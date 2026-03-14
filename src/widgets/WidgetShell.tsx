@@ -1,6 +1,8 @@
+import { useState, useMemo } from 'react'
 import { useDataSource } from '../hooks/useDataSource'
 import { getWidget } from '../core/WidgetRegistry'
 import { ErrorBoundary } from '../core/ErrorBoundary'
+import { Filters, applyFilters, type FilterValues } from './Filters'
 import type { WidgetConfig } from '../types/template'
 
 function formatAge(ts: number | null): string | null {
@@ -19,6 +21,14 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
 
   const isStreaming = config.source?.stream
   const isPolling = !isStreaming && config.source?.refreshInterval
+  const hasFilters = config.filters && config.filters.length > 0
+
+  const [filterValues, setFilterValues] = useState<FilterValues>({})
+
+  const filteredData = useMemo(() => {
+    if (!hasFilters || !data) return data
+    return applyFilters(data, config.filters!, filterValues)
+  }, [data, hasFilters, config.filters, filterValues])
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
@@ -40,6 +50,11 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
           </div>
         </div>
       )}
+      {hasFilters && !loading && data != null && (
+        <div className="px-4 pt-3">
+          <Filters filters={config.filters!} data={data} onChange={setFilterValues} />
+        </div>
+      )}
       <div className="p-4" style={{ height: contentHeight }}>
         {loading && (
           <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
@@ -53,7 +68,7 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
         )}
         {!loading && !error && (
           <ErrorBoundary>
-            <Component data={data} options={config.options} />
+            <Component data={filteredData} options={config.options} />
           </ErrorBoundary>
         )}
       </div>
