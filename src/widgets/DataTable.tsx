@@ -1,80 +1,14 @@
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
 
-const DEFAULT_PAGE_SIZE = 20
-
-// Backend pagination response shape
-interface PaginatedResponse {
-  rows?: unknown[]
-  data?: unknown[]
-  nextCursor?: string | null
-  prevCursor?: string | null
-  next?: string | null
-  prev?: string | null
-  totalCount?: number
-  total?: number
-}
-
-function isPaginated(data: unknown): data is PaginatedResponse {
-  if (!data || typeof data !== 'object' || Array.isArray(data)) return false
-  const d = data as Record<string, unknown>
-  return ('rows' in d || 'data' in d) && ('nextCursor' in d || 'next' in d || 'totalCount' in d || 'total' in d)
-}
+const DEFAULT_PAGE_SIZE = 25
 
 export function DataTable({ data, options }: WidgetProps) {
   const pageSize = (options?.pageSize as number) || DEFAULT_PAGE_SIZE
-  const paginated = isPaginated(data)
-
-  // Backend pagination state
-  const [cursors, setCursors] = useState<(string | null)[]>([null]) // stack of cursors
-  const [serverPage, setServerPage] = useState(0)
-  const [serverData, setServerData] = useState(data)
-
-  // When source data changes (new fetch), update serverData
-  useEffect(() => { setServerData(data) }, [data])
-
-  const fetchPage = useCallback(async (cursor: string | null, direction: 'next' | 'prev') => {
-    if (!options?.paginationUrl) return
-    try {
-      const body: Record<string, unknown> = { pageSize, ...(options?.paginationBody as object) }
-      if (cursor) body.cursor = cursor
-      const res = await fetch(options.paginationUrl as string, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-      if (!res.ok) return
-      const result = await res.json()
-      setServerData(result)
-      if (direction === 'next') {
-        setServerPage(p => p + 1)
-        const nextCursor = result.nextCursor ?? result.next ?? null
-        setCursors(prev => [...prev, nextCursor])
-      } else {
-        setServerPage(p => Math.max(0, p - 1))
-        setCursors(prev => prev.slice(0, -1))
-      }
-    } catch { /* ignore */ }
-  }, [options?.paginationUrl, options?.paginationBody, pageSize])
-
-  // Extract rows from paginated or plain data
-  const rawRows = useMemo(() => {
-    if (paginated && serverData) {
-      const d = serverData as PaginatedResponse
-      return (d.rows ?? d.data ?? []) as Record<string, unknown>[]
-    }
-    return null
-  }, [paginated, serverData])
-
-  const totalCount = paginated ? ((serverData as PaginatedResponse)?.totalCount ?? (serverData as PaginatedResponse)?.total) : undefined
-  const nextCursor = paginated ? ((serverData as PaginatedResponse)?.nextCursor ?? (serverData as PaginatedResponse)?.next) : undefined
-  const prevCursor = serverPage > 0 ? cursors[cursors.length - 2] : undefined
-
-  // For non-paginated data, use client-side pagination
-  const { columns, rows } = useMemo(() => normalize(rawRows ?? data), [rawRows, data])
+  const { columns, rows } = useMemo(() => normalize(data), [data])
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortAsc, setSortAsc] = useState(true)
-  const [clientPage, setClientPage] = useState(0)
+  const [page, setPage] = useState(0)
 
   const sorted = useMemo(() => {
     if (!sortKey) return rows
@@ -91,16 +25,15 @@ export function DataTable({ data, options }: WidgetProps) {
     })
   }, [rows, sortKey, sortAsc])
 
-  // Client-side pagination (for non-server-paginated data)
-  const clientTotalPages = Math.max(1, Math.ceil(sorted.length / pageSize))
-  const safeClientPage = Math.min(clientPage, clientTotalPages - 1)
-  const displayRows = paginated ? sorted : sorted.slice(safeClientPage * pageSize, (safeClientPage + 1) * pageSize)
-  const showClientPagination = !paginated && sorted.length > pageSize
+  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize))
+  const safePage = Math.min(page, totalPages - 1)
+  const display = sorted.slice(safePage * pageSize, (safePage + 1) * pageSize)
+  const showPagination = sorted.length > pageSize
 
   const toggleSort = (col: string) => {
     if (sortKey === col) setSortAsc(!sortAsc)
     else { setSortKey(col); setSortAsc(true) }
-    setClientPage(0)
+    setPage(0)
   }
 
   if (columns.length === 0) {
@@ -129,7 +62,7 @@ export function DataTable({ data, options }: WidgetProps) {
             </tr>
           </thead>
           <tbody>
-            {displayRows.map((row, i) => (
+            {display.map((row, i) => (
               <tr key={i} className="border-b border-zinc-800/60 hover:bg-zinc-800/40">
                 {columns.map(col => (
                   <td key={col} className="px-3 py-2.5 whitespace-nowrap tabular-nums text-zinc-100">
@@ -141,69 +74,15 @@ export function DataTable({ data, options }: WidgetProps) {
           </tbody>
         </table>
       </div>
-
-      {/* Server-driven cursor pagination */}
-      {paginated && (
-        <div className="flex items-center justify-between px-3 py-2 border-t border-zinc-800 text-xs text-zinc-400">
-          <span>{totalCount != null ? `${totalCount} rows` : `Page ${serverPage + 1}`}</span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => prevCursor !== undefined && fetchPage(prevCursor ?? null, 'prev')}
-              disabled={serverPage === 0}
-              className="px-2 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-default"
-            >
-              &lsaquo; Prev
-            </button>
-            <span className="px-2 text-zinc-300">
-              {serverPage + 1}
-            </span>
-            <button
-              onClick={() => nextCursor && fetchPage(nextCursor, 'next')}
-              disabled={!nextCursor}
-              className="px-2 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-default"
-            >
-              Next &rsaquo;
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Client-side page pagination */}
-      {showClientPagination && (
+      {showPagination && (
         <div className="flex items-center justify-between px-3 py-2 border-t border-zinc-800 text-xs text-zinc-400">
           <span>{sorted.length} rows</span>
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => setClientPage(0)}
-              disabled={safeClientPage === 0}
-              className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-default"
-            >
-              &laquo;
-            </button>
-            <button
-              onClick={() => setClientPage(p => Math.max(0, p - 1))}
-              disabled={safeClientPage === 0}
-              className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-default"
-            >
-              &lsaquo;
-            </button>
-            <span className="px-2 text-zinc-300">
-              {safeClientPage + 1} / {clientTotalPages}
-            </span>
-            <button
-              onClick={() => setClientPage(p => Math.min(clientTotalPages - 1, p + 1))}
-              disabled={safeClientPage >= clientTotalPages - 1}
-              className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-default"
-            >
-              &rsaquo;
-            </button>
-            <button
-              onClick={() => setClientPage(clientTotalPages - 1)}
-              disabled={safeClientPage >= clientTotalPages - 1}
-              className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-default"
-            >
-              &raquo;
-            </button>
+            <button onClick={() => setPage(0)} disabled={safePage === 0} className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30">&laquo;</button>
+            <button onClick={() => setPage(p => p - 1)} disabled={safePage === 0} className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30">&lsaquo;</button>
+            <span className="px-2 text-zinc-300">{safePage + 1} / {totalPages}</span>
+            <button onClick={() => setPage(p => p + 1)} disabled={safePage >= totalPages - 1} className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30">&rsaquo;</button>
+            <button onClick={() => setPage(totalPages - 1)} disabled={safePage >= totalPages - 1} className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30">&raquo;</button>
           </div>
         </div>
       )}
