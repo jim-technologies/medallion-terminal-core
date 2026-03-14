@@ -19,10 +19,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: flox/setup-flox@v2
+      - uses: flox/install-flox-action@v3
 
       - name: Build Storybook
-        run: flox activate -- sh -c "pnpm install && pnpm build:storybook"
+        run: flox activate -- sh -c "pnpm install --frozen-lockfile && pnpm run build:storybook"
 
       - uses: actions/upload-pages-artifact@v3
         with:
