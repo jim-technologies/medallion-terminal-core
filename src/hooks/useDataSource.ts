@@ -19,8 +19,8 @@ export interface DataSourceState {
   data: unknown
   loading: boolean
   error: string | null
-  lastUpdated: number | null // epoch ms
-  connected: boolean // true when streaming connection is active
+  lastUpdated: number | null
+  connected: boolean
 }
 
 export function useDataSource(source?: DataSource): DataSourceState {
@@ -46,7 +46,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
       return
     }
 
-    // Inline data — no fetch needed
+    // Inline data
     if (source.data !== undefined) {
       handleData(source.data)
       return
@@ -60,7 +60,118 @@ export function useDataSource(source?: DataSource): DataSourceState {
     const streamType = source.stream === true ? 'sse'
       : source.stream === 'ws' ? 'ws'
       : source.stream === 'sse' ? 'sse'
+      : source.stream === 'connect' ? 'connect'
       : null
+
+    // --- ConnectRPC server-streaming ---
+    // Connect protocol: POST with JSON body, response is a stream of
+    // enveloped messages. Each envelope: 1 byte flags + 4 bytes big-endian
+    // length + N bytes JSON payload. Flag 0x02 = end-of-stream (trailers).
+    if (streamType === 'connect') {
+      let disposed = false
+
+      const connect = async () => {
+        if (disposed) return
+        try {
+          const res = await fetch(source.url!, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/connect+json',
+              ...source.headers,
+            },
+            body: JSON.stringify(source.body ?? {}),
+          })
+
+          if (!res.ok) {
+            throw new Error(`ConnectRPC error: HTTP ${res.status}`)
+          }
+
+          if (!res.body) {
+            throw new Error('ConnectRPC: no response body')
+          }
+
+          setConnected(true)
+          setError(null)
+          reconnectDelay.current = INITIAL_RECONNECT_DELAY
+
+          const reader = res.body.getReader()
+
+          // Buffer for handling partial reads
+          let buffer = new Uint8Array(0)
+
+          const appendToBuffer = (chunk: Uint8Array) => {
+            const newBuf = new Uint8Array(buffer.length + chunk.length)
+            newBuf.set(buffer)
+            newBuf.set(chunk, buffer.length)
+            buffer = newBuf
+          }
+
+          const consumeFromBuffer = (n: number): Uint8Array | null => {
+            if (buffer.length < n) return null
+            const result = buffer.slice(0, n)
+            buffer = buffer.slice(n)
+            return result
+          }
+
+          // Read and parse enveloped messages
+          while (!disposed) {
+            const { done, value } = await reader.read()
+            if (done) break
+            if (value) appendToBuffer(value)
+
+            // Process all complete messages in buffer
+            while (buffer.length >= 5) {
+              const flags = buffer[0]
+              const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+              const length = view.getUint32(1)
+
+              if (buffer.length < 5 + length) break // incomplete message
+
+              // End-of-stream trailers
+              if (flags & 0x02) {
+                consumeFromBuffer(5 + length)
+                break
+              }
+
+              const msgBytes = consumeFromBuffer(5 + length)
+              if (!msgBytes) break
+
+              const payload = msgBytes.slice(5)
+              const text = new TextDecoder().decode(payload)
+              try {
+                const parsed = JSON.parse(text)
+                if (!disposed) handleData(parsed)
+              } catch {
+                if (!disposed) setError('Failed to parse ConnectRPC message')
+              }
+            }
+          }
+
+          reader.releaseLock()
+        } catch (err: unknown) {
+          if (!disposed && err instanceof Error) {
+            setError(err.message)
+          }
+        } finally {
+          if (!disposed) {
+            setConnected(false)
+            // Auto-reconnect
+            reconnectTimer.current = setTimeout(() => {
+              reconnectDelay.current = Math.min(reconnectDelay.current * 2, MAX_RECONNECT_DELAY)
+              connect()
+            }, reconnectDelay.current)
+          }
+        }
+      }
+
+      connect()
+
+      return () => {
+        disposed = true
+        clearTimeout(reconnectTimer.current)
+        setConnected(false)
+      }
+    }
 
     // --- WebSocket ---
     if (streamType === 'ws') {
@@ -93,7 +204,6 @@ export function useDataSource(source?: DataSource): DataSourceState {
         ws.onclose = () => {
           setConnected(false)
           if (!disposed) {
-            // Auto-reconnect with exponential backoff
             reconnectTimer.current = setTimeout(() => {
               reconnectDelay.current = Math.min(reconnectDelay.current * 2, MAX_RECONNECT_DELAY)
               connect()
