@@ -1,0 +1,220 @@
+syntax = "proto3";
+
+package medallion.terminal.v1;
+
+import "google/protobuf/struct.proto";
+
+// =============================================================
+// Canonical Data Shapes
+//
+// These define the standard payload formats that widgets expect.
+// Backend APIs SHOULD return data conforming to these shapes.
+// Widgets also accept common variations (e.g. raw arrays of
+// objects for tables) and normalize internally.
+// =============================================================
+
+// --- Timeseries ---
+// Use for: price charts, traffic graphs, sensor data, any
+// timestamped numeric data.
+//
+// JSON examples:
+//
+// Single series (flat):
+//   { "points": [
+//       { "timestamp": "2024-01-01T00:00:00Z", "value": 42000.50 },
+//       { "timestamp": "2024-01-02T00:00:00Z", "value": 43100.00 }
+//   ]}
+//
+// Multi-series:
+//   { "series": [
+//       { "name": "BTC", "points": [{ "timestamp": "...", "value": 42000 }] },
+//       { "name": "ETH", "points": [{ "timestamp": "...", "value": 2800 }] }
+//   ]}
+//
+// Shorthand (also accepted by widget, no proto equivalent):
+//   [{ "timestamp": "2024-01-01", "value": 42000 }]
+//   [{ "timestamp": "2024-01-01", "BTC": 42000, "ETH": 2800 }]
+
+message TimeseriesPayload {
+  // Flat list of points. Use for single-series data.
+  repeated TimeseriesPoint points = 1;
+
+  // Named series. Use for multi-series overlays.
+  repeated TimeseriesSeries series = 2;
+}
+
+message TimeseriesPoint {
+  // ISO 8601 timestamp or Unix epoch (seconds or milliseconds).
+  string timestamp = 1;
+
+  // Numeric value at this timestamp.
+  double value = 2;
+}
+
+message TimeseriesSeries {
+  // Display name for this series (used in legend/tooltip).
+  string name = 1;
+
+  // Data points for this series.
+  repeated TimeseriesPoint points = 2;
+}
+
+// --- Candlestick (OHLCV) ---
+// Use for: financial price charts, order flow, any OHLCV data.
+//
+// JSON example:
+//   [
+//     { "timestamp": "2024-03-01", "open": 61800, "high": 63200, "low": 61400, "close": 62400, "volume": 28500 },
+//     { "timestamp": "2024-03-02", "open": 62400, "high": 63800, "low": 62100, "close": 63100, "volume": 31200 }
+//   ]
+//
+// Also accepts shorthand keys: t/o/h/l/c/v or date/open/high/low/close/vol
+
+message CandlestickPayload {
+  repeated CandlestickBar bars = 1;
+}
+
+message CandlestickBar {
+  // ISO 8601 date or Unix epoch.
+  string timestamp = 1;
+
+  double open = 2;
+  double high = 3;
+  double low = 4;
+  double close = 5;
+
+  // Optional. If provided, rendered as a volume histogram below the chart.
+  optional double volume = 6;
+}
+
+// --- Table ---
+// Use for: portfolios, order books, leaderboards, any tabular data.
+//
+// JSON examples:
+//
+// Array of objects (columns auto-detected):
+//   [
+//     { "Asset": "BTC", "Price": 67500, "Volume": 1234567 },
+//     { "Asset": "ETH", "Price": 3456, "Volume": 987654 }
+//   ]
+//
+// Explicit schema:
+//   { "columns": [
+//       { "key": "asset", "label": "Asset", "type": "COLUMN_TYPE_STRING" },
+//       { "key": "price", "label": "Price", "type": "COLUMN_TYPE_NUMBER" }
+//     ],
+//     "rows": [
+//       { "asset": "BTC", "price": 67500 },
+//       { "asset": "ETH", "price": 3456 }
+//   ]}
+
+message TablePayload {
+  // Optional column definitions. If omitted, columns are
+  // auto-detected from the first row's keys.
+  repeated TableColumn columns = 1;
+
+  // Row data as a list of objects.
+  repeated google.protobuf.Struct rows = 2;
+}
+
+message TableColumn {
+  // Field key matching the row object keys.
+  string key = 1;
+
+  // Display label. Defaults to key if omitted.
+  string label = 2;
+
+  // Data type hint for formatting and sorting.
+  ColumnType type = 3;
+}
+
+enum ColumnType {
+  COLUMN_TYPE_UNSPECIFIED = 0;
+  COLUMN_TYPE_STRING = 1;
+  COLUMN_TYPE_NUMBER = 2;
+  COLUMN_TYPE_BOOLEAN = 3;
+  COLUMN_TYPE_TIMESTAMP = 4;
+}
+
+// --- Metric ---
+// Use for: KPIs, single aggregate values, counters.
+//
+// JSON examples:
+//
+// Full:
+//   { "value": 67842.50, "delta": 2.18, "unit": "USD", "label": "Current Price" }
+//
+// Minimal:
+//   { "value": 67842.50 }
+//
+// Raw number (also accepted by widget, no proto equivalent):
+//   67842.50
+
+// --- Text ---
+// Use for: news feeds, AI summaries, alerts, article lists.
+//
+// JSON examples:
+//
+// Array of articles:
+//   [
+//     { "title": "Bitcoin hits ATH", "body": "...", "source": "CoinDesk", "date": "Mar 14", "tags": ["BTC"] },
+//     { "title": "ETH upgrade", "body": "...", "source": "The Block", "date": "Mar 13" }
+//   ]
+//
+// Single article:
+//   { "title": "Market Summary", "body": "Full text here..." }
+//
+// Plain string (also accepted by widget, no proto equivalent):
+//   "Some text content"
+
+message TextPayload {
+  repeated TextItem items = 1;
+}
+
+message TextItem {
+  // Headline or title.
+  optional string title = 1;
+
+  // Main body text.
+  optional string body = 2;
+
+  // Attribution source (e.g. "Reuters", "CoinDesk").
+  optional string source = 3;
+
+  // Display date or timestamp string.
+  optional string date = 4;
+
+  // Author name.
+  optional string author = 5;
+
+  // Categorization tags.
+  repeated string tags = 6;
+}
+
+// --- Metric ---
+// Use for: KPIs, single aggregate values, counters.
+//
+// JSON examples:
+//
+// Full:
+//   { "value": 67842.50, "delta": 2.18, "unit": "USD", "label": "Current Price" }
+//
+// Minimal:
+//   { "value": 67842.50 }
+//
+// Raw number (also accepted by widget, no proto equivalent):
+//   67842.50
+
+message MetricPayload {
+  // The primary numeric value to display.
+  double value = 1;
+
+  // Percentage change. Positive = green/up, negative = red/down.
+  optional double delta = 2;
+
+  // Unit label displayed after the value (e.g. "USD", "%", "req/s").
+  optional string unit = 3;
+
+  // Subtitle label displayed below the value.
+  optional string label = 4;
+}

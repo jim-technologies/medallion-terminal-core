@@ -1,0 +1,18 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: flox/setup-flox@v2
+
+      - name: Install, lint, test, build
+        run: flox activate -- sh -c "pnpm install --frozen-lockfile && pnpm run ci"

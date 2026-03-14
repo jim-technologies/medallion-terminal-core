@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package medallion.terminal.v1;
+
+import "google/protobuf/struct.proto";
+
+// Template is the top-level dashboard configuration.
+// A backend serves this as JSON; the frontend renders it.
+//
+// Example:
+//   GET /template?id=my-dashboard
+//   -> { "title": "My Dashboard", "columns": 12, "widgets": [...] }
+message Template {
+  // Dashboard title displayed at the top.
+  string title = 1;
+
+  // Grid column count. Default: 12.
+  int32 columns = 2;
+
+  // Ordered list of widgets to render in the grid.
+  repeated Widget widgets = 3;
+}
+
+// Widget defines a single visual component in the dashboard grid.
+message Widget {
+  // Unique identifier for this widget instance.
+  string id = 1;
+
+  // Widget type name. Maps to a registered renderer.
+  // Built-in: "timeseries", "table", "metric".
+  string component = 2;
+
+  // Column span (1-12). Default: 6.
+  // Mobile: always full-width. Tablet: clamped to columns/2.
+  int32 span = 3;
+
+  // Content height in pixels. Each component type has a sensible default.
+  int32 height = 4;
+
+  // Display title shown in the widget header.
+  string title = 5;
+
+  // Where this widget gets its data.
+  DataSource source = 6;
+
+  // Widget-specific configuration overrides.
+  // Interpretation depends on the component type.
+  google.protobuf.Struct options = 7;
+}
+
+// DataSource tells the frontend how to fetch data for a widget.
+message DataSource {
+  // URL to fetch data from. Mutually exclusive with inline data.
+  string url = 1;
+
+  // Inline data embedded directly in the template.
+  // Use this for static/demo data. Mutually exclusive with url.
+  google.protobuf.Value data = 2;
+
+  // Streaming mode for live updates.
+  // "sse" (or true for backwards compat) = Server-Sent Events.
+  // "ws" = WebSocket. Supports auto-reconnect with exponential backoff.
+  // Omit or empty = no streaming (one-time fetch, optionally with polling).
+  string stream = 3;
+
+  // HTTP method. Default: "GET".
+  string method = 4;
+
+  // HTTP headers to include in the request.
+  map<string, string> headers = 5;
+
+  // Polling interval in milliseconds for non-streaming sources.
+  // 0 = no polling (fetch once).
+  int32 refresh_interval_ms = 6;
+
+  // Dot-path to extract nested data from the response.
+  // Example: "data.items" extracts response.data.items.
+  string transform = 7;
+}
