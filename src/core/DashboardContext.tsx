@@ -9,7 +9,6 @@ export interface WidgetAction {
   span?: number
   height?: number
   source?: WidgetConfig['source']
-  filters?: WidgetConfig['filters']
   options?: WidgetConfig['options']
 }
 

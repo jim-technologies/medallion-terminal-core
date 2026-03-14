@@ -32,7 +32,6 @@ export function Dashboard({ template }: { template: Template }) {
             ...(action.span !== undefined && { span: action.span }),
             ...(action.height !== undefined && { height: action.height }),
             ...(action.source !== undefined && { source: action.source }),
-            ...(action.filters !== undefined && { filters: action.filters }),
             ...(action.options !== undefined && { options: action.options }),
           }
         } else {
@@ -44,7 +43,6 @@ export function Dashboard({ template }: { template: Template }) {
             span: action.span,
             height: action.height,
             source: action.source,
-            filters: action.filters,
             options: action.options,
           })
         }
