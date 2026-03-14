@@ -5,6 +5,7 @@ import { DataTable } from '../widgets/DataTable'
 import { Metric } from '../widgets/Metric'
 import { Text } from '../widgets/Text'
 import { Candlestick } from '../widgets/Candlestick'
+import { Prompt } from '../widgets/Prompt'
 import { Placeholder } from '../widgets/Placeholder'
 
 const registry = new Map<string, ComponentType<WidgetProps>>([
@@ -13,6 +14,7 @@ const registry = new Map<string, ComponentType<WidgetProps>>([
   ['table', DataTable],
   ['metric', Metric],
   ['text', Text],
+  ['prompt', Prompt],
 ])
 
 export function getWidget(name: string): ComponentType<WidgetProps> {
