@@ -24,7 +24,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build",
-    "ci": "pnpm lint && pnpm test && pnpm build && pnpm build:lib && pnpm build:storybook"
+    "ci": "pnpm install --frozen-lockfile && pnpm lint && pnpm test && pnpm build && pnpm build:lib && pnpm build:storybook"
   },
   "peerDependencies": {
     "lightweight-charts": "^5.0.0",
