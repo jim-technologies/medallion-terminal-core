@@ -28,7 +28,11 @@ jobs:
       - uses: flox/install-flox-action@v2
       - uses: flox/activate-action@v1
         with:
-          command: pnpm install --frozen-lockfile && pnpm run build:storybook
+          command: pnpm install --frozen-lockfile
+
+      - uses: flox/activate-action@v1
+        with:
+          command: pnpm run build:storybook
 
       - uses: actions/upload-pages-artifact@v3
         with:
