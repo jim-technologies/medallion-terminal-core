@@ -21,4 +21,4 @@ jobs:
       - uses: flox/install-flox-action@v2
       - uses: flox/activate-action@v1
         with:
-          command: pnpm install --frozen-lockfile && pnpm run ci
+          command: pnpm run ci
