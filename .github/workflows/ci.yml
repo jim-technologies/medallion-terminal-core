@@ -12,7 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: flox/install-flox-action@v3
+      - uses: actions/cache@v4
+        with:
+          path: /nix/store
+          key: nix-${{ runner.os }}-${{ hashFiles('.flox/env/manifest.lock') }}
+          restore-keys: nix-${{ runner.os }}-
 
-      - name: Install, lint, test, build
-        run: flox activate -- sh -c "pnpm install --frozen-lockfile && pnpm run ci"
+      - uses: flox/install-flox-action@v2
+      - uses: flox/activate-action@v1
+        with:
+          command: pnpm install --frozen-lockfile && pnpm run ci
