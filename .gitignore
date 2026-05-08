@@ -1,6 +1,11 @@
 node_modules
 dist
+dist-app
 storybook-static
 *.tsbuildinfo
 *.local
 .DS_Store
+
+# Defensive: examples/ contains source widgets, but a stray tsc run
+# can leak .d.ts outputs. The intentional ambient types use .d.mts.
+examples/**/*.d.ts

@@ -1,0 +1,154 @@
+{
+  "title": "ICU bed 4 — Patient Doe, Jane (47)",
+  "context": { "values": { "bed": "ICU-04" } },
+  "widgets": [
+    {
+      "id": "vitals",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 90,
+      "source": {
+        "inline": [
+          { "label": "HR",    "value":  82, "delta": -0.014, "unit": "bpm",     "trend": [78, 80, 81, 84, 86, 84, 82] },
+          { "label": "BP sys","value": 124, "delta":  0.008, "unit": "mmHg",    "trend": [128, 126, 125, 124, 124, 125, 124] },
+          { "label": "BP dia","value":  78,                  "unit": "mmHg" },
+          { "label": "SpO2",  "value":  97, "delta":  0.000, "unit": "%",       "trend": [97, 97, 96, 96, 97, 97, 97] },
+          { "label": "Temp",  "value": 37.2, "delta": 0.012, "unit": "°C" },
+          { "label": "RR",    "value":  16, "delta": -0.062, "unit": "/min" }
+        ]
+      }
+    },
+
+    {
+      "id": "telemetry",
+      "component": "timeseries",
+      "span": 9,
+      "height": 320,
+      "title": "Vitals (last 4h)",
+      "source": {
+        "inline": {
+          "annotations": [
+            { "timestamp": "13:42", "label": "Norepinephrine 0.05 µg/kg/min", "kind": "info" },
+            { "timestamp": "15:18", "label": "Bolus 250 ml NS", "kind": "info" },
+            { "timestamp": "16:04", "label": "SpO2 dip < 92%", "kind": "warn", "value": 91 }
+          ],
+          "series": [
+            { "name": "HR",   "data": [
+              { "timestamp": "13:00", "value": 88 }, { "timestamp": "13:20", "value": 90 }, { "timestamp": "13:40", "value": 92 },
+              { "timestamp": "14:00", "value": 86 }, { "timestamp": "14:20", "value": 84 }, { "timestamp": "14:40", "value": 82 },
+              { "timestamp": "15:00", "value": 80 }, { "timestamp": "15:20", "value": 78 }, { "timestamp": "15:40", "value": 80 },
+              { "timestamp": "16:00", "value": 84 }, { "timestamp": "16:20", "value": 86 }, { "timestamp": "16:40", "value": 82 }
+            ]},
+            { "name": "SpO2", "data": [
+              { "timestamp": "13:00", "value": 96 }, { "timestamp": "13:20", "value": 96 }, { "timestamp": "13:40", "value": 96 },
+              { "timestamp": "14:00", "value": 97 }, { "timestamp": "14:20", "value": 97 }, { "timestamp": "14:40", "value": 97 },
+              { "timestamp": "15:00", "value": 97 }, { "timestamp": "15:20", "value": 97 }, { "timestamp": "15:40", "value": 95 },
+              { "timestamp": "16:00", "value": 91 }, { "timestamp": "16:20", "value": 95 }, { "timestamp": "16:40", "value": 97 }
+            ]},
+            { "name": "BP sys","data": [
+              { "timestamp": "13:00", "value": 130 }, { "timestamp": "13:20", "value": 128 }, { "timestamp": "13:40", "value": 126 },
+              { "timestamp": "14:00", "value": 125 }, { "timestamp": "14:20", "value": 125 }, { "timestamp": "14:40", "value": 124 },
+              { "timestamp": "15:00", "value": 124 }, { "timestamp": "15:20", "value": 122 }, { "timestamp": "15:40", "value": 122 },
+              { "timestamp": "16:00", "value": 124 }, { "timestamp": "16:20", "value": 124 }, { "timestamp": "16:40", "value": 124 }
+            ]}
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "infusion",
+      "component": "gauge",
+      "span": 3,
+      "height": 320,
+      "title": "Infusion remaining",
+      "source": {
+        "inline": {
+          "value": 0.62, "min": 0, "max": 1, "label": "Norepi bag",
+          "bands": [
+            { "from": 0,    "to": 0.2, "color": "danger", "label": "Refill" },
+            { "from": 0.2,  "to": 0.5, "color": "warn",   "label": "Low" },
+            { "from": 0.5,  "to": 1,   "color": "ok",     "label": "OK" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "alerts",
+      "component": "events",
+      "span": 6,
+      "height": 280,
+      "title": "Alerts & nurse log",
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "16:04:11", "label": "SpO2 alarm — 91%", "status": "EVENT_STATUS_WARN",  "source": "monitor" },
+            { "timestamp": "15:42:08", "label": "Pain report 5/10",  "status": "EVENT_STATUS_INFO",  "source": "RN-ML" },
+            { "timestamp": "15:18:33", "label": "250 ml NS bolus given", "status": "EVENT_STATUS_OK", "source": "RN-ML", "tags": ["fluids"] },
+            { "timestamp": "14:11:42", "label": "ABG draw, lactate 1.4", "status": "EVENT_STATUS_OK", "source": "lab" },
+            { "timestamp": "13:42:01", "label": "Norepi titrated to 0.05", "status": "EVENT_STATUS_OK", "source": "Dr-AS" },
+            { "timestamp": "12:00:00", "label": "Shift change",           "status": "EVENT_STATUS_INFO", "source": "RN-ML" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "medications",
+      "component": "table",
+      "span": 6,
+      "height": 280,
+      "title": "Active orders",
+      "source": {
+        "inline": [
+          { "Drug": "Norepinephrine",  "Dose": "0.05 µg/kg/min", "Route": "IV cont", "Started": "Mon 22:14", "Status": "Active"   },
+          { "Drug": "Heparin",         "Dose": "5000 U bid",     "Route": "SC",      "Started": "Mon 18:00", "Status": "Active"   },
+          { "Drug": "Pantoprazole",    "Dose": "40 mg q24h",     "Route": "IV push", "Started": "Mon 22:00", "Status": "Active"   },
+          { "Drug": "Acetaminophen",   "Dose": "650 mg q6h prn", "Route": "PO",      "Started": "Tue 06:00", "Status": "PRN"      },
+          { "Drug": "Ondansetron",     "Dose": "4 mg q8h prn",   "Route": "IV push", "Started": "Tue 06:00", "Status": "PRN"      },
+          { "Drug": "Vancomycin",      "Dose": "1 g q12h",       "Route": "IV piggy","Started": "Mon 22:30", "Status": "Active"   }
+        ]
+      }
+    },
+
+    {
+      "id": "fluid-balance",
+      "component": "distribution",
+      "span": 4,
+      "height": 240,
+      "title": "Fluid balance (24h, ml)",
+      "source": {
+        "inline": {
+          "slices": [
+            { "label": "IV in",    "value": 2400, "color": "info" },
+            { "label": "PO",       "value":  320, "color": "info" },
+            { "label": "Urine",    "value": 1840, "color": "warn" },
+            { "label": "Drain",    "value":  280, "color": "muted" },
+            { "label": "Other",    "value":   60, "color": "muted" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "history",
+      "component": "text",
+      "span": 8,
+      "height": 240,
+      "title": "Notes",
+      "source": {
+        "inline": {
+          "items": [
+            { "title": "Tue 06:30 — AM rounds",
+              "body": "Hemodynamically improved. Norepi at 0.05 µg/kg/min, MAP 76. Lactate trending down. Plan: wean pressors, advance diet, OOB to chair.",
+              "author": "Dr. Patel", "date": "06:30 today" },
+            { "title": "Mon 22:14 — Admit note",
+              "body": "47F with septic shock secondary to UTI. Started broad-spectrum, pressor support, hemodynamic monitoring. ICU bed 4.",
+              "author": "Dr. Patel", "date": "Mon 22:14" }
+          ]
+        }
+      }
+    }
+  ]
+}

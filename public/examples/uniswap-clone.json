@@ -1,0 +1,143 @@
+{
+  "title": "ETH / USDC — 0.05% pool",
+  "context": { "values": { "pair": "ETH-USDC", "fee": "0.05", "range": "1m" } },
+  "widgets": [
+    { "id": "tvl",   "component": "metric", "span": 3, "height": 100, "title": "TVL",       "source": { "inline": { "value": 384200000, "delta": -0.018, "unit": "USD" } } },
+    { "id": "vol24", "component": "metric", "span": 3, "height": 100, "title": "24h Volume","source": { "inline": { "value": 142800000, "delta":  0.064, "unit": "USD" } } },
+    { "id": "fees",  "component": "metric", "span": 3, "height": 100, "title": "24h Fees",  "source": { "inline": { "value": 71400, "unit": "USD" } } },
+    { "id": "apr",   "component": "metric", "span": 3, "height": 100, "title": "1y Fee APR","source": { "inline": { "value": 6.78, "delta": 0.012, "unit": "%" } } },
+
+    {
+      "id": "px",
+      "component": "timeseries",
+      "span": 8,
+      "height": 360,
+      "title": "ETH / USDC — Price",
+      "source": {
+        "inline": {
+          "points": [
+            { "timestamp": "2026-04-01", "value": 3120 }, { "timestamp": "2026-04-03", "value": 3185 },
+            { "timestamp": "2026-04-05", "value": 3220 }, { "timestamp": "2026-04-07", "value": 3290 },
+            { "timestamp": "2026-04-09", "value": 3268 }, { "timestamp": "2026-04-11", "value": 3340 },
+            { "timestamp": "2026-04-13", "value": 3402 }, { "timestamp": "2026-04-15", "value": 3380 },
+            { "timestamp": "2026-04-17", "value": 3360 }, { "timestamp": "2026-04-19", "value": 3420 },
+            { "timestamp": "2026-04-21", "value": 3440 }, { "timestamp": "2026-04-23", "value": 3478 },
+            { "timestamp": "2026-04-25", "value": 3501 }, { "timestamp": "2026-04-27", "value": 3486 },
+            { "timestamp": "2026-04-29", "value": 3472 }, { "timestamp": "2026-04-30", "value": 3456 }
+          ],
+          "annotations": [
+            { "timestamp": "2026-04-13", "value": 3402, "label": "Fed minutes",      "kind": "info" },
+            { "timestamp": "2026-04-23", "value": 3478, "label": "ETH ETF approval", "kind": "info" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "swap",
+      "component": "trade",
+      "span": 4,
+      "height": 360,
+      "title": "Swap",
+      "options": {
+        "url": "/api/swap",
+        "symbol": "ETH-USDC",
+        "quote_unit": "ETH",
+        "available": 4.218
+      }
+    },
+    {
+      "id": "composition",
+      "component": "distribution",
+      "span": 8,
+      "height": 360,
+      "title": "Pool Composition",
+      "source": {
+        "inline": {
+          "slices": [
+            { "label": "ETH",  "value": 191200000, "color": "info" },
+            { "label": "USDC", "value": 193000000, "color": "ok"   }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "depth",
+      "component": "timeseries",
+      "span": 8,
+      "height": 280,
+      "title": "Liquidity Depth (vs Tick)",
+      "source": {
+        "inline": {
+          "points": [
+            { "timestamp": "3300", "value": 28400 }, { "timestamp": "3320", "value": 31800 },
+            { "timestamp": "3340", "value": 38200 }, { "timestamp": "3360", "value": 42600 },
+            { "timestamp": "3380", "value": 51400 }, { "timestamp": "3400", "value": 64800 },
+            { "timestamp": "3420", "value": 82400 }, { "timestamp": "3440", "value": 96200 },
+            { "timestamp": "3456", "value": 104800 },
+            { "timestamp": "3480", "value": 88600 }, { "timestamp": "3500", "value": 72400 },
+            { "timestamp": "3520", "value": 58200 }, { "timestamp": "3540", "value": 46800 },
+            { "timestamp": "3560", "value": 38400 }, { "timestamp": "3580", "value": 32100 }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "fee-tiers",
+      "component": "table",
+      "span": 4,
+      "height": 280,
+      "title": "Fee Tiers (click to switch)",
+      "options": { "row_context": { "key": "fee", "field": "Fee" } },
+      "source": {
+        "inline": [
+          { "Fee": "0.01", "TVL ($)":  18400000, "24h Vol ($)":  4200000, "APR %":  0.84 },
+          { "Fee": "0.05", "TVL ($)": 384200000, "24h Vol ($)":142800000, "APR %":  6.78 },
+          { "Fee": "0.30", "TVL ($)":  92600000, "24h Vol ($)": 18400000, "APR %":  2.18 },
+          { "Fee": "1.00", "TVL ($)":   4800000, "24h Vol ($)":   620000, "APR %":  4.71 }
+        ]
+      }
+    },
+
+    {
+      "id": "top-pools",
+      "component": "table",
+      "span": 12,
+      "height": 320,
+      "title": "Top Pools (click to switch)",
+      "options": { "row_context": { "key": "pair", "field": "Pair" } },
+      "source": {
+        "inline": [
+          { "Pair": "ETH-USDC", "Fee %": 0.05, "TVL ($)": 384200000, "24h Vol ($)": 142800000, "APR %":  6.78 },
+          { "Pair": "WBTC-ETH", "Fee %": 0.30, "TVL ($)": 218400000, "24h Vol ($)":  41800000, "APR %":  4.32 },
+          { "Pair": "USDC-USDT", "Fee %": 0.01, "TVL ($)":146200000, "24h Vol ($)":  82400000, "APR %":  0.94 },
+          { "Pair": "ETH-USDT", "Fee %": 0.30, "TVL ($)":  98400000, "24h Vol ($)":  18200000, "APR %":  2.41 },
+          { "Pair": "PEPE-ETH", "Fee %": 1.00, "TVL ($)":  18200000, "24h Vol ($)":   8400000, "APR %": 14.82 },
+          { "Pair": "ARB-ETH",  "Fee %": 0.30, "TVL ($)":  12400000, "24h Vol ($)":   2800000, "APR %":  3.18 }
+        ]
+      }
+    },
+
+    {
+      "id": "swaps",
+      "component": "events",
+      "span": 12,
+      "height": 320,
+      "title": "Recent Swaps",
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "15:01:42", "label": "Swap  4.218 ETH → 14,580.42 USDC",  "status": "EVENT_STATUS_OK", "source": "0x4f…a92e" },
+            { "timestamp": "15:01:18", "label": "Swap 12,400 USDC → 3.587 ETH",      "status": "EVENT_STATUS_OK", "source": "0x9c…e041" },
+            { "timestamp": "15:00:51", "label": "Swap  0.420 ETH →  1,452.04 USDC",  "status": "EVENT_STATUS_OK", "source": "0x7d…b1f4" },
+            { "timestamp": "15:00:33", "label": "Add  +18.2 ETH +62,840 USDC",       "status": "EVENT_STATUS_INFO", "source": "0x2a…c8e3", "tags": ["LP"] },
+            { "timestamp": "15:00:11", "label": "Swap  82,400 USDC → 23.84 ETH",     "status": "EVENT_STATUS_OK", "source": "0x6e…f902" },
+            { "timestamp": "14:59:48", "label": "Remove -4.2 ETH -14,520 USDC",      "status": "EVENT_STATUS_INFO", "source": "0x1b…d784", "tags": ["LP"] }
+          ]
+        }
+      }
+    }
+  ]
+}

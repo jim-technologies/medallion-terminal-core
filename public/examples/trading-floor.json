@@ -1,0 +1,147 @@
+{
+  "title": "Multi-Asset Desk",
+  "context": { "values": { "range": "1d" } },
+  "widgets": [
+    {
+      "id": "header",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 80,
+      "source": {
+        "inline": [
+          { "label": "BTC", "value": 67842, "delta":  0.0036, "unit": "USD", "trend": [67100, 67500, 67800, 67400, 67900, 67600, 67842] },
+          { "label": "ETH", "value":  3456, "delta":  0.0081, "unit": "USD", "trend": [3380, 3410, 3445, 3420, 3460, 3450, 3456] },
+          { "label": "SOL", "value":   168, "delta":  0.0192, "unit": "USD", "trend": [162, 164, 166, 165, 167, 167, 168] },
+          { "label": "SPY", "value": 521.4, "delta":  0.0024, "unit": "USD" },
+          { "label": "QQQ", "value": 442.1, "delta": -0.0008, "unit": "USD" },
+          { "label": "GLD", "value": 218.6, "delta":  0.0046, "unit": "USD" }
+        ]
+      }
+    },
+
+    {
+      "id": "px",
+      "component": "candlestick",
+      "span": 8,
+      "height": 380,
+      "title": "BTC/USD — Intraday",
+      "source": {
+        "inline": [
+          { "timestamp": "2026-04-30 09:30", "open": 67200, "high": 67450, "low": 67100, "close": 67380, "volume": 4200 },
+          { "timestamp": "2026-04-30 10:00", "open": 67380, "high": 67620, "low": 67310, "close": 67580, "volume": 4800 },
+          { "timestamp": "2026-04-30 10:30", "open": 67580, "high": 67700, "low": 67420, "close": 67460, "volume": 3600 },
+          { "timestamp": "2026-04-30 11:00", "open": 67460, "high": 67510, "low": 67220, "close": 67280, "volume": 3900 },
+          { "timestamp": "2026-04-30 11:30", "open": 67280, "high": 67400, "low": 67180, "close": 67340, "volume": 2800 },
+          { "timestamp": "2026-04-30 12:00", "open": 67340, "high": 67620, "low": 67300, "close": 67580, "volume": 3400 },
+          { "timestamp": "2026-04-30 12:30", "open": 67580, "high": 67780, "low": 67520, "close": 67700, "volume": 4100 },
+          { "timestamp": "2026-04-30 13:00", "open": 67700, "high": 67920, "low": 67650, "close": 67860, "volume": 4600 },
+          { "timestamp": "2026-04-30 13:30", "open": 67860, "high": 67980, "low": 67740, "close": 67800, "volume": 3700 },
+          { "timestamp": "2026-04-30 14:00", "open": 67800, "high": 67910, "low": 67620, "close": 67680, "volume": 3200 },
+          { "timestamp": "2026-04-30 14:30", "open": 67680, "high": 67740, "low": 67410, "close": 67500, "volume": 4400 },
+          { "timestamp": "2026-04-30 15:00", "open": 67500, "high": 67890, "low": 67460, "close": 67842, "volume": 5100 }
+        ]
+      }
+    },
+
+    {
+      "id": "corr",
+      "component": "heatmap",
+      "span": 4,
+      "height": 380,
+      "title": "30D Correlation (click to switch)",
+      "options": { "row_context": { "key": "symbol" } },
+      "source": {
+        "inline": {
+          "rows":    ["BTC","ETH","SOL","SPY","QQQ","GLD"],
+          "columns": ["BTC","ETH","SOL","SPY","QQQ","GLD"],
+          "scale":   "diverging",
+          "min": -1, "max": 1,
+          "cells": [
+            { "row": 0, "col": 0, "value":  1.00 }, { "row": 0, "col": 1, "value":  0.84 }, { "row": 0, "col": 2, "value":  0.72 }, { "row": 0, "col": 3, "value":  0.31 }, { "row": 0, "col": 4, "value":  0.38 }, { "row": 0, "col": 5, "value":  0.12 },
+            { "row": 1, "col": 0, "value":  0.84 }, { "row": 1, "col": 1, "value":  1.00 }, { "row": 1, "col": 2, "value":  0.78 }, { "row": 1, "col": 3, "value":  0.34 }, { "row": 1, "col": 4, "value":  0.41 }, { "row": 1, "col": 5, "value":  0.08 },
+            { "row": 2, "col": 0, "value":  0.72 }, { "row": 2, "col": 1, "value":  0.78 }, { "row": 2, "col": 2, "value":  1.00 }, { "row": 2, "col": 3, "value":  0.28 }, { "row": 2, "col": 4, "value":  0.35 }, { "row": 2, "col": 5, "value":  0.05 },
+            { "row": 3, "col": 0, "value":  0.31 }, { "row": 3, "col": 1, "value":  0.34 }, { "row": 3, "col": 2, "value":  0.28 }, { "row": 3, "col": 3, "value":  1.00 }, { "row": 3, "col": 4, "value":  0.92 }, { "row": 3, "col": 5, "value": -0.18 },
+            { "row": 4, "col": 0, "value":  0.38 }, { "row": 4, "col": 1, "value":  0.41 }, { "row": 4, "col": 2, "value":  0.35 }, { "row": 4, "col": 3, "value":  0.92 }, { "row": 4, "col": 4, "value":  1.00 }, { "row": 4, "col": 5, "value": -0.21 },
+            { "row": 5, "col": 0, "value":  0.12 }, { "row": 5, "col": 1, "value":  0.08 }, { "row": 5, "col": 2, "value":  0.05 }, { "row": 5, "col": 3, "value": -0.18 }, { "row": 5, "col": 4, "value": -0.21 }, { "row": 5, "col": 5, "value":  1.00 }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "vol-profile",
+      "component": "volume_profile",
+      "span": 3,
+      "height": 320,
+      "title": "BTC Volume Profile",
+      "source": {
+        "inline": [
+          { "price": 68400, "volume":  840 },
+          { "price": 68200, "volume": 1240 },
+          { "price": 68000, "volume": 2680 },
+          { "price": 67800, "volume": 4120 },
+          { "price": 67600, "volume": 5840 },
+          { "price": 67400, "volume": 7820 },
+          { "price": 67200, "volume": 6440 },
+          { "price": 67000, "volume": 4980 },
+          { "price": 66800, "volume": 3220 },
+          { "price": 66600, "volume": 1840 },
+          { "price": 66400, "volume":  920 }
+        ]
+      }
+    },
+    {
+      "id": "alloc",
+      "component": "treemap",
+      "span": 3,
+      "height": 320,
+      "title": "Book Allocation",
+      "source": {
+        "inline": [
+          { "label": "BTC",   "value": 42.8, "color": "info" },
+          { "label": "ETH",   "value": 24.6, "color": "info" },
+          { "label": "SOL",   "value": 12.4, "color": "info" },
+          { "label": "Cash",  "value": 14.2, "color": "muted" },
+          { "label": "Other", "value":  6.0, "color": "muted" }
+        ]
+      }
+    },
+    {
+      "id": "tape",
+      "component": "events",
+      "span": 6,
+      "height": 320,
+      "title": "Trade Tape",
+      "options": { "filter": true },
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "15:00:14", "label": "BUY  0.42 BTC @ 67,842", "status": "EVENT_STATUS_OK",   "source": "alpha-1", "tags": ["BTC","entry"] },
+            { "timestamp": "14:58:02", "label": "SELL 1.20 ETH @ 3,456",   "status": "EVENT_STATUS_OK",   "source": "alpha-1", "tags": ["ETH","exit"]  },
+            { "timestamp": "14:51:33", "label": "BUY  6.00 SOL @ 168.20",  "status": "EVENT_STATUS_OK",   "source": "alpha-2", "tags": ["SOL","entry"] },
+            { "timestamp": "14:42:17", "label": "Stop hit on ETH long",    "status": "EVENT_STATUS_WARN", "source": "alpha-1", "tags": ["ETH","stop"]  },
+            { "timestamp": "14:11:08", "label": "BUY  0.18 BTC @ 67,510",  "status": "EVENT_STATUS_OK",   "source": "alpha-1", "tags": ["BTC","entry"] },
+            { "timestamp": "13:48:41", "label": "Order rejected: balance", "status": "EVENT_STATUS_ERROR","source": "alpha-3", "tags": ["risk"]        }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "positions",
+      "component": "table",
+      "span": 12,
+      "height": 280,
+      "title": "Open Positions",
+      "options": { "heat_columns": ["PnL ($)", "PnL %"] },
+      "source": {
+        "inline": [
+          { "Asset": "BTC", "Side": "Long",  "Qty":  3.42, "Avg":  64580, "Mark": 67842, "PnL ($)": 11168, "PnL %": 0.0505 },
+          { "Asset": "ETH", "Side": "Long",  "Qty": 28.40, "Avg":   3220, "Mark":  3456, "PnL ($)":  6702, "PnL %": 0.0733 },
+          { "Asset": "SOL", "Side": "Long",  "Qty":   180, "Avg":    142, "Mark":   168, "PnL ($)":  4680, "PnL %": 0.1831 },
+          { "Asset": "GLD", "Side": "Short", "Qty":   500, "Avg":    222, "Mark":   218, "PnL ($)":  2000, "PnL %": 0.0180 }
+        ]
+      }
+    }
+  ]
+}

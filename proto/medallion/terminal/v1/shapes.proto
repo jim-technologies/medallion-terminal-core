@@ -5,127 +5,177 @@ package medallion.terminal.v1;
 import "google/protobuf/struct.proto";
 
 // =============================================================
-// Canonical Data Shapes
+// Canonical Payload Shapes
 //
-// These define the standard payload formats that widgets expect.
-// Backend APIs SHOULD return data conforming to these shapes.
-// Widgets also accept common variations (e.g. raw arrays of
-// objects for tables) and normalize internally.
+// These are the typed payloads returned by TerminalService. Each
+// case in DataResponse.payload (see terminal.proto) maps 1:1 to a
+// message defined here.
+//
+// Backends do not invent shapes — they pick one of these and fill
+// it in. That is the contract: implement the proto, the dashboard
+// renders.
+//
+// Examples in comments use mixed domains (finance, prediction
+// markets, ops, sentiment) intentionally — these payloads are
+// domain-agnostic.
 // =============================================================
 
 // --- Timeseries ---
-// Use for: price charts, traffic graphs, sensor data, any
-// timestamped numeric data.
+// Use for: line charts of any timestamped numeric data.
+// Examples: price history, sentiment over time, metric over time,
+// a bot's PnL curve, request latency, election polling spread.
 //
 // JSON examples:
 //
-// Single series (flat):
+// Single series:
 //   { "points": [
-//       { "timestamp": "2024-01-01T00:00:00Z", "value": 42000.50 },
-//       { "timestamp": "2024-01-02T00:00:00Z", "value": 43100.00 }
+//       { "timestamp": "2026-04-01T00:00:00Z", "value": 67400 },
+//       { "timestamp": "2026-04-02T00:00:00Z", "value": 68200 }
 //   ]}
 //
-// Multi-series:
+// Multi-series (overlay):
 //   { "series": [
-//       { "name": "BTC", "points": [{ "timestamp": "...", "value": 42000 }] },
-//       { "name": "ETH", "points": [{ "timestamp": "...", "value": 2800 }] }
+//       { "name": "Yes", "points": [...] },
+//       { "name": "No",  "points": [...] }
 //   ]}
-//
-// Shorthand (also accepted by widget, no proto equivalent):
-//   [{ "timestamp": "2024-01-01", "value": 42000 }]
-//   [{ "timestamp": "2024-01-01", "BTC": 42000, "ETH": 2800 }]
-
 message TimeseriesPayload {
-  // Flat list of points. Use for single-series data.
+  // Single-series shorthand. Mutually exclusive with `series`.
   repeated TimeseriesPoint points = 1;
 
-  // Named series. Use for multi-series overlays.
+  // Multi-series form. Each series renders as one line.
   repeated TimeseriesSeries series = 2;
+
+  // Optional markers overlaid on the chart. Use for buy/sell signals,
+  // events, alerts, AI-flagged regions, etc.
+  repeated Annotation annotations = 3;
 }
 
 message TimeseriesPoint {
-  // ISO 8601 timestamp or Unix epoch (seconds or milliseconds).
+  // ISO 8601 timestamp or Unix epoch (seconds or ms).
   string timestamp = 1;
 
-  // Numeric value at this timestamp.
   double value = 2;
 }
 
 message TimeseriesSeries {
-  // Display name for this series (used in legend/tooltip).
+  // Display name (used in legend/tooltip).
   string name = 1;
 
-  // Data points for this series.
   repeated TimeseriesPoint points = 2;
 }
 
-// --- Candlestick (OHLCV) ---
-// Use for: financial price charts, order flow, any OHLCV data.
+// --- Candles (OHLCV) ---
+// Use for: any open/high/low/close timeseries, with optional volume.
+// Examples: equity/crypto price bars, prediction market bid/ask bars.
 //
 // JSON example:
-//   [
-//     { "timestamp": "2024-03-01", "open": 61800, "high": 63200, "low": 61400, "close": 62400, "volume": 28500 },
-//     { "timestamp": "2024-03-02", "open": 62400, "high": 63800, "low": 62100, "close": 63100, "volume": 31200 }
-//   ]
-//
-// Also accepts shorthand keys: t/o/h/l/c/v or date/open/high/low/close/vol
+//   { "bars": [
+//       { "timestamp": "2026-04-01", "open": 67100, "high": 68400,
+//         "low": 66800, "close": 68200, "volume": 28500 }
+//   ]}
+message CandlePayload {
+  repeated Candle bars = 1;
 
-message CandlestickPayload {
-  repeated CandlestickBar bars = 1;
+  // Markers overlaid on the chart (trades, signals, events). Same
+  // shape as TimeseriesPayload.annotations — the renderer maps the
+  // `kind` to a built-in marker style (arrowUp for buy, arrowDown
+  // for sell, etc.).
+  repeated Annotation annotations = 2;
 }
 
-message CandlestickBar {
-  // ISO 8601 date or Unix epoch.
+message Candle {
   string timestamp = 1;
-
   double open = 2;
   double high = 3;
   double low = 4;
   double close = 5;
-
-  // Optional. If provided, rendered as a volume histogram below the chart.
+  // If set, rendered as a volume histogram beneath the chart.
   optional double volume = 6;
 }
 
+// Annotation — a single marker overlay on a chart (timeseries or
+// candles). Used for buy/sell signals, alerts, news markers, etc.
+//
+// JSON example (on a candlestick):
+//   { "timestamp": "2026-04-08", "label": "BUY", "kind": "buy" }
+//   { "timestamp": "2026-04-12", "label": "SELL 0.5",
+//     "kind": "sell", "value": 71200 }
+//
+// Recognized `kind` values map to default colors and shapes:
+//   buy   → up-arrow / green
+//   sell  → down-arrow / red
+//   info  → circle / sky-blue
+//   warn  → circle / amber
+// Other values render as a neutral gray dot.
+message Annotation {
+  // Where on the x-axis the marker sits (ISO 8601 or Unix epoch).
+  string timestamp = 1;
+
+  // Y-axis position. Optional for candlestick (the renderer pins
+  // above/below the bar based on `kind`); recommended for timeseries.
+  optional double value = 2;
+
+  // Short text shown next to the marker (and as hover tooltip).
+  string label = 3;
+
+  // Marker semantic. Free-form — unrecognized values render as
+  // neutral. Recognized: "buy", "sell", "info", "warn".
+  string kind = 4;
+
+  // Optional color override (CSS hex). Use only when the default
+  // kind color is wrong for the dashboard's palette.
+  optional string color = 5;
+
+  // If present, the annotation is a band spanning [timestamp,
+  // end_timestamp] — the renderer fills the region instead of
+  // drawing a point marker. Use for in-sample / out-of-sample
+  // backtest splits, stress periods (COVID, FTX), FOMC windows,
+  // blackout zones, regime detector outputs, etc.
+  optional string end_timestamp = 6;
+}
+
 // --- Table ---
-// Use for: portfolios, order books, leaderboards, any tabular data.
+// Use for: any tabular data.
+// Examples: holdings, leaderboards, peer comparison, order book,
+// list of open positions, cron job registry.
 //
 // JSON examples:
 //
-// Array of objects (columns auto-detected):
-//   [
-//     { "Asset": "BTC", "Price": 67500, "Volume": 1234567 },
-//     { "Asset": "ETH", "Price": 3456, "Volume": 987654 }
-//   ]
+// Implicit (columns auto-detected from row keys):
+//   { "rows": [
+//       { "asset": "BTC", "qty": 1.5, "price": 67500 },
+//       { "asset": "ETH", "qty": 12,  "price": 3450 }
+//   ]}
 //
-// Explicit schema:
+// Explicit (column types and formatting hints):
 //   { "columns": [
 //       { "key": "asset", "label": "Asset", "type": "COLUMN_TYPE_STRING" },
-//       { "key": "price", "label": "Price", "type": "COLUMN_TYPE_NUMBER" }
+//       { "key": "price", "label": "Price", "type": "COLUMN_TYPE_NUMBER",
+//         "format": "currency:USD" }
 //     ],
-//     "rows": [
-//       { "asset": "BTC", "price": 67500 },
-//       { "asset": "ETH", "price": 3456 }
-//   ]}
-
+//     "rows": [...] }
 message TablePayload {
-  // Optional column definitions. If omitted, columns are
-  // auto-detected from the first row's keys.
+  // Optional schema. If omitted, columns auto-detect from the first row.
   repeated TableColumn columns = 1;
 
-  // Row data as a list of objects.
+  // Row data as objects (keys must match column.key when columns are set).
   repeated google.protobuf.Struct rows = 2;
 }
 
 message TableColumn {
-  // Field key matching the row object keys.
+  // Field key matching row object keys.
   string key = 1;
 
-  // Display label. Defaults to key if omitted.
+  // Display label. Defaults to `key` if omitted.
   string label = 2;
 
-  // Data type hint for formatting and sorting.
+  // Type hint for sorting and default formatting.
   ColumnType type = 3;
+
+  // Optional formatting directive. Examples:
+  //   "currency:USD", "currency:EUR", "percent", "percent:2",
+  //   "datetime", "date", "compact" (1.2M, 3.4B), "delta"
+  optional string format = 4;
 }
 
 enum ColumnType {
@@ -137,84 +187,387 @@ enum ColumnType {
 }
 
 // --- Metric ---
-// Use for: KPIs, single aggregate values, counters.
+// Use for: a single headline number with optional context.
+// Examples: spot price, total PnL, today's volume, model accuracy,
+// open positions count, win rate.
 //
 // JSON examples:
 //
 // Full:
-//   { "value": 67842.50, "delta": 2.18, "unit": "USD", "label": "Current Price" }
+//   { "value": 67842.50, "delta": 2.18, "unit": "USD",
+//     "label": "Spot", "trend": [67100, 67300, 67500, 67800, 67842] }
 //
 // Minimal:
 //   { "value": 67842.50 }
-//
-// Raw number (also accepted by widget, no proto equivalent):
-//   67842.50
+message MetricPayload {
+  double value = 1;
 
-// --- Text ---
-// Use for: news feeds, AI summaries, alerts, article lists.
+  // Change since some baseline; shown as a colored delta indicator.
+  // Convention: a fraction (0.0218 = +2.18%). Sign drives color.
+  optional double delta = 2;
+
+  // Unit displayed after the value ("USD", "%", "req/s").
+  optional string unit = 3;
+
+  // Subtitle below the value.
+  optional string label = 4;
+
+  // Optional sparkline — tiny inline trend chart. Just the values,
+  // evenly spaced. For a full chart, use TimeseriesPayload instead.
+  repeated double trend = 5;
+}
+
+// --- Gauge ---
+// Use for: bounded scalars where position within a range is meaningful.
+// Examples: prediction market probability (0..1), sentiment (-1..1),
+// model confidence, cron-fleet health (% green), workflow progress.
 //
 // JSON examples:
 //
-// Array of articles:
-//   [
-//     { "title": "Bitcoin hits ATH", "body": "...", "source": "CoinDesk", "date": "Mar 14", "tags": ["BTC"] },
-//     { "title": "ETH upgrade", "body": "...", "source": "The Block", "date": "Mar 13" }
-//   ]
+// Probability:
+//   { "value": 0.67, "min": 0, "max": 1, "label": "Yes" }
 //
-// Single article:
-//   { "title": "Market Summary", "body": "Full text here..." }
-//
-// Plain string (also accepted by widget, no proto equivalent):
-//   "Some text content"
+// Sentiment with color bands:
+//   { "value": 0.32, "min": -1, "max": 1, "label": "Net sentiment",
+//     "bands": [
+//       { "from": -1,  "to": -0.3, "color": "danger", "label": "Bearish" },
+//       { "from": -0.3,"to":  0.3, "color": "warn",   "label": "Neutral" },
+//       { "from":  0.3,"to":  1,   "color": "ok",     "label": "Bullish" }
+//   ]}
+message GaugePayload {
+  double value = 1;
 
+  // Range bounds. Default min=0, max=1.
+  optional double min = 2;
+  optional double max = 3;
+
+  optional string label = 4;
+
+  // Optional colored zones along the range.
+  repeated GaugeBand bands = 5;
+}
+
+message GaugeBand {
+  double from = 1;
+  double to = 2;
+
+  // Semantic color name. The frontend maps this to a theme color.
+  // Recognized: "ok", "warn", "danger", "info", "muted".
+  string color = 3;
+
+  optional string label = 4;
+}
+
+// --- Heatmap ---
+// Use for: 2D matrices colored by value.
+// Examples: sector returns matrix, correlation matrix, cron fleet
+// health (job × hour), sentiment grid (entity × source), calendar
+// heatmap (day × hour activity).
+//
+// JSON example:
+//   { "rows": ["Tech", "Energy", "Finance"],
+//     "columns": ["Mon", "Tue", "Wed"],
+//     "cells": [
+//       { "row": 0, "col": 0, "value": 1.2 },
+//       { "row": 0, "col": 1, "value": -0.8 }
+//     ],
+//     "scale": "diverging" }
+message HeatmapPayload {
+  // Row labels (ordered). Cell.row indexes into this list.
+  repeated string rows = 1;
+
+  // Column labels (ordered). Cell.col indexes into this list.
+  repeated string columns = 2;
+
+  repeated HeatmapCell cells = 3;
+
+  // Color scale bounds. Auto-detected from data if unset.
+  optional double min = 4;
+  optional double max = 5;
+
+  // Color scale type: "diverging" (centered at 0) or "sequential".
+  // Default: sequential.
+  optional string scale = 6;
+}
+
+message HeatmapCell {
+  int32 row = 1;
+  int32 col = 2;
+  double value = 3;
+  // Optional text override (otherwise the formatted value is shown).
+  optional string label = 4;
+}
+
+// --- Events (timeline) ---
+// Use for: chronological streams where status is first-class.
+// Examples: cron run history, workflow stage progress, trade fills,
+// alerts, deployment timeline, bet settlement log.
+//
+// JSON example:
+//   { "events": [
+//       { "timestamp": "2026-04-01T09:00:00Z",
+//         "label": "Daily ingest",
+//         "status": "EVENT_STATUS_OK",
+//         "body": "Processed 1.2M rows in 38s" },
+//       { "timestamp": "2026-04-01T09:15:00Z",
+//         "label": "Sentiment refresh",
+//         "status": "EVENT_STATUS_WARN",
+//         "body": "3 sources timed out, used cached values" }
+//   ]}
+message EventPayload {
+  repeated Event events = 1;
+}
+
+message Event {
+  string timestamp = 1;
+
+  // Primary one-line description.
+  string label = 2;
+
+  EventStatus status = 3;
+
+  // Detail or longer description.
+  optional string body = 4;
+
+  // Attribution (e.g. "scheduler", "user@x", "ingest-worker-3").
+  optional string source = 5;
+
+  repeated string tags = 6;
+}
+
+enum EventStatus {
+  EVENT_STATUS_UNSPECIFIED = 0;
+  EVENT_STATUS_OK = 1;
+  EVENT_STATUS_WARN = 2;
+  EVENT_STATUS_ERROR = 3;
+  EVENT_STATUS_INFO = 4;
+  EVENT_STATUS_PENDING = 5;
+}
+
+// --- Distribution ---
+// Use for: labeled categorical proportions (pie/donut/stacked bar).
+// Examples: bull/bear sentiment split, asset allocation, win/loss
+// breakdown, vote share, topic distribution.
+//
+// JSON example:
+//   { "slices": [
+//       { "label": "Bull", "value": 0.62, "color": "ok" },
+//       { "label": "Bear", "value": 0.38, "color": "danger" }
+//   ]}
+//
+// Values are normalized for rendering — pass raw counts or
+// fractions, the widget computes percentages.
+message DistributionPayload {
+  repeated DistributionSlice slices = 1;
+
+  // Optional total to normalize against. Default: sum of slice values.
+  // Use this when slices represent a subset (e.g. "top 5 of N").
+  optional double total = 2;
+}
+
+message DistributionSlice {
+  string label = 1;
+  double value = 2;
+
+  // Semantic color hint. Recognized: "ok", "warn", "danger", "info",
+  // "muted". Free-form names map to the dashboard's palette.
+  optional string color = 3;
+}
+
+// --- Order Book ---
+// Use for: bid/ask depth at multiple price levels.
+// Examples: crypto exchange order books, prediction market yes/no
+// books, options bid/ask ladders, NBBO views.
+//
+// JSON example:
+//   { "bids": [
+//       { "price": 67840, "size": 0.42 },
+//       { "price": 67830, "size": 1.10 },
+//       { "price": 67820, "size": 2.85 }
+//     ],
+//     "asks": [
+//       { "price": 67850, "size": 0.30 },
+//       { "price": 67860, "size": 0.95 },
+//       { "price": 67870, "size": 2.40 }
+//     ],
+//     "mid": 67845, "spread": 10 }
+//
+// Convention: bids sorted high→low, asks sorted low→high.
+message OrderBookPayload {
+  repeated OrderLevel bids = 1;
+  repeated OrderLevel asks = 2;
+  // Mid price (auto-computed if absent).
+  optional double mid = 3;
+  // Bid/ask spread (auto-computed if absent).
+  optional double spread = 4;
+  // Optional venue name when comparing across exchanges.
+  optional string venue = 5;
+}
+
+message OrderLevel {
+  double price = 1;
+  double size = 2;
+  // Optional total at this level (sum of orders).
+  optional int32 orders = 3;
+}
+
+// --- Paired Grid ---
+// Use for: side-by-side comparison of two columns at every numeric
+// row key. Pure "left vs right at key" lattice — the payload
+// declares which numeric measures it carries; the widget renders
+// whatever the backend declared.
+//
+// Examples:
+//   * Options chain: rows keyed by strike, measures bid/ask/iv/delta,
+//     left=calls, right=puts.
+//   * Sportsbook ladder: rows keyed by line, measures odds/hold,
+//     left=home, right=away.
+//   * Prediction market: rows keyed by threshold, measures yes/no_price,
+//     left=YES, right=NO.
+//   * A/B test by percentile: rows keyed by percentile, measures
+//     mean/p_value, left=A, right=B.
+//
+// JSON example (options chain):
+//   { "subject": "BTC", "dimension": "2026-06-27", "subject_value": 67842,
+//     "left_label": "Calls", "right_label": "Puts", "key_label": "Strike",
+//     "measures": [
+//       { "key": "iv",    "label": "IV",  "format": "percent" },
+//       { "key": "delta", "label": "Δ" },
+//       { "key": "bid",   "label": "Bid", "format": "compact" },
+//       { "key": "ask",   "label": "Ask", "format": "compact" }
+//     ],
+//     "rows": [
+//       { "key": 65000,
+//         "left":  { "values": { "iv": 0.62, "delta":  0.74, "bid": 4200, "ask": 4250 } },
+//         "right": { "values": { "iv": 0.58, "delta": -0.26, "bid":  280, "ask":  310 } } }
+//   ]}
+//
+// JSON example (sportsbook spread ladder):
+//   { "subject": "Lakers vs Celtics", "dimension": "Spread",
+//     "left_label": "Lakers", "right_label": "Celtics", "key_label": "Line",
+//     "measures": [{ "key": "odds", "label": "Odds" }],
+//     "rows": [
+//       { "key": -3.5, "left": { "values": { "odds": 1.91 } }, "right": { "values": { "odds": 1.95 } } },
+//       { "key":  3.5, "left": { "values": { "odds": 2.05 } }, "right": { "values": { "odds": 1.81 } } }
+//   ]}
+//
+// Cross-venue comparison: emit one PairedGridPayload per venue and
+// arrange them side-by-side via the dashboard grid; or use a Table
+// widget with explicit venue columns for direct best-quote comparison.
+message PairedGridPayload {
+  // What this grid is about. Free-form (ticker, match name, A/B test
+  // label). Surfaced in the header.
+  string subject = 1;
+  // Free-form qualifier (option expiry "2026-06-27", market line type
+  // "spread", test variant axis "p50/p95/p99"). Surfaced as a subtitle.
+  string dimension = 2;
+  // Headline number for the subject (option underlying spot price,
+  // current score, baseline metric). Used to highlight the closest
+  // row in the grid (ATM, current line, etc.).
+  optional double subject_value = 3;
+  // Optional venue name (e.g. "deribit", "draftkings"). Useful when
+  // the dashboard shows multiple grids side-by-side.
+  optional string venue = 4;
+
+  repeated PairedRow rows = 5;
+
+  // Header labels for the two columns. Default: "Left" / "Right".
+  // Use to surface domain meaning (e.g. "Calls" / "Puts", "Home" /
+  // "Away", "YES" / "NO") without forcing the proto to know the domain.
+  optional string left_label = 6;
+  optional string right_label = 7;
+  // Header label for the row key column. Default: "Key".
+  // Use to label the lattice (e.g. "Strike", "Line", "Percentile").
+  optional string key_label = 8;
+
+  // Declared measures — the numeric columns the backend carries on
+  // each side. Order is render order. If empty, the widget unions the
+  // keys it sees on row sides (best-effort, formats default to number).
+  repeated PairedMeasure measures = 9;
+}
+
+message PairedRow {
+  // Row identifier — strike, line, percentile, threshold. Numeric so
+  // the renderer can sort and compute proximity to subject_value.
+  double key = 1;
+  optional PairedSide left = 2;
+  optional PairedSide right = 3;
+}
+
+// PairedSide — one side of a paired row. Pure value bag, keyed by
+// PairedMeasure.key. No typed fields — everything domain-specific
+// (bid/ask/iv/odds/p_value) is declared via `measures`.
+message PairedSide {
+  map<string, double> values = 1;
+}
+
+// PairedMeasure — declares one numeric column that appears on both
+// sides of the grid. The widget renders measures in declared order.
+message PairedMeasure {
+  // Field key — matches PairedSide.values map keys.
+  string key = 1;
+  // Display label (header text). Defaults to `key` if omitted.
+  string label = 2;
+  // Optional format hint. Recognized: "number" (default), "percent",
+  // "compact" (1.2K, 3.4M), "currency", "currency:USD", "delta".
+  optional string format = 3;
+}
+
+// --- Embed ---
+// Use for: pointing the `image` or `iframe` widget at a URL that
+// changes with context. Lets a Connect backend swap an AI-generated
+// chart, a per-symbol screenshot, or an embedded third-party widget
+// without forcing the dashboard to use the `url` escape hatch.
+//
+// JSON example (image):
+//   { "url": "https://charts.example.com/btc.png", "label": "BTC, 1h" }
+//
+// JSON example (iframe with sandbox override):
+//   { "url": "https://embed.tradingview.com/...",
+//     "label": "TradingView BTC",
+//     "sandbox": "allow-scripts allow-same-origin allow-popups" }
+message EmbedPayload {
+  // The URL the widget renders. For `image`, src; for `iframe`, src.
+  string url = 1;
+
+  // Display label. Image: alt text. Iframe: title.
+  optional string label = 2;
+
+  // Iframe-only override of the sandbox attribute. Ignored by image.
+  optional string sandbox = 3;
+}
+
+// --- Text ---
+// Use for: news feeds, AI summaries, articles, alerts.
+//
+// JSON example:
+//   { "items": [
+//       { "title": "Bitcoin breaks $73K", "body": "...",
+//         "source": "CoinDesk", "date": "2026-04-14",
+//         "tags": ["BTC", "ETF"], "sentiment": 0.6 },
+//       { "title": "Daily summary", "body": "Markets rallied..." }
+//   ]}
 message TextPayload {
   repeated TextItem items = 1;
 }
 
 message TextItem {
-  // Headline or title.
   optional string title = 1;
-
-  // Main body text.
   optional string body = 2;
 
-  // Attribution source (e.g. "Reuters", "CoinDesk").
+  // Attribution (publication, author handle, model name, etc.).
   optional string source = 3;
 
-  // Display date or timestamp string.
+  // Display date string. Free-form (e.g. "Mar 14", "2 hours ago").
   optional string date = 4;
 
-  // Author name.
   optional string author = 5;
 
-  // Categorization tags.
   repeated string tags = 6;
-}
 
-// --- Metric ---
-// Use for: KPIs, single aggregate values, counters.
-//
-// JSON examples:
-//
-// Full:
-//   { "value": 67842.50, "delta": 2.18, "unit": "USD", "label": "Current Price" }
-//
-// Minimal:
-//   { "value": 67842.50 }
-//
-// Raw number (also accepted by widget, no proto equivalent):
-//   67842.50
+  // Optional link the item references.
+  optional string url = 7;
 
-message MetricPayload {
-  // The primary numeric value to display.
-  double value = 1;
-
-  // Percentage change. Positive = green/up, negative = red/down.
-  optional double delta = 2;
-
-  // Unit label displayed after the value (e.g. "USD", "%", "req/s").
-  optional string unit = 3;
-
-  // Subtitle label displayed below the value.
-  optional string label = 4;
+  // Optional sentiment score in [-1, 1]. Used to color the item.
+  optional double sentiment = 8;
 }

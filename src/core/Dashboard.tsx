@@ -1,8 +1,16 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import type { Template, WidgetConfig } from '../types/template'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import { WidgetShell } from '../widgets/WidgetShell'
-import { DashboardContext, type WidgetAction } from './DashboardContext'
+import { DashboardContext, type DispatchOptions, type WidgetAction, type Severity } from './DashboardContext'
+import { HoverProvider } from './HoverContext'
+import { NowProvider } from './NowContext'
+import { applyActions } from './applyActions'
+import { readCtxFromUrl, writeCtxToUrl } from './urlState'
+import { interpolate } from './resolveSource'
+import { CommandPalette } from './CommandPalette'
+import { ShortcutsOverlay } from './ShortcutsOverlay'
+import { Toaster, type Toast } from './Toaster'
 
 const DEFAULT_HEIGHTS: Record<string, number> = {
   metric: 120,
@@ -11,44 +19,190 @@ const DEFAULT_HEIGHTS: Record<string, number> = {
   table: 350,
   text: 350,
   prompt: 60,
+  gauge: 220,
+  distribution: 280,
+  heatmap: 320,
+  events: 320,
+  catalog: 480,
+  orderbook: 380,
+  paired_grid: 420,
+  trade: 280,
+  ticker: 56,
+  volume_profile: 380,
+  stat_strip: 90,
+  bar_chart: 320,
+  scatter: 360,
+  clock: 100,
+  treemap: 380,
+  image: 320,
+  iframe: 360,
+  histogram: 280,
+  section: 24,
+  area_chart: 280,
+  slider: 80,
+  select: 80,
+  boxplot: 360,
+  radar: 380,
+  dag: 420,
+  multi_select: 100,
+  json: 360,
+  sparkline: 60,
 }
 
-export function Dashboard({ template }: { template: Template }) {
+const RANGES = ['1d', '5d', '1m', '3m', '1y', 'max']
+
+function RangeSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex bg-zinc-900 border border-zinc-800 rounded p-0.5 gap-0.5">
+      {RANGES.map(r => {
+        const active = value.toLowerCase() === r
+        return (
+          <button
+            key={r}
+            onClick={() => onChange(r)}
+            className={`px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${
+              active ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            {r}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+const REFRESH_OPTIONS: Array<{ label: string; ms: number | null }> = [
+  { label: 'Off', ms: null },
+  { label: '5s',  ms: 5000 },
+  { label: '30s', ms: 30000 },
+  { label: '1m',  ms: 60000 },
+  { label: '5m',  ms: 300000 },
+]
+
+function RefreshPicker({ value, onChange }: { value: number | null; onChange: (ms: number | null) => void }) {
+  return (
+    <div className="flex bg-zinc-900 border border-zinc-800 rounded p-0.5 gap-0.5">
+      {REFRESH_OPTIONS.map(opt => {
+        const active = value === opt.ms
+        return (
+          <button
+            key={opt.label}
+            onClick={() => onChange(opt.ms)}
+            className={`px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${
+              active ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+            title={opt.ms ? `Refresh every ${opt.label}` : 'No auto-refresh'}
+          >
+            {opt.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function OpenPaletteHint() {
+  const isMac = typeof navigator !== 'undefined' && /mac/i.test(navigator.platform)
+  const trigger = () => {
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'k', metaKey: isMac, ctrlKey: !isMac, bubbles: true }),
+    )
+  }
+  return (
+    <button
+      onClick={trigger}
+      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded font-mono"
+      title="Open command palette"
+    >
+      {isMac ? '⌘' : 'Ctrl'} K
+    </button>
+  )
+}
+
+function DensityToggle({ compact, onToggle }: { compact: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded"
+      title={compact ? 'Switch to comfortable density' : 'Switch to compact density'}
+    >
+      {compact ? 'Cozy' : 'Compact'}
+    </button>
+  )
+}
+
+function SnapshotButton({ onCopied }: { onCopied: () => void }) {
+  const copy = async () => {
+    if (typeof navigator === 'undefined' || !navigator.clipboard) return
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      onCopied()
+    } catch {
+      // Clipboard blocked — silently no-op. Better than throwing on a
+      // permission denial in a hostile iframe.
+    }
+  }
+  return (
+    <button
+      onClick={copy}
+      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded"
+      title="Copy current dashboard URL"
+    >
+      Snapshot
+    </button>
+  )
+}
+
+export function Dashboard({ template, backendUrl }: { template: Template; backendUrl?: string }) {
   const breakpoint = useBreakpoint()
   const columns = template.columns || 12
   const [widgets, setWidgets] = useState<WidgetConfig[]>(template.widgets)
+  // ctx initial state: template defaults overlaid by URL params.
+  // URL wins so shared bookmarks restore exactly the view the sender saw.
+  const [ctx, setCtxState] = useState<Record<string, string>>(() => {
+    const base = template.context?.values ?? {}
+    if (typeof window === 'undefined') return base
+    return { ...base, ...readCtxFromUrl(window.location.search) }
+  })
+  // Dashboard-level prefs persist to localStorage so they survive reloads.
+  // ctx already lives in the URL (shareable); these knobs are personal.
+  const [refreshIntervalMs, setRefreshIntervalMs] = useState<number | null>(() => readPref('refreshIntervalMs', null))
+  const [compact, setCompact] = useState<boolean>(() => readPref('compact', false))
+  useEffect(() => { writePref('refreshIntervalMs', refreshIntervalMs) }, [refreshIntervalMs])
+  useEffect(() => { writePref('compact', compact) }, [compact])
 
-  const dispatch = useCallback((actions: WidgetAction[]) => {
-    setWidgets(prev => {
-      const next = [...prev]
-      for (const action of actions) {
-        const idx = next.findIndex(w => w.id === action.targetId)
-        if (idx >= 0) {
-          // Merge action fields into existing widget
-          next[idx] = {
-            ...next[idx],
-            ...(action.component !== undefined && { component: action.component }),
-            ...(action.title !== undefined && { title: action.title }),
-            ...(action.span !== undefined && { span: action.span }),
-            ...(action.height !== undefined && { height: action.height }),
-            ...(action.source !== undefined && { source: action.source }),
-            ...(action.options !== undefined && { options: action.options }),
-          }
-        } else {
-          // Create new widget from action
-          next.push({
-            id: action.targetId,
-            component: action.component || 'placeholder',
-            title: action.title,
-            span: action.span,
-            height: action.height,
-            source: action.source,
-            options: action.options,
-          })
-        }
-      }
-      return next
-    })
+  const [fullscreenId, setFullscreenId] = useState<string | null>(null)
+  const [toasts, setToasts] = useState<Toast[]>([])
+  const toastIdRef = useRef(0)
+
+  const toast = useCallback((message: string, severity: Severity = 'info') => {
+    toastIdRef.current += 1
+    const id = toastIdRef.current
+    setToasts(prev => [...prev, { id, message, severity }])
+  }, [])
+
+  const dismissToast = useCallback((id: number) => {
+    setToasts(prev => prev.filter(t => t.id !== id))
+  }, [])
+
+  // Identity guard — same value coming through (e.g. clicking the
+  // currently-selected watchlist row) keeps the same state object so
+  // downstream widgets don't re-fetch and the URL effect doesn't fire.
+  const setCtx = useCallback((key: string, value: string) => {
+    setCtxState(prev => (prev[key] === value ? prev : { ...prev, [key]: value }))
+  }, [])
+
+  // Mirror ctx into the URL on every change (replaceState — don't pollute history).
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const qs = writeCtxToUrl(window.location.search, ctx)
+    const url = `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`
+    window.history.replaceState(null, '', url)
+  }, [ctx])
+
+  const dispatch = useCallback((actions: WidgetAction[], options?: DispatchOptions) => {
+    setWidgets(prev => applyActions(prev, actions, options))
   }, [])
 
   const effectiveSpan = (span: number) => {
@@ -57,16 +211,71 @@ export function Dashboard({ template }: { template: Template }) {
     return Math.min(span, columns)
   }
 
+  // Stable context value — re-creates only when an actual dependency
+  // changes, so consumers don't re-render on unrelated parent updates.
+  const contextValue = useMemo(
+    () => ({
+      dispatch,
+      ctx,
+      setCtx,
+      backendUrl,
+      widgets,
+      refreshIntervalMs: refreshIntervalMs ?? undefined,
+      toast,
+      compact,
+      fullscreenId,
+      setFullscreenId,
+    }),
+    [dispatch, ctx, setCtx, backendUrl, widgets, refreshIntervalMs, toast, compact, fullscreenId],
+  )
+
+  // Esc closes fullscreen.
+  useEffect(() => {
+    if (!fullscreenId) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setFullscreenId(null) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [fullscreenId])
+
+  const fullscreenWidget = fullscreenId ? widgets.find(w => w.id === fullscreenId) : null
+
   return (
-    <DashboardContext.Provider value={{ dispatch }}>
+    <DashboardContext.Provider value={contextValue}>
+     <NowProvider>
+     <HoverProvider>
+      <CommandPalette />
+      <ShortcutsOverlay />
+      <Toaster toasts={toasts} dismiss={dismissToast} />
       <div className="min-h-full bg-zinc-950 p-3 md:p-5">
-        {template.title && (
-          <h1 className="text-lg font-semibold text-zinc-100 mb-4 tracking-tight">
-            {template.title}
-          </h1>
-        )}
+        <div className="mb-4 flex items-center gap-3 flex-wrap">
+          {template.title && (
+            <h1 className="text-lg font-semibold text-zinc-100 tracking-tight mr-1">
+              {interpolate(template.title, ctx)}
+            </h1>
+          )}
+          {Object.entries(ctx).map(([k, v]) => {
+            if (k === 'range') {
+              return <RangeSelector key={k} value={v} onChange={val => setCtx(k, val)} />
+            }
+            return (
+              <div
+                key={k}
+                className="px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-xs"
+              >
+                <span className="text-zinc-500 uppercase tracking-wider mr-1">{k}</span>
+                <span className="text-zinc-100 font-mono">{v}</span>
+              </div>
+            )
+          })}
+          <div className="ml-auto flex items-center gap-2">
+            <RefreshPicker value={refreshIntervalMs} onChange={setRefreshIntervalMs} />
+            <DensityToggle compact={compact} onToggle={() => setCompact(c => !c)} />
+            <SnapshotButton onCopied={() => toast('URL copied', 'ok')} />
+            <OpenPaletteHint />
+          </div>
+        </div>
         <div
-          className="grid gap-3 md:gap-4"
+          className="grid gap-3 md:gap-4 items-start"
           style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
         >
           {widgets.map((widget, i) => (
@@ -84,6 +293,60 @@ export function Dashboard({ template }: { template: Template }) {
           ))}
         </div>
       </div>
+      {fullscreenWidget && (
+        <FullscreenOverlay widget={fullscreenWidget} onClose={() => setFullscreenId(null)} />
+      )}
+     </HoverProvider>
+     </NowProvider>
     </DashboardContext.Provider>
   )
+}
+
+function FullscreenOverlay({ widget, onClose }: { widget: WidgetConfig; onClose: () => void }) {
+  // Use ~85vh of viewport for the content area; rest goes to chrome.
+  const contentHeight = typeof window !== 'undefined' ? Math.floor(window.innerHeight * 0.82) : 600
+  return (
+    <div
+      className="fixed inset-0 z-30 bg-zinc-950/95 backdrop-blur-sm p-4 md:p-8 flex flex-col motion-safe:animate-[fadeIn_180ms_ease-out]"
+      onClick={onClose}
+    >
+      <div className="flex items-center justify-between mb-3 shrink-0">
+        <span className="text-[10px] uppercase tracking-wider text-zinc-500">
+          Fullscreen — esc to close
+        </span>
+        <button
+          onClick={onClose}
+          className="text-zinc-500 hover:text-zinc-200 px-2 py-0.5 text-xs rounded border border-zinc-800"
+        >
+          Close
+        </button>
+      </div>
+      <div onClick={e => e.stopPropagation()} className="flex-1 min-h-0">
+        <WidgetShell config={widget} contentHeight={contentHeight} />
+      </div>
+    </div>
+  )
+}
+
+// localStorage helpers — namespaced and JSON-encoded so future prefs
+// can be added without churn. Quietly no-op if storage is unavailable.
+const STORAGE_PREFIX = 'medallion-terminal:'
+
+function readPref<T>(key: string, fallback: T): T {
+  if (typeof window === 'undefined' || !window.localStorage) return fallback
+  try {
+    const raw = window.localStorage.getItem(STORAGE_PREFIX + key)
+    return raw == null ? fallback : (JSON.parse(raw) as T)
+  } catch {
+    return fallback
+  }
+}
+
+function writePref(key: string, value: unknown): void {
+  if (typeof window === 'undefined' || !window.localStorage) return
+  try {
+    window.localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value))
+  } catch {
+    // Quota or denied — leave silent. Reload defaults are fine.
+  }
 }

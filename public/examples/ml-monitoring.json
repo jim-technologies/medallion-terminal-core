@@ -1,0 +1,158 @@
+{
+  "title": "Recommender model — production monitoring",
+  "context": { "values": { "model": "rec-v3.4", "window": "24h" } },
+  "widgets": [
+    {
+      "id": "headline",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 90,
+      "source": {
+        "inline": [
+          { "label": "Accuracy",  "value": 0.913, "delta":  0.004, "unit": "%" },
+          { "label": "Precision", "value": 0.871, "delta": -0.012 },
+          { "label": "Recall",    "value": 0.842, "delta":  0.018 },
+          { "label": "AUC",       "value": 0.946, "delta":  0.002 },
+          { "label": "P95 ms",    "value": 38.2,  "delta":  0.041, "unit": "ms" },
+          { "label": "QPS",       "value": 8420,  "delta":  0.063, "unit": "/s" }
+        ]
+      }
+    },
+
+    {
+      "id": "drift",
+      "component": "timeseries",
+      "span": 8,
+      "height": 320,
+      "title": "Population drift (PSI) — last 24h",
+      "options": { "brush": true },
+      "source": {
+        "inline": {
+          "annotations": [
+            { "timestamp": "10:30", "label": "Schema v3.4 deploy", "kind": "info" },
+            { "timestamp": "14:12", "label": "Feature drift > 0.2", "kind": "warn", "value": 0.21 }
+          ],
+          "series": [
+            { "name": "user_age", "data": [
+              { "timestamp": "00:00", "value": 0.04 }, { "timestamp": "02:00", "value": 0.05 },
+              { "timestamp": "04:00", "value": 0.06 }, { "timestamp": "06:00", "value": 0.05 },
+              { "timestamp": "08:00", "value": 0.07 }, { "timestamp": "10:00", "value": 0.09 },
+              { "timestamp": "12:00", "value": 0.12 }, { "timestamp": "14:00", "value": 0.21 },
+              { "timestamp": "16:00", "value": 0.18 }, { "timestamp": "18:00", "value": 0.15 },
+              { "timestamp": "20:00", "value": 0.13 }, { "timestamp": "22:00", "value": 0.11 }
+            ]},
+            { "name": "session_len", "data": [
+              { "timestamp": "00:00", "value": 0.02 }, { "timestamp": "02:00", "value": 0.03 },
+              { "timestamp": "04:00", "value": 0.03 }, { "timestamp": "06:00", "value": 0.02 },
+              { "timestamp": "08:00", "value": 0.04 }, { "timestamp": "10:00", "value": 0.05 },
+              { "timestamp": "12:00", "value": 0.06 }, { "timestamp": "14:00", "value": 0.08 },
+              { "timestamp": "16:00", "value": 0.07 }, { "timestamp": "18:00", "value": 0.07 },
+              { "timestamp": "20:00", "value": 0.06 }, { "timestamp": "22:00", "value": 0.05 }
+            ]},
+            { "name": "device_class", "data": [
+              { "timestamp": "00:00", "value": 0.01 }, { "timestamp": "02:00", "value": 0.01 },
+              { "timestamp": "04:00", "value": 0.02 }, { "timestamp": "06:00", "value": 0.02 },
+              { "timestamp": "08:00", "value": 0.03 }, { "timestamp": "10:00", "value": 0.03 },
+              { "timestamp": "12:00", "value": 0.04 }, { "timestamp": "14:00", "value": 0.05 },
+              { "timestamp": "16:00", "value": 0.04 }, { "timestamp": "18:00", "value": 0.04 },
+              { "timestamp": "20:00", "value": 0.03 }, { "timestamp": "22:00", "value": 0.03 }
+            ]}
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "sla",
+      "component": "gauge",
+      "span": 4,
+      "height": 320,
+      "title": "Latency SLA budget",
+      "source": {
+        "inline": {
+          "value": 0.78, "min": 0, "max": 1, "label": "burned",
+          "bands": [
+            { "from": 0,    "to": 0.5,  "color": "ok",     "label": "Healthy" },
+            { "from": 0.5,  "to": 0.85, "color": "warn",   "label": "At risk" },
+            { "from": 0.85, "to": 1,    "color": "danger", "label": "Critical" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "confusion",
+      "component": "heatmap",
+      "span": 6,
+      "height": 320,
+      "title": "Confusion matrix (top intents)",
+      "source": {
+        "inline": {
+          "rows":    ["browse", "buy", "support", "compare", "saved"],
+          "columns": ["browse", "buy", "support", "compare", "saved"],
+          "scale": "sequential",
+          "cells": [
+            { "row": 0, "col": 0, "value": 0.92 }, { "row": 0, "col": 1, "value": 0.04 }, { "row": 0, "col": 2, "value": 0.01 }, { "row": 0, "col": 3, "value": 0.02 }, { "row": 0, "col": 4, "value": 0.01 },
+            { "row": 1, "col": 0, "value": 0.06 }, { "row": 1, "col": 1, "value": 0.88 }, { "row": 1, "col": 2, "value": 0.01 }, { "row": 1, "col": 3, "value": 0.04 }, { "row": 1, "col": 4, "value": 0.01 },
+            { "row": 2, "col": 0, "value": 0.03 }, { "row": 2, "col": 1, "value": 0.02 }, { "row": 2, "col": 2, "value": 0.86 }, { "row": 2, "col": 3, "value": 0.06 }, { "row": 2, "col": 4, "value": 0.03 },
+            { "row": 3, "col": 0, "value": 0.05 }, { "row": 3, "col": 1, "value": 0.08 }, { "row": 3, "col": 2, "value": 0.04 }, { "row": 3, "col": 3, "value": 0.81 }, { "row": 3, "col": 4, "value": 0.02 },
+            { "row": 4, "col": 0, "value": 0.04 }, { "row": 4, "col": 1, "value": 0.03 }, { "row": 4, "col": 2, "value": 0.02 }, { "row": 4, "col": 3, "value": 0.03 }, { "row": 4, "col": 4, "value": 0.88 }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "latency",
+      "component": "histogram",
+      "span": 6,
+      "height": 320,
+      "title": "Inference latency (ms, 1h)",
+      "source": {
+        "inline": [
+          { "bin":  "10", "count":   12 }, { "bin":  "15", "count":  148 }, { "bin":  "20", "count":  812 },
+          { "bin":  "25", "count": 2140 }, { "bin":  "30", "count": 3420 }, { "bin":  "35", "count": 2810 },
+          { "bin":  "40", "count": 1640 }, { "bin":  "45", "count":  920 }, { "bin":  "50", "count":  410 },
+          { "bin":  "60", "count":  180 }, { "bin":  "80", "count":   72 }, { "bin": "100", "count":   28 },
+          { "bin": "150", "count":    9 }, { "bin": "300", "count":    3 }
+        ]
+      }
+    },
+
+    {
+      "id": "pr-curve",
+      "component": "scatter",
+      "span": 6,
+      "height": 280,
+      "title": "Precision-recall (current vs prior)",
+      "source": {
+        "inline": [
+          { "x": 0.05, "y": 0.99 }, { "x": 0.10, "y": 0.97 }, { "x": 0.20, "y": 0.95 },
+          { "x": 0.30, "y": 0.92 }, { "x": 0.40, "y": 0.89 }, { "x": 0.50, "y": 0.86 },
+          { "x": 0.60, "y": 0.83 }, { "x": 0.70, "y": 0.78 }, { "x": 0.80, "y": 0.71 },
+          { "x": 0.90, "y": 0.58 }, { "x": 0.95, "y": 0.42 }, { "x": 0.98, "y": 0.21 }
+        ]
+      }
+    },
+
+    {
+      "id": "deploys",
+      "component": "events",
+      "span": 6,
+      "height": 280,
+      "title": "Lifecycle events",
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "14:12:08", "label": "Drift alarm: user_age PSI > 0.2", "status": "EVENT_STATUS_WARN",  "source": "monitor",  "tags": ["drift"] },
+            { "timestamp": "10:30:11", "label": "Promote rec-v3.4 to 100%",         "status": "EVENT_STATUS_OK",    "source": "deploy",   "tags": ["release"] },
+            { "timestamp": "09:45:02", "label": "Canary rec-v3.4 at 25% — pass",    "status": "EVENT_STATUS_OK",    "source": "canary",   "tags": ["release"] },
+            { "timestamp": "08:10:33", "label": "Shadow score diff > 0.5%",         "status": "EVENT_STATUS_INFO",  "source": "shadow",   "tags": ["validate"] },
+            { "timestamp": "06:00:00", "label": "Daily training run completed",     "status": "EVENT_STATUS_OK",    "source": "trainer",  "tags": ["training"] },
+            { "timestamp": "02:42:19", "label": "Feature store sync failed",        "status": "EVENT_STATUS_ERROR", "source": "ingest",   "tags": ["ingest"] }
+          ]
+        }
+      }
+    }
+  ]
+}

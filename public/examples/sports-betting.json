@@ -1,0 +1,28 @@
+{
+  "title": "Sports book — Lakers vs Celtics",
+  "context": { "values": { "matchup": "LAL-BOS" } },
+  "widgets": [
+    { "id": "bankroll", "component": "metric", "span": 3, "height": 110, "title": "Bankroll",
+      "source": { "source_id": "bankroll" } },
+    { "id": "match", "component": "metric", "span": 9, "height": 110, "title": "Tip-off in",
+      "source": { "inline": { "value": 47, "unit": "min", "label": "Q1 starts" } } },
+
+    { "id": "ladder", "component": "paired_grid", "span": 8, "height": 380, "title": "Spread ladder (live)",
+      "source": { "source_id": "nba_spread", "params": { "matchup": "${ctx.matchup}" }, "stream": true } },
+
+    { "id": "kelly_lakers", "component": "kelly", "span": 4, "height": 380,
+      "title": "Kelly — Lakers @ market line",
+      "options": {
+        "probability": 0.58,
+        "bankroll": 10000,
+        "fraction": "half",
+        "odds_path": "rows.4.left.values.odds"
+      },
+      "source": { "source_id": "nba_spread", "params": { "matchup": "${ctx.matchup}" }, "stream": true }
+    },
+
+    { "id": "ai", "component": "prompt", "span": 12, "height": 110,
+      "title": "Ask (try: \"compare line to model\", \"what's the best edge\")",
+      "options": {} }
+  ]
+}

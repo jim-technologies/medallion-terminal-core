@@ -1,0 +1,147 @@
+{
+  "title": "Solar farm — Mojave 1",
+  "context": { "values": { "site": "mojave-1" } },
+  "widgets": [
+    {
+      "id": "headline",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 90,
+      "source": {
+        "inline": [
+          { "label": "Output now",   "value": 84.2, "delta":  0.041, "unit": "MW" },
+          { "label": "Today",        "value": 612,  "delta":  0.018, "unit": "MWh" },
+          { "label": "Capacity",     "value": 100,                    "unit": "MW" },
+          { "label": "Utilization",  "value": 84.2, "delta":  0.041, "unit": "%" },
+          { "label": "Inverters",    "value": 38,   "label": "of 40" },
+          { "label": "Curtailment",  "value": 1.4,  "delta": -0.123, "unit": "%" }
+        ]
+      }
+    },
+
+    {
+      "id": "today",
+      "component": "area_chart",
+      "span": 8,
+      "height": 320,
+      "title": "Generation today (MW)",
+      "source": {
+        "inline": {
+          "annotations": [
+            { "timestamp": "08:24", "label": "Sunrise", "kind": "info" },
+            { "timestamp": "13:18", "label": "Inverter 17 fault", "kind": "warn" },
+            { "timestamp": "16:42", "label": "Curtailment 5%", "kind": "warn" }
+          ],
+          "series": [
+            { "name": "Actual",   "data": [
+              { "timestamp": "06:00", "value":  0 }, { "timestamp": "07:00", "value":  4 }, { "timestamp": "08:00", "value": 18 },
+              { "timestamp": "09:00", "value": 36 }, { "timestamp": "10:00", "value": 58 }, { "timestamp": "11:00", "value": 74 },
+              { "timestamp": "12:00", "value": 88 }, { "timestamp": "13:00", "value": 92 }, { "timestamp": "14:00", "value": 84 },
+              { "timestamp": "15:00", "value": 82 }, { "timestamp": "16:00", "value": 76 }, { "timestamp": "17:00", "value": 60 },
+              { "timestamp": "18:00", "value": 32 }, { "timestamp": "19:00", "value":  8 }, { "timestamp": "20:00", "value":  0 }
+            ]},
+            { "name": "Forecast", "data": [
+              { "timestamp": "06:00", "value":  0 }, { "timestamp": "07:00", "value":  6 }, { "timestamp": "08:00", "value": 22 },
+              { "timestamp": "09:00", "value": 42 }, { "timestamp": "10:00", "value": 62 }, { "timestamp": "11:00", "value": 80 },
+              { "timestamp": "12:00", "value": 92 }, { "timestamp": "13:00", "value": 96 }, { "timestamp": "14:00", "value": 92 },
+              { "timestamp": "15:00", "value": 86 }, { "timestamp": "16:00", "value": 78 }, { "timestamp": "17:00", "value": 60 },
+              { "timestamp": "18:00", "value": 30 }, { "timestamp": "19:00", "value":  8 }, { "timestamp": "20:00", "value":  0 }
+            ]}
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "battery",
+      "component": "gauge",
+      "span": 4,
+      "height": 320,
+      "title": "Battery state of charge",
+      "source": {
+        "inline": {
+          "value": 0.71, "min": 0, "max": 1, "label": "SoC",
+          "bands": [
+            { "from": 0,    "to": 0.2, "color": "danger", "label": "Low" },
+            { "from": 0.2,  "to": 0.8, "color": "ok",     "label": "Operational" },
+            { "from": 0.8,  "to": 1,   "color": "warn",   "label": "Topped" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "panels",
+      "component": "heatmap",
+      "span": 8,
+      "height": 320,
+      "title": "Panel array health (output % of nominal)",
+      "source": {
+        "inline": {
+          "rows":    ["Block A", "Block B", "Block C", "Block D"],
+          "columns": ["Str 1", "Str 2", "Str 3", "Str 4", "Str 5", "Str 6", "Str 7", "Str 8"],
+          "scale": "diverging",
+          "min": 0.7, "max": 1.05,
+          "cells": [
+            { "row": 0, "col": 0, "value": 0.97 }, { "row": 0, "col": 1, "value": 0.96 }, { "row": 0, "col": 2, "value": 0.95 }, { "row": 0, "col": 3, "value": 0.94 }, { "row": 0, "col": 4, "value": 0.94 }, { "row": 0, "col": 5, "value": 0.96 }, { "row": 0, "col": 6, "value": 0.95 }, { "row": 0, "col": 7, "value": 0.97 },
+            { "row": 1, "col": 0, "value": 0.96 }, { "row": 1, "col": 1, "value": 0.94 }, { "row": 1, "col": 2, "value": 0.92 }, { "row": 1, "col": 3, "value": 0.88 }, { "row": 1, "col": 4, "value": 0.86 }, { "row": 1, "col": 5, "value": 0.94 }, { "row": 1, "col": 6, "value": 0.96 }, { "row": 1, "col": 7, "value": 0.95 },
+            { "row": 2, "col": 0, "value": 0.95 }, { "row": 2, "col": 1, "value": 0.93 }, { "row": 2, "col": 2, "value": 0.74 }, { "row": 2, "col": 3, "value": 0.92 }, { "row": 2, "col": 4, "value": 0.94 }, { "row": 2, "col": 5, "value": 0.95 }, { "row": 2, "col": 6, "value": 0.97 }, { "row": 2, "col": 7, "value": 0.96 },
+            { "row": 3, "col": 0, "value": 0.94 }, { "row": 3, "col": 1, "value": 0.95 }, { "row": 3, "col": 2, "value": 0.96 }, { "row": 3, "col": 3, "value": 0.95 }, { "row": 3, "col": 4, "value": 0.94 }, { "row": 3, "col": 5, "value": 0.93 }, { "row": 3, "col": 6, "value": 0.94 }, { "row": 3, "col": 7, "value": 0.95 }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "weather",
+      "component": "metric",
+      "span": 4,
+      "height": 320,
+      "title": "Conditions",
+      "source": {
+        "inline": {
+          "value": 31, "unit": "°C", "label": "irradiance 842 W/m² · wind 4.2 m/s · clear",
+          "trend": [28, 29, 30, 30, 31, 31, 31]
+        }
+      }
+    },
+
+    {
+      "id": "incidents",
+      "component": "events",
+      "span": 6,
+      "height": 240,
+      "title": "Site events",
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "16:42:11", "label": "Curtailment per ISO dispatch (5%)", "status": "EVENT_STATUS_WARN",  "source": "ISO" },
+            { "timestamp": "13:18:42", "label": "Inverter 17 IGBT over-temp",        "status": "EVENT_STATUS_ERROR", "source": "INV-17" },
+            { "timestamp": "13:22:03", "label": "Inverter 17 isolated, restart OK",  "status": "EVENT_STATUS_OK",    "source": "INV-17" },
+            { "timestamp": "08:24:00", "label": "Sunrise — auto-startup complete",   "status": "EVENT_STATUS_OK",    "source": "scada" },
+            { "timestamp": "06:00:00", "label": "Daily prediction received from MET", "status": "EVENT_STATUS_INFO",  "source": "MET" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "ppa",
+      "component": "bar_chart",
+      "span": 6,
+      "height": 240,
+      "title": "Last 7 days vs PPA contract (MWh)",
+      "source": {
+        "inline": [
+          { "label": "Mon", "value": 588 },
+          { "label": "Tue", "value": 612 },
+          { "label": "Wed", "value": 624 },
+          { "label": "Thu", "value": 540 },
+          { "label": "Fri", "value": 596 },
+          { "label": "Sat", "value": 632 },
+          { "label": "Sun", "value": 612 }
+        ]
+      }
+    }
+  ]
+}

@@ -1,14 +1,49 @@
 import { useState, useMemo } from 'react'
+import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 
 const DEFAULT_PAGE_SIZE = 25
 
+interface RowContext {
+  key: string       // ctx key to set
+  field?: string    // column whose cell value becomes the new ctx value (default: first column)
+}
+
 export function DataTable({ data, options }: WidgetProps) {
+  const { setCtx } = useDashboard()
   const pageSize = (options?.pageSize as number) || DEFAULT_PAGE_SIZE
+  const rowContext = options?.row_context as RowContext | undefined
+  const heatColumns = (options?.heat_columns as string[] | undefined) ?? []
+  const exportEnabled = options?.export === true
   const { columns, rows } = useMemo(() => normalize(data), [data])
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortAsc, setSortAsc] = useState(true)
   const [page, setPage] = useState(0)
+
+  // Pre-compute min/max per heat column over the full row set so coloring
+  // is stable across pages and sort.
+  const heatRanges = useMemo(() => {
+    const out: Record<string, { min: number; max: number }> = {}
+    for (const col of heatColumns) {
+      let min = Infinity, max = -Infinity
+      for (const row of rows) {
+        const v = row[col]
+        if (typeof v === 'number' && Number.isFinite(v)) {
+          if (v < min) min = v
+          if (v > max) max = v
+        }
+      }
+      if (Number.isFinite(min) && Number.isFinite(max)) out[col] = { min, max }
+    }
+    return out
+  }, [rows, heatColumns])
+
+  const handleRowClick = (row: Record<string, unknown>) => {
+    if (!rowContext) return
+    const field = rowContext.field ?? columns[0]
+    const value = row[field]
+    if (value != null) setCtx(rowContext.key, String(value))
+  }
 
   const sorted = useMemo(() => {
     if (!sortKey) return rows
@@ -40,8 +75,33 @@ export function DataTable({ data, options }: WidgetProps) {
     return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
   }
 
+  const exportCsv = () => {
+    const lines = [
+      columns.map(csvEscape).join(','),
+      ...sorted.map(r => columns.map(c => csvEscape(r[c])).join(',')),
+    ]
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'export.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="flex flex-col h-full">
+      {exportEnabled && (
+        <div className="flex justify-end pb-1">
+          <button
+            onClick={exportCsv}
+            className="text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800"
+            title="Download as CSV"
+          >
+            ↓ CSV
+          </button>
+        </div>
+      )}
       <div className="overflow-auto flex-1 min-h-0">
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-zinc-900">
@@ -63,12 +123,30 @@ export function DataTable({ data, options }: WidgetProps) {
           </thead>
           <tbody>
             {display.map((row, i) => (
-              <tr key={i} className="border-b border-zinc-800/60 hover:bg-zinc-800/40">
-                {columns.map(col => (
-                  <td key={col} className="px-3 py-2.5 whitespace-nowrap tabular-nums text-zinc-100">
-                    {formatCell(row[col])}
-                  </td>
-                ))}
+              <tr
+                key={i}
+                onClick={rowContext ? () => handleRowClick(row) : undefined}
+                className={`border-b border-zinc-800/60 ${
+                  rowContext ? 'cursor-pointer hover:bg-zinc-800' : 'hover:bg-zinc-800/40'
+                }`}
+              >
+                {columns.map(col => {
+                  const range = heatRanges[col]
+                  const value = row[col]
+                  const heatStyle =
+                    range && typeof value === 'number'
+                      ? { backgroundColor: heatColor(value, range.min, range.max) }
+                      : undefined
+                  return (
+                    <td
+                      key={col}
+                      className="px-3 py-2.5 whitespace-nowrap tabular-nums text-zinc-100"
+                      style={heatStyle}
+                    >
+                      {formatCell(row[col])}
+                    </td>
+                  )
+                })}
               </tr>
             ))}
           </tbody>
@@ -107,6 +185,29 @@ function normalize(data: unknown): { columns: string[]; rows: Record<string, unk
   }
 
   return { columns: [], rows: [] }
+}
+
+// Diverging when the column straddles 0 (% change), sequential otherwise.
+// Returns a translucent rgba so the row's hover effect still shows through.
+function heatColor(value: number, min: number, max: number): string {
+  if (max === min) return 'transparent'
+  if (min < 0 && max > 0) {
+    const span = Math.max(Math.abs(min), Math.abs(max))
+    const t = Math.max(-1, Math.min(1, value / span))
+    return t >= 0
+      ? `rgba(16, 185, 129, ${0.35 * t})`        // emerald
+      : `rgba(239, 68, 68, ${0.35 * -t})`        // red
+  }
+  const t = (value - min) / (max - min)
+  return `rgba(14, 165, 233, ${0.35 * t})`       // sky
+}
+
+// CSV-escape: wrap in quotes when needed, double internal quotes.
+function csvEscape(v: unknown): string {
+  if (v == null) return ''
+  const s = typeof v === 'number' ? String(v) : String(v)
+  if (/[,"\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`
+  return s
 }
 
 function formatCell(value: unknown): string {

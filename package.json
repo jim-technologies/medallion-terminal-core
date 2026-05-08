@@ -9,6 +9,9 @@
       "import": "./dist/medallion-terminal-core.js",
       "types": "./dist/index.d.ts"
     },
+    "./proto": {
+      "types": "./dist/proto.d.ts"
+    },
     "./styles": "./dist/styles.css"
   },
   "files": [
@@ -17,11 +20,15 @@
   ],
   "scripts": {
     "dev": "vite",
-    "lint": "tsc --noEmit && buf lint",
+    "lint": "tsc --noEmit && buf format --diff --exit-code && buf lint && buf build && pnpm gen:proto && git diff --exit-code src/gen",
+    "gen:proto": "PATH=\"$PWD/node_modules/.bin:$PATH\" buf generate",
+    "format": "buf format --write",
     "test": "vitest run",
+    "bench": "vitest bench --run",
     "build": "tsc -b && vite build",
     "build:lib": "vite build --config vite.config.lib.ts && tsc -p tsconfig.build.json",
     "preview": "vite preview",
+    "backend": "node examples/backend/server.mjs",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build",
     "ci": "pnpm install --frozen-lockfile && pnpm lint && pnpm test && pnpm build && pnpm build:lib && pnpm build:storybook"
@@ -44,9 +51,12 @@
     ]
   },
   "devDependencies": {
+    "@bufbuild/protobuf": "^2.12.0",
+    "@bufbuild/protoc-gen-es": "^2.12.0",
     "@storybook/react": "^10.2.19",
     "@storybook/react-vite": "^10.2.19",
     "@tailwindcss/vite": "^4.2.1",
+    "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.2.0",

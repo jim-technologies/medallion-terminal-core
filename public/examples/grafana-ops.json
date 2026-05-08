@@ -1,0 +1,258 @@
+{
+  "title": "API Service — Production",
+  "context": { "values": { "service": "api-prod", "range": "1h" } },
+  "widgets": [
+    {
+      "id": "header",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 90,
+      "source": {
+        "inline": [
+          { "label": "Uptime",     "value": 99.94, "unit": "%" },
+          { "label": "RPS (1m)",   "value":  4280, "delta":  0.018, "trend": [3900, 3950, 4020, 4150, 4180, 4220, 4280] },
+          { "label": "p50",        "value":  18.4, "unit": "ms",     "delta": -0.024 },
+          { "label": "p99",        "value":   142, "unit": "ms",     "delta":  0.082 },
+          { "label": "Error rate", "value":  0.42, "unit": "%",      "delta": -0.05 },
+          { "label": "Saturation", "value":  56.0, "unit": "%" }
+        ]
+      }
+    },
+
+    {
+      "id": "alerts-banner",
+      "component": "ticker",
+      "span": 12,
+      "height": 56,
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "14:51", "label": "p99 latency > 100ms (api-prod/payments)", "status": "EVENT_STATUS_WARN" },
+            { "timestamp": "14:32", "label": "Error rate spike on /v1/orders (3.4%)",   "status": "EVENT_STATUS_ERROR" },
+            { "timestamp": "14:20", "label": "Database connection pool 82% saturated",  "status": "EVENT_STATUS_WARN" },
+            { "timestamp": "12:00", "label": "Daily backup completed",                  "status": "EVENT_STATUS_OK" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "section-perf",
+      "component": "section",
+      "span": 12,
+      "height": 24,
+      "options": { "label": "Latency & Throughput" }
+    },
+
+    {
+      "id": "latency-ts",
+      "component": "timeseries",
+      "span": 8,
+      "height": 320,
+      "title": "Latency by Percentile (ms)",
+      "options": { "brush": true },
+      "source": {
+        "inline": {
+          "annotations": [
+            { "timestamp": "13:30", "end_timestamp": "13:45", "label": "Deploy v2.4.1", "kind": "info" },
+            { "timestamp": "14:32", "label": "Spike", "value": 142, "kind": "warn" }
+          ],
+          "series": [
+            { "name": "p50", "data": [
+              { "timestamp": "13:00", "value": 16 }, { "timestamp": "13:10", "value": 17 }, { "timestamp": "13:20", "value": 17 },
+              { "timestamp": "13:30", "value": 19 }, { "timestamp": "13:40", "value": 22 }, { "timestamp": "13:50", "value": 18 },
+              { "timestamp": "14:00", "value": 17 }, { "timestamp": "14:10", "value": 18 }, { "timestamp": "14:20", "value": 19 },
+              { "timestamp": "14:30", "value": 21 }, { "timestamp": "14:40", "value": 20 }, { "timestamp": "14:50", "value": 18 }
+            ]},
+            { "name": "p95", "data": [
+              { "timestamp": "13:00", "value": 64 }, { "timestamp": "13:10", "value": 68 }, { "timestamp": "13:20", "value": 72 },
+              { "timestamp": "13:30", "value": 88 }, { "timestamp": "13:40", "value": 94 }, { "timestamp": "13:50", "value": 76 },
+              { "timestamp": "14:00", "value": 72 }, { "timestamp": "14:10", "value": 78 }, { "timestamp": "14:20", "value": 84 },
+              { "timestamp": "14:30", "value": 96 }, { "timestamp": "14:40", "value": 88 }, { "timestamp": "14:50", "value": 78 }
+            ]},
+            { "name": "p99", "data": [
+              { "timestamp": "13:00", "value":  98 }, { "timestamp": "13:10", "value": 104 }, { "timestamp": "13:20", "value": 112 },
+              { "timestamp": "13:30", "value": 124 }, { "timestamp": "13:40", "value": 136 }, { "timestamp": "13:50", "value": 108 },
+              { "timestamp": "14:00", "value": 104 }, { "timestamp": "14:10", "value": 116 }, { "timestamp": "14:20", "value": 122 },
+              { "timestamp": "14:30", "value": 142 }, { "timestamp": "14:40", "value": 128 }, { "timestamp": "14:50", "value": 116 }
+            ]}
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "error-budget",
+      "component": "gauge",
+      "span": 4,
+      "height": 320,
+      "title": "30-day Error Budget",
+      "source": {
+        "inline": {
+          "value": 0.62, "min": 0, "max": 1, "label": "62% remaining",
+          "bands": [
+            { "from": 0,    "to": 0.2,  "color": "danger" },
+            { "from": 0.2,  "to": 0.5,  "color": "warn" },
+            { "from": 0.5,  "to": 1,    "color": "ok" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "rps-area",
+      "component": "area_chart",
+      "span": 8,
+      "height": 280,
+      "title": "Requests by Endpoint",
+      "source": {
+        "inline": [
+          { "ts": "13:00", "/v1/orders": 1240, "/v1/quote": 1820, "/v1/auth": 460, "/health": 580 },
+          { "ts": "13:10", "/v1/orders": 1310, "/v1/quote": 1880, "/v1/auth": 480, "/health": 590 },
+          { "ts": "13:20", "/v1/orders": 1280, "/v1/quote": 1920, "/v1/auth": 470, "/health": 580 },
+          { "ts": "13:30", "/v1/orders": 1410, "/v1/quote": 1980, "/v1/auth": 510, "/health": 600 },
+          { "ts": "13:40", "/v1/orders": 1380, "/v1/quote": 1960, "/v1/auth": 500, "/health": 595 },
+          { "ts": "13:50", "/v1/orders": 1340, "/v1/quote": 1900, "/v1/auth": 490, "/health": 590 },
+          { "ts": "14:00", "/v1/orders": 1390, "/v1/quote": 1940, "/v1/auth": 500, "/health": 595 },
+          { "ts": "14:10", "/v1/orders": 1420, "/v1/quote": 1980, "/v1/auth": 510, "/health": 600 },
+          { "ts": "14:20", "/v1/orders": 1480, "/v1/quote": 2020, "/v1/auth": 520, "/health": 605 },
+          { "ts": "14:30", "/v1/orders": 1520, "/v1/quote": 2060, "/v1/auth": 530, "/health": 610 },
+          { "ts": "14:40", "/v1/orders": 1490, "/v1/quote": 2040, "/v1/auth": 525, "/health": 605 },
+          { "ts": "14:50", "/v1/orders": 1510, "/v1/quote": 2080, "/v1/auth": 540, "/health": 615 }
+        ]
+      }
+    },
+
+    {
+      "id": "errors-by-endpoint",
+      "component": "bar_chart",
+      "span": 4,
+      "height": 280,
+      "title": "Errors / min by Endpoint",
+      "source": {
+        "inline": [
+          { "label": "/v1/orders", "value": 18.4 },
+          { "label": "/v1/quote",  "value":  3.2 },
+          { "label": "/v1/auth",   "value":  1.1 },
+          { "label": "/health",    "value":  0.0 },
+          { "label": "/v1/users",  "value":  4.8 }
+        ]
+      }
+    },
+
+    {
+      "id": "section-dist",
+      "component": "section",
+      "span": 12,
+      "height": 24,
+      "options": { "label": "Distributions" }
+    },
+
+    {
+      "id": "latency-hist",
+      "component": "histogram",
+      "span": 4,
+      "height": 280,
+      "title": "Latency Distribution (last 1h)",
+      "source": {
+        "inline": [
+          12, 14, 15, 16, 16, 17, 17, 18, 18, 18, 19, 19, 20, 20, 21, 22, 23, 24, 26, 28,
+          14, 15, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 22, 23, 24, 26, 28, 30, 32, 35,
+          15, 16, 17, 18, 18, 19, 19, 20, 21, 22, 24, 26, 28, 30, 32, 35, 40, 46, 54, 64,
+          16, 17, 18, 19, 20, 21, 22, 24, 26, 28, 32, 38, 44, 52, 62, 76, 92, 108, 124, 142,
+          18, 19, 20, 22, 24, 26, 28, 32, 36, 42, 48, 56, 66, 78, 88, 96, 108, 116, 128, 142
+        ],
+        "bins": 30
+      }
+    },
+
+    {
+      "id": "latency-by-endpoint",
+      "component": "boxplot",
+      "span": 4,
+      "height": 280,
+      "title": "Latency by Endpoint (ms)",
+      "source": {
+        "inline": [
+          { "label": "/orders", "values": [22, 28, 32, 38, 44, 52, 64, 78, 88, 92, 108, 124, 142, 156, 24, 30, 36, 42, 50, 60, 72, 86, 96, 112] },
+          { "label": "/quote",  "values": [12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 34, 38, 44, 52, 12, 14, 16, 18, 20, 22, 24, 26, 30, 38] },
+          { "label": "/auth",   "values": [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 32, 38, 44, 8, 10, 12, 14, 16, 18, 20, 22, 26, 32] },
+          { "label": "/health", "values": [4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 9, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9] },
+          { "label": "/users",  "values": [16, 18, 22, 24, 28, 32, 36, 42, 48, 54, 62, 72, 84, 92, 16, 20, 24, 28, 32, 38, 44, 52, 64, 78] }
+        ]
+      }
+    },
+
+    {
+      "id": "rps-heatmap",
+      "component": "heatmap",
+      "span": 4,
+      "height": 280,
+      "title": "Requests by Region × Hour",
+      "source": {
+        "inline": {
+          "rows":    ["us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"],
+          "columns": ["09","10","11","12","13","14","15"],
+          "scale":   "sequential",
+          "cells": [
+            { "row": 0, "col": 0, "value": 1840 }, { "row": 0, "col": 1, "value": 2120 }, { "row": 0, "col": 2, "value": 2480 }, { "row": 0, "col": 3, "value": 2620 }, { "row": 0, "col": 4, "value": 2580 }, { "row": 0, "col": 5, "value": 2740 }, { "row": 0, "col": 6, "value": 2680 },
+            { "row": 1, "col": 0, "value":  840 }, { "row": 1, "col": 1, "value":  920 }, { "row": 1, "col": 2, "value": 1080 }, { "row": 1, "col": 3, "value": 1180 }, { "row": 1, "col": 4, "value": 1240 }, { "row": 1, "col": 5, "value": 1320 }, { "row": 1, "col": 6, "value": 1280 },
+            { "row": 2, "col": 0, "value": 1240 }, { "row": 2, "col": 1, "value": 1180 }, { "row": 2, "col": 2, "value": 1120 }, { "row": 2, "col": 3, "value": 1080 }, { "row": 2, "col": 4, "value": 1020 }, { "row": 2, "col": 5, "value":  980 }, { "row": 2, "col": 6, "value":  940 },
+            { "row": 3, "col": 0, "value":  420 }, { "row": 3, "col": 1, "value":  480 }, { "row": 3, "col": 2, "value":  520 }, { "row": 3, "col": 3, "value":  560 }, { "row": 3, "col": 4, "value":  580 }, { "row": 3, "col": 5, "value":  600 }, { "row": 3, "col": 6, "value":  590 }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "section-logs",
+      "component": "section",
+      "span": 12,
+      "height": 24,
+      "options": { "label": "Events & Logs" }
+    },
+
+    {
+      "id": "incidents",
+      "component": "events",
+      "span": 6,
+      "height": 320,
+      "title": "Recent Incidents",
+      "options": { "filter": true },
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "14:51:18", "label": "p99 latency exceeded threshold",      "status": "EVENT_STATUS_WARN",  "source": "alertmanager", "body": "p99 = 142ms (>100ms) on api-prod/payments for 3 minutes", "tags": ["latency","payments"] },
+            { "timestamp": "14:32:04", "label": "Error rate spike on /v1/orders",      "status": "EVENT_STATUS_ERROR", "source": "alertmanager", "body": "Error rate = 3.4% (>1%) over 5 minutes",                  "tags": ["errors","orders"] },
+            { "timestamp": "14:20:11", "label": "DB connection pool saturation 82%",   "status": "EVENT_STATUS_WARN",  "source": "alertmanager", "body": "Pool util = 82% (>75%) on primary db",                   "tags": ["database"] },
+            { "timestamp": "13:48:02", "label": "Cache miss rate elevated",            "status": "EVENT_STATUS_INFO",  "source": "alertmanager", "body": "Miss rate = 14% (baseline 8%)",                          "tags": ["cache"] },
+            { "timestamp": "13:30:14", "label": "Deploy v2.4.1 promoted to prod",      "status": "EVENT_STATUS_OK",    "source": "argocd",       "body": "Rollout complete in 2m 14s, all health checks green",     "tags": ["deploy"] },
+            { "timestamp": "12:00:00", "label": "Daily snapshot complete",             "status": "EVENT_STATUS_OK",    "source": "scheduler",    "body": "Backed up 4.2 GB to s3://snaps/api-prod/",               "tags": ["backup"] }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "service-health",
+      "component": "table",
+      "span": 6,
+      "height": 320,
+      "title": "Service Health (click to focus)",
+      "options": {
+        "row_context": { "key": "service", "field": "Service" },
+        "heat_columns": ["p99 (ms)", "Error %", "Sat %"]
+      },
+      "source": {
+        "inline": [
+          { "Service": "api-prod",       "RPS": 4280, "p99 (ms)": 142, "Error %": 0.42, "Sat %": 56 },
+          { "Service": "auth-prod",      "RPS": 1240, "p99 (ms)":  68, "Error %": 0.04, "Sat %": 38 },
+          { "Service": "ingest-prod",    "RPS":  820, "p99 (ms)":  84, "Error %": 0.18, "Sat %": 42 },
+          { "Service": "payments-prod",  "RPS":  640, "p99 (ms)": 168, "Error %": 1.20, "Sat %": 71 },
+          { "Service": "search-prod",    "RPS": 2180, "p99 (ms)":  46, "Error %": 0.08, "Sat %": 22 },
+          { "Service": "ws-prod",        "RPS":  320, "p99 (ms)":  22, "Error %": 0.00, "Sat %": 18 }
+        ]
+      }
+    }
+  ]
+}

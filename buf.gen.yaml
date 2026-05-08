@@ -1,0 +1,14 @@
+version: v2
+plugins:
+  # Emit TS types only (no runtime registry needed — we serialize via
+  # JSON, so we don't pull in the full @bufbuild/protobuf reflection
+  # graph). Output lands in src/gen/ and is checked in so the build
+  # doesn't depend on `buf generate` at every install.
+  - local: protoc-gen-es
+    out: src/gen
+    opt:
+      - target=ts
+      - import_extension=js
+      - json_types=true
+inputs:
+  - directory: proto

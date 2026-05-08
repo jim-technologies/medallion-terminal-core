@@ -1,0 +1,27 @@
+{
+  "title": "Reference Backend — BTC desk",
+  "context": { "values": { "symbol": "BTCUSD" } },
+  "widgets": [
+    { "id": "ai",     "component": "prompt", "span": 12, "height": 110, "title": "Ask (try: \"show me ETH candles\", \"options chain\", \"rebuild for SOL\")",
+      "options": {} },
+
+    { "id": "spot",   "component": "metric", "span": 3, "height": 110, "title": "${ctx.symbol} spot",
+      "source": { "source_id": "btc_spot", "params": { "symbol": "${ctx.symbol}" }, "stream": true },
+      "alert": { "when": "value > 70000", "message": "${ctx.symbol} crossed 70k", "severity": "warn" } },
+    { "id": "fills",  "component": "events", "span": 9, "height": 110, "title": "Live fills",
+      "source": { "source_id": "fills", "stream": true } },
+
+    { "id": "px",     "component": "candlestick", "span": 8, "height": 380, "title": "${ctx.symbol} — 1m bars",
+      "source": { "source_id": "btc_candles", "params": { "symbol": "${ctx.symbol}", "limit": "60" }, "stream": true } },
+    { "id": "book",   "component": "orderbook", "span": 4, "height": 380, "title": "Order book",
+      "source": { "source_id": "btc_orderbook", "params": { "symbol": "${ctx.symbol}" }, "stream": true } },
+
+    { "id": "chain",  "component": "paired_grid", "span": 8, "height": 380, "title": "Options chain",
+      "source": { "source_id": "btc_options" } },
+    { "id": "ticket", "component": "trade", "span": 4, "height": 380, "title": "Order ticket",
+      "options": { "symbol": "${ctx.symbol}", "quote_unit": "BTC", "available": 1.25, "confirm": true, "action_id": "place_order" } },
+
+    { "id": "news",   "component": "text", "span": 12, "height": 240, "title": "News",
+      "source": { "source_id": "news", "params": { "symbol": "${ctx.symbol}" } } }
+  ]
+}

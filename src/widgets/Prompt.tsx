@@ -1,49 +1,72 @@
 import { useState, useCallback, type KeyboardEvent } from 'react'
 import { useDashboard, type WidgetAction } from '../core/DashboardContext'
-import type { WidgetProps } from '../types/template'
+import { buildGenerateUrl, buildGenerateRequest } from '../core/resolveSource'
+import type { Context, WidgetProps } from '../types/template'
 
-interface PromptResponse {
-  dialogue?: {
-    text?: string
-  }
+// Response shape mirrors GenerateResponse from the proto. All fields
+// optional — backends are free to send partial responses.
+interface GenerateResponse {
+  text?: string
+  actions?: WidgetAction[]
+  context?: Context
+  replace_all?: boolean
+}
+
+// Legacy ad-hoc shape, kept for backwards compatibility with any
+// non-Connect backend wired via options.url.
+interface LegacyResponse {
+  dialogue?: { text?: string }
   actions?: WidgetAction[]
 }
 
 export function Prompt({ options }: WidgetProps) {
-  const { dispatch } = useDashboard()
+  const { dispatch, ctx, setCtx, backendUrl, widgets } = useDashboard()
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [reply, setReply] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const url = options?.url as string | undefined
+  // Prefer Connect Generate when the dashboard is configured against a
+  // backend; otherwise speak the legacy ad-hoc shape against
+  // `options.url` so demo backends keep working.
+  const fallbackUrl = options?.url as string | undefined
+  const hasBackend = !!backendUrl
 
   const submit = useCallback(async () => {
-    if (!url || !query.trim() || loading) return
+    const text = query.trim()
+    if (!text || loading) return
+    if (!hasBackend && !fallbackUrl) return
 
     setLoading(true)
     setError(null)
     setReply(null)
 
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: query.trim() }),
-      })
+      const res = hasBackend
+        ? await fetch(buildGenerateUrl(backendUrl!), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildGenerateRequest(text, ctx, widgets)),
+          })
+        : await fetch(fallbackUrl!, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: text }),
+          })
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
-      const result: PromptResponse = await res.json()
+      const result = (await res.json()) as GenerateResponse & LegacyResponse
 
-      // Show dialogue text
-      if (result.dialogue?.text) {
-        setReply(result.dialogue.text)
+      const replyText = result.text ?? result.dialogue?.text
+      if (replyText) setReply(replyText)
+
+      if (result.context?.values) {
+        for (const [k, v] of Object.entries(result.context.values)) setCtx(k, v)
       }
 
-      // Dispatch actions to update widgets
       if (result.actions && result.actions.length > 0) {
-        dispatch(result.actions)
+        dispatch(result.actions, { replaceAll: result.replace_all })
       }
 
       setQuery('')
@@ -52,7 +75,7 @@ export function Prompt({ options }: WidgetProps) {
     } finally {
       setLoading(false)
     }
-  }, [url, query, loading, dispatch])
+  }, [query, loading, hasBackend, backendUrl, fallbackUrl, ctx, widgets, dispatch, setCtx])
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -61,10 +84,10 @@ export function Prompt({ options }: WidgetProps) {
     }
   }
 
-  if (!url) {
+  if (!hasBackend && !fallbackUrl) {
     return (
       <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
-        Prompt requires options.url
+        Set a backendUrl on Dashboard or options.url on this widget
       </div>
     )
   }
@@ -91,12 +114,8 @@ export function Prompt({ options }: WidgetProps) {
           {loading ? '...' : 'Send'}
         </button>
       </div>
-      {reply && (
-        <div className="text-xs text-zinc-400 leading-relaxed">{reply}</div>
-      )}
-      {error && (
-        <div className="text-xs text-red-400">{error}</div>
-      )}
+      {reply && <div className="text-xs text-zinc-400 leading-relaxed">{reply}</div>}
+      {error && <div className="text-xs text-red-400">{error}</div>}
     </div>
   )
 }

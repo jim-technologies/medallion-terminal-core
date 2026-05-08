@@ -1,0 +1,163 @@
+{
+  "title": "Will ETH close above $4,000 by year-end?",
+  "context": { "values": { "event": "eth-4k-eoy" } },
+  "widgets": [
+    {
+      "id": "header",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 80,
+      "source": {
+        "inline": [
+          { "label": "Yes Implied", "value": 42.0, "delta":  0.04, "unit": "%", "trend": [38, 36, 34, 39, 41, 40, 43, 44, 42] },
+          { "label": "No Implied",  "value": 58.0, "delta": -0.04, "unit": "%" },
+          { "label": "24h Volume",  "value": 482, "unit": "k USDC" },
+          { "label": "Liquidity",   "value": 2.96, "unit": "M USDC" },
+          { "label": "Trades 24h",  "value": 1284 },
+          { "label": "Days to res.","value":  244 }
+        ]
+      }
+    },
+
+    {
+      "id": "yes-prob",
+      "component": "gauge",
+      "span": 4,
+      "height": 240,
+      "title": "Yes Probability",
+      "source": {
+        "inline": {
+          "value": 0.42, "min": 0, "max": 1, "label": "42% — implied",
+          "bands": [
+            { "from": 0,    "to": 0.33, "color": "danger" },
+            { "from": 0.33, "to": 0.66, "color": "warn"   },
+            { "from": 0.66, "to": 1,    "color": "ok"     }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "share",
+      "component": "distribution",
+      "span": 4,
+      "height": 240,
+      "title": "Order Book Share",
+      "source": {
+        "inline": {
+          "slices": [
+            { "label": "Yes", "value": 1240000, "color": "ok"     },
+            { "label": "No",  "value": 1716000, "color": "danger" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "summary",
+      "component": "text",
+      "span": 4,
+      "height": 240,
+      "title": "Resolution",
+      "source": {
+        "inline": [{
+          "title": "ETH/USD ≥ $4,000 close on Dec 31",
+          "body": "Source: Coinbase spot. Implied has drifted 38%→42% over 7d as ETH retook $3,400. Yes liquidity thinning at strikes above 0.50.",
+          "source": "Polymarket",
+          "date": "Apr 30, 2026"
+        }]
+      }
+    },
+
+    {
+      "id": "history",
+      "component": "timeseries",
+      "span": 8,
+      "height": 320,
+      "title": "Implied Probability — 30D",
+      "source": {
+        "inline": {
+          "series": [
+            {
+              "name": "Yes",
+              "data": [
+                { "timestamp": "2026-04-01", "value": 0.38 }, { "timestamp": "2026-04-04", "value": 0.36 },
+                { "timestamp": "2026-04-08", "value": 0.34 }, { "timestamp": "2026-04-12", "value": 0.39 },
+                { "timestamp": "2026-04-16", "value": 0.41 }, { "timestamp": "2026-04-20", "value": 0.40 },
+                { "timestamp": "2026-04-24", "value": 0.43 }, { "timestamp": "2026-04-28", "value": 0.44 },
+                { "timestamp": "2026-04-30", "value": 0.42 }
+              ]
+            },
+            {
+              "name": "No",
+              "data": [
+                { "timestamp": "2026-04-01", "value": 0.62 }, { "timestamp": "2026-04-04", "value": 0.64 },
+                { "timestamp": "2026-04-08", "value": 0.66 }, { "timestamp": "2026-04-12", "value": 0.61 },
+                { "timestamp": "2026-04-16", "value": 0.59 }, { "timestamp": "2026-04-20", "value": 0.60 },
+                { "timestamp": "2026-04-24", "value": 0.57 }, { "timestamp": "2026-04-28", "value": 0.56 },
+                { "timestamp": "2026-04-30", "value": 0.58 }
+              ]
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "venues",
+      "component": "table",
+      "span": 4,
+      "height": 320,
+      "title": "Yes Price Across Venues",
+      "options": { "heat_columns": ["Spread"] },
+      "source": {
+        "inline": [
+          { "Venue": "Polymarket", "Bid": 0.418, "Ask": 0.422, "Spread": 0.004, "Vol":  482 },
+          { "Venue": "Kalshi",     "Bid": 0.412, "Ask": 0.428, "Spread": 0.016, "Vol":  124 },
+          { "Venue": "PredictIt",  "Bid": 0.405, "Ask": 0.435, "Spread": 0.030, "Vol":   38 },
+          { "Venue": "Manifold",   "Bid": 0.420, "Ask": 0.440, "Spread": 0.020, "Vol":   62 }
+        ]
+      }
+    },
+
+    {
+      "id": "book",
+      "component": "table",
+      "span": 6,
+      "height": 280,
+      "title": "Top of Book",
+      "options": { "heat_columns": ["Bid Size", "Ask Size"] },
+      "source": {
+        "inline": [
+          { "Side": "Yes", "Bid": 0.418, "Bid Size":  4200, "Ask": 0.422, "Ask Size":  3100 },
+          { "Side": "Yes", "Bid": 0.416, "Bid Size":  6800, "Ask": 0.424, "Ask Size":  5900 },
+          { "Side": "Yes", "Bid": 0.412, "Bid Size": 12400, "Ask": 0.428, "Ask Size":  9100 },
+          { "Side": "No",  "Bid": 0.578, "Bid Size":  3800, "Ask": 0.582, "Ask Size":  4400 },
+          { "Side": "No",  "Bid": 0.576, "Bid Size":  7200, "Ask": 0.584, "Ask Size":  8100 },
+          { "Side": "No",  "Bid": 0.572, "Bid Size": 11800, "Ask": 0.588, "Ask Size": 10600 }
+        ]
+      }
+    },
+
+    {
+      "id": "trades",
+      "component": "events",
+      "span": 6,
+      "height": 280,
+      "title": "Recent Trades",
+      "options": { "filter": true },
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "15:02:11", "label": "BUY  Yes 1,200 @ 0.420", "status": "EVENT_STATUS_OK", "tags": ["yes"] },
+            { "timestamp": "14:58:45", "label": "SELL Yes 800   @ 0.418", "status": "EVENT_STATUS_OK", "tags": ["yes"] },
+            { "timestamp": "14:51:02", "label": "BUY  No  3,400 @ 0.580", "status": "EVENT_STATUS_OK", "tags": ["no"]  },
+            { "timestamp": "14:44:30", "label": "BUY  Yes 600   @ 0.422", "status": "EVENT_STATUS_OK", "tags": ["yes"] },
+            { "timestamp": "14:32:18", "label": "Liquidity added: $50k",   "status": "EVENT_STATUS_INFO", "source": "lp-1" },
+            { "timestamp": "14:18:09", "label": "BUY  No  1,800 @ 0.578", "status": "EVENT_STATUS_OK", "tags": ["no"]  }
+          ]
+        }
+      }
+    }
+  ]
+}

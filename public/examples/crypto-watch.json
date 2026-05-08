@@ -1,0 +1,150 @@
+{
+  "title": "${ctx.symbol} — Crypto Watch",
+  "context": { "values": { "symbol": "BTC", "range": "1d" } },
+  "widgets": [
+    {
+      "id": "ai-summary",
+      "component": "text",
+      "span": 12,
+      "height": 90,
+      "title": "AI Summary",
+      "source": {
+        "inline": [{
+          "title": "Bitcoin trades sideways above $67k as ETF flows cool",
+          "body": "BTC is consolidating in a tight $66.8k–$68.4k range after last week's rally. Spot ETF net flows have moderated to +$120M/day from peaks above $1B. Funding rates remain neutral, suggesting positioning is balanced. Watch the $66k support — a break opens room toward $63k.",
+          "source": "Daily AI Summary",
+          "date": "Just now"
+        }]
+      }
+    },
+    {
+      "id": "px",
+      "component": "candlestick",
+      "span": 8,
+      "height": 420,
+      "title": "${ctx.symbol}/USD — ${ctx.range} (with bot trades)",
+      "source": {
+        "inline": {
+          "annotations": [
+            { "timestamp": "2026-04-04", "label": "BUY 0.5",  "kind": "buy" },
+            { "timestamp": "2026-04-09", "label": "BUY 0.3",  "kind": "buy" },
+            { "timestamp": "2026-04-12", "label": "SELL 0.4", "kind": "sell" },
+            { "timestamp": "2026-04-14", "label": "SELL 0.4", "kind": "sell" },
+            { "timestamp": "2026-04-19", "label": "BUY 0.6",  "kind": "buy" },
+            { "timestamp": "2026-04-22", "label": "Earnings", "kind": "info" }
+          ],
+          "bars": [
+          { "timestamp": "2026-04-01", "open": 61800, "high": 63200, "low": 61400, "close": 62400, "volume": 28500 },
+          { "timestamp": "2026-04-02", "open": 62400, "high": 63800, "low": 62100, "close": 63100, "volume": 31200 },
+          { "timestamp": "2026-04-03", "open": 63100, "high": 64500, "low": 62700, "close": 64200, "volume": 33800 },
+          { "timestamp": "2026-04-04", "open": 64200, "high": 65100, "low": 63600, "close": 64800, "volume": 29400 },
+          { "timestamp": "2026-04-05", "open": 64800, "high": 66200, "low": 64400, "close": 65900, "volume": 35100 },
+          { "timestamp": "2026-04-06", "open": 65900, "high": 67400, "low": 65200, "close": 67100, "volume": 41200 },
+          { "timestamp": "2026-04-07", "open": 67100, "high": 67800, "low": 65800, "close": 66400, "volume": 32700 },
+          { "timestamp": "2026-04-08", "open": 66400, "high": 68900, "low": 66100, "close": 68200, "volume": 44600 },
+          { "timestamp": "2026-04-09", "open": 68200, "high": 69400, "low": 67500, "close": 68900, "volume": 36800 },
+          { "timestamp": "2026-04-10", "open": 68900, "high": 70200, "low": 68400, "close": 69800, "volume": 38900 },
+          { "timestamp": "2026-04-11", "open": 69800, "high": 71500, "low": 69200, "close": 71200, "volume": 47200 },
+          { "timestamp": "2026-04-12", "open": 71200, "high": 72400, "low": 70100, "close": 70600, "volume": 41800 },
+          { "timestamp": "2026-04-13", "open": 70600, "high": 71800, "low": 69400, "close": 69900, "volume": 35400 },
+          { "timestamp": "2026-04-14", "open": 69900, "high": 70400, "low": 67200, "close": 67600, "volume": 51200 },
+          { "timestamp": "2026-04-15", "open": 67600, "high": 68800, "low": 66800, "close": 68400, "volume": 38700 },
+          { "timestamp": "2026-04-16", "open": 68400, "high": 69200, "low": 67100, "close": 67400, "volume": 33200 },
+          { "timestamp": "2026-04-17", "open": 67400, "high": 67900, "low": 66200, "close": 66800, "volume": 29800 },
+          { "timestamp": "2026-04-18", "open": 66800, "high": 68100, "low": 66400, "close": 67900, "volume": 31400 },
+          { "timestamp": "2026-04-19", "open": 67900, "high": 68900, "low": 67500, "close": 68600, "volume": 27300 },
+          { "timestamp": "2026-04-20", "open": 68600, "high": 69400, "low": 67800, "close": 68100, "volume": 28900 },
+          { "timestamp": "2026-04-21", "open": 68100, "high": 68500, "low": 66900, "close": 67200, "volume": 32600 },
+          { "timestamp": "2026-04-22", "open": 67200, "high": 67800, "low": 66400, "close": 67100, "volume": 26400 },
+          { "timestamp": "2026-04-23", "open": 67100, "high": 68400, "low": 66800, "close": 68000, "volume": 28700 },
+          { "timestamp": "2026-04-24", "open": 68000, "high": 68600, "low": 67400, "close": 67800, "volume": 24900 },
+          { "timestamp": "2026-04-25", "open": 67800, "high": 68900, "low": 67200, "close": 68400, "volume": 31100 },
+          { "timestamp": "2026-04-26", "open": 68400, "high": 69100, "low": 67900, "close": 68200, "volume": 25800 },
+          { "timestamp": "2026-04-27", "open": 68200, "high": 68800, "low": 67100, "close": 67500, "volume": 27200 },
+          { "timestamp": "2026-04-28", "open": 67500, "high": 68200, "low": 66700, "close": 67900, "volume": 29400 },
+          { "timestamp": "2026-04-29", "open": 67900, "high": 68500, "low": 67100, "close": 67600, "volume": 26800 },
+          { "timestamp": "2026-04-30", "open": 67600, "high": 68400, "low": 66900, "close": 67842, "volume": 28100 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "spot",
+      "component": "metric",
+      "span": 4,
+      "height": 130,
+      "title": "Spot",
+      "source": {
+        "inline": { "value": 67842, "delta": 0.0036, "unit": "USD", "label": "Last", "trend": [67100, 67500, 67800, 67400, 67900, 67600, 67842] }
+      }
+    },
+    {
+      "id": "mcap",
+      "component": "metric",
+      "span": 4,
+      "height": 110,
+      "title": "Market Cap",
+      "source": { "inline": { "value": 1334.2, "unit": "B USD" } }
+    },
+    {
+      "id": "vol24",
+      "component": "metric",
+      "span": 4,
+      "height": 110,
+      "title": "24h Volume",
+      "source": { "inline": { "value": 28.1, "delta": -0.124, "unit": "B USD" } }
+    },
+    {
+      "id": "sentiment",
+      "component": "gauge",
+      "span": 4,
+      "height": 200,
+      "title": "Net Sentiment (24h, X)",
+      "source": {
+        "inline": {
+          "value": 0.32,
+          "min": -1,
+          "max": 1,
+          "label": "Bullish-leaning",
+          "bands": [
+            { "from": -1,   "to": -0.3, "color": "danger", "label": "Bearish" },
+            { "from": -0.3, "to":  0.3, "color": "warn",   "label": "Neutral" },
+            { "from":  0.3, "to":  1,   "color": "ok",     "label": "Bullish" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "peers",
+      "component": "table",
+      "span": 8,
+      "height": 280,
+      "title": "Peer Comparison (click a row to switch symbol)",
+      "options": { "row_context": { "key": "symbol", "field": "Asset" } },
+      "source": {
+        "inline": [
+          { "Asset": "BTC", "Price": 67842, "24h %": 0.36,  "7d %": 1.42, "Mkt Cap (B)": 1334.2, "Dom %": 53.8 },
+          { "Asset": "ETH", "Price":  3456, "24h %": 0.81,  "7d %": 2.18, "Mkt Cap (B)":  416.4, "Dom %": 16.8 },
+          { "Asset": "SOL", "Price":   168, "24h %": 1.92,  "7d %": 4.41, "Mkt Cap (B)":   78.4, "Dom %":  3.2 },
+          { "Asset": "BNB", "Price":   612, "24h %": 0.04,  "7d %": -0.62, "Mkt Cap (B)":  91.2, "Dom %":  3.7 },
+          { "Asset": "XRP", "Price":  0.62, "24h %": -0.48, "7d %": -2.13, "Mkt Cap (B)":  34.8, "Dom %":  1.4 }
+        ]
+      }
+    },
+    {
+      "id": "news",
+      "component": "text",
+      "span": 12,
+      "height": 360,
+      "title": "Latest",
+      "source": {
+        "inline": [
+          { "title": "Spot ETF flows moderate after weeks of inflows", "source": "CoinDesk",    "date": "2h ago",  "body": "Net flows for US spot Bitcoin ETFs slowed to $120M, the lowest single day in three weeks, as price action chops below all-time highs.", "tags": ["BTC", "ETF"] },
+          { "title": "Mt. Gox trustee distributions resume",            "source": "The Block",   "date": "6h ago",  "body": "Roughly 14,000 BTC was moved to creditor wallets overnight. The market absorbed the supply with limited impact on price.",                "tags": ["BTC"] },
+          { "title": "MicroStrategy adds to position",                  "source": "Reuters",     "date": "1d ago",  "body": "MSTR purchased an additional 7,000 BTC for ~$472M, taking total holdings above 224,000 coins.",                                          "tags": ["BTC", "Treasury"] },
+          { "title": "Hash rate hits new ATH",                          "source": "Glassnode",   "date": "1d ago",  "body": "Network hash rate reached a new all-time high of 712 EH/s, with difficulty up 5.4% on the latest adjustment.",                          "tags": ["BTC", "Mining"] }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,662 @@
+// Reference TerminalService backend — single-file Node http server.
+// Implements every RPC the dashboard speaks (Get, Stream, ListSources,
+// SubmitAction, WatchAction, Generate) over Connect HTTP/JSON. Use as
+// a template to fork for real backends.
+//
+// Run:   pnpm backend     (or: node examples/backend/server.mjs)
+// View:  http://localhost:5173/?template=/examples/reference-backend.json&backend=http://localhost:3001
+// The dashboard template that exercises this backend lives at
+// public/examples/reference-backend.json.
+//
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║ DEMO-ONLY DEFAULTS — DO NOT DEPLOY AS-IS                         ║
+// ║   • CORS: Access-Control-Allow-Origin: *                         ║
+// ║   • No authentication                                             ║
+// ║   • No rate limiting                                              ║
+// ║   • Request body capped at 1 MiB (DoS guard)                     ║
+// ║   • In-memory action store bounded at 1024 (LRU eviction)        ║
+// ║ Replace each before any non-localhost deploy.                    ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+import { createServer } from 'node:http'
+
+const PORT = Number(process.env.PORT ?? 3001)
+const SERVICE = 'medallion.terminal.v1.TerminalService'
+
+// -------------------------------------------------------------
+// Source catalog — what this backend can serve.
+// -------------------------------------------------------------
+
+const SOURCES = [
+  {
+    id: 'btc_spot',
+    name: 'BTC spot price',
+    description: 'Last trade price for BTC/USD. Streams a fresh tick every second.',
+    shape: 'SHAPE_METRIC',
+    streamable: true,
+    tags: ['crypto', 'price'],
+    params: [{ key: 'symbol', description: 'Ticker (BTCUSD, ETHUSD)', type: 'PARAM_TYPE_STRING', default_value: 'BTCUSD' }],
+  },
+  {
+    id: 'btc_candles',
+    name: 'BTC OHLCV bars',
+    description: '1-minute candles. Streams an append every 5s.',
+    shape: 'SHAPE_CANDLES',
+    streamable: true,
+    tags: ['crypto', 'price'],
+    params: [
+      { key: 'symbol', description: 'Ticker', type: 'PARAM_TYPE_STRING', default_value: 'BTCUSD' },
+      { key: 'limit', description: 'Number of bars to return', type: 'PARAM_TYPE_INTEGER', default_value: '60' },
+    ],
+  },
+  {
+    id: 'btc_orderbook',
+    name: 'BTC order book',
+    description: 'Top-of-book bids and asks. Streams every 500ms.',
+    shape: 'SHAPE_ORDERBOOK',
+    streamable: true,
+    tags: ['crypto', 'microstructure'],
+    params: [{ key: 'symbol', description: 'Ticker', type: 'PARAM_TYPE_STRING', default_value: 'BTCUSD' }],
+  },
+  {
+    id: 'btc_options',
+    name: 'BTC options chain',
+    description: 'Static options chain for the next monthly expiry.',
+    shape: 'SHAPE_PAIRED_GRID',
+    streamable: false,
+    tags: ['crypto', 'options'],
+    params: [{ key: 'expiry', description: 'Expiry date', type: 'PARAM_TYPE_DATE', default_value: '2026-06-27' }],
+  },
+  {
+    id: 'fills',
+    name: 'Recent fills',
+    description: 'Latest executed trades. Streams a new event every 2s.',
+    shape: 'SHAPE_EVENTS',
+    streamable: true,
+    tags: ['crypto', 'trades'],
+    params: [],
+  },
+  {
+    id: 'news',
+    name: 'Market news',
+    description: 'Curated headlines for the active symbol.',
+    shape: 'SHAPE_TEXT',
+    streamable: false,
+    tags: ['news'],
+    params: [{ key: 'symbol', description: 'Ticker', type: 'PARAM_TYPE_STRING', default_value: 'BTCUSD' }],
+  },
+  {
+    id: 'nba_spread',
+    name: 'NBA spread ladder',
+    description: 'Live decimal odds across spread points for an NBA matchup. Streams every 1.5s.',
+    shape: 'SHAPE_PAIRED_GRID',
+    streamable: true,
+    tags: ['sports', 'nba', 'odds'],
+    params: [{ key: 'matchup', description: 'Matchup id', type: 'PARAM_TYPE_STRING', default_value: 'LAL-BOS' }],
+  },
+  {
+    id: 'bankroll',
+    name: 'Bankroll',
+    description: 'Available capital for the active book.',
+    shape: 'SHAPE_METRIC',
+    streamable: false,
+    tags: ['portfolio'],
+    params: [],
+  },
+]
+
+// -------------------------------------------------------------
+// Generators — produce a DataResponse for each source.
+// -------------------------------------------------------------
+
+let spot = 67_842
+
+function tickSpot() {
+  spot += (Math.random() - 0.5) * 80
+  return spot
+}
+
+function getBtcSpot() {
+  const value = tickSpot()
+  return { metric: { value, delta: (Math.random() - 0.5) * 0.02, unit: 'USD' } }
+}
+
+function getBtcCandles(limit = 60) {
+  const bars = []
+  let t = Math.floor(Date.now() / 60_000) * 60_000 - limit * 60_000
+  let prev = spot - 200
+  for (let i = 0; i < limit; i++) {
+    const o = prev
+    const c = o + (Math.random() - 0.5) * 120
+    const h = Math.max(o, c) + Math.random() * 60
+    const l = Math.min(o, c) - Math.random() * 60
+    bars.push({
+      timestamp: new Date(t).toISOString(),
+      open: round(o), high: round(h), low: round(l), close: round(c),
+      volume: round(Math.random() * 8 + 1, 2),
+    })
+    prev = c
+    t += 60_000
+  }
+  return { candles: { bars } }
+}
+
+function getBtcOrderbook() {
+  const mid = spot
+  const bids = []
+  const asks = []
+  for (let i = 1; i <= 8; i++) {
+    bids.push({ price: round(mid - i * 0.5), size: round(Math.random() * 3 + 0.1, 3) })
+    asks.push({ price: round(mid + i * 0.5), size: round(Math.random() * 3 + 0.1, 3) })
+  }
+  return { orderbook: { bids, asks, mid: round(mid), spread: 1, venue: 'reference' } }
+}
+
+function getBtcOptions() {
+  const measures = [
+    { key: 'iv', label: 'IV', format: 'percent' },
+    { key: 'delta', label: 'Δ' },
+    { key: 'bid', label: 'Bid', format: 'compact' },
+    { key: 'ask', label: 'Ask', format: 'compact' },
+  ]
+  const rows = []
+  for (const strike of [50_000, 55_000, 60_000, 65_000, 67_500, 70_000, 72_500, 75_000, 80_000, 85_000]) {
+    const moneyness = (spot - strike) / spot
+    const callIntrinsic = Math.max(0, spot - strike)
+    const putIntrinsic = Math.max(0, strike - spot)
+    const tv = 1500 * Math.exp(-Math.abs(moneyness) * 4)
+    rows.push({
+      key: strike,
+      left: { values: { iv: 0.55 + Math.random() * 0.2, delta: clamp(0.5 + moneyness * 2.4, 0.05, 0.97), bid: round(callIntrinsic + tv * 0.95), ask: round(callIntrinsic + tv * 1.05) } },
+      right: { values: { iv: 0.55 + Math.random() * 0.2, delta: clamp(-0.5 + moneyness * 2.4, -0.97, -0.05), bid: round(putIntrinsic + tv * 0.95), ask: round(putIntrinsic + tv * 1.05) } },
+    })
+  }
+  return {
+    paired_grid: {
+      subject: 'BTC', dimension: '2026-06-27', subject_value: round(spot), venue: 'reference',
+      left_label: 'Calls', right_label: 'Puts', key_label: 'Strike',
+      measures, rows,
+    },
+  }
+}
+
+function nextFill() {
+  const side = Math.random() < 0.5 ? 'BUY ' : 'SELL'
+  const px = round(spot + (Math.random() - 0.5) * 4)
+  const sz = round(Math.random() * 0.5 + 0.005, 3)
+  return {
+    timestamp: new Date().toISOString().slice(11, 19),
+    label: `${side} ${sz.toFixed(3)} @ ${px.toLocaleString()}`,
+    status: 'EVENT_STATUS_OK',
+    source: 'reference',
+    tags: [side.trim().toLowerCase()],
+  }
+}
+
+// Per-connection ring buffer factory: each Stream subscriber gets its
+// own fills history so concurrent clients don't shift each other's
+// state. Get-shaped reads use a transient buffer (one snapshot, no
+// shared mutation).
+function newFillsBuffer() {
+  return Array.from({ length: 8 }, nextFill)
+}
+
+function getFillsSnapshot() {
+  return { events: { events: newFillsBuffer().reverse() } }
+}
+
+// Sports book sources — drive the Kelly domain-pack demo.
+
+let homeFav = -3.5  // current spread point favored by the home team
+function tickSpread() {
+  homeFav += (Math.random() - 0.5) * 0.4
+  return homeFav
+}
+
+function getNbaSpread() {
+  const center = tickSpread()
+  const measures = [{ key: 'odds', label: 'Odds', format: 'number' }]
+  const rows = []
+  for (const offset of [-7.5, -5.5, -3.5, -1.5, 0, 1.5, 3.5, 5.5, 7.5]) {
+    const line = round(center + offset, 1)
+    // Exponential decay around the true line; convert to decimal odds with a 5% vig.
+    const homeProb = 1 / (1 + Math.exp(-line / 4))
+    const vig = 1.05
+    const homeOdds = round(vig / homeProb, 2)
+    const awayOdds = round(vig / (1 - homeProb), 2)
+    rows.push({ key: line, left: { values: { odds: homeOdds } }, right: { values: { odds: awayOdds } } })
+  }
+  return {
+    paired_grid: {
+      subject: 'Lakers vs Celtics',
+      dimension: 'Spread (pts)',
+      subject_value: round(center, 1),
+      venue: 'reference',
+      left_label: 'Lakers',
+      right_label: 'Celtics',
+      key_label: 'Line',
+      measures,
+      rows,
+    },
+  }
+}
+
+let bankroll = 10_000
+function getBankroll() {
+  return { metric: { value: bankroll, unit: 'USD', label: 'available' } }
+}
+
+function getNews(symbol = 'BTCUSD') {
+  return {
+    text: {
+      items: [
+        { title: `${symbol} pulls back from intraday high`, body: 'Order flow data shows aggressive selling at the round number.', source: 'WireSim', date: 'just now', sentiment: -0.2 },
+        { title: 'ETF inflows continue', body: 'Net inflows of $48M reported across the major spot ETFs.', source: 'WireSim', date: '5m ago', sentiment: 0.4 },
+        { title: 'Volatility compresses ahead of Fed minutes', body: 'Implied vol grinds lower despite a steady realized print.', source: 'WireSim', date: '32m ago', sentiment: 0.1 },
+      ],
+    },
+  }
+}
+
+const HANDLERS = {
+  btc_spot:      () => getBtcSpot(),
+  btc_candles:   p => getBtcCandles(parseInt(p.limit ?? '60', 10)),
+  btc_orderbook: () => getBtcOrderbook(),
+  btc_options:   () => getBtcOptions(),
+  fills:         () => getFillsSnapshot(),
+  news:          p => getNews(p.symbol ?? 'BTCUSD'),
+  nba_spread:    () => getNbaSpread(),
+  bankroll:      () => getBankroll(),
+}
+
+const STREAM_TICK_MS = {
+  btc_orderbook: 500,
+  btc_spot:      1000,
+  fills:         2000,
+  btc_candles:   5000,
+  nba_spread:    1500,
+}
+const DEFAULT_TICK_MS = 1500
+
+// -------------------------------------------------------------
+// Connect framing — [flags(1)][length(4 BE)][payload N].
+// -------------------------------------------------------------
+
+/** @param {object} obj */
+function frame(obj) {
+  const payload = Buffer.from(JSON.stringify(obj))
+  const buf = Buffer.alloc(5 + payload.length)
+  buf.writeUInt8(0, 0)
+  buf.writeUInt32BE(payload.length, 1)
+  payload.copy(buf, 5)
+  return buf
+}
+
+function endFrame(body = {}) {
+  const trailer = Buffer.from(JSON.stringify(body))
+  const buf = Buffer.alloc(5 + trailer.length)
+  buf.writeUInt8(0x02, 0) // end-of-stream flag
+  buf.writeUInt32BE(trailer.length, 1)
+  trailer.copy(buf, 5)
+  return buf
+}
+
+function errorTrailer(code, message) {
+  return endFrame({ error: { code, message } })
+}
+
+// -------------------------------------------------------------
+// Action state — tracks in-flight orders for WatchAction.
+// -------------------------------------------------------------
+
+// Cap the in-memory action log so a long-running reference backend
+// doesn't leak. Real backends would persist + TTL via a real store.
+const ACTIONS_CAP = 1024
+const actions = new Map() // key: client_request_id -> { id, action_id, status, history }
+
+function recordAction(req) {
+  const existing = req.client_request_id && actions.get(req.client_request_id)
+  if (existing) return existing // idempotent: same client_request_id returns the original
+  const id = `ord-${Math.random().toString(36).slice(2, 10)}`
+  const entry = {
+    id,
+    action_id: req.action_id,
+    client_request_id: req.client_request_id ?? '',
+    params: req.params ?? {},
+    history: [{ status: 'ACTION_STATUS_ACCEPTED', timestamp: new Date().toISOString(), sequence: 0 }],
+  }
+  if (req.client_request_id) {
+    if (actions.size >= ACTIONS_CAP) {
+      // Map iterator preserves insertion order; drop the oldest.
+      actions.delete(actions.keys().next().value)
+    }
+    actions.set(req.client_request_id, entry)
+  }
+  return entry
+}
+
+function appendAction(entry, update) {
+  const seq = entry.history.length
+  entry.history.push({ ...update, timestamp: new Date().toISOString(), sequence: seq })
+}
+
+// Simulate an order moving ACCEPTED → PENDING (partial) → OK (filled).
+function scheduleOrderProgress(entry) {
+  const params = entry.params || {}
+  const totalAmount = Number(params.amount ?? 1)
+  setTimeout(() => {
+    appendAction(entry, { status: 'ACTION_STATUS_PENDING', status_detail: 'partial', message: `Filled ${(totalAmount * 0.4).toFixed(4)} / ${totalAmount}` })
+  }, 800)
+  setTimeout(() => {
+    appendAction(entry, { status: 'ACTION_STATUS_PENDING', status_detail: 'partial', message: `Filled ${(totalAmount * 0.75).toFixed(4)} / ${totalAmount}` })
+  }, 1700)
+  setTimeout(() => {
+    appendAction(entry, { status: 'ACTION_STATUS_OK', status_detail: 'filled', message: `Filled ${totalAmount} @ ${Math.round(spot)}`, data: { fill_price: round(spot), fill_qty: totalAmount } })
+  }, 2600)
+}
+
+// -------------------------------------------------------------
+// HTTP server.
+// -------------------------------------------------------------
+
+// Exported for the integration test (vitest) and any embedder. The
+// CLI entrypoint at the bottom auto-starts on PORT when run directly.
+export function createTerminalServer() {
+  return createServer(handleRequest)
+}
+
+async function handleRequest(req, res) {
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, corsHeaders())
+    res.end()
+    return
+  }
+  res.setHeader('Access-Control-Allow-Origin', '*')
+
+  const path = req.url || ''
+  if (!path.startsWith(`/${SERVICE}/`)) {
+    res.writeHead(404).end()
+    return
+  }
+  const rpc = path.slice(SERVICE.length + 2)
+
+  // 1 MiB body cap — guards against unbounded buffering DoS.
+  // Real backends route through a reverse proxy with stricter limits.
+  const MAX_BODY = 1 << 20
+  let body = ''
+  let bodyBytes = 0
+  let oversize = false
+  for await (const chunk of req) {
+    bodyBytes += chunk.length
+    if (bodyBytes > MAX_BODY) { oversize = true; break }
+    body += chunk
+  }
+  if (oversize) {
+    res.writeHead(413, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ code: 'resource_exhausted', message: `body exceeds ${MAX_BODY} bytes` }))
+    return
+  }
+  let parsed = {}
+  try { parsed = body ? JSON.parse(body) : {} } catch {
+    res.writeHead(400, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ code: 'invalid_argument', message: 'malformed JSON' }))
+    return
+  }
+
+  switch (rpc) {
+    case 'ListSources': return json(res, { sources: SOURCES })
+    case 'Get':         return handleGet(res, parsed)
+    case 'Stream':      return handleStream(res, parsed)
+    case 'Generate':    return handleGenerate(res, parsed)
+    case 'SubmitAction': return handleSubmit(res, parsed)
+    case 'WatchAction':  return handleWatch(res, parsed)
+    default:
+      res.writeHead(404, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ code: 'not_found', message: `unknown RPC: ${rpc}` }))
+  }
+}
+
+function handleGet(res, req) {
+  const handler = HANDLERS[req.source_id]
+  if (!handler) return notFound(res, `unknown source: ${req.source_id}`)
+  json(res, handler(req.params ?? {}))
+}
+
+function handleStream(res, req) {
+  // Synthetic source for testing the trailer-error path: emits N data
+  // frames then closes with an error trailer instead of a clean one.
+  // params: { count: int, code: string, message: string }
+  // Count is capped to keep a malicious caller from forcing a huge
+  // synchronous write loop.
+  if (req.source_id === '__error_after') {
+    const requested = parseInt(req.params?.count ?? '2', 10)
+    const count = Math.max(0, Math.min(Number.isFinite(requested) ? requested : 0, 1000))
+    const code = req.params?.code ?? 'internal'
+    const message = req.params?.message ?? 'simulated stream error'
+    res.writeHead(200, { 'Content-Type': 'application/connect+json', 'Access-Control-Allow-Origin': '*' })
+    for (let i = 0; i < count; i++) {
+      res.write(frame({ metric: { value: i, unit: 'count' } }))
+    }
+    res.write(errorTrailer(code, message))
+    res.end()
+    return
+  }
+
+  const handler = HANDLERS[req.source_id]
+  if (!handler) return notFound(res, `unknown source: ${req.source_id}`)
+
+  res.writeHead(200, {
+    'Content-Type': 'application/connect+json',
+    'Access-Control-Allow-Origin': '*',
+  })
+
+  // Per-connection state for sources that need to evolve a series.
+  // fills owns its own ring buffer so concurrent clients don't shift
+  // each other's history.
+  const fillsBuf = req.source_id === 'fills' ? newFillsBuffer() : null
+  const tickMs = STREAM_TICK_MS[req.source_id] ?? DEFAULT_TICK_MS
+
+  const emit = () => {
+    if (fillsBuf) {
+      fillsBuf.shift()
+      fillsBuf.push(nextFill())
+      res.write(frame({ events: { events: fillsBuf.slice().reverse() } }))
+    } else {
+      res.write(frame(handler(req.params ?? {})))
+    }
+  }
+
+  emit() // first frame: snapshot
+  const interval = setInterval(emit, tickMs)
+  res.on('close', () => clearInterval(interval))
+}
+
+// -------------------------------------------------------------
+// Generate — pattern-match a prompt into widget actions + context.
+// Real backends call an LLM here; the reference impl just shows the
+// shape of a useful response, so the Prompt → Generate → applyActions
+// loop is demonstrable end-to-end.
+// -------------------------------------------------------------
+
+const KNOWN_SYMBOLS = ['BTC', 'ETH', 'SOL', 'DOGE', 'BTCUSD', 'ETHUSD', 'SOLUSD', 'DOGEUSD']
+
+function detectSymbol(promptUpper) {
+  for (const s of KNOWN_SYMBOLS) {
+    const re = new RegExp(`\\b${s}\\b`)
+    if (re.test(promptUpper)) return s.endsWith('USD') ? s : `${s}USD`
+  }
+  return null
+}
+
+function widgetForIntent(intent, symbol) {
+  switch (intent) {
+    case 'candles':
+      return { target_id: 'gen-px', component: 'candlestick', span: 8, height: 380, title: `${symbol} — 1m bars`,
+        source: { source_id: 'btc_candles', params: { symbol, limit: '60' }, stream: true } }
+    case 'orderbook':
+      return { target_id: 'gen-book', component: 'orderbook', span: 4, height: 380, title: 'Order book',
+        source: { source_id: 'btc_orderbook', params: { symbol }, stream: true } }
+    case 'options':
+      return { target_id: 'gen-chain', component: 'paired_grid', span: 12, height: 380, title: 'Options chain',
+        source: { source_id: 'btc_options' } }
+    case 'spot':
+      return { target_id: 'gen-spot', component: 'metric', span: 3, height: 110, title: `${symbol} spot`,
+        source: { source_id: 'btc_spot', params: { symbol }, stream: true } }
+    case 'fills':
+      return { target_id: 'gen-fills', component: 'events', span: 9, height: 110, title: 'Live fills',
+        source: { source_id: 'fills', stream: true } }
+    case 'news':
+      return { target_id: 'gen-news', component: 'text', span: 12, height: 240, title: 'News',
+        source: { source_id: 'news', params: { symbol } } }
+    default: return null
+  }
+}
+
+function fullDashboard(symbol) {
+  return ['spot', 'fills', 'candles', 'orderbook', 'options', 'news']
+    .map(intent => widgetForIntent(intent, symbol))
+}
+
+function handleGenerate(res, req) {
+  const prompt = String(req.prompt ?? '')
+  const promptLower = prompt.toLowerCase()
+  const promptUpper = prompt.toUpperCase()
+  const incomingCtx = req.context?.values ?? {}
+
+  const detected = detectSymbol(promptUpper)
+  const symbol = detected ?? incomingCtx.symbol ?? 'BTCUSD'
+
+  const wantsRebuild = /\b(rebuild|fresh|reset|new dashboard|start over|show me everything)\b/.test(promptLower)
+  const intentMatchers = {
+    candles:   /\b(chart|candle|candles|ohlc|price)\b/,
+    orderbook: /\b(order ?book|depth|book)\b/,
+    options:   /\b(option|options|chain)\b/,
+    spot:      /\b(spot|last|quote)\b/,
+    fills:     /\b(fill|fills|trades|tape)\b/,
+    news:      /\b(news|headline|headlines)\b/,
+  }
+
+  let actions
+  let replaceAll = false
+  if (wantsRebuild) {
+    actions = fullDashboard(symbol)
+    replaceAll = true
+  } else {
+    actions = []
+    for (const [intent, re] of Object.entries(intentMatchers)) {
+      if (re.test(promptLower)) {
+        const widget = widgetForIntent(intent, symbol)
+        if (widget) actions.push(widget)
+      }
+    }
+    // Symbol-only prompt with no widget intent: just switch context.
+    // Existing source_id widgets re-fetch via `${ctx.symbol}` substitution.
+  }
+
+  const ctxUpdate = detected ? { values: { symbol: detected } } : undefined
+  const text = actions.length > 0
+    ? `Wired ${actions.length} widget${actions.length === 1 ? '' : 's'} for ${symbol}${replaceAll ? ' (full rebuild).' : '.'}`
+    : detected
+      ? `Switched to ${symbol}.`
+      : 'Try: "show me BTC candles", "options chain", "rebuild for ETH", or just a ticker like "SOL".'
+
+  json(res, { text, actions, context: ctxUpdate, replace_all: replaceAll })
+}
+
+function handleSubmit(res, req) {
+  if (!req.action_id) return badRequest(res, 'action_id is required')
+  const entry = recordAction(req)
+  // Async lifecycle for orders; messages just OK synchronously.
+  if (entry.action_id === 'place_order' && entry.history.length === 1) {
+    scheduleOrderProgress(entry)
+  }
+  json(res, {
+    id: entry.id,
+    status: entry.history[0].status,
+    message: 'Order accepted',
+  })
+}
+
+function handleWatch(res, req) {
+  const entry = (req.client_request_id && actions.get(req.client_request_id))
+    || [...actions.values()].find(e => e.id === req.id || e.action_id === req.action_id)
+  if (!entry) return notFound(res, 'no matching action to watch')
+
+  res.writeHead(200, {
+    'Content-Type': 'application/connect+json',
+    'Access-Control-Allow-Origin': '*',
+  })
+
+  let cursor = 0
+  const flush = () => {
+    while (cursor < entry.history.length) {
+      const u = entry.history[cursor]
+      res.write(frame({
+        id: entry.id,
+        action_id: entry.action_id,
+        client_request_id: entry.client_request_id,
+        status: u.status,
+        status_detail: u.status_detail,
+        message: u.message,
+        data: u.data,
+        timestamp: u.timestamp,
+        sequence: u.sequence,
+      }))
+      cursor += 1
+      if (isTerminal(u.status)) {
+        res.write(endFrame())
+        res.end()
+        return true
+      }
+    }
+    return false
+  }
+
+  if (flush()) return
+  const interval = setInterval(() => { if (flush()) clearInterval(interval) }, 200)
+  res.on('close', () => clearInterval(interval))
+}
+
+const TERMINAL = new Set(['ACTION_STATUS_OK', 'ACTION_STATUS_REJECTED', 'ACTION_STATUS_FAILED', 'ACTION_STATUS_CANCELLED'])
+function isTerminal(s) { return TERMINAL.has(s) }
+
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Idempotency-Key',
+    'Access-Control-Max-Age': '86400',
+  }
+}
+
+function json(res, obj) {
+  res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' })
+  res.end(JSON.stringify(obj))
+}
+
+function notFound(res, msg) {
+  res.writeHead(404, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' })
+  res.end(JSON.stringify({ code: 'not_found', message: msg }))
+}
+
+function badRequest(res, msg) {
+  res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' })
+  res.end(JSON.stringify({ code: 'invalid_argument', message: msg }))
+}
+
+function round(n, p = 0) {
+  const f = Math.pow(10, p)
+  return Math.round(n * f) / f
+}
+function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)) }
+
+// CLI entrypoint: only auto-listen when this file is run directly.
+// Tests import createTerminalServer() and bind to an ephemeral port.
+import { fileURLToPath } from 'node:url'
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const server = createTerminalServer()
+  server.listen(PORT, () => {
+    console.log(`[medallion-ref-backend] listening on http://localhost:${PORT}`)
+    console.log(`[medallion-ref-backend] sources: ${SOURCES.map(s => s.id).join(', ')}`)
+  })
+}

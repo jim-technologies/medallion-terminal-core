@@ -1,0 +1,149 @@
+{
+  "title": "Logistics control room",
+  "context": { "values": { "region": "NA-W" } },
+  "widgets": [
+    {
+      "id": "kpis",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 90,
+      "source": {
+        "inline": [
+          { "label": "In transit",    "value": 12480, "delta":  0.034, "unit": "pkg" },
+          { "label": "Delivered 24h", "value":  8642, "delta":  0.058 },
+          { "label": "Exceptions",    "value":   142, "delta": -0.082 },
+          { "label": "On-time %",     "value": 94.6,  "delta":  0.012, "unit": "%" },
+          { "label": "Hubs online",   "value": 38,    "label": "of 40" }
+        ]
+      }
+    },
+
+    {
+      "id": "lanes",
+      "component": "heatmap",
+      "span": 8,
+      "height": 360,
+      "title": "Lane volume (origin × destination, today)",
+      "options": { "row_context": { "key": "origin" }, "col_context": { "key": "destination" } },
+      "source": {
+        "inline": {
+          "rows":    ["LAX", "SFO", "SEA", "DEN", "ORD", "DFW"],
+          "columns": ["JFK", "BOS", "ATL", "MIA", "ORD", "DFW", "DEN"],
+          "scale": "sequential",
+          "cells": [
+            { "row": 0, "col": 0, "value": 1240 }, { "row": 0, "col": 1, "value":  640 }, { "row": 0, "col": 2, "value":  820 }, { "row": 0, "col": 3, "value":  410 }, { "row": 0, "col": 4, "value": 1420 }, { "row": 0, "col": 5, "value":  980 }, { "row": 0, "col": 6, "value":  620 },
+            { "row": 1, "col": 0, "value":  980 }, { "row": 1, "col": 1, "value":  520 }, { "row": 1, "col": 2, "value":  440 }, { "row": 1, "col": 3, "value":  260 }, { "row": 1, "col": 4, "value":  840 }, { "row": 1, "col": 5, "value":  720 }, { "row": 1, "col": 6, "value":  380 },
+            { "row": 2, "col": 0, "value":  680 }, { "row": 2, "col": 1, "value":  340 }, { "row": 2, "col": 2, "value":  220 }, { "row": 2, "col": 3, "value":  140 }, { "row": 2, "col": 4, "value":  580 }, { "row": 2, "col": 5, "value":  410 }, { "row": 2, "col": 6, "value":  860 },
+            { "row": 3, "col": 0, "value":  420 }, { "row": 3, "col": 1, "value":  220 }, { "row": 3, "col": 2, "value":  640 }, { "row": 3, "col": 3, "value":  380 }, { "row": 3, "col": 4, "value":  920 }, { "row": 3, "col": 5, "value":  780 }, { "row": 3, "col": 6, "value":  140 },
+            { "row": 4, "col": 0, "value": 1840 }, { "row": 4, "col": 1, "value":  920 }, { "row": 4, "col": 2, "value": 1140 }, { "row": 4, "col": 3, "value":  720 }, { "row": 4, "col": 4, "value":  120 }, { "row": 4, "col": 5, "value": 1240 }, { "row": 4, "col": 6, "value":  840 },
+            { "row": 5, "col": 0, "value":  840 }, { "row": 5, "col": 1, "value":  420 }, { "row": 5, "col": 2, "value":  980 }, { "row": 5, "col": 3, "value":  640 }, { "row": 5, "col": 4, "value": 1140 }, { "row": 5, "col": 5, "value":  240 }, { "row": 5, "col": 6, "value":  720 }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "categories",
+      "component": "treemap",
+      "span": 4,
+      "height": 360,
+      "title": "Volume by category (today)",
+      "source": {
+        "inline": [
+          { "label": "Electronics", "value": 4820, "children": [
+            { "label": "Phones",   "value": 2140 },
+            { "label": "Laptops",  "value": 1280 },
+            { "label": "Audio",    "value":  840 },
+            { "label": "Other",    "value":  560 }
+          ]},
+          { "label": "Apparel",     "value": 3120, "children": [
+            { "label": "Shoes",    "value": 1240 },
+            { "label": "Outer",    "value":  840 },
+            { "label": "Athletic", "value":  680 },
+            { "label": "Other",    "value":  360 }
+          ]},
+          { "label": "Home",        "value": 2480 },
+          { "label": "Grocery",    "value": 1840 },
+          { "label": "Pharma",      "value": 980 },
+          { "label": "Other",       "value": 580 }
+        ]
+      }
+    },
+
+    {
+      "id": "throughput",
+      "component": "area_chart",
+      "span": 8,
+      "height": 280,
+      "title": "Hub throughput (last 12h, packages/min)",
+      "source": {
+        "inline": {
+          "series": [
+            { "name": "ORD", "data": [
+              { "timestamp": "06:00", "value": 240 }, { "timestamp": "07:00", "value": 380 }, { "timestamp": "08:00", "value": 520 },
+              { "timestamp": "09:00", "value": 680 }, { "timestamp": "10:00", "value": 740 }, { "timestamp": "11:00", "value": 820 },
+              { "timestamp": "12:00", "value": 880 }, { "timestamp": "13:00", "value": 920 }, { "timestamp": "14:00", "value": 940 },
+              { "timestamp": "15:00", "value": 920 }, { "timestamp": "16:00", "value": 880 }, { "timestamp": "17:00", "value": 840 }
+            ]},
+            { "name": "DFW", "data": [
+              { "timestamp": "06:00", "value": 180 }, { "timestamp": "07:00", "value": 280 }, { "timestamp": "08:00", "value": 420 },
+              { "timestamp": "09:00", "value": 520 }, { "timestamp": "10:00", "value": 580 }, { "timestamp": "11:00", "value": 620 },
+              { "timestamp": "12:00", "value": 680 }, { "timestamp": "13:00", "value": 720 }, { "timestamp": "14:00", "value": 760 },
+              { "timestamp": "15:00", "value": 780 }, { "timestamp": "16:00", "value": 740 }, { "timestamp": "17:00", "value": 700 }
+            ]},
+            { "name": "LAX", "data": [
+              { "timestamp": "06:00", "value": 320 }, { "timestamp": "07:00", "value": 440 }, { "timestamp": "08:00", "value": 540 },
+              { "timestamp": "09:00", "value": 620 }, { "timestamp": "10:00", "value": 700 }, { "timestamp": "11:00", "value": 760 },
+              { "timestamp": "12:00", "value": 800 }, { "timestamp": "13:00", "value": 820 }, { "timestamp": "14:00", "value": 800 },
+              { "timestamp": "15:00", "value": 780 }, { "timestamp": "16:00", "value": 740 }, { "timestamp": "17:00", "value": 700 }
+            ]}
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "exceptions",
+      "component": "events",
+      "span": 4,
+      "height": 280,
+      "title": "Exceptions (live)",
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "16:42:11", "label": "ORD belt 3 jam — 18min", "status": "EVENT_STATUS_ERROR", "source": "ORD-BLT-3" },
+            { "timestamp": "16:18:42", "label": "Truck T-104 delayed 45min", "status": "EVENT_STATUS_WARN", "source": "fleet" },
+            { "timestamp": "15:42:08", "label": "Customs hold — 14 pkg JFK→LHR", "status": "EVENT_STATUS_WARN", "source": "JFK" },
+            { "timestamp": "14:11:33", "label": "Weather delay PHX inbound", "status": "EVENT_STATUS_INFO", "source": "weather" },
+            { "timestamp": "13:48:17", "label": "Sorter offline ATL — recovered", "status": "EVENT_STATUS_OK", "source": "ATL" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "shipments",
+      "component": "table",
+      "span": 12,
+      "height": 320,
+      "title": "Active shipments",
+      "options": {
+        "row_context": { "key": "tracking", "field": "Tracking" },
+        "heat_columns": ["Delay (min)"],
+        "export": true
+      },
+      "source": {
+        "inline": [
+          { "Tracking": "1Z9X4F", "Origin": "LAX", "Destination": "JFK", "Status": "In transit",   "Carrier": "UPS",    "ETA": "Tue 09:40", "Delay (min)":  0  },
+          { "Tracking": "1Z8K2R", "Origin": "SEA", "Destination": "ATL", "Status": "Out for del",  "Carrier": "FedEx",  "ETA": "Today 17:30", "Delay (min)": 22 },
+          { "Tracking": "1Z7M1P", "Origin": "ORD", "Destination": "MIA", "Status": "At hub",       "Carrier": "DHL",    "ETA": "Wed 11:00", "Delay (min)":  0  },
+          { "Tracking": "1Z3Q9N", "Origin": "DFW", "Destination": "BOS", "Status": "Exception",    "Carrier": "USPS",   "ETA": "Wed 08:00", "Delay (min)": 142},
+          { "Tracking": "1Z6L8H", "Origin": "DEN", "Destination": "DEN", "Status": "Delivered",    "Carrier": "UPS",    "ETA": "13:42",     "Delay (min)":  0  },
+          { "Tracking": "1Z2J5T", "Origin": "SFO", "Destination": "ORD", "Status": "In transit",   "Carrier": "UPS",    "ETA": "Tue 14:15", "Delay (min)":  8  },
+          { "Tracking": "1Z4P0V", "Origin": "LAX", "Destination": "DFW", "Status": "At hub",       "Carrier": "FedEx",  "ETA": "Wed 09:30", "Delay (min)":  0  },
+          { "Tracking": "1Z5R7C", "Origin": "ORD", "Destination": "DEN", "Status": "Exception",    "Carrier": "DHL",    "ETA": "Thu 11:00", "Delay (min)": 240 }
+        ]
+      }
+    }
+  ]
+}

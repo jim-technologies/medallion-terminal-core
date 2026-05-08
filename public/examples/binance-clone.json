@@ -1,0 +1,150 @@
+{
+  "title": "${ctx.symbol} — Spot",
+  "context": { "values": { "symbol": "BTCUSDT", "range": "1h" } },
+  "widgets": [
+    {
+      "id": "header",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 90,
+      "source": {
+        "inline": [
+          { "label": "Last Price", "value": 67842.50, "delta": 0.0036, "unit": "USDT", "trend": [67100, 67500, 67800, 67400, 67900, 67600, 67842] },
+          { "label": "24h High",   "value": 68924.10, "unit": "USDT" },
+          { "label": "24h Low",    "value": 66708.40, "unit": "USDT" },
+          { "label": "24h Volume", "value": 28145,    "unit": "BTC" }
+        ]
+      }
+    },
+
+    {
+      "id": "px",
+      "component": "candlestick",
+      "span": 8,
+      "height": 460,
+      "title": "${ctx.symbol} — ${ctx.range}",
+      "source": {
+        "inline": {
+          "annotations": [
+            { "timestamp": "2026-04-30 09:00", "label": "Buy 0.5",  "kind": "buy" },
+            { "timestamp": "2026-04-30 13:00", "label": "Sell 0.3", "kind": "sell" }
+          ],
+          "bars": [
+            { "timestamp": "2026-04-30 06:00", "open": 67100, "high": 67450, "low": 66900, "close": 67380, "volume": 1820 },
+            { "timestamp": "2026-04-30 07:00", "open": 67380, "high": 67620, "low": 67310, "close": 67580, "volume": 2040 },
+            { "timestamp": "2026-04-30 08:00", "open": 67580, "high": 67700, "low": 67310, "close": 67410, "volume": 1640 },
+            { "timestamp": "2026-04-30 09:00", "open": 67410, "high": 67510, "low": 67120, "close": 67280, "volume": 2180 },
+            { "timestamp": "2026-04-30 10:00", "open": 67280, "high": 67400, "low": 67100, "close": 67340, "volume": 1480 },
+            { "timestamp": "2026-04-30 11:00", "open": 67340, "high": 67620, "low": 67280, "close": 67580, "volume": 1840 },
+            { "timestamp": "2026-04-30 12:00", "open": 67580, "high": 67780, "low": 67520, "close": 67700, "volume": 2200 },
+            { "timestamp": "2026-04-30 13:00", "open": 67700, "high": 67920, "low": 67610, "close": 67860, "volume": 2580 },
+            { "timestamp": "2026-04-30 14:00", "open": 67860, "high": 67980, "low": 67620, "close": 67680, "volume": 2140 },
+            { "timestamp": "2026-04-30 15:00", "open": 67680, "high": 67890, "low": 67410, "close": 67842, "volume": 2860 }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "book",
+      "component": "orderbook",
+      "span": 4,
+      "height": 460,
+      "title": "Order Book — ${ctx.symbol}",
+      "source": {
+        "inline": {
+          "venue": "binance",
+          "asks": [
+            { "price": 67862.40, "size": 1.42 },
+            { "price": 67860.10, "size": 0.84 },
+            { "price": 67857.80, "size": 2.46 },
+            { "price": 67852.50, "size": 0.92 },
+            { "price": 67848.30, "size": 0.41 },
+            { "price": 67846.10, "size": 0.32 }
+          ],
+          "bids": [
+            { "price": 67840.00, "size": 0.46 },
+            { "price": 67838.20, "size": 0.83 },
+            { "price": 67836.50, "size": 1.18 },
+            { "price": 67834.10, "size": 1.91 },
+            { "price": 67830.40, "size": 2.74 },
+            { "price": 67826.80, "size": 3.42 }
+          ],
+          "mid": 67843.20, "spread": 6.10
+        }
+      }
+    },
+
+    {
+      "id": "ticket",
+      "component": "trade",
+      "span": 4,
+      "height": 320,
+      "title": "Order Ticket",
+      "options": {
+        "url": "/api/orders",
+        "quote_unit": "BTC",
+        "available": 0.842,
+        "confirm": true
+      }
+    },
+    {
+      "id": "trades",
+      "component": "events",
+      "span": 4,
+      "height": 320,
+      "title": "Market Trades",
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "15:00:14", "label": "BUY  0.0420 @ 67,842.50", "status": "EVENT_STATUS_OK" },
+            { "timestamp": "15:00:13", "label": "SELL 0.1200 @ 67,841.10", "status": "EVENT_STATUS_OK" },
+            { "timestamp": "15:00:11", "label": "BUY  0.0040 @ 67,842.50", "status": "EVENT_STATUS_OK" },
+            { "timestamp": "15:00:08", "label": "BUY  0.6800 @ 67,843.20", "status": "EVENT_STATUS_OK" },
+            { "timestamp": "15:00:05", "label": "SELL 1.0200 @ 67,840.00", "status": "EVENT_STATUS_OK" },
+            { "timestamp": "15:00:01", "label": "BUY  0.2400 @ 67,842.40", "status": "EVENT_STATUS_OK" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "open-orders",
+      "component": "table",
+      "span": 4,
+      "height": 320,
+      "title": "Open Orders",
+      "source": {
+        "inline": [
+          { "Time": "14:42:11", "Pair": "BTC/USDT", "Type": "Limit", "Side": "Buy",  "Price": 66800,  "Amount": 0.50, "Filled %": 0   },
+          { "Time": "14:11:08", "Pair": "BTC/USDT", "Type": "Limit", "Side": "Sell", "Price": 70200,  "Amount": 0.30, "Filled %": 0   },
+          { "Time": "13:48:41", "Pair": "ETH/USDT", "Type": "Stop",  "Side": "Sell", "Price":  3320,  "Amount": 4.00, "Filled %": 0   },
+          { "Time": "13:01:14", "Pair": "SOL/USDT", "Type": "Limit", "Side": "Buy",  "Price":   158,  "Amount":  20,  "Filled %": 35  }
+        ]
+      }
+    },
+
+    {
+      "id": "watchlist",
+      "component": "table",
+      "span": 12,
+      "height": 320,
+      "title": "Watchlist (click a row to switch pair)",
+      "options": {
+        "row_context": { "key": "symbol", "field": "Pair" },
+        "heat_columns": ["24h %"],
+        "export": true
+      },
+      "source": {
+        "inline": [
+          { "Pair": "BTCUSDT", "Last": 67842.50, "24h %":  0.36, "24h Vol": 28145, "Mkt Cap (B)": 1334.2 },
+          { "Pair": "ETHUSDT", "Last":  3456.20, "24h %":  0.81, "24h Vol": 121400, "Mkt Cap (B)":  416.4 },
+          { "Pair": "SOLUSDT", "Last":   168.20, "24h %":  1.92, "24h Vol":  18420, "Mkt Cap (B)":   78.4 },
+          { "Pair": "BNBUSDT", "Last":   612.80, "24h %":  0.04, "24h Vol":  21300, "Mkt Cap (B)":   91.2 },
+          { "Pair": "XRPUSDT", "Last":     0.62, "24h %": -0.48, "24h Vol":  68200, "Mkt Cap (B)":   34.8 },
+          { "Pair": "DOGEUSDT", "Last":    0.158, "24h %":  3.21, "24h Vol":  42800, "Mkt Cap (B)":   22.6 }
+        ]
+      }
+    }
+  ]
+}
