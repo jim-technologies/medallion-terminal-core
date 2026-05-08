@@ -19,3 +19,12 @@ body {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+/* Stock-ticker marquee. The content row renders two copies of the
+   items back-to-back; this animation translates the row by exactly
+   -50% so the loop is seamless (the second copy slides into the
+   position where the first started). */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
