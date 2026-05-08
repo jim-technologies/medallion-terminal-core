@@ -5,6 +5,7 @@ storybook-static
 *.tsbuildinfo
 *.local
 .DS_Store
+.claude/
 
 # Defensive: examples/ contains source widgets, but a stray tsc run
 # can leak .d.ts outputs. The intentional ambient types use .d.mts.
