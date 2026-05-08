@@ -54,8 +54,8 @@
       "source": {
         "inline": {
           "annotations": [
-            { "timestamp": "13:30", "end_timestamp": "13:45", "label": "Deploy v2.4.1", "kind": "info" },
-            { "timestamp": "14:32", "label": "Spike", "value": 142, "kind": "warn" }
+            { "timestamp": "13:30", "end_timestamp": "13:50", "label": "Deploy v2.4.1", "kind": "info" },
+            { "timestamp": "14:30", "label": "Spike", "value": 142, "kind": "warn" }
           ],
           "series": [
             { "name": "p50", "data": [

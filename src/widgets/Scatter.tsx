@@ -65,7 +65,11 @@ export function Scatter({ data }: WidgetProps) {
             const { cx, cy, payload } = props
             if (cx == null || cy == null || !payload) return <circle cx={0} cy={0} r={0} />
             const fill = resolveColor(payload)
-            const r = payload.size != null ? Math.max(3, Math.sqrt(payload.size) * 2) : 5
+            // sqrt(size) * 2 keeps the AREA proportional to size; cap
+            // at MAX_R so a row with size in the thousands doesn't
+            // render a 200px blob that overflows the chart panel.
+            const MAX_R = 20
+            const r = payload.size != null ? Math.min(MAX_R, Math.max(3, Math.sqrt(payload.size) * 2)) : 5
             return (
               <g>
                 <circle cx={cx} cy={cy} r={r} fill={fill} fillOpacity={0.7} stroke={fill} strokeWidth={1}>

@@ -13,7 +13,7 @@
           { "label": "Delivered 24h", "value":  8642, "delta":  0.058 },
           { "label": "Exceptions",    "value":   142, "delta": -0.082 },
           { "label": "On-time %",     "value": 94.6,  "delta":  0.012, "unit": "%" },
-          { "label": "Hubs online",   "value": 38,    "label": "of 40" }
+          { "label": "Hubs online",   "value": 38,    "unit": "of 40" }
         ]
       }
     },

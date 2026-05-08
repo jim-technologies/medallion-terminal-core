@@ -48,9 +48,13 @@ function normalize(data: unknown): TextItem[] {
   // Single string
   if (typeof data === 'string') return [{ body: data }]
 
-  // Single object
+  // Single object — unwrap a top-level `items` array first (matches the
+  // proto's TextPayload.items field). Otherwise treat the whole object
+  // as one item.
   if (!Array.isArray(data) && typeof data === 'object' && data !== null) {
-    return [normalizeItem(data as Record<string, unknown>)]
+    const obj = data as Record<string, unknown>
+    if (Array.isArray(obj.items)) return normalize(obj.items)
+    return [normalizeItem(obj)]
   }
 
   // Array

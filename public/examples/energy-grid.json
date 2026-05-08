@@ -13,7 +13,7 @@
           { "label": "Today",        "value": 612,  "delta":  0.018, "unit": "MWh" },
           { "label": "Capacity",     "value": 100,                    "unit": "MW" },
           { "label": "Utilization",  "value": 84.2, "delta":  0.041, "unit": "%" },
-          { "label": "Inverters",    "value": 38,   "label": "of 40" },
+          { "label": "Inverters",    "value": 38,   "unit": "of 40" },
           { "label": "Curtailment",  "value": 1.4,  "delta": -0.123, "unit": "%" }
         ]
       }

@@ -9,7 +9,7 @@
       "height": 90,
       "source": {
         "inline": [
-          { "label": "Accuracy",  "value": 0.913, "delta":  0.004, "unit": "%" },
+          { "label": "Accuracy",  "value": 91.3,  "delta":  0.004, "unit": "%" },
           { "label": "Precision", "value": 0.871, "delta": -0.012 },
           { "label": "Recall",    "value": 0.842, "delta":  0.018 },
           { "label": "AUC",       "value": 0.946, "delta":  0.002 },
@@ -29,8 +29,8 @@
       "source": {
         "inline": {
           "annotations": [
-            { "timestamp": "10:30", "label": "Schema v3.4 deploy", "kind": "info" },
-            { "timestamp": "14:12", "label": "Feature drift > 0.2", "kind": "warn", "value": 0.21 }
+            { "timestamp": "10:00", "label": "Schema v3.4 deploy", "kind": "info" },
+            { "timestamp": "14:00", "label": "Feature drift > 0.2", "kind": "warn", "value": 0.21 }
           ],
           "series": [
             { "name": "user_age", "data": [

@@ -28,9 +28,9 @@
       "source": {
         "inline": {
           "annotations": [
-            { "timestamp": "13:42", "label": "Norepinephrine 0.05 µg/kg/min", "kind": "info" },
-            { "timestamp": "15:18", "label": "Bolus 250 ml NS", "kind": "info" },
-            { "timestamp": "16:04", "label": "SpO2 dip < 92%", "kind": "warn", "value": 91 }
+            { "timestamp": "13:40", "label": "Norepinephrine 0.05 µg/kg/min", "kind": "info", "value": 92 },
+            { "timestamp": "15:20", "label": "Bolus 250 ml NS", "kind": "info", "value": 78 },
+            { "timestamp": "16:00", "label": "SpO2 dip < 92%", "kind": "warn", "value": 91 }
           ],
           "series": [
             { "name": "HR",   "data": [
