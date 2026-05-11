@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { formatCompact } from './format'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface Box {
   label: string
@@ -25,7 +26,7 @@ const BOX_PALETTE = ['#0ea5e9', '#10b981', '#a78bfa', '#f59e0b', '#f472b6', '#fb
 export function Boxplot({ data }: WidgetProps) {
   const boxes = useMemo(() => normalize(data), [data])
   if (!boxes || boxes.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+    return <Empty>No data</Empty>
   }
 
   // Y-axis range: extend slightly beyond outliers for breathing room.

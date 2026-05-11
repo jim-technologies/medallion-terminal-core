@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface SliderOptions {
   key?: string
@@ -48,11 +49,7 @@ export function Slider({ options }: WidgetProps) {
   }, [opts.key, ctx[opts.key ?? '']])
 
   if (!opts.key) {
-    return (
-      <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
-        Slider requires options.key
-      </div>
-    )
+    return <Empty>Slider requires options.key</Empty>
   }
 
   const onChange = (next: number) => {

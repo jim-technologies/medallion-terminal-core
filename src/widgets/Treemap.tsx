@@ -6,6 +6,7 @@ import {
 } from 'recharts'
 import { SEMANTIC, PALETTE } from './colors'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface Node {
   name: string
@@ -21,7 +22,7 @@ interface Node {
 export function Treemap({ data }: WidgetProps) {
   const nodes = useMemo(() => normalize(data), [data])
   if (!nodes || nodes.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+    return <Empty>No data</Empty>
   }
 
   return (

@@ -1,4 +1,5 @@
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 const COLORS: Record<string, string> = {
   ok:     '#10b981',
@@ -22,7 +23,7 @@ const ARC_PATH = 'M 16 104 A 84 84 0 0 1 184 104'
 
 export function Gauge({ data }: WidgetProps) {
   const g = normalize(data)
-  if (!g) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+  if (!g) return <Empty>No data</Empty>
 
   const range = g.max - g.min
   const progress = range > 0 ? Math.max(0, Math.min(1, (g.value - g.min) / range)) : 0

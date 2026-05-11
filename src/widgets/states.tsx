@@ -54,12 +54,15 @@ export function Skeleton({ component }: { component?: string }) {
 
 // Shared empty-state placeholder. Each widget owns its message ("No data",
 // "No events", "No URL configured", etc.); this just unifies the markup
-// and styling so all 30+ widgets stay visually consistent.
+// and styling so all 30+ widgets stay visually consistent. A faint
+// glyph above the text reads as "nothing here yet" without competing
+// with real content.
 export function Empty({ children, padded }: { children: React.ReactNode; padded?: boolean }) {
   return (
     <div
-      className={`flex items-center justify-center h-full text-zinc-500 text-sm${padded ? ' px-4 text-center' : ''}`}
+      className={`flex flex-col items-center justify-center h-full gap-1.5 text-zinc-500 text-sm${padded ? ' px-4 text-center' : ''}`}
     >
+      <span className="text-zinc-700 text-xs uppercase tracking-[0.2em] leading-none">·  ·  ·</span>
       {children}
     </div>
   )

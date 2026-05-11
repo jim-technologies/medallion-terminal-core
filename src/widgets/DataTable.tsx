@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useDashboard } from '../core/DashboardContext'
+import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
 const DEFAULT_PAGE_SIZE = 25
@@ -131,7 +132,7 @@ export function DataTable({ data, options }: WidgetProps) {
   }
 
   if (columns.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+    return <Empty>No data</Empty>
   }
 
   const exportCsv = () => {

@@ -1,6 +1,7 @@
 import { useState, useCallback, type KeyboardEvent } from 'react'
 import { useDashboard, type WidgetAction } from '../core/DashboardContext'
 import { buildGenerateUrl, buildGenerateRequest } from '../core/resolveSource'
+import { Empty } from './states'
 import type { Context, WidgetProps } from '../types/template'
 
 // Response shape mirrors GenerateResponse from the proto. All fields
@@ -85,11 +86,7 @@ export function Prompt({ options }: WidgetProps) {
   }
 
   if (!hasBackend && !fallbackUrl) {
-    return (
-      <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
-        Set a backendUrl on Dashboard or options.url on this widget
-      </div>
-    )
+    return <Empty padded>Set a backendUrl on Dashboard or options.url on this widget</Empty>
   }
 
   return (

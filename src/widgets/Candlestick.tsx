@@ -12,6 +12,7 @@ import {
   type Time,
 } from 'lightweight-charts'
 import { useHover } from '../core/HoverContext'
+import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -175,7 +176,7 @@ export function Candlestick({ data }: WidgetProps) {
   }, [result])
 
   if (result.candles.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+    return <Empty>No data</Empty>
   }
 
   return <div ref={containerRef} className="w-full h-full" />

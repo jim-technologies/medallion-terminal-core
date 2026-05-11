@@ -1,5 +1,6 @@
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface Choice { value: string; label?: string }
 
@@ -21,11 +22,11 @@ export function MultiSelect({ options }: WidgetProps) {
   const { ctx, setCtx } = useDashboard()
 
   if (!opts.key) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">MultiSelect requires options.key</div>
+    return <Empty>MultiSelect requires options.key</Empty>
   }
   const raw = opts.choices ?? []
   if (raw.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">MultiSelect requires options.choices</div>
+    return <Empty>MultiSelect requires options.choices</Empty>
   }
   const choices: Choice[] = raw.map(c =>
     typeof c === 'string' ? { value: c, label: c } : { value: c.value, label: c.label ?? c.value },

@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useAnimatedNumber } from '../hooks/useAnimatedNumber'
 import { formatStat } from './format'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface Stat {
   label: string
@@ -16,7 +17,7 @@ interface Stat {
 export function StatStrip({ data }: WidgetProps) {
   const stats = useMemo(() => normalize(data), [data])
   if (!stats || stats.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+    return <Empty>No data</Empty>
   }
 
   return (

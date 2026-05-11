@@ -2,12 +2,13 @@ import { useMemo } from 'react'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { resolveColor } from './colors'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface Slice { label: string; value: number; color?: string }
 
 export function Distribution({ data }: WidgetProps) {
   const norm = useMemo(() => normalize(data), [data])
-  if (!norm) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+  if (!norm) return <Empty>No data</Empty>
 
   const { slices, total } = norm
   const colors = slices.map((s, i) => resolveColor(s.color, i))

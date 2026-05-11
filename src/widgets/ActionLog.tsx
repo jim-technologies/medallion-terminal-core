@@ -1,5 +1,6 @@
 import { useNow } from '../core/NowContext'
 import { useDashboard } from '../core/DashboardContext'
+import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
 // Order blotter. Subscribes to the dashboard's in-memory action ring
@@ -46,11 +47,7 @@ export function ActionLog({ options }: WidgetProps) {
   const rows = recentActions.slice(0, limit)
 
   if (rows.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
-        No actions yet
-      </div>
-    )
+    return <Empty>No actions yet</Empty>
   }
 
   return (

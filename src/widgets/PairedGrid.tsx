@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useDashboard } from '../core/DashboardContext'
+import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
 // Click-a-row → set ctx[key] to the row's `key` (strike, line, etc).
@@ -45,7 +46,7 @@ export function PairedGrid({ data, options }: WidgetProps) {
     () => (grid ? [...grid.rows].sort((a, b) => a.key - b.key) : []),
     [grid],
   )
-  if (!grid) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+  if (!grid) return <Empty>No data</Empty>
 
   const subjectVal = grid.subject_value
   const step = sortedRows.length >= 2 ? sortedRows[1].key - sortedRows[0].key : 0

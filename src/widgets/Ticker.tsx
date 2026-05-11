@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 // Auto-scrolling EventPayload renderer — same data shape as the
 // `Events` widget, but laid out as a horizontal stock-ticker that
@@ -35,7 +36,7 @@ interface TickerOptions {
 export function Ticker({ data, options }: WidgetProps) {
   const items = useMemo(() => normalize(data), [data])
   if (!items || items.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No items</div>
+    return <Empty>No items</Empty>
   }
 
   const opts = (options ?? {}) as TickerOptions

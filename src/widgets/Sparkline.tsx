@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface SparkOptions {
   // Force a color regardless of trend direction. Otherwise the line
@@ -20,7 +21,7 @@ export function Sparkline({ data, options }: WidgetProps) {
   const values = useMemo(() => normalize(data), [data])
 
   if (!values || values.length < 2) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+    return <Empty>No data</Empty>
   }
 
   const min = Math.min(...values)

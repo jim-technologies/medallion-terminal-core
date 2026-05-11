@@ -1,5 +1,6 @@
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface Choice { value: string; label?: string }
 
@@ -24,18 +25,10 @@ export function Select({ options }: WidgetProps) {
   )
 
   if (!opts.key) {
-    return (
-      <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
-        Select requires options.key
-      </div>
-    )
+    return <Empty>Select requires options.key</Empty>
   }
   if (choices.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
-        Select requires options.choices
-      </div>
-    )
+    return <Empty>Select requires options.choices</Empty>
   }
 
   const current = ctx[opts.key] ?? opts.default ?? choices[0].value

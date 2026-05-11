@@ -1,10 +1,11 @@
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 export function Text({ data }: WidgetProps) {
   const items = normalize(data)
 
   if (items.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No content</div>
+    return <Empty>No content</Empty>
   }
 
   return (

@@ -4,6 +4,7 @@ import {
 } from 'recharts'
 import { useHover } from '../core/HoverContext'
 import { abbreviateAxis, formatTimestamp } from './format'
+import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
 const COLORS = ['#38bdf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6']
@@ -29,7 +30,7 @@ export function Timeseries({ data, options }: WidgetProps) {
   const lastEmitted = useRef<string | null>(null)
   const chart = useMemo(() => normalize(data), [data])
   const showBrush = options?.brush === true
-  if (!chart) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+  if (!chart) return <Empty>No data</Empty>
 
   // Only render the sync line when the hover came from a different widget.
   const showSyncLine = hoverTime != null && hoverTime !== lastEmitted.current

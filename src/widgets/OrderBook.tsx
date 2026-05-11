@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useDashboard } from '../core/DashboardContext'
+import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
 interface Level {
@@ -37,7 +38,7 @@ export function OrderBook({ data, options }: WidgetProps) {
         if (priceContext.side_key) setCtx(priceContext.side_key, side === 'bid' ? 'buy' : 'sell')
       }
     : undefined
-  if (!book) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+  if (!book) return <Empty>No data</Empty>
 
   const bestBid = book.bids[0]?.price
   const bestAsk = book.asks[0]?.price

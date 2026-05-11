@@ -4,6 +4,7 @@ import {
 } from 'recharts'
 import { formatCompact } from './format'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 const DEFAULT_BINS = 20
 
@@ -20,7 +21,7 @@ interface Bucket { bin: string; count: number; rangeStart: number; rangeEnd: num
 export function Histogram({ data, options }: WidgetProps) {
   const buckets = useMemo(() => normalize(data, options), [data, options])
   if (!buckets || buckets.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+    return <Empty>No data</Empty>
   }
 
   return (

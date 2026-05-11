@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 // Pretty-printed JSON view of whatever the source returns. Use for raw
 // data inspection: backend response debugging, AI-emitted templates,
@@ -16,7 +17,7 @@ export function Json({ data }: WidgetProps) {
   }, [data])
 
   if (!pretty) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+    return <Empty>No data</Empty>
   }
 
   return (

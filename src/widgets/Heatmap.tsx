@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import { formatCompact } from './format'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface Cell { row: number; col: number; value: number; label?: string }
 interface HeatmapData {
@@ -23,7 +24,7 @@ const COL_LABEL_H = 22
 export function Heatmap({ data, options }: WidgetProps) {
   const { setCtx } = useDashboard()
   const h = useMemo(() => normalize(data), [data])
-  if (!h) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+  if (!h) return <Empty>No data</Empty>
 
   const rowCtx = options?.row_context as AxisContext | undefined
   const colCtx = options?.col_context as AxisContext | undefined

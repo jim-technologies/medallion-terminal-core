@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 const STATUS_DOT: Record<string, string> = {
   EVENT_STATUS_OK:      'bg-emerald-500',
@@ -41,7 +42,7 @@ export function Events({ data, options }: WidgetProps) {
   }, [events, query])
 
   if (!events || events.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No events</div>
+    return <Empty>No events</Empty>
   }
 
   return (

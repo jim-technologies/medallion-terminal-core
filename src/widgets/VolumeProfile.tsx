@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface Row { price: number; volume: number }
 
@@ -10,7 +11,7 @@ interface Row { price: number; volume: number }
 export function VolumeProfile({ data }: WidgetProps) {
   const rows = useMemo(() => normalize(data), [data])
   if (!rows || rows.length === 0) {
-    return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+    return <Empty>No data</Empty>
   }
 
   const max = Math.max(...rows.map(r => r.volume), 1)

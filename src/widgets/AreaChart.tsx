@@ -11,6 +11,7 @@ import {
 } from 'recharts'
 import { abbreviateAxis, formatTimestamp } from './format'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 const COLORS = ['#38bdf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6']
 
@@ -27,7 +28,7 @@ const TS_KEYS = ['timestamp', 'date', 'time', 'datetime', 'ts', 'x', 't']
 export function AreaChart({ data, options }: WidgetProps) {
   const chart = useMemo(() => normalize(data), [data])
   const showBrush = options?.brush === true
-  if (!chart) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+  if (!chart) return <Empty>No data</Empty>
 
   const stack = chart.keys.length > 1
 

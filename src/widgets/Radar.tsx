@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'recharts'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 const COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#a78bfa', '#f472b6', '#fbbf24']
 
@@ -23,7 +24,7 @@ interface ChartData {
 // models × {accuracy, precision, recall, ...}, etc.
 export function Radar({ data }: WidgetProps) {
   const chart = useMemo(() => normalize(data), [data])
-  if (!chart) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+  if (!chart) return <Empty>No data</Empty>
 
   return (
     <ResponsiveContainer width="100%" height="100%">

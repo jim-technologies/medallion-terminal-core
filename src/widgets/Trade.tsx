@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import { buildSubmitActionUrl, buildActionRequest, newClientRequestId } from '../core/resolveSource'
 import { useWatchAction, isTerminalStatus, isErrorStatus } from '../hooks/useWatchAction'
+import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
 type Side = 'buy' | 'sell'
@@ -206,11 +207,7 @@ export function Trade({ options }: WidgetProps) {
   }, [confirming])
 
   if (!target) {
-    return (
-      <div className="flex items-center justify-center h-full text-zinc-500 text-sm">
-        Trade requires backendUrl or options.url
-      </div>
-    )
+    return <Empty>Trade requires backendUrl or options.url</Empty>
   }
 
   const sideButtonClass = (s: Side) =>

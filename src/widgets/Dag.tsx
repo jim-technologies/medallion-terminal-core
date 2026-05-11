@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
+import { Empty } from './states'
 
 interface Node {
   id: string
@@ -50,7 +51,7 @@ const PAD = 16
 //   { nodes: [{id, label, status?}], edges: [{from, to}] }
 export function Dag({ data }: WidgetProps) {
   const laid = useMemo(() => layout(normalize(data)), [data])
-  if (!laid) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
+  if (!laid) return <Empty>No data</Empty>
 
   return (
     <div className="h-full w-full overflow-auto">
