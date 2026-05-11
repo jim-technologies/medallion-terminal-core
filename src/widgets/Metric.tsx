@@ -1,14 +1,37 @@
+import { useEffect, useRef, useState } from 'react'
 import { useAnimatedNumber } from '../hooks/useAnimatedNumber'
 import { formatStat } from './format'
 import type { WidgetProps } from '../types/template'
+
+const FLASH_MS = 600
 
 export function Metric({ data }: WidgetProps) {
   const { value, delta, unit, label, trend } = normalize(data)
   const animated = useAnimatedNumber(value)
 
+  // Tick flash. On every value change after the first render, briefly
+  // tint the headline green (uptick) or red (downtick). Matches the
+  // Bloomberg / Eikon convention so traders can read direction at a
+  // glance even when the magnitude doesn't move much.
+  const prevRef = useRef<number | null>(null)
+  const [flash, setFlash] = useState<'up' | 'down' | null>(null)
+  useEffect(() => {
+    const prev = prevRef.current
+    prevRef.current = value
+    if (prev == null || prev === value) return
+    setFlash(value > prev ? 'up' : 'down')
+    const t = setTimeout(() => setFlash(null), FLASH_MS)
+    return () => clearTimeout(t)
+  }, [value])
+
+  const flashClass =
+    flash === 'up' ? 'text-emerald-300' :
+    flash === 'down' ? 'text-red-300' :
+    'text-white'
+
   return (
     <div className="flex flex-col items-center justify-center h-full gap-1">
-      <div className="text-3xl font-bold text-white tabular-nums">
+      <div className={`text-3xl font-bold tabular-nums transition-colors duration-300 ${flashClass}`}>
         {formatStat(animated)}
         {unit && <span className="text-base font-normal text-zinc-400 ml-1">{unit}</span>}
       </div>
