@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import type { Template, WidgetConfig } from '../types/template'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import { WidgetShell } from '../widgets/WidgetShell'
-import { DashboardContext, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent, type ActionLogEntry, type WidgetHealth } from './DashboardContext'
+import { DashboardContext, useDashboard, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent, type ActionLogEntry, type WidgetHealth } from './DashboardContext'
 import { HoverProvider } from './HoverContext'
 import { NowProvider } from './NowContext'
 import { applyActions } from './applyActions'
@@ -12,6 +12,7 @@ import { CommandPalette } from './CommandPalette'
 import { ShortcutsOverlay } from './ShortcutsOverlay'
 import { Toaster, type Toast } from './Toaster'
 import { validateTemplate, type ValidationIssue } from './validateTemplate'
+import { useNow } from './NowContext'
 
 const DEFAULT_HEIGHTS: Record<string, number> = {
   metric: 120,
@@ -124,6 +125,79 @@ function OpenPaletteHint() {
     >
       {isMac ? '⌘' : 'Ctrl'} K
     </button>
+  )
+}
+
+function formatClock(ms: number): string {
+  const d = new Date(ms)
+  const hh = String(d.getHours()).padStart(2, '0')
+  const mm = String(d.getMinutes()).padStart(2, '0')
+  const ss = String(d.getSeconds()).padStart(2, '0')
+  return `${hh}:${mm}:${ss}`
+}
+
+function formatAgo(now: number, then: number): string {
+  const s = Math.floor((now - then) / 1000)
+  if (s < 5) return 'now'
+  if (s < 60) return `${s}s`
+  const m = Math.floor(s / 60)
+  if (m < 60) return `${m}m`
+  return `${Math.floor(m / 60)}h`
+}
+
+// Bottom status bar — runs underneath the grid as a thin terminal-style
+// footer. Reads only from context (no props) so it can be hidden without
+// passing it down. Picks complementary info to the top toolbar: the
+// toolbar shows current ctx + health pill + prefs; the footer shows
+// the latest action and a live clock so the operator always sees both
+// "what just happened" and "what time is it".
+function StatusBar() {
+  const { recentActions, widgetHealth } = useDashboard()
+  // The clock needs a 1Hz tick; useNow ref-counts so this is the only
+  // permanent subscriber when no live widgets are present.
+  const now = useNow(true)
+  const latest = recentActions[0]
+  const entries = Object.values(widgetHealth)
+  const streams = entries.filter(e => e.streaming)
+  const liveStreams = streams.filter(e => e.connected && !e.error).length
+  const errored = entries.filter(e => e.error).length
+  const latestTone =
+    latest?.status?.endsWith('_OK') ? 'text-emerald-400/80' :
+    latest?.status?.endsWith('_PENDING') || latest?.status?.endsWith('_ACCEPTED') ? 'text-amber-400/80' :
+    latest && (latest.status?.endsWith('_REJECTED') || latest.status?.endsWith('_FAILED') || latest.status?.endsWith('_CANCELLED')) ? 'text-red-400/80' :
+    'text-zinc-400'
+
+  return (
+    <div className="border-t border-zinc-800 bg-zinc-900/70 px-3 md:px-5 py-1 flex items-center gap-4 text-[10px] font-mono text-zinc-500 shrink-0">
+      <div className="flex-1 min-w-0 truncate">
+        {latest ? (
+          <span className="flex items-center gap-2">
+            <span className="tabular-nums w-7 shrink-0">{formatAgo(now, latest.receivedAt)}</span>
+            <span className="text-zinc-300 shrink-0">{latest.actionId}</span>
+            <span className={`uppercase tracking-wider shrink-0 ${latestTone}`}>
+              {latest.status.replace(/^ACTION_STATUS_/, '').toLowerCase()}
+            </span>
+            {latest.message && (
+              <span className="truncate text-zinc-400">{latest.message}</span>
+            )}
+          </span>
+        ) : (
+          <span className="text-zinc-600">idle</span>
+        )}
+      </div>
+      {streams.length > 0 && (
+        <span
+          className={liveStreams === streams.length ? 'text-emerald-400/80' : 'text-amber-400/80'}
+          title={`${liveStreams} of ${streams.length} streams connected`}
+        >
+          <span className="tabular-nums">{liveStreams}/{streams.length}</span> <span className="opacity-60">↑</span>
+        </span>
+      )}
+      {errored > 0 && (
+        <span className="text-red-400 tabular-nums">{errored} err</span>
+      )}
+      <span className="tabular-nums text-zinc-300">{formatClock(now)}</span>
+    </div>
   )
 }
 
@@ -463,7 +537,8 @@ export function Dashboard({
           onDismiss={() => setBannerDismissed(true)}
         />
       )}
-      <div className="min-h-full bg-zinc-950 p-3 md:p-5">
+      <div className="min-h-full bg-zinc-950 flex flex-col">
+       <div className="flex-1 p-3 md:p-5">
         <div className="mb-4 flex items-center gap-3 flex-wrap">
           {template.title && (
             <h1 className="text-lg font-semibold text-zinc-100 tracking-tight mr-1">
@@ -512,6 +587,8 @@ export function Dashboard({
             </div>
           ))}
         </div>
+       </div>
+       <StatusBar />
       </div>
       {fullscreenWidget && (
         <FullscreenOverlay widget={fullscreenWidget} onClose={() => setFullscreenId(null)} />
