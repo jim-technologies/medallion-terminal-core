@@ -92,10 +92,70 @@ Any widget can declare a client-side alert that fires a toast when a predicate o
 ```jsonc
 { "component": "metric",
   "source": { "source_id": "btc_spot", "stream": true },
-  "alert": { "when": "value > 70000", "message": "${ctx.symbol} crossed 70k", "severity": "warn" } }
+  "alert": { "when": "value > 70000 && volume > 1e8",
+             "message": "${ctx.symbol} crossed 70k on heavy volume",
+             "severity": "warn" } }
 ```
 
-Predicate format: `<path> <op> <literal>` where `op` is `> >= < <= == !=` and `path` walks the widget's `data` (same shape your widget receives via `WidgetProps.data`, which is the unwrapped `DataResponse` payload). Edge-triggered: fires once on transition, clears when the predicate returns false. No backend rule engine required.
+Predicate format: `<term> [&& <term> | || <term> ...]` where each term is `<path> <op> <literal>` (`op` ∈ `> >= < <= == !=`). `&&` binds tighter than `||`; no parens. `path` walks the widget's `data`. Edge-triggered: fires once on transition, clears when the predicate returns false. No backend rule engine required.
+
+## Cross-widget selection
+
+Clicking a row / cell / price level on certain widgets sets a `ctx` key, which retargets every other widget bound to it:
+
+```jsonc
+// Click a watchlist row → set ctx.symbol → all other widgets re-fetch.
+{ "component": "table",
+  "source": { "source_id": "watchlist" },
+  "options": { "row_context": { "key": "symbol", "field": "Asset" } } }
+
+// Click an option strike → set ctx.strike.
+{ "component": "paired_grid", "options": { "row_context": { "key": "strike" } } }
+
+// Click a price level → set ctx.price (e.g. to prefill the Trade widget).
+{ "component": "orderbook", "options": { "price_context": { "key": "price" } } }
+
+// Heatmap cells map to one or both axes.
+{ "component": "heatmap",
+  "options": { "row_context": { "key": "asset" }, "col_context": { "key": "hour" } } }
+```
+
+## Keyboard
+
+| Key | Action |
+|-----|--------|
+| `⌘K` / `Ctrl-K` | Command palette (set ctx, save/load views) |
+| `j` / `↓` | Focus next widget |
+| `k` / `↑` | Focus previous widget |
+| `f` | Fullscreen focused widget |
+| `r` | Refresh focused widget |
+| `?` | Shortcuts cheat sheet |
+| `Esc` | Clear focus / close overlays |
+
+Widget focus is mouse-driven too — clicking a widget tile gives it the focus ring.
+
+## Validation
+
+`<Dashboard>` validates the template at mount and renders a banner for unknown components, conflicting source modes, out-of-range spans, and malformed alert predicates. Errors stay pinned; warnings dismiss for the session. You can run the validator yourself:
+
+```ts
+import { validateTemplate } from 'medallion-terminal-core'
+const issues = validateTemplate(template, ['my_custom_widget']) // pass custom names
+```
+
+## Telemetry
+
+Pass `onEvent` to `<Dashboard>` for a single sink covering alerts, widget errors, and action lifecycles:
+
+```ts
+<Dashboard template={tpl} backendUrl="…" onEvent={e => {
+  switch (e.type) {
+    case 'alert':         myAnalytics.track('alert', e); break
+    case 'widget_error':  Sentry.captureMessage(e.message, { extra: e }); break
+    case 'action':        if (e.terminal) myLedger.append(e); break
+  }
+}} />
+```
 
 ## Context and URL state
 

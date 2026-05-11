@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Catalog } from './Catalog'
-import { DashboardContext } from '../core/DashboardContext'
+import { DashboardContext, DEFAULT_DASHBOARD_CONTEXT } from '../core/DashboardContext'
 
 const meta: Meta<typeof Catalog> = {
   title: 'Widgets/Catalog',
@@ -30,7 +30,7 @@ function withMockFetch(response: object) {
     setTimeout(() => { window.fetch = original }, 30000)
     return (
       <DashboardContext.Provider
-        value={{ dispatch: () => {}, ctx: {}, setCtx: () => {}, widgets: [], backendUrl: 'https://mock', toast: () => {}, compact: false, fullscreenId: null, setFullscreenId: () => {} }}
+        value={{ ...DEFAULT_DASHBOARD_CONTEXT, backendUrl: 'https://mock' }}
       >
         <Story />
       </DashboardContext.Provider>
@@ -58,7 +58,7 @@ export const Populated: Story = {
 export const NoBackend: Story = {
   decorators: [
     (Story) => (
-      <DashboardContext.Provider value={{ dispatch: () => {}, ctx: {}, setCtx: () => {}, widgets: [], toast: () => {}, compact: false, fullscreenId: null, setFullscreenId: () => {} }}>
+      <DashboardContext.Provider value={DEFAULT_DASHBOARD_CONTEXT}>
         <Story />
       </DashboardContext.Provider>
     ),

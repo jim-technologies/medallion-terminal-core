@@ -30,7 +30,7 @@ interface OrderBody {
 
 export function Trade({ options }: WidgetProps) {
   const opts = (options ?? {}) as TradeOptions
-  const { ctx, toast, backendUrl } = useDashboard()
+  const { ctx, toast, backendUrl, emit } = useDashboard()
   const symbol = opts.symbol ?? ctx.symbol ?? ''
   const fallbackUrl = opts.url
   const actionId = opts.action_id ?? 'place_order'
@@ -59,11 +59,20 @@ export function Trade({ options }: WidgetProps) {
     if (!watch.latest) return
     const u = watch.latest
     if (u.message) setReply(u.message)
-    if (isTerminalStatus(u.status)) {
+    const terminal = isTerminalStatus(u.status)
+    emit({
+      type: 'action',
+      actionId: u.action_id ?? actionId,
+      clientRequestId: u.client_request_id ?? '',
+      status: String(u.status ?? ''),
+      message: u.message,
+      terminal,
+    })
+    if (terminal) {
       if (u.message) toast(u.message, isErrorStatus(u.status) ? 'error' : 'ok')
       setWatchTarget(null)
     }
-  }, [watch.latest, toast])
+  }, [watch.latest, toast, emit, actionId])
 
   // Editing any field after entering confirm state must drop back to
   // the form — otherwise the confirm summary shows stale numbers.
@@ -123,6 +132,15 @@ export function Trade({ options }: WidgetProps) {
       const data = await res.json().catch(() => ({}))
       // ActionResponse uses `message`; legacy backends may too.
       const msg = typeof data.message === 'string' ? data.message : 'Order submitted'
+      const status = typeof data.status === 'string' ? data.status : ''
+      emit({
+        type: 'action',
+        actionId,
+        clientRequestId,
+        status,
+        message: msg,
+        terminal: isTerminalStatus(status),
+      })
       // A backend that synchronously rejects/fails the order is still
       // an HTTP 200 — the failure is in the status enum, not the
       // transport. Route it to error UI accordingly.
@@ -146,10 +164,18 @@ export function Trade({ options }: WidgetProps) {
       const msg = e instanceof Error ? e.message : 'Submit failed'
       setError(msg)
       toast(msg, 'error')
+      emit({
+        type: 'action',
+        actionId,
+        clientRequestId,
+        status: 'ACTION_STATUS_FAILED',
+        message: msg,
+        terminal: true,
+      })
     } finally {
       setSubmitting(false)
     }
-  }, [target, backendUrl, fallbackUrl, actionId, submitting, amount, price, symbol, side, opts.confirm, confirming, toast])
+  }, [target, backendUrl, fallbackUrl, actionId, submitting, amount, price, symbol, side, opts.confirm, confirming, toast, emit])
 
   useEffect(() => {
     if (!confirming) return

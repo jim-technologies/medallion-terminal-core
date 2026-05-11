@@ -24,7 +24,9 @@ export {
 export { applyActions } from './core/applyActions'
 export { readCtxFromUrl, writeCtxToUrl } from './core/urlState'
 export { getNested } from './core/getNested'
-export { evaluateAlert } from './core/alerts'
+export { evaluateAlert, canParsePredicate } from './core/alerts'
+export { validateTemplate, BUILTIN_COMPONENTS } from './core/validateTemplate'
+export type { ValidationIssue, ValidationSeverity } from './core/validateTemplate'
 
 // Widgets
 export { Timeseries } from './widgets/Timeseries'
@@ -78,7 +80,7 @@ export { useWatchAction, isTerminalStatus, type ActionUpdate } from './hooks/use
 // Types
 export type { Template, Context, WidgetConfig, WidgetAlert, DataSource, WidgetProps } from './types/template'
 export type { DataSourceState } from './hooks/useDataSource'
-export type { WidgetAction, DispatchOptions, DashboardContextValue } from './core/DashboardContext'
+export type { WidgetAction, DispatchOptions, DashboardContextValue, DashboardEvent, EmitEvent } from './core/DashboardContext'
 export type { Breakpoint } from './hooks/useBreakpoint'
 
 // Proto-derived JSON types — for backend implementers.

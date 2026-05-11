@@ -1,15 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Trade } from './Trade'
-import { DashboardContext } from '../core/DashboardContext'
+import { DashboardContext, DEFAULT_DASHBOARD_CONTEXT } from '../core/DashboardContext'
 
 const meta: Meta<typeof Trade> = {
   title: 'Widgets/Trade',
   component: Trade,
   decorators: [
     (Story) => (
-      <DashboardContext.Provider
-        value={{ dispatch: () => {}, ctx: { symbol: 'BTCUSDT' }, setCtx: () => {}, widgets: [], toast: () => {}, compact: false, fullscreenId: null, setFullscreenId: () => {} }}
-      >
+      <DashboardContext.Provider value={{ ...DEFAULT_DASHBOARD_CONTEXT, ctx: { symbol: 'BTCUSDT' } }}>
         <div style={{ height: 300, width: 280, background: '#18181b', padding: 16, borderRadius: 8 }}>
           <Story />
         </div>

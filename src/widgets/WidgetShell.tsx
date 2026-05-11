@@ -30,14 +30,15 @@ function renderBody(args: {
   options: Record<string, unknown> | undefined
   component: string
   Component: ComponentType<{ data: unknown; options?: Record<string, unknown> }>
+  onRenderError?: (err: Error) => void
 }) {
-  const { resolution, loading, error, data, options, component, Component } = args
+  const { resolution, loading, error, data, options, component, Component, onRenderError } = args
   if (resolution.error) return <ErrorState message={resolution.error} />
   if (loading) return <Skeleton component={component} />
   if (error) return <ErrorState message={error} />
   return (
     <div className="h-full motion-safe:animate-[fadeIn_200ms_ease-out]">
-      <ErrorBoundary>
+      <ErrorBoundary onError={onRenderError}>
         <Suspense fallback={<Skeleton component={component} />}>
           <Component data={data} options={options} />
         </Suspense>
@@ -114,7 +115,7 @@ function ActionMenu({ widget, onRefresh }: { widget: WidgetConfig; onRefresh: ()
 }
 
 export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; contentHeight: number }) {
-  const { ctx, backendUrl, refreshIntervalMs, compact, toast } = useDashboard()
+  const { ctx, backendUrl, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit } = useDashboard()
   // Title interpolation is lenient — partial substitution is fine for a
   // human-facing string. Source interpolation is strict (resolveSource).
   const title = useMemo(
@@ -148,6 +149,19 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
   // idle dashboard with no live widgets pays for nothing.
   const now = useNow(isLive && lastUpdated != null)
 
+  // Refresh pulse — Dashboard's keyboard handler bumps refreshPulse with
+  // our id when the user presses `r`. We watch the counter and trigger
+  // a fresh fetch when it changes. Compares against a ref so a remount
+  // doesn't accidentally refetch.
+  const lastPulseN = useRef(0)
+  useEffect(() => {
+    if (!refreshPulse || refreshPulse.id !== config.id) return
+    if (refreshPulse.n !== lastPulseN.current) {
+      lastPulseN.current = refreshPulse.n
+      refresh()
+    }
+  }, [refreshPulse, config.id, refresh])
+
   // Edge-triggered alert. Fires once when the predicate transitions
   // false → true; clears when it returns to false. Holds prev state
   // in a ref so re-renders without data updates don't refire.
@@ -161,13 +175,37 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
     const triggered = evaluateAlert(data, alert.when)
     if (triggered && !alertWasTriggered.current) {
       const interpolated = interpolate(alert.message, ctx)
-      toast(interpolated, alert.severity ?? 'warn')
+      const severity = alert.severity ?? 'warn'
+      toast(interpolated, severity)
+      emit({ type: 'alert', widgetId: config.id, severity, message: interpolated, predicate: alert.when })
     }
     alertWasTriggered.current = triggered
-  }, [data, config.alert, ctx, toast])
+  }, [data, config.alert, ctx, toast, emit, config.id])
 
+  // Surface data/resolve errors as telemetry on the rising edge only —
+  // streaming sources can churn between connected/disconnected and
+  // we'd flood the sink if we emitted every render.
+  const lastErrorEmitted = useRef<string | null>(null)
+  useEffect(() => {
+    const msg = resolution.error ?? error
+    const source: 'data' | 'resolve' = resolution.error ? 'resolve' : 'data'
+    if (msg && msg !== lastErrorEmitted.current) {
+      emit({ type: 'widget_error', widgetId: config.id, component: config.component, message: msg, source })
+      lastErrorEmitted.current = msg
+    } else if (!msg) {
+      lastErrorEmitted.current = null
+    }
+  }, [resolution.error, error, emit, config.id, config.component])
+
+  const isFocused = !!config.id && focusedId === config.id
+  // Mouse click to focus mirrors keyboard nav. Cheap visual affordance
+  // for users who don't know about j/k yet.
+  const onShellClick = config.id ? () => setFocusedId(config.id!) : undefined
   return (
-    <div className={`bg-zinc-900 border border-zinc-800 ${compact ? 'rounded' : 'rounded-lg'} overflow-hidden`}>
+    <div
+      onClick={onShellClick}
+      className={`bg-zinc-900 border ${isFocused ? 'border-sky-500/60 ring-1 ring-sky-500/40' : 'border-zinc-800'} ${compact ? 'rounded' : 'rounded-lg'} overflow-hidden transition-colors`}
+    >
       {title && (
         <div className={`${compact ? 'px-2.5 py-1.5' : 'px-4 py-2.5'} border-b border-zinc-800 flex items-center justify-between`}>
           <h3 className={`${compact ? 'text-xs' : 'text-sm'} font-medium text-zinc-100 truncate`}>{title}</h3>
@@ -186,7 +224,17 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
         </div>
       )}
       <div className={compact ? 'p-2.5' : 'p-4'} style={{ height: compact ? Math.round(contentHeight * 0.92) : contentHeight }}>
-        {renderBody({ resolution, loading, error, data, options: config.options, component: config.component, Component })}
+        {renderBody({
+          resolution, loading, error, data,
+          options: config.options, component: config.component, Component,
+          onRenderError: (err) => emit({
+            type: 'widget_error',
+            widgetId: config.id,
+            component: config.component,
+            message: err.message,
+            source: 'render',
+          }),
+        })}
       </div>
     </div>
   )

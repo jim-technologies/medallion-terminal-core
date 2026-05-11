@@ -1,24 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { MultiSelect } from './MultiSelect'
-import { DashboardContext } from '../core/DashboardContext'
+import { DashboardContext, DEFAULT_DASHBOARD_CONTEXT } from '../core/DashboardContext'
 
 const meta: Meta<typeof MultiSelect> = {
   title: 'Widgets/MultiSelect',
   component: MultiSelect,
   decorators: [
     (Story) => (
-      <DashboardContext.Provider
-        value={{
-          dispatch: () => {},
-          ctx: {},
-          setCtx: () => {},
-          widgets: [],
-          toast: () => {},
-          compact: false,
-          fullscreenId: null,
-          setFullscreenId: () => {},
-        }}
-      >
+      <DashboardContext.Provider value={DEFAULT_DASHBOARD_CONTEXT}>
         <div style={{ height: 100, width: 360, background: '#18181b', padding: 12, borderRadius: 8 }}>
           <Story />
         </div>

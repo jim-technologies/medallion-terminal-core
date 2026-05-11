@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Prompt } from './Prompt'
-import { DashboardContext } from '../core/DashboardContext'
+import { DashboardContext, DEFAULT_DASHBOARD_CONTEXT } from '../core/DashboardContext'
 
 const meta: Meta<typeof Prompt> = {
   title: 'Widgets/Prompt',
@@ -8,16 +8,7 @@ const meta: Meta<typeof Prompt> = {
   decorators: [
     (Story) => (
       <DashboardContext.Provider
-        value={{
-          dispatch: () => {},
-          ctx: { symbol: 'BTC' },
-          setCtx: () => {},
-          widgets: [],
-          toast: () => {},
-          compact: false,
-          fullscreenId: null,
-          setFullscreenId: () => {},
-        }}
+        value={{ ...DEFAULT_DASHBOARD_CONTEXT, ctx: { symbol: 'BTC' } }}
       >
         <div style={{ height: 100, width: 520, background: '#18181b', padding: 12, borderRadius: 8 }}>
           <Story />

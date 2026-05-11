@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react'
 
 const SHORTCUTS: Array<{ keys: string; description: string }> = [
   { keys: '⌘ K / Ctrl K', description: 'Open command palette (set ctx, save/load views)' },
-  { keys: '↑ ↓',          description: 'In palette: cycle recent commands' },
+  { keys: 'j / ↓',        description: 'Focus next widget' },
+  { keys: 'k / ↑',        description: 'Focus previous widget' },
+  { keys: 'f',            description: 'Fullscreen focused widget' },
+  { keys: 'r',            description: 'Refresh focused widget' },
   { keys: '↵',            description: 'In palette: apply current input' },
-  { keys: 'Esc',          description: 'Close palette / fullscreen / overlays' },
+  { keys: 'Esc',          description: 'Clear focus / close palette / close fullscreen' },
   { keys: '⌘ 1 — 9',      description: 'In multi-tab: jump to tab N' },
   { keys: '?',            description: 'Show this shortcuts cheat sheet' },
   { keys: '/save <name>', description: 'In palette: save current ctx as a named view' },

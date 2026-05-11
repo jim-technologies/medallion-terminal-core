@@ -2,6 +2,10 @@ import { Component, type ReactNode, type ErrorInfo } from 'react'
 
 interface Props {
   children: ReactNode
+  // Optional sink for render-time exceptions. WidgetShell wires this to
+  // the dashboard's emit() so consumers see render crashes in their
+  // telemetry stream alongside data errors.
+  onError?: (error: Error) => void
 }
 
 interface State {
@@ -17,6 +21,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('[MedallionTerminal] Widget error:', error, info.componentStack)
+    this.props.onError?.(error)
   }
 
   render() {

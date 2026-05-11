@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import type { Template, WidgetConfig } from '../types/template'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import { WidgetShell } from '../widgets/WidgetShell'
-import { DashboardContext, type DispatchOptions, type WidgetAction, type Severity } from './DashboardContext'
+import { DashboardContext, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent } from './DashboardContext'
 import { HoverProvider } from './HoverContext'
 import { NowProvider } from './NowContext'
 import { applyActions } from './applyActions'
@@ -11,6 +11,7 @@ import { interpolate } from './resolveSource'
 import { CommandPalette } from './CommandPalette'
 import { ShortcutsOverlay } from './ShortcutsOverlay'
 import { Toaster, type Toast } from './Toaster'
+import { validateTemplate, type ValidationIssue } from './validateTemplate'
 
 const DEFAULT_HEIGHTS: Record<string, number> = {
   metric: 120,
@@ -154,10 +155,24 @@ function SnapshotButton({ onCopied }: { onCopied: () => void }) {
   )
 }
 
-export function Dashboard({ template, backendUrl }: { template: Template; backendUrl?: string }) {
+export function Dashboard({
+  template, backendUrl, onEvent,
+}: {
+  template: Template
+  backendUrl?: string
+  // Optional telemetry sink. Receives alerts, widget errors, and
+  // action submissions. Keep handler cheap — it runs on every event.
+  onEvent?: (event: DashboardEvent) => void
+}) {
   const breakpoint = useBreakpoint()
   const columns = template.columns || 12
   const [widgets, setWidgets] = useState<WidgetConfig[]>(template.widgets)
+  // Validation runs once per template identity. Errors are loud and
+  // persistent; warnings are dismissible. Authors get a banner on bad
+  // templates instead of a blank widget tile and a console error.
+  const issues = useMemo(() => validateTemplate(template), [template])
+  const hasErrors = useMemo(() => issues.some(i => i.severity === 'error'), [issues])
+  const [bannerDismissed, setBannerDismissed] = useState(false)
   // ctx initial state: template defaults overlaid by URL params.
   // URL wins so shared bookmarks restore exactly the view the sender saw.
   const [ctx, setCtxState] = useState<Record<string, string>>(() => {
@@ -173,8 +188,23 @@ export function Dashboard({ template, backendUrl }: { template: Template; backen
   useEffect(() => { writePref('compact', compact) }, [compact])
 
   const [fullscreenId, setFullscreenId] = useState<string | null>(null)
+  const [focusedId, setFocusedId] = useState<string | null>(null)
+  const [refreshPulse, setRefreshPulse] = useState<{ id: string; n: number } | null>(null)
   const [toasts, setToasts] = useState<Toast[]>([])
   const toastIdRef = useRef(0)
+
+  const requestRefresh = useCallback((id: string) => {
+    setRefreshPulse(prev => ({ id, n: (prev?.id === id ? prev.n : 0) + 1 }))
+  }, [])
+
+  // Hold the latest onEvent in a ref so widgets can emit through a
+  // stable function — re-renders from a parent that swaps the handler
+  // identity don't tear down WidgetShell's effects.
+  const onEventRef = useRef(onEvent)
+  useEffect(() => { onEventRef.current = onEvent }, [onEvent])
+  const emit = useCallback((event: DashboardEvent) => {
+    onEventRef.current?.(event)
+  }, [])
 
   const toast = useCallback((message: string, severity: Severity = 'info') => {
     toastIdRef.current += 1
@@ -225,8 +255,14 @@ export function Dashboard({ template, backendUrl }: { template: Template; backen
       compact,
       fullscreenId,
       setFullscreenId,
+      focusedId,
+      setFocusedId,
+      refreshPulse,
+      requestRefresh,
+      emit,
     }),
-    [dispatch, ctx, setCtx, backendUrl, widgets, refreshIntervalMs, toast, compact, fullscreenId],
+    [dispatch, ctx, setCtx, backendUrl, widgets, refreshIntervalMs, toast, compact,
+     fullscreenId, focusedId, refreshPulse, requestRefresh, emit],
   )
 
   // Esc closes fullscreen.
@@ -237,6 +273,46 @@ export function Dashboard({ template, backendUrl }: { template: Template; backen
     return () => document.removeEventListener('keydown', onKey)
   }, [fullscreenId])
 
+  // Keyboard widget navigation: j/k (or ↓/↑) cycle focus across widgets
+  // that have an `id`; `f` fullscreens the focused widget; `r`
+  // refreshes it; Esc clears focus. Skip when the user is typing into
+  // an input/textarea/contenteditable. Modifier keys are ignored so
+  // ⌘K still belongs to the palette.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const tag = (e.target as HTMLElement | null)?.tagName
+      const inEditable = tag === 'INPUT' || tag === 'TEXTAREA' ||
+        (e.target as HTMLElement | null)?.isContentEditable
+      if (inEditable) return
+
+      const ids = widgets.map(w => w.id).filter((id): id is string => !!id)
+      if (ids.length === 0) return
+
+      const cycle = (delta: number) => {
+        const idx = focusedId ? ids.indexOf(focusedId) : -1
+        const next = ids[(idx + delta + ids.length) % ids.length]
+        setFocusedId(next)
+      }
+
+      switch (e.key) {
+        case 'j': case 'ArrowDown': e.preventDefault(); cycle(1); break
+        case 'k': case 'ArrowUp':   e.preventDefault(); cycle(-1); break
+        case 'f':
+          if (focusedId) { e.preventDefault(); setFullscreenId(focusedId) }
+          break
+        case 'r':
+          if (focusedId) { e.preventDefault(); requestRefresh(focusedId) }
+          break
+        case 'Escape':
+          if (focusedId) { setFocusedId(null) }
+          break
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [widgets, focusedId, requestRefresh])
+
   const fullscreenWidget = fullscreenId ? widgets.find(w => w.id === fullscreenId) : null
 
   return (
@@ -246,6 +322,13 @@ export function Dashboard({ template, backendUrl }: { template: Template; backen
       <CommandPalette />
       <ShortcutsOverlay />
       <Toaster toasts={toasts} dismiss={dismissToast} />
+      {issues.length > 0 && (!bannerDismissed || hasErrors) && (
+        <ValidationBanner
+          issues={issues}
+          dismissible={!hasErrors}
+          onDismiss={() => setBannerDismissed(true)}
+        />
+      )}
       <div className="min-h-full bg-zinc-950 p-3 md:p-5">
         <div className="mb-4 flex items-center gap-3 flex-wrap">
           {template.title && (
@@ -299,6 +382,50 @@ export function Dashboard({ template, backendUrl }: { template: Template; backen
      </HoverProvider>
      </NowProvider>
     </DashboardContext.Provider>
+  )
+}
+
+// Authoring-time banner for template validation issues. Errors stay
+// pinned; warnings can be dismissed for the session. Kept inline in the
+// Dashboard file because it's purely chrome around <Dashboard> and has
+// no use outside it.
+function ValidationBanner({
+  issues, dismissible, onDismiss,
+}: { issues: ValidationIssue[]; dismissible: boolean; onDismiss: () => void }) {
+  const errors = issues.filter(i => i.severity === 'error')
+  const warnings = issues.filter(i => i.severity === 'warn')
+  const tone = errors.length > 0
+    ? 'bg-red-500/10 border-red-500/40 text-red-200'
+    : 'bg-amber-500/10 border-amber-500/40 text-amber-200'
+  const label = errors.length > 0 ? 'Template errors' : 'Template warnings'
+  return (
+    <div className={`border-b ${tone} px-3 md:px-5 py-2 text-xs flex items-start gap-3`}>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium uppercase tracking-wider text-[10px] mb-1">
+          {label} ({errors.length + warnings.length})
+        </div>
+        <ul className="space-y-0.5">
+          {[...errors, ...warnings].slice(0, 8).map((i, idx) => (
+            <li key={idx} className="font-mono text-[11px] leading-tight">
+              <span className="opacity-60">{i.path || '<root>'}</span>
+              <span className="mx-1.5 opacity-40">·</span>
+              <span>{i.message}</span>
+            </li>
+          ))}
+          {issues.length > 8 && (
+            <li className="opacity-60 text-[10px]">… and {issues.length - 8} more</li>
+          )}
+        </ul>
+      </div>
+      {dismissible && (
+        <button
+          onClick={onDismiss}
+          className="text-[10px] uppercase tracking-wider opacity-70 hover:opacity-100 shrink-0"
+        >
+          Dismiss
+        </button>
+      )}
+    </div>
   )
 }
 

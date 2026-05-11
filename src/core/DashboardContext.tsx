@@ -3,6 +3,39 @@ import type { WidgetConfig } from '../types/template'
 
 export type Severity = 'ok' | 'warn' | 'error' | 'info'
 
+// Single telemetry sink for the dashboard. Pass `onEvent` to <Dashboard>
+// to forward these to your analytics / observability layer. Intentionally
+// narrow — we only emit signals that operators actually need to see.
+export type DashboardEvent =
+  | {
+      type: 'alert'
+      widgetId?: string
+      severity: Severity
+      message: string
+      predicate: string
+    }
+  | {
+      type: 'widget_error'
+      widgetId?: string
+      component: string
+      message: string
+      // 'data' = source fetch / stream failure; 'render' = exception
+      // caught by ErrorBoundary; 'resolve' = ctx interpolation failure.
+      source: 'data' | 'render' | 'resolve'
+    }
+  | {
+      type: 'action'
+      actionId: string
+      clientRequestId: string
+      status: string
+      message?: string
+      // True when the status is terminal (OK/REJECTED/FAILED/CANCELLED).
+      // Non-terminal (ACCEPTED/PENDING) means more updates are coming.
+      terminal: boolean
+    }
+
+export type EmitEvent = (event: DashboardEvent) => void
+
 export interface WidgetAction {
   targetId: string
   // If true, remove the widget at targetId. Other fields ignored.
@@ -49,9 +82,26 @@ export interface DashboardContextValue {
   // The widget id currently displayed full-screen, or null for normal grid.
   fullscreenId: string | null
   setFullscreenId: (id: string | null) => void
+  // Keyboard navigation focus. `j`/`k` cycle through ids, `f`
+  // fullscreens the focused widget, `r` refreshes it. Esc clears.
+  focusedId: string | null
+  setFocusedId: (id: string | null) => void
+  // Bumps when the user presses `r` on the focused widget. WidgetShell
+  // watches its own id against `id`: if they match and `n` changed,
+  // it triggers a fresh fetch. Keeps the refresh API one-way and
+  // doesn't require widgets to register imperative handles.
+  refreshPulse: { id: string; n: number } | null
+  requestRefresh: (id: string) => void
+  // Telemetry fan-out. Safe no-op when consumer didn't pass `onEvent`.
+  // Widgets emit via this rather than calling props directly so the
+  // surface stays uniform across alerts, errors, and actions.
+  emit: EmitEvent
 }
 
-export const DashboardContext = createContext<DashboardContextValue>({
+// No-op stub. Exported so Storybook fixtures (and tests) can spread it
+// instead of re-listing every context field — keeps story files stable
+// as the context grows.
+export const DEFAULT_DASHBOARD_CONTEXT: DashboardContextValue = {
   dispatch: () => {},
   ctx: {},
   setCtx: () => {},
@@ -60,7 +110,14 @@ export const DashboardContext = createContext<DashboardContextValue>({
   compact: false,
   fullscreenId: null,
   setFullscreenId: () => {},
-})
+  focusedId: null,
+  setFocusedId: () => {},
+  refreshPulse: null,
+  requestRefresh: () => {},
+  emit: () => {},
+}
+
+export const DashboardContext = createContext<DashboardContextValue>(DEFAULT_DASHBOARD_CONTEXT)
 
 export function useDashboard(): DashboardContextValue {
   return useContext(DashboardContext)
