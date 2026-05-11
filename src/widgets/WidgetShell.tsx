@@ -171,11 +171,14 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
   // Refresh pulse — Dashboard's keyboard handler bumps refreshPulse with
   // our id when the user presses `r`. We watch the counter and trigger
   // a fresh fetch when it changes. Compares against a ref so a remount
-  // doesn't accidentally refetch.
+  // doesn't accidentally refetch. `id === '*'` means refresh every
+  // widget (toolbar "Reload" button).
   const lastPulseN = useRef(0)
   useEffect(() => {
-    if (!refreshPulse || refreshPulse.id !== config.id) return
-    if (refreshPulse.n !== lastPulseN.current) {
+    if (!refreshPulse) return
+    const matches = refreshPulse.id === '*' || refreshPulse.id === config.id
+    if (!matches) return
+    if (refreshPulse.n > lastPulseN.current) {
       lastPulseN.current = refreshPulse.n
       refresh()
     }

@@ -137,6 +137,23 @@ Clicking a row / cell / price level on certain widgets sets a `ctx` key, which r
 
 Widget focus is mouse-driven too — clicking a widget tile gives it the focus ring.
 
+Templates can declare per-dashboard hotkeys for instant ctx switches:
+
+```jsonc
+{
+  "shortcuts": [
+    { "key": "1", "ctx": { "symbol": "BTC" }, "label": "Bitcoin" },
+    { "key": "2", "ctx": { "symbol": "ETH" } },
+    { "key": "3", "ctx": { "symbol": "SOL" } }
+  ],
+  "widgets": [/* ... */]
+}
+```
+
+Pressing the key (outside an input, no modifier) merges its `ctx` into the active context. They appear in the `?` cheat sheet.
+
+The toolbar `Reload` button refreshes every widget at once; per-widget refresh is still available via the widget action menu or `r` on the focused widget.
+
 ## Validation
 
 `<Dashboard>` validates the template at mount and renders a banner for unknown components, conflicting source modes, out-of-range spans, and malformed alert predicates. Errors stay pinned; warnings dismiss for the session. You can run the validator yourself:
@@ -151,13 +168,18 @@ const issues = validateTemplate(template, ['my_custom_widget']) // pass custom n
 Pass `onEvent` to `<Dashboard>` for a single sink covering alerts, widget errors, and action lifecycles:
 
 ```ts
-<Dashboard template={tpl} backendUrl="…" onEvent={e => {
-  switch (e.type) {
-    case 'alert':         myAnalytics.track('alert', e); break
-    case 'widget_error':  Sentry.captureMessage(e.message, { extra: e }); break
-    case 'action':        if (e.terminal) myLedger.append(e); break
-  }
-}} />
+<Dashboard
+  template={tpl}
+  backendUrl="…"
+  onEvent={e => {
+    switch (e.type) {
+      case 'alert':         myAnalytics.track('alert', e); break
+      case 'widget_error':  Sentry.captureMessage(e.message, { extra: e }); break
+      case 'action':        if (e.terminal) myLedger.append(e); break
+    }
+  }}
+  onCtxChange={ctx => router.replace({ query: ctx })}
+/>
 ```
 
 ## Context and URL state

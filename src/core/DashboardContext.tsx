@@ -98,10 +98,12 @@ export interface DashboardContextValue {
   focusedId: string | null
   setFocusedId: (id: string | null) => void
   // Bumps when the user presses `r` on the focused widget. WidgetShell
-  // watches its own id against `id`: if they match and `n` changed,
-  // it triggers a fresh fetch. Keeps the refresh API one-way and
-  // doesn't require widgets to register imperative handles.
+  // watches its own id against `id`: if they match (or id === '*'
+  // meaning "all widgets") and `n` changed, it triggers a fresh
+  // fetch. Keeps the refresh API one-way and doesn't require widgets
+  // to register imperative handles.
   refreshPulse: { id: string; n: number } | null
+  // Pass '*' to refresh every widget at once (toolbar "Reload" button).
   requestRefresh: (id: string) => void
   // Telemetry fan-out. Safe no-op when consumer didn't pass `onEvent`.
   // Widgets emit via this rather than calling props directly so the
