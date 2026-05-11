@@ -22,10 +22,15 @@ export function DataTable({ data, options }: WidgetProps) {
   // Opt-in tick flash for streaming watchlists. Off by default — most
   // tables aren't live and don't need the visual churn.
   const tickFlash = options?.tick_flash === true
+  // Opt-in client-side search. Renders a small filter input at the top
+  // that matches any cell value substring. Off by default; turn on for
+  // long watchlists with `options.search = true`.
+  const searchEnabled = options?.search === true
   const { columns, rows } = useMemo(() => normalize(data), [data])
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortAsc, setSortAsc] = useState(true)
   const [page, setPage] = useState(0)
+  const [query, setQuery] = useState('')
 
   // Row identity for flash tracking. Use the first column value — that
   // matches how a watchlist is structured (symbol leading the row).
@@ -105,9 +110,24 @@ export function DataTable({ data, options }: WidgetProps) {
     if (value != null) setCtx(rowContext.key, String(value))
   }
 
+  // Filter first (cheaper to sort fewer rows). Case-insensitive
+  // substring match against any cell — sufficient for a watchlist;
+  // authors who need column-scoped search can wire it via a Select
+  // widget that filters at the backend.
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return rows
+    return rows.filter(row =>
+      columns.some(col => {
+        const v = row[col]
+        return v != null && String(v).toLowerCase().includes(q)
+      }),
+    )
+  }, [rows, columns, query])
+
   const sorted = useMemo(() => {
-    if (!sortKey) return rows
-    return [...rows].sort((a, b) => {
+    if (!sortKey) return filtered
+    return [...filtered].sort((a, b) => {
       const va = a[sortKey]
       const vb = b[sortKey]
       if (va == null && vb == null) return 0
@@ -118,7 +138,7 @@ export function DataTable({ data, options }: WidgetProps) {
         : String(va).localeCompare(String(vb))
       return sortAsc ? cmp : -cmp
     })
-  }, [rows, sortKey, sortAsc])
+  }, [filtered, sortKey, sortAsc])
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize))
   const safePage = Math.min(page, totalPages - 1)
@@ -151,15 +171,26 @@ export function DataTable({ data, options }: WidgetProps) {
 
   return (
     <div className="flex flex-col h-full">
-      {exportEnabled && (
-        <div className="flex justify-end pb-1">
-          <button
-            onClick={exportCsv}
-            className="text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800"
-            title="Download as CSV"
-          >
-            ↓ CSV
-          </button>
+      {(searchEnabled || exportEnabled) && (
+        <div className="flex items-center gap-2 pb-1">
+          {searchEnabled && (
+            <input
+              type="text"
+              value={query}
+              onChange={e => { setQuery(e.target.value); setPage(0) }}
+              placeholder="filter…"
+              className="flex-1 bg-zinc-950 border border-zinc-800 rounded px-2 py-0.5 text-xs text-zinc-200 placeholder-zinc-600 outline-none focus:border-zinc-600"
+            />
+          )}
+          {exportEnabled && (
+            <button
+              onClick={exportCsv}
+              className="text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800 shrink-0"
+              title="Download as CSV"
+            >
+              ↓ CSV
+            </button>
+          )}
         </div>
       )}
       <div className="overflow-auto flex-1 min-h-0">
