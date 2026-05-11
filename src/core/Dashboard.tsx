@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import type { Template, WidgetConfig } from '../types/template'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import { WidgetShell } from '../widgets/WidgetShell'
-import { DashboardContext, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent, type ActionLogEntry } from './DashboardContext'
+import { DashboardContext, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent, type ActionLogEntry, type WidgetHealth } from './DashboardContext'
 import { HoverProvider } from './HoverContext'
 import { NowProvider } from './NowContext'
 import { applyActions } from './applyActions'
@@ -127,6 +127,34 @@ function OpenPaletteHint() {
   )
 }
 
+function HealthPill({ health }: { health: Record<string, WidgetHealth> }) {
+  const entries = Object.values(health)
+  if (entries.length === 0) return null
+  const streams = entries.filter(e => e.streaming)
+  const liveStreams = streams.filter(e => e.connected && !e.error).length
+  const errored = entries.filter(e => e.error)
+  if (streams.length === 0 && errored.length === 0) return null
+  const errorTitles = errored.map(e => e.title).join('\n')
+  return (
+    <div className="flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider bg-zinc-900 border border-zinc-800 rounded">
+      {streams.length > 0 && (
+        <span
+          className={liveStreams === streams.length ? 'text-emerald-400' : 'text-amber-400'}
+          title={`${liveStreams} of ${streams.length} streams connected`}
+        >
+          <span className="tabular-nums">{liveStreams}/{streams.length}</span>
+          <span className="ml-0.5">↑</span>
+        </span>
+      )}
+      {errored.length > 0 && (
+        <span className="text-red-400 tabular-nums" title={errorTitles}>
+          {errored.length} err{errored.length === 1 ? '' : 's'}
+        </span>
+      )}
+    </div>
+  )
+}
+
 function ReloadAllButton({ onClick }: { onClick: () => void }) {
   return (
     <button
@@ -248,6 +276,31 @@ export function Dashboard({
   const [recentActions, setRecentActions] = useState<ActionLogEntry[]>([])
   const clearRecentActions = useCallback(() => setRecentActions([]), [])
 
+  // Aggregated widget health. Each WidgetShell reports its streaming
+  // status, connection, and last error here. Pass `null` to unregister
+  // on unmount. Setter dedupes identical state so unchanged ticks don't
+  // re-render the toolbar.
+  const [widgetHealth, setWidgetHealth] = useState<Record<string, WidgetHealth>>({})
+  const reportWidgetHealth = useCallback((id: string, state: WidgetHealth | null) => {
+    setWidgetHealth(prev => {
+      const existing = prev[id]
+      if (state === null) {
+        if (!existing) return prev
+        const next = { ...prev }
+        delete next[id]
+        return next
+      }
+      if (existing &&
+          existing.streaming === state.streaming &&
+          existing.connected === state.connected &&
+          existing.error === state.error &&
+          existing.title === state.title) {
+        return prev
+      }
+      return { ...prev, [id]: state }
+    })
+  }, [])
+
   const emit = useCallback((event: DashboardEvent) => {
     onEventRef.current?.(event)
     if (event.type === 'action') {
@@ -328,10 +381,12 @@ export function Dashboard({
       recentActions,
       clearRecentActions,
       soundEnabled,
+      widgetHealth,
+      reportWidgetHealth,
     }),
     [dispatch, ctx, setCtx, backendUrl, widgets, refreshIntervalMs, toast, compact,
      fullscreenId, focusedId, refreshPulse, requestRefresh, emit,
-     recentActions, clearRecentActions, soundEnabled],
+     recentActions, clearRecentActions, soundEnabled, widgetHealth, reportWidgetHealth],
   )
 
   // Esc closes fullscreen.
@@ -430,6 +485,7 @@ export function Dashboard({
             )
           })}
           <div className="ml-auto flex items-center gap-2">
+            <HealthPill health={widgetHealth} />
             <RefreshPicker value={refreshIntervalMs} onChange={setRefreshIntervalMs} />
             <ReloadAllButton onClick={() => requestRefresh('*')} />
             <SoundToggle enabled={soundEnabled} onToggle={() => setSoundEnabled(s => !s)} />

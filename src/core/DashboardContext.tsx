@@ -118,6 +118,23 @@ export interface DashboardContextValue {
   // default; toggled from the dashboard toolbar and persisted in
   // localStorage. Info/ok alerts are always silent.
   soundEnabled: boolean
+  // Per-widget health snapshot — WidgetShell reports its streaming
+  // status and last error here so the toolbar can render an aggregate
+  // pill (N streams live, M errors). Stored as an object keyed by
+  // widget id so React state diffing is cheap.
+  widgetHealth: Record<string, WidgetHealth>
+  reportWidgetHealth: (id: string, state: WidgetHealth | null) => void
+}
+
+export interface WidgetHealth {
+  // Display title (or component name) so the toolbar's hover detail
+  // can name the offender without a separate lookup.
+  title: string
+  // True only when the widget's source has `stream: true` — polling
+  // widgets aren't "streams" and don't count toward the live ratio.
+  streaming: boolean
+  connected: boolean
+  error: string | null
 }
 
 // No-op stub. Exported so Storybook fixtures (and tests) can spread it
@@ -140,6 +157,8 @@ export const DEFAULT_DASHBOARD_CONTEXT: DashboardContextValue = {
   recentActions: [],
   clearRecentActions: () => {},
   soundEnabled: false,
+  widgetHealth: {},
+  reportWidgetHealth: () => {},
 }
 
 export const DashboardContext = createContext<DashboardContextValue>(DEFAULT_DASHBOARD_CONTEXT)

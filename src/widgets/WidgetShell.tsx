@@ -134,7 +134,7 @@ function ActionMenu({
 }
 
 export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; contentHeight: number }) {
-  const { ctx, backendUrl, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit, soundEnabled } = useDashboard()
+  const { ctx, backendUrl, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit, soundEnabled, reportWidgetHealth } = useDashboard()
   // Title interpolation is lenient — partial substitution is fine for a
   // human-facing string. Source interpolation is strict (resolveSource).
   const title = useMemo(
@@ -219,6 +219,22 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
       lastErrorEmitted.current = null
     }
   }, [resolution.error, error, emit, config.id, config.component])
+
+  // Report widget health to the dashboard so the toolbar pill stays in
+  // sync. Widgets without an id are anonymous and skip reporting —
+  // the toolbar can't address them anyway. Title falls back to the
+  // component name so the hover detail still names the offender.
+  useEffect(() => {
+    if (!config.id) return
+    const streaming = !!source?.stream
+    reportWidgetHealth(config.id, {
+      title: title || config.title || config.component,
+      streaming,
+      connected: streaming ? connected : true,
+      error: resolution.error ?? error,
+    })
+    return () => reportWidgetHealth(config.id!, null)
+  }, [config.id, title, config.title, config.component, source?.stream, connected, resolution.error, error, reportWidgetHealth])
 
   const isFocused = !!config.id && focusedId === config.id
   // Mouse click to focus mirrors keyboard nav. Cheap visual affordance
