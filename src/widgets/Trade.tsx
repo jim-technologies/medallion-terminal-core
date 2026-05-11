@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import { buildSubmitActionUrl, buildActionRequest, newClientRequestId } from '../core/resolveSource'
 import { useWatchAction, isTerminalStatus, isErrorStatus } from '../hooks/useWatchAction'
@@ -41,6 +41,27 @@ export function Trade({ options }: WidgetProps) {
   const [side, setSide] = useState<Side>('buy')
   const [amount, setAmount] = useState('')
   const [price, setPrice] = useState('')
+
+  // ctx → form sync. When another widget writes ctx.price or ctx.side
+  // (e.g. an OrderBook click with price_context), pull those values
+  // into the form. A ref tracks the last-seen ctx value so user typing
+  // doesn't get wiped on unrelated ctx changes; we only overwrite when
+  // the ctx value itself actually changed.
+  const lastCtxPrice = useRef<string | undefined>(ctx.price)
+  useEffect(() => {
+    if (ctx.price !== lastCtxPrice.current) {
+      lastCtxPrice.current = ctx.price
+      if (ctx.price != null) setPrice(ctx.price)
+    }
+  }, [ctx.price])
+
+  const lastCtxSide = useRef<string | undefined>(ctx.side)
+  useEffect(() => {
+    if (ctx.side !== lastCtxSide.current) {
+      lastCtxSide.current = ctx.side
+      if (ctx.side === 'buy' || ctx.side === 'sell') setSide(ctx.side)
+    }
+  }, [ctx.side])
   const [submitting, setSubmitting] = useState(false)
   const [reply, setReply] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)

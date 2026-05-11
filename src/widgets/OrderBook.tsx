@@ -16,9 +16,13 @@ interface OrderBookData {
 }
 
 // Click a price level → set ctx[key] to that price. Lets a Trade widget
-// reading `${ctx.price}` pre-fill the limit price from the book.
+// reading `${ctx.price}` pre-fill the limit price from the book. The
+// optional `side_key` also writes the order side (clicked a bid → buy,
+// clicked an ask → sell), completing the book → ticket workflow with a
+// single click.
 interface PriceContext {
   key: string
+  side_key?: string
 }
 
 const TOP_N = 10
@@ -27,7 +31,12 @@ export function OrderBook({ data, options }: WidgetProps) {
   const { setCtx } = useDashboard()
   const book = useMemo(() => normalize(data), [data])
   const priceContext = options?.price_context as PriceContext | undefined
-  const onPrice = priceContext ? (price: number) => setCtx(priceContext.key, String(price)) : undefined
+  const onPrice = priceContext
+    ? (price: number, side: 'bid' | 'ask') => {
+        setCtx(priceContext.key, String(price))
+        if (priceContext.side_key) setCtx(priceContext.side_key, side === 'bid' ? 'buy' : 'sell')
+      }
+    : undefined
   if (!book) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
 
   const bestBid = book.bids[0]?.price
@@ -79,14 +88,14 @@ export function OrderBook({ data, options }: WidgetProps) {
 function Row({
   side, level, cum, maxSize, onPrice,
 }: {
-  side: 'bid' | 'ask'; level: Level; cum: number; maxSize: number; onPrice?: (price: number) => void
+  side: 'bid' | 'ask'; level: Level; cum: number; maxSize: number; onPrice?: (price: number, side: 'bid' | 'ask') => void
 }) {
   const pct = (level.size / maxSize) * 100
   const bar = side === 'bid' ? 'bg-emerald-500/10' : 'bg-red-500/10'
   const text = side === 'bid' ? 'text-emerald-400' : 'text-red-400'
   return (
     <div
-      onClick={onPrice ? () => onPrice(level.price) : undefined}
+      onClick={onPrice ? () => onPrice(level.price, side) : undefined}
       className={`relative grid grid-cols-3 gap-2 px-2 py-0.5 ${onPrice ? 'cursor-pointer hover:bg-zinc-800/40' : ''}`}
     >
       <div className={`absolute inset-y-0 right-0 ${bar}`} style={{ width: `${pct}%` }} />

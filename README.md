@@ -116,7 +116,10 @@ Clicking a row / cell / price level on certain widgets sets a `ctx` key, which r
 { "component": "paired_grid", "options": { "row_context": { "key": "strike" } } }
 
 // Click a price level → set ctx.price (e.g. to prefill the Trade widget).
-{ "component": "orderbook", "options": { "price_context": { "key": "price" } } }
+// `side_key` also writes ctx.side ("buy" on bid click, "sell" on ask click)
+// for a one-click book-to-ticket flow.
+{ "component": "orderbook",
+  "options": { "price_context": { "key": "price", "side_key": "side" } } }
 
 // Heatmap cells map to one or both axes.
 { "component": "heatmap",
