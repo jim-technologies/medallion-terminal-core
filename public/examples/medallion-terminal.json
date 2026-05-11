@@ -1,0 +1,171 @@
+{
+  "title": "Medallion Terminal",
+  "context": { "values": { "symbol": "BTC", "range": "1d" } },
+  "shortcuts": [
+    { "key": "1", "ctx": { "symbol": "BTC" }, "label": "Bitcoin"  },
+    { "key": "2", "ctx": { "symbol": "ETH" }, "label": "Ethereum" },
+    { "key": "3", "ctx": { "symbol": "SOL" }, "label": "Solana"   },
+    { "key": "4", "ctx": { "symbol": "SPY" }, "label": "S&P 500"  }
+  ],
+  "widgets": [
+    {
+      "id": "tape",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 80,
+      "source": {
+        "inline": [
+          { "label": "BTC",  "value": 67842.50, "delta":  0.0184, "unit": "USD", "trend": [66100, 66800, 67200, 66900, 67500, 67700, 67842] },
+          { "label": "ETH",  "value":  3456.10, "delta":  0.0081, "unit": "USD", "trend": [3380, 3410, 3445, 3420, 3460, 3450, 3456] },
+          { "label": "SOL",  "value":   168.20, "delta":  0.0392, "unit": "USD", "trend": [162, 164, 166, 165, 167, 167, 168] },
+          { "label": "SPY",  "value":   521.40, "delta":  0.0024, "unit": "USD" },
+          { "label": "DXY",  "value":   104.62, "delta": -0.0012, "unit": "" },
+          { "label": "VIX",  "value":    15.30, "delta":  0.0420, "unit": "" }
+        ]
+      }
+    },
+
+    {
+      "id": "watchlist",
+      "component": "table",
+      "span": 4,
+      "height": 420,
+      "title": "Watchlist",
+      "options": {
+        "row_context": { "key": "symbol", "field": "Sym" },
+        "tick_flash": true,
+        "search": true,
+        "heat_columns": ["Chg%"]
+      },
+      "source": {
+        "inline": [
+          { "Sym": "BTC", "Last": 67842.50, "Chg%":  1.84, "Vol":  4823 },
+          { "Sym": "ETH", "Last":  3456.10, "Chg%":  0.81, "Vol":  2410 },
+          { "Sym": "SOL", "Last":   168.20, "Chg%":  3.92, "Vol":   980 },
+          { "Sym": "LINK","Last":    14.62, "Chg%": -0.42, "Vol":   180 },
+          { "Sym": "AVAX","Last":    35.10, "Chg%":  1.10, "Vol":   220 },
+          { "Sym": "DOGE","Last":     0.156,"Chg%":  4.30, "Vol":  6500 },
+          { "Sym": "SPY", "Last":   521.40, "Chg%":  0.24, "Vol":   840 },
+          { "Sym": "QQQ", "Last":   442.10, "Chg%": -0.08, "Vol":   620 },
+          { "Sym": "GLD", "Last":   218.60, "Chg%":  0.46, "Vol":   180 }
+        ]
+      }
+    },
+
+    {
+      "id": "px",
+      "component": "candlestick",
+      "span": 5,
+      "height": 420,
+      "title": "${ctx.symbol}/USD — ${ctx.range}",
+      "source": {
+        "inline": {
+          "bars": [
+            { "timestamp": "2026-05-11 09:30", "open": 67200, "high": 67450, "low": 67100, "close": 67380, "volume": 4200 },
+            { "timestamp": "2026-05-11 10:00", "open": 67380, "high": 67620, "low": 67310, "close": 67580, "volume": 4800 },
+            { "timestamp": "2026-05-11 10:30", "open": 67580, "high": 67700, "low": 67420, "close": 67460, "volume": 3600 },
+            { "timestamp": "2026-05-11 11:00", "open": 67460, "high": 67510, "low": 67220, "close": 67280, "volume": 3900 },
+            { "timestamp": "2026-05-11 11:30", "open": 67280, "high": 67400, "low": 67180, "close": 67340, "volume": 2800 },
+            { "timestamp": "2026-05-11 12:00", "open": 67340, "high": 67620, "low": 67300, "close": 67580, "volume": 3400 },
+            { "timestamp": "2026-05-11 12:30", "open": 67580, "high": 67780, "low": 67520, "close": 67700, "volume": 4100 },
+            { "timestamp": "2026-05-11 13:00", "open": 67700, "high": 67920, "low": 67650, "close": 67860, "volume": 4600 },
+            { "timestamp": "2026-05-11 13:30", "open": 67860, "high": 67980, "low": 67740, "close": 67800, "volume": 3700 },
+            { "timestamp": "2026-05-11 14:00", "open": 67800, "high": 67910, "low": 67620, "close": 67680, "volume": 3200 },
+            { "timestamp": "2026-05-11 14:30", "open": 67680, "high": 67740, "low": 67410, "close": 67500, "volume": 4400 },
+            { "timestamp": "2026-05-11 15:00", "open": 67500, "high": 67890, "low": 67460, "close": 67842, "volume": 5100 }
+          ],
+          "annotations": [
+            { "timestamp": "2026-05-11 12:00", "label": "FOMC minutes", "kind": "info" }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "book",
+      "component": "orderbook",
+      "span": 3,
+      "height": 420,
+      "title": "${ctx.symbol} book",
+      "options": { "price_context": { "key": "price", "side_key": "side" } },
+      "source": {
+        "inline": {
+          "mid": 67842.5,
+          "spread": 1.0,
+          "venue": "demo",
+          "bids": [
+            { "price": 67842, "size": 0.85 },
+            { "price": 67841, "size": 1.20 },
+            { "price": 67840, "size": 2.40 },
+            { "price": 67839, "size": 0.62 },
+            { "price": 67838, "size": 1.85 },
+            { "price": 67837, "size": 3.10 },
+            { "price": 67836, "size": 0.95 }
+          ],
+          "asks": [
+            { "price": 67843, "size": 0.72 },
+            { "price": 67844, "size": 1.40 },
+            { "price": 67845, "size": 2.05 },
+            { "price": 67846, "size": 0.88 },
+            { "price": 67847, "size": 1.62 },
+            { "price": 67848, "size": 2.95 },
+            { "price": 67849, "size": 1.10 }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "ticket",
+      "component": "trade",
+      "span": 3,
+      "height": 280,
+      "title": "Order ticket",
+      "options": {
+        "url": "/api/orders",
+        "quote_unit": "${ctx.symbol}",
+        "confirm": true
+      }
+    },
+
+    {
+      "id": "blotter",
+      "component": "action_log",
+      "span": 9,
+      "height": 280,
+      "title": "Order log"
+    },
+
+    {
+      "id": "alert",
+      "component": "metric",
+      "span": 3,
+      "height": 120,
+      "title": "BTC spot",
+      "source": {
+        "inline": { "value": 67842.50, "delta": 0.0184, "unit": "USD" }
+      },
+      "alert": {
+        "when": "value > 70000 && delta > 0",
+        "message": "${ctx.symbol} ripping past 70k",
+        "severity": "warn"
+      }
+    },
+
+    {
+      "id": "news",
+      "component": "text",
+      "span": 9,
+      "height": 120,
+      "title": "News",
+      "source": {
+        "inline": {
+          "items": [
+            { "title": "Fed minutes hint at fewer cuts", "body": "Officials signaled patience on rate cuts amid sticky services inflation.", "timestamp": "2026-05-11 12:00" },
+            { "title": "ETF flows turn positive", "body": "Spot Bitcoin ETFs saw $312M net inflows on Friday after a four-day streak of outflows.", "timestamp": "2026-05-11 09:15" }
+          ]
+        }
+      }
+    }
+  ]
+}

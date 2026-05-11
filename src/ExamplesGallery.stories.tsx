@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Dashboard } from './core/Dashboard'
 import type { Template, WidgetConfig } from './types/template'
 
+import medallionTerminal from '../public/examples/medallion-terminal.json'
 import cryptoWatch from '../public/examples/crypto-watch.json'
 import tradingFloor from '../public/examples/trading-floor.json'
 import predictionMarket from '../public/examples/prediction-market.json'
@@ -112,6 +113,7 @@ const referenceBackendSamples: Record<string, unknown> = {
   },
 }
 
+export const MedallionTerminal    = story(medallionTerminal)
 export const CryptoWatch          = story(cryptoWatch)
 export const TradingFloor         = story(tradingFloor)
 export const PredictionMarket     = story(predictionMarket)

@@ -10,6 +10,12 @@ interface Example {
 
 const EXAMPLES: Example[] = [
   {
+    path: '/examples/medallion-terminal.json',
+    title: 'Medallion Terminal',
+    blurb: 'Showcase: tick-flash watchlist, OrderBook → Trade via ctx.price/side, per-dashboard 1/2/3 shortcuts, live action log, compound alert predicate.',
+    tags: ['finance', 'showcase'],
+  },
+  {
     path: '/examples/crypto-watch.json',
     title: 'Crypto Watch',
     blurb: 'Perplexity-finance-style: AI summary, candles, peers (click-to-jump), sentiment gauge, news.',
