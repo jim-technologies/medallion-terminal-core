@@ -1,5 +1,12 @@
 import { useMemo } from 'react'
+import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
+
+// Click-a-row → set ctx[key] to the row's `key` (strike, line, etc).
+// Mirrors the DataTable / Heatmap row_context convention.
+interface PairedRowContext {
+  key: string
+}
 
 interface PairedSide {
   values: Record<string, number>
@@ -31,7 +38,8 @@ interface PairedGridData {
 
 const MAX_AUTO_MEASURES = 6
 
-export function PairedGrid({ data }: WidgetProps) {
+export function PairedGrid({ data, options }: WidgetProps) {
+  const { setCtx } = useDashboard()
   const grid = useMemo(() => normalize(data), [data])
   const sortedRows = useMemo(
     () => (grid ? [...grid.rows].sort((a, b) => a.key - b.key) : []),
@@ -42,6 +50,7 @@ export function PairedGrid({ data }: WidgetProps) {
   const subjectVal = grid.subject_value
   const step = sortedRows.length >= 2 ? sortedRows[1].key - sortedRows[0].key : 0
   const measures = grid.measures
+  const rowContext = options?.row_context as PairedRowContext | undefined
 
   return (
     <div className="h-full flex flex-col text-xs">
@@ -70,9 +79,14 @@ export function PairedGrid({ data }: WidgetProps) {
           <tbody>
             {sortedRows.map((row, i) => {
               const isAtm = subjectVal != null && step > 0 && Math.abs(row.key - subjectVal) < step
-              const trClass = isAtm ? 'bg-zinc-800/40' : 'hover:bg-zinc-800/20'
+              const clickable = !!rowContext
+              const trClass = `${isAtm ? 'bg-zinc-800/40' : 'hover:bg-zinc-800/20'} ${clickable ? 'cursor-pointer' : ''}`
               return (
-                <tr key={i} className={`border-b border-zinc-800/40 ${trClass}`}>
+                <tr
+                  key={i}
+                  onClick={clickable ? () => setCtx(rowContext!.key, String(row.key)) : undefined}
+                  className={`border-b border-zinc-800/40 ${trClass}`}
+                >
                   {measures.map(m => (
                     <td key={`l-${m.key}`} className="text-right px-2 py-1 text-zinc-300">
                       {fmtMeasure(row.left?.values?.[m.key], m.format)}

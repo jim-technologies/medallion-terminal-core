@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 
 interface Level {
@@ -14,10 +15,19 @@ interface OrderBookData {
   venue?: string
 }
 
+// Click a price level → set ctx[key] to that price. Lets a Trade widget
+// reading `${ctx.price}` pre-fill the limit price from the book.
+interface PriceContext {
+  key: string
+}
+
 const TOP_N = 10
 
-export function OrderBook({ data }: WidgetProps) {
+export function OrderBook({ data, options }: WidgetProps) {
+  const { setCtx } = useDashboard()
   const book = useMemo(() => normalize(data), [data])
+  const priceContext = options?.price_context as PriceContext | undefined
+  const onPrice = priceContext ? (price: number) => setCtx(priceContext.key, String(price)) : undefined
   if (!book) return <div className="flex items-center justify-center h-full text-zinc-500 text-sm">No data</div>
 
   const bestBid = book.bids[0]?.price
@@ -43,7 +53,7 @@ export function OrderBook({ data }: WidgetProps) {
             // Cumulative from top of book down — for asks displayed in descending order,
             // the row farthest from mid has the smallest cumulative.
             const cum = topAsks.slice(i).reduce((s, l) => s + l.size, 0)
-            return <Row key={`ask-${i}`} side="ask" level={a} cum={cum} maxSize={maxSize} />
+            return <Row key={`ask-${i}`} side="ask" level={a} cum={cum} maxSize={maxSize} onPrice={onPrice} />
           })}
         </div>
         <div className="border-y border-zinc-700 bg-zinc-900/60 px-2 py-1.5 flex items-center justify-between shrink-0">
@@ -53,7 +63,7 @@ export function OrderBook({ data }: WidgetProps) {
         <div className="flex-1 overflow-auto">
           {topBids.map((b, i) => {
             const cum = topBids.slice(0, i + 1).reduce((s, l) => s + l.size, 0)
-            return <Row key={`bid-${i}`} side="bid" level={b} cum={cum} maxSize={maxSize} />
+            return <Row key={`bid-${i}`} side="bid" level={b} cum={cum} maxSize={maxSize} onPrice={onPrice} />
           })}
         </div>
       </div>
@@ -66,12 +76,19 @@ export function OrderBook({ data }: WidgetProps) {
   )
 }
 
-function Row({ side, level, cum, maxSize }: { side: 'bid' | 'ask'; level: Level; cum: number; maxSize: number }) {
+function Row({
+  side, level, cum, maxSize, onPrice,
+}: {
+  side: 'bid' | 'ask'; level: Level; cum: number; maxSize: number; onPrice?: (price: number) => void
+}) {
   const pct = (level.size / maxSize) * 100
   const bar = side === 'bid' ? 'bg-emerald-500/10' : 'bg-red-500/10'
   const text = side === 'bid' ? 'text-emerald-400' : 'text-red-400'
   return (
-    <div className="relative grid grid-cols-3 gap-2 px-2 py-0.5">
+    <div
+      onClick={onPrice ? () => onPrice(level.price) : undefined}
+      className={`relative grid grid-cols-3 gap-2 px-2 py-0.5 ${onPrice ? 'cursor-pointer hover:bg-zinc-800/40' : ''}`}
+    >
       <div className={`absolute inset-y-0 right-0 ${bar}`} style={{ width: `${pct}%` }} />
       <span className={`relative ${text} tabular-nums`}>{format(level.price)}</span>
       <span className="relative text-right text-zinc-200 tabular-nums">{formatSize(level.size)}</span>
