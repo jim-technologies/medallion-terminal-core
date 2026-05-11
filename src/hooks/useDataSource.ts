@@ -54,6 +54,10 @@ export interface DataSourceState {
   error: string | null
   lastUpdated: number | null
   connected: boolean
+  // Wall-clock ms at which the next reconnect attempt will fire, or null
+  // if the stream is connected (or not a stream). UI surfaces it as a
+  // "reconnecting in Xs" countdown next to the disconnected indicator.
+  nextRetryAt: number | null
   // Manually trigger a refetch. No-op for inline sources.
   refresh: () => void
 }
@@ -64,6 +68,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<number | null>(null)
   const [connected, setConnected] = useState(false)
+  const [nextRetryAt, setNextRetryAt] = useState<number | null>(null)
   const [refreshTick, setRefreshTick] = useState(0)
   const refresh = useCallback(() => setRefreshTick(t => t + 1), [])
   const reconnectDelay = useRef(INITIAL_RECONNECT_DELAY)
@@ -165,6 +170,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
           if (!res.body) throw new Error('ConnectRPC: no response body')
 
           setConnected(true)
+          setNextRetryAt(null)
           setError(null)
           reconnectDelay.current = INITIAL_RECONNECT_DELAY
 
@@ -190,10 +196,12 @@ export function useDataSource(source?: DataSource): DataSourceState {
         } finally {
           if (!disposed) {
             setConnected(false)
+            const delay = reconnectDelay.current
+            setNextRetryAt(Date.now() + delay)
             reconnectTimer.current = setTimeout(() => {
               reconnectDelay.current = Math.min(reconnectDelay.current * 2, MAX_RECONNECT_DELAY)
               connect()
-            }, reconnectDelay.current)
+            }, delay)
           }
         }
       }
@@ -204,6 +212,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
         ctrl.abort()
         clearTimeout(reconnectTimer.current)
         setConnected(false)
+        setNextRetryAt(null)
       }
     }
 
@@ -215,21 +224,23 @@ export function useDataSource(source?: DataSource): DataSourceState {
       const connect = () => {
         if (disposed) return
         es = new EventSource(source.url!)
-        es.onopen = () => { setConnected(true); setError(null); reconnectDelay.current = INITIAL_RECONNECT_DELAY }
+        es.onopen = () => { setConnected(true); setNextRetryAt(null); setError(null); reconnectDelay.current = INITIAL_RECONNECT_DELAY }
         es.onmessage = (e) => { try { handleData(JSON.parse(e.data)) } catch { setError('Failed to parse stream') } }
         es.onerror = () => {
           es?.close(); setConnected(false)
           if (!disposed) {
+            const delay = reconnectDelay.current
+            setNextRetryAt(Date.now() + delay)
             reconnectTimer.current = setTimeout(() => {
               reconnectDelay.current = Math.min(reconnectDelay.current * 2, MAX_RECONNECT_DELAY)
               connect()
-            }, reconnectDelay.current)
+            }, delay)
           }
         }
       }
 
       connect()
-      return () => { disposed = true; clearTimeout(reconnectTimer.current); es?.close(); setConnected(false) }
+      return () => { disposed = true; clearTimeout(reconnectTimer.current); es?.close(); setConnected(false); setNextRetryAt(null) }
     }
 
     // --- Regular fetch (+ polling) ---
@@ -269,5 +280,5 @@ export function useDataSource(source?: DataSource): DataSourceState {
     if (throttleTimer.current) clearTimeout(throttleTimer.current)
   }, [])
 
-  return { data, loading, error, lastUpdated, connected, refresh }
+  return { data, loading, error, lastUpdated, connected, nextRetryAt, refresh }
 }
