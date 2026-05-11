@@ -3,6 +3,21 @@ export interface Template {
   columns?: number // grid columns, default 12
   context?: Context
   widgets: WidgetConfig[]
+  // Optional per-dashboard hotkeys. Pressing a key (outside an editable
+  // element, no modifier) merges the entry's `ctx` map into the active
+  // context. Intended for "press 1 for BTC, 2 for ETH" trader flows.
+  shortcuts?: TemplateShortcut[]
+}
+
+export interface TemplateShortcut {
+  // The literal key character (e.g. "1", "b"). Single-char keys only —
+  // anything fancier (modifiers, sequences) belongs in app-level code,
+  // not the template. Case-sensitive: "B" and "b" differ.
+  key: string
+  // Map of ctx keys to set when the shortcut fires.
+  ctx: Record<string, string>
+  // Optional label shown in the shortcuts cheat sheet (`?`).
+  label?: string
 }
 
 export interface Context {

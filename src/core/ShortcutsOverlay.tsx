@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { TemplateShortcut } from '../types/template'
 
 const SHORTCUTS: Array<{ keys: string; description: string }> = [
   { keys: '⌘ K / Ctrl K', description: 'Open command palette (set ctx, save/load views)' },
@@ -15,10 +16,16 @@ const SHORTCUTS: Array<{ keys: string; description: string }> = [
   { keys: '/delete <name>', description: 'In palette: delete a saved view' },
 ]
 
+function describeShortcut(s: TemplateShortcut): string {
+  if (s.label) return s.label
+  const pairs = Object.entries(s.ctx).map(([k, v]) => `${k}=${v}`).join(' · ')
+  return `Set ${pairs}`
+}
+
 // Press `?` (anywhere outside an input) to bring up the shortcuts cheat
 // sheet. `Esc` or click outside dismisses. Mounted once at the
 // Dashboard root so it's available everywhere.
-export function ShortcutsOverlay() {
+export function ShortcutsOverlay({ templateShortcuts }: { templateShortcuts?: TemplateShortcut[] }) {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -62,6 +69,21 @@ export function ShortcutsOverlay() {
               <span className="text-xs text-zinc-400">{s.description}</span>
             </div>
           ))}
+          {templateShortcuts && templateShortcuts.length > 0 && (
+            <>
+              <div className="text-[10px] uppercase tracking-wider text-zinc-500 mt-3 mb-1">
+                Dashboard shortcuts
+              </div>
+              {templateShortcuts.map((s, i) => (
+                <div key={`tpl-${i}`} className="flex items-baseline gap-3">
+                  <kbd className="text-[10px] font-mono text-zinc-300 bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 shrink-0">
+                    {s.key}
+                  </kbd>
+                  <span className="text-xs text-zinc-400">{describeShortcut(s)}</span>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
     </div>

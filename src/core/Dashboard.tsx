@@ -127,6 +127,18 @@ function OpenPaletteHint() {
   )
 }
 
+function ReloadAllButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded"
+      title="Refresh every widget"
+    >
+      Reload
+    </button>
+  )
+}
+
 function SoundToggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void }) {
   return (
     <button
@@ -174,13 +186,17 @@ function SnapshotButton({ onCopied }: { onCopied: () => void }) {
 }
 
 export function Dashboard({
-  template, backendUrl, onEvent,
+  template, backendUrl, onEvent, onCtxChange,
 }: {
   template: Template
   backendUrl?: string
   // Optional telemetry sink. Receives alerts, widget errors, and
   // action submissions. Keep handler cheap — it runs on every event.
   onEvent?: (event: DashboardEvent) => void
+  // Fires when the active ctx changes (palette command, row click,
+  // template shortcut, URL load). Use for analytics or to mirror ctx
+  // into your app's router.
+  onCtxChange?: (ctx: Record<string, string>) => void
 }) {
   const breakpoint = useBreakpoint()
   const columns = template.columns || 12
@@ -213,8 +229,12 @@ export function Dashboard({
   const [toasts, setToasts] = useState<Toast[]>([])
   const toastIdRef = useRef(0)
 
+  // Monotonic — every bump increments. Widgets compare against their
+  // last-seen `n` to decide whether to refetch, so the counter must
+  // never reset (otherwise an `*` pulse after individual pulses could
+  // silently fall below a widget's last-seen counter).
   const requestRefresh = useCallback((id: string) => {
-    setRefreshPulse(prev => ({ id, n: (prev?.id === id ? prev.n : 0) + 1 }))
+    setRefreshPulse(prev => ({ id, n: (prev?.n ?? 0) + 1 }))
   }, [])
 
   // Hold the latest onEvent in a ref so widgets can emit through a
@@ -270,6 +290,12 @@ export function Dashboard({
     window.history.replaceState(null, '', url)
   }, [ctx])
 
+  // Fan out ctx changes to the consumer. Held in a ref so swapping
+  // callback identity doesn't retrigger the effect on every ctx tick.
+  const onCtxChangeRef = useRef(onCtxChange)
+  useEffect(() => { onCtxChangeRef.current = onCtxChange }, [onCtxChange])
+  useEffect(() => { onCtxChangeRef.current?.(ctx) }, [ctx])
+
   const dispatch = useCallback((actions: WidgetAction[], options?: DispatchOptions) => {
     setWidgets(prev => applyActions(prev, actions, options))
   }, [])
@@ -320,7 +346,9 @@ export function Dashboard({
   // that have an `id`; `f` fullscreens the focused widget; `r`
   // refreshes it; Esc clears focus. Skip when the user is typing into
   // an input/textarea/contenteditable. Modifier keys are ignored so
-  // ⌘K still belongs to the palette.
+  // ⌘K still belongs to the palette. Per-template shortcuts (e.g.
+  // `1 → ctx.symbol=BTC`) take precedence over the built-in nav keys
+  // so authors can override `j`/`k` if they really want to.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return
@@ -328,6 +356,14 @@ export function Dashboard({
       const inEditable = tag === 'INPUT' || tag === 'TEXTAREA' ||
         (e.target as HTMLElement | null)?.isContentEditable
       if (inEditable) return
+
+      // Template-defined shortcut first.
+      const shortcut = template.shortcuts?.find(s => s.key === e.key)
+      if (shortcut) {
+        e.preventDefault()
+        for (const [k, v] of Object.entries(shortcut.ctx)) setCtx(k, v)
+        return
+      }
 
       const ids = widgets.map(w => w.id).filter((id): id is string => !!id)
       if (ids.length === 0) return
@@ -354,7 +390,7 @@ export function Dashboard({
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [widgets, focusedId, requestRefresh])
+  }, [widgets, focusedId, requestRefresh, template.shortcuts, setCtx])
 
   const fullscreenWidget = fullscreenId ? widgets.find(w => w.id === fullscreenId) : null
 
@@ -363,7 +399,7 @@ export function Dashboard({
      <NowProvider>
      <HoverProvider>
       <CommandPalette />
-      <ShortcutsOverlay />
+      <ShortcutsOverlay templateShortcuts={template.shortcuts} />
       <Toaster toasts={toasts} dismiss={dismissToast} />
       {issues.length > 0 && (!bannerDismissed || hasErrors) && (
         <ValidationBanner
@@ -395,6 +431,7 @@ export function Dashboard({
           })}
           <div className="ml-auto flex items-center gap-2">
             <RefreshPicker value={refreshIntervalMs} onChange={setRefreshIntervalMs} />
+            <ReloadAllButton onClick={() => requestRefresh('*')} />
             <SoundToggle enabled={soundEnabled} onToggle={() => setSoundEnabled(s => !s)} />
             <DensityToggle compact={compact} onToggle={() => setCompact(c => !c)} />
             <SnapshotButton onCopied={() => toast('URL copied', 'ok')} />

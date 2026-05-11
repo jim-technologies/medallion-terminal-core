@@ -79,7 +79,7 @@ export { useAnimatedNumber } from './hooks/useAnimatedNumber'
 export { useWatchAction, isTerminalStatus, type ActionUpdate } from './hooks/useWatchAction'
 
 // Types
-export type { Template, Context, WidgetConfig, WidgetAlert, DataSource, WidgetProps } from './types/template'
+export type { Template, Context, WidgetConfig, WidgetAlert, TemplateShortcut, DataSource, WidgetProps } from './types/template'
 export type { DataSourceState } from './hooks/useDataSource'
 export type { WidgetAction, DispatchOptions, DashboardContextValue, DashboardEvent, EmitEvent, ActionLogEntry } from './core/DashboardContext'
 export type { Breakpoint } from './hooks/useBreakpoint'
