@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evaluateAlert } from '../core/alerts'
+import { evaluateAlert, canParsePredicate } from '../core/alerts'
 
 describe('evaluateAlert', () => {
   it('returns false on empty / malformed predicate', () => {
@@ -64,5 +64,37 @@ describe('evaluateAlert', () => {
 
   it('handles a realistic spot-price threshold', () => {
     expect(evaluateAlert({ metric: { value: 70_000, unit: 'USD' } }, 'metric.value > 67500')).toBe(true)
+  })
+
+  it('AND composition — both must hold', () => {
+    const d = { value: 70_000, volume: 1.5e8 }
+    expect(evaluateAlert(d, 'value > 67500 && volume > 1e8')).toBe(true)
+    expect(evaluateAlert(d, 'value > 67500 && volume > 2e8')).toBe(false)
+  })
+
+  it('OR composition — either holds', () => {
+    const d = { value: 60_000, volume: 2e8 }
+    expect(evaluateAlert(d, 'value > 67500 || volume > 1e8')).toBe(true)
+    expect(evaluateAlert(d, 'value > 67500 || volume > 3e8')).toBe(false)
+  })
+
+  it('AND binds tighter than OR', () => {
+    // value>X AND volume>Y  OR  status=="ERROR"
+    // Truth table: only the AND-pair or the status branch can win.
+    const errored = { value: 0, volume: 0, status: 'ERROR' }
+    const both    = { value: 100, volume: 100, status: 'OK' }
+    const oneOnly = { value: 100, volume: 0, status: 'OK' }
+    const pred = 'value > 50 && volume > 50 || status == "ERROR"'
+    expect(evaluateAlert(errored, pred)).toBe(true)
+    expect(evaluateAlert(both, pred)).toBe(true)
+    expect(evaluateAlert(oneOnly, pred)).toBe(false)
+  })
+
+  it('canParsePredicate flags malformed composites', () => {
+    expect(canParsePredicate('value > 50')).toBe(true)
+    expect(canParsePredicate('value > 50 && volume > 100')).toBe(true)
+    expect(canParsePredicate('value > 50 ||')).toBe(false)
+    expect(canParsePredicate('&& value > 50')).toBe(false)
+    expect(canParsePredicate('not a predicate')).toBe(false)
   })
 })
