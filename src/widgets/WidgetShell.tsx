@@ -6,6 +6,7 @@ import { useDashboard } from '../core/DashboardContext'
 import { resolveSource, interpolate } from '../core/resolveSource'
 import { useNow } from '../core/NowContext'
 import { evaluateAlert } from '../core/alerts'
+import { playAlertBeep } from '../core/sound'
 import { Skeleton, ErrorState } from './states'
 import type { WidgetConfig } from '../types/template'
 
@@ -47,7 +48,16 @@ function renderBody(args: {
   )
 }
 
-function ActionMenu({ widget, onRefresh }: { widget: WidgetConfig; onRefresh: () => void }) {
+function ActionMenu({
+  widget, onRefresh, onCopy,
+}: {
+  widget: WidgetConfig
+  onRefresh: () => void
+  // Returns true if data was copied; false if there's nothing to copy
+  // or the clipboard refused. Toast is fired by the parent based on
+  // the result so it can interpolate the widget title.
+  onCopy: () => Promise<boolean>
+}) {
   const { dispatch, fullscreenId, setFullscreenId } = useDashboard()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -67,8 +77,9 @@ function ActionMenu({ widget, onRefresh }: { widget: WidgetConfig; onRefresh: ()
   const canRefresh = !!src && !isInline
   const canRemove = !!widget.id
   const canFullscreen = !!widget.id && fullscreenId !== widget.id
+  const canCopy = true // every widget can attempt copy; onCopy guards no-data
 
-  if (!canRefresh && !canRemove && !canFullscreen) return null
+  if (!canRefresh && !canRemove && !canFullscreen && !canCopy) return null
 
   return (
     <div className="relative" ref={ref}>
@@ -87,6 +98,14 @@ function ActionMenu({ widget, onRefresh }: { widget: WidgetConfig; onRefresh: ()
               className="block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800"
             >
               Refresh
+            </button>
+          )}
+          {canCopy && (
+            <button
+              onClick={async () => { await onCopy(); setOpen(false) }}
+              className="block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800"
+            >
+              Copy data
             </button>
           )}
           {canFullscreen && (
@@ -115,7 +134,7 @@ function ActionMenu({ widget, onRefresh }: { widget: WidgetConfig; onRefresh: ()
 }
 
 export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; contentHeight: number }) {
-  const { ctx, backendUrl, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit } = useDashboard()
+  const { ctx, backendUrl, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit, soundEnabled } = useDashboard()
   // Title interpolation is lenient — partial substitution is fine for a
   // human-facing string. Source interpolation is strict (resolveSource).
   const title = useMemo(
@@ -178,9 +197,10 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
       const severity = alert.severity ?? 'warn'
       toast(interpolated, severity)
       emit({ type: 'alert', widgetId: config.id, severity, message: interpolated, predicate: alert.when })
+      if (soundEnabled) playAlertBeep(severity)
     }
     alertWasTriggered.current = triggered
-  }, [data, config.alert, ctx, toast, emit, config.id])
+  }, [data, config.alert, ctx, toast, emit, config.id, soundEnabled])
 
   // Surface data/resolve errors as telemetry on the rising edge only —
   // streaming sources can churn between connected/disconnected and
@@ -219,7 +239,23 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
                 title={connected ? 'Connected' : 'Disconnected'}
               />
             )}
-            <ActionMenu widget={config} onRefresh={refresh} />
+            <ActionMenu
+              widget={config}
+              onRefresh={refresh}
+              onCopy={async () => {
+                if (data == null) { toast('No data to copy', 'warn'); return false }
+                if (typeof navigator === 'undefined' || !navigator.clipboard) {
+                  toast('Clipboard unavailable', 'warn'); return false
+                }
+                try {
+                  await navigator.clipboard.writeText(JSON.stringify(data, null, 2))
+                  toast(`${config.title ?? config.component} copied`, 'ok')
+                  return true
+                } catch {
+                  toast('Clipboard blocked', 'warn'); return false
+                }
+              }}
+            />
           </div>
         </div>
       )}

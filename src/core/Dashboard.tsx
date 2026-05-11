@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import type { Template, WidgetConfig } from '../types/template'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import { WidgetShell } from '../widgets/WidgetShell'
-import { DashboardContext, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent } from './DashboardContext'
+import { DashboardContext, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent, type ActionLogEntry } from './DashboardContext'
 import { HoverProvider } from './HoverContext'
 import { NowProvider } from './NowContext'
 import { applyActions } from './applyActions'
@@ -48,9 +48,15 @@ const DEFAULT_HEIGHTS: Record<string, number> = {
   multi_select: 100,
   json: 360,
   sparkline: 60,
+  action_log: 320,
 }
 
 const RANGES = ['1d', '5d', '1m', '3m', '1y', 'max']
+
+// Cap the in-memory action blotter. Large enough for a trading session,
+// small enough that an action storm can't blow up memory. Newest first;
+// older entries fall off the tail.
+const RECENT_ACTIONS_CAP = 200
 
 function RangeSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
@@ -121,6 +127,18 @@ function OpenPaletteHint() {
   )
 }
 
+function SoundToggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded"
+      title={enabled ? 'Mute alert sounds' : 'Enable alert sounds (warn/error)'}
+    >
+      {enabled ? '\u{1F50A} On' : '\u{1F507} Off'}
+    </button>
+  )
+}
+
 function DensityToggle({ compact, onToggle }: { compact: boolean; onToggle: () => void }) {
   return (
     <button
@@ -184,8 +202,10 @@ export function Dashboard({
   // ctx already lives in the URL (shareable); these knobs are personal.
   const [refreshIntervalMs, setRefreshIntervalMs] = useState<number | null>(() => readPref('refreshIntervalMs', null))
   const [compact, setCompact] = useState<boolean>(() => readPref('compact', false))
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => readPref('soundEnabled', false))
   useEffect(() => { writePref('refreshIntervalMs', refreshIntervalMs) }, [refreshIntervalMs])
   useEffect(() => { writePref('compact', compact) }, [compact])
+  useEffect(() => { writePref('soundEnabled', soundEnabled) }, [soundEnabled])
 
   const [fullscreenId, setFullscreenId] = useState<string | null>(null)
   const [focusedId, setFocusedId] = useState<string | null>(null)
@@ -202,8 +222,27 @@ export function Dashboard({
   // identity don't tear down WidgetShell's effects.
   const onEventRef = useRef(onEvent)
   useEffect(() => { onEventRef.current = onEvent }, [onEvent])
+
+  // Ring buffer of recent action events for the action_log widget.
+  // Capped so a noisy backend can't grow state without bound.
+  const [recentActions, setRecentActions] = useState<ActionLogEntry[]>([])
+  const clearRecentActions = useCallback(() => setRecentActions([]), [])
+
   const emit = useCallback((event: DashboardEvent) => {
     onEventRef.current?.(event)
+    if (event.type === 'action') {
+      setRecentActions(prev => {
+        const next: ActionLogEntry = {
+          receivedAt: Date.now(),
+          actionId: event.actionId,
+          clientRequestId: event.clientRequestId,
+          status: event.status,
+          message: event.message,
+          terminal: event.terminal,
+        }
+        return [next, ...prev].slice(0, RECENT_ACTIONS_CAP)
+      })
+    }
   }, [])
 
   const toast = useCallback((message: string, severity: Severity = 'info') => {
@@ -260,9 +299,13 @@ export function Dashboard({
       refreshPulse,
       requestRefresh,
       emit,
+      recentActions,
+      clearRecentActions,
+      soundEnabled,
     }),
     [dispatch, ctx, setCtx, backendUrl, widgets, refreshIntervalMs, toast, compact,
-     fullscreenId, focusedId, refreshPulse, requestRefresh, emit],
+     fullscreenId, focusedId, refreshPulse, requestRefresh, emit,
+     recentActions, clearRecentActions, soundEnabled],
   )
 
   // Esc closes fullscreen.
@@ -352,6 +395,7 @@ export function Dashboard({
           })}
           <div className="ml-auto flex items-center gap-2">
             <RefreshPicker value={refreshIntervalMs} onChange={setRefreshIntervalMs} />
+            <SoundToggle enabled={soundEnabled} onToggle={() => setSoundEnabled(s => !s)} />
             <DensityToggle compact={compact} onToggle={() => setCompact(c => !c)} />
             <SnapshotButton onCopied={() => toast('URL copied', 'ok')} />
             <OpenPaletteHint />

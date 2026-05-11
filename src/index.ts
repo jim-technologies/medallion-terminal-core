@@ -63,6 +63,7 @@ export { Dag } from './widgets/Dag'
 export { MultiSelect } from './widgets/MultiSelect'
 export { Json } from './widgets/Json'
 export { Sparkline } from './widgets/Sparkline'
+export { ActionLog } from './widgets/ActionLog'
 export { WidgetShell } from './widgets/WidgetShell'
 export { Placeholder } from './widgets/Placeholder'
 export { Skeleton, ErrorState, Empty } from './widgets/states'
@@ -80,7 +81,7 @@ export { useWatchAction, isTerminalStatus, type ActionUpdate } from './hooks/use
 // Types
 export type { Template, Context, WidgetConfig, WidgetAlert, DataSource, WidgetProps } from './types/template'
 export type { DataSourceState } from './hooks/useDataSource'
-export type { WidgetAction, DispatchOptions, DashboardContextValue, DashboardEvent, EmitEvent } from './core/DashboardContext'
+export type { WidgetAction, DispatchOptions, DashboardContextValue, DashboardEvent, EmitEvent, ActionLogEntry } from './core/DashboardContext'
 export type { Breakpoint } from './hooks/useBreakpoint'
 
 // Proto-derived JSON types — for backend implementers.

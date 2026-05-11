@@ -49,6 +49,7 @@ const registry = new Map<string, AnyWidget>([
   ['multi_select',   lazyWidget(() => import('../widgets/MultiSelect'), 'MultiSelect')],
   ['json',           lazyWidget(() => import('../widgets/Json'), 'Json')],
   ['sparkline',      lazyWidget(() => import('../widgets/Sparkline'), 'Sparkline')],
+  ['action_log',     lazyWidget(() => import('../widgets/ActionLog'), 'ActionLog')],
 ])
 
 export function getWidget(name: string): AnyWidget {

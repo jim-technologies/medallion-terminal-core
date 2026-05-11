@@ -67,6 +67,7 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 | `embed` | `{ url, label?, sandbox? }` | Image / iframe |
 | `trade` | (form) | Calls `SubmitAction`, watches via `WatchAction` |
 | `prompt` | (form) | Calls `Generate` |
+| `action_log` | (none) | Live order blotter — listens to `emit({type:'action'})` |
 
 Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus chart variants (`bar_chart`, `area_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `treemap`, `sparkline`, `dag`, `volume_profile`).
 
@@ -98,6 +99,8 @@ Any widget can declare a client-side alert that fires a toast when a predicate o
 ```
 
 Predicate format: `<term> [&& <term> | || <term> ...]` where each term is `<path> <op> <literal>` (`op` ∈ `> >= < <= == !=`). `&&` binds tighter than `||`; no parens. `path` walks the widget's `data`. Edge-triggered: fires once on transition, clears when the predicate returns false. No backend rule engine required.
+
+A toolbar 🔊/🔇 toggle plays a short WebAudio beep on `warn`/`error` severities. Off by default; pref persists in localStorage.
 
 ## Cross-widget selection
 

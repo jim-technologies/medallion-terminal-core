@@ -36,6 +36,17 @@ export type DashboardEvent =
 
 export type EmitEvent = (event: DashboardEvent) => void
 
+// One row in the in-memory action blotter. Mirrors the 'action' event
+// fields plus a wall-clock receive time so the log can show "12s ago".
+export interface ActionLogEntry {
+  receivedAt: number
+  actionId: string
+  clientRequestId: string
+  status: string
+  message?: string
+  terminal: boolean
+}
+
 export interface WidgetAction {
   targetId: string
   // If true, remove the widget at targetId. Other fields ignored.
@@ -96,6 +107,15 @@ export interface DashboardContextValue {
   // Widgets emit via this rather than calling props directly so the
   // surface stays uniform across alerts, errors, and actions.
   emit: EmitEvent
+  // In-memory ring of recent action events. The action_log widget
+  // reads from this; capped so a misbehaving backend can't grow state
+  // forever. Each emit({type:'action'}) appends an entry.
+  recentActions: ActionLogEntry[]
+  clearRecentActions: () => void
+  // When true, warn/error alerts play a short audio beep. Off by
+  // default; toggled from the dashboard toolbar and persisted in
+  // localStorage. Info/ok alerts are always silent.
+  soundEnabled: boolean
 }
 
 // No-op stub. Exported so Storybook fixtures (and tests) can spread it
@@ -115,6 +135,9 @@ export const DEFAULT_DASHBOARD_CONTEXT: DashboardContextValue = {
   refreshPulse: null,
   requestRefresh: () => {},
   emit: () => {},
+  recentActions: [],
+  clearRecentActions: () => {},
+  soundEnabled: false,
 }
 
 export const DashboardContext = createContext<DashboardContextValue>(DEFAULT_DASHBOARD_CONTEXT)
