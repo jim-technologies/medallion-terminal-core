@@ -1,8 +1,11 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 
 const DEFAULT_PAGE_SIZE = 25
+// Tick-flash window. Matches Metric so a multi-metric dashboard reads
+// consistently across tile types.
+const FLASH_MS = 600
 
 interface RowContext {
   key: string       // ctx key to set
@@ -15,10 +18,66 @@ export function DataTable({ data, options }: WidgetProps) {
   const rowContext = options?.row_context as RowContext | undefined
   const heatColumns = (options?.heat_columns as string[] | undefined) ?? []
   const exportEnabled = options?.export === true
+  // Opt-in tick flash for streaming watchlists. Off by default — most
+  // tables aren't live and don't need the visual churn.
+  const tickFlash = options?.tick_flash === true
   const { columns, rows } = useMemo(() => normalize(data), [data])
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortAsc, setSortAsc] = useState(true)
   const [page, setPage] = useState(0)
+
+  // Row identity for flash tracking. Use the first column value — that
+  // matches how a watchlist is structured (symbol leading the row).
+  // Falls back to row index when the first column is missing.
+  const rowKey = (row: Record<string, unknown>, i: number): string => {
+    const k = columns[0] != null ? row[columns[0]] : undefined
+    return k == null ? `_idx_${i}` : String(k)
+  }
+
+  // Track previous numeric values per row key; when any column changes,
+  // record a flash direction (by the first changed numeric column) and
+  // clear after FLASH_MS. Skipped entirely when tick_flash is off.
+  const prevValues = useRef<Map<string, Record<string, number>>>(new Map())
+  const [flashes, setFlashes] = useState<Map<string, 'up' | 'down'>>(new Map())
+  useEffect(() => {
+    if (!tickFlash) return
+    const additions = new Map<string, 'up' | 'down'>()
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i]
+      const key = rowKey(r, i)
+      const prev = prevValues.current.get(key)
+      const curr: Record<string, number> = {}
+      let direction: 'up' | 'down' | null = null
+      for (const col of columns) {
+        const v = r[col]
+        if (typeof v === 'number') {
+          curr[col] = v
+          if (direction == null && prev && prev[col] != null && prev[col] !== v) {
+            direction = v > prev[col] ? 'up' : 'down'
+          }
+        }
+      }
+      prevValues.current.set(key, curr)
+      if (direction) additions.set(key, direction)
+    }
+    if (additions.size === 0) return
+    setFlashes(prev => {
+      const next = new Map(prev)
+      for (const [k, dir] of additions) next.set(k, dir)
+      return next
+    })
+    const t = setTimeout(() => {
+      setFlashes(prev => {
+        const next = new Map(prev)
+        for (const [k, dir] of additions) {
+          if (next.get(k) === dir) next.delete(k)
+        }
+        return next
+      })
+    }, FLASH_MS)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- columns/rowKey are derived from rows
+  }, [rows, tickFlash])
 
   // Pre-compute min/max per heat column over the full row set so coloring
   // is stable across pages and sort.
@@ -122,11 +181,17 @@ export function DataTable({ data, options }: WidgetProps) {
             </tr>
           </thead>
           <tbody>
-            {display.map((row, i) => (
+            {display.map((row, i) => {
+              const flash = flashes.get(rowKey(row, i))
+              const flashClass =
+                flash === 'up'   ? 'bg-emerald-500/15' :
+                flash === 'down' ? 'bg-red-500/15' :
+                ''
+              return (
               <tr
                 key={i}
                 onClick={rowContext ? () => handleRowClick(row) : undefined}
-                className={`border-b border-zinc-800/60 ${
+                className={`border-b border-zinc-800/60 transition-colors duration-300 ${flashClass} ${
                   rowContext ? 'cursor-pointer hover:bg-zinc-800' : 'hover:bg-zinc-800/40'
                 }`}
               >
@@ -148,7 +213,8 @@ export function DataTable({ data, options }: WidgetProps) {
                   )
                 })}
               </tr>
-            ))}
+              )
+            })}
           </tbody>
         </table>
       </div>
