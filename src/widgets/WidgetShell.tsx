@@ -158,15 +158,16 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
     }
   }, [config.source, ctx, backendUrl, refreshIntervalMs])
   const source = resolution.source
-  const { data, loading, error, lastUpdated, connected, refresh } = useDataSource(source)
+  const { data, loading, error, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(source)
   const Component = getWidget(config.component)
   // Reflect the resolved source so a dashboard-level refresh interval
   // override still drives the "last updated" badge.
   const isLive = !!source?.stream || !!(source?.refreshIntervalMs ?? source?.refreshInterval)
-  // Subscribe to the dashboard's shared 1Hz tick only when we'd
-  // actually render an "X ago" badge. The provider ref-counts so an
-  // idle dashboard with no live widgets pays for nothing.
-  const now = useNow(isLive && lastUpdated != null)
+  // Subscribe to the dashboard's shared 1Hz tick when anything in the
+  // header needs to re-render per second: the "X ago" badge, OR the
+  // reconnect countdown on a disconnected stream.
+  const tickActive = (isLive && lastUpdated != null) || nextRetryAt != null
+  const now = useNow(tickActive)
 
   // Refresh pulse — Dashboard's keyboard handler bumps refreshPulse with
   // our id when the user presses `r`. We watch the counter and trigger
@@ -240,10 +241,16 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
   // Mouse click to focus mirrors keyboard nav. Cheap visual affordance
   // for users who don't know about j/k yet.
   const onShellClick = config.id ? () => setFocusedId(config.id!) : undefined
+  // Focused state: replace the double-border ring with a soft single
+  // border + outer glow. Looks more like a Bloomberg highlight, less
+  // like a bright outline.
+  const focusClass = isFocused
+    ? 'border-sky-400/60 shadow-[0_0_12px_-2px_rgba(56,189,248,0.4)]'
+    : 'border-zinc-800'
   return (
     <div
       onClick={onShellClick}
-      className={`bg-zinc-900 border ${isFocused ? 'border-sky-500/60 ring-1 ring-sky-500/40' : 'border-zinc-800'} ${compact ? 'rounded' : 'rounded-lg'} overflow-hidden transition-colors`}
+      className={`bg-zinc-900 border ${focusClass} ${compact ? 'rounded' : 'rounded-lg'} overflow-hidden transition-shadow`}
     >
       {title && (
         <div className={`${compact ? 'px-2.5 py-1.5' : 'px-4 py-2.5'} border-b border-zinc-800 flex items-center justify-between`}>
@@ -252,10 +259,15 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
             {isLive && lastUpdated && (
               <span className="text-[10px] text-zinc-600">{formatAge(now, lastUpdated)}</span>
             )}
+            {config.source?.stream && !connected && nextRetryAt != null && (
+              <span className="text-[10px] text-amber-400/80 tabular-nums" title="Reconnecting">
+                retry {Math.max(0, Math.ceil((nextRetryAt - now) / 1000))}s
+              </span>
+            )}
             {config.source?.stream && (
               <span
-                className={`w-2 h-2 rounded-full shrink-0 ${connected ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600'}`}
-                title={connected ? 'Connected' : 'Disconnected'}
+                className={`w-2 h-2 rounded-full shrink-0 ${connected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-500/70'}`}
+                title={connected ? 'Connected' : (nextRetryAt ? 'Reconnecting' : 'Disconnected')}
               />
             )}
             <ActionMenu
