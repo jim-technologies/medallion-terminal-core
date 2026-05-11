@@ -32,6 +32,26 @@ describe('command palette parser — set commands', () => {
   })
 })
 
+describe('command palette parser — multi-pair commands', () => {
+  it('parses "symbol:BTC range:1d"', () => {
+    expect(parseCommand('symbol:BTC range:1d', 'symbol')).toEqual({
+      kind: 'set_many',
+      pairs: [['symbol', 'BTC'], ['range', '1d']],
+    })
+  })
+  it('parses three pairs with mixed colon/equals', () => {
+    expect(parseCommand('symbol:BTC range=1d venue:binance', 'symbol')).toEqual({
+      kind: 'set_many',
+      pairs: [['symbol', 'BTC'], ['range', '1d'], ['venue', 'binance']],
+    })
+  })
+  it('falls back to single set when a token isn\'t a pair', () => {
+    // "symbol BTC" — second token has no colon, should match the
+    // existing "key value" single-pair branch, not set_many.
+    expect(parseCommand('symbol BTC', 'symbol')).toEqual({ kind: 'set', key: 'symbol', value: 'BTC' })
+  })
+})
+
 describe('command palette parser — slash commands', () => {
   it('parses /save <name>', () => {
     expect(parseCommand('/save btc-desk', 'symbol')).toEqual({ kind: 'save', name: 'btc-desk' })

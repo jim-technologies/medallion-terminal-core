@@ -6,14 +6,15 @@ const RANGE_PRESETS = new Set(['1d', '5d', '1m', '3m', '1y', 'max'])
 
 type Cmd =
   | { kind: 'set';    key: string; value: string }
+  | { kind: 'set_many'; pairs: Array<[string, string]> }
   | { kind: 'save';   name: string }
   | { kind: 'load';   name: string }
   | { kind: 'delete'; name: string }
   | { kind: 'noop' }
 
 // Parse a command. Slash commands (`/save name`, `/load name`,
-// `/delete name`) are recognised first; the rest is the existing
-// key/value parser.
+// `/delete name`) are recognised first; multi-pair "k1:v1 k2:v2"
+// next; then the single-pair / bare-value fallbacks.
 function parseCommand(input: string, dominantKey: string): Cmd | null {
   const s = input.trim()
   if (!s) return null
@@ -26,6 +27,20 @@ function parseCommand(input: string, dominantKey: string): Cmd | null {
       case 'delete': case 'rm': return name ? { kind: 'delete', name } : null
       default: return { kind: 'noop' }
     }
+  }
+  // Multi-pair: every whitespace-separated token must be "key:value" or
+  // "key=value" (no internal spaces). Falls through to single-pair
+  // parsing if any token doesn't match, so "symbol BTC" still works.
+  const tokens = s.split(/\s+/)
+  if (tokens.length > 1) {
+    const pairs: Array<[string, string]> = []
+    let ok = true
+    for (const t of tokens) {
+      const tm = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*)[:=](.+)$/)
+      if (!tm) { ok = false; break }
+      pairs.push([tm[1].toLowerCase(), tm[2]])
+    }
+    if (ok && pairs.length > 1) return { kind: 'set_many', pairs }
   }
   const m = s.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*[:=]\s*(.+)$/)
   if (m) return { kind: 'set', key: m[1].toLowerCase(), value: m[2].trim() }
@@ -93,6 +108,8 @@ export function CommandPalette() {
       toast(`Deleted "${parsed.name}"`, 'ok')
     } else if (parsed.kind === 'set') {
       setCtx(parsed.key, parsed.value)
+    } else if (parsed.kind === 'set_many') {
+      for (const [k, v] of parsed.pairs) setCtx(k, v)
     }
     setHistory(h => [input, ...h.filter(x => x !== input)].slice(0, 5))
     setOpen(false)
@@ -131,7 +148,7 @@ export function CommandPalette() {
               navigateHistory(-1)
             }
           }}
-          placeholder="symbol: BTC · range = 1d · BTC · /save view · /load view"
+          placeholder="symbol:BTC range:1d  ·  /save view  ·  /load view"
           className="w-full bg-transparent text-zinc-100 px-4 py-3 text-sm outline-none placeholder-zinc-500 border-b border-zinc-800"
         />
         {Object.entries(ctx).length > 0 && (
