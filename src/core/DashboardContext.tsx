@@ -47,6 +47,18 @@ export interface ActionLogEntry {
   terminal: boolean
 }
 
+// One row in the in-memory alert ring. Mirrors the 'alert' event plus a
+// receive time. Drives the alert_log widget the same way ActionLogEntry
+// drives action_log — separate buffers so alert frequency doesn't push
+// trade actions out of the blotter and vice versa.
+export interface AlertLogEntry {
+  receivedAt: number
+  widgetId?: string
+  severity: Severity
+  message: string
+  predicate: string
+}
+
 export interface WidgetAction {
   targetId: string
   // If true, remove the widget at targetId. Other fields ignored.
@@ -114,6 +126,8 @@ export interface DashboardContextValue {
   // forever. Each emit({type:'action'}) appends an entry.
   recentActions: ActionLogEntry[]
   clearRecentActions: () => void
+  recentAlerts: AlertLogEntry[]
+  clearRecentAlerts: () => void
   // When true, warn/error alerts play a short audio beep. Off by
   // default; toggled from the dashboard toolbar and persisted in
   // localStorage. Info/ok alerts are always silent.
@@ -156,6 +170,8 @@ export const DEFAULT_DASHBOARD_CONTEXT: DashboardContextValue = {
   emit: () => {},
   recentActions: [],
   clearRecentActions: () => {},
+  recentAlerts: [],
+  clearRecentAlerts: () => {},
   soundEnabled: false,
   widgetHealth: {},
   reportWidgetHealth: () => {},

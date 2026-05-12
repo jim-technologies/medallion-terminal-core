@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import type { Template, WidgetConfig } from '../types/template'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import { WidgetShell } from '../widgets/WidgetShell'
-import { DashboardContext, useDashboard, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent, type ActionLogEntry, type WidgetHealth } from './DashboardContext'
+import { DashboardContext, useDashboard, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent, type ActionLogEntry, type AlertLogEntry, type WidgetHealth } from './DashboardContext'
 import { HoverProvider } from './HoverContext'
 import { NowProvider } from './NowContext'
 import { applyActions } from './applyActions'
@@ -50,6 +50,7 @@ const DEFAULT_HEIGHTS: Record<string, number> = {
   json: 360,
   sparkline: 60,
   action_log: 320,
+  alert_log: 320,
 }
 
 const RANGES = ['1d', '5d', '1m', '3m', '1y', 'max']
@@ -58,6 +59,7 @@ const RANGES = ['1d', '5d', '1m', '3m', '1y', 'max']
 // small enough that an action storm can't blow up memory. Newest first;
 // older entries fall off the tail.
 const RECENT_ACTIONS_CAP = 200
+const RECENT_ALERTS_CAP = 200
 
 function RangeSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
@@ -354,6 +356,9 @@ export function Dashboard({
   // Capped so a noisy backend can't grow state without bound.
   const [recentActions, setRecentActions] = useState<ActionLogEntry[]>([])
   const clearRecentActions = useCallback(() => setRecentActions([]), [])
+  // Parallel ring for alerts → drives the alert_log widget.
+  const [recentAlerts, setRecentAlerts] = useState<AlertLogEntry[]>([])
+  const clearRecentAlerts = useCallback(() => setRecentAlerts([]), [])
 
   // Aggregated widget health. Each WidgetShell reports its streaming
   // status, connection, and last error here. Pass `null` to unregister
@@ -393,6 +398,17 @@ export function Dashboard({
           terminal: event.terminal,
         }
         return [next, ...prev].slice(0, RECENT_ACTIONS_CAP)
+      })
+    } else if (event.type === 'alert') {
+      setRecentAlerts(prev => {
+        const next: AlertLogEntry = {
+          receivedAt: Date.now(),
+          widgetId: event.widgetId,
+          severity: event.severity,
+          message: event.message,
+          predicate: event.predicate,
+        }
+        return [next, ...prev].slice(0, RECENT_ALERTS_CAP)
       })
     }
   }, [])
@@ -459,13 +475,16 @@ export function Dashboard({
       emit,
       recentActions,
       clearRecentActions,
+      recentAlerts,
+      clearRecentAlerts,
       soundEnabled,
       widgetHealth,
       reportWidgetHealth,
     }),
     [dispatch, ctx, setCtx, backendUrl, widgets, refreshIntervalMs, toast, compact,
      fullscreenId, focusedId, refreshPulse, requestRefresh, emit,
-     recentActions, clearRecentActions, soundEnabled, widgetHealth, reportWidgetHealth],
+     recentActions, clearRecentActions, recentAlerts, clearRecentAlerts,
+     soundEnabled, widgetHealth, reportWidgetHealth],
   )
 
   // Esc closes fullscreen.
