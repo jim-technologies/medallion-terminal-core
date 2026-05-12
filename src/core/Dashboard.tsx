@@ -503,6 +503,16 @@ export function Dashboard({
     return () => document.removeEventListener('keydown', onKey)
   }, [fullscreenId])
 
+  // Scroll the focused widget into view so keyboard nav doesn't leave
+  // focus off-screen on long dashboards. `block: 'nearest'` keeps it
+  // tame — we only scroll when the tile is actually outside the
+  // viewport, not on every focus tick within it.
+  useEffect(() => {
+    if (!focusedId || typeof document === 'undefined') return
+    const el = document.getElementById(`mt-widget-${focusedId}`)
+    el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }, [focusedId])
+
   // Keyboard widget navigation: j/k (or ↓/↑) cycle focus across widgets
   // that have an `id`; `f` fullscreens the focused widget; `r`
   // refreshes it; Esc clears focus. Skip when the user is typing into
@@ -608,6 +618,10 @@ export function Dashboard({
           {widgets.map((widget, i) => (
             <div
               key={widget.id || i}
+              // Stable DOM id so the keyboard nav effect can scroll the
+              // focused widget into view. Prefixed to avoid collisions
+              // with arbitrary user-chosen widget ids.
+              id={widget.id ? `mt-widget-${widget.id}` : undefined}
               style={{
                 gridColumn: `span ${effectiveSpan(widget.span || 6)}`,
               }}
