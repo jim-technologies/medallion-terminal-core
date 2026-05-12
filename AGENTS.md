@@ -2,241 +2,252 @@
 
 ## What This Is
 
-An open-source, template-driven React SPA framework for building composable, multi-domain analytical dashboards. Think "Bloomberg Terminal but domain-agnostic and open." Anyone can plug in their own data sources to create their own terminal — financial data, sports betting, odds aggregation, bot responses, plots, graphs, election analysis, web analytics, etc.
+Proto-driven React framework for building composable, multi-domain analytical dashboards. Think "Bloomberg Terminal but domain-agnostic and open." Implement one ConnectRPC service (`TerminalService`), get a terminal.
 
-This repo is the **frontend framework only**. No backend. No Go. Pure React.
+This repo is the **frontend framework only**. No backend (a reference Node implementation lives in `examples/backend/server.mjs`). Pure React + TypeScript.
 
 ## How It Works
 
-1. The app fetches a **template JSON** from any API endpoint (default: `/templates/demo.json`, override with `?template=URL`)
-2. The template describes the dashboard layout: which widgets go where, and where each widget gets its data
-3. The framework **dynamically renders** the entire dashboard from this template
-4. For live data, widgets connect via SSE (Server-Sent Events) when `"stream": true`
+1. A backend implements `TerminalService` (proto in `proto/medallion/terminal/v1/`):
+   - `Get` / `Stream` — return one of the canonical payload shapes
+   - `ListSources` — declare the catalog
+   - `SubmitAction` / `WatchAction` — write side with idempotency + lifecycle
+   - `Generate` — AI-generated dashboards (optional)
+2. The dashboard loads a JSON template that wires widgets to source IDs (or arbitrary URLs, or inline data).
+3. The framework renders. Cross-widget context (`ctx`) flows through `${ctx.<key>}` substitution.
 
-The core principle is **convention over configuration**:
-- You say `"component": "timeseries"` and provide data shaped as `[{timestamp, value}]` — you get a line chart. No configuration needed.
-- You say `"component": "table"` with an array of objects — columns are auto-detected, sorting works out of the box.
-- You say `"component": "metric"` with `{value, delta, unit}` — you get a formatted metric card with change indicator.
-- The system does NOT try to support every possible way to draw a chart. It supports the common cases well with strong defaults.
+Core principle: **convention over configuration**. A widget knows how to render its data shape — authors don't configure axes, colors, formatters unless they want to override.
 
-## Template JSON Schema
+## Template JSON
 
-```json
+```jsonc
 {
-  "title": "Dashboard Title",
+  "title": "${ctx.symbol} desk",
   "columns": 12,
+  "context": { "values": { "symbol": "BTC", "range": "1d" } },
+  "shortcuts": [
+    { "key": "1", "ctx": { "symbol": "BTC" } },
+    { "key": "2", "ctx": { "symbol": "ETH" } }
+  ],
   "widgets": [
     {
-      "id": "unique-id",
-      "component": "timeseries | table | metric",
+      "id": "px",
+      "component": "candlestick",
       "span": 8,
-      "height": 300,
-      "title": "Widget Title",
+      "title": "${ctx.symbol}/USD",
       "source": {
-        "url": "https://api.example.com/data",
-        "data": [],
-        "stream": false,
-        "method": "GET",
-        "headers": {},
-        "refreshInterval": 5000,
-        "transform": "data.items"
+        "source_id": "btc_candles",
+        "params": { "range": "${ctx.range}" },
+        "stream": true,
+        "staleAfterMs": 10000
       },
-      "options": {}
+      "alert": {
+        "when": "bars.0.close > 70000 && bars.0.volume > 1e6",
+        "message": "${ctx.symbol} ripping",
+        "severity": "warn"
+      }
     }
   ]
 }
 ```
 
 Key fields:
-- `component`: which widget to render (convention: name maps to a built-in widget)
-- `span`: column span out of 12 (default 6). Mobile collapses to full-width.
-- `source.url`: fetch data from this URL
-- `source.data`: OR provide inline data directly (no fetch needed)
-- `source.stream`: if true, connects via SSE for real-time updates
-- `source.transform`: dot-path to extract nested data (e.g. `"data.items"`)
-- `source.refreshInterval`: polling interval in ms for non-streaming sources
+- `component`: built-in widget name (see registry below) or a custom name from `registerWidget`.
+- `span`: 1..12 grid columns (tablet clamps to 6, mobile to full-width).
+- `source.source_id`: pull from `TerminalService.Get`/`Stream`. Preferred.
+- `source.url`: arbitrary URL (escape hatch / federation).
+- `source.inline`: bake data into the template (demos, AI-generated dashboards).
+- `source.stream`: `true` = SSE (url mode) or Connect server-streaming (source_id mode); `"connect"` = manually-encoded Connect stream over an arbitrary URL.
+- `source.refreshIntervalMs`: polling interval for non-streaming sources.
+- `source.throttleMs`: trailing-edge throttle for tick-firehose streams.
+- `source.staleAfterMs`: flag the widget as stale when no update has arrived in N ms.
+- `source.params`: passed as `TerminalService.params` for source_id mode, or as query string for url mode. Values get `${ctx.x}` substitution.
+- `alert.when`: client-side predicate. Format: `<term> [&& <term> | || <term> ...]` where each term is `<path> <op> <literal>` and `op ∈ > >= < <= == !=`. `&&` binds tighter than `||`. Edge-triggered (fires once on false→true).
 
-## Canonical Data Shapes (What Widgets Expect)
+## Built-in widgets
 
-### Timeseries
-Array of objects with a timestamp key and one or more numeric keys. Auto-detects timestamp field (`timestamp`, `date`, `time`, `ts`, `x`). Auto-detects all numeric fields as separate series.
+Charts: `timeseries`, `candlestick`, `area_chart`, `bar_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `sparkline`, `volume_profile`, `treemap`, `heatmap`.
 
-```json
-[
-  { "timestamp": "2024-01-01", "value": 42000 },
-  { "timestamp": "2024-01-02", "value": 43500 }
-]
-```
+Tabular / metric: `table`, `metric`, `gauge`, `distribution`, `stat_strip`, `paired_grid`, `orderbook`.
 
-Multi-series (explicit):
-```json
-{
-  "series": [
-    { "name": "BTC", "data": [{ "timestamp": "2024-01-01", "value": 42000 }] },
-    { "name": "ETH", "data": [{ "timestamp": "2024-01-01", "value": 2800 }] }
-  ]
-}
-```
+Live feeds: `events`, `text` (news/articles, supports image_url + flash-on-new-item), `ticker` (auto-scrolling marquee), `action_log` (order blotter), `alert_log` (alert feed).
 
-### Table
-Array of objects (columns auto-detected from keys):
-```json
-[
-  { "Asset": "BTC", "Price": 67500, "Volume": 1234567 },
-  { "Asset": "ETH", "Price": 3456, "Volume": 987654 }
-]
-```
+Write surfaces: `trade` (order ticket — calls SubmitAction, watches via WatchAction), `prompt` (AI prompt — calls Generate).
 
-Or explicit columns + rows:
-```json
-{
-  "columns": ["Asset", "Price", "Volume"],
-  "rows": [["BTC", 67500, 1234567], ["ETH", 3456, 987654]]
-}
-```
+Layout/input: `section`, `slider`, `select`, `multi_select`, `clock`, `dag`, `catalog`, `image`, `iframe`, `json`.
 
-### Metric
-Single value with optional delta and unit:
-```json
-{ "value": 67842.50, "delta": 2.18, "unit": "USD", "label": "Current Price" }
-```
+## Canonical data shapes
 
-Or just a raw number: `67842.50`
+Proto-defined in `proto/medallion/terminal/v1/shapes.proto`. Widgets accept both the canonical shape and convenient shorthand:
 
-## Protobuf Contracts (Source of Truth)
+- `timeseries`: `[{timestamp, value}]` or `{points}` or `{series: [{name, data}]}`. Optional `annotations` for point markers + range bands.
+- `candlestick`: `{bars: [{timestamp, open, high, low, close, volume?}], annotations?}`.
+- `table`: `[{col: val}]` or `{columns, rows}`.
+- `metric`: `{value, delta?, unit?, label?, trend?}` (trend → inline sparkline) or a raw number.
+- `gauge`: `{value, min?, max?, bands?}`.
+- `heatmap`: `{rows, columns, cells: [{row, col, value, label?}], min?, max?, scale?}`.
+- `events`: `{events: [{timestamp, label, status?}]}`.
+- `distribution`: `{slices: [{label, value}]}`.
+- `text`: `{items: [{title?, body?, source?, date?, tags?, image_url?, id?}]}`.
+- `orderbook`: `{bids: [{price, size}], asks: [{price, size}], mid?, spread?, venue?}`.
+- `paired_grid`: `{subject, dimension?, rows: [{key, left, right}], measures, key_label, left_label, right_label}` — options chains, sportsbook ladders.
 
-The canonical payload shapes are defined in protobuf under `proto/medallion/terminal/v1/`. This is the **formal standard** — any backend serving data to Medallion Terminal should conform to these shapes. Backend developers can generate types in any language (Go, Python, Rust, etc.) from these definitions.
+## Cross-widget interaction
 
-```
-proto/medallion/terminal/v1/
-  template.proto  — Template, Widget, DataSource (dashboard configuration contract)
-  shapes.proto    — TimeseriesPayload, TablePayload, MetricPayload (data shape contracts)
-buf.yaml          — Buf module configuration (lint + breaking change detection)
-```
+Widgets retarget each other via `ctx`:
 
-- `buf lint` validates the proto definitions
-- The proto defines the shapes; the frontend accepts JSON conforming to these shapes
-- Widgets also accept common shorthand formats (e.g. raw arrays) for convenience and normalize internally
-- The TypeScript types in `src/types/template.ts` mirror the proto definitions for frontend use
+- `table`: `options.row_context: { key, field? }` — clicking a row sets `ctx[key]` to the cell value.
+- `heatmap`: `options.row_context`, `options.col_context` — clicking a cell sets one or both axis ctx keys.
+- `paired_grid`: `options.row_context: { key }` — clicking a row sets `ctx[key]` to the row's `key` value.
+- `orderbook`: `options.price_context: { key, side_key? }` — clicking a price level sets `ctx[key]` to the price; `side_key` also sets buy/sell (bid → buy, ask → sell). Pairs with `trade` for one-click book-to-ticket.
+- `trade`: reads `ctx.price`, `ctx.side`, `ctx.symbol` and syncs them into the order form.
+
+## Streaming UX
+
+- Streaming sources show a green pulsing dot when connected, amber dot when disconnected, with a `retry Ns` countdown.
+- `source.staleAfterMs` flips the timestamp badge amber and prepends `stale ·` when N ms passes without an update.
+- Header `X ago` badge updates every second via a shared 1Hz `NowContext` that ref-counts subscribers.
+
+## Keyboard
+
+| Key | Action |
+|-----|--------|
+| `⌘K` / `Ctrl-K` | Open command palette (set ctx, save/load views, paletteSuggest autocomplete) |
+| `j` / `↓` | Focus next widget |
+| `k` / `↑` | Focus previous widget |
+| `f` | Fullscreen focused widget |
+| `r` | Refresh focused widget |
+| `?` | Shortcuts cheat sheet (includes template.shortcuts) |
+| `Esc` | Clear focus / close overlays |
+| `⌘1`..`⌘9` | Multi-tab dashboards: jump to tab N |
+
+Template-defined hotkeys (`template.shortcuts: [{ key, ctx, label? }]`) take precedence over built-in nav keys.
+
+Cmd-K palette grammar:
+- `symbol:BTC` / `symbol=BTC` — single set
+- `symbol:BTC range:1d venue:binance` — multi-pair set (no spaces in values)
+- `BTC` — bare value goes to the first ctx key
+- `1d` (or any of `1d 5d 1m 3m 1y max`) — bare range preset
+- `/save name` — save current ctx as a named view (localStorage)
+- `/load name` (or `/open name`) — restore a saved view
+- `/delete name` (or `/rm name`) — delete a saved view
+
+## Consumer-side hooks
+
+`<Dashboard>` props:
+- `template: Template`
+- `backendUrl?: string` — Connect/HTTP host for source_id resolution + actions
+- `onEvent?: (e: DashboardEvent) => void` — alerts, widget errors, action lifecycles
+- `onCtxChange?: (ctx) => void` — fires when active ctx changes
+- `paletteSuggest?: (query) => Promise<PaletteSuggestion[]>` — backend-driven autocomplete
+
+`DashboardEvent` union: `alert` | `widget_error` | `action`. See `src/core/DashboardContext.tsx`.
 
 ## Architecture
 
 ```
-proto/
-  medallion/terminal/v1/
-    template.proto        — Protobuf: template + widget + data source contracts
-    shapes.proto          — Protobuf: canonical data shapes (timeseries, table, metric)
+proto/medallion/terminal/v1/
+  shapes.proto           — payload shapes (Get/Stream return one of)
+  template.proto         — dashboard config contract
+  terminal.proto         — TerminalService RPCs + ActionRequest/Update
 src/
-  index.ts                — Library barrel export (npm package entry point)
-  types/template.ts       — TypeScript types mirroring the proto definitions
-  core/Dashboard.tsx      — Grid layout renderer, responsive breakpoints
-  core/WidgetRegistry.ts  — Maps component name strings to React components
-  core/ErrorBoundary.tsx  — Isolates widget crashes so one failure doesn't kill the dashboard
-  hooks/useDataSource.ts  — Data fetching: inline, fetch, SSE streaming, polling
-  hooks/useBreakpoint.ts  — Responsive breakpoint detection (mobile/tablet/desktop)
-  widgets/WidgetShell.tsx  — Common wrapper: title bar, loading/error states, live indicator
-  widgets/Timeseries.tsx  — Line chart (Recharts), auto-normalizes data shapes
-  widgets/DataTable.tsx   — Sortable table, auto-generates columns from data
-  widgets/Metric.tsx      — Single value display with delta indicator
-  widgets/Text.tsx        — Text/news/article feed widget with title, body, metadata, tags
-  widgets/Placeholder.tsx — Fallback for unknown widget types
-  widgets/*.stories.tsx   — Storybook stories for each widget
-  App.tsx                 — Template loader (fetches from URL or default demo)
-.storybook/               — Storybook configuration
-public/templates/demo.json — Demo template with inline sample data
-buf.yaml                  — Buf module configuration
+  index.ts                — Library barrel
+  types/template.ts       — Hand-rolled framework types (mirror proto)
+  proto.ts                — Proto-derived JSON types (generated)
+  core/
+    Dashboard.tsx         — Grid layout, toolbar, status bar, keybindings
+    MultiDashboard.tsx    — Multi-tab wrapper with Cmd-1..9 hotkeys
+    DashboardContext.tsx  — Context shape, default value, action/alert ring types
+    NowContext.tsx        — Ref-counted 1Hz tick (only ticks when subscribed)
+    HoverContext.tsx      — Cross-chart crosshair sync
+    WidgetRegistry.ts     — Lazy-loaded widget map (registerWidget for custom)
+    CommandPalette.tsx    — Cmd-K modal + suggestions
+    ShortcutsOverlay.tsx  — `?` cheat sheet
+    Toaster.tsx           — Toast queue
+    ErrorBoundary.tsx     — Per-widget render-crash isolation
+    alerts.ts             — AND/OR predicate evaluator (no eval, no parens)
+    sound.ts              — WebAudio beep on warn/error alerts (opt-in)
+    resolveSource.ts      — ${ctx.x} interpolation + Connect URL builders
+    validateTemplate.ts   — Template authoring validator
+    applyActions.ts       — Merge WidgetAction[] into widgets[]
+    savedViews.ts         — localStorage-backed named ctx snapshots
+    urlState.ts           — ctx ↔ URL query string
+    connectFraming.ts     — Connect-Web envelope parser
+    getNested.ts          — dot-path walker for alerts + transforms
+  hooks/
+    useDataSource.ts      — Inline / fetch / SSE / Connect with reconnect
+    useWatchAction.ts     — Subscribe to action lifecycle stream
+    useBreakpoint.ts      — Mobile/tablet/desktop detection
+    useAnimatedNumber.ts  — Smooth metric value transitions
+  widgets/
+    *.tsx                 — One file per built-in widget
+    *.stories.tsx         — Storybook stories
+    states.tsx            — Shared Empty/Skeleton/ErrorState
+    format.ts             — Number/time formatters (currency, percent, bps, etc)
+    colors.ts             — Semantic palette + chart color rotation
+    WidgetShell.tsx       — Title bar, action menu, focus ring, alert effect,
+                            stale/retry badges, telemetry emit
+public/examples/         — Bundled example templates
+examples/
+  backend/server.mjs       — Reference Node TerminalService
+  widgets/                 — Sample custom widget (Kelly sizing)
 ```
 
-## Grid System
+## Grid system
 
-- 12-column CSS Grid (industry standard)
-- Widgets declare `span` (1-12) for column width
-- **Desktop** (>=1024px): full 12 columns
-- **Tablet** (768-1023px): widgets clamped to max 6 columns (2-column layout)
-- **Mobile** (<768px): everything stacks full-width
-- No drag-and-drop. Fixed layout from template. Simple and predictable.
+12-column CSS Grid. Widgets declare `span` (1-12). Desktop: full 12. Tablet (768-1023): max 6. Mobile (<768): full-width. No drag-and-drop — fixed from template, predictable.
 
-## Extending (Adding Custom Widgets)
+## Extending — custom widgets
 
-```typescript
-import { registerWidget } from './core/WidgetRegistry'
-import type { WidgetProps } from './types/template'
+```ts
+import { registerWidget } from 'medallion-terminal-core'
+import type { WidgetProps } from 'medallion-terminal-core'
 
-function MyCustomWidget({ data, options }: WidgetProps) {
-  // render your widget
+function MyWidget({ data, options }: WidgetProps) {
+  // render
 }
 
-registerWidget('my-custom', MyCustomWidget)
+registerWidget('my_widget', MyWidget)
 ```
 
-Then use in templates: `"component": "my-custom"`
+Use in templates: `"component": "my_widget"`. The template validator accepts custom names if passed via `validateTemplate(template, ['my_widget'])`.
 
-## Using as npm Package
+## Dev commands (run inside `flox activate`)
 
-Consumers can install and import the library:
+- `pnpm dev` — vite (http://localhost:5173)
+- `pnpm backend` — reference TerminalService on :3001
+- `pnpm lint` — `tsc --noEmit` + buf format/lint/build + regen proto types and check
+- `pnpm test` — vitest
+- `pnpm build` — standalone app
+- `pnpm build:lib` — npm library (JS + CSS + .d.ts)
+- `pnpm storybook` — storybook (http://localhost:6006)
+- `pnpm ci` — install + lint + test + both builds + storybook build
 
-```typescript
-import { Dashboard } from 'medallion-terminal-core'
-import 'medallion-terminal-core/styles'
-import type { Template } from 'medallion-terminal-core'
+## Tech stack
 
-function App() {
-  const template: Template = { /* ... */ }
-  return <Dashboard template={template} />
-}
-```
+React 19 + TypeScript 5.9. Vite 7, Tailwind v4, Recharts 3, lightweight-charts 5 (for `candlestick`), Vitest, Storybook 10, Protobuf + Buf, pnpm, flox.
 
-Build the library with `pnpm build:lib`. Output goes to `dist/`.
+## Design principles
 
-## Dev Commands
+1. **Convention over configuration.** Strong defaults; no axis/color knobs unless the widget needs them.
+2. **Template-driven.** One JSON renders the whole dashboard.
+3. **Domain-agnostic core.** No "ticker"/"odds"/"patient" in widget code — only generic shapes.
+4. **Thin and opinionated.** Drag-and-drop, light mode, and other "for everyone" features are intentional non-goals. The core is for finance terminals; refusing scope keeps it small (~50 KB gzipped).
+5. **Backend = one ConnectRPC service.** Get/Stream/ListSources/Submit/Watch/Generate. Generated types from `proto/`.
 
-- `pnpm dev` — Start the standalone demo app (http://localhost:5173)
-- `pnpm lint` — TypeScript type check + buf lint protos
-- `pnpm test` — Run tests (vitest)
-- `pnpm build` — Build the standalone app
-- `pnpm build:lib` — Build the npm library (JS + CSS + type declarations)
-- `pnpm storybook` — Start Storybook (http://localhost:6006)
-- `pnpm build:storybook` — Build static Storybook site
-- `pnpm run ci` — Run everything: lint, test, build, build:lib, build:storybook
+## What this is NOT
 
-All commands run inside `flox activate` both locally and in CI to ensure identical environments.
+- Not a backend.
+- Not infinitely flexible — opinionated.
+- Not a generative-UI system — AI returns template JSON, not generated React code.
+- Not a drag-and-drop builder — templates are authored, not painted.
 
-## Tech Stack
+## Related context
 
-- React 19 + TypeScript
-- Vite 7 (build tooling)
-- Tailwind CSS v4 (styling, dark theme)
-- Recharts 3 (timeseries/line charts)
-- lightweight-charts 5 (TradingView candlestick/OHLCV charts)
-- Vitest (testing)
-- Storybook 10 (component catalog + demo)
-- Protobuf + Buf (canonical payload shape definitions)
-- pnpm (package manager)
-- flox (environment management — nodejs, pnpm, buf)
-- No backend dependencies, no SSR, no heavy state management libraries
+Open-source core of the Medallion Terminal stack. A real deployment pairs this with:
+- Go backend services (ConnectRPC for the service, anything for ingestion).
+- TimescaleDB / Postgres for storage.
+- Domain Packs (separate repos) that translate domain data into the canonical shapes.
+- An AI router that returns typed `GenerateResponse` JSON, not generated code.
 
-## Design Principles
-
-1. **Convention over configuration** — Sensible defaults for everything. You don't configure chart axes, colors, or formatting unless you want to override. The widget knows how to render its data shape.
-2. **Template-driven** — The entire dashboard is described by a single JSON. Drop in a template, get a dashboard.
-3. **Domain-agnostic** — The core never uses domain-specific terms (no "ticker", "price", "odds"). Generic shapes: timeseries, table, metric. Any domain plugs into these.
-4. **Mobile-friendly** — Responsive grid that works on phone, tablet, and desktop.
-5. **Plug and play** — Point `source.url` at any API that returns the right shape. The framework handles fetching, streaming, and rendering.
-
-## What This Is NOT
-
-- Not a backend — no Go, no database, no ingestion pipelines
-- Not a component library you npm install — it's a standalone SPA (may evolve to library later)
-- Not infinitely flexible — it's opinionated. Convention over configuration.
-- Not a generative UI system — no AI generates frontend code. AI (if integrated) returns template JSON, the framework renders it deterministically.
-
-## Related Context
-
-This is the open-source core of the Medallion Terminal ecosystem. The broader architecture (described in a separate planning doc) includes:
-- Go backend services with ConnectRPC for API contracts
-- PostgreSQL + TimescaleDB for storage
-- River job queue for data ingestion
-- Domain Packs (separate repos) that translate domain-specific data into canonical shapes
-- AI assistant that acts as a semantic router, returning typed JSON config (not generated code)
-
-Those concerns live in separate repositories. This repo is purely the rendering engine.
+Those concerns live in separate repositories. This repo is the rendering engine.
