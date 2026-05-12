@@ -209,19 +209,25 @@ export function DataTable({ data, options }: WidgetProps) {
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-zinc-900">
             <tr>
-              {columns.map(col => (
-                <th
-                  key={col}
-                  onClick={() => toggleSort(col)}
-                  className="text-left px-3 py-2 text-zinc-400 border-b border-zinc-700
-                    cursor-pointer hover:text-zinc-100 select-none whitespace-nowrap font-medium"
-                >
-                  {col}
-                  {sortKey === col && (
-                    <span className="ml-1 text-zinc-500">{sortAsc ? '\u2191' : '\u2193'}</span>
-                  )}
-                </th>
-              ))}
+              {columns.map(col => {
+                const fmt = columnFormats[col]
+                // Numeric formats right-align so digits line up under
+                // tabular-nums. Sparklines / strings stay left.
+                const numeric = fmt && fmt !== 'sparkline' &&
+                  /^(currency|percent|bps|compact)(:|$)/.test(fmt)
+                return (
+                  <th
+                    key={col}
+                    onClick={() => toggleSort(col)}
+                    className={`px-3 py-2 text-zinc-400 border-b border-zinc-700 cursor-pointer hover:text-zinc-100 select-none whitespace-nowrap font-medium ${numeric ? 'text-right' : 'text-left'}`}
+                  >
+                    {col}
+                    {sortKey === col && (
+                      <span className="ml-1 text-zinc-500">{sortAsc ? '\u2191' : '\u2193'}</span>
+                    )}
+                  </th>
+                )
+              })}
             </tr>
           </thead>
           <tbody>
@@ -261,6 +267,9 @@ export function DataTable({ data, options }: WidgetProps) {
                   const display = fmt ? formatWith(value, fmt) : formatCell(value)
                   // Signed numeric formats color the cell green/red.
                   const isSigned = fmt ? fmt.split(':').slice(1).includes('signed') : false
+                  const isNumericFmt = fmt && fmt !== 'sparkline' &&
+                    /^(currency|percent|bps|compact)(:|$)/.test(fmt)
+                  const align = isNumericFmt ? 'text-right' : ''
                   const tone =
                     isSigned && typeof value === 'number'
                       ? value > 0 ? 'text-emerald-400' :
@@ -270,7 +279,7 @@ export function DataTable({ data, options }: WidgetProps) {
                   return (
                     <td
                       key={col}
-                      className={`px-3 py-2.5 whitespace-nowrap tabular-nums ${tone}`}
+                      className={`px-3 py-2.5 whitespace-nowrap tabular-nums ${align} ${tone}`}
                       style={heatStyle}
                     >
                       {display}
