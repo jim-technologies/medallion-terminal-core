@@ -70,7 +70,7 @@ Charts: `timeseries`, `candlestick`, `area_chart`, `bar_chart`, `scatter`, `hist
 
 Tabular / metric: `table`, `metric`, `gauge`, `distribution`, `stat_strip`, `paired_grid`, `orderbook`.
 
-Live feeds: `events`, `text` (news/articles, supports image_url + flash-on-new-item), `ticker` (auto-scrolling marquee), `action_log` (order blotter), `alert_log` (alert feed).
+Live feeds: `events`, `text` (news/articles, supports image_url + flash-on-new-item), `ticker` (auto-scrolling marquee), `tape` (time-and-sales / append-only event stream with ring buffer), `action_log` (order blotter), `alert_log` (alert feed).
 
 Write surfaces: `trade` (order ticket — calls SubmitAction, watches via WatchAction), `prompt` (AI prompt — calls Generate).
 

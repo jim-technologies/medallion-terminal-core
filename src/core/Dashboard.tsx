@@ -51,6 +51,7 @@ const DEFAULT_HEIGHTS: Record<string, number> = {
   sparkline: 60,
   action_log: 320,
   alert_log: 320,
+  tape: 320,
 }
 
 const RANGES = ['1d', '5d', '1m', '3m', '1y', 'max']

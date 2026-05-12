@@ -139,9 +139,31 @@
     {
       "id": "blotter",
       "component": "action_log",
-      "span": 9,
+      "span": 5,
       "height": 280,
       "title": "Order log"
+    },
+
+    {
+      "id": "tape",
+      "component": "tape",
+      "span": 4,
+      "height": 280,
+      "title": "${ctx.symbol} prints",
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "2026-05-12 14:59:58", "side": "buy",  "price": 67843, "size": 0.142 },
+            { "timestamp": "2026-05-12 14:59:52", "side": "sell", "price": 67841, "size": 0.085 },
+            { "timestamp": "2026-05-12 14:59:45", "side": "buy",  "price": 67843, "size": 0.310 },
+            { "timestamp": "2026-05-12 14:59:38", "side": "sell", "price": 67840, "size": 0.220 },
+            { "timestamp": "2026-05-12 14:59:30", "side": "buy",  "price": 67844, "size": 0.058 },
+            { "timestamp": "2026-05-12 14:59:22", "side": "sell", "price": 67842, "size": 1.840 },
+            { "timestamp": "2026-05-12 14:59:14", "side": "buy",  "price": 67845, "size": 0.092 },
+            { "timestamp": "2026-05-12 14:59:05", "side": "sell", "price": 67841, "size": 0.412 }
+          ]
+        }
+      }
     },
 
     {

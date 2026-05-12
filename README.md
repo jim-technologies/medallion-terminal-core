@@ -69,6 +69,7 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 | `prompt` | (form) | Calls `Generate` |
 | `action_log` | (none) | Live order blotter — listens to `emit({type:'action'})` |
 | `alert_log` | (none) | Live alert feed — listens to `emit({type:'alert'})` |
+| `tape` | `{events: [{timestamp, price?, size?, side?, label?}]}` or one event | Time-and-sales / high-frequency append-only stream |
 
 Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus chart variants (`bar_chart`, `area_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `treemap`, `sparkline`, `dag`, `volume_profile`).
 
