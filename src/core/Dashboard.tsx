@@ -8,7 +8,7 @@ import { NowProvider } from './NowContext'
 import { applyActions } from './applyActions'
 import { readCtxFromUrl, writeCtxToUrl } from './urlState'
 import { interpolate } from './resolveSource'
-import { CommandPalette } from './CommandPalette'
+import { CommandPalette, type PaletteSuggest } from './CommandPalette'
 import { ShortcutsOverlay } from './ShortcutsOverlay'
 import { Toaster, type Toast } from './Toaster'
 import { validateTemplate, type ValidationIssue } from './validateTemplate'
@@ -288,7 +288,7 @@ function SnapshotButton({ onCopied }: { onCopied: () => void }) {
 }
 
 export function Dashboard({
-  template, backendUrl, onEvent, onCtxChange,
+  template, backendUrl, onEvent, onCtxChange, paletteSuggest,
 }: {
   template: Template
   backendUrl?: string
@@ -299,6 +299,11 @@ export function Dashboard({
   // template shortcut, URL load). Use for analytics or to mirror ctx
   // into your app's router.
   onCtxChange?: (ctx: Record<string, string>) => void
+  // Optional async source of palette suggestions. Wire to your symbol
+  // search / source catalog / backend ListSources. Each suggestion
+  // carries a `ctx` map that's merged into the active context when
+  // the user clicks it.
+  paletteSuggest?: PaletteSuggest
 }) {
   const breakpoint = useBreakpoint()
   const columns = template.columns || 12
@@ -527,7 +532,7 @@ export function Dashboard({
     <DashboardContext.Provider value={contextValue}>
      <NowProvider>
      <HoverProvider>
-      <CommandPalette />
+      <CommandPalette suggest={paletteSuggest} />
       <ShortcutsOverlay templateShortcuts={template.shortcuts} />
       <Toaster toasts={toasts} dismiss={dismissToast} />
       {issues.length > 0 && (!bannerDismissed || hasErrors) && (

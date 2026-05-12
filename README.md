@@ -78,7 +78,10 @@ Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus 
 "source": { "url": "https://api/sse", "stream": true }                    // SSE
 "source": { "source_id": "ticks", "stream": true, "throttleMs": 100 }     // Trailing-edge throttle
 "source": { "source_id": "snapshots", "refreshIntervalMs": 5000 }         // Polling
+"source": { "source_id": "ticks", "stream": true, "staleAfterMs": 10000 } // Stale-warn after 10s silence
 ```
+
+When a streaming source disconnects, the widget header shows an amber `retry Ns` countdown. When data hasn't updated within `staleAfterMs`, the timestamp turns amber and the badge reads `stale · Xs ago` — data is still displayed; silent freeze is worse than visible staleness.
 
 ## Actions
 
@@ -182,6 +185,14 @@ Pass `onEvent` to `<Dashboard>` for a single sink covering alerts, widget errors
     }
   }}
   onCtxChange={ctx => router.replace({ query: ctx })}
+  paletteSuggest={async q => {
+    const hits = await fetch(`/api/symbol-search?q=${encodeURIComponent(q)}`).then(r => r.json())
+    return hits.map(h => ({
+      label: h.symbol,
+      hint: `${h.name} · ${h.exchange}`,
+      ctx: { symbol: h.symbol },
+    }))
+  }}
 />
 ```
 

@@ -3,6 +3,20 @@ import { useDashboard } from './DashboardContext'
 import { saveView, loadView, listViews, deleteView } from './savedViews'
 
 const RANGE_PRESETS = new Set(['1d', '5d', '1m', '3m', '1y', 'max'])
+const SUGGEST_DEBOUNCE_MS = 150
+const MAX_SUGGESTIONS = 8
+
+export interface PaletteSuggestion {
+  // Primary line — what the user reads to identify the choice.
+  label: string
+  // Optional secondary line (e.g. full name, exchange tag).
+  hint?: string
+  // Ctx values merged on click. Multiple pairs allowed so a single
+  // suggestion can retarget more than one dimension.
+  ctx: Record<string, string>
+}
+
+export type PaletteSuggest = (query: string) => Promise<PaletteSuggestion[]> | PaletteSuggestion[]
 
 type Cmd =
   | { kind: 'set';    key: string; value: string }
@@ -50,7 +64,7 @@ function parseCommand(input: string, dominantKey: string): Cmd | null {
   return { kind: 'set', key: dominantKey, value: s }
 }
 
-export function CommandPalette() {
+export function CommandPalette({ suggest }: { suggest?: PaletteSuggest } = {}) {
   const { ctx, setCtx, toast } = useDashboard()
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState('')
@@ -58,6 +72,10 @@ export function CommandPalette() {
   // -1 = "live" input, 0..N-1 = navigating into history.
   const [historyCursor, setHistoryCursor] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
+  const [suggestions, setSuggestions] = useState<PaletteSuggestion[]>([])
+  // Generation token so a slow earlier fetch doesn't overwrite a fast
+  // later one with stale results.
+  const suggestGen = useRef(0)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -74,8 +92,27 @@ export function CommandPalette() {
 
   useEffect(() => {
     if (open) inputRef.current?.focus()
-    else { setInput(''); setHistoryCursor(-1) }
+    else { setInput(''); setHistoryCursor(-1); setSuggestions([]) }
   }, [open])
+
+  // Debounced suggestion fetch. Token-guarded to avoid out-of-order
+  // results clobbering the latest. Cleared when the input is empty.
+  useEffect(() => {
+    if (!suggest || !open) return
+    const q = input.trim()
+    if (!q) { setSuggestions([]); return }
+    const gen = ++suggestGen.current
+    const handle = setTimeout(async () => {
+      try {
+        const results = await suggest(q)
+        if (gen !== suggestGen.current) return
+        setSuggestions(results.slice(0, MAX_SUGGESTIONS))
+      } catch {
+        if (gen === suggestGen.current) setSuggestions([])
+      }
+    }, SUGGEST_DEBOUNCE_MS)
+    return () => clearTimeout(handle)
+  }, [input, open, suggest])
 
   // Hooks must run unconditionally; bail on render output instead.
   const dominantKey = useMemo(() => Object.keys(ctx)[0] ?? 'symbol', [ctx])
@@ -122,6 +159,11 @@ export function CommandPalette() {
     setInput(next === -1 ? '' : history[next])
   }
 
+  const applySuggestion = (s: PaletteSuggestion) => {
+    for (const [k, v] of Object.entries(s.ctx)) setCtx(k, v)
+    setOpen(false)
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black/60 flex items-start justify-center pt-[20vh] px-4"
@@ -151,6 +193,25 @@ export function CommandPalette() {
           placeholder="symbol:BTC range:1d  ·  /save view  ·  /load view"
           className="w-full bg-transparent text-zinc-100 px-4 py-3 text-sm outline-none placeholder-zinc-500 border-b border-zinc-800"
         />
+        {suggestions.length > 0 && (
+          <div className="border-b border-zinc-800 max-h-72 overflow-auto">
+            {suggestions.map((s, i) => (
+              <button
+                key={`${s.label}-${i}`}
+                onClick={() => applySuggestion(s)}
+                className="block w-full text-left px-4 py-1.5 text-sm hover:bg-zinc-800/60 group"
+              >
+                <span className="text-zinc-100">{s.label}</span>
+                {s.hint && (
+                  <span className="ml-2 text-[10px] text-zinc-500 font-mono">{s.hint}</span>
+                )}
+                <span className="ml-2 text-[10px] text-zinc-700 font-mono opacity-0 group-hover:opacity-100">
+                  {Object.entries(s.ctx).map(([k, v]) => `${k}=${v}`).join(' · ')}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
         {Object.entries(ctx).length > 0 && (
           <div className="px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap">
             <span className="text-[10px] uppercase tracking-wider text-zinc-600 self-center">current</span>
