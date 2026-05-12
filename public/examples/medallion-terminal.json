@@ -35,7 +35,12 @@
         "row_context": { "key": "symbol", "field": "Sym" },
         "tick_flash": true,
         "search": true,
-        "heat_columns": ["Chg%"]
+        "heat_columns": ["Chg%"],
+        "column_formats": {
+          "Last":  "currency:USD",
+          "Chg%":  "percent:signed:p",
+          "Vol":   "compact"
+        }
       },
       "source": {
         "inline": [

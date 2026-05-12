@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import { Empty } from './states'
+import { formatCurrency, formatPercent, formatBps, formatCompact } from './format'
 import type { WidgetProps } from '../types/template'
 
 const DEFAULT_PAGE_SIZE = 25
@@ -26,6 +27,17 @@ export function DataTable({ data, options }: WidgetProps) {
   // that matches any cell value substring. Off by default; turn on for
   // long watchlists with `options.search = true`.
   const searchEnabled = options?.search === true
+  // Per-column format hints. Values:
+  //   "currency"          → $1,234.56 (USD)
+  //   "currency:EUR"      → €1,234.56
+  //   "percent"           → -2.18%   (input as fraction)
+  //   "percent:signed"    → +2.18%
+  //   "percent:p"         → 2.18%    (input already a percent)
+  //   "bps"               → -25 bps
+  //   "bps:signed"        → +25 bps
+  //   "compact"           → 1.2K / 3.4M
+  // Plus a signed sub-tag on numeric formats colors the cell (green/red).
+  const columnFormats = (options?.column_formats as Record<string, string> | undefined) ?? {}
   const { columns, rows } = useMemo(() => normalize(data), [data])
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortAsc, setSortAsc] = useState(true)
@@ -234,13 +246,23 @@ export function DataTable({ data, options }: WidgetProps) {
                     range && typeof value === 'number'
                       ? { backgroundColor: heatColor(value, range.min, range.max) }
                       : undefined
+                  const fmt = columnFormats[col]
+                  const display = fmt ? formatWith(value, fmt) : formatCell(value)
+                  // Signed numeric formats color the cell green/red.
+                  const isSigned = fmt ? fmt.split(':').slice(1).includes('signed') : false
+                  const tone =
+                    isSigned && typeof value === 'number'
+                      ? value > 0 ? 'text-emerald-400' :
+                        value < 0 ? 'text-red-400' :
+                        'text-zinc-100'
+                      : 'text-zinc-100'
                   return (
                     <td
                       key={col}
-                      className="px-3 py-2.5 whitespace-nowrap tabular-nums text-zinc-100"
+                      className={`px-3 py-2.5 whitespace-nowrap tabular-nums ${tone}`}
                       style={heatStyle}
                     >
-                      {formatCell(row[col])}
+                      {display}
                     </td>
                   )
                 })}
@@ -317,4 +339,38 @@ function formatCell(value: unknown): string {
   }
   if (typeof value === 'boolean') return value ? 'Yes' : 'No'
   return String(value)
+}
+
+// Apply a column_formats hint to one cell value. Non-numeric values pass
+// through to the default formatter so a string in a "currency" column
+// (e.g. an aggregator label) doesn't crash the row.
+//
+// Hint grammar: "type[:arg[:arg ...]]" \u2014 args are order-independent.
+//   currency[:CODE]              CODE defaults to USD (e.g. "currency:EUR")
+//   percent[:signed][:p]         p \u21d2 input already in % units; signed adds +/-
+//   bps[:signed]                 signed adds +/-
+//   compact                      1.2K / 3.4M
+function formatWith(value: unknown, hint: string): string {
+  if (value == null) return '\u2014'
+  if (typeof value !== 'number') return formatCell(value)
+  const [head, ...args] = hint.split(':')
+  const argSet = new Set(args)
+  const signed = argSet.has('signed')
+  switch (head) {
+    case 'currency': {
+      // The non-`signed` arg, if any, is the currency code.
+      const code = args.find(a => a !== 'signed') ?? 'USD'
+      return formatCurrency(value, code)
+    }
+    case 'percent': {
+      const as = argSet.has('p') ? 'percent' as const : 'fraction' as const
+      return formatPercent(value, { signed, as })
+    }
+    case 'bps':
+      return formatBps(value, { signed })
+    case 'compact':
+      return formatCompact(value)
+    default:
+      return formatCell(value)
+  }
 }
