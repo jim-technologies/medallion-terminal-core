@@ -90,6 +90,12 @@ export interface DataSource {
   // 1000 msg/s would otherwise force 1000 React renders.
   throttleMs?: number
 
+  // Mark the widget "stale" when no update has arrived in this many
+  // ms. The header shows an amber "stale" badge; data is still
+  // displayed (silent freeze is worse than stale data with a warning).
+  // Useful for desk traders monitoring live data lines.
+  staleAfterMs?: number
+
   // url-mode only.
   method?: 'GET' | 'POST'
   headers?: Record<string, string>

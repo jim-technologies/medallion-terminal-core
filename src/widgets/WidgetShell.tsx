@@ -164,10 +164,14 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
   // override still drives the "last updated" badge.
   const isLive = !!source?.stream || !!(source?.refreshIntervalMs ?? source?.refreshInterval)
   // Subscribe to the dashboard's shared 1Hz tick when anything in the
-  // header needs to re-render per second: the "X ago" badge, OR the
-  // reconnect countdown on a disconnected stream.
-  const tickActive = (isLive && lastUpdated != null) || nextRetryAt != null
+  // header needs to re-render per second: the "X ago" badge, the
+  // reconnect countdown on a disconnected stream, OR a stale-after
+  // threshold that may have just expired.
+  const staleAfterMs = source?.staleAfterMs
+  const tickActive = (isLive && lastUpdated != null) || nextRetryAt != null ||
+    (!!staleAfterMs && lastUpdated != null)
   const now = useNow(tickActive)
+  const isStale = !!staleAfterMs && lastUpdated != null && (now - lastUpdated) > staleAfterMs
 
   // Refresh pulse — Dashboard's keyboard handler bumps refreshPulse with
   // our id when the user presses `r`. We watch the counter and trigger
@@ -257,7 +261,9 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
           <h3 className={`${compact ? 'text-xs' : 'text-sm'} font-medium text-zinc-100 truncate`}>{title}</h3>
           <div className="flex items-center gap-2 shrink-0 ml-2">
             {isLive && lastUpdated && (
-              <span className="text-[10px] text-zinc-600">{formatAge(now, lastUpdated)}</span>
+              <span className={`text-[10px] ${isStale ? 'text-amber-400/80' : 'text-zinc-600'}`}>
+                {isStale ? 'stale · ' : ''}{formatAge(now, lastUpdated)}
+              </span>
             )}
             {config.source?.stream && !connected && nextRetryAt != null && (
               <span className="text-[10px] text-amber-400/80 tabular-nums" title="Reconnecting">
