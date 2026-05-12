@@ -247,6 +247,17 @@ export function DataTable({ data, options }: WidgetProps) {
                       ? { backgroundColor: heatColor(value, range.min, range.max) }
                       : undefined
                   const fmt = columnFormats[col]
+                  // Sparkline column: the cell value is a number[] (or
+                  // an array we can coerce) and we render a tiny inline
+                  // SVG instead of formatted text. The signed coloring
+                  // and heat-cell tinting don't apply.
+                  if (fmt === 'sparkline' && Array.isArray(value)) {
+                    return (
+                      <td key={col} className="px-3 py-2.5 whitespace-nowrap" style={heatStyle}>
+                        <SparklineCell values={value as unknown[]} />
+                      </td>
+                    )
+                  }
                   const display = fmt ? formatWith(value, fmt) : formatCell(value)
                   // Signed numeric formats color the cell green/red.
                   const isSigned = fmt ? fmt.split(':').slice(1).includes('signed') : false
@@ -328,6 +339,38 @@ function csvEscape(v: unknown): string {
   const s = typeof v === 'number' ? String(v) : String(v)
   if (/[,"\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`
   return s
+}
+
+// Tiny inline sparkline for table cells. Direction (up/down) chooses the
+// stroke color — emerald if the last value is at-or-above the first,
+// red otherwise. Drops on the floor if the array can't be coerced to
+// at least two finite numbers.
+function SparklineCell({ values }: { values: unknown[] }) {
+  const nums = values.map(v => Number(v)).filter(n => Number.isFinite(n))
+  if (nums.length < 2) return <span className="text-zinc-600">—</span>
+  const min = Math.min(...nums)
+  const max = Math.max(...nums)
+  const range = max - min || 1
+  const up = nums[nums.length - 1] >= nums[0]
+  const color = up ? '#10b981' : '#ef4444'
+  const points = nums
+    .map((v, i) => {
+      const x = (i / (nums.length - 1)) * 100
+      const y = 16 - ((v - min) / range) * 14 - 1
+      return `${x.toFixed(1)},${y.toFixed(1)}`
+    })
+    .join(' ')
+  return (
+    <svg viewBox="0 0 100 16" className="w-20 h-4" preserveAspectRatio="none">
+      <polyline
+        fill="none"
+        stroke={color}
+        strokeWidth="1.5"
+        points={points}
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  )
 }
 
 function formatCell(value: unknown): string {
