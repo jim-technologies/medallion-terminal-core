@@ -19,6 +19,10 @@ interface TradeOptions {
   quote_unit?: string   // Display label ("BTC", "ETH", etc.)
   available?: number    // Optional balance display
   confirm?: boolean     // Show a confirm step before POST
+  // Percent-of-available quick chips. Each value is a fraction
+  // (0.25 → 25%); clicking fills the amount field with
+  // (available * pct). No-op if `available` isn't provided.
+  quick_amounts?: number[]
 }
 
 interface OrderBody {
@@ -278,6 +282,26 @@ export function Trade({ options }: WidgetProps) {
         onChange={setAmount}
         disabled={submitting}
       />
+      {opts.quick_amounts && opts.quick_amounts.length > 0 && opts.available != null && (
+        <div className="flex gap-1">
+          {opts.quick_amounts.map((pct, i) => {
+            const fillAmount = (opts.available! * pct)
+            // Trim trailing zeros to keep typed input feel.
+            const display = fillAmount.toFixed(6).replace(/\.?0+$/, '')
+            return (
+              <button
+                key={i}
+                onClick={() => setAmount(display)}
+                disabled={submitting}
+                className="flex-1 text-[10px] uppercase tracking-wider text-zinc-400 hover:text-zinc-100 bg-zinc-800/60 hover:bg-zinc-800 rounded py-1 disabled:opacity-30"
+                title={`${(pct * 100).toFixed(0)}% of available`}
+              >
+                {(pct * 100).toFixed(0)}%
+              </button>
+            )
+          })}
+        </div>
+      )}
       <Field
         label="Price"
         placeholder="market"

@@ -130,7 +130,9 @@
       "options": {
         "url": "/api/orders",
         "quote_unit": "${ctx.symbol}",
-        "confirm": true
+        "confirm": true,
+        "available": 1.5,
+        "quick_amounts": [0.25, 0.5, 0.75, 1.0]
       }
     },
 
