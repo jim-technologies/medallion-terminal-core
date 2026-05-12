@@ -237,9 +237,10 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
       streaming,
       connected: streaming ? connected : true,
       error: resolution.error ?? error,
+      stale: isStale,
     })
     return () => reportWidgetHealth(config.id!, null)
-  }, [config.id, title, config.title, config.component, source?.stream, connected, resolution.error, error, reportWidgetHealth])
+  }, [config.id, title, config.title, config.component, source?.stream, connected, resolution.error, error, isStale, reportWidgetHealth])
 
   const isFocused = !!config.id && focusedId === config.id
   // Mouse click to focus mirrors keyboard nav. Cheap visual affordance

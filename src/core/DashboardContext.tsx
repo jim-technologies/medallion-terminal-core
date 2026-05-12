@@ -149,6 +149,9 @@ export interface WidgetHealth {
   streaming: boolean
   connected: boolean
   error: string | null
+  // True when data hasn't updated within source.staleAfterMs. Reported
+  // by WidgetShell as the threshold trips; the status bar tallies.
+  stale: boolean
 }
 
 // No-op stub. Exported so Storybook fixtures (and tests) can spread it

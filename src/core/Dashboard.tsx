@@ -163,6 +163,7 @@ function StatusBar() {
   const streams = entries.filter(e => e.streaming)
   const liveStreams = streams.filter(e => e.connected && !e.error).length
   const errored = entries.filter(e => e.error).length
+  const staleCount = entries.filter(e => e.stale).length
   const latestTone =
     latest?.status?.endsWith('_OK') ? 'text-emerald-400/80' :
     latest?.status?.endsWith('_PENDING') || latest?.status?.endsWith('_ACCEPTED') ? 'text-amber-400/80' :
@@ -193,6 +194,11 @@ function StatusBar() {
           title={`${liveStreams} of ${streams.length} streams connected`}
         >
           <span className="tabular-nums">{liveStreams}/{streams.length}</span> <span className="opacity-60">↑</span>
+        </span>
+      )}
+      {staleCount > 0 && (
+        <span className="text-amber-400/80 tabular-nums" title={`${staleCount} widget(s) without recent updates`}>
+          {staleCount} stale
         </span>
       )}
       {errored > 0 && (
@@ -378,7 +384,8 @@ export function Dashboard({
           existing.streaming === state.streaming &&
           existing.connected === state.connected &&
           existing.error === state.error &&
-          existing.title === state.title) {
+          existing.title === state.title &&
+          existing.stale === state.stale) {
         return prev
       }
       return { ...prev, [id]: state }
