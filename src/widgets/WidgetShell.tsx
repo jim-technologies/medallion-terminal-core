@@ -32,11 +32,15 @@ function renderBody(args: {
   component: string
   Component: ComponentType<{ data: unknown; options?: Record<string, unknown> }>
   onRenderError?: (err: Error) => void
+  onRetry?: () => void
 }) {
-  const { resolution, loading, error, data, options, component, Component, onRenderError } = args
+  const { resolution, loading, error, data, options, component, Component, onRenderError, onRetry } = args
+  // Retry is only meaningful when the source is fetchable — ctx-
+  // resolution errors aren't fixed by re-fetching, but a stream/poll
+  // failure might be transient.
   if (resolution.error) return <ErrorState message={resolution.error} />
   if (loading) return <Skeleton component={component} />
-  if (error) return <ErrorState message={error} />
+  if (error) return <ErrorState message={error} onRetry={onRetry} />
   return (
     <div className="h-full motion-safe:animate-[fadeIn_200ms_ease-out]">
       <ErrorBoundary onError={onRenderError}>
@@ -308,6 +312,9 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
             message: err.message,
             source: 'render',
           }),
+          // Inline-data sources can't retry; only offer the button
+          // when there's an actual fetch/stream behind the widget.
+          onRetry: source && !(source.inline !== undefined || source.data !== undefined) ? refresh : undefined,
         })}
       </div>
     </div>

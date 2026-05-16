@@ -68,13 +68,21 @@ export function Empty({ children, padded }: { children: React.ReactNode; padded?
   )
 }
 
-export function ErrorState({ message }: { message: string }) {
+export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
-    <div className="h-full flex items-center justify-center">
-      <div className="flex items-center gap-2 text-sm max-w-full px-2">
+    <div className="h-full flex flex-col items-center justify-center gap-2 px-2">
+      <div className="flex items-center gap-2 text-sm max-w-full">
         <span className="text-red-400 shrink-0">⚠</span>
         <span className="text-zinc-400 font-mono text-xs truncate">{message}</span>
       </div>
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          className="text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800"
+        >
+          Retry
+        </button>
+      )}
     </div>
   )
 }
