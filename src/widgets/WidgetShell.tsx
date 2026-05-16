@@ -30,11 +30,12 @@ function renderBody(args: {
   data: unknown
   options: Record<string, unknown> | undefined
   component: string
-  Component: ComponentType<{ data: unknown; options?: Record<string, unknown> }>
+  widgetId?: string
+  Component: ComponentType<{ data: unknown; options?: Record<string, unknown>; widgetId?: string }>
   onRenderError?: (err: Error) => void
   onRetry?: () => void
 }) {
-  const { resolution, loading, error, data, options, component, Component, onRenderError, onRetry } = args
+  const { resolution, loading, error, data, options, component, widgetId, Component, onRenderError, onRetry } = args
   // Retry is only meaningful when the source is fetchable — ctx-
   // resolution errors aren't fixed by re-fetching, but a stream/poll
   // failure might be transient.
@@ -45,7 +46,7 @@ function renderBody(args: {
     <div className="h-full motion-safe:animate-[fadeIn_200ms_ease-out]">
       <ErrorBoundary onError={onRenderError}>
         <Suspense fallback={<Skeleton component={component} />}>
-          <Component data={data} options={options} />
+          <Component data={data} options={options} widgetId={widgetId} />
         </Suspense>
       </ErrorBoundary>
     </div>
@@ -304,7 +305,7 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
       <div className={compact ? 'p-2.5' : 'p-4'} style={{ height: compact ? Math.round(contentHeight * 0.92) : contentHeight }}>
         {renderBody({
           resolution, loading, error, data,
-          options: config.options, component: config.component, Component,
+          options: config.options, component: config.component, widgetId: config.id, Component,
           onRenderError: (err) => emit({
             type: 'widget_error',
             widgetId: config.id,

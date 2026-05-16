@@ -106,4 +106,8 @@ export interface DataSource {
 export interface WidgetProps {
   data: unknown
   options?: Record<string, unknown>
+  // Widget's own id from the template, when one was declared. Lets a
+  // widget address itself via context APIs (e.g. requestRefresh) without
+  // resorting to the over-broad '*' wildcard.
+  widgetId?: string
 }

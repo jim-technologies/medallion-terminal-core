@@ -41,7 +41,7 @@ interface FileBrowserOptions {
   download_url?: string
 }
 
-export function FileBrowser({ data, options }: WidgetProps) {
+export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const opts = (options ?? {}) as FileBrowserOptions
   const { ctx, setCtx, backendUrl, toast, requestRefresh } = useDashboard()
 
@@ -140,7 +140,10 @@ export function FileBrowser({ data, options }: WidgetProps) {
     setUploading(false)
     if (okCount > 0) {
       toast(`Uploaded ${okCount} file${okCount === 1 ? '' : 's'}`, 'ok')
-      requestRefresh('*')
+      // Refresh just this widget so the new file appears. Falling back
+      // to '*' only when the template didn't give us an id — bare
+      // best-effort behavior over silent stalemate.
+      requestRefresh(widgetId ?? '*')
     }
   }
 
