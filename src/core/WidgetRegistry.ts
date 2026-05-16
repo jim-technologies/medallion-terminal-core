@@ -55,6 +55,12 @@ const registry = new Map<string, AnyWidget>([
   ['file_browser',   lazyWidget(() => import('../widgets/FileBrowser'), 'FileBrowser')],
 ])
 
+// Snapshot of the keys present at module load — i.e. the framework's
+// built-in widgets, before any consumer-side registerWidget calls. The
+// validator's BUILTIN_COMPONENTS list is asserted equal to this set in
+// a test so the two never drift.
+export const BUILTIN_KEYS: ReadonlySet<string> = new Set(registry.keys())
+
 export function getWidget(name: string): AnyWidget {
   return registry.get(name) || Placeholder
 }

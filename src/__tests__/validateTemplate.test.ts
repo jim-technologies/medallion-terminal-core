@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { validateTemplate } from '../core/validateTemplate'
+import { validateTemplate, BUILTIN_COMPONENTS } from '../core/validateTemplate'
+import { BUILTIN_KEYS } from '../core/WidgetRegistry'
 import type { Template } from '../types/template'
 
 describe('validateTemplate', () => {
@@ -77,5 +78,14 @@ describe('validateTemplate', () => {
 
   it('errors on non-object template', () => {
     expect(validateTemplate(null as never)).toHaveLength(1)
+  })
+
+  // Drift guard. If a widget is added to WidgetRegistry but forgotten in
+  // BUILTIN_COMPONENTS (or vice versa), authors get a spurious "unknown
+  // component" warning at runtime. Catch the divergence at test time.
+  it('BUILTIN_COMPONENTS stays in sync with the widget registry', () => {
+    const inValidator = [...BUILTIN_COMPONENTS].sort()
+    const inRegistry = [...BUILTIN_KEYS].sort()
+    expect(inValidator).toEqual(inRegistry)
   })
 })
