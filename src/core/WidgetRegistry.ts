@@ -52,6 +52,7 @@ const registry = new Map<string, AnyWidget>([
   ['action_log',     lazyWidget(() => import('../widgets/ActionLog'), 'ActionLog')],
   ['alert_log',      lazyWidget(() => import('../widgets/AlertLog'), 'AlertLog')],
   ['tape',           lazyWidget(() => import('../widgets/Tape'), 'Tape')],
+  ['file_browser',   lazyWidget(() => import('../widgets/FileBrowser'), 'FileBrowser')],
 ])
 
 export function getWidget(name: string): AnyWidget {

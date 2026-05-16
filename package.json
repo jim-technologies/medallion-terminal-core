@@ -1,6 +1,6 @@
 {
   "name": "medallion-terminal-core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "main": "./dist/medallion-terminal-core.js",
   "types": "./dist/index.d.ts",
@@ -27,6 +27,7 @@
     "bench": "vitest bench --run",
     "build": "tsc -b && vite build",
     "build:lib": "vite build --config vite.config.lib.ts && tsc -p tsconfig.build.json",
+    "prepare": "pnpm build:lib",
     "preview": "vite preview",
     "backend": "node examples/backend/server.mjs",
     "storybook": "storybook dev -p 6006",

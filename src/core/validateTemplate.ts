@@ -12,6 +12,7 @@ export const BUILTIN_COMPONENTS: ReadonlySet<string> = new Set([
   'bar_chart', 'scatter', 'clock', 'treemap', 'image', 'iframe',
   'histogram', 'section', 'area_chart', 'slider', 'select', 'boxplot',
   'radar', 'dag', 'multi_select', 'json', 'sparkline', 'action_log', 'alert_log', 'tape',
+  'file_browser',
 ])
 
 export type ValidationSeverity = 'error' | 'warn'
