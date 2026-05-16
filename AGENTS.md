@@ -72,7 +72,7 @@ Tabular / metric: `table`, `metric`, `gauge`, `distribution`, `stat_strip`, `pai
 
 Live feeds: `events`, `text` (news/articles, supports image_url + flash-on-new-item), `ticker` (auto-scrolling marquee), `tape` (time-and-sales / append-only event stream with ring buffer), `action_log` (order blotter), `alert_log` (alert feed).
 
-Write surfaces: `trade` (order ticket — calls SubmitAction, watches via WatchAction), `prompt` (AI prompt — calls Generate).
+Write surfaces: `trade` (order ticket — calls SubmitAction, watches via WatchAction), `prompt` (AI prompt — calls Generate), `file_browser` (object-store file pane — breadcrumb nav, drag-drop upload via SubmitAction, click-to-download).
 
 Layout/input: `section`, `slider`, `select`, `multi_select`, `clock`, `dag`, `catalog`, `image`, `iframe`, `json`.
 

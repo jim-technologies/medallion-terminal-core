@@ -70,6 +70,7 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 | `action_log` | (none) | Live order blotter — listens to `emit({type:'action'})` |
 | `alert_log` | (none) | Live alert feed — listens to `emit({type:'alert'})` |
 | `tape` | `{events: [{timestamp, price?, size?, side?, label?}]}` or one event | Time-and-sales / high-frequency append-only stream |
+| `file_browser` | `{entries: [{kind, name, object_id?, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download |
 
 Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus chart variants (`bar_chart`, `area_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `treemap`, `sparkline`, `dag`, `volume_profile`).
 
