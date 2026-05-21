@@ -39,6 +39,11 @@ describe('FileBrowser helpers', () => {
       expect(normalizeEntries({ entries: e })).toEqual(e)
     })
 
+    it('unwraps TablePayload { rows: [...] }', () => {
+      const e = [{ kind: 'file', name: 'a.txt', object_id: 'A' }]
+      expect(normalizeEntries({ rows: e })).toEqual(e)
+    })
+
     it('returns [] for unknown shapes', () => {
       expect(normalizeEntries({ stuff: [] })).toEqual([])
       expect(normalizeEntries(42)).toEqual([])

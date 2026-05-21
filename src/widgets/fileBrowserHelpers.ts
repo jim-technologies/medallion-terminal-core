@@ -19,9 +19,13 @@ export function isFolder(e: FileBrowserEntry): boolean {
 export function normalizeEntries(data: unknown): FileBrowserEntry[] {
   if (!data) return []
   if (Array.isArray(data)) return data as FileBrowserEntry[]
-  if (typeof data === 'object' && data !== null && 'entries' in data) {
-    const e = (data as { entries: unknown }).entries
-    if (Array.isArray(e)) return e as FileBrowserEntry[]
+  if (typeof data === 'object' && data !== null) {
+    const obj = data as Record<string, unknown>
+    // Plain { entries: [...] } shape (URL source escape hatch).
+    if (Array.isArray(obj.entries)) return obj.entries as FileBrowserEntry[]
+    // TablePayload shape — what TerminalService.Get returns for a
+    // SHAPE_TABLE source backed by a file listing.
+    if (Array.isArray(obj.rows)) return obj.rows as FileBrowserEntry[]
   }
   return []
 }
