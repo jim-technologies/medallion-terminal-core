@@ -8,6 +8,7 @@ import {
   previewKind,
   buildMediaUrl,
 } from '../widgets/fileBrowserHelpers'
+import { prettyJSON, parseCSV } from '../widgets/fileBrowserDecoders'
 
 describe('FileBrowser helpers', () => {
   describe('isFolder', () => {
@@ -97,7 +98,6 @@ describe('FileBrowser helpers', () => {
       ['image/heif', undefined, 'heic'],
       ['video/x-matroska', undefined, 'mkv'],
       ['application/x-matroska', undefined, 'mkv'],
-      ['text/plain', undefined, null],
       ['application/zip', undefined, null],
       ['', undefined, null],
       [undefined, undefined, null],
@@ -110,6 +110,21 @@ describe('FileBrowser helpers', () => {
       ['video/mp4', 'unknown.mkv', 'mkv'], // mkv extension still triggers — extension hint is the conservative path
       // Filename without recognized extension → unchanged classification.
       ['application/octet-stream', 'README', null],
+      // Text-family kinds.
+      ['application/json', undefined, 'json'],
+      ['text/json', undefined, 'json'],
+      ['application/octet-stream', 'data.json', 'json'],
+      ['application/yaml', undefined, 'yaml'],
+      ['application/x-yaml', undefined, 'yaml'],
+      ['application/octet-stream', 'config.yaml', 'yaml'],
+      ['application/octet-stream', 'config.yml', 'yaml'],
+      ['text/markdown', undefined, 'markdown'],
+      ['application/octet-stream', 'README.md', 'markdown'],
+      ['text/csv', undefined, 'csv'],
+      ['application/octet-stream', 'export.csv', 'csv'],
+      ['text/plain', undefined, 'text'],
+      ['application/octet-stream', 'notes.txt', 'text'],
+      ['application/octet-stream', 'app.log', 'text'],
     ])('%q + %q → %s', (ct, name, want) => {
       expect(previewKind(ct as string | undefined, name)).toBe(want as ReturnType<typeof previewKind>)
     })
@@ -121,6 +136,28 @@ describe('FileBrowser helpers', () => {
     })
     it('url-encodes both', () => {
       expect(buildMediaUrl('/media/{namespace}/{object_id}', 'my ns', 'a/b')).toBe('/media/my%20ns/a%2Fb')
+    })
+  })
+
+  describe('prettyJSON', () => {
+    it('indents valid JSON', () => {
+      expect(prettyJSON('{"a":1,"b":[2,3]}')).toBe('{\n  "a": 1,\n  "b": [\n    2,\n    3\n  ]\n}')
+    })
+    it('returns input unchanged on parse failure', () => {
+      expect(prettyJSON('not json {')).toBe('not json {')
+    })
+  })
+
+  describe('parseCSV', () => {
+    it('parses a simple CSV', () => {
+      expect(parseCSV('a,b,c\n1,2,3\n')).toEqual([['a', 'b', 'c'], ['1', '2', '3']])
+    })
+    it('handles quoted fields with commas and CRLF', () => {
+      expect(parseCSV('name,note\r\n"smith, john","hello, world"\r\n'))
+        .toEqual([['name', 'note'], ['smith, john', 'hello, world']])
+    })
+    it('handles escaped quotes', () => {
+      expect(parseCSV('quote\n"she said ""hi"""\n')).toEqual([['quote'], ['she said "hi"']])
     })
   })
 

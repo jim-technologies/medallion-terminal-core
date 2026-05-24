@@ -59,11 +59,22 @@ export function humanSize(n: number): string {
 // preview category the FileBrowser renders, or null for "not previewable,
 // download instead".
 //
-// `heic` and `mkv` are intentionally NOT lumped into `image`/`video` —
-// they need a client-side decode/remux step before the native element
-// can render them. The PreviewOverlay loads the WASM helpers for those
-// kinds on demand.
-export type PreviewKind = 'video' | 'audio' | 'image' | 'pdf' | 'heic' | 'mkv' | null
+// Special kinds (`heic`, `mkv`, `markdown`) need client-side decode /
+// remux / render before the native element can show them — the
+// PreviewOverlay loads the helpers for those on demand.
+export type PreviewKind =
+  | 'video'
+  | 'audio'
+  | 'image'
+  | 'pdf'
+  | 'heic'
+  | 'mkv'
+  | 'text'
+  | 'json'
+  | 'yaml'
+  | 'markdown'
+  | 'csv'
+  | null
 
 export function previewKind(contentType?: string, filename?: string): PreviewKind {
   const ext = (filename ?? '').toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] ?? ''
@@ -83,6 +94,14 @@ export function previewKind(contentType?: string, filename?: string): PreviewKin
   if (ct.startsWith('audio/')) return 'audio'
   if (ct.startsWith('image/')) return 'image'
   if (ct === 'application/pdf' || ext === 'pdf') return 'pdf'
+
+  // Text-family kinds. MIME wins; extension is the fallback.
+  if (ct === 'application/json' || ct === 'text/json' || ext === 'json') return 'json'
+  if (ct === 'application/yaml' || ct === 'text/yaml' || ct === 'application/x-yaml' || ext === 'yaml' || ext === 'yml') return 'yaml'
+  if (ct === 'text/markdown' || ct === 'text/x-markdown' || ext === 'md' || ext === 'markdown') return 'markdown'
+  if (ct === 'text/csv' || ct === 'application/csv' || ext === 'csv') return 'csv'
+  // Generic text MIME OR text-like extensions we want to render inline.
+  if (ct.startsWith('text/') || ext === 'txt' || ext === 'log' || ext === 'ini' || ext === 'conf') return 'text'
   return null
 }
 

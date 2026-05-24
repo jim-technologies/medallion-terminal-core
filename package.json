@@ -1,6 +1,6 @@
 {
   "name": "medallion-terminal-core",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "type": "module",
   "main": "./dist/medallion-terminal-core.js",
   "types": "./dist/index.d.ts",
@@ -45,6 +45,7 @@
     "@ffmpeg/util": "^0.12.2",
     "heic2any": "^0.0.4",
     "lightweight-charts": "^5.1.0",
+    "marked": "^18.0.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "recharts": "^3.8.0"

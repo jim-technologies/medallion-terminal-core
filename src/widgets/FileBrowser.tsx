@@ -19,7 +19,14 @@ import {
   buildMediaUrl,
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
-import { decodeHeic, remuxMkvToMp4 } from './fileBrowserDecoders'
+import {
+  decodeHeic,
+  remuxMkvToMp4,
+  fetchText,
+  prettyJSON,
+  parseCSV,
+  renderMarkdown,
+} from './fileBrowserDecoders'
 import type { WidgetProps } from '../types/template'
 
 // FileBrowser is the file-pane primitive: breadcrumb header + folder/file
@@ -292,10 +299,11 @@ function PreviewOverlay({
   onDownload: () => void
 }) {
   const kind = previewKind(entry.content_type, entry.name)
+  const isTextLike = kind === 'text' || kind === 'json' || kind === 'yaml' || kind === 'csv' || kind === 'markdown'
   // image/video/pdf show a loading sentinel until the element loads.
-  // audio is rendered inside its own card with the native player's spinner.
+  // text-family previews fetch the bytes asynchronously.
   const [loading, setLoading] = useState(
-    kind === 'image' || kind === 'video' || kind === 'pdf' || kind === 'heic' || kind === 'mkv',
+    kind === 'image' || kind === 'video' || kind === 'pdf' || kind === 'heic' || kind === 'mkv' || isTextLike,
   )
   const [failed, setFailed] = useState(false)
   const [failedMsg, setFailedMsg] = useState<string | null>(null)
@@ -304,6 +312,10 @@ function PreviewOverlay({
   const [transcoded, setTranscoded] = useState<string | null>(null)
   // Coarse progress text shown for MKV remux (ffmpeg load → fetch → remux).
   const [progress, setProgress] = useState<string>('Loading…')
+  // Text-family preview state.
+  const [textBody, setTextBody] = useState<string | null>(null)
+  const [csvRows, setCsvRows] = useState<string[][] | null>(null)
+  const [markdownHtml, setMarkdownHtml] = useState<string | null>(null)
 
   const onMediaLoad = () => setLoading(false)
   const onMediaError = () => { setLoading(false); setFailed(true); setFailedMsg(null) }
@@ -346,6 +358,36 @@ function PreviewOverlay({
       if (url) URL.revokeObjectURL(url)
     }
   }, [kind, mediaUrl])
+
+  // Text-family previews: fetch + transform. CSV → table rows, JSON →
+  // pretty-printed string, markdown → HTML (lazy-loaded `marked`),
+  // text/yaml → raw with monospace.
+  useEffect(() => {
+    if (!isTextLike) return undefined
+    let cancelled = false
+    void (async () => {
+      try {
+        const raw = await fetchText(mediaUrl)
+        if (cancelled) return
+        if (kind === 'csv') {
+          setCsvRows(parseCSV(raw))
+        } else if (kind === 'json') {
+          setTextBody(prettyJSON(raw))
+        } else if (kind === 'markdown') {
+          setMarkdownHtml(await renderMarkdown(raw))
+        } else {
+          setTextBody(raw)
+        }
+        setLoading(false)
+      } catch (err) {
+        if (cancelled) return
+        setFailedMsg((err as Error).message)
+        setFailed(true)
+        setLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [kind, isTextLike, mediaUrl])
 
   return (
     <div
@@ -459,6 +501,42 @@ function PreviewOverlay({
             onError={onMediaError}
             className="max-h-full max-w-full bg-black rounded shadow-2xl"
           />
+        )}
+        {!failed && (kind === 'text' || kind === 'json' || kind === 'yaml') && textBody !== null && (
+          <pre className="w-full h-full overflow-auto bg-zinc-900 text-zinc-100 text-xs font-mono p-4 rounded shadow-2xl whitespace-pre-wrap break-words">
+            {textBody}
+          </pre>
+        )}
+        {!failed && kind === 'markdown' && markdownHtml !== null && (
+          <div
+            className="w-full h-full overflow-auto bg-white text-zinc-900 text-sm p-6 rounded shadow-2xl prose prose-zinc max-w-none"
+            // marked is the trust boundary; v18+ sanitises by default.
+            dangerouslySetInnerHTML={{ __html: markdownHtml }}
+          />
+        )}
+        {!failed && kind === 'csv' && csvRows !== null && (
+          <div className="w-full h-full overflow-auto bg-zinc-900 text-zinc-100 text-xs p-4 rounded shadow-2xl">
+            <table className="border-collapse">
+              {csvRows.length > 0 && (
+                <thead>
+                  <tr>
+                    {csvRows[0].map((h, i) => (
+                      <th key={i} className="border border-zinc-700 px-2 py-1 text-left font-semibold sticky top-0 bg-zinc-800">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+              )}
+              <tbody>
+                {csvRows.slice(1).map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => (
+                      <td key={j} className="border border-zinc-800 px-2 py-1 align-top">{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
         {kind === null && !failed && (
           <div className="flex flex-col items-center gap-3 text-zinc-300 text-sm">
