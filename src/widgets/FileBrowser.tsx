@@ -267,6 +267,18 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
 // drive the byte loads via Range requests against `mediaUrl`, so the backend
 // only has to fetch the chunks overlapping the visible portion (or the
 // scrubbed-to position for video/audio).
+//
+// Design rules so the four kinds feel uniform:
+//   • Same rounded shadow card for every kind (audio gets a tagged card,
+//     others inherit theirs from the media element itself).
+//   • Loading sentinel under the media until the element fires its first
+//     load event — no black-screen-while-fetching for big files.
+//   • onError → fall back to a "preview failed, try Download" pane
+//     instead of a silently-broken element.
+//   • Backdrop click (anywhere in the dim area) closes; click on the
+//     media itself does not, so scrubbing/selecting text works.
+//   • playsInline + preload="metadata" on video to keep iOS sane and
+//     avoid pulling the whole file before the user even hits play.
 function PreviewOverlay({
   entry,
   mediaUrl,
@@ -279,14 +291,28 @@ function PreviewOverlay({
   onDownload: () => void
 }) {
   const kind = previewKind(entry.content_type)
+  // image/video/pdf show a loading sentinel until the element loads.
+  // audio is rendered inside its own card with the native player's spinner.
+  const [loading, setLoading] = useState(kind === 'image' || kind === 'video' || kind === 'pdf')
+  const [failed, setFailed] = useState(false)
+
+  const onMediaLoad = () => setLoading(false)
+  const onMediaError = () => { setLoading(false); setFailed(true) }
+  const backdropClose = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col bg-zinc-950/95"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      onClick={backdropClose}
     >
       <div className="flex items-center gap-3 px-4 py-2 text-zinc-200 border-b border-zinc-800 bg-zinc-900">
         <span className="text-sm font-medium truncate flex-1">{entry.name}</span>
-        <span className="text-xs text-zinc-500">{entry.content_type}</span>
+        <span className="text-xs text-zinc-500 truncate max-w-[200px]">{entry.content_type}</span>
+        {typeof entry.size_bytes === 'number' && (
+          <span className="text-xs text-zinc-600 tabular-nums">{humanSize(entry.size_bytes)}</span>
+        )}
         <button
           onClick={onDownload}
           className="text-xs text-sky-400 hover:underline"
@@ -301,22 +327,76 @@ function PreviewOverlay({
           ×
         </button>
       </div>
-      <div className="flex-1 flex items-center justify-center overflow-auto p-4">
-        {kind === 'video' && (
-          <video src={mediaUrl} controls autoPlay className="max-h-full max-w-full bg-black" />
+      <div
+        className="flex-1 flex items-center justify-center overflow-auto p-4 relative"
+        onClick={backdropClose}
+      >
+        {loading && !failed && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="text-zinc-500 text-xs uppercase tracking-wider">Loading…</div>
+          </div>
         )}
-        {kind === 'audio' && (
-          <audio src={mediaUrl} controls autoPlay className="w-2/3" />
+        {failed && (
+          <div className="flex flex-col items-center gap-3 text-zinc-300 text-sm">
+            <span className="text-zinc-500">⚠ Preview couldn't load.</span>
+            <button onClick={onDownload} className="text-sky-400 hover:underline text-xs">
+              Download instead
+            </button>
+          </div>
         )}
-        {kind === 'image' && (
-          <img src={mediaUrl} alt={entry.name ?? ''} className="max-h-full max-w-full object-contain" />
+        {!failed && kind === 'video' && (
+          <video
+            src={mediaUrl}
+            controls
+            autoPlay
+            playsInline
+            preload="metadata"
+            onLoadedMetadata={onMediaLoad}
+            onError={onMediaError}
+            className="max-h-full max-w-full bg-black rounded shadow-2xl"
+          />
         )}
-        {kind === 'pdf' && (
-          <embed src={mediaUrl} type="application/pdf" className="w-full h-full" />
+        {!failed && kind === 'audio' && (
+          <div className="flex flex-col items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-lg p-6 shadow-2xl w-full max-w-md">
+            <div className="text-3xl select-none" aria-hidden="true">♪</div>
+            <div className="text-sm text-zinc-200 truncate max-w-full" title={entry.name}>{entry.name}</div>
+            <audio
+              src={mediaUrl}
+              controls
+              autoPlay
+              preload="metadata"
+              onError={onMediaError}
+              className="w-full"
+            />
+          </div>
         )}
-        {kind === null && (
-          <div className="text-zinc-400 text-sm">
-            No inline preview for {entry.content_type ?? 'this file type'}. Use Download.
+        {!failed && kind === 'image' && (
+          <img
+            src={mediaUrl}
+            alt={entry.name ?? ''}
+            decoding="async"
+            onLoad={onMediaLoad}
+            onError={onMediaError}
+            className="max-h-full max-w-full object-contain rounded shadow-2xl"
+          />
+        )}
+        {!failed && kind === 'pdf' && (
+          // iframe is more reliably rendered than <embed> across browsers
+          // (some refuse <embed> for security reasons; iframe with a
+          // direct PDF src gets the native viewer with toolbar/scrub).
+          <iframe
+            src={mediaUrl}
+            title={entry.name ?? 'PDF preview'}
+            onLoad={onMediaLoad}
+            className="w-full h-full bg-white rounded shadow-2xl border-0"
+          />
+        )}
+        {kind === null && !failed && (
+          <div className="flex flex-col items-center gap-3 text-zinc-300 text-sm">
+            <span className="text-zinc-500">No inline preview for {entry.content_type ?? 'this file type'}.</span>
+            <button onClick={onDownload} className="text-sky-400 hover:underline text-xs">
+              Download instead
+            </button>
           </div>
         )}
       </div>
