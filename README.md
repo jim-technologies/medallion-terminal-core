@@ -70,11 +70,48 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 | `action_log` | (none) | Live order blotter — listens to `emit({type:'action'})` |
 | `alert_log` | (none) | Live alert feed — listens to `emit({type:'alert'})` |
 | `tape` | `{events: [{timestamp, price?, size?, side?, label?}]}` or one event | Time-and-sales / high-frequency append-only stream |
-| `file_browser` | `{entries: [{kind, name, object_id?, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download, inline preview for video/audio/image/PDF |
+| `file_browser` | `{entries: [{kind, name, object_id?, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download, inline preview for video/audio/image/PDF, paginated listings, icons/gallery toggle, keyboard-navigable preview |
 
 The file_browser previews video and audio through a native `<video>` / `<audio>` element pointed at `options.media_url_template` (default `/media/{namespace}/{object_id}`). For scrub to work on long files the backend **must** support HTTP `Range:` and reply `206 Partial Content` — the reference backend (`examples/backend/server.mjs`) implements this. MP4s should be encoded with `-movflags +faststart` so the player can read metadata before downloading the whole file.
 
 Demo paths in the reference backend use a **hive-style partition convention**: `key__value/` (double-underscore as the GitHub-friendly replacement for `=`, since neither GitHub repo names nor common URL allowlists tolerate `=`). Uploads dropped at the root are auto-partitioned by content type — `type__video/`, `type__image/`, `type__data/`, etc. — while uploads into an existing subfolder are respected verbatim, so authors can layer their own taxonomy on top.
+
+#### Pagination
+
+For large folders, FileBrowser pages the listing through ctx — no client-side virtualisation, no all-at-once fetch. Wire `page` and `page_size` as source params (driven from ctx) and have the backend fold pagination totals into row 0 of the TablePayload:
+
+```jsonc
+{
+  "component": "file_browser",
+  "source": { "source_id": "files",
+              "params": { "namespace": "${ctx.namespace}", "path": "${ctx.path}",
+                          "page": "${ctx.page}", "page_size": "${ctx.page_size}" } },
+  "options": {
+    "namespace_ctx": "namespace",  // ctx key the breadcrumb writes to
+    "path_ctx": "path",
+    "page_ctx": "page",            // default "page"; ctx value is decimal
+    "page_size_ctx": "page_size",  // default "page_size"
+    "view_mode_ctx": "view_mode"   // "icons" (default) | "gallery"
+  }
+}
+```
+
+Backend convention: prepend a sentinel row `{ "__meta__": true, "total": N, "page": P, "page_size": S }` to `rows`; FileBrowser strips it and uses the totals to render `‹ Page P / ceil(N/S) ›`. Without the meta row paging still works — the widget falls back to "no totals" mode (Prev/Next without a page count).
+
+#### Gallery vs. icons
+
+A toolbar toggle switches between **Icons** (default — filename + emoji icon, zero image bytes fetched) and **Gallery** (grid of thumbnails via lazy `<img loading="lazy">`). Use Icons for thousand-file folders where you'd otherwise hammer the backend with hundreds of `/media` requests; Gallery for browsing photos. Image bytes only fetch when the cell scrolls into view; backend `Cache-Control: public, max-age=…, immutable` on `/media` for image content types is recommended.
+
+#### Keyboard nav in the preview overlay
+
+| Key | Action |
+|-----|--------|
+| `→` | Next item (images + audio + video) |
+| `←` | Previous item |
+| `Space` | Play/pause (audio + video; no-op for images/PDFs) |
+| `Esc` | Close overlay |
+
+Toolbar prev/next + the keyboard arrows walk the same navigable queue. Audio/video also auto-advance on `ended` — separate queue (excludes images) so a music playlist ends gracefully instead of jumping to a photo.
 
 Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus chart variants (`bar_chart`, `area_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `treemap`, `sparkline`, `dag`, `volume_profile`).
 
