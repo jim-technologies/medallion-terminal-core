@@ -2,6 +2,17 @@
 
 Notable changes to medallion-terminal-core. Versions follow semver.
 
+## [0.3.1] — 2026-05-24
+
+### Changed
+
+- **FileBrowser idiom polish.** Drop three dead `PreviewOverlay` props (`mediaTemplate`, `namespace`, `backendUrl`) — vestigial from a pre-`onSelect` design where the overlay rebuilt next-track URLs itself. Tighter prop surface, no behavior change.
+- **TypeScript type guards.** Replace `(err as Error).message` catches with a shared `errorMessage(err)` helper that handles non-Error throws (`unknown` is the actual catch type). Replace `as Record<string, unknown>` casts in `extractPagination` / `normalizeEntries` with a private `isMetaRow` type guard. Replace `res.body!.getReader()` non-null assertion in `parseConnectStream` with an explicit guard.
+
+### Added
+
+- `errorMessage(err: unknown): string` exported helper for safe error narrowing in catch blocks.
+
 ## [0.3.0] — 2026-05-24
 
 ### Added

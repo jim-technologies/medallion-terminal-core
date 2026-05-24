@@ -22,6 +22,7 @@ import {
   navigableQueue,
   nextInQueue,
   prevInQueue,
+  errorMessage,
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
 import {
@@ -167,7 +168,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       link.click()
       setTimeout(() => URL.revokeObjectURL(link.href), 5000)
     } catch (err) {
-      toast(`Download failed: ${(err as Error).message}`, 'error')
+      toast(`Download failed: ${errorMessage(err)}`, 'error')
     }
   }
 
@@ -204,7 +205,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
         }
         okCount++
       } catch (err) {
-        toast(`Upload failed: ${f.name} — ${(err as Error).message}`, 'error')
+        toast(`Upload failed: ${f.name} — ${errorMessage(err)}`, 'error')
       }
     }
     setUploading(false)
@@ -342,9 +343,6 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           onSelect={(e) => setPreview(e)}
           onClose={() => setPreview(null)}
           onDownload={() => { void downloadFile(preview) }}
-          mediaTemplate={mediaTemplate}
-          namespace={namespace}
-          backendUrl={backendUrl ?? ''}
         />
       )}
     </div>
@@ -424,9 +422,6 @@ function PreviewOverlay({
   onSelect,
   onClose,
   onDownload,
-  mediaTemplate,
-  namespace,
-  backendUrl,
 }: {
   entry: FileBrowserEntry
   mediaUrl: string
@@ -440,12 +435,6 @@ function PreviewOverlay({
   onSelect: (e: FileBrowserEntry) => void
   onClose: () => void
   onDownload: () => void
-  // Needed because rebuilding mediaUrl for the next/prev entry happens
-  // inside the overlay (so the auto-advance handler doesn't need a
-  // parent callback for each track switch).
-  mediaTemplate: string
-  namespace: string
-  backendUrl: string
 }) {
   const kind = previewKind(entry.content_type, entry.name)
   const isTextLike = kind === 'text' || kind === 'json' || kind === 'yaml' || kind === 'csv' || kind === 'markdown'
@@ -510,11 +499,6 @@ function PreviewOverlay({
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entry.object_id, navQueue.length, shuffle, repeat])
-  // Suppress unused warnings; both are real props consumed below.
-  void mediaTemplate
-  void namespace
-  void backendUrl
-
   const onMediaLoad = () => setLoading(false)
   const onMediaError = () => { setLoading(false); setFailed(true); setFailedMsg(null) }
   const backdropClose = (e: React.MouseEvent) => {
@@ -546,7 +530,7 @@ function PreviewOverlay({
         setLoading(false)
       } catch (err) {
         if (cancelled) return
-        setFailedMsg((err as Error).message)
+        setFailedMsg(errorMessage(err))
         setFailed(true)
         setLoading(false)
       }
@@ -579,7 +563,7 @@ function PreviewOverlay({
         setLoading(false)
       } catch (err) {
         if (cancelled) return
-        setFailedMsg((err as Error).message)
+        setFailedMsg(errorMessage(err))
         setFailed(true)
         setLoading(false)
       }

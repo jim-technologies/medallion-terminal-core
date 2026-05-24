@@ -2,6 +2,25 @@
 // only the component (WidgetRegistry's lazy loader requires homogeneous
 // ComponentType<WidgetProps> module shape).
 
+// errorMessage narrows an unknown thrown value to a printable string.
+// Catch blocks in TypeScript receive `unknown`; this avoids the
+// `(err as Error).message` cast that hides non-Error throws.
+export function errorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message
+  if (typeof err === 'string') return err
+  try {
+    return JSON.stringify(err)
+  } catch {
+    return String(err)
+  }
+}
+
+// isMetaRow narrows a row-shaped unknown to the pagination meta sentinel
+// that files's TerminalService.getFiles folds into TablePayload.rows.
+function isMetaRow(r: unknown): r is Record<string, unknown> & { __meta__: true } {
+  return typeof r === 'object' && r !== null && (r as Record<string, unknown>).__meta__ === true
+}
+
 export interface FileBrowserEntry {
   kind?: string
   name?: string
@@ -30,12 +49,11 @@ export function extractPagination(data: unknown): PaginationMeta | null {
   const rows = pickRows(data)
   if (!rows) return null
   for (const r of rows) {
-    if (r && typeof r === 'object' && (r as Record<string, unknown>).__meta__ === true) {
-      const m = r as Record<string, unknown>
+    if (isMetaRow(r)) {
       return {
-        total: Number(m.total ?? 0),
-        page: Number(m.page ?? 1),
-        pageSize: Number(m.page_size ?? 0),
+        total: Number(r.total ?? 0),
+        page: Number(r.page ?? 1),
+        pageSize: Number(r.page_size ?? 0),
       }
     }
   }
@@ -46,9 +64,7 @@ export function normalizeEntries(data: unknown): FileBrowserEntry[] {
   const rows = pickRows(data)
   if (!rows) return []
   // Strip the pagination meta row produced by the files backend.
-  return rows.filter(
-    (r) => !(r && typeof r === 'object' && (r as Record<string, unknown>).__meta__ === true),
-  ) as FileBrowserEntry[]
+  return rows.filter((r) => !isMetaRow(r)) as FileBrowserEntry[]
 }
 
 function pickRows(data: unknown): unknown[] | null {
@@ -237,7 +253,10 @@ export async function readConnectErrorMessage(res: Response): Promise<string> {
 // envelope is `[flag:1 byte][len:4 bytes BE][JSON payload]`; the end-
 // stream envelope sets flag bit 1.
 export async function parseConnectStream(res: Response, mime?: string): Promise<Blob> {
-  const reader = res.body!.getReader()
+  if (!res.body) {
+    throw new Error('parseConnectStream: response has no body')
+  }
+  const reader = res.body.getReader()
   const chunks: Uint8Array[] = []
   while (true) {
     const { value, done } = await reader.read()
