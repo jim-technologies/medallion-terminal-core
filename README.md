@@ -70,7 +70,11 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 | `action_log` | (none) | Live order blotter — listens to `emit({type:'action'})` |
 | `alert_log` | (none) | Live alert feed — listens to `emit({type:'alert'})` |
 | `tape` | `{events: [{timestamp, price?, size?, side?, label?}]}` or one event | Time-and-sales / high-frequency append-only stream |
-| `file_browser` | `{entries: [{kind, name, object_id?, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download |
+| `file_browser` | `{entries: [{kind, name, object_id?, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download, inline preview for video/audio/image/PDF |
+
+The file_browser previews video and audio through a native `<video>` / `<audio>` element pointed at `options.media_url_template` (default `/media/{namespace}/{object_id}`). For scrub to work on long files the backend **must** support HTTP `Range:` and reply `206 Partial Content` — the reference backend (`examples/backend/server.mjs`) implements this. MP4s should be encoded with `-movflags +faststart` so the player can read metadata before downloading the whole file.
+
+Demo paths in the reference backend use a **hive-style partition convention**: `key__value/` (double-underscore as the GitHub-friendly replacement for `=`, since neither GitHub repo names nor common URL allowlists tolerate `=`). Uploads dropped at the root are auto-partitioned by content type — `type__video/`, `type__image/`, `type__data/`, etc. — while uploads into an existing subfolder are respected verbatim, so authors can layer their own taxonomy on top.
 
 Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus chart variants (`bar_chart`, `area_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `treemap`, `sparkline`, `dag`, `volume_profile`).
 

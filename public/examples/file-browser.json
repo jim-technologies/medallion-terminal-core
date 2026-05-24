@@ -1,0 +1,57 @@
+{
+  "title": "File browser — ${ctx.namespace}",
+  "context": { "values": { "namespace": "demo", "path": "" } },
+  "widgets": [
+    {
+      "id": "ns",
+      "component": "metric",
+      "span": 3,
+      "height": 100,
+      "title": "Namespace",
+      "source": { "inline": { "value": 0, "label": "${ctx.namespace}" } }
+    },
+
+    {
+      "id": "tip",
+      "component": "text",
+      "span": 9,
+      "height": 100,
+      "title": "Demo",
+      "source": {
+        "inline": {
+          "items": [
+            { "body": "Drag any file into the browser to upload. Bare filenames are auto-partitioned by content type using the hive convention type__{kind}/. Drop a video and scrub the preview — the /media endpoint supports Range requests so seek works without re-downloading." }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "browser",
+      "component": "file_browser",
+      "span": 12,
+      "height": 540,
+      "title": "Files at /${ctx.path}",
+      "refresh_policy": "self",
+      "options": {
+        "path_ctx": "path",
+        "namespace_ctx": "namespace",
+        "upload_action_id": "upload",
+        "download_url": "/files.v1.FileService/Download",
+        "media_url_template": "/media/{namespace}/{object_id}"
+      },
+      "source": {
+        "source_id": "files",
+        "params": { "namespace": "${ctx.namespace}", "path": "${ctx.path}" }
+      }
+    },
+
+    {
+      "id": "log",
+      "component": "action_log",
+      "span": 12,
+      "height": 200,
+      "title": "Upload log"
+    }
+  ]
+}

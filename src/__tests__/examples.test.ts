@@ -14,6 +14,7 @@ import logisticsOps from '../../public/examples/logistics-ops.json'
 import clinicalIcu from '../../public/examples/clinical-icu.json'
 import energyGrid from '../../public/examples/energy-grid.json'
 import medallionTerminal from '../../public/examples/medallion-terminal.json'
+import fileBrowser from '../../public/examples/file-browser.json'
 
 // =============================================================
 // Contract validation — loads every public/examples/*.json and
@@ -43,6 +44,7 @@ const EXAMPLES: Record<string, Json> = {
   'clinical-icu':           clinicalIcu,
   'energy-grid':            energyGrid,
   'medallion-terminal':     medallionTerminal,
+  'file-browser':           fileBrowser,
 }
 
 // ----- Type guards -----

@@ -73,7 +73,11 @@ Tabular / metric: `table`, `metric`, `gauge`, `distribution`, `stat_strip`, `pai
 
 Live feeds: `events`, `text` (news/articles, supports image_url + flash-on-new-item), `ticker` (auto-scrolling marquee), `tape` (time-and-sales / append-only event stream with ring buffer), `action_log` (order blotter), `alert_log` (alert feed).
 
-Write surfaces: `trade` (order ticket — calls SubmitAction, watches via WatchAction), `prompt` (AI prompt — calls Generate), `file_browser` (object-store file pane — breadcrumb nav, drag-drop upload via SubmitAction, click-to-download).
+Write surfaces: `trade` (order ticket — calls SubmitAction, watches via WatchAction), `prompt` (AI prompt — calls Generate), `file_browser` (object-store file pane — breadcrumb nav, drag-drop upload via SubmitAction, click-to-download or inline preview).
+
+The file_browser previews video/audio inline via native `<video src=options.media_url_template>` (default `/media/{namespace}/{object_id}`). Seek on long files requires the backend to honor HTTP `Range:` and respond `206 Partial Content`. The reference backend implements this end-to-end. MP4 uploads should be encoded with `-movflags +faststart` (moov atom at the front) so players can seek before downloading the whole file.
+
+Path convention used by the reference backend's file store: hive-style `key__value/` partitions (double-underscore replacing `=`, since GitHub repo names and most URL allowlists can't tolerate `=`). Uploads at the root auto-partition by content type (`type__video/`, `type__data/`, ...); uploads into an existing subfolder are respected as-is.
 
 Layout/input: `section`, `slider`, `select`, `multi_select`, `clock`, `dag`, `catalog`, `image`, `iframe`, `json`.
 

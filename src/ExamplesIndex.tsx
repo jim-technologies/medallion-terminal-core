@@ -16,6 +16,12 @@ const EXAMPLES: Example[] = [
     tags: ['finance', 'showcase'],
   },
   {
+    path: '/examples/file-browser.json',
+    title: 'File Browser',
+    blurb: 'Object-store front: drag-drop upload, breadcrumb nav, inline video/audio/image/PDF preview. Range-supporting /media endpoint backs the <video> scrub bar.',
+    tags: ['files', 'demo'],
+  },
+  {
     path: '/examples/crypto-watch.json',
     title: 'Crypto Watch',
     blurb: 'Perplexity-finance-style: AI summary, candles, peers (click-to-jump), sentiment gauge, news.',

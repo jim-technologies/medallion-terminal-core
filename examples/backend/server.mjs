@@ -29,6 +29,18 @@ const SERVICE = 'medallion.terminal.v1.TerminalService'
 
 const SOURCES = [
   {
+    id: 'files',
+    name: 'Demo file store',
+    description: 'In-memory object store. Lists immediate children at the given path. Pairs with the file_browser widget. Range-supporting /media/{ns}/{oid} endpoint makes <video> seek work on large uploads.',
+    shape: 'SHAPE_UNSPECIFIED',
+    streamable: false,
+    tags: ['files', 'demo'],
+    params: [
+      { key: 'namespace', description: 'Tenant / bucket name', type: 'PARAM_TYPE_STRING', default_value: 'demo' },
+      { key: 'path',      description: 'Folder prefix (empty = root)', type: 'PARAM_TYPE_STRING', default_value: '' },
+    ],
+  },
+  {
     id: 'btc_spot',
     name: 'BTC spot price',
     description: 'Last trade price for BTC/USD. Streams a fresh tick every second.',
@@ -267,6 +279,7 @@ const HANDLERS = {
   news:          p => getNews(p.symbol ?? 'BTCUSD'),
   nba_spread:    () => getNbaSpread(),
   bankroll:      () => getBankroll(),
+  files:         p => listFiles(p.namespace ?? 'demo', p.path ?? ''),
 }
 
 const STREAM_TICK_MS = {
@@ -374,15 +387,22 @@ async function handleRequest(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
 
   const path = req.url || ''
-  if (!path.startsWith(`/${SERVICE}/`)) {
+
+  // Bodyless routes — handled before body capture so a large GET (e.g.
+  // a partial-content video range) doesn't trip the byte cap.
+  if ((req.method === 'GET' || req.method === 'HEAD') && path.startsWith('/media/')) {
+    return handleMedia(req, res, path)
+  }
+
+  if (!path.startsWith(`/${SERVICE}/`) && path !== '/files.v1.FileService/Download') {
     res.writeHead(404).end()
     return
   }
-  const rpc = path.slice(SERVICE.length + 2)
 
-  // 1 MiB body cap — guards against unbounded buffering DoS.
-  // Real backends route through a reverse proxy with stricter limits.
-  const MAX_BODY = 1 << 20
+  // 32 MiB body cap — bumped from the 1 MiB CRUD default because file
+  // uploads (base64-encoded) need headroom. Real backends route through
+  // a reverse proxy with stricter, route-aware limits.
+  const MAX_BODY = 32 << 20
   let body = ''
   let bodyBytes = 0
   let oversize = false
@@ -403,6 +423,13 @@ async function handleRequest(req, res) {
     return
   }
 
+  // Connect-style Download lives outside the TerminalService namespace
+  // because file_browser's default options.download_url targets it.
+  if (path === '/files.v1.FileService/Download') {
+    return handleFileDownload(res, parsed)
+  }
+
+  const rpc = path.slice(SERVICE.length + 2)
   switch (rpc) {
     case 'ListSources': return json(res, { sources: SOURCES })
     case 'Get':         return handleGet(res, parsed)
@@ -565,6 +592,24 @@ function handleGenerate(res, req) {
 
 function handleSubmit(res, req) {
   if (!req.action_id) return badRequest(res, 'action_id is required')
+  // File upload is stateless from a lifecycle perspective — synchronous
+  // OK/FAILED, no watch stream needed. Skip the action ring entirely.
+  if (req.action_id === 'upload') {
+    const r = handleFileUpload(req)
+    if (!r.ok) {
+      return json(res, {
+        id: '',
+        status: 'ACTION_STATUS_FAILED',
+        message: r.message,
+      })
+    }
+    return json(res, {
+      id: r.object_id,
+      status: 'ACTION_STATUS_OK',
+      message: `Uploaded ${r.size_bytes} bytes → ${r.path}`,
+      data: { object_id: r.object_id, path: r.path, size_bytes: r.size_bytes },
+    })
+  }
   const entry = recordAction(req)
   // Async lifecycle for orders; messages just OK synchronously.
   if (entry.action_id === 'place_order' && entry.history.length === 1) {
@@ -623,10 +668,216 @@ function isTerminal(s) { return TERMINAL.has(s) }
 function corsHeaders() {
   return {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Idempotency-Key',
+    'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Idempotency-Key, Range, Connect-Protocol-Version',
+    'Access-Control-Expose-Headers': 'Content-Range, Accept-Ranges, Content-Length',
     'Access-Control-Max-Age': '86400',
   }
+}
+
+// =============================================================
+// File storage demo — pairs with the file_browser widget.
+//
+// Hive-style partitioning convention: `key__value/` (double-
+// underscore as the `=` replacement, since GitHub-friendly paths
+// can't use `=`). Uploaded files dropped at the root are
+// auto-partitioned by content type (`type__video/`, `type__image/`,
+// `type__data/`, ...). Uploads into a subfolder are respected as-is
+// so users can build their own taxonomy on top.
+//
+// `/media/{namespace}/{object_id}` serves bytes with Range support,
+// which is what lets the file_browser preview overlay's <video>
+// element seek to arbitrary positions in large uploads without
+// downloading the whole file. Browsers send `Range: bytes=N-` when
+// the user scrubs; we return `206 Partial Content`.
+// =============================================================
+
+const fileStore = new Map() // namespace -> Map<objectId, { name, path, contentType, bytes, modifiedAt }>
+
+function getNamespace(name) {
+  let m = fileStore.get(name)
+  if (!m) { m = new Map(); fileStore.set(name, m) }
+  return m
+}
+
+function categorize(contentType) {
+  const ct = (contentType || '').toLowerCase().split(';')[0].trim()
+  if (ct.startsWith('video/')) return 'video'
+  if (ct.startsWith('audio/')) return 'audio'
+  if (ct.startsWith('image/')) return 'image'
+  if (ct === 'application/pdf') return 'doc'
+  if (ct === 'application/json' || ct === 'text/csv' || ct === 'application/x-ndjson') return 'data'
+  if (ct.startsWith('text/')) return 'doc'
+  if (ct.includes('zip') || ct.includes('tar') || ct.includes('gzip')) return 'archive'
+  if (ct.includes('javascript') || ct.includes('typescript')) return 'code'
+  return 'other'
+}
+
+// Apply hive convention only when the user dropped a bare filename
+// (no folder). If they navigated into a subfolder first, respect that
+// — the existing path becomes the partition by convention.
+function hivePartition(rawPath, contentType) {
+  if (rawPath.includes('/')) return rawPath
+  return `type__${categorize(contentType)}/${rawPath}`
+}
+
+function seedFile(namespace, path, contentType, bytes) {
+  const oid = `obj-${Math.random().toString(36).slice(2, 10)}`
+  getNamespace(namespace).set(oid, {
+    name: path.split('/').pop(),
+    path,
+    contentType,
+    bytes: Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes),
+    modifiedAt: new Date().toISOString(),
+  })
+  return oid
+}
+
+// Initial fixtures so the file_browser shows something before the
+// user uploads anything. All seeded paths use the hive convention.
+seedFile('demo', 'type__doc/README.md', 'text/markdown',
+  '# Medallion file_browser demo\n\n' +
+  'Drag any file into this pane to upload. Bare filenames are auto-partitioned\n' +
+  'by content type (e.g. `type__video/`); paths inside a subfolder are kept as-is.\n\n' +
+  'Drop a video and scrub the preview — the backend serves `Range:` requests,\n' +
+  'so seek works without downloading the whole file.\n')
+seedFile('demo', 'type__data/tickers.json', 'application/json',
+  JSON.stringify({ symbols: ['BTC', 'ETH', 'SOL'], updated: new Date().toISOString() }, null, 2))
+
+// listFiles returns immediate children of `path` (folders and files).
+// Pairs with the file_browser widget's expected shape.
+function listFiles(namespace, path) {
+  const ns = getNamespace(namespace)
+  const prefix = path ? path + '/' : ''
+  const folders = new Set()
+  const files = []
+  for (const [oid, f] of ns) {
+    if (!f.path.startsWith(prefix)) continue
+    const rest = f.path.slice(prefix.length)
+    const slash = rest.indexOf('/')
+    if (slash >= 0) {
+      folders.add(rest.slice(0, slash))
+    } else if (rest) {
+      files.push({
+        kind: 'file',
+        name: f.name,
+        object_id: oid,
+        size_bytes: f.bytes.length,
+        content_type: f.contentType,
+        modified_at: f.modifiedAt,
+      })
+    }
+  }
+  const folderEntries = [...folders].sort().map(name => ({ kind: 'folder', name }))
+  files.sort((a, b) => a.name.localeCompare(b.name))
+  return { entries: [...folderEntries, ...files] }
+}
+
+function handleFileUpload(req) {
+  const params = req.params ?? {}
+  const namespace = String(params.namespace ?? 'demo')
+  const rawPath = String(params.path ?? '').trim()
+  if (!rawPath) return { ok: false, message: 'path is required' }
+  const contentType = String(params.content_type ?? 'application/octet-stream')
+  const dataB64 = String(params.data_b64 ?? '')
+  const bytes = dataB64 ? Buffer.from(dataB64, 'base64') : Buffer.alloc(0)
+  const finalPath = hivePartition(rawPath, contentType)
+  const oid = `obj-${Math.random().toString(36).slice(2, 10)}`
+  getNamespace(namespace).set(oid, {
+    name: finalPath.split('/').pop(),
+    path: finalPath,
+    contentType,
+    bytes,
+    modifiedAt: new Date().toISOString(),
+  })
+  return { ok: true, object_id: oid, path: finalPath, size_bytes: bytes.length }
+}
+
+// GET / HEAD /media/{namespace}/{object_id}
+//
+// Range handling matters: <video> elements send `Range: bytes=N-` when
+// the user scrubs. Without 206 responses, scrub would either re-download
+// from byte 0 (slow) or simply not work (some browsers refuse). For
+// open-ended `bytes=N-` we serve from N to EOF; for suffix `bytes=-N`
+// we serve the last N bytes. Bare 416 on parse failure.
+function handleMedia(req, res, urlPath) {
+  const parts = urlPath.split('/').filter(Boolean)
+  if (parts.length < 3 || parts[0] !== 'media') {
+    return notFound(res, 'expected /media/{namespace}/{object_id}')
+  }
+  const namespace = decodeURIComponent(parts[1])
+  const objectId = decodeURIComponent(parts[2])
+  const file = getNamespace(namespace).get(objectId)
+  if (!file) return notFound(res, `no object ${objectId} in ${namespace}`)
+
+  const total = file.bytes.length
+  const base = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Expose-Headers': 'Content-Range, Accept-Ranges, Content-Length',
+    'Accept-Ranges': 'bytes',
+    'Content-Type': file.contentType,
+    'Cache-Control': 'private, max-age=60',
+  }
+  const range = req.headers.range
+  if (range) {
+    const m = /^bytes=(\d*)-(\d*)$/.exec(range)
+    if (!m) {
+      res.writeHead(416, { ...base, 'Content-Range': `bytes */${total}` }).end()
+      return
+    }
+    const [, startStr, endStr] = m
+    let start, end
+    if (startStr === '' && endStr !== '') {
+      // suffix range: last N bytes
+      const n = parseInt(endStr, 10)
+      start = Math.max(0, total - n)
+      end = total - 1
+    } else {
+      start = startStr === '' ? 0 : parseInt(startStr, 10)
+      end = endStr === '' ? total - 1 : parseInt(endStr, 10)
+    }
+    if (!Number.isFinite(start) || !Number.isFinite(end) || start < 0 || end >= total || start > end) {
+      res.writeHead(416, { ...base, 'Content-Range': `bytes */${total}` }).end()
+      return
+    }
+    const chunk = file.bytes.subarray(start, end + 1)
+    res.writeHead(206, {
+      ...base,
+      'Content-Length': String(chunk.length),
+      'Content-Range': `bytes ${start}-${end}/${total}`,
+    })
+    if (req.method === 'HEAD') res.end()
+    else res.end(chunk)
+    return
+  }
+  res.writeHead(200, { ...base, 'Content-Length': String(total) })
+  if (req.method === 'HEAD') res.end()
+  else res.end(file.bytes)
+}
+
+// Connect server-streaming Download. Matches the path the file_browser
+// uses by default (`options.download_url`). Streams in 64 KiB chunks
+// so a large file doesn't have to fit into one envelope.
+function handleFileDownload(res, req) {
+  const namespace = String(req.namespace ?? req.params?.namespace ?? 'demo')
+  const objectId = String(req.objectId ?? req.object_id ?? req.params?.objectId ?? '')
+  res.writeHead(200, {
+    'Content-Type': 'application/connect+json',
+    'Access-Control-Allow-Origin': '*',
+  })
+  const file = getNamespace(namespace).get(objectId)
+  if (!file) {
+    res.write(errorTrailer('not_found', `no object ${objectId} in ${namespace}`))
+    res.end()
+    return
+  }
+  const CHUNK = 64 * 1024
+  for (let off = 0; off < file.bytes.length; off += CHUNK) {
+    const slice = file.bytes.subarray(off, Math.min(off + CHUNK, file.bytes.length))
+    res.write(frame({ data: slice.toString('base64') }))
+  }
+  res.write(endFrame())
+  res.end()
 }
 
 function json(res, obj) {
