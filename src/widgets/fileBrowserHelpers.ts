@@ -55,17 +55,34 @@ export function humanSize(n: number): string {
   return `${u === 0 ? v.toFixed(0) : v.toFixed(1)} ${units[u]}`
 }
 
-// previewKind classifies a content_type into the inline-preview category
-// the FileBrowser renders, or null for "not previewable, download instead".
-export type PreviewKind = 'video' | 'audio' | 'image' | 'pdf' | null
+// previewKind classifies a (content_type, filename) pair into the inline-
+// preview category the FileBrowser renders, or null for "not previewable,
+// download instead".
+//
+// `heic` and `mkv` are intentionally NOT lumped into `image`/`video` —
+// they need a client-side decode/remux step before the native element
+// can render them. The PreviewOverlay loads the WASM helpers for those
+// kinds on demand.
+export type PreviewKind = 'video' | 'audio' | 'image' | 'pdf' | 'heic' | 'mkv' | null
 
-export function previewKind(contentType?: string): PreviewKind {
-  if (!contentType) return null
-  const ct = contentType.toLowerCase().split(';')[0].trim()
+export function previewKind(contentType?: string, filename?: string): PreviewKind {
+  const ext = (filename ?? '').toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] ?? ''
+  const ct = (contentType ?? '').toLowerCase().split(';')[0].trim()
+
+  // Decode-required image format. Treat extension-based detection as the
+  // hint of last resort — some uploads come in as application/octet-stream.
+  if (ct === 'image/heic' || ct === 'image/heif' || ext === 'heic' || ext === 'heif') {
+    return 'heic'
+  }
+  // Remux-required container. matroska MIME variants + the ubiquitous
+  // .mkv extension. Same uploader-doesn't-set-mime fallback applies.
+  if (ct === 'video/x-matroska' || ct === 'application/x-matroska' || ext === 'mkv') {
+    return 'mkv'
+  }
   if (ct.startsWith('video/')) return 'video'
   if (ct.startsWith('audio/')) return 'audio'
   if (ct.startsWith('image/')) return 'image'
-  if (ct === 'application/pdf') return 'pdf'
+  if (ct === 'application/pdf' || ext === 'pdf') return 'pdf'
   return null
 }
 

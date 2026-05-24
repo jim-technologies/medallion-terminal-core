@@ -19,6 +19,7 @@ import {
   buildMediaUrl,
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
+import { decodeHeic, remuxMkvToMp4 } from './fileBrowserDecoders'
 import type { WidgetProps } from '../types/template'
 
 // FileBrowser is the file-pane primitive: breadcrumb header + folder/file
@@ -78,7 +79,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       return
     }
     // Previewable types open in the overlay; everything else downloads.
-    if (mediaTemplate && previewKind(e.content_type)) {
+    if (mediaTemplate && previewKind(e.content_type, e.name)) {
       setPreview(e)
       return
     }
@@ -290,17 +291,61 @@ function PreviewOverlay({
   onClose: () => void
   onDownload: () => void
 }) {
-  const kind = previewKind(entry.content_type)
+  const kind = previewKind(entry.content_type, entry.name)
   // image/video/pdf show a loading sentinel until the element loads.
   // audio is rendered inside its own card with the native player's spinner.
-  const [loading, setLoading] = useState(kind === 'image' || kind === 'video' || kind === 'pdf')
+  const [loading, setLoading] = useState(
+    kind === 'image' || kind === 'video' || kind === 'pdf' || kind === 'heic' || kind === 'mkv',
+  )
   const [failed, setFailed] = useState(false)
+  const [failedMsg, setFailedMsg] = useState<string | null>(null)
+  // For HEIC + MKV the inline element renders a transcoded Blob URL produced
+  // client-side. `transcoded` holds it once the WASM helper finishes.
+  const [transcoded, setTranscoded] = useState<string | null>(null)
+  // Coarse progress text shown for MKV remux (ffmpeg load → fetch → remux).
+  const [progress, setProgress] = useState<string>('Loading…')
 
   const onMediaLoad = () => setLoading(false)
-  const onMediaError = () => { setLoading(false); setFailed(true) }
+  const onMediaError = () => { setLoading(false); setFailed(true); setFailedMsg(null) }
   const backdropClose = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose()
   }
+
+  // Drive the HEIC decode / MKV remux off the same `mediaUrl`. Both helpers
+  // are dynamic-imported on first use so the WASM cost (~1.5 MB heic, ~30 MB
+  // ffmpeg) doesn't land in the FileBrowser's initial bundle. Cleanup
+  // revokes the object URL when the overlay closes or the file changes.
+  useEffect(() => {
+    if (kind !== 'heic' && kind !== 'mkv') return undefined
+    let cancelled = false
+    let url: string | null = null
+    void (async () => {
+      try {
+        let blob: Blob
+        if (kind === 'heic') {
+          setProgress('Decoding HEIC…')
+          const res = await fetch(mediaUrl)
+          if (!res.ok) throw new Error(`fetch failed: ${res.status}`)
+          blob = await decodeHeic(await res.blob())
+        } else {
+          blob = await remuxMkvToMp4(mediaUrl, (m) => { if (!cancelled) setProgress(m) })
+        }
+        if (cancelled) return
+        url = URL.createObjectURL(blob)
+        setTranscoded(url)
+        setLoading(false)
+      } catch (err) {
+        if (cancelled) return
+        setFailedMsg((err as Error).message)
+        setFailed(true)
+        setLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+      if (url) URL.revokeObjectURL(url)
+    }
+  }, [kind, mediaUrl])
 
   return (
     <div
@@ -333,12 +378,15 @@ function PreviewOverlay({
       >
         {loading && !failed && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-zinc-500 text-xs uppercase tracking-wider">Loading…</div>
+            <div className="text-zinc-500 text-xs uppercase tracking-wider">{progress}</div>
           </div>
         )}
         {failed && (
-          <div className="flex flex-col items-center gap-3 text-zinc-300 text-sm">
+          <div className="flex flex-col items-center gap-3 text-zinc-300 text-sm max-w-md text-center">
             <span className="text-zinc-500">⚠ Preview couldn't load.</span>
+            {failedMsg && (
+              <span className="text-zinc-600 text-xs font-mono break-words">{failedMsg}</span>
+            )}
             <button onClick={onDownload} className="text-sky-400 hover:underline text-xs">
               Download instead
             </button>
@@ -389,6 +437,27 @@ function PreviewOverlay({
             title={entry.name ?? 'PDF preview'}
             onLoad={onMediaLoad}
             className="w-full h-full bg-white rounded shadow-2xl border-0"
+          />
+        )}
+        {!failed && kind === 'heic' && transcoded && (
+          <img
+            src={transcoded}
+            alt={entry.name ?? ''}
+            decoding="async"
+            onError={onMediaError}
+            className="max-h-full max-w-full object-contain rounded shadow-2xl"
+          />
+        )}
+        {!failed && kind === 'mkv' && transcoded && (
+          <video
+            src={transcoded}
+            controls
+            autoPlay
+            playsInline
+            preload="metadata"
+            onLoadedMetadata={onMediaLoad}
+            onError={onMediaError}
+            className="max-h-full max-w-full bg-black rounded shadow-2xl"
           />
         )}
         {kind === null && !failed && (

@@ -85,20 +85,33 @@ describe('FileBrowser helpers', () => {
 
   describe('previewKind', () => {
     it.each([
-      ['video/mp4', 'video'],
-      ['video/webm', 'video'],
-      ['VIDEO/MP4', 'video'],
-      ['audio/mpeg', 'audio'],
-      ['image/jpeg', 'image'],
-      ['image/png', 'image'],
-      ['application/pdf', 'pdf'],
-      ['application/pdf; charset=binary', 'pdf'],
-      ['text/plain', null],
-      ['application/zip', null],
-      ['', null],
-      [undefined, null],
-    ])('%q → %s', (ct, want) => {
-      expect(previewKind(ct as string | undefined)).toBe(want as ReturnType<typeof previewKind>)
+      ['video/mp4', undefined, 'video'],
+      ['video/webm', undefined, 'video'],
+      ['VIDEO/MP4', undefined, 'video'],
+      ['audio/mpeg', undefined, 'audio'],
+      ['image/jpeg', undefined, 'image'],
+      ['image/png', undefined, 'image'],
+      ['application/pdf', undefined, 'pdf'],
+      ['application/pdf; charset=binary', undefined, 'pdf'],
+      ['image/heic', undefined, 'heic'],
+      ['image/heif', undefined, 'heic'],
+      ['video/x-matroska', undefined, 'mkv'],
+      ['application/x-matroska', undefined, 'mkv'],
+      ['text/plain', undefined, null],
+      ['application/zip', undefined, null],
+      ['', undefined, null],
+      [undefined, undefined, null],
+      // Extension-based fallback for files uploaded as octet-stream.
+      ['application/octet-stream', 'iphone.heic', 'heic'],
+      ['application/octet-stream', 'CLIP.HEIF', 'heic'],
+      ['application/octet-stream', 'movie.mkv', 'mkv'],
+      ['application/octet-stream', 'doc.pdf', 'pdf'],
+      // Content-type wins over extension when both are present and useful.
+      ['video/mp4', 'unknown.mkv', 'mkv'], // mkv extension still triggers — extension hint is the conservative path
+      // Filename without recognized extension → unchanged classification.
+      ['application/octet-stream', 'README', null],
+    ])('%q + %q → %s', (ct, name, want) => {
+      expect(previewKind(ct as string | undefined, name)).toBe(want as ReturnType<typeof previewKind>)
     })
   })
 
