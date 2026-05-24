@@ -9,6 +9,7 @@ import { Empty } from './states'
 import {
   isFolder,
   normalizeEntries,
+  extractPagination,
   sortEntries,
   splitPath,
   humanSize,
@@ -18,6 +19,7 @@ import {
   previewKind,
   buildMediaUrl,
   playableQueue,
+  navigableQueue,
   nextInQueue,
   prevInQueue,
   type FileBrowserEntry,
@@ -50,6 +52,12 @@ import type { WidgetProps } from '../types/template'
 interface FileBrowserOptions {
   path_ctx?: string
   namespace_ctx?: string
+  // ctx keys driving pagination + view mode. The backend Source contract
+  // reads `page` and `page_size` from its DataRequest params; the
+  // widget pushes them through ctx so a click on Next triggers a refresh.
+  page_ctx?: string
+  page_size_ctx?: string
+  view_mode_ctx?: string
   upload_action_id?: string
   download_url?: string
   // URL template for the Range-supporting blob endpoint that backs inline
@@ -65,14 +73,28 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
 
   const pathKey = opts.path_ctx ?? 'path'
   const nsKey = opts.namespace_ctx ?? 'namespace'
+  const pageKey = opts.page_ctx ?? 'page'
+  const pageSizeKey = opts.page_size_ctx ?? 'page_size'
+  const viewModeKey = opts.view_mode_ctx ?? 'view_mode'
   const uploadActionId = opts.upload_action_id ?? 'upload'
 
   const namespace = ctx[nsKey] ?? 'default'
   const currentPath = ctx[pathKey] ?? ''
+  const page = parseInt(ctx[pageKey] ?? '1', 10) || 1
+  const pageSize = parseInt(ctx[pageSizeKey] ?? '50', 10) || 50
+  const viewMode = (ctx[viewModeKey] === 'gallery' ? 'gallery' : 'icons') as 'icons' | 'gallery'
 
   const entries = useMemo(() => normalizeEntries(data), [data])
+  const pagination = useMemo(() => extractPagination(data), [data])
   const sorted = useMemo(() => sortEntries(entries), [entries])
   const segments = useMemo(() => splitPath(currentPath), [currentPath])
+
+  // Total may come from the backend pagination meta; fall back to the
+  // current page size when absent (older sources, inline arrays).
+  const total = pagination?.total ?? entries.length
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const hasPrev = page > 1
+  const hasNext = page < totalPages
 
   const [dragging, setDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -80,7 +102,19 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
 
   const mediaTemplate = opts.media_url_template ?? '/media/{namespace}/{object_id}'
 
+  // Reset to page 1 whenever the directory or namespace changes — the
+  // current page number is meaningless against the new directory's
+  // entry count, and "Photos page 7" after navigating into an empty
+  // subfolder is jarring.
+  useEffect(() => {
+    if (page !== 1) setCtx(pageKey, '1')
+    // pageKey/setCtx are stable; only fire on path or namespace change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [namespace, currentPath])
+
   const navigateTo = (p: string) => setCtx(pathKey, p)
+  const goToPage = (n: number) => setCtx(pageKey, String(Math.max(1, Math.min(totalPages, n))))
+  const toggleViewMode = () => setCtx(viewModeKey, viewMode === 'gallery' ? 'icons' : 'gallery')
 
   const onRowClick = (e: FileBrowserEntry) => {
     if (isFolder(e)) {
@@ -210,9 +244,41 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
             </span>
           )
         })}
-        <span className="ml-auto text-zinc-500">
-          {sorted.length} {sorted.length === 1 ? 'item' : 'items'}
-        </span>
+        <div className="ml-auto flex items-center gap-3 text-zinc-500">
+          {/* View-mode toggle. Icons (default) sends ZERO image bytes — the
+              row icon is just an emoji. Gallery loads inline thumbnails
+              via <img loading="lazy">, browser-cached aggressively by the
+              /media handler's Cache-Control for image types. */}
+          <button
+            onClick={toggleViewMode}
+            className="text-zinc-400 hover:text-zinc-100 border border-zinc-700 rounded px-2 py-0.5"
+            title={viewMode === 'gallery' ? 'Switch to icons (no thumbnails)' : 'Switch to gallery (loads image thumbnails)'}
+          >
+            {viewMode === 'gallery' ? '◫ Gallery' : '☰ Icons'}
+          </button>
+          <span className="tabular-nums">{total} {total === 1 ? 'item' : 'items'}</span>
+          {totalPages > 1 && (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => goToPage(page - 1)}
+                disabled={!hasPrev}
+                className="text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 disabled:cursor-not-allowed px-1"
+                aria-label="Previous page"
+              >
+                ‹
+              </button>
+              <span className="tabular-nums text-zinc-400">{page} / {totalPages}</span>
+              <button
+                onClick={() => goToPage(page + 1)}
+                disabled={!hasNext}
+                className="text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 disabled:cursor-not-allowed px-1"
+                aria-label="Next page"
+              >
+                ›
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto relative min-h-0">
@@ -223,6 +289,12 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
         )}
         {sorted.length === 0 ? (
           <Empty>This folder is empty. Drop files to upload.</Empty>
+        ) : viewMode === 'gallery' ? (
+          <GalleryGrid
+            entries={sorted}
+            onClick={onRowClick}
+            mediaUrlFor={(e) => (e.object_id ? (backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, e.object_id) : '')}
+          />
         ) : (
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-zinc-900 z-[1]">
@@ -265,7 +337,8 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
         <PreviewOverlay
           entry={preview}
           mediaUrl={(backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, preview.object_id ?? '')}
-          queue={playableQueue(sorted)}
+          autoAdvanceQueue={playableQueue(sorted)}
+          navigableQueue={navigableQueue(sorted)}
           onSelect={(e) => setPreview(e)}
           onClose={() => setPreview(null)}
           onDownload={() => { void downloadFile(preview) }}
@@ -274,6 +347,54 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           backendUrl={backendUrl ?? ''}
         />
       )}
+    </div>
+  )
+}
+
+// GalleryGrid renders entries as a tile grid. Images inside the visible
+// area lazy-load their bytes via <img loading="lazy">; off-screen images
+// don't fetch until scrolled to. Non-image files (and folders) just show
+// an emoji icon — no /media call.
+function GalleryGrid({
+  entries,
+  onClick,
+  mediaUrlFor,
+}: {
+  entries: FileBrowserEntry[]
+  onClick: (e: FileBrowserEntry) => void
+  mediaUrlFor: (e: FileBrowserEntry) => string
+}) {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 p-3">
+      {entries.map((e, i) => {
+        const kind = previewKind(e.content_type, e.name)
+        const isImage = kind === 'image' || kind === 'heic'
+        const folder = isFolder(e)
+        return (
+          <button
+            key={`${e.kind ?? ''}:${e.name ?? i}`}
+            onClick={() => onClick(e)}
+            className="flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left"
+          >
+            <div className="w-full aspect-square bg-zinc-950 rounded flex items-center justify-center overflow-hidden">
+              {folder ? (
+                <span className="text-4xl select-none">📁</span>
+              ) : isImage && e.object_id ? (
+                <img
+                  src={mediaUrlFor(e)}
+                  alt={e.name ?? ''}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-4xl select-none">📄</span>
+              )}
+            </div>
+            <span className="w-full text-xs text-zinc-200 truncate" title={e.name}>{e.name}</span>
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -298,7 +419,8 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
 function PreviewOverlay({
   entry,
   mediaUrl,
-  queue,
+  autoAdvanceQueue,
+  navigableQueue: navQueue,
   onSelect,
   onClose,
   onDownload,
@@ -308,10 +430,13 @@ function PreviewOverlay({
 }: {
   entry: FileBrowserEntry
   mediaUrl: string
-  // Playlist for prev/next/auto-advance. Audio + video entries from the
-  // same folder in their natural display order. Empty or single-element
-  // queues just hide the playlist controls.
-  queue: FileBrowserEntry[]
+  // autoAdvanceQueue is what onEnded (audio/video) walks. Excludes
+  // images so finishing track 3 doesn't jump to a photo with no audio
+  // playing — the queue dead-ends gracefully.
+  autoAdvanceQueue: FileBrowserEntry[]
+  // navigableQueue is what arrow-keys + toolbar prev/next walk.
+  // Includes images so the overlay doubles as a slideshow.
+  navigableQueue: FileBrowserEntry[]
   onSelect: (e: FileBrowserEntry) => void
   onClose: () => void
   onDownload: () => void
@@ -341,22 +466,50 @@ function PreviewOverlay({
   const [csvRows, setCsvRows] = useState<string[][] | null>(null)
   const [markdownHtml, setMarkdownHtml] = useState<string | null>(null)
 
-  // Playlist controls (only meaningful when queue has > 1 entries and
-  // the current kind is playable — audio/video/mkv).
-  const isPlayable = kind === 'audio' || kind === 'video' || kind === 'mkv'
-  const playlistVisible = isPlayable && queue.length > 1
-  const queueIndex = queue.findIndex((q) => q.object_id === entry.object_id)
+  // Playlist controls (only meaningful when navQueue has > 1 entries
+  // and the current kind is part of it — image/audio/video/mkv/heic).
+  const queueVisible = navQueue.length > 1
+  const queueIndex = navQueue.findIndex((q) => q.object_id === entry.object_id)
   const [shuffle, setShuffle] = useState(false)
   const [repeat, setRepeat] = useState(true) // sensible default for "play folder"
 
+  // Toolbar prev/next + arrow keys walk navQueue. onEnded (audio/video)
+  // uses autoAdvanceQueue so a music playlist doesn't jump to an image
+  // at the end of a track.
   const advanceNext = () => {
-    const next = nextInQueue(queue, entry.object_id, shuffle, repeat)
+    const next = nextInQueue(navQueue, entry.object_id, shuffle, repeat)
     if (next) onSelect(next)
   }
   const advancePrev = () => {
-    const prev = prevInQueue(queue, entry.object_id, repeat)
+    const prev = prevInQueue(navQueue, entry.object_id, repeat)
     if (prev) onSelect(prev)
   }
+  const autoAdvance = () => {
+    const next = nextInQueue(autoAdvanceQueue, entry.object_id, shuffle, repeat)
+    if (next) onSelect(next)
+  }
+
+  // Keyboard nav. ← prev, → next, Space toggles play (audio/video only;
+  // images shrug it off). Esc is handled by the parent's effect.
+  useEffect(() => {
+    const onKey = (ev: KeyboardEvent) => {
+      // Skip when focus is in an input/textarea so the user can type.
+      const t = ev.target as HTMLElement | null
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return
+      if (ev.key === 'ArrowRight') { ev.preventDefault(); advanceNext() }
+      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); advancePrev() }
+      else if (ev.key === ' ') {
+        const el = document.querySelector('video, audio') as HTMLMediaElement | null
+        if (el) {
+          ev.preventDefault()
+          if (el.paused) void el.play(); else el.pause()
+        }
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entry.object_id, navQueue.length, shuffle, repeat])
   // Suppress unused warnings; both are real props consumed below.
   void mediaTemplate
   void namespace
@@ -445,21 +598,21 @@ function PreviewOverlay({
         {typeof entry.size_bytes === 'number' && (
           <span className="text-xs text-zinc-600 tabular-nums">{humanSize(entry.size_bytes)}</span>
         )}
-        {playlistVisible && (
+        {queueVisible && (
           <div className="flex items-center gap-2 text-zinc-400 text-sm border-l border-zinc-700 pl-3 ml-2">
             <button
               onClick={advancePrev}
               className="hover:text-zinc-100 leading-none px-1"
-              aria-label="Previous"
-              title="Previous"
+              aria-label="Previous (←)"
+              title="Previous (←)"
             >
               ⏮
             </button>
             <button
               onClick={advanceNext}
               className="hover:text-zinc-100 leading-none px-1"
-              aria-label="Next"
-              title="Next"
+              aria-label="Next (→)"
+              title="Next (→)"
             >
               ⏭
             </button>
@@ -480,7 +633,7 @@ function PreviewOverlay({
               🔁
             </button>
             <span className="text-xs text-zinc-500 tabular-nums">
-              {queueIndex >= 0 ? queueIndex + 1 : '–'} / {queue.length}
+              {queueIndex >= 0 ? queueIndex + 1 : '–'} / {navQueue.length}
             </span>
           </div>
         )}
@@ -526,7 +679,7 @@ function PreviewOverlay({
             playsInline
             preload="metadata"
             onLoadedMetadata={onMediaLoad}
-            onEnded={advanceNext}
+            onEnded={autoAdvance}
             onError={onMediaError}
             className="max-h-full max-w-full bg-black rounded shadow-2xl"
           />
@@ -540,7 +693,7 @@ function PreviewOverlay({
               controls
               autoPlay
               preload="metadata"
-              onEnded={advanceNext}
+              onEnded={autoAdvance}
               onError={onMediaError}
               className="w-full"
             />
@@ -584,7 +737,7 @@ function PreviewOverlay({
             playsInline
             preload="metadata"
             onLoadedMetadata={onMediaLoad}
-            onEnded={advanceNext}
+            onEnded={autoAdvance}
             onError={onMediaError}
             className="max-h-full max-w-full bg-black rounded shadow-2xl"
           />

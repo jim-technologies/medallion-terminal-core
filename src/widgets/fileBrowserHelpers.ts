@@ -16,18 +16,50 @@ export function isFolder(e: FileBrowserEntry): boolean {
   return k === 'FOLDER' || k === 'KIND_FOLDER'
 }
 
-export function normalizeEntries(data: unknown): FileBrowserEntry[] {
-  if (!data) return []
-  if (Array.isArray(data)) return data as FileBrowserEntry[]
-  if (typeof data === 'object' && data !== null) {
-    const obj = data as Record<string, unknown>
-    // Plain { entries: [...] } shape (URL source escape hatch).
-    if (Array.isArray(obj.entries)) return obj.entries as FileBrowserEntry[]
-    // TablePayload shape — what TerminalService.Get returns for a
-    // SHAPE_TABLE source backed by a file listing.
-    if (Array.isArray(obj.rows)) return obj.rows as FileBrowserEntry[]
+export interface PaginationMeta {
+  total: number
+  page: number
+  pageSize: number
+}
+
+// extractPagination plucks the optional `__meta__: true` row that the
+// files TerminalService.getFiles handler folds into TablePayload.rows
+// to carry pagination totals. Returns null when no meta row is present
+// (raw inline arrays, non-paginated sources).
+export function extractPagination(data: unknown): PaginationMeta | null {
+  const rows = pickRows(data)
+  if (!rows) return null
+  for (const r of rows) {
+    if (r && typeof r === 'object' && (r as Record<string, unknown>).__meta__ === true) {
+      const m = r as Record<string, unknown>
+      return {
+        total: Number(m.total ?? 0),
+        page: Number(m.page ?? 1),
+        pageSize: Number(m.page_size ?? 0),
+      }
+    }
   }
-  return []
+  return null
+}
+
+export function normalizeEntries(data: unknown): FileBrowserEntry[] {
+  const rows = pickRows(data)
+  if (!rows) return []
+  // Strip the pagination meta row produced by the files backend.
+  return rows.filter(
+    (r) => !(r && typeof r === 'object' && (r as Record<string, unknown>).__meta__ === true),
+  ) as FileBrowserEntry[]
+}
+
+function pickRows(data: unknown): unknown[] | null {
+  if (!data) return null
+  if (Array.isArray(data)) return data
+  if (typeof data === 'object') {
+    const obj = data as Record<string, unknown>
+    if (Array.isArray(obj.entries)) return obj.entries
+    if (Array.isArray(obj.rows)) return obj.rows
+  }
+  return null
 }
 
 export function sortEntries(entries: FileBrowserEntry[]): FileBrowserEntry[] {
@@ -57,18 +89,29 @@ export function humanSize(n: number): string {
 
 // playableKinds is the set of preview kinds that have a `ended` event and
 // make sense in an auto-advancing playlist. Images, PDFs, plain text etc.
-// don't time-out; they don't belong in the queue.
+// don't time-out; they don't belong in the auto-advance queue.
 const playablePreviewKinds = new Set(['audio', 'video', 'mkv'])
 
-// playableQueue filters and orders the entries that should appear in the
-// next/prev rotation when the preview overlay is open. The folder's
-// natural sort order is the play order — same shape the user sees in the
-// table — so behaviour matches expectation without a separate "playlist"
-// concept.
+// navigablePreviewKinds is the superset used for keyboard ← → navigation
+// in the overlay. Images join the queue so the user can flip through
+// photos the same way they advance music tracks.
+const navigablePreviewKinds = new Set(['audio', 'video', 'mkv', 'image', 'heic'])
+
+// playableQueue filters entries for the auto-advance path (audio/video
+// onEnded). Same natural sort order as the file table.
 export function playableQueue(entries: FileBrowserEntry[]): FileBrowserEntry[] {
   return entries.filter((e) => {
     const k = previewKind(e.content_type, e.name)
     return k !== null && playablePreviewKinds.has(k)
+  })
+}
+
+// navigableQueue is the queue keyboard arrows + the toolbar prev/next
+// buttons walk. Includes images so the overlay turns into a slideshow.
+export function navigableQueue(entries: FileBrowserEntry[]): FileBrowserEntry[] {
+  return entries.filter((e) => {
+    const k = previewKind(e.content_type, e.name)
+    return k !== null && navigablePreviewKinds.has(k)
   })
 }
 

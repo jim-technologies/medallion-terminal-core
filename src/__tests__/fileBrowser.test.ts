@@ -2,12 +2,14 @@ import { describe, it, expect } from 'vitest'
 import {
   isFolder,
   normalizeEntries,
+  extractPagination,
   sortEntries,
   splitPath,
   humanSize,
   previewKind,
   buildMediaUrl,
   playableQueue,
+  navigableQueue,
   nextInQueue,
   prevInQueue,
 } from '../widgets/fileBrowserHelpers'
@@ -139,6 +141,43 @@ describe('FileBrowser helpers', () => {
     })
     it('url-encodes both', () => {
       expect(buildMediaUrl('/media/{namespace}/{object_id}', 'my ns', 'a/b')).toBe('/media/my%20ns/a%2Fb')
+    })
+  })
+
+  describe('extractPagination', () => {
+    it('returns null when no __meta__ row is present', () => {
+      expect(extractPagination({ rows: [{ kind: 'file', name: 'a' }] })).toBeNull()
+      expect(extractPagination(null)).toBeNull()
+    })
+
+    it('plucks total/page/page_size from the meta row', () => {
+      const data = { rows: [
+        { __meta__: true, total: 250, page: 3, page_size: 50 },
+        { kind: 'file', name: 'a' },
+      ] }
+      expect(extractPagination(data)).toEqual({ total: 250, page: 3, pageSize: 50 })
+    })
+  })
+
+  describe('normalizeEntries with __meta__ row', () => {
+    it('filters out the pagination meta sentinel', () => {
+      const data = { rows: [
+        { __meta__: true, total: 1, page: 1, page_size: 50 },
+        { kind: 'file', name: 'a' },
+      ] }
+      expect(normalizeEntries(data)).toEqual([{ kind: 'file', name: 'a' }])
+    })
+  })
+
+  describe('navigableQueue', () => {
+    it('keeps images alongside audio/video for arrow-key nav', () => {
+      const entries = [
+        { kind: 'file', name: 'a.jpg', object_id: 'A', content_type: 'image/jpeg' },
+        { kind: 'file', name: 'b.mp3', object_id: 'B', content_type: 'audio/mpeg' },
+        { kind: 'file', name: 'c.pdf', object_id: 'C', content_type: 'application/pdf' },
+        { kind: 'file', name: 'd.mp4', object_id: 'D', content_type: 'video/mp4' },
+      ]
+      expect(navigableQueue(entries).map((e) => e.object_id)).toEqual(['A', 'B', 'D'])
     })
   })
 
