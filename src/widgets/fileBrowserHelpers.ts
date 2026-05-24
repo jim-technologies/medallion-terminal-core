@@ -55,6 +55,28 @@ export function humanSize(n: number): string {
   return `${u === 0 ? v.toFixed(0) : v.toFixed(1)} ${units[u]}`
 }
 
+// previewKind classifies a content_type into the inline-preview category
+// the FileBrowser renders, or null for "not previewable, download instead".
+export type PreviewKind = 'video' | 'audio' | 'image' | 'pdf' | null
+
+export function previewKind(contentType?: string): PreviewKind {
+  if (!contentType) return null
+  const ct = contentType.toLowerCase().split(';')[0].trim()
+  if (ct.startsWith('video/')) return 'video'
+  if (ct.startsWith('audio/')) return 'audio'
+  if (ct.startsWith('image/')) return 'image'
+  if (ct === 'application/pdf') return 'pdf'
+  return null
+}
+
+// buildMediaUrl substitutes {namespace} and {object_id} in the configured
+// template. Default template matches files's /media/{ns}/{oid} endpoint.
+export function buildMediaUrl(template: string, namespace: string, objectID: string): string {
+  return template
+    .replace('{namespace}', encodeURIComponent(namespace))
+    .replace('{object_id}', encodeURIComponent(objectID))
+}
+
 export function arrayBufferToBase64(buf: ArrayBuffer): string {
   let s = ''
   const bytes = new Uint8Array(buf)

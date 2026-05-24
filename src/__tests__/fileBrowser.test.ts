@@ -5,6 +5,8 @@ import {
   sortEntries,
   splitPath,
   humanSize,
+  previewKind,
+  buildMediaUrl,
 } from '../widgets/fileBrowserHelpers'
 
 describe('FileBrowser helpers', () => {
@@ -78,6 +80,34 @@ describe('FileBrowser helpers', () => {
       ['a//b', ['a', 'b']],
     ])('%q → %j', (input, want) => {
       expect(splitPath(input)).toEqual(want)
+    })
+  })
+
+  describe('previewKind', () => {
+    it.each([
+      ['video/mp4', 'video'],
+      ['video/webm', 'video'],
+      ['VIDEO/MP4', 'video'],
+      ['audio/mpeg', 'audio'],
+      ['image/jpeg', 'image'],
+      ['image/png', 'image'],
+      ['application/pdf', 'pdf'],
+      ['application/pdf; charset=binary', 'pdf'],
+      ['text/plain', null],
+      ['application/zip', null],
+      ['', null],
+      [undefined, null],
+    ])('%q → %s', (ct, want) => {
+      expect(previewKind(ct as string | undefined)).toBe(want as ReturnType<typeof previewKind>)
+    })
+  })
+
+  describe('buildMediaUrl', () => {
+    it('substitutes namespace and object_id', () => {
+      expect(buildMediaUrl('/media/{namespace}/{object_id}', 'photos', 'OID')).toBe('/media/photos/OID')
+    })
+    it('url-encodes both', () => {
+      expect(buildMediaUrl('/media/{namespace}/{object_id}', 'my ns', 'a/b')).toBe('/media/my%20ns/a%2Fb')
     })
   })
 

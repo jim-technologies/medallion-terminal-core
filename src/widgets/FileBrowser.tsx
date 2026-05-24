@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import {
   buildSubmitActionUrl,
@@ -15,6 +15,8 @@ import {
   arrayBufferToBase64,
   parseConnectStream,
   readConnectErrorMessage,
+  previewKind,
+  buildMediaUrl,
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
 import type { WidgetProps } from '../types/template'
@@ -39,6 +41,11 @@ interface FileBrowserOptions {
   namespace_ctx?: string
   upload_action_id?: string
   download_url?: string
+  // URL template for the Range-supporting blob endpoint that backs inline
+  // preview. {namespace} and {object_id} are substituted. Default matches
+  // files's /media/{ns}/{oid} convention. Set to "" to disable preview
+  // entirely (every file click triggers download).
+  media_url_template?: string
 }
 
 export function FileBrowser({ data, options, widgetId }: WidgetProps) {
@@ -58,6 +65,9 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
 
   const [dragging, setDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [preview, setPreview] = useState<FileBrowserEntry | null>(null)
+
+  const mediaTemplate = opts.media_url_template ?? '/media/{namespace}/{object_id}'
 
   const navigateTo = (p: string) => setCtx(pathKey, p)
 
@@ -65,10 +75,25 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     if (isFolder(e)) {
       const next = currentPath ? `${currentPath}/${e.name ?? ''}` : (e.name ?? '')
       navigateTo(next)
-    } else {
-      void downloadFile(e)
+      return
     }
+    // Previewable types open in the overlay; everything else downloads.
+    if (mediaTemplate && previewKind(e.content_type)) {
+      setPreview(e)
+      return
+    }
+    void downloadFile(e)
   }
+
+  // Esc closes the preview overlay. Bound globally while open.
+  useEffect(() => {
+    if (!preview) return undefined
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPreview(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [preview])
 
   const downloadFile = async (e: FileBrowserEntry) => {
     if (!e.object_id) {
@@ -221,6 +246,77 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
         {uploading && (
           <div className="absolute bottom-2 right-2 bg-zinc-800 border border-zinc-700 text-zinc-200 px-3 py-1.5 rounded text-xs shadow-lg">
             Uploading…
+          </div>
+        )}
+      </div>
+
+      {preview && (
+        <PreviewOverlay
+          entry={preview}
+          mediaUrl={(backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, preview.object_id ?? '')}
+          onClose={() => setPreview(null)}
+          onDownload={() => { void downloadFile(preview) }}
+        />
+      )}
+    </div>
+  )
+}
+
+// PreviewOverlay covers the FileBrowser area with a dim backdrop and renders
+// the appropriate native media element for the file's content_type. Browsers
+// drive the byte loads via Range requests against `mediaUrl`, so the backend
+// only has to fetch the chunks overlapping the visible portion (or the
+// scrubbed-to position for video/audio).
+function PreviewOverlay({
+  entry,
+  mediaUrl,
+  onClose,
+  onDownload,
+}: {
+  entry: FileBrowserEntry
+  mediaUrl: string
+  onClose: () => void
+  onDownload: () => void
+}) {
+  const kind = previewKind(entry.content_type)
+  return (
+    <div
+      className="fixed inset-0 z-50 flex flex-col bg-zinc-950/95"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div className="flex items-center gap-3 px-4 py-2 text-zinc-200 border-b border-zinc-800 bg-zinc-900">
+        <span className="text-sm font-medium truncate flex-1">{entry.name}</span>
+        <span className="text-xs text-zinc-500">{entry.content_type}</span>
+        <button
+          onClick={onDownload}
+          className="text-xs text-sky-400 hover:underline"
+        >
+          Download
+        </button>
+        <button
+          onClick={onClose}
+          className="text-zinc-400 hover:text-zinc-100 text-lg leading-none"
+          aria-label="Close preview"
+        >
+          ×
+        </button>
+      </div>
+      <div className="flex-1 flex items-center justify-center overflow-auto p-4">
+        {kind === 'video' && (
+          <video src={mediaUrl} controls autoPlay className="max-h-full max-w-full bg-black" />
+        )}
+        {kind === 'audio' && (
+          <audio src={mediaUrl} controls autoPlay className="w-2/3" />
+        )}
+        {kind === 'image' && (
+          <img src={mediaUrl} alt={entry.name ?? ''} className="max-h-full max-w-full object-contain" />
+        )}
+        {kind === 'pdf' && (
+          <embed src={mediaUrl} type="application/pdf" className="w-full h-full" />
+        )}
+        {kind === null && (
+          <div className="text-zinc-400 text-sm">
+            No inline preview for {entry.content_type ?? 'this file type'}. Use Download.
           </div>
         )}
       </div>
