@@ -63,6 +63,7 @@ Key fields:
 - `source.staleAfterMs`: flag the widget as stale when no update has arrived in N ms.
 - `source.params`: passed as `TerminalService.params` for source_id mode, or as query string for url mode. Values get `${ctx.x}` substitution.
 - `alert.when`: client-side predicate. Format: `<term> [&& <term> | || <term> ...]` where each term is `<path> <op> <literal>` and `op ∈ > >= < <= == !=`. `&&` binds tighter than `||`. Edge-triggered (fires once on false→true).
+- `refresh_policy`: `"global"` (default) | `"self"` | `"manual"`. Controls whether the widget responds to pulse-driven refresh (`r` key, toolbar Reload, sibling `requestRefresh`). Streaming and `refreshIntervalMs` polling are unaffected — only pulses are gated. Use `"manual"` for widgets whose local state (video preview, in-flight form) should never be torn down by a global Reload.
 
 ## Built-in widgets
 

@@ -163,6 +163,22 @@ Pressing the key (outside an input, no modifier) merges its `ctx` into the activ
 
 The toolbar `Reload` button refreshes every widget at once; per-widget refresh is still available via the widget action menu or `r` on the focused widget.
 
+A widget can opt out of pulse-driven refresh via `refresh_policy`:
+
+```jsonc
+{ "component": "file_browser",
+  "refresh_policy": "manual",  // ignore global Reload + sibling-triggered pulses
+  "source": { "source_id": "files" } }
+```
+
+| `refresh_policy` | Pulse behavior |
+|------------------|----------------|
+| `"global"` (default) | Refresh on `*` pulses and own-id pulses |
+| `"self"` | Refresh only on own-id pulses; ignore `*` Reload |
+| `"manual"` | Ignore all pulses. Only the action-menu Refresh item triggers refetch |
+
+Streaming sources and `refreshIntervalMs` polling are unaffected — the policy gates *pulse-driven* refresh only. Use `"manual"` for widgets whose local state should survive everything short of an explicit click (video preview, in-flight forms, multi-step wizards).
+
 ## Validation
 
 `<Dashboard>` validates the template at mount and renders a banner for unknown components, conflicting source modes, out-of-range spans, and malformed alert predicates. Errors stay pinned; warnings dismiss for the session. You can run the validator yourself:

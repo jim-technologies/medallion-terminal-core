@@ -36,6 +36,22 @@ export interface WidgetConfig {
   // on every update. Edge-triggered: fires once when the predicate
   // transitions false → true. Cleared when it returns to false.
   alert?: WidgetAlert
+  // How this widget responds to refresh pulses (`r` on focus, toolbar
+  // Reload, requestRefresh from sibling widgets after an action). Does
+  // NOT affect streaming sources or the source's own refreshIntervalMs
+  // polling — those are continuous data flows the author opted into.
+  //   "global" (default) — refreshes on '*' pulses and own-id pulses.
+  //   "self"             — refreshes only on own-id pulses; ignores '*'.
+  //                        Use when global Reload would discard local
+  //                        UI state the user cares about.
+  //   "manual"           — ignores pulses entirely. Refetch is only
+  //                        triggered by the action menu's Refresh item
+  //                        (which calls refresh() directly, bypassing
+  //                        the pulse channel). Use for widgets whose
+  //                        local state must survive everything short of
+  //                        an explicit click: video preview, in-flight
+  //                        forms, multi-step wizards.
+  refresh_policy?: 'global' | 'self' | 'manual'
 }
 
 export interface WidgetAlert {

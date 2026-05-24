@@ -183,16 +183,25 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
   // a fresh fetch when it changes. Compares against a ref so a remount
   // doesn't accidentally refetch. `id === '*'` means refresh every
   // widget (toolbar "Reload" button).
+  //
+  // refresh_policy gates the pulse. "manual" widgets skip even targeted
+  // pulses — refetch only happens via the action-menu Refresh item which
+  // calls refresh() directly. "self" widgets ignore '*' but still honor
+  // their own id (a sibling widget can still nudge them after an action).
   const lastPulseN = useRef(0)
   useEffect(() => {
     if (!refreshPulse) return
-    const matches = refreshPulse.id === '*' || refreshPulse.id === config.id
+    const policy = config.refresh_policy ?? 'global'
+    if (policy === 'manual') return
+    const isGlobal = refreshPulse.id === '*'
+    if (isGlobal && policy === 'self') return
+    const matches = isGlobal || refreshPulse.id === config.id
     if (!matches) return
     if (refreshPulse.n > lastPulseN.current) {
       lastPulseN.current = refreshPulse.n
       refresh()
     }
-  }, [refreshPulse, config.id, refresh])
+  }, [refreshPulse, config.id, config.refresh_policy, refresh])
 
   // Edge-triggered alert. Fires once when the predicate transitions
   // false → true; clears when it returns to false. Holds prev state

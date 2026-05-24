@@ -80,6 +80,29 @@ describe('validateTemplate', () => {
     expect(validateTemplate(null as never)).toHaveLength(1)
   })
 
+  it('accepts valid refresh_policy values', () => {
+    for (const policy of ['global', 'self', 'manual'] as const) {
+      const tpl: Template = {
+        widgets: [{ component: 'metric', source: { inline: 1 }, refresh_policy: policy }],
+      }
+      expect(validateTemplate(tpl)).toEqual([])
+    }
+  })
+
+  it('errors on unknown refresh_policy', () => {
+    const tpl: Template = {
+      widgets: [{
+        component: 'metric',
+        source: { inline: 1 },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        refresh_policy: 'sometimes' as any,
+      }],
+    }
+    const issues = validateTemplate(tpl)
+    expect(issues).toHaveLength(1)
+    expect(issues[0]).toMatchObject({ severity: 'error', path: 'widgets[0].refresh_policy' })
+  })
+
   // Drift guard. If a widget is added to WidgetRegistry but forgotten in
   // BUILTIN_COMPONENTS (or vice versa), authors get a spurious "unknown
   // component" warning at runtime. Catch the divergence at test time.

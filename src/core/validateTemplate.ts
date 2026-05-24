@@ -60,6 +60,16 @@ export function validateTemplate(
     if (w.span != null && (!Number.isInteger(w.span) || w.span < 1 || w.span > 12)) {
       issues.push({ path: `${p}.span`, severity: 'warn', message: `span ${w.span} out of range 1..12` })
     }
+    if (w.refresh_policy != null &&
+        w.refresh_policy !== 'global' &&
+        w.refresh_policy !== 'self' &&
+        w.refresh_policy !== 'manual') {
+      issues.push({
+        path: `${p}.refresh_policy`,
+        severity: 'error',
+        message: `refresh_policy ${JSON.stringify(w.refresh_policy)} must be "global" | "self" | "manual"`,
+      })
+    }
     if (w.source) {
       const s = w.source
       const modes: string[] = []
