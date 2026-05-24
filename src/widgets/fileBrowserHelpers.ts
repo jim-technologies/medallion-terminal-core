@@ -55,6 +55,66 @@ export function humanSize(n: number): string {
   return `${u === 0 ? v.toFixed(0) : v.toFixed(1)} ${units[u]}`
 }
 
+// playableKinds is the set of preview kinds that have a `ended` event and
+// make sense in an auto-advancing playlist. Images, PDFs, plain text etc.
+// don't time-out; they don't belong in the queue.
+const playablePreviewKinds = new Set(['audio', 'video', 'mkv'])
+
+// playableQueue filters and orders the entries that should appear in the
+// next/prev rotation when the preview overlay is open. The folder's
+// natural sort order is the play order — same shape the user sees in the
+// table — so behaviour matches expectation without a separate "playlist"
+// concept.
+export function playableQueue(entries: FileBrowserEntry[]): FileBrowserEntry[] {
+  return entries.filter((e) => {
+    const k = previewKind(e.content_type, e.name)
+    return k !== null && playablePreviewKinds.has(k)
+  })
+}
+
+// nextInQueue picks the next entry to play. `shuffle` returns a random
+// other entry; otherwise advances linearly. When at the end:
+//   - repeat = true  → wraps to start (shuffle: re-rolls)
+//   - repeat = false → returns null (overlay stops auto-advancing)
+// Returns null when the queue has zero or one playable items.
+export function nextInQueue(
+  queue: FileBrowserEntry[],
+  currentObjectID: string | undefined,
+  shuffle: boolean,
+  repeat: boolean,
+  rand: () => number = Math.random,
+): FileBrowserEntry | null {
+  if (queue.length === 0) return null
+  if (queue.length === 1) return repeat ? queue[0] : null
+  const idx = queue.findIndex((e) => e.object_id === currentObjectID)
+  if (shuffle) {
+    // Pick a random different entry. If we can't find one (unlikely
+    // given length ≥ 2) fall back to linear.
+    for (let tries = 0; tries < 5; tries++) {
+      const candidate = queue[Math.floor(rand() * queue.length)]
+      if (candidate.object_id !== currentObjectID) return candidate
+    }
+    return queue[(idx + 1) % queue.length]
+  }
+  if (idx < 0) return queue[0] // current not in queue (folder changed) → restart
+  if (idx + 1 < queue.length) return queue[idx + 1]
+  return repeat ? queue[0] : null
+}
+
+// prevInQueue is always linear — "previous" with shuffle on is ambiguous
+// (no canonical history). Returns null when there's no earlier entry and
+// repeat is off; with repeat, wraps to the last entry.
+export function prevInQueue(
+  queue: FileBrowserEntry[],
+  currentObjectID: string | undefined,
+  repeat: boolean,
+): FileBrowserEntry | null {
+  if (queue.length === 0) return null
+  const idx = queue.findIndex((e) => e.object_id === currentObjectID)
+  if (idx > 0) return queue[idx - 1]
+  return repeat ? queue[queue.length - 1] : null
+}
+
 // previewKind classifies a (content_type, filename) pair into the inline-
 // preview category the FileBrowser renders, or null for "not previewable,
 // download instead".

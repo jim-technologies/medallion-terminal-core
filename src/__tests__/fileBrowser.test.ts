@@ -7,6 +7,9 @@ import {
   humanSize,
   previewKind,
   buildMediaUrl,
+  playableQueue,
+  nextInQueue,
+  prevInQueue,
 } from '../widgets/fileBrowserHelpers'
 import { prettyJSON, parseCSV } from '../widgets/fileBrowserDecoders'
 
@@ -136,6 +139,74 @@ describe('FileBrowser helpers', () => {
     })
     it('url-encodes both', () => {
       expect(buildMediaUrl('/media/{namespace}/{object_id}', 'my ns', 'a/b')).toBe('/media/my%20ns/a%2Fb')
+    })
+  })
+
+  describe('playableQueue', () => {
+    it('keeps audio/video/mkv in display order; drops images, pdfs, text', () => {
+      const entries = [
+        { kind: 'file', name: 'a.jpg', object_id: 'A', content_type: 'image/jpeg' },
+        { kind: 'file', name: 'b.mp3', object_id: 'B', content_type: 'audio/mpeg' },
+        { kind: 'file', name: 'c.pdf', object_id: 'C', content_type: 'application/pdf' },
+        { kind: 'file', name: 'd.mp4', object_id: 'D', content_type: 'video/mp4' },
+        { kind: 'file', name: 'e.mkv', object_id: 'E', content_type: 'video/x-matroska' },
+        { kind: 'file', name: 'f.txt', object_id: 'F', content_type: 'text/plain' },
+      ]
+      expect(playableQueue(entries).map((e) => e.object_id)).toEqual(['B', 'D', 'E'])
+    })
+  })
+
+  describe('nextInQueue / prevInQueue', () => {
+    const q = [
+      { object_id: 'A', kind: 'file', name: 'a.mp3', content_type: 'audio/mpeg' },
+      { object_id: 'B', kind: 'file', name: 'b.mp3', content_type: 'audio/mpeg' },
+      { object_id: 'C', kind: 'file', name: 'c.mp3', content_type: 'audio/mpeg' },
+    ]
+
+    it('linear next', () => {
+      expect(nextInQueue(q, 'A', false, false)?.object_id).toBe('B')
+      expect(nextInQueue(q, 'B', false, false)?.object_id).toBe('C')
+    })
+
+    it('linear next at end with repeat off → null', () => {
+      expect(nextInQueue(q, 'C', false, false)).toBeNull()
+    })
+
+    it('linear next at end with repeat on → wraps to first', () => {
+      expect(nextInQueue(q, 'C', false, true)?.object_id).toBe('A')
+    })
+
+    it('linear prev', () => {
+      expect(prevInQueue(q, 'B', false)?.object_id).toBe('A')
+      expect(prevInQueue(q, 'C', false)?.object_id).toBe('B')
+    })
+
+    it('prev at start with repeat off → null', () => {
+      expect(prevInQueue(q, 'A', false)).toBeNull()
+    })
+
+    it('prev at start with repeat on → wraps to last', () => {
+      expect(prevInQueue(q, 'A', true)?.object_id).toBe('C')
+    })
+
+    it('shuffle picks something different', () => {
+      // Deterministic rand returns 0.5 → index 1 → which is the current "B".
+      // Implementation retries; second roll 0.99 → index 2 → "C".
+      const rolls = [0.5, 0.99]
+      let i = 0
+      const rand = () => rolls[i++]
+      expect(nextInQueue(q, 'B', true, false, rand)?.object_id).toBe('C')
+    })
+
+    it('single-element queue: only loops if repeat is on', () => {
+      const one = [q[0]]
+      expect(nextInQueue(one, 'A', false, false)).toBeNull()
+      expect(nextInQueue(one, 'A', false, true)?.object_id).toBe('A')
+    })
+
+    it('empty queue returns null', () => {
+      expect(nextInQueue([], 'A', false, true)).toBeNull()
+      expect(prevInQueue([], 'A', true)).toBeNull()
     })
   })
 

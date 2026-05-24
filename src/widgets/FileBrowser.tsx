@@ -17,6 +17,9 @@ import {
   readConnectErrorMessage,
   previewKind,
   buildMediaUrl,
+  playableQueue,
+  nextInQueue,
+  prevInQueue,
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
 import {
@@ -262,8 +265,13 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
         <PreviewOverlay
           entry={preview}
           mediaUrl={(backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, preview.object_id ?? '')}
+          queue={playableQueue(sorted)}
+          onSelect={(e) => setPreview(e)}
           onClose={() => setPreview(null)}
           onDownload={() => { void downloadFile(preview) }}
+          mediaTemplate={mediaTemplate}
+          namespace={namespace}
+          backendUrl={backendUrl ?? ''}
         />
       )}
     </div>
@@ -290,13 +298,29 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
 function PreviewOverlay({
   entry,
   mediaUrl,
+  queue,
+  onSelect,
   onClose,
   onDownload,
+  mediaTemplate,
+  namespace,
+  backendUrl,
 }: {
   entry: FileBrowserEntry
   mediaUrl: string
+  // Playlist for prev/next/auto-advance. Audio + video entries from the
+  // same folder in their natural display order. Empty or single-element
+  // queues just hide the playlist controls.
+  queue: FileBrowserEntry[]
+  onSelect: (e: FileBrowserEntry) => void
   onClose: () => void
   onDownload: () => void
+  // Needed because rebuilding mediaUrl for the next/prev entry happens
+  // inside the overlay (so the auto-advance handler doesn't need a
+  // parent callback for each track switch).
+  mediaTemplate: string
+  namespace: string
+  backendUrl: string
 }) {
   const kind = previewKind(entry.content_type, entry.name)
   const isTextLike = kind === 'text' || kind === 'json' || kind === 'yaml' || kind === 'csv' || kind === 'markdown'
@@ -316,6 +340,27 @@ function PreviewOverlay({
   const [textBody, setTextBody] = useState<string | null>(null)
   const [csvRows, setCsvRows] = useState<string[][] | null>(null)
   const [markdownHtml, setMarkdownHtml] = useState<string | null>(null)
+
+  // Playlist controls (only meaningful when queue has > 1 entries and
+  // the current kind is playable — audio/video/mkv).
+  const isPlayable = kind === 'audio' || kind === 'video' || kind === 'mkv'
+  const playlistVisible = isPlayable && queue.length > 1
+  const queueIndex = queue.findIndex((q) => q.object_id === entry.object_id)
+  const [shuffle, setShuffle] = useState(false)
+  const [repeat, setRepeat] = useState(true) // sensible default for "play folder"
+
+  const advanceNext = () => {
+    const next = nextInQueue(queue, entry.object_id, shuffle, repeat)
+    if (next) onSelect(next)
+  }
+  const advancePrev = () => {
+    const prev = prevInQueue(queue, entry.object_id, repeat)
+    if (prev) onSelect(prev)
+  }
+  // Suppress unused warnings; both are real props consumed below.
+  void mediaTemplate
+  void namespace
+  void backendUrl
 
   const onMediaLoad = () => setLoading(false)
   const onMediaError = () => { setLoading(false); setFailed(true); setFailedMsg(null) }
@@ -400,6 +445,45 @@ function PreviewOverlay({
         {typeof entry.size_bytes === 'number' && (
           <span className="text-xs text-zinc-600 tabular-nums">{humanSize(entry.size_bytes)}</span>
         )}
+        {playlistVisible && (
+          <div className="flex items-center gap-2 text-zinc-400 text-sm border-l border-zinc-700 pl-3 ml-2">
+            <button
+              onClick={advancePrev}
+              className="hover:text-zinc-100 leading-none px-1"
+              aria-label="Previous"
+              title="Previous"
+            >
+              ⏮
+            </button>
+            <button
+              onClick={advanceNext}
+              className="hover:text-zinc-100 leading-none px-1"
+              aria-label="Next"
+              title="Next"
+            >
+              ⏭
+            </button>
+            <button
+              onClick={() => setShuffle((v) => !v)}
+              className={`px-1 leading-none ${shuffle ? 'text-sky-400' : 'hover:text-zinc-100'}`}
+              aria-label="Toggle shuffle"
+              title={shuffle ? 'Shuffle on' : 'Shuffle off'}
+            >
+              🔀
+            </button>
+            <button
+              onClick={() => setRepeat((v) => !v)}
+              className={`px-1 leading-none ${repeat ? 'text-sky-400' : 'hover:text-zinc-100'}`}
+              aria-label="Toggle repeat"
+              title={repeat ? 'Repeat on' : 'Repeat off'}
+            >
+              🔁
+            </button>
+            <span className="text-xs text-zinc-500 tabular-nums">
+              {queueIndex >= 0 ? queueIndex + 1 : '–'} / {queue.length}
+            </span>
+          </div>
+        )}
         <button
           onClick={onDownload}
           className="text-xs text-sky-400 hover:underline"
@@ -442,6 +526,7 @@ function PreviewOverlay({
             playsInline
             preload="metadata"
             onLoadedMetadata={onMediaLoad}
+            onEnded={advanceNext}
             onError={onMediaError}
             className="max-h-full max-w-full bg-black rounded shadow-2xl"
           />
@@ -455,6 +540,7 @@ function PreviewOverlay({
               controls
               autoPlay
               preload="metadata"
+              onEnded={advanceNext}
               onError={onMediaError}
               className="w-full"
             />
@@ -498,6 +584,7 @@ function PreviewOverlay({
             playsInline
             preload="metadata"
             onLoadedMetadata={onMediaLoad}
+            onEnded={advanceNext}
             onError={onMediaError}
             className="max-h-full max-w-full bg-black rounded shadow-2xl"
           />
