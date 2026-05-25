@@ -26,9 +26,9 @@ export const Mixed: Story = {
       entries: [
         { kind: 'folder', name: 'travel' },
         { kind: 'folder', name: 'birthdays' },
-        { kind: 'file', name: 'beach.jpg', object_id: 'OID1', size_bytes: 2_300_000, content_type: 'image/jpeg', modified_at: '2026-03-12' },
-        { kind: 'file', name: 'notes.txt', object_id: 'OID2', size_bytes: 412, content_type: 'text/plain', modified_at: '2026-03-08' },
-        { kind: 'file', name: 'cake.png',  object_id: 'OID3', size_bytes: 980_000, content_type: 'image/png', modified_at: '2026-02-19' },
+        { kind: 'file', name: 'beach.jpg', size_bytes: 2_300_000, content_type: 'image/jpeg', modified_at: '2026-03-12' },
+        { kind: 'file', name: 'notes.txt', size_bytes: 412, content_type: 'text/plain', modified_at: '2026-03-08' },
+        { kind: 'file', name: 'cake.png',  size_bytes: 980_000, content_type: 'image/png', modified_at: '2026-02-19' },
       ],
     },
   },

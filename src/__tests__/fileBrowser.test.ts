@@ -48,7 +48,7 @@ describe('FileBrowser helpers', () => {
     })
 
     it('unwraps TablePayload { rows: [...] }', () => {
-      const e = [{ kind: 'file', name: 'a.txt', object_id: 'A' }]
+      const e = [{ kind: 'file', name: 'a.txt' }]
       expect(normalizeEntries({ rows: e })).toEqual(e)
     })
 
