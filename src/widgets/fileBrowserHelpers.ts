@@ -1,6 +1,12 @@
 // Pure helpers extracted from FileBrowser so the widget module exports
 // only the component (WidgetRegistry's lazy loader requires homogeneous
 // ComponentType<WidgetProps> module shape).
+//
+// medallion-terminal-core is intentionally generic — these helpers
+// have NO knowledge of any specific backend (no ULIDs, no object_ids,
+// no protocol-specific sentinels). A row is just `{kind, name, ...}`;
+// the "stable identifier" for an entry within a listing is its name
+// (which the backend guarantees unique per directory).
 
 // errorMessage narrows an unknown thrown value to a printable string.
 // Catch blocks in TypeScript receive `unknown`; this avoids the
@@ -15,16 +21,9 @@ export function errorMessage(err: unknown): string {
   }
 }
 
-// isMetaRow narrows a row-shaped unknown to the pagination meta sentinel
-// that files's TerminalService.getFiles folds into TablePayload.rows.
-function isMetaRow(r: unknown): r is Record<string, unknown> & { __meta__: true } {
-  return typeof r === 'object' && r !== null && (r as Record<string, unknown>).__meta__ === true
-}
-
 export interface FileBrowserEntry {
   kind?: string
   name?: string
-  object_id?: string
   size_bytes?: number
   content_type?: string
   modified_at?: string
@@ -35,36 +34,10 @@ export function isFolder(e: FileBrowserEntry): boolean {
   return k === 'FOLDER' || k === 'KIND_FOLDER'
 }
 
-export interface PaginationMeta {
-  total: number
-  page: number
-  pageSize: number
-}
-
-// extractPagination plucks the optional `__meta__: true` row that the
-// files TerminalService.getFiles handler folds into TablePayload.rows
-// to carry pagination totals. Returns null when no meta row is present
-// (raw inline arrays, non-paginated sources).
-export function extractPagination(data: unknown): PaginationMeta | null {
-  const rows = pickRows(data)
-  if (!rows) return null
-  for (const r of rows) {
-    if (isMetaRow(r)) {
-      return {
-        total: Number(r.total ?? 0),
-        page: Number(r.page ?? 1),
-        pageSize: Number(r.page_size ?? 0),
-      }
-    }
-  }
-  return null
-}
-
 export function normalizeEntries(data: unknown): FileBrowserEntry[] {
   const rows = pickRows(data)
   if (!rows) return []
-  // Strip the pagination meta row produced by the files backend.
-  return rows.filter((r) => !isMetaRow(r)) as FileBrowserEntry[]
+  return rows as FileBrowserEntry[]
 }
 
 function pickRows(data: unknown): unknown[] | null {
@@ -90,6 +63,21 @@ function byName(a: FileBrowserEntry, b: FileBrowserEntry): number {
 
 export function splitPath(p: string): string[] {
   return p ? p.split('/').filter(Boolean) : []
+}
+
+// joinPath builds a child path under `dir`. Strips leading/trailing
+// slashes so callers don't have to be careful. Empty `dir` returns
+// just `name` so root-level entries don't get a leading slash.
+//
+//   joinPath('', 'foo.txt')           → 'foo.txt'
+//   joinPath('Photos', '2024')        → 'Photos/2024'
+//   joinPath('/Photos/', '/birthday') → 'Photos/birthday'
+export function joinPath(dir: string, name: string): string {
+  const d = (dir ?? '').replace(/^\/+|\/+$/g, '')
+  const n = (name ?? '').replace(/^\/+|\/+$/g, '')
+  if (!d) return n
+  if (!n) return d
+  return d + '/' + n
 }
 
 export function humanSize(n: number): string {
@@ -123,7 +111,7 @@ export function playableQueue(entries: FileBrowserEntry[]): FileBrowserEntry[] {
 }
 
 // navigableQueue is the queue keyboard arrows + the toolbar prev/next
-// buttons walk. Includes images so the overlay turns into a slideshow.
+// buttons walk. Includes images so the overlay doubles as a slideshow.
 export function navigableQueue(entries: FileBrowserEntry[]): FileBrowserEntry[] {
   return entries.filter((e) => {
     const k = previewKind(e.content_type, e.name)
@@ -131,27 +119,27 @@ export function navigableQueue(entries: FileBrowserEntry[]): FileBrowserEntry[] 
   })
 }
 
-// nextInQueue picks the next entry to play. `shuffle` returns a random
-// other entry; otherwise advances linearly. When at the end:
+// nextInQueue picks the next entry to play. The queue's stable
+// identifier is each entry's `name` (unique within the listing).
+// `shuffle` returns a random other entry; otherwise advances linearly.
+// When at the end:
 //   - repeat = true  → wraps to start (shuffle: re-rolls)
 //   - repeat = false → returns null (overlay stops auto-advancing)
 // Returns null when the queue has zero or one playable items.
 export function nextInQueue(
   queue: FileBrowserEntry[],
-  currentObjectID: string | undefined,
+  currentName: string | undefined,
   shuffle: boolean,
   repeat: boolean,
   rand: () => number = Math.random,
 ): FileBrowserEntry | null {
   if (queue.length === 0) return null
   if (queue.length === 1) return repeat ? queue[0] : null
-  const idx = queue.findIndex((e) => e.object_id === currentObjectID)
+  const idx = queue.findIndex((e) => e.name === currentName)
   if (shuffle) {
-    // Pick a random different entry. If we can't find one (unlikely
-    // given length ≥ 2) fall back to linear.
     for (let tries = 0; tries < 5; tries++) {
       const candidate = queue[Math.floor(rand() * queue.length)]
-      if (candidate.object_id !== currentObjectID) return candidate
+      if (candidate.name !== currentName) return candidate
     }
     return queue[(idx + 1) % queue.length]
   }
@@ -160,23 +148,23 @@ export function nextInQueue(
   return repeat ? queue[0] : null
 }
 
-// prevInQueue is always linear — "previous" with shuffle on is ambiguous
-// (no canonical history). Returns null when there's no earlier entry and
-// repeat is off; with repeat, wraps to the last entry.
+// prevInQueue is always linear — "previous" with shuffle on is
+// ambiguous (no canonical history). Returns null when there's no
+// earlier entry and repeat is off; with repeat, wraps to the last.
 export function prevInQueue(
   queue: FileBrowserEntry[],
-  currentObjectID: string | undefined,
+  currentName: string | undefined,
   repeat: boolean,
 ): FileBrowserEntry | null {
   if (queue.length === 0) return null
-  const idx = queue.findIndex((e) => e.object_id === currentObjectID)
+  const idx = queue.findIndex((e) => e.name === currentName)
   if (idx > 0) return queue[idx - 1]
   return repeat ? queue[queue.length - 1] : null
 }
 
-// previewKind classifies a (content_type, filename) pair into the inline-
-// preview category the FileBrowser renders, or null for "not previewable,
-// download instead".
+// previewKind classifies a (content_type, filename) pair into the
+// inline-preview category the FileBrowser renders, or null for "not
+// previewable, download instead".
 //
 // Special kinds (`heic`, `mkv`, `markdown`) need client-side decode /
 // remux / render before the native element can show them — the
@@ -199,37 +187,30 @@ export function previewKind(contentType?: string, filename?: string): PreviewKin
   const ext = (filename ?? '').toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] ?? ''
   const ct = (contentType ?? '').toLowerCase().split(';')[0].trim()
 
-  // Decode-required image format. Treat extension-based detection as the
-  // hint of last resort — some uploads come in as application/octet-stream.
-  if (ct === 'image/heic' || ct === 'image/heif' || ext === 'heic' || ext === 'heif') {
-    return 'heic'
-  }
-  // Remux-required container. matroska MIME variants + the ubiquitous
-  // .mkv extension. Same uploader-doesn't-set-mime fallback applies.
-  if (ct === 'video/x-matroska' || ct === 'application/x-matroska' || ext === 'mkv') {
-    return 'mkv'
-  }
+  if (ct === 'image/heic' || ct === 'image/heif' || ext === 'heic' || ext === 'heif') return 'heic'
+  if (ct === 'video/x-matroska' || ct === 'application/x-matroska' || ext === 'mkv') return 'mkv'
   if (ct.startsWith('video/')) return 'video'
   if (ct.startsWith('audio/')) return 'audio'
   if (ct.startsWith('image/')) return 'image'
   if (ct === 'application/pdf' || ext === 'pdf') return 'pdf'
-
-  // Text-family kinds. MIME wins; extension is the fallback.
   if (ct === 'application/json' || ct === 'text/json' || ext === 'json') return 'json'
   if (ct === 'application/yaml' || ct === 'text/yaml' || ct === 'application/x-yaml' || ext === 'yaml' || ext === 'yml') return 'yaml'
   if (ct === 'text/markdown' || ct === 'text/x-markdown' || ext === 'md' || ext === 'markdown') return 'markdown'
   if (ct === 'text/csv' || ct === 'application/csv' || ext === 'csv') return 'csv'
-  // Generic text MIME OR text-like extensions we want to render inline.
   if (ct.startsWith('text/') || ext === 'txt' || ext === 'log' || ext === 'ini' || ext === 'conf') return 'text'
   return null
 }
 
-// buildMediaUrl substitutes {namespace} and {object_id} in the configured
-// template. Default template matches files's /media/{ns}/{oid} endpoint.
-export function buildMediaUrl(template: string, namespace: string, objectID: string): string {
+// buildMediaUrl substitutes `{namespace}` and `{path}` in the
+// configured template. Both substituted values are URL-encoded.
+// Generic: the template format is the consumer's choice — e.g.
+//   "/media?namespace={namespace}&path={path}"            (query)
+//   "/files/{namespace}/{path}"                            (path)
+//   "https://cdn.example/{namespace}/objects/{path}"       (CDN)
+export function buildMediaUrl(template: string, namespace: string, path: string): string {
   return template
     .replace('{namespace}', encodeURIComponent(namespace))
-    .replace('{object_id}', encodeURIComponent(objectID))
+    .replace('{path}', encodeURIComponent(path))
 }
 
 export function arrayBufferToBase64(buf: ArrayBuffer): string {
@@ -252,6 +233,10 @@ export async function readConnectErrorMessage(res: Response): Promise<string> {
 // assembles a Blob from the JSON envelopes' base64 `data` field. Each
 // envelope is `[flag:1 byte][len:4 bytes BE][JSON payload]`; the end-
 // stream envelope sets flag bit 1.
+//
+// Lives in medallion because Connect is the wire format invariantprotocol
+// (and many other Connect-based services) project to. NOT files-
+// specific — any Connect server-streaming RPC produces these envelopes.
 export async function parseConnectStream(res: Response, mime?: string): Promise<Blob> {
   if (!res.body) {
     throw new Error('parseConnectStream: response has no body')

@@ -9,9 +9,9 @@ import { Empty } from './states'
 import {
   isFolder,
   normalizeEntries,
-  extractPagination,
   sortEntries,
   splitPath,
+  joinPath,
   humanSize,
   arrayBufferToBase64,
   parseConnectStream,
@@ -35,36 +35,46 @@ import {
 } from './fileBrowserDecoders'
 import type { WidgetProps } from '../types/template'
 
-// FileBrowser is the file-pane primitive: breadcrumb header + folder/file
-// list + drag-drop upload zone. Designed for object-store fronts where
-// users browse virtual folders, click in/out, drop files to upload, and
-// click files to download.
+// FileBrowser is a generic file-pane primitive: breadcrumb header +
+// folder/file list + drag-drop upload zone + preview overlay. Designed
+// for object-store-shaped backends — the widget knows nothing about
+// any specific protocol or backend; it composes paths, fires
+// configured URLs, and surfaces the data the source returned.
 //
-// Data shape: { entries: [{ kind, name, object_id?, size_bytes?, ... }] }
-// where `kind` is "folder" | "file" (case-insensitive; "KIND_FOLDER" /
-// "KIND_FILE" enum strings also accepted).
+// Entry shape: { kind, name, size_bytes?, content_type?, modified_at? }.
+// `kind` is "folder" | "file" (case-insensitive; "KIND_FOLDER" /
+// "KIND_FILE" enum strings also accepted). The widget identifies an
+// entry by its `name` within the current directory — backends must
+// guarantee unique names per directory (which any filesystem-shaped
+// store does).
 //
-// Backend contract: uploads go through SubmitAction with
-// options.upload_action_id (default "upload") and payload
-// { namespace, path, content_type, data_b64 }. Downloads POST to
-// options.download_url (default the Connect server-streaming endpoint
-// of FileService.Download).
+// Backend contract:
+//   - Listing: returned via the dashboard source mechanism. Pagination
+//     is driven through the ctx keys named in `page_ctx` / `page_size_ctx`.
+//   - Upload: SubmitAction with options.upload_action_id (default
+//     "upload") and payload { namespace, path, content_type, data_b64 }.
+//   - Download: POST to options.download_url with body
+//     { namespace, path }; response is parsed as a Connect
+//     server-streaming envelope. Override for non-Connect backends.
+//   - Inline preview: GET against the URL produced by `media_url_template`
+//     with {namespace} and {path} substituted. Must serve HTTP Range.
 
 interface FileBrowserOptions {
   path_ctx?: string
   namespace_ctx?: string
-  // ctx keys driving pagination + view mode. The backend Source contract
-  // reads `page` and `page_size` from its DataRequest params; the
-  // widget pushes them through ctx so a click on Next triggers a refresh.
+  // ctx keys driving pagination + view mode. The backend source reads
+  // `page` and `page_size` from its DataRequest params; the widget
+  // pushes them through ctx so a click on Next triggers a refresh.
   page_ctx?: string
   page_size_ctx?: string
   view_mode_ctx?: string
   upload_action_id?: string
   download_url?: string
-  // URL template for the Range-supporting blob endpoint that backs inline
-  // preview. {namespace} and {object_id} are substituted. Default matches
-  // files's /media/{ns}/{oid} convention. Set to "" to disable preview
-  // entirely (every file click triggers download).
+  // URL template for the Range-supporting blob endpoint that backs
+  // inline preview. {namespace} and {path} are substituted (both
+  // URL-encoded). Default uses a query-string format so paths with
+  // slashes are unambiguous. Set to "" to disable preview entirely
+  // (every file click triggers download).
   media_url_template?: string
 }
 
@@ -86,22 +96,22 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const viewMode = (ctx[viewModeKey] === 'gallery' ? 'gallery' : 'icons') as 'icons' | 'gallery'
 
   const entries = useMemo(() => normalizeEntries(data), [data])
-  const pagination = useMemo(() => extractPagination(data), [data])
   const sorted = useMemo(() => sortEntries(entries), [entries])
   const segments = useMemo(() => splitPath(currentPath), [currentPath])
 
-  // Total may come from the backend pagination meta; fall back to the
-  // current page size when absent (older sources, inline arrays).
-  const total = pagination?.total ?? entries.length
-  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  // Simple paging without a total: Next is enabled when the current
+  // page came back full (entries.length === pageSize), implying there
+  // MIGHT be more. A partial page means "we're on the last page."
+  // Backends that want a strict page count can publish it themselves
+  // via their own widget; the generic widget stays protocol-agnostic.
   const hasPrev = page > 1
-  const hasNext = page < totalPages
+  const hasNext = entries.length >= pageSize
 
   const [dragging, setDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState<FileBrowserEntry | null>(null)
 
-  const mediaTemplate = opts.media_url_template ?? '/media/{namespace}/{object_id}'
+  const mediaTemplate = opts.media_url_template ?? '/media?namespace={namespace}&path={path}'
 
   // Reset to page 1 whenever the directory or namespace changes — the
   // current page number is meaningless against the new directory's
@@ -114,13 +124,18 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   }, [namespace, currentPath])
 
   const navigateTo = (p: string) => setCtx(pathKey, p)
-  const goToPage = (n: number) => setCtx(pageKey, String(Math.max(1, Math.min(totalPages, n))))
+  const goToPage = (n: number) => setCtx(pageKey, String(Math.max(1, n)))
   const toggleViewMode = () => setCtx(viewModeKey, viewMode === 'gallery' ? 'icons' : 'gallery')
+
+  // entryFullPath computes the slash-joined full path for an entry in
+  // the current directory. Used everywhere the widget needs a stable
+  // identifier (URLs, downloads, queue keys) without depending on any
+  // backend-specific id field.
+  const entryFullPath = (e: FileBrowserEntry): string => joinPath(currentPath, e.name ?? '')
 
   const onRowClick = (e: FileBrowserEntry) => {
     if (isFolder(e)) {
-      const next = currentPath ? `${currentPath}/${e.name ?? ''}` : (e.name ?? '')
-      navigateTo(next)
+      navigateTo(entryFullPath(e))
       return
     }
     // Previewable types open in the overlay; everything else downloads.
@@ -142,11 +157,17 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   }, [preview])
 
   const downloadFile = async (e: FileBrowserEntry) => {
-    if (!e.object_id) {
-      toast('File has no object_id', 'error')
+    const downloadURL = opts.download_url
+    if (!downloadURL) {
+      toast('Download not configured (set options.download_url)', 'error')
       return
     }
-    const url = (backendUrl ?? '') + (opts.download_url ?? '/files.v1.FileService/Download')
+    if (!e.name) {
+      toast('File has no name', 'error')
+      return
+    }
+    const fullPath = entryFullPath(e)
+    const url = (backendUrl ?? '') + downloadURL
     try {
       const res = await fetch(url, {
         method: 'POST',
@@ -154,7 +175,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           'Content-Type': 'application/json',
           'Connect-Protocol-Version': '1',
         },
-        body: JSON.stringify({ namespace, objectId: e.object_id }),
+        body: JSON.stringify({ namespace, path: fullPath }),
       })
       if (!res.ok) {
         const msg = await readConnectErrorMessage(res)
@@ -164,7 +185,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       const blob = await parseConnectStream(res, e.content_type)
       const link = document.createElement('a')
       link.href = URL.createObjectURL(blob)
-      link.download = e.name ?? e.object_id
+      link.download = e.name
       link.click()
       setTimeout(() => URL.revokeObjectURL(link.href), 5000)
     } catch (err) {
@@ -257,8 +278,8 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           >
             {viewMode === 'gallery' ? '◫ Gallery' : '☰ Icons'}
           </button>
-          <span className="tabular-nums">{total} {total === 1 ? 'item' : 'items'}</span>
-          {totalPages > 1 && (
+          <span className="tabular-nums">{entries.length} on page</span>
+          {(hasPrev || hasNext) && (
             <div className="flex items-center gap-1">
               <button
                 onClick={() => goToPage(page - 1)}
@@ -268,7 +289,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
               >
                 ‹
               </button>
-              <span className="tabular-nums text-zinc-400">{page} / {totalPages}</span>
+              <span className="tabular-nums text-zinc-400">Page {page}</span>
               <button
                 onClick={() => goToPage(page + 1)}
                 disabled={!hasNext}
@@ -294,7 +315,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           <GalleryGrid
             entries={sorted}
             onClick={onRowClick}
-            mediaUrlFor={(e) => (e.object_id ? (backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, e.object_id) : '')}
+            mediaUrlFor={(e) => (e.name ? (backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, entryFullPath(e)) : '')}
           />
         ) : (
           <table className="w-full text-xs">
@@ -337,7 +358,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       {preview && (
         <PreviewOverlay
           entry={preview}
-          mediaUrl={(backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, preview.object_id ?? '')}
+          mediaUrl={(backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, entryFullPath(preview))}
           autoAdvanceQueue={playableQueue(sorted)}
           navigableQueue={navigableQueue(sorted)}
           onSelect={(e) => setPreview(e)}
@@ -377,7 +398,7 @@ function GalleryGrid({
             <div className="w-full aspect-square bg-zinc-950 rounded flex items-center justify-center overflow-hidden">
               {folder ? (
                 <span className="text-4xl select-none">📁</span>
-              ) : isImage && e.object_id ? (
+              ) : isImage && e.name ? (
                 <img
                   src={mediaUrlFor(e)}
                   alt={e.name ?? ''}
@@ -458,7 +479,7 @@ function PreviewOverlay({
   // Playlist controls (only meaningful when navQueue has > 1 entries
   // and the current kind is part of it — image/audio/video/mkv/heic).
   const queueVisible = navQueue.length > 1
-  const queueIndex = navQueue.findIndex((q) => q.object_id === entry.object_id)
+  const queueIndex = navQueue.findIndex((q) => q.name === entry.name)
   const [shuffle, setShuffle] = useState(false)
   const [repeat, setRepeat] = useState(true) // sensible default for "play folder"
 
@@ -466,15 +487,15 @@ function PreviewOverlay({
   // uses autoAdvanceQueue so a music playlist doesn't jump to an image
   // at the end of a track.
   const advanceNext = () => {
-    const next = nextInQueue(navQueue, entry.object_id, shuffle, repeat)
+    const next = nextInQueue(navQueue, entry.name, shuffle, repeat)
     if (next) onSelect(next)
   }
   const advancePrev = () => {
-    const prev = prevInQueue(navQueue, entry.object_id, repeat)
+    const prev = prevInQueue(navQueue, entry.name, repeat)
     if (prev) onSelect(prev)
   }
   const autoAdvance = () => {
-    const next = nextInQueue(autoAdvanceQueue, entry.object_id, shuffle, repeat)
+    const next = nextInQueue(autoAdvanceQueue, entry.name, shuffle, repeat)
     if (next) onSelect(next)
   }
 
@@ -498,7 +519,7 @@ function PreviewOverlay({
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entry.object_id, navQueue.length, shuffle, repeat])
+  }, [entry.name, navQueue.length, shuffle, repeat])
   const onMediaLoad = () => setLoading(false)
   const onMediaError = () => { setLoading(false); setFailed(true); setFailedMsg(null) }
   const backdropClose = (e: React.MouseEvent) => {

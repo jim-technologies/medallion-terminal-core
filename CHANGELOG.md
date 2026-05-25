@@ -2,6 +2,54 @@
 
 Notable changes to medallion-terminal-core. Versions follow semver.
 
+## [0.4.0] — 2026-05-25
+
+### Changed (breaking)
+
+- **FileBrowser is now protocol-agnostic.** No more knowledge of any
+  specific backend's identifier scheme. Concretely:
+
+  - `FileBrowserEntry.object_id` is gone. Entries are
+    `{ kind, name, size_bytes?, content_type?, modified_at? }`. The
+    widget identifies entries by `name` (unique-per-directory, which
+    any filesystem-shaped backend already guarantees) and computes
+    full paths on the fly as `joinPath(currentPath, entry.name)`.
+  - `buildMediaUrl(template, namespace, path)` now substitutes
+    `{namespace}` and `{path}` instead of `{namespace}` and `{object_id}`.
+    The default template changed from `/media/{namespace}/{object_id}`
+    to `/media?namespace={namespace}&path={path}` (query-string form
+    avoids path-segment ambiguity for paths with slashes).
+  - Download POST body is now `{namespace, path}` instead of
+    `{namespace, objectId}`. `options.download_url` no longer has a
+    default — backends must set it explicitly.
+  - `nextInQueue`/`prevInQueue` parameter renamed from `currentObjectID`
+    to `currentName` (the stable identifier within a directory). Same
+    semantics, generic key.
+
+- **Pagination simplified.** The `__meta__: true` sentinel row + the
+  `extractPagination` helper are gone — that was a files-specific
+  pagination shim that didn't belong in a generic widget. The
+  FileBrowser now shows a simple Prev/Next pager: Next is enabled
+  while the current page is full (entries.length === page_size);
+  a partial page disables it. Backends wanting strict totals can
+  compose their own pager above the widget.
+
+### Added
+
+- **`joinPath(dir, name)` helper** in fileBrowserHelpers — strips
+  stray slashes and composes `dir/name` cleanly. Used internally to
+  compute entry full paths; exported for consumers building their
+  own URL templates.
+
+### Migration
+
+For consumers that were passing `object_id` on entries: drop it and
+make sure the entry's `name` is unique per directory listing (it
+already was). For consumers using the default media URL template:
+either accept the new query-string default or set `media_url_template`
+explicitly. For backends that were inserting `__meta__` rows: stop
+doing that — the widget no longer reads them.
+
 ## [0.3.1] — 2026-05-24
 
 ### Changed

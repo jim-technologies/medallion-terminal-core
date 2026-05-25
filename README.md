@@ -70,11 +70,11 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 | `action_log` | (none) | Live order blotter — listens to `emit({type:'action'})` |
 | `alert_log` | (none) | Live alert feed — listens to `emit({type:'alert'})` |
 | `tape` | `{events: [{timestamp, price?, size?, side?, label?}]}` or one event | Time-and-sales / high-frequency append-only stream |
-| `file_browser` | `{entries: [{kind, name, object_id?, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download, inline preview for video/audio/image/PDF, paginated listings, icons/gallery toggle, keyboard-navigable preview |
+| `file_browser` | `{entries: [{kind, name, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download, inline preview for video/audio/image/PDF, paginated listings, icons/gallery toggle, keyboard-navigable preview. Identifies entries by `name` within the current directory — backends MUST guarantee unique names per directory (any filesystem-shaped store does). |
 
-The file_browser previews video and audio through a native `<video>` / `<audio>` element pointed at `options.media_url_template` (default `/media/{namespace}/{object_id}`). For scrub to work on long files the backend **must** support HTTP `Range:` and reply `206 Partial Content` — the reference backend (`examples/backend/server.mjs`) implements this. MP4s should be encoded with `-movflags +faststart` so the player can read metadata before downloading the whole file.
+The file_browser previews video and audio through a native `<video>` / `<audio>` element pointed at `options.media_url_template` (default `/media?namespace={namespace}&path={path}` — both placeholders URL-encoded). For scrub to work on long files the backend **must** support HTTP `Range:` and reply `206 Partial Content`. MP4s should be encoded with `-movflags +faststart` so the player can read metadata before downloading the whole file.
 
-Demo paths in the reference backend use a **hive-style partition convention**: `key__value/` (double-underscore as the GitHub-friendly replacement for `=`, since neither GitHub repo names nor common URL allowlists tolerate `=`). Uploads dropped at the root are auto-partitioned by content type — `type__video/`, `type__image/`, `type__data/`, etc. — while uploads into an existing subfolder are respected verbatim, so authors can layer their own taxonomy on top.
+Backends supply entries with just `{kind, name, size_bytes?, content_type?, modified_at?}` — no opaque IDs. The widget computes a full path on the fly as `currentPath + '/' + entry.name` whenever it needs a stable identifier (URLs, queue navigation, downloads).
 
 #### Pagination
 
@@ -96,7 +96,7 @@ For large folders, FileBrowser pages the listing through ctx — no client-side 
 }
 ```
 
-Backend convention: prepend a sentinel row `{ "__meta__": true, "total": N, "page": P, "page_size": S }` to `rows`; FileBrowser strips it and uses the totals to render `‹ Page P / ceil(N/S) ›`. Without the meta row paging still works — the widget falls back to "no totals" mode (Prev/Next without a page count).
+The widget shows a Prev/Next pager without claiming a total page count — Next is enabled while the current page came back full (entries.length === page_size), implying there may be more; a partial page disables Next. Backends that want richer pagination (jump-to-page, total count) can compose their own pager widget above the file_browser. The default keeps the widget protocol-agnostic.
 
 #### Gallery vs. icons
 

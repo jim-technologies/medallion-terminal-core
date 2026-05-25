@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest'
 import {
   isFolder,
   normalizeEntries,
-  extractPagination,
   sortEntries,
   splitPath,
+  joinPath,
   humanSize,
   previewKind,
   buildMediaUrl,
@@ -136,116 +136,106 @@ describe('FileBrowser helpers', () => {
   })
 
   describe('buildMediaUrl', () => {
-    it('substitutes namespace and object_id', () => {
-      expect(buildMediaUrl('/media/{namespace}/{object_id}', 'photos', 'OID')).toBe('/media/photos/OID')
+    it('substitutes namespace and path', () => {
+      expect(buildMediaUrl('/media?namespace={namespace}&path={path}', 'photos', '2024/birthday.jpg'))
+        .toBe('/media?namespace=photos&path=2024%2Fbirthday.jpg')
     })
     it('url-encodes both', () => {
-      expect(buildMediaUrl('/media/{namespace}/{object_id}', 'my ns', 'a/b')).toBe('/media/my%20ns/a%2Fb')
+      expect(buildMediaUrl('/files/{namespace}/{path}', 'my ns', 'a/b'))
+        .toBe('/files/my%20ns/a%2Fb')
     })
   })
 
-  describe('extractPagination', () => {
-    it('returns null when no __meta__ row is present', () => {
-      expect(extractPagination({ rows: [{ kind: 'file', name: 'a' }] })).toBeNull()
-      expect(extractPagination(null)).toBeNull()
-    })
-
-    it('plucks total/page/page_size from the meta row', () => {
-      const data = { rows: [
-        { __meta__: true, total: 250, page: 3, page_size: 50 },
-        { kind: 'file', name: 'a' },
-      ] }
-      expect(extractPagination(data)).toEqual({ total: 250, page: 3, pageSize: 50 })
-    })
-  })
-
-  describe('normalizeEntries with __meta__ row', () => {
-    it('filters out the pagination meta sentinel', () => {
-      const data = { rows: [
-        { __meta__: true, total: 1, page: 1, page_size: 50 },
-        { kind: 'file', name: 'a' },
-      ] }
-      expect(normalizeEntries(data)).toEqual([{ kind: 'file', name: 'a' }])
+  describe('joinPath', () => {
+    it.each([
+      ['', 'foo.txt', 'foo.txt'],
+      ['Photos', '2024', 'Photos/2024'],
+      ['/Photos/', '/birthday', 'Photos/birthday'],
+      ['a/b', 'c/d', 'a/b/c/d'],
+    ])('joinPath(%q, %q) → %q', (dir, name, want) => {
+      expect(joinPath(dir, name)).toBe(want)
     })
   })
 
   describe('navigableQueue', () => {
     it('keeps images alongside audio/video for arrow-key nav', () => {
       const entries = [
-        { kind: 'file', name: 'a.jpg', object_id: 'A', content_type: 'image/jpeg' },
-        { kind: 'file', name: 'b.mp3', object_id: 'B', content_type: 'audio/mpeg' },
-        { kind: 'file', name: 'c.pdf', object_id: 'C', content_type: 'application/pdf' },
-        { kind: 'file', name: 'd.mp4', object_id: 'D', content_type: 'video/mp4' },
+        { kind: 'file', name: 'a.jpg', content_type: 'image/jpeg' },
+        { kind: 'file', name: 'b.mp3', content_type: 'audio/mpeg' },
+        { kind: 'file', name: 'c.pdf', content_type: 'application/pdf' },
+        { kind: 'file', name: 'd.mp4', content_type: 'video/mp4' },
       ]
-      expect(navigableQueue(entries).map((e) => e.object_id)).toEqual(['A', 'B', 'D'])
+      expect(navigableQueue(entries).map((e) => e.name)).toEqual(['a.jpg', 'b.mp3', 'd.mp4'])
     })
   })
 
   describe('playableQueue', () => {
     it('keeps audio/video/mkv in display order; drops images, pdfs, text', () => {
       const entries = [
-        { kind: 'file', name: 'a.jpg', object_id: 'A', content_type: 'image/jpeg' },
-        { kind: 'file', name: 'b.mp3', object_id: 'B', content_type: 'audio/mpeg' },
-        { kind: 'file', name: 'c.pdf', object_id: 'C', content_type: 'application/pdf' },
-        { kind: 'file', name: 'd.mp4', object_id: 'D', content_type: 'video/mp4' },
-        { kind: 'file', name: 'e.mkv', object_id: 'E', content_type: 'video/x-matroska' },
-        { kind: 'file', name: 'f.txt', object_id: 'F', content_type: 'text/plain' },
+        { kind: 'file', name: 'a.jpg', content_type: 'image/jpeg' },
+        { kind: 'file', name: 'b.mp3', content_type: 'audio/mpeg' },
+        { kind: 'file', name: 'c.pdf', content_type: 'application/pdf' },
+        { kind: 'file', name: 'd.mp4', content_type: 'video/mp4' },
+        { kind: 'file', name: 'e.mkv', content_type: 'video/x-matroska' },
+        { kind: 'file', name: 'f.txt', content_type: 'text/plain' },
       ]
-      expect(playableQueue(entries).map((e) => e.object_id)).toEqual(['B', 'D', 'E'])
+      expect(playableQueue(entries).map((e) => e.name)).toEqual(['b.mp3', 'd.mp4', 'e.mkv'])
     })
   })
 
   describe('nextInQueue / prevInQueue', () => {
+    // Queue keyed by name — the unique-within-directory identifier
+    // the widget standardizes on.
     const q = [
-      { object_id: 'A', kind: 'file', name: 'a.mp3', content_type: 'audio/mpeg' },
-      { object_id: 'B', kind: 'file', name: 'b.mp3', content_type: 'audio/mpeg' },
-      { object_id: 'C', kind: 'file', name: 'c.mp3', content_type: 'audio/mpeg' },
+      { kind: 'file', name: 'a.mp3', content_type: 'audio/mpeg' },
+      { kind: 'file', name: 'b.mp3', content_type: 'audio/mpeg' },
+      { kind: 'file', name: 'c.mp3', content_type: 'audio/mpeg' },
     ]
 
     it('linear next', () => {
-      expect(nextInQueue(q, 'A', false, false)?.object_id).toBe('B')
-      expect(nextInQueue(q, 'B', false, false)?.object_id).toBe('C')
+      expect(nextInQueue(q, 'a.mp3', false, false)?.name).toBe('b.mp3')
+      expect(nextInQueue(q, 'b.mp3', false, false)?.name).toBe('c.mp3')
     })
 
     it('linear next at end with repeat off → null', () => {
-      expect(nextInQueue(q, 'C', false, false)).toBeNull()
+      expect(nextInQueue(q, 'c.mp3', false, false)).toBeNull()
     })
 
     it('linear next at end with repeat on → wraps to first', () => {
-      expect(nextInQueue(q, 'C', false, true)?.object_id).toBe('A')
+      expect(nextInQueue(q, 'c.mp3', false, true)?.name).toBe('a.mp3')
     })
 
     it('linear prev', () => {
-      expect(prevInQueue(q, 'B', false)?.object_id).toBe('A')
-      expect(prevInQueue(q, 'C', false)?.object_id).toBe('B')
+      expect(prevInQueue(q, 'b.mp3', false)?.name).toBe('a.mp3')
+      expect(prevInQueue(q, 'c.mp3', false)?.name).toBe('b.mp3')
     })
 
     it('prev at start with repeat off → null', () => {
-      expect(prevInQueue(q, 'A', false)).toBeNull()
+      expect(prevInQueue(q, 'a.mp3', false)).toBeNull()
     })
 
     it('prev at start with repeat on → wraps to last', () => {
-      expect(prevInQueue(q, 'A', true)?.object_id).toBe('C')
+      expect(prevInQueue(q, 'a.mp3', true)?.name).toBe('c.mp3')
     })
 
     it('shuffle picks something different', () => {
-      // Deterministic rand returns 0.5 → index 1 → which is the current "B".
-      // Implementation retries; second roll 0.99 → index 2 → "C".
+      // Deterministic rand returns 0.5 → index 1 → which is the current "b.mp3".
+      // Implementation retries; second roll 0.99 → index 2 → "c.mp3".
       const rolls = [0.5, 0.99]
       let i = 0
       const rand = () => rolls[i++]
-      expect(nextInQueue(q, 'B', true, false, rand)?.object_id).toBe('C')
+      expect(nextInQueue(q, 'b.mp3', true, false, rand)?.name).toBe('c.mp3')
     })
 
     it('single-element queue: only loops if repeat is on', () => {
       const one = [q[0]]
-      expect(nextInQueue(one, 'A', false, false)).toBeNull()
-      expect(nextInQueue(one, 'A', false, true)?.object_id).toBe('A')
+      expect(nextInQueue(one, 'a.mp3', false, false)).toBeNull()
+      expect(nextInQueue(one, 'a.mp3', false, true)?.name).toBe('a.mp3')
     })
 
     it('empty queue returns null', () => {
-      expect(nextInQueue([], 'A', false, true)).toBeNull()
-      expect(prevInQueue([], 'A', true)).toBeNull()
+      expect(nextInQueue([], 'anything', false, true)).toBeNull()
+      expect(prevInQueue([], 'anything', true)).toBeNull()
     })
   })
 
