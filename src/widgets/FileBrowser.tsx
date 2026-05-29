@@ -69,6 +69,12 @@ interface FileBrowserOptions {
   page_size_ctx?: string
   view_mode_ctx?: string
   upload_action_id?: string
+  // Optional streaming upload endpoint. When set, files are POSTed
+  // directly (raw body, no base64) to
+  //   `${upload_url}?namespace=&path=&content_type=`
+  // which lets large files upload without buffering/encoding them in a
+  // JSON RPC. Falls back to the upload_action_id RPC path when unset.
+  upload_url?: string
   download_url?: string
   // URL template for the Range-supporting blob endpoint that backs
   // inline preview. {namespace} and {path} are substituted (both
@@ -88,6 +94,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const pageSizeKey = opts.page_size_ctx ?? 'page_size'
   const viewModeKey = opts.view_mode_ctx ?? 'view_mode'
   const uploadActionId = opts.upload_action_id ?? 'upload'
+  const uploadUrl = opts.upload_url
 
   const namespace = ctx[nsKey] ?? 'default'
   const currentPath = ctx[pathKey] ?? ''
@@ -197,32 +204,46 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     setUploading(true)
     let okCount = 0
     for (const f of Array.from(files)) {
+      const destPath = joinPath(currentPath, f.name)
+      const contentType = f.type || 'application/octet-stream'
       try {
-        const buf = await f.arrayBuffer()
-        const b64 = arrayBufferToBase64(buf)
-        const payload = {
-          namespace,
-          path: currentPath ? `${currentPath}/${f.name}` : f.name,
-          content_type: f.type || 'application/octet-stream',
-          data_b64: b64,
-        }
-        const url = buildSubmitActionUrl(backendUrl ?? '')
-        const req = buildActionRequest({
-          actionId: uploadActionId,
-          params: payload,
-          clientRequestId: newClientRequestId(),
-        })
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Connect-Protocol-Version': '1',
-          },
-          body: JSON.stringify(req),
-        })
-        if (!res.ok) {
-          const msg = await readConnectErrorMessage(res)
-          throw new Error(msg)
+        if (uploadUrl) {
+          // Stream the file straight into the body — no base64, no full
+          // buffering — so large files upload without memory blowup.
+          const qs = new URLSearchParams({ namespace, path: destPath, content_type: contentType })
+          const res = await fetch(`${backendUrl ?? ''}${uploadUrl}?${qs.toString()}`, {
+            method: 'POST',
+            body: f,
+          })
+          if (!res.ok) {
+            throw new Error((await res.text()) || `HTTP ${res.status}`)
+          }
+        } else {
+          const buf = await f.arrayBuffer()
+          const payload = {
+            namespace,
+            path: destPath,
+            content_type: contentType,
+            data_b64: arrayBufferToBase64(buf),
+          }
+          const url = buildSubmitActionUrl(backendUrl ?? '')
+          const req = buildActionRequest({
+            actionId: uploadActionId,
+            params: payload,
+            clientRequestId: newClientRequestId(),
+          })
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Connect-Protocol-Version': '1',
+            },
+            body: JSON.stringify(req),
+          })
+          if (!res.ok) {
+            const msg = await readConnectErrorMessage(res)
+            throw new Error(msg)
+          }
         }
         okCount++
       } catch (err) {
