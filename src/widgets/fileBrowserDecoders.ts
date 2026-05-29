@@ -62,14 +62,22 @@ export function parseCSV(raw: string): string[][] {
   return rows
 }
 
-// renderMarkdown lazy-loads marked (~30 KB) and renders the input to
-// HTML. Sanitisation is the marked default for v18+ (no script tags
-// pass through). Returns the original text wrapped in <pre> on parse
-// failure so the user still sees something.
+// renderMarkdown lazy-loads marked (~30 KB) + DOMPurify and renders the
+// input to SANITISED HTML. marked does NOT sanitise — it passes raw HTML,
+// `javascript:` URLs, and `onerror=` attributes straight through — so the
+// output MUST go through DOMPurify before it reaches
+// dangerouslySetInnerHTML, otherwise untrusted markdown (e.g. scraped
+// content) is a stored-XSS vector. Both libs load only when a markdown
+// file is actually previewed. Returns the original text wrapped in <pre>
+// on parse failure so the user still sees something.
 export async function renderMarkdown(raw: string): Promise<string> {
-  const { marked } = await import('marked')
+  const [{ marked }, { default: DOMPurify }] = await Promise.all([
+    import('marked'),
+    import('dompurify'),
+  ])
   try {
-    return (await marked.parse(raw, { async: true })) as string
+    const html = (await marked.parse(raw, { async: true })) as string
+    return DOMPurify.sanitize(html)
   } catch {
     return `<pre>${escapeHtml(raw)}</pre>`
   }
