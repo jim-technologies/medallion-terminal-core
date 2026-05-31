@@ -2,8 +2,7 @@ import { useEffect } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
-
-interface Choice { value: string; label?: string }
+import { type Choice, resolveSelection } from './selectHelpers'
 
 interface SelectOptions {
   key?: string
@@ -33,21 +32,19 @@ export function Select({ data, options }: WidgetProps) {
 
   const key = opts.key
   const choices = resolveChoices(data, opts)
-  // The value the dropdown DISPLAYS as selected. ctx wins, then an
-  // explicit default, then the first choice.
   const ctxVal = key ? ctx[key] : undefined
-  const current = ctxVal ?? opts.default ?? (choices[0]?.value)
+  const { current, shouldSync } = resolveSelection(ctxVal, opts.default, choices)
 
   // Sync the displayed value into ctx when ctx is empty but we have a
   // resolved choice. Without this, dependent sources (e.g. a file browser
   // wired to ${ctx.org}) fire with an EMPTY param on first load — the
   // dropdown looks populated but never told ctx what it's showing. Only
-  // fires when ctx[key] is unset, so it never fights a user/URL selection.
+  // fires when ctx[key] is unset/empty, so it never fights a real selection.
   useEffect(() => {
-    if (key && (ctxVal === undefined || ctxVal === '') && current) {
+    if (key && shouldSync) {
       setCtx(key, current)
     }
-  }, [key, ctxVal, current, setCtx])
+  }, [key, shouldSync, current, setCtx])
 
   if (!key) {
     return <Empty>Select requires options.key</Empty>
