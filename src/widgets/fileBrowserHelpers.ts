@@ -206,15 +206,19 @@ export function previewKind(contentType?: string, filename?: string): PreviewKin
   return null
 }
 
-// buildMediaUrl substitutes `{namespace}` and `{path}` in the
-// configured template. Both substituted values are URL-encoded.
+// buildMediaUrl substitutes the bucket + path tokens in the configured
+// template. Both substituted values are URL-encoded. `{bucket}` is the
+// preferred token (matches the FileBrowser's bucket_param vocabulary);
+// `{namespace}` is accepted as a back-compat alias for the same value.
 // Generic: the template format is the consumer's choice — e.g.
-//   "/media?namespace={namespace}&path={path}"            (query)
-//   "/files/{namespace}/{path}"                            (path)
-//   "https://cdn.example/{namespace}/objects/{path}"       (CDN)
-export function buildMediaUrl(template: string, namespace: string, path: string): string {
+//   "/media?org={bucket}&path={path}"                 (query)
+//   "/files/{bucket}/{path}"                          (path)
+//   "https://cdn.example/{bucket}/objects/{path}"     (CDN)
+export function buildMediaUrl(template: string, bucket: string, path: string): string {
+  const enc = encodeURIComponent(bucket)
   return template
-    .replace('{namespace}', encodeURIComponent(namespace))
+    .replace('{bucket}', enc)
+    .replace('{namespace}', enc)
     .replace('{path}', encodeURIComponent(path))
 }
 

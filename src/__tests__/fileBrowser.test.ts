@@ -136,12 +136,16 @@ describe('FileBrowser helpers', () => {
   })
 
   describe('buildMediaUrl', () => {
-    it('substitutes namespace and path', () => {
+    it('substitutes the {bucket} token and path', () => {
+      expect(buildMediaUrl('/media?org={bucket}&path={path}', 'photos', '2024/birthday.jpg'))
+        .toBe('/media?org=photos&path=2024%2Fbirthday.jpg')
+    })
+    it('accepts {namespace} as a back-compat alias for {bucket}', () => {
       expect(buildMediaUrl('/media?namespace={namespace}&path={path}', 'photos', '2024/birthday.jpg'))
         .toBe('/media?namespace=photos&path=2024%2Fbirthday.jpg')
     })
     it('url-encodes both', () => {
-      expect(buildMediaUrl('/files/{namespace}/{path}', 'my ns', 'a/b'))
+      expect(buildMediaUrl('/files/{bucket}/{path}', 'my ns', 'a/b'))
         .toBe('/files/my%20ns/a%2Fb')
     })
   })
