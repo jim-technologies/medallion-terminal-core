@@ -86,6 +86,11 @@ interface FileBrowserOptions {
   // the listing until the box is cleared. Hits carry their own full path,
   // so clicking one previews/downloads it wherever it lives.
   search_url?: string
+  // Optional URL-ingest endpoint. When set, the upload dialog gains a "From
+  // URL" tab: POSTs `{<bucket>, repo, path, url}` and the backend fetches
+  // the media server-side (no local file needed). Returns a task id the
+  // backend processes async; the dialog reports "started".
+  ingest_url?: string
   download_url?: string
   // URL template for the Range-supporting blob endpoint that backs inline
   // preview. {namespace} (the bucket) and {path} are substituted (both
@@ -105,6 +110,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const viewModeKey = opts.view_mode_ctx ?? 'view_mode'
   const uploadActionId = opts.upload_action_id ?? 'upload'
   const uploadUrl = opts.upload_url
+  const ingestUrl = opts.ingest_url
 
   // `bucket` is the top-level container (files: the org). Named generically
   // so the widget isn't files-specific; sent to the backend as bucketParam.
@@ -117,6 +123,16 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const [dragging, setDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState<FileBrowserEntry | null>(null)
+
+  // Upload dialog state. Opened by the toolbar "Upload" button; offers a
+  // File tab and (when ingest_url is set) a From-URL tab. `dlgRepo`
+  // defaults to the current folder so the common case is one click.
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dlgMode, setDlgMode] = useState<'url' | 'file'>('url')
+  const [dlgRepo, setDlgRepo] = useState('')
+  const [dlgName, setDlgName] = useState('')
+  const [dlgSrcURL, setDlgSrcURL] = useState('')
+  const [dlgBusy, setDlgBusy] = useState(false)
 
   // Search state. When `searchHits` is non-null the widget shows results
   // instead of the directory listing; clearing the box returns to browsing.
@@ -201,6 +217,70 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     navigateTo(p)
   }
 
+  // openDialog seeds the repo field from the folder you're in (the common
+  // case) and the filename guessed from a URL later. Picks the URL tab when
+  // ingest is available, else File.
+  const openDialog = () => {
+    setDlgRepo(currentPath)
+    setDlgName('')
+    setDlgSrcURL('')
+    setDlgMode(ingestUrl ? 'url' : 'file')
+    setDialogOpen(true)
+  }
+
+  // submitIngest POSTs {bucket, repo, path, url} to ingest_url; the backend
+  // fetches the media server-side (async). Reports "started" and closes.
+  const submitIngest = async () => {
+    if (!ingestUrl) return
+    const repo = dlgRepo.trim()
+    const name = dlgName.trim()
+    const src = dlgSrcURL.trim()
+    if (!repo || !name || !src) {
+      toast('Need a folder (repo), a filename, and a URL', 'error')
+      return
+    }
+    setDlgBusy(true)
+    try {
+      const res = await fetch((backendUrl ?? '') + ingestUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
+        body: JSON.stringify({ [bucketParam]: bucket, repo, path: name, url: src }),
+      })
+      if (!res.ok) {
+        throw new Error(await readConnectErrorMessage(res))
+      }
+      toast(`Fetching ${name} in the background — it'll appear when done.`, 'ok')
+      setDialogOpen(false)
+    } catch (err) {
+      toast(`Ingest failed: ${errorMessage(err)}`, 'error')
+    } finally {
+      setDlgBusy(false)
+    }
+  }
+
+  // submitDialogFile uploads a picked file to the chosen repo + filename
+  // (so you can target any repo, including from the root, unlike drag-drop
+  // which uses the current folder).
+  const submitDialogFile = async (file: File) => {
+    const repo = dlgRepo.trim()
+    const name = (dlgName.trim() || file.name)
+    if (!repo) {
+      toast('Need a destination folder (repo)', 'error')
+      return
+    }
+    setDlgBusy(true)
+    try {
+      await uploadOne(file, repo, name)
+      toast(`Uploaded ${name}`, 'ok')
+      setDialogOpen(false)
+      requestRefresh(widgetId ?? '*')
+    } catch (err) {
+      toast(`Upload failed: ${errorMessage(err)}`, 'error')
+    } finally {
+      setDlgBusy(false)
+    }
+  }
+
   // entryFullPath computes the slash-joined full path for an entry in
   // the current directory. Used everywhere the widget needs a stable
   // identifier (URLs, downloads, queue keys) without depending on any
@@ -272,59 +352,46 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     }
   }
 
+  // uploadOne sends a single file to (repo, path). Streaming endpoint when
+  // configured (no base64, no full buffering — large files OK), else the
+  // base64 SubmitAction fallback. Throws on failure.
+  const uploadOne = async (file: File, repo: string, path: string) => {
+    const contentType = file.type || 'application/octet-stream'
+    if (uploadUrl) {
+      const qs = new URLSearchParams({ [bucketParam]: bucket, repo, path, content_type: contentType })
+      const res = await fetch(`${backendUrl ?? ''}${uploadUrl}?${qs.toString()}`, { method: 'POST', body: file })
+      if (!res.ok) throw new Error((await res.text()) || `HTTP ${res.status}`)
+      return
+    }
+    const buf = await file.arrayBuffer()
+    const url = buildSubmitActionUrl(backendUrl ?? '')
+    const req = buildActionRequest({
+      actionId: uploadActionId,
+      params: { [bucketParam]: bucket, repo, path, content_type: contentType, data_b64: arrayBufferToBase64(buf) },
+      clientRequestId: newClientRequestId(),
+    })
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
+      body: JSON.stringify(req),
+    })
+    if (!res.ok) throw new Error(await readConnectErrorMessage(res))
+  }
+
+  // handleFiles is the drag-drop path: repo = the folder you're viewing,
+  // filename = the file's name. Root drops are rejected (no repo). Use the
+  // Upload dialog to target an arbitrary repo or upload from the root.
   const handleFiles = async (files: FileList | File[]) => {
-    // The destination repo (clone unit) is the folder you're viewing; the
-    // file's name is the in-repo path. Dropping at the root has no repo to
-    // attach to — guide the user to navigate into a folder first.
     if (currentPath === '') {
-      toast('Open a folder first — a dropped file is stored under that folder.', 'error')
+      toast('Open a folder first, or use the Upload button to choose a folder.', 'error')
       return
     }
     const repo = currentPath
     setUploading(true)
     let okCount = 0
     for (const f of Array.from(files)) {
-      const contentType = f.type || 'application/octet-stream'
       try {
-        if (uploadUrl) {
-          // Stream the file straight into the body — no base64, no full
-          // buffering — so large files upload without memory blowup.
-          const qs = new URLSearchParams({ [bucketParam]: bucket, repo, path: f.name, content_type: contentType })
-          const res = await fetch(`${backendUrl ?? ''}${uploadUrl}?${qs.toString()}`, {
-            method: 'POST',
-            body: f,
-          })
-          if (!res.ok) {
-            throw new Error((await res.text()) || `HTTP ${res.status}`)
-          }
-        } else {
-          const buf = await f.arrayBuffer()
-          const payload = {
-            [bucketParam]: bucket,
-            repo,
-            path: f.name,
-            content_type: contentType,
-            data_b64: arrayBufferToBase64(buf),
-          }
-          const url = buildSubmitActionUrl(backendUrl ?? '')
-          const req = buildActionRequest({
-            actionId: uploadActionId,
-            params: payload,
-            clientRequestId: newClientRequestId(),
-          })
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Connect-Protocol-Version': '1',
-            },
-            body: JSON.stringify(req),
-          })
-          if (!res.ok) {
-            const msg = await readConnectErrorMessage(res)
-            throw new Error(msg)
-          }
-        }
+        await uploadOne(f, repo, f.name)
         okCount++
       } catch (err) {
         toast(`Upload failed: ${f.name} — ${errorMessage(err)}`, 'error')
@@ -333,16 +400,13 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     setUploading(false)
     if (okCount > 0) {
       toast(`Uploaded ${okCount} file${okCount === 1 ? '' : 's'}`, 'ok')
-      // Refresh just this widget so the new file appears. Falling back
-      // to '*' only when the template didn't give us an id — bare
-      // best-effort behavior over silent stalemate.
       requestRefresh(widgetId ?? '*')
     }
   }
 
   return (
     <div
-      className="h-full flex flex-col"
+      className="h-full flex flex-col relative"
       onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
       onDragLeave={() => setDragging(false)}
       onDrop={(e) => {
@@ -400,6 +464,19 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
                 </button>
               )}
             </div>
+          )}
+          {/* Upload: opens a dialog to pick a destination repo + filename,
+              and either choose a local file or paste a media URL (YouTube /
+              .m3u8) the server fetches itself. Distinct from drag-drop,
+              which always targets the current folder. */}
+          {(uploadUrl || uploadActionId || ingestUrl) && (
+            <button
+              onClick={openDialog}
+              className="text-zinc-200 hover:text-white border border-zinc-700 rounded px-2 py-0.5"
+              title="Upload a file or fetch a media URL"
+            >
+              ⬆ Upload
+            </button>
           )}
           {/* View-mode toggle. Icons (default) sends ZERO image bytes — the
               row icon is just an emoji. Gallery loads inline thumbnails
@@ -501,6 +578,108 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           onClose={() => setPreview(null)}
           onDownload={() => { void downloadFile(preview) }}
         />
+      )}
+
+      {dialogOpen && (
+        <div
+          className="absolute inset-0 z-20 flex items-center justify-center bg-black/60"
+          onClick={() => { if (!dlgBusy) setDialogOpen(false) }}
+        >
+          <div
+            className="flex flex-col gap-3 bg-zinc-900 border border-zinc-700 rounded-lg p-5 shadow-2xl w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-medium text-zinc-100">Upload to {bucket}</h2>
+              <button
+                onClick={() => { if (!dlgBusy) setDialogOpen(false) }}
+                className="text-zinc-500 hover:text-zinc-200"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Mode tabs: a local File, or a media URL the server fetches.
+                The URL tab only shows when ingest_url is configured. */}
+            {ingestUrl && (
+              <div className="flex gap-1 text-xs">
+                <button
+                  onClick={() => setDlgMode('url')}
+                  className={`px-3 py-1 rounded border ${dlgMode === 'url' ? 'border-sky-500 text-sky-300 bg-sky-500/10' : 'border-zinc-700 text-zinc-400 hover:text-zinc-200'}`}
+                >
+                  From URL
+                </button>
+                <button
+                  onClick={() => setDlgMode('file')}
+                  className={`px-3 py-1 rounded border ${dlgMode === 'file' ? 'border-sky-500 text-sky-300 bg-sky-500/10' : 'border-zinc-700 text-zinc-400 hover:text-zinc-200'}`}
+                >
+                  Local file
+                </button>
+              </div>
+            )}
+
+            <label className="flex flex-col gap-1 text-xs text-zinc-400">
+              Folder (repo)
+              <input
+                type="text"
+                value={dlgRepo}
+                onChange={(e) => setDlgRepo(e.target.value)}
+                placeholder="e.g. year=2026/name=avatar"
+                className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
+              />
+              <span className="text-zinc-600">The git-clone partition. Becomes a GitHub repo.</span>
+            </label>
+
+            <label className="flex flex-col gap-1 text-xs text-zinc-400">
+              Filename {dlgMode === 'file' && '(optional — defaults to the file’s name)'}
+              <input
+                type="text"
+                value={dlgName}
+                onChange={(e) => setDlgName(e.target.value)}
+                placeholder="e.g. avatar.mp4"
+                className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
+              />
+              <span className="text-zinc-600">Location inside the repo (may include subfolders).</span>
+            </label>
+
+            {dlgMode === 'url' ? (
+              <>
+                <label className="flex flex-col gap-1 text-xs text-zinc-400">
+                  Media URL
+                  <input
+                    type="url"
+                    value={dlgSrcURL}
+                    onChange={(e) => setDlgSrcURL(e.target.value)}
+                    placeholder="https://youtu.be/… or https://…/playlist.m3u8"
+                    className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
+                  />
+                  <span className="text-zinc-600">YouTube, a supported site, or a raw HLS playlist. Fetched server-side.</span>
+                </label>
+                <button
+                  onClick={() => void submitIngest()}
+                  disabled={dlgBusy}
+                  className="self-end px-3 py-1.5 rounded bg-sky-600 hover:bg-sky-500 disabled:bg-zinc-700 text-white text-sm"
+                >
+                  {dlgBusy ? 'Starting…' : 'Fetch & store'}
+                </button>
+              </>
+            ) : (
+              <>
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0]
+                    if (f) void submitDialogFile(f)
+                  }}
+                  disabled={dlgBusy}
+                  className="text-xs text-zinc-300 file:mr-3 file:rounded file:border-0 file:bg-sky-600 file:px-3 file:py-1.5 file:text-white hover:file:bg-sky-500"
+                />
+                {dlgBusy && <span className="self-end text-xs text-zinc-400">Uploading…</span>}
+              </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   )
