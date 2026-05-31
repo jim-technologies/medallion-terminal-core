@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
@@ -30,16 +31,30 @@ export function Select({ data, options }: WidgetProps) {
   const opts = (options ?? {}) as SelectOptions
   const { ctx, setCtx } = useDashboard()
 
-  if (!opts.key) {
+  const key = opts.key
+  const choices = resolveChoices(data, opts)
+  // The value the dropdown DISPLAYS as selected. ctx wins, then an
+  // explicit default, then the first choice.
+  const ctxVal = key ? ctx[key] : undefined
+  const current = ctxVal ?? opts.default ?? (choices[0]?.value)
+
+  // Sync the displayed value into ctx when ctx is empty but we have a
+  // resolved choice. Without this, dependent sources (e.g. a file browser
+  // wired to ${ctx.org}) fire with an EMPTY param on first load — the
+  // dropdown looks populated but never told ctx what it's showing. Only
+  // fires when ctx[key] is unset, so it never fights a user/URL selection.
+  useEffect(() => {
+    if (key && (ctxVal === undefined || ctxVal === '') && current) {
+      setCtx(key, current)
+    }
+  }, [key, ctxVal, current, setCtx])
+
+  if (!key) {
     return <Empty>Select requires options.key</Empty>
   }
-
-  const choices = resolveChoices(data, opts)
   if (choices.length === 0) {
     return <Empty>Select has no choices</Empty>
   }
-
-  const current = ctx[opts.key] ?? opts.default ?? choices[0].value
 
   return (
     <div className="flex flex-col h-full justify-center gap-1.5 px-2">
