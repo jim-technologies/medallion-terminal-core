@@ -27,6 +27,11 @@ export interface FileBrowserEntry {
   size_bytes?: number
   content_type?: string
   modified_at?: string
+  // Full path within the namespace. Normal directory listings omit it
+  // (the widget derives it from the current dir + name); SEARCH results
+  // set it, since a hit can live in any directory. When present it's the
+  // authoritative path for download / preview / navigation.
+  path?: string
 }
 
 export function isFolder(e: FileBrowserEntry): boolean {

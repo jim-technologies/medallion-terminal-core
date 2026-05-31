@@ -75,6 +75,11 @@ interface FileBrowserOptions {
   // which lets large files upload without buffering/encoding them in a
   // JSON RPC. Falls back to the upload_action_id RPC path when unset.
   upload_url?: string
+  // Optional search endpoint. When set, a search box appears; submitting
+  // POSTs `{namespace, query}` to `${search_url}` and the results replace
+  // the listing until the box is cleared. Hits carry their own full path,
+  // so clicking one previews/downloads it wherever it lives.
+  search_url?: string
   download_url?: string
   // URL template for the Range-supporting blob endpoint that backs
   // inline preview. {namespace} and {path} are substituted (both
@@ -102,8 +107,25 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const pageSize = parseInt(ctx[pageSizeKey] ?? '50', 10) || 50
   const viewMode = (ctx[viewModeKey] === 'gallery' ? 'gallery' : 'icons') as 'icons' | 'gallery'
 
-  const entries = useMemo(() => normalizeEntries(data), [data])
-  const sorted = useMemo(() => sortEntries(entries), [entries])
+  const [dragging, setDragging] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [preview, setPreview] = useState<FileBrowserEntry | null>(null)
+
+  // Search state. When `searchHits` is non-null the widget shows results
+  // instead of the directory listing; clearing the box returns to browsing.
+  const searchUrl = opts.search_url
+  const [searchText, setSearchText] = useState('')
+  const [searchHits, setSearchHits] = useState<FileBrowserEntry[] | null>(null)
+  const [searching, setSearching] = useState(false)
+
+  const listing = useMemo(() => normalizeEntries(data), [data])
+  // The active entry set: search results (flat, already files) when a
+  // search is in effect, else the sorted directory listing.
+  const entries = searchHits ?? listing
+  const sorted = useMemo(
+    () => (searchHits ? searchHits : sortEntries(listing)),
+    [searchHits, listing],
+  )
   const segments = useMemo(() => splitPath(currentPath), [currentPath])
 
   // Simple paging without a total: Next is enabled when the current
@@ -111,12 +133,9 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   // MIGHT be more. A partial page means "we're on the last page."
   // Backends that want a strict page count can publish it themselves
   // via their own widget; the generic widget stays protocol-agnostic.
-  const hasPrev = page > 1
-  const hasNext = entries.length >= pageSize
-
-  const [dragging, setDragging] = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [preview, setPreview] = useState<FileBrowserEntry | null>(null)
+  // Paging applies to directory listings only, not search results.
+  const hasPrev = !searchHits && page > 1
+  const hasNext = !searchHits && listing.length >= pageSize
 
   const mediaTemplate = opts.media_url_template ?? '/media?namespace={namespace}&path={path}'
 
@@ -134,15 +153,61 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const goToPage = (n: number) => setCtx(pageKey, String(Math.max(1, n)))
   const toggleViewMode = () => setCtx(viewModeKey, viewMode === 'gallery' ? 'icons' : 'gallery')
 
+  // runSearch POSTs {namespace, query} to search_url and shows the hits.
+  // An empty query clears search and returns to the directory listing.
+  const runSearch = async () => {
+    if (!searchUrl) return
+    const q = searchText.trim()
+    if (q === '') {
+      setSearchHits(null)
+      return
+    }
+    setSearching(true)
+    try {
+      const res = await fetch((backendUrl ?? '') + searchUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
+        body: JSON.stringify({ namespace, query: q }),
+      })
+      if (!res.ok) {
+        toast(`Search failed: ${await readConnectErrorMessage(res)}`, 'error')
+        return
+      }
+      const body = (await res.json()) as { hits?: FileBrowserEntry[] }
+      // Hits arrive as files with a `path`; tag kind so isFolder/preview work.
+      setSearchHits((body.hits ?? []).map((h) => ({ ...h, kind: 'file' })))
+    } catch (err) {
+      toast(`Search failed: ${errorMessage(err)}`, 'error')
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  const clearSearch = () => {
+    setSearchText('')
+    setSearchHits(null)
+  }
+
+  // Leaving search when the user navigates into a folder from a hit.
+  const navigateAndClearSearch = (p: string) => {
+    clearSearch()
+    navigateTo(p)
+  }
+
   // entryFullPath computes the slash-joined full path for an entry in
   // the current directory. Used everywhere the widget needs a stable
   // identifier (URLs, downloads, queue keys) without depending on any
   // backend-specific id field.
-  const entryFullPath = (e: FileBrowserEntry): string => joinPath(currentPath, e.name ?? '')
+  // Prefer an entry's own `path` (search hits carry it) over deriving it
+  // from the current directory (normal listings).
+  const entryFullPath = (e: FileBrowserEntry): string =>
+    e.path && e.path !== '' ? e.path : joinPath(currentPath, e.name ?? '')
 
   const onRowClick = (e: FileBrowserEntry) => {
     if (isFolder(e)) {
-      navigateTo(entryFullPath(e))
+      // From a search result, jumping into a folder leaves search mode.
+      if (searchHits) navigateAndClearSearch(entryFullPath(e))
+      else navigateTo(entryFullPath(e))
       return
     }
     // Previewable types open in the overlay; everything else downloads.
@@ -288,6 +353,39 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           )
         })}
         <div className="ml-auto flex items-center gap-3 text-zinc-500">
+          {searchUrl && (
+            <div className="flex items-center gap-1">
+              <input
+                type="search"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') void runSearch()
+                  if (e.key === 'Escape') clearSearch()
+                }}
+                placeholder="Search files…"
+                className="bg-zinc-800 border border-zinc-700 rounded px-2 py-0.5 text-xs text-zinc-100 outline-none focus:border-zinc-500 w-40"
+              />
+              <button
+                onClick={() => void runSearch()}
+                disabled={searching}
+                className="text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 px-1"
+                aria-label="Search"
+                title="Search this namespace"
+              >
+                {searching ? '…' : '🔍'}
+              </button>
+              {searchHits && (
+                <button
+                  onClick={clearSearch}
+                  className="text-zinc-400 hover:text-zinc-100 px-1"
+                  title="Clear search, back to browsing"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          )}
           {/* View-mode toggle. Icons (default) sends ZERO image bytes — the
               row icon is just an emoji. Gallery loads inline thumbnails
               via <img loading="lazy">, browser-cached aggressively by the
@@ -299,7 +397,9 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           >
             {viewMode === 'gallery' ? '◫ Gallery' : '☰ Icons'}
           </button>
-          <span className="tabular-nums">{entries.length} on page</span>
+          <span className="tabular-nums">
+            {searchHits ? `${searchHits.length} result${searchHits.length === 1 ? '' : 's'}` : `${entries.length} on page`}
+          </span>
           {(hasPrev || hasNext) && (
             <div className="flex items-center gap-1">
               <button
@@ -331,7 +431,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           </div>
         )}
         {sorted.length === 0 ? (
-          <Empty>This folder is empty. Drop files to upload.</Empty>
+          <Empty>{searchHits ? 'No files match your search.' : 'This folder is empty. Drop files to upload.'}</Empty>
         ) : viewMode === 'gallery' ? (
           <GalleryGrid
             entries={sorted}
