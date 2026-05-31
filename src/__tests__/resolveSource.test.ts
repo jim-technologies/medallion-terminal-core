@@ -121,6 +121,18 @@ describe('resolveSource — source_id mode', () => {
     expect(warn).toHaveBeenCalledOnce()
     warn.mockRestore()
   })
+
+  it('treats empty-string backendUrl as SAME ORIGIN (relative URL), not missing', () => {
+    // An app served from the same host as its API passes backendUrl="".
+    // That is valid and must resolve to a relative path — NOT be treated
+    // as "no backend" (which silently stops every source_id widget).
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const out = resolveSource({ source_id: 'files' }, {}, '')
+    expect(out.url).toBe('/medallion.terminal.v1.TerminalService/Get')
+    expect(out.body).toEqual({ source_id: 'files', params: {} })
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
+  })
 })
 
 describe('Generate RPC builders', () => {

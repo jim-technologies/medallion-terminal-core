@@ -111,7 +111,10 @@ export function resolveSource(
 ): DataSource {
   // Mode 1: source_id — translate to a Connect HTTP/JSON call
   if (source.source_id) {
-    if (!backendUrl) {
+    // undefined = no backend configured (bail). Empty string = SAME ORIGIN
+    // (valid — the app is served from the same host as the API), so it must
+    // NOT be treated as missing. Only `undefined` short-circuits.
+    if (backendUrl === undefined) {
       if (!warnedNoBackend) {
         console.warn(
           `[medallion] source_id "${source.source_id}" requires a backendUrl on <Dashboard>; ` +
