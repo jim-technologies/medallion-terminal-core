@@ -61,7 +61,10 @@ import type { WidgetProps } from '../types/template'
 
 interface FileBrowserOptions {
   path_ctx?: string
-  namespace_ctx?: string
+  // ctx key holding the top-level "bucket" the widget browses (files: the
+  // org). Sent to the backend as the `bucket_param` field (default "org").
+  bucket_ctx?: string
+  bucket_param?: string
   // ctx keys driving pagination + view mode. The backend source reads
   // `page` and `page_size` from its DataRequest params; the widget
   // pushes them through ctx so a click on Next triggers a refresh.
@@ -71,21 +74,22 @@ interface FileBrowserOptions {
   upload_action_id?: string
   // Optional streaming upload endpoint. When set, files are POSTed
   // directly (raw body, no base64) to
-  //   `${upload_url}?namespace=&path=&content_type=`
+  //   `${upload_url}?<bucket>=&repo=&path=&content_type=`
   // which lets large files upload without buffering/encoding them in a
   // JSON RPC. Falls back to the upload_action_id RPC path when unset.
+  // Upload splits the destination: `repo` = the folder you're viewing (the
+  // clone unit), `path` = the filename. Dropping at the root is rejected
+  // (a repo is required) — navigate into a folder first.
   upload_url?: string
   // Optional search endpoint. When set, a search box appears; submitting
-  // POSTs `{namespace, query}` to `${search_url}` and the results replace
+  // POSTs `{<bucket>, query}` to `${search_url}` and the results replace
   // the listing until the box is cleared. Hits carry their own full path,
   // so clicking one previews/downloads it wherever it lives.
   search_url?: string
   download_url?: string
-  // URL template for the Range-supporting blob endpoint that backs
-  // inline preview. {namespace} and {path} are substituted (both
-  // URL-encoded). Default uses a query-string format so paths with
-  // slashes are unambiguous. Set to "" to disable preview entirely
-  // (every file click triggers download).
+  // URL template for the Range-supporting blob endpoint that backs inline
+  // preview. {namespace} (the bucket) and {path} are substituted (both
+  // URL-encoded). Set to "" to disable preview entirely.
   media_url_template?: string
 }
 
@@ -94,14 +98,17 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const { ctx, setCtx, backendUrl, toast, requestRefresh } = useDashboard()
 
   const pathKey = opts.path_ctx ?? 'path'
-  const nsKey = opts.namespace_ctx ?? 'namespace'
+  const bucketKey = opts.bucket_ctx ?? 'org'
+  const bucketParam = opts.bucket_param ?? 'org'
   const pageKey = opts.page_ctx ?? 'page'
   const pageSizeKey = opts.page_size_ctx ?? 'page_size'
   const viewModeKey = opts.view_mode_ctx ?? 'view_mode'
   const uploadActionId = opts.upload_action_id ?? 'upload'
   const uploadUrl = opts.upload_url
 
-  const namespace = ctx[nsKey] ?? 'default'
+  // `bucket` is the top-level container (files: the org). Named generically
+  // so the widget isn't files-specific; sent to the backend as bucketParam.
+  const bucket = ctx[bucketKey] ?? 'default'
   const currentPath = ctx[pathKey] ?? ''
   const page = parseInt(ctx[pageKey] ?? '1', 10) || 1
   const pageSize = parseInt(ctx[pageSizeKey] ?? '50', 10) || 50
@@ -145,9 +152,9 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   // subfolder is jarring.
   useEffect(() => {
     if (page !== 1) setCtx(pageKey, '1')
-    // pageKey/setCtx are stable; only fire on path or namespace change.
+    // pageKey/setCtx are stable; only fire on path or bucket change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace, currentPath])
+  }, [bucket, currentPath])
 
   const navigateTo = (p: string) => setCtx(pathKey, p)
   const goToPage = (n: number) => setCtx(pageKey, String(Math.max(1, n)))
@@ -167,7 +174,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       const res = await fetch((backendUrl ?? '') + searchUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
-        body: JSON.stringify({ namespace, query: q }),
+        body: JSON.stringify({ [bucketParam]: bucket, query: q }),
       })
       if (!res.ok) {
         toast(`Search failed: ${await readConnectErrorMessage(res)}`, 'error')
@@ -247,7 +254,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           'Content-Type': 'application/json',
           'Connect-Protocol-Version': '1',
         },
-        body: JSON.stringify({ namespace, path: fullPath }),
+        body: JSON.stringify({ [bucketParam]: bucket, path: fullPath }),
       })
       if (!res.ok) {
         const msg = await readConnectErrorMessage(res)
@@ -266,16 +273,23 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   }
 
   const handleFiles = async (files: FileList | File[]) => {
+    // The destination repo (clone unit) is the folder you're viewing; the
+    // file's name is the in-repo path. Dropping at the root has no repo to
+    // attach to — guide the user to navigate into a folder first.
+    if (currentPath === '') {
+      toast('Open a folder first — a dropped file is stored under that folder.', 'error')
+      return
+    }
+    const repo = currentPath
     setUploading(true)
     let okCount = 0
     for (const f of Array.from(files)) {
-      const destPath = joinPath(currentPath, f.name)
       const contentType = f.type || 'application/octet-stream'
       try {
         if (uploadUrl) {
           // Stream the file straight into the body — no base64, no full
           // buffering — so large files upload without memory blowup.
-          const qs = new URLSearchParams({ namespace, path: destPath, content_type: contentType })
+          const qs = new URLSearchParams({ [bucketParam]: bucket, repo, path: f.name, content_type: contentType })
           const res = await fetch(`${backendUrl ?? ''}${uploadUrl}?${qs.toString()}`, {
             method: 'POST',
             body: f,
@@ -286,8 +300,9 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
         } else {
           const buf = await f.arrayBuffer()
           const payload = {
-            namespace,
-            path: destPath,
+            [bucketParam]: bucket,
+            repo,
+            path: f.name,
             content_type: contentType,
             data_b64: arrayBufferToBase64(buf),
           }
@@ -436,7 +451,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           <GalleryGrid
             entries={sorted}
             onClick={onRowClick}
-            mediaUrlFor={(e) => (e.name ? (backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, entryFullPath(e)) : '')}
+            mediaUrlFor={(e) => (e.name ? (backendUrl ?? '') + buildMediaUrl(mediaTemplate, bucket, entryFullPath(e)) : '')}
           />
         ) : (
           <table className="w-full text-xs">
@@ -479,7 +494,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       {preview && (
         <PreviewOverlay
           entry={preview}
-          mediaUrl={(backendUrl ?? '') + buildMediaUrl(mediaTemplate, namespace, entryFullPath(preview))}
+          mediaUrl={(backendUrl ?? '') + buildMediaUrl(mediaTemplate, bucket, entryFullPath(preview))}
           autoAdvanceQueue={playableQueue(sorted)}
           navigableQueue={navigableQueue(sorted)}
           onSelect={(e) => setPreview(e)}

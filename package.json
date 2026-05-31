@@ -1,6 +1,6 @@
 {
   "name": "medallion-terminal-core",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "type": "module",
   "main": "./dist/medallion-terminal-core.js",
   "types": "./dist/index.d.ts",
