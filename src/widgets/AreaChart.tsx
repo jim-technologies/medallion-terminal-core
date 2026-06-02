@@ -14,6 +14,10 @@ import { TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
+// Local line palette, shared byte-for-byte with Timeseries and
+// intentionally distinct from the categorical `PALETTE` (colors.ts):
+// lighter hues for thin strokes/fills on dark. See CONVENTIONS.md
+// "Palette decision". Do not replace with PALETTE — visual change.
 const COLORS = ['#38bdf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6']
 
 interface ChartData {

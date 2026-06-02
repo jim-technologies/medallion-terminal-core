@@ -82,6 +82,10 @@ function resolveColor(b: Bar): string {
   return b.value < 0 ? '#ef4444' : '#38bdf8'
 }
 
+// Local tick formatter, intentionally distinct from the shared
+// `abbreviateAxis` (format.ts): bars use 1dp for sub-1e3 non-integers
+// (cleaner for counts/totals) where abbreviateAxis uses 2dp. See
+// CONVENTIONS.md "Abbreviate decision" — do not swap; it changes ticks.
 function abbreviate(n: number): string {
   if (typeof n !== 'number') return String(n)
   if (Math.abs(n) >= 1e9) return (n / 1e9).toFixed(1) + 'B'

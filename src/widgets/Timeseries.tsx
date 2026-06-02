@@ -8,6 +8,10 @@ import { TOOLTIP_STYLE } from './colors'
 import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
+// Local line palette — intentionally distinct from the shared categorical
+// `PALETTE` in colors.ts: lighter hues tuned for thin strokes on the dark
+// chart background. See CONVENTIONS.md "Palette decision". Do not replace
+// with PALETTE — it would change rendered line colors.
 const COLORS = ['#38bdf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6']
 
 const ANN_COLOR: Record<string, string> = {
