@@ -175,11 +175,20 @@ export function Candlestick({ data }: WidgetProps) {
     chartRef.current?.timeScale().fitContent()
   }, [result])
 
-  if (result.candles.length === 0) {
-    return <Empty>No data</Empty>
-  }
-
-  return <div ref={containerRef} className="w-full h-full" />
+  // The container must always be mounted so the create-chart effect (which
+  // runs once and bails if the ref is null) finds it — otherwise an async
+  // source that delivers data after first paint never gets a chart. Empty
+  // state is overlaid rather than replacing the container.
+  return (
+    <div className="relative w-full h-full">
+      <div ref={containerRef} className="w-full h-full" />
+      {result.candles.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <Empty>No data</Empty>
+        </div>
+      )}
+    </div>
+  )
 }
 
 function toMarkers(annotations: Annotation[]): SeriesMarker<Time>[] {

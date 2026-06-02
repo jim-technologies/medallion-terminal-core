@@ -2,6 +2,23 @@
 
 Notable changes to medallion-terminal-core. Versions follow semver.
 
+## [Unreleased]
+
+### Fixed
+
+- **DataTable** now renders the canonical `TablePayload` — `columns` as
+  `{ key, label?, format? }` objects with `rows` as keyed objects (Structs),
+  using `label` for headers and the per-column `format` for cell formatting
+  (author `options.column_formats` still override). Previously `normalize()`
+  only handled string columns / positional rows, so a backend returning the
+  documented explicit-column shape crashed with "Objects are not valid as a
+  React child".
+- **Candlestick** now creates its chart when data arrives after first paint.
+  The create-chart effect runs once and bailed if the container wasn't
+  mounted yet; an async (Connect/SSE) source whose first render is empty
+  therefore never got a chart. The container is now always mounted and the
+  empty state is overlaid.
+
 ## [0.4.0] — 2026-05-25
 
 ### Changed (breaking)

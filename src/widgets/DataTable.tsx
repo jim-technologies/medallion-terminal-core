@@ -37,8 +37,11 @@ export function DataTable({ data, options }: WidgetProps) {
   //   "bps:signed"        → +25 bps
   //   "compact"           → 1.2K / 3.4M
   // Plus a signed sub-tag on numeric formats colors the cell (green/red).
-  const columnFormats = (options?.column_formats as Record<string, string> | undefined) ?? {}
-  const { columns, rows } = useMemo(() => normalize(data), [data])
+  const authorFormats = (options?.column_formats as Record<string, string> | undefined) ?? {}
+  const { columns, rows, labels, formats } = useMemo(() => normalize(data), [data])
+  // Backend-declared formats (from TablePayload) are the base; author
+  // options.column_formats override them per column.
+  const columnFormats = useMemo(() => ({ ...formats, ...authorFormats }), [formats, authorFormats])
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortAsc, setSortAsc] = useState(true)
   const [page, setPage] = useState(0)
@@ -221,7 +224,7 @@ export function DataTable({ data, options }: WidgetProps) {
                     onClick={() => toggleSort(col)}
                     className={`px-3 py-2 text-zinc-400 border-b border-zinc-700 cursor-pointer hover:text-zinc-100 select-none whitespace-nowrap font-medium ${numeric ? 'text-right' : 'text-left'}`}
                   >
-                    {col}
+                    {labels[col] ?? col}
                     {sortKey === col && (
                       <span className="ml-1 text-zinc-500">{sortAsc ? '\u2191' : '\u2193'}</span>
                     )}
@@ -308,23 +311,72 @@ export function DataTable({ data, options }: WidgetProps) {
   )
 }
 
-function normalize(data: unknown): { columns: string[]; rows: Record<string, unknown>[] } {
-  if (!data) return { columns: [], rows: [] }
+interface NormalizedTable {
+  columns: string[]
+  rows: Record<string, unknown>[]
+  // Header label per column key (from TablePayload TableColumn.label).
+  labels: Record<string, string>
+  // Format hint per column key (from TableColumn.format). Merged under
+  // any options.column_formats the author supplies, so authoring wins.
+  formats: Record<string, string>
+}
+
+// Accepts every table shape a backend might send:
+//   - top-level array of row objects (columns auto-detected)
+//   - the canonical TablePayload: { columns: [{key,label,format,...}], rows: [{...}] }
+//   - the legacy positional form:  { columns: ["a","b"], rows: [[1,2], ...] }
+//   - a bare { rows: [{...}] } (columns auto-detected from row keys)
+function normalize(data: unknown): NormalizedTable {
+  const empty: NormalizedTable = { columns: [], rows: [], labels: {}, formats: {} }
+  if (!data) return empty
 
   if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object') {
     const columns = [...new Set(data.flatMap(row => Object.keys(row as object)))]
-    return { columns, rows: data as Record<string, unknown>[] }
+    return { ...empty, columns, rows: data as Record<string, unknown>[] }
   }
 
-  if (typeof data === 'object' && data !== null && 'columns' in data && 'rows' in data) {
-    const d = data as { columns: string[]; rows: unknown[][] }
-    const rows = d.rows.map(row =>
-      Object.fromEntries(d.columns.map((col, i) => [col, row[i]]))
-    )
-    return { columns: d.columns, rows }
+  if (typeof data === 'object' && data !== null && 'rows' in data) {
+    const d = data as { columns?: unknown[]; rows: unknown[] }
+    const rawCols = Array.isArray(d.columns) ? d.columns : []
+
+    // Canonical TablePayload — columns are { key, label?, format? } objects.
+    if (rawCols.length > 0 && typeof rawCols[0] === 'object') {
+      const cols = rawCols as { key: string; label?: string; format?: string }[]
+      const columns = cols.map(c => c.key)
+      const labels: Record<string, string> = {}
+      const formats: Record<string, string> = {}
+      for (const c of cols) {
+        if (c.label) labels[c.key] = c.label
+        if (c.format) formats[c.key] = c.format
+      }
+      const rows = (d.rows as unknown[]).map(row =>
+        Array.isArray(row)
+          ? Object.fromEntries(columns.map((k, i) => [k, (row as unknown[])[i]]))
+          : (row as Record<string, unknown>),
+      )
+      return { columns, rows, labels, formats }
+    }
+
+    // Legacy positional form — string columns, array rows.
+    if (rawCols.length > 0) {
+      const columns = rawCols as string[]
+      const rows = (d.rows as unknown[]).map(row =>
+        Array.isArray(row)
+          ? Object.fromEntries(columns.map((c, i) => [c, (row as unknown[])[i]]))
+          : (row as Record<string, unknown>),
+      )
+      return { ...empty, columns, rows }
+    }
+
+    // Rows only — derive columns from the union of row keys.
+    const rows = d.rows as Record<string, unknown>[]
+    if (rows.length > 0 && typeof rows[0] === 'object' && !Array.isArray(rows[0])) {
+      const columns = [...new Set(rows.flatMap(r => Object.keys(r)))]
+      return { ...empty, columns, rows }
+    }
   }
 
-  return { columns: [], rows: [] }
+  return empty
 }
 
 // Diverging when the column straddles 0 (% change), sequential otherwise.
