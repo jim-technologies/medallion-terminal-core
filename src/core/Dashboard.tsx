@@ -297,10 +297,16 @@ function SnapshotButton({ onCopied }: { onCopied: () => void }) {
 }
 
 export function Dashboard({
-  template, backendUrl, onEvent, onCtxChange, paletteSuggest,
+  template, backendUrl, onEvent, onCtxChange, paletteSuggest, chrome = 'full',
 }: {
   template: Template
   backendUrl?: string
+  // Chrome level. "full" (default) renders the top toolbar (ctx chips,
+  // health pill, refresh/sound/density/snapshot controls) and the
+  // status-bar footer. "minimal" hides both, leaving only the widget
+  // grid (the dashboard title still shows if set) — used by the embed
+  // surface so a BI tool / Grafana panel can iframe a clean live view.
+  chrome?: 'full' | 'minimal'
   // Optional telemetry sink. Receives alerts, widget errors, and
   // action submissions. Keep handler cheap — it runs on every event.
   onEvent?: (event: DashboardEvent) => void
@@ -581,13 +587,14 @@ export function Dashboard({
       )}
       <div className="min-h-full bg-zinc-950 flex flex-col">
        <div className="flex-1 p-3 md:p-5">
+        {(template.title || chrome === 'full') && (
         <div className="mb-4 flex items-center gap-3 flex-wrap">
           {template.title && (
             <h1 className="text-lg font-semibold text-zinc-100 tracking-tight mr-1">
               {interpolate(template.title, ctx)}
             </h1>
           )}
-          {Object.entries(ctx).map(([k, v]) => {
+          {chrome === 'full' && Object.entries(ctx).map(([k, v]) => {
             if (k === 'range') {
               return <RangeSelector key={k} value={v} onChange={val => setCtx(k, val)} />
             }
@@ -601,6 +608,7 @@ export function Dashboard({
               </div>
             )
           })}
+          {chrome === 'full' && (
           <div className="ml-auto flex items-center gap-2">
             <HealthPill health={widgetHealth} />
             <RefreshPicker value={refreshIntervalMs} onChange={setRefreshIntervalMs} />
@@ -610,7 +618,9 @@ export function Dashboard({
             <SnapshotButton onCopied={() => toast('URL copied', 'ok')} />
             <OpenPaletteHint />
           </div>
+          )}
         </div>
+        )}
         <div
           className="grid gap-3 md:gap-4 items-start"
           style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
@@ -634,7 +644,7 @@ export function Dashboard({
           ))}
         </div>
        </div>
-       <StatusBar />
+       {chrome === 'full' && <StatusBar />}
       </div>
       {fullscreenWidget && (
         <FullscreenOverlay widget={fullscreenWidget} onClose={() => setFullscreenId(null)} />

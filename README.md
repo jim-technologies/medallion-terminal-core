@@ -256,6 +256,80 @@ Pass `onEvent` to `<Dashboard>` for a single sink covering alerts, widget errors
 />
 ```
 
+## BI export and embedding
+
+The terminal exports any view's data in BI-standard formats and serves a
+single widget or dashboard standalone so external BI tools (Power BI,
+Looker Studio, Superset, Grafana) can consume it.
+
+### Export
+
+Every data widget's action menu (`⋮`) gains an **Export** submenu —
+**CSV**, **Parquet**, **JSON**, **NDJSON**. Each widget payload is
+flattened to a tidy `{ columns, rows }` table first (multi-series
+time-series pivot wide by timestamp; candles, heatmap cells, order-book
+levels, distribution slices, etc. all project to rows), then serialized.
+Parquet uses a pure-JS writer (`hyparquet-writer`) that is lazily
+imported, so it stays out of the core bundle until used.
+
+Programmatic surface:
+
+```ts
+import { exportView, downloadView, flatten, toParquet } from 'medallion-terminal-core'
+
+const blob = await exportView({ data, component: 'candlestick' }, 'parquet')  // → Blob
+downloadView({ data, component: 'table' }, 'csv', 'positions')                 // browser save
+const table = flatten(data, 'timeseries')                                      // { columns, rows }
+const bytes = await toParquet(table)                                           // Uint8Array
+```
+
+Add an export button to a custom widget with `<ExportMenu view={{ data, component }} filenameBase="…" />`.
+
+### Embed
+
+`embed.html` is a standalone iframe target driven entirely by the query
+string — the lowest common denominator every BI tool's panel/embed
+supports. It renders a single widget or a whole dashboard with minimal
+chrome (no toolbar / status bar).
+
+```
+embed.html?src=btc_candles&component=candlestick&backend=https://api.x&ctx.symbol=BTC&stream=1
+embed.html?template=/examples/crypto-watch.json&ctx.symbol=ETH&chrome=full
+```
+
+| Param | Meaning |
+|-------|---------|
+| `src` | TerminalService source id (single-widget) |
+| `component` | widget component (default `table`) |
+| `url` | arbitrary data URL (single-widget escape hatch) |
+| `template` | dashboard template JSON URL (full dashboard) |
+| `backend` | TerminalService base URL |
+| `ctx.<k>=v` | seed context values |
+| `stream` / `refreshMs` | live source options |
+| `chrome` | `none` (default) or `full` |
+
+`<Dashboard chrome="minimal">` and the exported `<EmbedView>` /
+`parseEmbedConfig` / `buildEmbedUrl` give the same surface in-app.
+
+### BI-connector descriptor
+
+`buildBiDescriptor(sources, { name, endpoint })` turns a
+`ListSources` catalog into a typed, serializable `BiConnectorDescriptor`
+— the client-side contract a BI connector consumes: endpoint, protocol
+(`connect` or `sql`), per-table column schema (derived from each
+source's canonical `Shape`), params, and the precomputed Get RPC URL.
+`connectionFields(descriptor)` renders the human-pasteable settings
+(endpoint, method, request body template, auth hint) for a connection
+config UI.
+
+> The actual SQL/DuckDB/Arrow gateway is a **a separate backend service backend**
+> concern. To reach full Power BI / Looker / Superset / Grafana parity
+> the backend must serve either (a) the ConnectRPC `TerminalService.Get`
+> these tools call via a generic HTTP/JSON connector, or (b) a SQL/ODBC
+> or Arrow-Flight gateway over the same datasets (`protocol: 'sql'`).
+> This library defines and documents that contract and produces the
+> descriptor; it does not run the gateway.
+
 ## Context and URL state
 
 Dashboard ships a `ctx` bag (e.g. `symbol`, `range`). Widgets reference values via `${ctx.symbol}` substitution in URLs and params. Context lives in the URL (`?ctx.symbol=BTC`) so any view is shareable. Saved layouts live in localStorage; load via `/load <name>` in the command palette (`Cmd-K`).

@@ -76,6 +76,48 @@ export { abbreviateAxis, formatCompact, formatStat, formatTimestamp, formatPerce
 export { HoverContext, HoverProvider, useHover } from './core/HoverContext'
 export { NowContext, NowProvider, useNow } from './core/NowContext'
 
+// BI export / embedding surface
+export {
+  exportView,
+  downloadView,
+  viewRowCount,
+  exportFilename,
+} from './export/exportView'
+export type { ExportableView, ExportFormat, FlatTable, Cell } from './export/exportView'
+export { flatten } from './export/flatten'
+export {
+  toCsv,
+  toJson,
+  toNdjson,
+  toParquet,
+  csvEscape,
+  serializeText,
+  MIME,
+  EXTENSION,
+} from './export/serializers'
+export { ExportMenu } from './export/ExportMenu'
+export type { ExportMenuProps } from './export/ExportMenu'
+export { EmbedView } from './embed/EmbedView'
+export type { EmbedViewProps } from './embed/EmbedView'
+export { parseEmbedConfig, buildEmbedUrl } from './embed/embedConfig'
+export type { EmbedConfig } from './embed/embedConfig'
+export {
+  buildBiDescriptor,
+  descriptorToJson,
+  connectionFields,
+} from './bi/connector'
+export type {
+  BiConnectorDescriptor,
+  BiTable,
+  BiColumn,
+  BiParam,
+  BiProtocol,
+  BiColumnType,
+  BiShape,
+  SourceLike,
+  BuildDescriptorOptions,
+} from './bi/connector'
+
 // Hooks
 export { useDataSource } from './hooks/useDataSource'
 export { useBreakpoint } from './hooks/useBreakpoint'

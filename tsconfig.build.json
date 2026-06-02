@@ -14,6 +14,7 @@
     "src/**/*.stories.tsx",
     "src/__tests__/**",
     "src/main.tsx",
+    "src/embed/main.tsx",
     "src/App.tsx",
     "src/ExamplesIndex.tsx"
   ]

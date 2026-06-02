@@ -8,7 +8,16 @@ import { useNow } from '../core/NowContext'
 import { evaluateAlert } from '../core/alerts'
 import { playAlertBeep } from '../core/sound'
 import { Skeleton, ErrorState } from './states'
+import { downloadView, viewRowCount, type ExportFormat } from '../export/exportView'
 import type { WidgetConfig } from '../types/template'
+
+// Export formats offered in the widget action menu, in display order.
+const EXPORT_FORMATS: { key: ExportFormat; label: string }[] = [
+  { key: 'csv', label: 'CSV' },
+  { key: 'parquet', label: 'Parquet' },
+  { key: 'json', label: 'JSON' },
+  { key: 'ndjson', label: 'NDJSON' },
+]
 
 function formatAge(now: number, ts: number | null): string | null {
   if (!ts) return null
@@ -54,23 +63,32 @@ function renderBody(args: {
 }
 
 function ActionMenu({
-  widget, onRefresh, onCopy,
+  widget, data, onRefresh, onCopy, onToast,
 }: {
   widget: WidgetConfig
+  // The widget's resolved data — exported when the user picks a format.
+  data: unknown
   onRefresh: () => void
   // Returns true if data was copied; false if there's nothing to copy
   // or the clipboard refused. Toast is fired by the parent based on
   // the result so it can interpolate the widget title.
   onCopy: () => Promise<boolean>
+  // Fire a toast from inside the menu (export result feedback).
+  onToast: (msg: string, severity: 'ok' | 'warn' | 'error') => void
 }) {
   const { dispatch, fullscreenId, setFullscreenId } = useDashboard()
   const [open, setOpen] = useState(false)
+  const [exportOpen, setExportOpen] = useState(false)
+  const [exporting, setExporting] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!open) return
     const close = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false)
+        setExportOpen(false)
+      }
     }
     document.addEventListener('mousedown', close)
     return () => document.removeEventListener('mousedown', close)
@@ -83,8 +101,35 @@ function ActionMenu({
   const canRemove = !!widget.id
   const canFullscreen = !!widget.id && fullscreenId !== widget.id
   const canCopy = true // every widget can attempt copy; onCopy guards no-data
+  // Export is offered whenever the widget's data flattens to >=1 row.
+  // Cheap to compute; gates the menu item so empty/non-tabular widgets
+  // (a bare metric tile renders fine, but e.g. an image won't) don't
+  // show a dead button.
+  const exportRows = data == null ? 0 : viewRowCount({ data, component: widget.component })
+  const canExport = exportRows > 0
 
-  if (!canRefresh && !canRemove && !canFullscreen && !canCopy) return null
+  const runExport = async (format: ExportFormat) => {
+    setExporting(true)
+    try {
+      const ok = await downloadView(
+        { data, component: widget.component },
+        format,
+        widget.title ?? widget.id ?? widget.component,
+      )
+      onToast(
+        ok ? `Exported ${exportRows.toLocaleString()} rows as ${format.toUpperCase()}` : 'Export failed',
+        ok ? 'ok' : 'warn',
+      )
+    } catch {
+      onToast('Export failed', 'error')
+    } finally {
+      setExporting(false)
+      setOpen(false)
+      setExportOpen(false)
+    }
+  }
+
+  if (!canRefresh && !canRemove && !canFullscreen && !canCopy && !canExport) return null
 
   return (
     <div className="relative" ref={ref}>
@@ -112,6 +157,32 @@ function ActionMenu({
             >
               Copy data
             </button>
+          )}
+          {canExport && (
+            <div>
+              <button
+                onClick={() => setExportOpen(o => !o)}
+                className="w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 flex items-center justify-between"
+                aria-expanded={exportOpen}
+              >
+                <span>Export{exporting ? '…' : ''}</span>
+                <span className="text-zinc-600">{exportOpen ? '▾' : '▸'}</span>
+              </button>
+              {exportOpen && (
+                <div className="bg-zinc-950/60">
+                  {EXPORT_FORMATS.map(f => (
+                    <button
+                      key={f.key}
+                      onClick={() => runExport(f.key)}
+                      disabled={exporting}
+                      className="block w-full text-left pl-6 pr-3 py-1.5 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 disabled:opacity-50"
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
           {canFullscreen && (
             <button
@@ -293,6 +364,8 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
             )}
             <ActionMenu
               widget={config}
+              data={data}
+              onToast={toast}
               onRefresh={refresh}
               onCopy={async () => {
                 if (data == null) { toast('No data to copy', 'warn'); return false }

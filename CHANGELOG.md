@@ -4,6 +4,43 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Added
+
+- **BI export / embedding surface.** The product-goal capability gap
+  (export/serve to Power BI, Looker Studio, Superset, Grafana) is now
+  built out:
+  - **Unified export** — `exportView(view, format)` flattens any
+    canonical widget payload to a tidy `{ columns, rows }` table
+    (`flatten()`) and serializes it to **CSV**, **Parquet**, **JSON**,
+    or **NDJSON**. Multi-series time-series pivot wide by timestamp;
+    candles / heatmap cells / order-book levels / distribution slices /
+    events / metrics all project to rows. Parquet uses the pure-JS
+    `hyparquet-writer`, dynamically imported so it stays out of the core
+    bundle (verified: the writer lands in a separate lazy chunk).
+    `downloadView()` is the browser save wrapper; `<ExportMenu>` is the
+    standalone UI affordance. Every data widget's action menu now has an
+    **Export** submenu (CSV / Parquet / JSON / NDJSON) via `WidgetShell`.
+  - **Embeddable mode** — `embed.html` is a standalone iframe entry
+    driven entirely by the query string (`src`/`component`/`url`/
+    `template`/`backend`/`ctx.*`/`stream`/`refreshMs`/`chrome`), so a
+    Grafana panel, Superset iframe, or BI report page can embed a single
+    live widget or a whole dashboard. Backed by `<EmbedView>` +
+    `parseEmbedConfig` / `buildEmbedUrl` (exported). `<Dashboard>` gained
+    a non-breaking `chrome?: 'full' | 'minimal'` prop (default `full`)
+    that hides the toolbar + status bar for embeds.
+  - **BI-connector descriptor** — `buildBiDescriptor(sources, opts)`
+    turns a `ListSources` catalog into a typed, serializable
+    `BiConnectorDescriptor` (endpoint, `connect`|`sql` protocol,
+    per-table column schema derived from each source's `Shape`, params,
+    precomputed Get RPC URL). `connectionFields()` renders the
+    human-pasteable connection settings for a config UI. The actual
+    SQL/DuckDB gateway remains a a separate backend service backend concern; this is
+    the client-side contract BI tools consume.
+  - Adds `hyparquet-writer` (dependency) and `hyparquet` (devDependency,
+    used only by the Parquet round-trip test). 41 new unit tests
+    (export serializers + flatten projections + embed config + descriptor
+    builder).
+
 ### Fixed
 
 - **DataTable** now renders the canonical `TablePayload` — `columns` as
