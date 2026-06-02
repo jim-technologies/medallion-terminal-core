@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts'
-import { SEMANTIC } from './colors'
+import { SEMANTIC, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
@@ -42,13 +42,7 @@ export function BarChart({ data }: WidgetProps) {
           width={50}
         />
         <Tooltip
-          contentStyle={{
-            backgroundColor: '#18181b',
-            border: '1px solid #3f3f46',
-            borderRadius: 6,
-            fontSize: 12,
-            color: '#fafafa',
-          }}
+          contentStyle={TOOLTIP_STYLE}
           cursor={{ fill: 'rgba(82, 82, 91, 0.2)' }}
         />
         <Bar dataKey="value" radius={[2, 2, 0, 0]}>

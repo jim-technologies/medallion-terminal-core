@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { downloadView, viewRowCount, type ExportableView, type ExportFormat } from './exportView'
+import { EXPORT_FORMATS } from './serializers'
 
 // ExportMenu — a small dropdown affordance for exporting a widget's
 // data in any BI-standard format (CSV / JSON / NDJSON / Parquet).
@@ -7,13 +8,6 @@ import { downloadView, viewRowCount, type ExportableView, type ExportFormat } fr
 // Drop it into a data widget's chrome. It owns its own open/close state
 // and the (possibly async, for Parquet) download. Styling matches the
 // terminal's zinc dark theme and the existing WidgetShell action menu.
-
-const FORMATS: { key: ExportFormat; label: string }[] = [
-  { key: 'csv', label: 'CSV' },
-  { key: 'parquet', label: 'Parquet' },
-  { key: 'json', label: 'JSON' },
-  { key: 'ndjson', label: 'NDJSON' },
-]
 
 export interface ExportMenuProps {
   view: ExportableView
@@ -88,7 +82,7 @@ export function ExportMenu({ view, filenameBase, onExport, variant = 'button' }:
           <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-zinc-600">
             {rowCount.toLocaleString()} rows
           </div>
-          {FORMATS.map((f) => (
+          {EXPORT_FORMATS.map((f) => (
             <button
               key={f.key}
               onClick={() => run(f.key)}

@@ -41,6 +41,18 @@ Notable changes to medallion-terminal-core. Versions follow semver.
     (export serializers + flatten projections + embed config + descriptor
     builder).
 
+### Internal
+
+- **Consistency/readability pass.** No behavior or API changes. The
+  Recharts tooltip `contentStyle`, duplicated inline across all eight
+  chart widgets, is now a single shared `TOOLTIP_STYLE` in
+  `widgets/colors.ts` (Timeseries' `0.375rem` radius normalized to the
+  equivalent `6`). The export-format menu list, previously duplicated in
+  `ExportMenu` and `WidgetShell`, is now one `EXPORT_FORMATS` in
+  `export/serializers.ts`. `Radar` dropped its private color array in
+  favor of the shared `PALETTE` (byte-identical colors). Minor whitespace
+  tidy in the skeleton archetype map.
+
 ### Fixed
 
 - **DataTable** now renders the canonical `TablePayload` — `columns` as

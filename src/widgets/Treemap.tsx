@@ -4,7 +4,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
-import { SEMANTIC, PALETTE } from './colors'
+import { SEMANTIC, PALETTE, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
@@ -36,13 +36,7 @@ export function Treemap({ data }: WidgetProps) {
         content={<Tile />}
       >
         <Tooltip
-          contentStyle={{
-            backgroundColor: '#18181b',
-            border: '1px solid #3f3f46',
-            borderRadius: 6,
-            fontSize: 12,
-            color: '#fafafa',
-          }}
+          contentStyle={TOOLTIP_STYLE}
           formatter={(v: unknown) => [String(v), '']}
         />
       </ReTreemap>

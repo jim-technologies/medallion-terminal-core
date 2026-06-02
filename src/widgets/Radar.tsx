@@ -10,9 +10,8 @@ import {
   Legend,
 } from 'recharts'
 import type { WidgetProps } from '../types/template'
+import { PALETTE, TOOLTIP_STYLE } from './colors'
 import { Empty } from './states'
-
-const COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#a78bfa', '#f472b6', '#fbbf24']
 
 interface ChartData {
   rows: Record<string, unknown>[]
@@ -32,15 +31,7 @@ export function Radar({ data }: WidgetProps) {
         <PolarGrid stroke="#27272a" />
         <PolarAngleAxis dataKey="metric" stroke="#3f3f46" tick={{ fontSize: 11, fill: '#a1a1aa' }} />
         <PolarRadiusAxis stroke="#3f3f46" tick={{ fontSize: 9, fill: '#52525b' }} />
-        <Tooltip
-          contentStyle={{
-            backgroundColor: '#18181b',
-            border: '1px solid #3f3f46',
-            borderRadius: 6,
-            fontSize: 12,
-            color: '#fafafa',
-          }}
-        />
+        <Tooltip contentStyle={TOOLTIP_STYLE} />
         {chart.series.length > 1 && (
           <Legend wrapperStyle={{ fontSize: 11, color: '#a1a1aa' }} />
         )}
@@ -49,8 +40,8 @@ export function Radar({ data }: WidgetProps) {
             key={s}
             name={s}
             dataKey={s}
-            stroke={COLORS[i % COLORS.length]}
-            fill={COLORS[i % COLORS.length]}
+            stroke={PALETTE[i % PALETTE.length]}
+            fill={PALETTE[i % PALETTE.length]}
             fillOpacity={0.25}
             strokeWidth={1.5}
           />

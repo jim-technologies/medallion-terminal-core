@@ -4,6 +4,7 @@ import {
 } from 'recharts'
 import { useHover } from '../core/HoverContext'
 import { abbreviateAxis, formatTimestamp } from './format'
+import { TOOLTIP_STYLE } from './colors'
 import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
@@ -66,13 +67,7 @@ export function Timeseries({ data, options }: WidgetProps) {
           width={60}
         />
         <Tooltip
-          contentStyle={{
-            backgroundColor: '#18181b',
-            border: '1px solid #3f3f46',
-            borderRadius: '0.375rem',
-            fontSize: 12,
-            color: '#fafafa',
-          }}
+          contentStyle={TOOLTIP_STYLE}
           labelStyle={{ color: '#a1a1aa' }}
           labelFormatter={formatTimestamp}
         />

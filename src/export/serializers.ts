@@ -29,6 +29,16 @@ export const EXTENSION: Record<ExportFormat, string> = {
   parquet: 'parquet',
 }
 
+// The export formats offered in UI menus, in display order. Shared by the
+// standalone <ExportMenu> and the per-widget action menu in WidgetShell so
+// both surfaces stay in lockstep.
+export const EXPORT_FORMATS: { key: ExportFormat; label: string }[] = [
+  { key: 'csv', label: 'CSV' },
+  { key: 'parquet', label: 'Parquet' },
+  { key: 'json', label: 'JSON' },
+  { key: 'ndjson', label: 'NDJSON' },
+]
+
 // --- CSV ---
 
 // RFC-4180 escaping: wrap a field in quotes when it contains a comma,

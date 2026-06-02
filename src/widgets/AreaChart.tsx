@@ -10,6 +10,7 @@ import {
   Brush,
 } from 'recharts'
 import { abbreviateAxis, formatTimestamp } from './format'
+import { TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
@@ -49,13 +50,7 @@ export function AreaChart({ data, options }: WidgetProps) {
           width={50}
         />
         <Tooltip
-          contentStyle={{
-            backgroundColor: '#18181b',
-            border: '1px solid #3f3f46',
-            borderRadius: 6,
-            fontSize: 12,
-            color: '#fafafa',
-          }}
+          contentStyle={TOOLTIP_STYLE}
           labelStyle={{ color: '#a1a1aa' }}
           labelFormatter={formatTimestamp}
         />

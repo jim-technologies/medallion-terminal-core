@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
-import { resolveColor } from './colors'
+import { resolveColor, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
@@ -34,13 +34,7 @@ export function Distribution({ data }: WidgetProps) {
               {slices.map((_, i) => <Cell key={i} fill={colors[i]} />)}
             </Pie>
             <Tooltip
-              contentStyle={{
-                backgroundColor: '#18181b',
-                border: '1px solid #3f3f46',
-                borderRadius: 6,
-                fontSize: 12,
-                color: '#fafafa',
-              }}
+              contentStyle={TOOLTIP_STYLE}
               formatter={(v) => {
                 const n = Number(v) || 0
                 return [`${formatNumber(n)} (${((n / total) * 100).toFixed(1)}%)`, '']

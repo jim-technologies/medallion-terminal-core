@@ -3,6 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts'
 import { formatCompact } from './format'
+import { TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
@@ -41,13 +42,7 @@ export function Histogram({ data, options }: WidgetProps) {
           width={40}
         />
         <Tooltip
-          contentStyle={{
-            backgroundColor: '#18181b',
-            border: '1px solid #3f3f46',
-            borderRadius: 6,
-            fontSize: 12,
-            color: '#fafafa',
-          }}
+          contentStyle={TOOLTIP_STYLE}
           cursor={{ fill: 'rgba(82, 82, 91, 0.2)' }}
         />
         <Bar dataKey="count" fill="#0ea5e9" radius={[2, 2, 0, 0]} />

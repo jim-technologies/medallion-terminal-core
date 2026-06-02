@@ -22,6 +22,17 @@ export const PALETTE: readonly string[] = [
   '#f472b6', '#fbbf24', '#22d3ee', '#fb7185',
 ]
 
+// Shared Recharts tooltip styling. Every chart widget renders the same
+// dark popover, so the inline `contentStyle` lived duplicated across each
+// one — centralized here to keep them visually identical.
+export const TOOLTIP_STYLE = {
+  backgroundColor: '#18181b',
+  border: '1px solid #3f3f46',
+  borderRadius: 6,
+  fontSize: 12,
+  color: '#fafafa',
+} as const
+
 // Standard "name → color, fall back to palette[i]" resolution. Names
 // recognised: any SEMANTIC key, or a literal `#hex`. Anything else
 // rotates the palette by index.

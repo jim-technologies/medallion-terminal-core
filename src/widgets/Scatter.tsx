@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts'
-import { SEMANTIC } from './colors'
+import { SEMANTIC, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
@@ -51,13 +51,7 @@ export function Scatter({ data }: WidgetProps) {
         {hasSize && <ZAxis type="number" dataKey="size" range={[40, 280]} />}
         <Tooltip
           cursor={{ strokeDasharray: '3 3', stroke: '#52525b' }}
-          contentStyle={{
-            backgroundColor: '#18181b',
-            border: '1px solid #3f3f46',
-            borderRadius: 6,
-            fontSize: 12,
-            color: '#fafafa',
-          }}
+          contentStyle={TOOLTIP_STYLE}
         />
         <ReScatter
           data={points}

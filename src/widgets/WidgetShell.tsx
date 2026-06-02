@@ -9,15 +9,8 @@ import { evaluateAlert } from '../core/alerts'
 import { playAlertBeep } from '../core/sound'
 import { Skeleton, ErrorState } from './states'
 import { downloadView, viewRowCount, type ExportFormat } from '../export/exportView'
+import { EXPORT_FORMATS } from '../export/serializers'
 import type { WidgetConfig } from '../types/template'
-
-// Export formats offered in the widget action menu, in display order.
-const EXPORT_FORMATS: { key: ExportFormat; label: string }[] = [
-  { key: 'csv', label: 'CSV' },
-  { key: 'parquet', label: 'Parquet' },
-  { key: 'json', label: 'JSON' },
-  { key: 'ndjson', label: 'NDJSON' },
-]
 
 function formatAge(now: number, ts: number | null): string | null {
   if (!ts) return null
