@@ -243,9 +243,9 @@ export async function readConnectErrorMessage(res: Response): Promise<string> {
 // envelope is `[flag:1 byte][len:4 bytes BE][JSON payload]`; the end-
 // stream envelope sets flag bit 1.
 //
-// Lives in medallion because Connect is the wire format invariantprotocol
-// (and many other Connect-based services) project to. NOT files-
-// specific — any Connect server-streaming RPC produces these envelopes.
+// Lives here because Connect is the wire-format invariant that this and
+// many other Connect-based services project to. NOT backend-specific —
+// any Connect server-streaming RPC produces these envelopes.
 export async function parseConnectStream(res: Response, mime?: string): Promise<Blob> {
   if (!res.body) {
     throw new Error('parseConnectStream: response has no body')

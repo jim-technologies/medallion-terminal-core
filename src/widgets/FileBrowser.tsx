@@ -61,8 +61,8 @@ import type { WidgetProps } from '../types/template'
 
 interface FileBrowserOptions {
   path_ctx?: string
-  // ctx key holding the top-level "bucket" the widget browses (files: the
-  // org). Sent to the backend as the `bucket_param` field (default "org").
+  // ctx key holding the top-level "bucket" the widget browses (e.g. the
+  // org or account). Sent to the backend as the `bucket_param` field (default "org").
   bucket_ctx?: string
   bucket_param?: string
   // ctx keys driving pagination + view mode. The backend source reads
@@ -112,8 +112,8 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const uploadUrl = opts.upload_url
   const ingestUrl = opts.ingest_url
 
-  // `bucket` is the top-level container (files: the org). Named generically
-  // so the widget isn't files-specific; sent to the backend as bucketParam.
+  // `bucket` is the top-level container (e.g. the org or account). Named
+  // generically so the widget isn't backend-specific; sent to the backend as bucketParam.
   const bucket = ctx[bucketKey] ?? 'default'
   const currentPath = ctx[pathKey] ?? ''
   const page = parseInt(ctx[pageKey] ?? '1', 10) || 1

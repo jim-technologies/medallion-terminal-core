@@ -135,7 +135,7 @@ A live dashboard is dynamic by default. To **share** one as a frozen artifact â€
 // App-driven: upload the frozen template and mint a share link.
 <Dashboard template={live} backendUrl={api}
   onShare={async (snapshot) => {
-    const url = await uploadToBucket(snapshot)   // your files / object store
+    const url = await uploadToBucket(snapshot)   // your object store / bucket
     showShareLink(url)                            // e.g. embed.html?template=<url>
   }}
 />

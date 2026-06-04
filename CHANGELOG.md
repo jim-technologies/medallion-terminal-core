@@ -93,7 +93,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
     semantics, generic key.
 
 - **Pagination simplified.** The `__meta__: true` sentinel row + the
-  `extractPagination` helper are gone — that was a files-specific
+  `extractPagination` helper are gone — that was a backend-specific
   pagination shim that didn't belong in a generic widget. The
   FileBrowser now shows a simple Prev/Next pager: Next is enabled
   while the current page is full (entries.length === page_size);
