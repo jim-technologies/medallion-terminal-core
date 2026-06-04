@@ -27,7 +27,7 @@
     "bench": "vitest bench --run",
     "build": "tsc -b && vite build",
     "build:lib": "vite build --config vite.config.lib.ts && tsc -p tsconfig.build.json",
-    "prepare": "pnpm build:lib",
+    "prepack": "pnpm build:lib",
     "preview": "vite preview",
     "check": "pnpm lint && pnpm test && pnpm build && pnpm build:lib",
     "backend": "node examples/backend/server.mjs",

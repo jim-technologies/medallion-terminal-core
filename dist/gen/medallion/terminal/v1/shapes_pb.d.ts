@@ -1,0 +1,2087 @@
+import type { GenEnum, GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
+import type { StructJson } from "@bufbuild/protobuf/wkt";
+import type { JsonObject, Message } from "@bufbuild/protobuf";
+/**
+ * Describes the file medallion/terminal/v1/shapes.proto.
+ */
+export declare const file_medallion_terminal_v1_shapes: GenFile;
+/**
+ * --- Timeseries ---
+ * Use for: line charts of any timestamped numeric data.
+ * Examples: price history, sentiment over time, metric over time,
+ * a bot's PnL curve, request latency, election polling spread.
+ *
+ * JSON examples:
+ *
+ * Single series:
+ *   { "points": [
+ *       { "timestamp": "2026-04-01T00:00:00Z", "value": 67400 },
+ *       { "timestamp": "2026-04-02T00:00:00Z", "value": 68200 }
+ *   ]}
+ *
+ * Multi-series (overlay):
+ *   { "series": [
+ *       { "name": "Yes", "points": [...] },
+ *       { "name": "No",  "points": [...] }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.TimeseriesPayload
+ */
+export type TimeseriesPayload = Message<"medallion.terminal.v1.TimeseriesPayload"> & {
+    /**
+     * Single-series shorthand. Mutually exclusive with `series`.
+     *
+     * @generated from field: repeated medallion.terminal.v1.TimeseriesPoint points = 1;
+     */
+    points: TimeseriesPoint[];
+    /**
+     * Multi-series form. Each series renders as one line.
+     *
+     * @generated from field: repeated medallion.terminal.v1.TimeseriesSeries series = 2;
+     */
+    series: TimeseriesSeries[];
+    /**
+     * Optional markers overlaid on the chart. Use for buy/sell signals,
+     * events, alerts, AI-flagged regions, etc.
+     *
+     * @generated from field: repeated medallion.terminal.v1.Annotation annotations = 3;
+     */
+    annotations: Annotation[];
+};
+/**
+ * --- Timeseries ---
+ * Use for: line charts of any timestamped numeric data.
+ * Examples: price history, sentiment over time, metric over time,
+ * a bot's PnL curve, request latency, election polling spread.
+ *
+ * JSON examples:
+ *
+ * Single series:
+ *   { "points": [
+ *       { "timestamp": "2026-04-01T00:00:00Z", "value": 67400 },
+ *       { "timestamp": "2026-04-02T00:00:00Z", "value": 68200 }
+ *   ]}
+ *
+ * Multi-series (overlay):
+ *   { "series": [
+ *       { "name": "Yes", "points": [...] },
+ *       { "name": "No",  "points": [...] }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.TimeseriesPayload
+ */
+export type TimeseriesPayloadJson = {
+    /**
+     * Single-series shorthand. Mutually exclusive with `series`.
+     *
+     * @generated from field: repeated medallion.terminal.v1.TimeseriesPoint points = 1;
+     */
+    points?: TimeseriesPointJson[];
+    /**
+     * Multi-series form. Each series renders as one line.
+     *
+     * @generated from field: repeated medallion.terminal.v1.TimeseriesSeries series = 2;
+     */
+    series?: TimeseriesSeriesJson[];
+    /**
+     * Optional markers overlaid on the chart. Use for buy/sell signals,
+     * events, alerts, AI-flagged regions, etc.
+     *
+     * @generated from field: repeated medallion.terminal.v1.Annotation annotations = 3;
+     */
+    annotations?: AnnotationJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.TimeseriesPayload.
+ * Use `create(TimeseriesPayloadSchema)` to create a new message.
+ */
+export declare const TimeseriesPayloadSchema: GenMessage<TimeseriesPayload, {
+    jsonType: TimeseriesPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.TimeseriesPoint
+ */
+export type TimeseriesPoint = Message<"medallion.terminal.v1.TimeseriesPoint"> & {
+    /**
+     * ISO 8601 timestamp or Unix epoch (seconds or ms).
+     *
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp: string;
+    /**
+     * @generated from field: double value = 2;
+     */
+    value: number;
+};
+/**
+ * @generated from message medallion.terminal.v1.TimeseriesPoint
+ */
+export type TimeseriesPointJson = {
+    /**
+     * ISO 8601 timestamp or Unix epoch (seconds or ms).
+     *
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp?: string;
+    /**
+     * @generated from field: double value = 2;
+     */
+    value?: number | "NaN" | "Infinity" | "-Infinity";
+};
+/**
+ * Describes the message medallion.terminal.v1.TimeseriesPoint.
+ * Use `create(TimeseriesPointSchema)` to create a new message.
+ */
+export declare const TimeseriesPointSchema: GenMessage<TimeseriesPoint, {
+    jsonType: TimeseriesPointJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.TimeseriesSeries
+ */
+export type TimeseriesSeries = Message<"medallion.terminal.v1.TimeseriesSeries"> & {
+    /**
+     * Display name (used in legend/tooltip).
+     *
+     * @generated from field: string name = 1;
+     */
+    name: string;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.TimeseriesPoint points = 2;
+     */
+    points: TimeseriesPoint[];
+};
+/**
+ * @generated from message medallion.terminal.v1.TimeseriesSeries
+ */
+export type TimeseriesSeriesJson = {
+    /**
+     * Display name (used in legend/tooltip).
+     *
+     * @generated from field: string name = 1;
+     */
+    name?: string;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.TimeseriesPoint points = 2;
+     */
+    points?: TimeseriesPointJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.TimeseriesSeries.
+ * Use `create(TimeseriesSeriesSchema)` to create a new message.
+ */
+export declare const TimeseriesSeriesSchema: GenMessage<TimeseriesSeries, {
+    jsonType: TimeseriesSeriesJson;
+}>;
+/**
+ * --- Candles (OHLCV) ---
+ * Use for: any open/high/low/close timeseries, with optional volume.
+ * Examples: equity/crypto price bars, prediction market bid/ask bars.
+ *
+ * JSON example:
+ *   { "bars": [
+ *       { "timestamp": "2026-04-01", "open": 67100, "high": 68400,
+ *         "low": 66800, "close": 68200, "volume": 28500 }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.CandlePayload
+ */
+export type CandlePayload = Message<"medallion.terminal.v1.CandlePayload"> & {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.Candle bars = 1;
+     */
+    bars: Candle[];
+    /**
+     * Markers overlaid on the chart (trades, signals, events). Same
+     * shape as TimeseriesPayload.annotations — the renderer maps the
+     * `kind` to a built-in marker style (arrowUp for buy, arrowDown
+     * for sell, etc.).
+     *
+     * @generated from field: repeated medallion.terminal.v1.Annotation annotations = 2;
+     */
+    annotations: Annotation[];
+};
+/**
+ * --- Candles (OHLCV) ---
+ * Use for: any open/high/low/close timeseries, with optional volume.
+ * Examples: equity/crypto price bars, prediction market bid/ask bars.
+ *
+ * JSON example:
+ *   { "bars": [
+ *       { "timestamp": "2026-04-01", "open": 67100, "high": 68400,
+ *         "low": 66800, "close": 68200, "volume": 28500 }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.CandlePayload
+ */
+export type CandlePayloadJson = {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.Candle bars = 1;
+     */
+    bars?: CandleJson[];
+    /**
+     * Markers overlaid on the chart (trades, signals, events). Same
+     * shape as TimeseriesPayload.annotations — the renderer maps the
+     * `kind` to a built-in marker style (arrowUp for buy, arrowDown
+     * for sell, etc.).
+     *
+     * @generated from field: repeated medallion.terminal.v1.Annotation annotations = 2;
+     */
+    annotations?: AnnotationJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.CandlePayload.
+ * Use `create(CandlePayloadSchema)` to create a new message.
+ */
+export declare const CandlePayloadSchema: GenMessage<CandlePayload, {
+    jsonType: CandlePayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.Candle
+ */
+export type Candle = Message<"medallion.terminal.v1.Candle"> & {
+    /**
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp: string;
+    /**
+     * @generated from field: double open = 2;
+     */
+    open: number;
+    /**
+     * @generated from field: double high = 3;
+     */
+    high: number;
+    /**
+     * @generated from field: double low = 4;
+     */
+    low: number;
+    /**
+     * @generated from field: double close = 5;
+     */
+    close: number;
+    /**
+     * If set, rendered as a volume histogram beneath the chart.
+     *
+     * @generated from field: optional double volume = 6;
+     */
+    volume?: number | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.Candle
+ */
+export type CandleJson = {
+    /**
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp?: string;
+    /**
+     * @generated from field: double open = 2;
+     */
+    open?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: double high = 3;
+     */
+    high?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: double low = 4;
+     */
+    low?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: double close = 5;
+     */
+    close?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * If set, rendered as a volume histogram beneath the chart.
+     *
+     * @generated from field: optional double volume = 6;
+     */
+    volume?: number | "NaN" | "Infinity" | "-Infinity";
+};
+/**
+ * Describes the message medallion.terminal.v1.Candle.
+ * Use `create(CandleSchema)` to create a new message.
+ */
+export declare const CandleSchema: GenMessage<Candle, {
+    jsonType: CandleJson;
+}>;
+/**
+ * Annotation — a single marker overlay on a chart (timeseries or
+ * candles). Used for buy/sell signals, alerts, news markers, etc.
+ *
+ * JSON example (on a candlestick):
+ *   { "timestamp": "2026-04-08", "label": "BUY", "kind": "buy" }
+ *   { "timestamp": "2026-04-12", "label": "SELL 0.5",
+ *     "kind": "sell", "value": 71200 }
+ *
+ * Recognized `kind` values map to default colors and shapes:
+ *   buy   → up-arrow / green
+ *   sell  → down-arrow / red
+ *   info  → circle / sky-blue
+ *   warn  → circle / amber
+ * Other values render as a neutral gray dot.
+ *
+ * @generated from message medallion.terminal.v1.Annotation
+ */
+export type Annotation = Message<"medallion.terminal.v1.Annotation"> & {
+    /**
+     * Where on the x-axis the marker sits (ISO 8601 or Unix epoch).
+     *
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp: string;
+    /**
+     * Y-axis position. Optional for candlestick (the renderer pins
+     * above/below the bar based on `kind`); recommended for timeseries.
+     *
+     * @generated from field: optional double value = 2;
+     */
+    value?: number | undefined;
+    /**
+     * Short text shown next to the marker (and as hover tooltip).
+     *
+     * @generated from field: string label = 3;
+     */
+    label: string;
+    /**
+     * Marker semantic. Free-form — unrecognized values render as
+     * neutral. Recognized: "buy", "sell", "info", "warn".
+     *
+     * @generated from field: string kind = 4;
+     */
+    kind: string;
+    /**
+     * Optional color override (CSS hex). Use only when the default
+     * kind color is wrong for the dashboard's palette.
+     *
+     * @generated from field: optional string color = 5;
+     */
+    color?: string | undefined;
+    /**
+     * If present, the annotation is a band spanning [timestamp,
+     * end_timestamp] — the renderer fills the region instead of
+     * drawing a point marker. Use for in-sample / out-of-sample
+     * backtest splits, stress periods (COVID, FTX), FOMC windows,
+     * blackout zones, regime detector outputs, etc.
+     *
+     * @generated from field: optional string end_timestamp = 6;
+     */
+    endTimestamp?: string | undefined;
+};
+/**
+ * Annotation — a single marker overlay on a chart (timeseries or
+ * candles). Used for buy/sell signals, alerts, news markers, etc.
+ *
+ * JSON example (on a candlestick):
+ *   { "timestamp": "2026-04-08", "label": "BUY", "kind": "buy" }
+ *   { "timestamp": "2026-04-12", "label": "SELL 0.5",
+ *     "kind": "sell", "value": 71200 }
+ *
+ * Recognized `kind` values map to default colors and shapes:
+ *   buy   → up-arrow / green
+ *   sell  → down-arrow / red
+ *   info  → circle / sky-blue
+ *   warn  → circle / amber
+ * Other values render as a neutral gray dot.
+ *
+ * @generated from message medallion.terminal.v1.Annotation
+ */
+export type AnnotationJson = {
+    /**
+     * Where on the x-axis the marker sits (ISO 8601 or Unix epoch).
+     *
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp?: string;
+    /**
+     * Y-axis position. Optional for candlestick (the renderer pins
+     * above/below the bar based on `kind`); recommended for timeseries.
+     *
+     * @generated from field: optional double value = 2;
+     */
+    value?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Short text shown next to the marker (and as hover tooltip).
+     *
+     * @generated from field: string label = 3;
+     */
+    label?: string;
+    /**
+     * Marker semantic. Free-form — unrecognized values render as
+     * neutral. Recognized: "buy", "sell", "info", "warn".
+     *
+     * @generated from field: string kind = 4;
+     */
+    kind?: string;
+    /**
+     * Optional color override (CSS hex). Use only when the default
+     * kind color is wrong for the dashboard's palette.
+     *
+     * @generated from field: optional string color = 5;
+     */
+    color?: string;
+    /**
+     * If present, the annotation is a band spanning [timestamp,
+     * end_timestamp] — the renderer fills the region instead of
+     * drawing a point marker. Use for in-sample / out-of-sample
+     * backtest splits, stress periods (COVID, FTX), FOMC windows,
+     * blackout zones, regime detector outputs, etc.
+     *
+     * @generated from field: optional string end_timestamp = 6;
+     */
+    endTimestamp?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.Annotation.
+ * Use `create(AnnotationSchema)` to create a new message.
+ */
+export declare const AnnotationSchema: GenMessage<Annotation, {
+    jsonType: AnnotationJson;
+}>;
+/**
+ * --- Table ---
+ * Use for: any tabular data.
+ * Examples: holdings, leaderboards, peer comparison, order book,
+ * list of open positions, cron job registry.
+ *
+ * JSON examples:
+ *
+ * Implicit (columns auto-detected from row keys):
+ *   { "rows": [
+ *       { "asset": "BTC", "qty": 1.5, "price": 67500 },
+ *       { "asset": "ETH", "qty": 12,  "price": 3450 }
+ *   ]}
+ *
+ * Explicit (column types and formatting hints):
+ *   { "columns": [
+ *       { "key": "asset", "label": "Asset", "type": "COLUMN_TYPE_STRING" },
+ *       { "key": "price", "label": "Price", "type": "COLUMN_TYPE_NUMBER",
+ *         "format": "currency:USD" }
+ *     ],
+ *     "rows": [...] }
+ *
+ * @generated from message medallion.terminal.v1.TablePayload
+ */
+export type TablePayload = Message<"medallion.terminal.v1.TablePayload"> & {
+    /**
+     * Optional schema. If omitted, columns auto-detect from the first row.
+     *
+     * @generated from field: repeated medallion.terminal.v1.TableColumn columns = 1;
+     */
+    columns: TableColumn[];
+    /**
+     * Row data as objects (keys must match column.key when columns are set).
+     *
+     * @generated from field: repeated google.protobuf.Struct rows = 2;
+     */
+    rows: JsonObject[];
+};
+/**
+ * --- Table ---
+ * Use for: any tabular data.
+ * Examples: holdings, leaderboards, peer comparison, order book,
+ * list of open positions, cron job registry.
+ *
+ * JSON examples:
+ *
+ * Implicit (columns auto-detected from row keys):
+ *   { "rows": [
+ *       { "asset": "BTC", "qty": 1.5, "price": 67500 },
+ *       { "asset": "ETH", "qty": 12,  "price": 3450 }
+ *   ]}
+ *
+ * Explicit (column types and formatting hints):
+ *   { "columns": [
+ *       { "key": "asset", "label": "Asset", "type": "COLUMN_TYPE_STRING" },
+ *       { "key": "price", "label": "Price", "type": "COLUMN_TYPE_NUMBER",
+ *         "format": "currency:USD" }
+ *     ],
+ *     "rows": [...] }
+ *
+ * @generated from message medallion.terminal.v1.TablePayload
+ */
+export type TablePayloadJson = {
+    /**
+     * Optional schema. If omitted, columns auto-detect from the first row.
+     *
+     * @generated from field: repeated medallion.terminal.v1.TableColumn columns = 1;
+     */
+    columns?: TableColumnJson[];
+    /**
+     * Row data as objects (keys must match column.key when columns are set).
+     *
+     * @generated from field: repeated google.protobuf.Struct rows = 2;
+     */
+    rows?: StructJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.TablePayload.
+ * Use `create(TablePayloadSchema)` to create a new message.
+ */
+export declare const TablePayloadSchema: GenMessage<TablePayload, {
+    jsonType: TablePayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.TableColumn
+ */
+export type TableColumn = Message<"medallion.terminal.v1.TableColumn"> & {
+    /**
+     * Field key matching row object keys.
+     *
+     * @generated from field: string key = 1;
+     */
+    key: string;
+    /**
+     * Display label. Defaults to `key` if omitted.
+     *
+     * @generated from field: string label = 2;
+     */
+    label: string;
+    /**
+     * Type hint for sorting and default formatting.
+     *
+     * @generated from field: medallion.terminal.v1.ColumnType type = 3;
+     */
+    type: ColumnType;
+    /**
+     * Optional formatting directive. Examples:
+     *   "currency:USD", "currency:EUR", "percent", "percent:2",
+     *   "datetime", "date", "compact" (1.2M, 3.4B), "delta"
+     *
+     * @generated from field: optional string format = 4;
+     */
+    format?: string | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.TableColumn
+ */
+export type TableColumnJson = {
+    /**
+     * Field key matching row object keys.
+     *
+     * @generated from field: string key = 1;
+     */
+    key?: string;
+    /**
+     * Display label. Defaults to `key` if omitted.
+     *
+     * @generated from field: string label = 2;
+     */
+    label?: string;
+    /**
+     * Type hint for sorting and default formatting.
+     *
+     * @generated from field: medallion.terminal.v1.ColumnType type = 3;
+     */
+    type?: ColumnTypeJson;
+    /**
+     * Optional formatting directive. Examples:
+     *   "currency:USD", "currency:EUR", "percent", "percent:2",
+     *   "datetime", "date", "compact" (1.2M, 3.4B), "delta"
+     *
+     * @generated from field: optional string format = 4;
+     */
+    format?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.TableColumn.
+ * Use `create(TableColumnSchema)` to create a new message.
+ */
+export declare const TableColumnSchema: GenMessage<TableColumn, {
+    jsonType: TableColumnJson;
+}>;
+/**
+ * --- Metric ---
+ * Use for: a single headline number with optional context.
+ * Examples: spot price, total PnL, today's volume, model accuracy,
+ * open positions count, win rate.
+ *
+ * JSON examples:
+ *
+ * Full:
+ *   { "value": 67842.50, "delta": 2.18, "unit": "USD",
+ *     "label": "Spot", "trend": [67100, 67300, 67500, 67800, 67842] }
+ *
+ * Minimal:
+ *   { "value": 67842.50 }
+ *
+ * @generated from message medallion.terminal.v1.MetricPayload
+ */
+export type MetricPayload = Message<"medallion.terminal.v1.MetricPayload"> & {
+    /**
+     * @generated from field: double value = 1;
+     */
+    value: number;
+    /**
+     * Change since some baseline; shown as a colored delta indicator.
+     * Convention: a fraction (0.0218 = +2.18%). Sign drives color.
+     *
+     * @generated from field: optional double delta = 2;
+     */
+    delta?: number | undefined;
+    /**
+     * Unit displayed after the value ("USD", "%", "req/s").
+     *
+     * @generated from field: optional string unit = 3;
+     */
+    unit?: string | undefined;
+    /**
+     * Subtitle below the value.
+     *
+     * @generated from field: optional string label = 4;
+     */
+    label?: string | undefined;
+    /**
+     * Optional sparkline — tiny inline trend chart. Just the values,
+     * evenly spaced. For a full chart, use TimeseriesPayload instead.
+     *
+     * @generated from field: repeated double trend = 5;
+     */
+    trend: number[];
+};
+/**
+ * --- Metric ---
+ * Use for: a single headline number with optional context.
+ * Examples: spot price, total PnL, today's volume, model accuracy,
+ * open positions count, win rate.
+ *
+ * JSON examples:
+ *
+ * Full:
+ *   { "value": 67842.50, "delta": 2.18, "unit": "USD",
+ *     "label": "Spot", "trend": [67100, 67300, 67500, 67800, 67842] }
+ *
+ * Minimal:
+ *   { "value": 67842.50 }
+ *
+ * @generated from message medallion.terminal.v1.MetricPayload
+ */
+export type MetricPayloadJson = {
+    /**
+     * @generated from field: double value = 1;
+     */
+    value?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Change since some baseline; shown as a colored delta indicator.
+     * Convention: a fraction (0.0218 = +2.18%). Sign drives color.
+     *
+     * @generated from field: optional double delta = 2;
+     */
+    delta?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Unit displayed after the value ("USD", "%", "req/s").
+     *
+     * @generated from field: optional string unit = 3;
+     */
+    unit?: string;
+    /**
+     * Subtitle below the value.
+     *
+     * @generated from field: optional string label = 4;
+     */
+    label?: string;
+    /**
+     * Optional sparkline — tiny inline trend chart. Just the values,
+     * evenly spaced. For a full chart, use TimeseriesPayload instead.
+     *
+     * @generated from field: repeated double trend = 5;
+     */
+    trend?: (number | "NaN" | "Infinity" | "-Infinity")[];
+};
+/**
+ * Describes the message medallion.terminal.v1.MetricPayload.
+ * Use `create(MetricPayloadSchema)` to create a new message.
+ */
+export declare const MetricPayloadSchema: GenMessage<MetricPayload, {
+    jsonType: MetricPayloadJson;
+}>;
+/**
+ * --- Gauge ---
+ * Use for: bounded scalars where position within a range is meaningful.
+ * Examples: prediction market probability (0..1), sentiment (-1..1),
+ * model confidence, cron-fleet health (% green), workflow progress.
+ *
+ * JSON examples:
+ *
+ * Probability:
+ *   { "value": 0.67, "min": 0, "max": 1, "label": "Yes" }
+ *
+ * Sentiment with color bands:
+ *   { "value": 0.32, "min": -1, "max": 1, "label": "Net sentiment",
+ *     "bands": [
+ *       { "from": -1,  "to": -0.3, "color": "danger", "label": "Bearish" },
+ *       { "from": -0.3,"to":  0.3, "color": "warn",   "label": "Neutral" },
+ *       { "from":  0.3,"to":  1,   "color": "ok",     "label": "Bullish" }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.GaugePayload
+ */
+export type GaugePayload = Message<"medallion.terminal.v1.GaugePayload"> & {
+    /**
+     * @generated from field: double value = 1;
+     */
+    value: number;
+    /**
+     * Range bounds. Default min=0, max=1.
+     *
+     * @generated from field: optional double min = 2;
+     */
+    min?: number | undefined;
+    /**
+     * @generated from field: optional double max = 3;
+     */
+    max?: number | undefined;
+    /**
+     * @generated from field: optional string label = 4;
+     */
+    label?: string | undefined;
+    /**
+     * Optional colored zones along the range.
+     *
+     * @generated from field: repeated medallion.terminal.v1.GaugeBand bands = 5;
+     */
+    bands: GaugeBand[];
+};
+/**
+ * --- Gauge ---
+ * Use for: bounded scalars where position within a range is meaningful.
+ * Examples: prediction market probability (0..1), sentiment (-1..1),
+ * model confidence, cron-fleet health (% green), workflow progress.
+ *
+ * JSON examples:
+ *
+ * Probability:
+ *   { "value": 0.67, "min": 0, "max": 1, "label": "Yes" }
+ *
+ * Sentiment with color bands:
+ *   { "value": 0.32, "min": -1, "max": 1, "label": "Net sentiment",
+ *     "bands": [
+ *       { "from": -1,  "to": -0.3, "color": "danger", "label": "Bearish" },
+ *       { "from": -0.3,"to":  0.3, "color": "warn",   "label": "Neutral" },
+ *       { "from":  0.3,"to":  1,   "color": "ok",     "label": "Bullish" }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.GaugePayload
+ */
+export type GaugePayloadJson = {
+    /**
+     * @generated from field: double value = 1;
+     */
+    value?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Range bounds. Default min=0, max=1.
+     *
+     * @generated from field: optional double min = 2;
+     */
+    min?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: optional double max = 3;
+     */
+    max?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: optional string label = 4;
+     */
+    label?: string;
+    /**
+     * Optional colored zones along the range.
+     *
+     * @generated from field: repeated medallion.terminal.v1.GaugeBand bands = 5;
+     */
+    bands?: GaugeBandJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.GaugePayload.
+ * Use `create(GaugePayloadSchema)` to create a new message.
+ */
+export declare const GaugePayloadSchema: GenMessage<GaugePayload, {
+    jsonType: GaugePayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.GaugeBand
+ */
+export type GaugeBand = Message<"medallion.terminal.v1.GaugeBand"> & {
+    /**
+     * @generated from field: double from = 1;
+     */
+    from: number;
+    /**
+     * @generated from field: double to = 2;
+     */
+    to: number;
+    /**
+     * Semantic color name. The frontend maps this to a theme color.
+     * Recognized: "ok", "warn", "danger", "info", "muted".
+     *
+     * @generated from field: string color = 3;
+     */
+    color: string;
+    /**
+     * @generated from field: optional string label = 4;
+     */
+    label?: string | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.GaugeBand
+ */
+export type GaugeBandJson = {
+    /**
+     * @generated from field: double from = 1;
+     */
+    from?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: double to = 2;
+     */
+    to?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Semantic color name. The frontend maps this to a theme color.
+     * Recognized: "ok", "warn", "danger", "info", "muted".
+     *
+     * @generated from field: string color = 3;
+     */
+    color?: string;
+    /**
+     * @generated from field: optional string label = 4;
+     */
+    label?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.GaugeBand.
+ * Use `create(GaugeBandSchema)` to create a new message.
+ */
+export declare const GaugeBandSchema: GenMessage<GaugeBand, {
+    jsonType: GaugeBandJson;
+}>;
+/**
+ * --- Heatmap ---
+ * Use for: 2D matrices colored by value.
+ * Examples: sector returns matrix, correlation matrix, cron fleet
+ * health (job × hour), sentiment grid (entity × source), calendar
+ * heatmap (day × hour activity).
+ *
+ * JSON example:
+ *   { "rows": ["Tech", "Energy", "Finance"],
+ *     "columns": ["Mon", "Tue", "Wed"],
+ *     "cells": [
+ *       { "row": 0, "col": 0, "value": 1.2 },
+ *       { "row": 0, "col": 1, "value": -0.8 }
+ *     ],
+ *     "scale": "diverging" }
+ *
+ * @generated from message medallion.terminal.v1.HeatmapPayload
+ */
+export type HeatmapPayload = Message<"medallion.terminal.v1.HeatmapPayload"> & {
+    /**
+     * Row labels (ordered). Cell.row indexes into this list.
+     *
+     * @generated from field: repeated string rows = 1;
+     */
+    rows: string[];
+    /**
+     * Column labels (ordered). Cell.col indexes into this list.
+     *
+     * @generated from field: repeated string columns = 2;
+     */
+    columns: string[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.HeatmapCell cells = 3;
+     */
+    cells: HeatmapCell[];
+    /**
+     * Color scale bounds. Auto-detected from data if unset.
+     *
+     * @generated from field: optional double min = 4;
+     */
+    min?: number | undefined;
+    /**
+     * @generated from field: optional double max = 5;
+     */
+    max?: number | undefined;
+    /**
+     * Color scale type: "diverging" (centered at 0) or "sequential".
+     * Default: sequential.
+     *
+     * @generated from field: optional string scale = 6;
+     */
+    scale?: string | undefined;
+};
+/**
+ * --- Heatmap ---
+ * Use for: 2D matrices colored by value.
+ * Examples: sector returns matrix, correlation matrix, cron fleet
+ * health (job × hour), sentiment grid (entity × source), calendar
+ * heatmap (day × hour activity).
+ *
+ * JSON example:
+ *   { "rows": ["Tech", "Energy", "Finance"],
+ *     "columns": ["Mon", "Tue", "Wed"],
+ *     "cells": [
+ *       { "row": 0, "col": 0, "value": 1.2 },
+ *       { "row": 0, "col": 1, "value": -0.8 }
+ *     ],
+ *     "scale": "diverging" }
+ *
+ * @generated from message medallion.terminal.v1.HeatmapPayload
+ */
+export type HeatmapPayloadJson = {
+    /**
+     * Row labels (ordered). Cell.row indexes into this list.
+     *
+     * @generated from field: repeated string rows = 1;
+     */
+    rows?: string[];
+    /**
+     * Column labels (ordered). Cell.col indexes into this list.
+     *
+     * @generated from field: repeated string columns = 2;
+     */
+    columns?: string[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.HeatmapCell cells = 3;
+     */
+    cells?: HeatmapCellJson[];
+    /**
+     * Color scale bounds. Auto-detected from data if unset.
+     *
+     * @generated from field: optional double min = 4;
+     */
+    min?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: optional double max = 5;
+     */
+    max?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Color scale type: "diverging" (centered at 0) or "sequential".
+     * Default: sequential.
+     *
+     * @generated from field: optional string scale = 6;
+     */
+    scale?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.HeatmapPayload.
+ * Use `create(HeatmapPayloadSchema)` to create a new message.
+ */
+export declare const HeatmapPayloadSchema: GenMessage<HeatmapPayload, {
+    jsonType: HeatmapPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.HeatmapCell
+ */
+export type HeatmapCell = Message<"medallion.terminal.v1.HeatmapCell"> & {
+    /**
+     * @generated from field: int32 row = 1;
+     */
+    row: number;
+    /**
+     * @generated from field: int32 col = 2;
+     */
+    col: number;
+    /**
+     * @generated from field: double value = 3;
+     */
+    value: number;
+    /**
+     * Optional text override (otherwise the formatted value is shown).
+     *
+     * @generated from field: optional string label = 4;
+     */
+    label?: string | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.HeatmapCell
+ */
+export type HeatmapCellJson = {
+    /**
+     * @generated from field: int32 row = 1;
+     */
+    row?: number;
+    /**
+     * @generated from field: int32 col = 2;
+     */
+    col?: number;
+    /**
+     * @generated from field: double value = 3;
+     */
+    value?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Optional text override (otherwise the formatted value is shown).
+     *
+     * @generated from field: optional string label = 4;
+     */
+    label?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.HeatmapCell.
+ * Use `create(HeatmapCellSchema)` to create a new message.
+ */
+export declare const HeatmapCellSchema: GenMessage<HeatmapCell, {
+    jsonType: HeatmapCellJson;
+}>;
+/**
+ * --- Events (timeline) ---
+ * Use for: chronological streams where status is first-class.
+ * Examples: cron run history, workflow stage progress, trade fills,
+ * alerts, deployment timeline, bet settlement log.
+ *
+ * JSON example:
+ *   { "events": [
+ *       { "timestamp": "2026-04-01T09:00:00Z",
+ *         "label": "Daily ingest",
+ *         "status": "EVENT_STATUS_OK",
+ *         "body": "Processed 1.2M rows in 38s" },
+ *       { "timestamp": "2026-04-01T09:15:00Z",
+ *         "label": "Sentiment refresh",
+ *         "status": "EVENT_STATUS_WARN",
+ *         "body": "3 sources timed out, used cached values" }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.EventPayload
+ */
+export type EventPayload = Message<"medallion.terminal.v1.EventPayload"> & {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.Event events = 1;
+     */
+    events: Event[];
+};
+/**
+ * --- Events (timeline) ---
+ * Use for: chronological streams where status is first-class.
+ * Examples: cron run history, workflow stage progress, trade fills,
+ * alerts, deployment timeline, bet settlement log.
+ *
+ * JSON example:
+ *   { "events": [
+ *       { "timestamp": "2026-04-01T09:00:00Z",
+ *         "label": "Daily ingest",
+ *         "status": "EVENT_STATUS_OK",
+ *         "body": "Processed 1.2M rows in 38s" },
+ *       { "timestamp": "2026-04-01T09:15:00Z",
+ *         "label": "Sentiment refresh",
+ *         "status": "EVENT_STATUS_WARN",
+ *         "body": "3 sources timed out, used cached values" }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.EventPayload
+ */
+export type EventPayloadJson = {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.Event events = 1;
+     */
+    events?: EventJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.EventPayload.
+ * Use `create(EventPayloadSchema)` to create a new message.
+ */
+export declare const EventPayloadSchema: GenMessage<EventPayload, {
+    jsonType: EventPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.Event
+ */
+export type Event = Message<"medallion.terminal.v1.Event"> & {
+    /**
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp: string;
+    /**
+     * Primary one-line description.
+     *
+     * @generated from field: string label = 2;
+     */
+    label: string;
+    /**
+     * @generated from field: medallion.terminal.v1.EventStatus status = 3;
+     */
+    status: EventStatus;
+    /**
+     * Detail or longer description.
+     *
+     * @generated from field: optional string body = 4;
+     */
+    body?: string | undefined;
+    /**
+     * Attribution (e.g. "scheduler", "user@x", "ingest-worker-3").
+     *
+     * @generated from field: optional string source = 5;
+     */
+    source?: string | undefined;
+    /**
+     * @generated from field: repeated string tags = 6;
+     */
+    tags: string[];
+};
+/**
+ * @generated from message medallion.terminal.v1.Event
+ */
+export type EventJson = {
+    /**
+     * @generated from field: string timestamp = 1;
+     */
+    timestamp?: string;
+    /**
+     * Primary one-line description.
+     *
+     * @generated from field: string label = 2;
+     */
+    label?: string;
+    /**
+     * @generated from field: medallion.terminal.v1.EventStatus status = 3;
+     */
+    status?: EventStatusJson;
+    /**
+     * Detail or longer description.
+     *
+     * @generated from field: optional string body = 4;
+     */
+    body?: string;
+    /**
+     * Attribution (e.g. "scheduler", "user@x", "ingest-worker-3").
+     *
+     * @generated from field: optional string source = 5;
+     */
+    source?: string;
+    /**
+     * @generated from field: repeated string tags = 6;
+     */
+    tags?: string[];
+};
+/**
+ * Describes the message medallion.terminal.v1.Event.
+ * Use `create(EventSchema)` to create a new message.
+ */
+export declare const EventSchema: GenMessage<Event, {
+    jsonType: EventJson;
+}>;
+/**
+ * --- Distribution ---
+ * Use for: labeled categorical proportions (pie/donut/stacked bar).
+ * Examples: bull/bear sentiment split, asset allocation, win/loss
+ * breakdown, vote share, topic distribution.
+ *
+ * JSON example:
+ *   { "slices": [
+ *       { "label": "Bull", "value": 0.62, "color": "ok" },
+ *       { "label": "Bear", "value": 0.38, "color": "danger" }
+ *   ]}
+ *
+ * Values are normalized for rendering — pass raw counts or
+ * fractions, the widget computes percentages.
+ *
+ * @generated from message medallion.terminal.v1.DistributionPayload
+ */
+export type DistributionPayload = Message<"medallion.terminal.v1.DistributionPayload"> & {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.DistributionSlice slices = 1;
+     */
+    slices: DistributionSlice[];
+    /**
+     * Optional total to normalize against. Default: sum of slice values.
+     * Use this when slices represent a subset (e.g. "top 5 of N").
+     *
+     * @generated from field: optional double total = 2;
+     */
+    total?: number | undefined;
+};
+/**
+ * --- Distribution ---
+ * Use for: labeled categorical proportions (pie/donut/stacked bar).
+ * Examples: bull/bear sentiment split, asset allocation, win/loss
+ * breakdown, vote share, topic distribution.
+ *
+ * JSON example:
+ *   { "slices": [
+ *       { "label": "Bull", "value": 0.62, "color": "ok" },
+ *       { "label": "Bear", "value": 0.38, "color": "danger" }
+ *   ]}
+ *
+ * Values are normalized for rendering — pass raw counts or
+ * fractions, the widget computes percentages.
+ *
+ * @generated from message medallion.terminal.v1.DistributionPayload
+ */
+export type DistributionPayloadJson = {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.DistributionSlice slices = 1;
+     */
+    slices?: DistributionSliceJson[];
+    /**
+     * Optional total to normalize against. Default: sum of slice values.
+     * Use this when slices represent a subset (e.g. "top 5 of N").
+     *
+     * @generated from field: optional double total = 2;
+     */
+    total?: number | "NaN" | "Infinity" | "-Infinity";
+};
+/**
+ * Describes the message medallion.terminal.v1.DistributionPayload.
+ * Use `create(DistributionPayloadSchema)` to create a new message.
+ */
+export declare const DistributionPayloadSchema: GenMessage<DistributionPayload, {
+    jsonType: DistributionPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.DistributionSlice
+ */
+export type DistributionSlice = Message<"medallion.terminal.v1.DistributionSlice"> & {
+    /**
+     * @generated from field: string label = 1;
+     */
+    label: string;
+    /**
+     * @generated from field: double value = 2;
+     */
+    value: number;
+    /**
+     * Semantic color hint. Recognized: "ok", "warn", "danger", "info",
+     * "muted". Free-form names map to the dashboard's palette.
+     *
+     * @generated from field: optional string color = 3;
+     */
+    color?: string | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.DistributionSlice
+ */
+export type DistributionSliceJson = {
+    /**
+     * @generated from field: string label = 1;
+     */
+    label?: string;
+    /**
+     * @generated from field: double value = 2;
+     */
+    value?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Semantic color hint. Recognized: "ok", "warn", "danger", "info",
+     * "muted". Free-form names map to the dashboard's palette.
+     *
+     * @generated from field: optional string color = 3;
+     */
+    color?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.DistributionSlice.
+ * Use `create(DistributionSliceSchema)` to create a new message.
+ */
+export declare const DistributionSliceSchema: GenMessage<DistributionSlice, {
+    jsonType: DistributionSliceJson;
+}>;
+/**
+ * --- Order Book ---
+ * Use for: bid/ask depth at multiple price levels.
+ * Examples: crypto exchange order books, prediction market yes/no
+ * books, options bid/ask ladders, NBBO views.
+ *
+ * JSON example:
+ *   { "bids": [
+ *       { "price": 67840, "size": 0.42 },
+ *       { "price": 67830, "size": 1.10 },
+ *       { "price": 67820, "size": 2.85 }
+ *     ],
+ *     "asks": [
+ *       { "price": 67850, "size": 0.30 },
+ *       { "price": 67860, "size": 0.95 },
+ *       { "price": 67870, "size": 2.40 }
+ *     ],
+ *     "mid": 67845, "spread": 10 }
+ *
+ * Convention: bids sorted high→low, asks sorted low→high.
+ *
+ * @generated from message medallion.terminal.v1.OrderBookPayload
+ */
+export type OrderBookPayload = Message<"medallion.terminal.v1.OrderBookPayload"> & {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.OrderLevel bids = 1;
+     */
+    bids: OrderLevel[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.OrderLevel asks = 2;
+     */
+    asks: OrderLevel[];
+    /**
+     * Mid price (auto-computed if absent).
+     *
+     * @generated from field: optional double mid = 3;
+     */
+    mid?: number | undefined;
+    /**
+     * Bid/ask spread (auto-computed if absent).
+     *
+     * @generated from field: optional double spread = 4;
+     */
+    spread?: number | undefined;
+    /**
+     * Optional venue name when comparing across exchanges.
+     *
+     * @generated from field: optional string venue = 5;
+     */
+    venue?: string | undefined;
+};
+/**
+ * --- Order Book ---
+ * Use for: bid/ask depth at multiple price levels.
+ * Examples: crypto exchange order books, prediction market yes/no
+ * books, options bid/ask ladders, NBBO views.
+ *
+ * JSON example:
+ *   { "bids": [
+ *       { "price": 67840, "size": 0.42 },
+ *       { "price": 67830, "size": 1.10 },
+ *       { "price": 67820, "size": 2.85 }
+ *     ],
+ *     "asks": [
+ *       { "price": 67850, "size": 0.30 },
+ *       { "price": 67860, "size": 0.95 },
+ *       { "price": 67870, "size": 2.40 }
+ *     ],
+ *     "mid": 67845, "spread": 10 }
+ *
+ * Convention: bids sorted high→low, asks sorted low→high.
+ *
+ * @generated from message medallion.terminal.v1.OrderBookPayload
+ */
+export type OrderBookPayloadJson = {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.OrderLevel bids = 1;
+     */
+    bids?: OrderLevelJson[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.OrderLevel asks = 2;
+     */
+    asks?: OrderLevelJson[];
+    /**
+     * Mid price (auto-computed if absent).
+     *
+     * @generated from field: optional double mid = 3;
+     */
+    mid?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Bid/ask spread (auto-computed if absent).
+     *
+     * @generated from field: optional double spread = 4;
+     */
+    spread?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Optional venue name when comparing across exchanges.
+     *
+     * @generated from field: optional string venue = 5;
+     */
+    venue?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.OrderBookPayload.
+ * Use `create(OrderBookPayloadSchema)` to create a new message.
+ */
+export declare const OrderBookPayloadSchema: GenMessage<OrderBookPayload, {
+    jsonType: OrderBookPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.OrderLevel
+ */
+export type OrderLevel = Message<"medallion.terminal.v1.OrderLevel"> & {
+    /**
+     * @generated from field: double price = 1;
+     */
+    price: number;
+    /**
+     * @generated from field: double size = 2;
+     */
+    size: number;
+    /**
+     * Optional total at this level (sum of orders).
+     *
+     * @generated from field: optional int32 orders = 3;
+     */
+    orders?: number | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.OrderLevel
+ */
+export type OrderLevelJson = {
+    /**
+     * @generated from field: double price = 1;
+     */
+    price?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: double size = 2;
+     */
+    size?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Optional total at this level (sum of orders).
+     *
+     * @generated from field: optional int32 orders = 3;
+     */
+    orders?: number;
+};
+/**
+ * Describes the message medallion.terminal.v1.OrderLevel.
+ * Use `create(OrderLevelSchema)` to create a new message.
+ */
+export declare const OrderLevelSchema: GenMessage<OrderLevel, {
+    jsonType: OrderLevelJson;
+}>;
+/**
+ * --- Paired Grid ---
+ * Use for: side-by-side comparison of two columns at every numeric
+ * row key. Pure "left vs right at key" lattice — the payload
+ * declares which numeric measures it carries; the widget renders
+ * whatever the backend declared.
+ *
+ * Examples:
+ *   * Options chain: rows keyed by strike, measures bid/ask/iv/delta,
+ *     left=calls, right=puts.
+ *   * Sportsbook ladder: rows keyed by line, measures odds/hold,
+ *     left=home, right=away.
+ *   * Prediction market: rows keyed by threshold, measures yes/no_price,
+ *     left=YES, right=NO.
+ *   * A/B test by percentile: rows keyed by percentile, measures
+ *     mean/p_value, left=A, right=B.
+ *
+ * JSON example (options chain):
+ *   { "subject": "BTC", "dimension": "2026-06-27", "subject_value": 67842,
+ *     "left_label": "Calls", "right_label": "Puts", "key_label": "Strike",
+ *     "measures": [
+ *       { "key": "iv",    "label": "IV",  "format": "percent" },
+ *       { "key": "delta", "label": "Δ" },
+ *       { "key": "bid",   "label": "Bid", "format": "compact" },
+ *       { "key": "ask",   "label": "Ask", "format": "compact" }
+ *     ],
+ *     "rows": [
+ *       { "key": 65000,
+ *         "left":  { "values": { "iv": 0.62, "delta":  0.74, "bid": 4200, "ask": 4250 } },
+ *         "right": { "values": { "iv": 0.58, "delta": -0.26, "bid":  280, "ask":  310 } } }
+ *   ]}
+ *
+ * JSON example (sportsbook spread ladder):
+ *   { "subject": "Lakers vs Celtics", "dimension": "Spread",
+ *     "left_label": "Lakers", "right_label": "Celtics", "key_label": "Line",
+ *     "measures": [{ "key": "odds", "label": "Odds" }],
+ *     "rows": [
+ *       { "key": -3.5, "left": { "values": { "odds": 1.91 } }, "right": { "values": { "odds": 1.95 } } },
+ *       { "key":  3.5, "left": { "values": { "odds": 2.05 } }, "right": { "values": { "odds": 1.81 } } }
+ *   ]}
+ *
+ * Cross-venue comparison: emit one PairedGridPayload per venue and
+ * arrange them side-by-side via the dashboard grid; or use a Table
+ * widget with explicit venue columns for direct best-quote comparison.
+ *
+ * @generated from message medallion.terminal.v1.PairedGridPayload
+ */
+export type PairedGridPayload = Message<"medallion.terminal.v1.PairedGridPayload"> & {
+    /**
+     * What this grid is about. Free-form (ticker, match name, A/B test
+     * label). Surfaced in the header.
+     *
+     * @generated from field: string subject = 1;
+     */
+    subject: string;
+    /**
+     * Free-form qualifier (option expiry "2026-06-27", market line type
+     * "spread", test variant axis "p50/p95/p99"). Surfaced as a subtitle.
+     *
+     * @generated from field: string dimension = 2;
+     */
+    dimension: string;
+    /**
+     * Headline number for the subject (option underlying spot price,
+     * current score, baseline metric). Used to highlight the closest
+     * row in the grid (ATM, current line, etc.).
+     *
+     * @generated from field: optional double subject_value = 3;
+     */
+    subjectValue?: number | undefined;
+    /**
+     * Optional venue name (e.g. "deribit", "draftkings"). Useful when
+     * the dashboard shows multiple grids side-by-side.
+     *
+     * @generated from field: optional string venue = 4;
+     */
+    venue?: string | undefined;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.PairedRow rows = 5;
+     */
+    rows: PairedRow[];
+    /**
+     * Header labels for the two columns. Default: "Left" / "Right".
+     * Use to surface domain meaning (e.g. "Calls" / "Puts", "Home" /
+     * "Away", "YES" / "NO") without forcing the proto to know the domain.
+     *
+     * @generated from field: optional string left_label = 6;
+     */
+    leftLabel?: string | undefined;
+    /**
+     * @generated from field: optional string right_label = 7;
+     */
+    rightLabel?: string | undefined;
+    /**
+     * Header label for the row key column. Default: "Key".
+     * Use to label the lattice (e.g. "Strike", "Line", "Percentile").
+     *
+     * @generated from field: optional string key_label = 8;
+     */
+    keyLabel?: string | undefined;
+    /**
+     * Declared measures — the numeric columns the backend carries on
+     * each side. Order is render order. If empty, the widget unions the
+     * keys it sees on row sides (best-effort, formats default to number).
+     *
+     * @generated from field: repeated medallion.terminal.v1.PairedMeasure measures = 9;
+     */
+    measures: PairedMeasure[];
+};
+/**
+ * --- Paired Grid ---
+ * Use for: side-by-side comparison of two columns at every numeric
+ * row key. Pure "left vs right at key" lattice — the payload
+ * declares which numeric measures it carries; the widget renders
+ * whatever the backend declared.
+ *
+ * Examples:
+ *   * Options chain: rows keyed by strike, measures bid/ask/iv/delta,
+ *     left=calls, right=puts.
+ *   * Sportsbook ladder: rows keyed by line, measures odds/hold,
+ *     left=home, right=away.
+ *   * Prediction market: rows keyed by threshold, measures yes/no_price,
+ *     left=YES, right=NO.
+ *   * A/B test by percentile: rows keyed by percentile, measures
+ *     mean/p_value, left=A, right=B.
+ *
+ * JSON example (options chain):
+ *   { "subject": "BTC", "dimension": "2026-06-27", "subject_value": 67842,
+ *     "left_label": "Calls", "right_label": "Puts", "key_label": "Strike",
+ *     "measures": [
+ *       { "key": "iv",    "label": "IV",  "format": "percent" },
+ *       { "key": "delta", "label": "Δ" },
+ *       { "key": "bid",   "label": "Bid", "format": "compact" },
+ *       { "key": "ask",   "label": "Ask", "format": "compact" }
+ *     ],
+ *     "rows": [
+ *       { "key": 65000,
+ *         "left":  { "values": { "iv": 0.62, "delta":  0.74, "bid": 4200, "ask": 4250 } },
+ *         "right": { "values": { "iv": 0.58, "delta": -0.26, "bid":  280, "ask":  310 } } }
+ *   ]}
+ *
+ * JSON example (sportsbook spread ladder):
+ *   { "subject": "Lakers vs Celtics", "dimension": "Spread",
+ *     "left_label": "Lakers", "right_label": "Celtics", "key_label": "Line",
+ *     "measures": [{ "key": "odds", "label": "Odds" }],
+ *     "rows": [
+ *       { "key": -3.5, "left": { "values": { "odds": 1.91 } }, "right": { "values": { "odds": 1.95 } } },
+ *       { "key":  3.5, "left": { "values": { "odds": 2.05 } }, "right": { "values": { "odds": 1.81 } } }
+ *   ]}
+ *
+ * Cross-venue comparison: emit one PairedGridPayload per venue and
+ * arrange them side-by-side via the dashboard grid; or use a Table
+ * widget with explicit venue columns for direct best-quote comparison.
+ *
+ * @generated from message medallion.terminal.v1.PairedGridPayload
+ */
+export type PairedGridPayloadJson = {
+    /**
+     * What this grid is about. Free-form (ticker, match name, A/B test
+     * label). Surfaced in the header.
+     *
+     * @generated from field: string subject = 1;
+     */
+    subject?: string;
+    /**
+     * Free-form qualifier (option expiry "2026-06-27", market line type
+     * "spread", test variant axis "p50/p95/p99"). Surfaced as a subtitle.
+     *
+     * @generated from field: string dimension = 2;
+     */
+    dimension?: string;
+    /**
+     * Headline number for the subject (option underlying spot price,
+     * current score, baseline metric). Used to highlight the closest
+     * row in the grid (ATM, current line, etc.).
+     *
+     * @generated from field: optional double subject_value = 3;
+     */
+    subjectValue?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Optional venue name (e.g. "deribit", "draftkings"). Useful when
+     * the dashboard shows multiple grids side-by-side.
+     *
+     * @generated from field: optional string venue = 4;
+     */
+    venue?: string;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.PairedRow rows = 5;
+     */
+    rows?: PairedRowJson[];
+    /**
+     * Header labels for the two columns. Default: "Left" / "Right".
+     * Use to surface domain meaning (e.g. "Calls" / "Puts", "Home" /
+     * "Away", "YES" / "NO") without forcing the proto to know the domain.
+     *
+     * @generated from field: optional string left_label = 6;
+     */
+    leftLabel?: string;
+    /**
+     * @generated from field: optional string right_label = 7;
+     */
+    rightLabel?: string;
+    /**
+     * Header label for the row key column. Default: "Key".
+     * Use to label the lattice (e.g. "Strike", "Line", "Percentile").
+     *
+     * @generated from field: optional string key_label = 8;
+     */
+    keyLabel?: string;
+    /**
+     * Declared measures — the numeric columns the backend carries on
+     * each side. Order is render order. If empty, the widget unions the
+     * keys it sees on row sides (best-effort, formats default to number).
+     *
+     * @generated from field: repeated medallion.terminal.v1.PairedMeasure measures = 9;
+     */
+    measures?: PairedMeasureJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.PairedGridPayload.
+ * Use `create(PairedGridPayloadSchema)` to create a new message.
+ */
+export declare const PairedGridPayloadSchema: GenMessage<PairedGridPayload, {
+    jsonType: PairedGridPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.PairedRow
+ */
+export type PairedRow = Message<"medallion.terminal.v1.PairedRow"> & {
+    /**
+     * Row identifier — strike, line, percentile, threshold. Numeric so
+     * the renderer can sort and compute proximity to subject_value.
+     *
+     * @generated from field: double key = 1;
+     */
+    key: number;
+    /**
+     * @generated from field: optional medallion.terminal.v1.PairedSide left = 2;
+     */
+    left?: PairedSide | undefined;
+    /**
+     * @generated from field: optional medallion.terminal.v1.PairedSide right = 3;
+     */
+    right?: PairedSide | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.PairedRow
+ */
+export type PairedRowJson = {
+    /**
+     * Row identifier — strike, line, percentile, threshold. Numeric so
+     * the renderer can sort and compute proximity to subject_value.
+     *
+     * @generated from field: double key = 1;
+     */
+    key?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: optional medallion.terminal.v1.PairedSide left = 2;
+     */
+    left?: PairedSideJson;
+    /**
+     * @generated from field: optional medallion.terminal.v1.PairedSide right = 3;
+     */
+    right?: PairedSideJson;
+};
+/**
+ * Describes the message medallion.terminal.v1.PairedRow.
+ * Use `create(PairedRowSchema)` to create a new message.
+ */
+export declare const PairedRowSchema: GenMessage<PairedRow, {
+    jsonType: PairedRowJson;
+}>;
+/**
+ * PairedSide — one side of a paired row. Pure value bag, keyed by
+ * PairedMeasure.key. No typed fields — everything domain-specific
+ * (bid/ask/iv/odds/p_value) is declared via `measures`.
+ *
+ * @generated from message medallion.terminal.v1.PairedSide
+ */
+export type PairedSide = Message<"medallion.terminal.v1.PairedSide"> & {
+    /**
+     * @generated from field: map<string, double> values = 1;
+     */
+    values: {
+        [key: string]: number;
+    };
+};
+/**
+ * PairedSide — one side of a paired row. Pure value bag, keyed by
+ * PairedMeasure.key. No typed fields — everything domain-specific
+ * (bid/ask/iv/odds/p_value) is declared via `measures`.
+ *
+ * @generated from message medallion.terminal.v1.PairedSide
+ */
+export type PairedSideJson = {
+    /**
+     * @generated from field: map<string, double> values = 1;
+     */
+    values?: {
+        [key: string]: number | "NaN" | "Infinity" | "-Infinity";
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.PairedSide.
+ * Use `create(PairedSideSchema)` to create a new message.
+ */
+export declare const PairedSideSchema: GenMessage<PairedSide, {
+    jsonType: PairedSideJson;
+}>;
+/**
+ * PairedMeasure — declares one numeric column that appears on both
+ * sides of the grid. The widget renders measures in declared order.
+ *
+ * @generated from message medallion.terminal.v1.PairedMeasure
+ */
+export type PairedMeasure = Message<"medallion.terminal.v1.PairedMeasure"> & {
+    /**
+     * Field key — matches PairedSide.values map keys.
+     *
+     * @generated from field: string key = 1;
+     */
+    key: string;
+    /**
+     * Display label (header text). Defaults to `key` if omitted.
+     *
+     * @generated from field: string label = 2;
+     */
+    label: string;
+    /**
+     * Optional format hint. Recognized: "number" (default), "percent",
+     * "compact" (1.2K, 3.4M), "currency", "currency:USD", "delta".
+     *
+     * @generated from field: optional string format = 3;
+     */
+    format?: string | undefined;
+};
+/**
+ * PairedMeasure — declares one numeric column that appears on both
+ * sides of the grid. The widget renders measures in declared order.
+ *
+ * @generated from message medallion.terminal.v1.PairedMeasure
+ */
+export type PairedMeasureJson = {
+    /**
+     * Field key — matches PairedSide.values map keys.
+     *
+     * @generated from field: string key = 1;
+     */
+    key?: string;
+    /**
+     * Display label (header text). Defaults to `key` if omitted.
+     *
+     * @generated from field: string label = 2;
+     */
+    label?: string;
+    /**
+     * Optional format hint. Recognized: "number" (default), "percent",
+     * "compact" (1.2K, 3.4M), "currency", "currency:USD", "delta".
+     *
+     * @generated from field: optional string format = 3;
+     */
+    format?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.PairedMeasure.
+ * Use `create(PairedMeasureSchema)` to create a new message.
+ */
+export declare const PairedMeasureSchema: GenMessage<PairedMeasure, {
+    jsonType: PairedMeasureJson;
+}>;
+/**
+ * --- Embed ---
+ * Use for: pointing the `image` or `iframe` widget at a URL that
+ * changes with context. Lets a Connect backend swap an AI-generated
+ * chart, a per-symbol screenshot, or an embedded third-party widget
+ * without forcing the dashboard to use the `url` escape hatch.
+ *
+ * JSON example (image):
+ *   { "url": "https://charts.example.com/btc.png", "label": "BTC, 1h" }
+ *
+ * JSON example (iframe with sandbox override):
+ *   { "url": "https://embed.tradingview.com/...",
+ *     "label": "TradingView BTC",
+ *     "sandbox": "allow-scripts allow-same-origin allow-popups" }
+ *
+ * @generated from message medallion.terminal.v1.EmbedPayload
+ */
+export type EmbedPayload = Message<"medallion.terminal.v1.EmbedPayload"> & {
+    /**
+     * The URL the widget renders. For `image`, src; for `iframe`, src.
+     *
+     * @generated from field: string url = 1;
+     */
+    url: string;
+    /**
+     * Display label. Image: alt text. Iframe: title.
+     *
+     * @generated from field: optional string label = 2;
+     */
+    label?: string | undefined;
+    /**
+     * Iframe-only override of the sandbox attribute. Ignored by image.
+     *
+     * @generated from field: optional string sandbox = 3;
+     */
+    sandbox?: string | undefined;
+};
+/**
+ * --- Embed ---
+ * Use for: pointing the `image` or `iframe` widget at a URL that
+ * changes with context. Lets a Connect backend swap an AI-generated
+ * chart, a per-symbol screenshot, or an embedded third-party widget
+ * without forcing the dashboard to use the `url` escape hatch.
+ *
+ * JSON example (image):
+ *   { "url": "https://charts.example.com/btc.png", "label": "BTC, 1h" }
+ *
+ * JSON example (iframe with sandbox override):
+ *   { "url": "https://embed.tradingview.com/...",
+ *     "label": "TradingView BTC",
+ *     "sandbox": "allow-scripts allow-same-origin allow-popups" }
+ *
+ * @generated from message medallion.terminal.v1.EmbedPayload
+ */
+export type EmbedPayloadJson = {
+    /**
+     * The URL the widget renders. For `image`, src; for `iframe`, src.
+     *
+     * @generated from field: string url = 1;
+     */
+    url?: string;
+    /**
+     * Display label. Image: alt text. Iframe: title.
+     *
+     * @generated from field: optional string label = 2;
+     */
+    label?: string;
+    /**
+     * Iframe-only override of the sandbox attribute. Ignored by image.
+     *
+     * @generated from field: optional string sandbox = 3;
+     */
+    sandbox?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.EmbedPayload.
+ * Use `create(EmbedPayloadSchema)` to create a new message.
+ */
+export declare const EmbedPayloadSchema: GenMessage<EmbedPayload, {
+    jsonType: EmbedPayloadJson;
+}>;
+/**
+ * --- Text ---
+ * Use for: news feeds, AI summaries, articles, alerts.
+ *
+ * JSON example:
+ *   { "items": [
+ *       { "title": "Bitcoin breaks $73K", "body": "...",
+ *         "source": "CoinDesk", "date": "2026-04-14",
+ *         "tags": ["BTC", "ETF"], "sentiment": 0.6 },
+ *       { "title": "Daily summary", "body": "Markets rallied..." }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.TextPayload
+ */
+export type TextPayload = Message<"medallion.terminal.v1.TextPayload"> & {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.TextItem items = 1;
+     */
+    items: TextItem[];
+};
+/**
+ * --- Text ---
+ * Use for: news feeds, AI summaries, articles, alerts.
+ *
+ * JSON example:
+ *   { "items": [
+ *       { "title": "Bitcoin breaks $73K", "body": "...",
+ *         "source": "CoinDesk", "date": "2026-04-14",
+ *         "tags": ["BTC", "ETF"], "sentiment": 0.6 },
+ *       { "title": "Daily summary", "body": "Markets rallied..." }
+ *   ]}
+ *
+ * @generated from message medallion.terminal.v1.TextPayload
+ */
+export type TextPayloadJson = {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.TextItem items = 1;
+     */
+    items?: TextItemJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.TextPayload.
+ * Use `create(TextPayloadSchema)` to create a new message.
+ */
+export declare const TextPayloadSchema: GenMessage<TextPayload, {
+    jsonType: TextPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.TextItem
+ */
+export type TextItem = Message<"medallion.terminal.v1.TextItem"> & {
+    /**
+     * @generated from field: optional string title = 1;
+     */
+    title?: string | undefined;
+    /**
+     * @generated from field: optional string body = 2;
+     */
+    body?: string | undefined;
+    /**
+     * Attribution (publication, author handle, model name, etc.).
+     *
+     * @generated from field: optional string source = 3;
+     */
+    source?: string | undefined;
+    /**
+     * Display date string. Free-form (e.g. "Mar 14", "2 hours ago").
+     *
+     * @generated from field: optional string date = 4;
+     */
+    date?: string | undefined;
+    /**
+     * @generated from field: optional string author = 5;
+     */
+    author?: string | undefined;
+    /**
+     * @generated from field: repeated string tags = 6;
+     */
+    tags: string[];
+    /**
+     * Optional link the item references.
+     *
+     * @generated from field: optional string url = 7;
+     */
+    url?: string | undefined;
+    /**
+     * Optional sentiment score in [-1, 1]. Used to color the item.
+     *
+     * @generated from field: optional double sentiment = 8;
+     */
+    sentiment?: number | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.TextItem
+ */
+export type TextItemJson = {
+    /**
+     * @generated from field: optional string title = 1;
+     */
+    title?: string;
+    /**
+     * @generated from field: optional string body = 2;
+     */
+    body?: string;
+    /**
+     * Attribution (publication, author handle, model name, etc.).
+     *
+     * @generated from field: optional string source = 3;
+     */
+    source?: string;
+    /**
+     * Display date string. Free-form (e.g. "Mar 14", "2 hours ago").
+     *
+     * @generated from field: optional string date = 4;
+     */
+    date?: string;
+    /**
+     * @generated from field: optional string author = 5;
+     */
+    author?: string;
+    /**
+     * @generated from field: repeated string tags = 6;
+     */
+    tags?: string[];
+    /**
+     * Optional link the item references.
+     *
+     * @generated from field: optional string url = 7;
+     */
+    url?: string;
+    /**
+     * Optional sentiment score in [-1, 1]. Used to color the item.
+     *
+     * @generated from field: optional double sentiment = 8;
+     */
+    sentiment?: number | "NaN" | "Infinity" | "-Infinity";
+};
+/**
+ * Describes the message medallion.terminal.v1.TextItem.
+ * Use `create(TextItemSchema)` to create a new message.
+ */
+export declare const TextItemSchema: GenMessage<TextItem, {
+    jsonType: TextItemJson;
+}>;
+/**
+ * @generated from enum medallion.terminal.v1.ColumnType
+ */
+export declare enum ColumnType {
+    /**
+     * @generated from enum value: COLUMN_TYPE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from enum value: COLUMN_TYPE_STRING = 1;
+     */
+    STRING = 1,
+    /**
+     * @generated from enum value: COLUMN_TYPE_NUMBER = 2;
+     */
+    NUMBER = 2,
+    /**
+     * @generated from enum value: COLUMN_TYPE_BOOLEAN = 3;
+     */
+    BOOLEAN = 3,
+    /**
+     * @generated from enum value: COLUMN_TYPE_TIMESTAMP = 4;
+     */
+    TIMESTAMP = 4
+}
+/**
+ * @generated from enum medallion.terminal.v1.ColumnType
+ */
+export type ColumnTypeJson = "COLUMN_TYPE_UNSPECIFIED" | "COLUMN_TYPE_STRING" | "COLUMN_TYPE_NUMBER" | "COLUMN_TYPE_BOOLEAN" | "COLUMN_TYPE_TIMESTAMP";
+/**
+ * Describes the enum medallion.terminal.v1.ColumnType.
+ */
+export declare const ColumnTypeSchema: GenEnum<ColumnType, ColumnTypeJson>;
+/**
+ * @generated from enum medallion.terminal.v1.EventStatus
+ */
+export declare enum EventStatus {
+    /**
+     * @generated from enum value: EVENT_STATUS_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from enum value: EVENT_STATUS_OK = 1;
+     */
+    OK = 1,
+    /**
+     * @generated from enum value: EVENT_STATUS_WARN = 2;
+     */
+    WARN = 2,
+    /**
+     * @generated from enum value: EVENT_STATUS_ERROR = 3;
+     */
+    ERROR = 3,
+    /**
+     * @generated from enum value: EVENT_STATUS_INFO = 4;
+     */
+    INFO = 4,
+    /**
+     * @generated from enum value: EVENT_STATUS_PENDING = 5;
+     */
+    PENDING = 5
+}
+/**
+ * @generated from enum medallion.terminal.v1.EventStatus
+ */
+export type EventStatusJson = "EVENT_STATUS_UNSPECIFIED" | "EVENT_STATUS_OK" | "EVENT_STATUS_WARN" | "EVENT_STATUS_ERROR" | "EVENT_STATUS_INFO" | "EVENT_STATUS_PENDING";
+/**
+ * Describes the enum medallion.terminal.v1.EventStatus.
+ */
+export declare const EventStatusSchema: GenEnum<EventStatus, EventStatusJson>;

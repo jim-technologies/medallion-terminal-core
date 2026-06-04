@@ -1,5 +1,7 @@
 node_modules
-dist
+# dist/ is committed so this package is installable directly from git
+# (github:jim-technologies/medallion-terminal-core) with no build step. Rebuild
+# with `pnpm build:lib` and commit the result when src/ changes.
 dist-app
 storybook-static
 *.tsbuildinfo
