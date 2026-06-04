@@ -1,0 +1,7 @@
+# pnpm 11+ reads build-script allowlists from here (it no longer honors the
+# `pnpm.onlyBuiltDependencies` field in package.json). esbuild fetches its
+# native binary via a postinstall build; allowing it lets this package build
+# its dist/ bundle — including when it's consumed as a git dependency, where
+# pnpm runs the `prepare` script in an isolated install.
+onlyBuiltDependencies:
+  - esbuild
