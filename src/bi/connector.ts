@@ -2,8 +2,8 @@
 // BI tool (Power BI, Looker Studio, Superset, Grafana) consumes to point
 // at a Medallion data endpoint.
 //
-// IMPORTANT SCOPE: the actual SQL/DuckDB gateway lives in a separate backend service
-// (a backend concern, NOT this repo). This module defines and documents
+// IMPORTANT SCOPE: the actual SQL/DuckDB gateway lives in a separate
+// backend service (NOT this repo). This module defines and documents
 // the CLIENT-SIDE contract:
 //   1. the typed shape of a connection descriptor,
 //   2. a builder that derives it from a ListSources catalog +
@@ -37,8 +37,8 @@ export type BiShape =
 // The transport a BI tool uses to reach the data. Two are documented:
 //   - "connect": the ConnectRPC TerminalService (Get returns a payload
 //     the BI connector flattens — same flatten() this library exports).
-//   - "sql": a SQL/Arrow-Flight/DuckDB HTTP gateway (served by
-//     a separate backend service) that BI tools with a generic SQL/ODBC connector
+//   - "sql": a SQL/Arrow-Flight/DuckDB HTTP gateway (served by a
+//     separate backend service) that BI tools with a generic SQL/ODBC connector
 //     (Power BI, Superset, Grafana, Looker) point at directly.
 export type BiProtocol = 'connect' | 'sql'
 

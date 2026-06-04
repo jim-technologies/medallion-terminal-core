@@ -338,7 +338,7 @@ source's canonical `Shape`), params, and the precomputed Get RPC URL.
 (endpoint, method, request body template, auth hint) for a connection
 config UI.
 
-> The actual SQL/DuckDB/Arrow gateway is a **a separate backend service backend**
+> The actual SQL/DuckDB/Arrow gateway is a **separate backend**
 > concern. To reach full Power BI / Looker / Superset / Grafana parity
 > the backend must serve either (a) the ConnectRPC `TerminalService.Get`
 > these tools call via a generic HTTP/JSON connector, or (b) a SQL/ODBC

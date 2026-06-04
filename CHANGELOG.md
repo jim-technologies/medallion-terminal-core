@@ -34,7 +34,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
     per-table column schema derived from each source's `Shape`, params,
     precomputed Get RPC URL). `connectionFields()` renders the
     human-pasteable connection settings for a config UI. The actual
-    SQL/DuckDB gateway remains a a separate backend service backend concern; this is
+    SQL/DuckDB gateway remains a separate backend concern; this is
     the client-side contract BI tools consume.
   - Adds `hyparquet-writer` (dependency) and `hyparquet` (devDependency,
     used only by the Parquet round-trip test). 41 new unit tests
