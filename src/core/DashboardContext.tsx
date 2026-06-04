@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { WidgetConfig } from '../types/template'
+import type { Template, WidgetConfig } from '../types/template'
 
 export type Severity = 'ok' | 'warn' | 'error' | 'info'
 
@@ -138,6 +138,15 @@ export interface DashboardContextValue {
   // widget id so React state diffing is cheap.
   widgetHealth: Record<string, WidgetHealth>
   reportWidgetHealth: (id: string, state: WidgetHealth | null) => void
+  // Snapshot capture. Each grid WidgetShell registers a cheap getter for
+  // its current rendered data (keyed by widgetSnapshotKey). The getter
+  // reads a ref, so registration causes no re-renders and capture reads
+  // exactly the on-screen frame. Returns an unregister fn.
+  registerWidgetData: (key: string, getData: () => unknown) => () => void
+  // Freeze the live dashboard into a static, self-contained Template:
+  // every widget's current data baked into source.inline, no backend.
+  // Used by the "Share" flow — see core/snapshot.ts.
+  snapshot: () => Template
 }
 
 export interface WidgetHealth {
@@ -178,6 +187,8 @@ export const DEFAULT_DASHBOARD_CONTEXT: DashboardContextValue = {
   soundEnabled: false,
   widgetHealth: {},
   reportWidgetHealth: () => {},
+  registerWidgetData: () => () => {},
+  snapshot: () => ({ widgets: [] }),
 }
 
 export const DashboardContext = createContext<DashboardContextValue>(DEFAULT_DASHBOARD_CONTEXT)

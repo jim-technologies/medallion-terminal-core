@@ -12,6 +12,7 @@ import { CommandPalette, type PaletteSuggest } from './CommandPalette'
 import { ShortcutsOverlay } from './ShortcutsOverlay'
 import { Toaster, type Toast } from './Toaster'
 import { validateTemplate, type ValidationIssue } from './validateTemplate'
+import { buildSnapshot, isStaticTemplate, widgetSnapshotKey } from './snapshot'
 import { useNow } from './NowContext'
 
 const DEFAULT_HEIGHTS: Record<string, number> = {
@@ -296,8 +297,57 @@ function SnapshotButton({ onCopied }: { onCopied: () => void }) {
   )
 }
 
+// Freeze the live dashboard into a static snapshot and hand it off. The
+// app passes onShare to upload the frozen Template to a bucket and mint
+// a share link; with no handler it downloads the snapshot JSON so the
+// flow is testable standalone.
+function ShareButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="px-2 py-1 text-[10px] uppercase tracking-wider text-emerald-400/80 hover:text-emerald-300 bg-zinc-900 border border-emerald-500/30 rounded"
+      title="Freeze data into a static, self-contained dashboard to share — nothing re-fetches or regenerates"
+    >
+      Share
+    </button>
+  )
+}
+
+// Shown instead of the live controls when viewing a frozen snapshot.
+function SnapshotBadge({ frozenAt }: { frozenAt?: string }) {
+  const when = frozenAt ? new Date(frozenAt) : null
+  const label = when && !Number.isNaN(when.getTime())
+    ? when.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+    : null
+  return (
+    <span
+      className="flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400 bg-zinc-900 border border-zinc-800 rounded"
+      title={label ? `Static snapshot frozen ${label} — data does not refresh` : 'Static snapshot — data does not refresh'}
+    >
+      <span className="w-1.5 h-1.5 rounded-full bg-zinc-500" />
+      Snapshot{label ? <span className="text-zinc-600 normal-case tracking-normal">· {label}</span> : null}
+    </span>
+  )
+}
+
+// Browser-only: download a frozen Template as a .json file. The default
+// "Share" action when the host didn't pass onShare.
+function downloadSnapshot(snapshot: Template): void {
+  if (typeof document === 'undefined' || typeof URL?.createObjectURL !== 'function') return
+  const safe = (snapshot.title || 'dashboard').trim().replace(/[^\w.-]+/g, '_').replace(/^_+|_+$/g, '') || 'dashboard'
+  const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${safe}.snapshot.json`
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 0)
+}
+
 export function Dashboard({
-  template, backendUrl, onEvent, onCtxChange, paletteSuggest, chrome = 'full',
+  template, backendUrl, onEvent, onCtxChange, paletteSuggest, chrome = 'full', onShare,
 }: {
   template: Template
   backendUrl?: string
@@ -319,6 +369,13 @@ export function Dashboard({
   // carries a `ctx` map that's merged into the active context when
   // the user clicks it.
   paletteSuggest?: PaletteSuggest
+  // "Share" handler. The toolbar Share button freezes the live dashboard
+  // into a static, self-contained Template (every widget's current data
+  // baked into source.inline — no re-fetch, no AI regeneration) and hands
+  // it here. Typically: upload to a bucket and mint a share URL. When
+  // omitted, Share downloads the snapshot JSON so the flow works
+  // standalone. Hidden on a template that is already a snapshot.
+  onShare?: (snapshot: Template) => void
 }) {
   const breakpoint = useBreakpoint()
   const columns = template.columns || 12
@@ -328,6 +385,9 @@ export function Dashboard({
   // templates instead of a blank widget tile and a console error.
   const issues = useMemo(() => validateTemplate(template), [template])
   const hasErrors = useMemo(() => issues.some(i => i.severity === 'error'), [issues])
+  // A frozen template (shared snapshot) renders offline — suppress the
+  // live controls (refresh/reload/share) and show a snapshot badge.
+  const frozen = useMemo(() => !!template.frozenAt || isStaticTemplate(template), [template])
   const [bannerDismissed, setBannerDismissed] = useState(false)
   // ctx initial state: template defaults overlaid by URL params.
   // URL wins so shared bookmarks restore exactly the view the sender saw.
@@ -397,6 +457,36 @@ export function Dashboard({
       }
       return { ...prev, [id]: state }
     })
+  }, [])
+
+  // Snapshot capture registry. Maps each grid widget's snapshot key to a
+  // getter for its current rendered data. Ref (not state) — registration
+  // must not trigger re-renders, and we only read it on demand when the
+  // user hits Share. Getters read a ref inside WidgetShell, so snapshot()
+  // captures exactly the on-screen frame.
+  const widgetDataGetters = useRef<Map<string, () => unknown>>(new Map())
+  const registerWidgetData = useCallback((key: string, getData: () => unknown) => {
+    widgetDataGetters.current.set(key, getData)
+    return () => {
+      // Guard against a remount race: only delete if still our getter.
+      if (widgetDataGetters.current.get(key) === getData) {
+        widgetDataGetters.current.delete(key)
+      }
+    }
+  }, [])
+
+  // Freeze the live dashboard into a static Template. Reads the current
+  // widget set (post AI edits), the active ctx, and each widget's
+  // captured data — nothing re-fetches. Held in a ref so identity is
+  // stable for the context value while always seeing fresh state.
+  const snapshotState = useRef({ widgets, ctx, template })
+  snapshotState.current = { widgets, ctx, template }
+  const snapshot = useCallback((): Template => {
+    const { widgets: w, ctx: c, template: t } = snapshotState.current
+    return buildSnapshot(t, w, c, (widget, i) => {
+      const getter = widgetDataGetters.current.get(widgetSnapshotKey(widget, i))
+      return getter ? getter() : undefined
+    }, new Date().toISOString())
   }, [])
 
   const emit = useCallback((event: DashboardEvent) => {
@@ -494,11 +584,13 @@ export function Dashboard({
       soundEnabled,
       widgetHealth,
       reportWidgetHealth,
+      registerWidgetData,
+      snapshot,
     }),
     [dispatch, ctx, setCtx, backendUrl, widgets, refreshIntervalMs, toast, compact,
      fullscreenId, focusedId, refreshPulse, requestRefresh, emit,
      recentActions, clearRecentActions, recentAlerts, clearRecentAlerts,
-     soundEnabled, widgetHealth, reportWidgetHealth],
+     soundEnabled, widgetHealth, reportWidgetHealth, registerWidgetData, snapshot],
   )
 
   // Esc closes fullscreen.
@@ -610,11 +702,27 @@ export function Dashboard({
           })}
           {chrome === 'full' && (
           <div className="ml-auto flex items-center gap-2">
-            <HealthPill health={widgetHealth} />
-            <RefreshPicker value={refreshIntervalMs} onChange={setRefreshIntervalMs} />
-            <ReloadAllButton onClick={() => requestRefresh('*')} />
+            {frozen ? (
+              <SnapshotBadge frozenAt={template.frozenAt} />
+            ) : (
+              <>
+                <HealthPill health={widgetHealth} />
+                <RefreshPicker value={refreshIntervalMs} onChange={setRefreshIntervalMs} />
+                <ReloadAllButton onClick={() => requestRefresh('*')} />
+              </>
+            )}
             <SoundToggle enabled={soundEnabled} onToggle={() => setSoundEnabled(s => !s)} />
             <DensityToggle compact={compact} onToggle={() => setCompact(c => !c)} />
+            {!frozen && (
+              <ShareButton
+                onClick={() => {
+                  const snap = snapshot()
+                  if (onShare) onShare(snap)
+                  else downloadSnapshot(snap)
+                  toast(onShare ? 'Snapshot shared' : 'Snapshot downloaded', 'ok')
+                }}
+              />
+            )}
             <SnapshotButton onCopied={() => toast('URL copied', 'ok')} />
             <OpenPaletteHint />
           </div>
@@ -639,6 +747,7 @@ export function Dashboard({
               <WidgetShell
                 config={widget}
                 contentHeight={widget.height || DEFAULT_HEIGHTS[widget.component] || 280}
+                snapshotKey={widgetSnapshotKey(widget, i)}
               />
             </div>
           ))}

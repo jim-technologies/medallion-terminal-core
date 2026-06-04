@@ -28,6 +28,7 @@ export { getNested } from './core/getNested'
 export { evaluateAlert, canParsePredicate } from './core/alerts'
 export { validateTemplate, BUILTIN_COMPONENTS } from './core/validateTemplate'
 export type { ValidationIssue, ValidationSeverity } from './core/validateTemplate'
+export { buildSnapshot, isStaticTemplate, widgetSnapshotKey } from './core/snapshot'
 
 // Widgets
 export { Timeseries } from './widgets/Timeseries'

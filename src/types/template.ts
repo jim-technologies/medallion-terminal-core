@@ -7,6 +7,13 @@ export interface Template {
   // element, no modifier) merges the entry's `ctx` map into the active
   // context. Intended for "press 1 for BTC, 2 for ETH" trader flows.
   shortcuts?: TemplateShortcut[]
+  // Set when this template is a frozen snapshot — every widget's data
+  // baked into `source.inline`, no live source. ISO-8601 timestamp of
+  // when it was frozen. Purely informational: the viewer shows a
+  // "Snapshot · <date>" badge and suppresses live chrome. Absent on a
+  // live (dynamic) template. Produced by buildSnapshot / Dashboard's
+  // snapshot().
+  frozenAt?: string
 }
 
 export interface TemplateShortcut {

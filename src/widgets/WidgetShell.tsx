@@ -202,8 +202,8 @@ function ActionMenu({
   )
 }
 
-export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; contentHeight: number }) {
-  const { ctx, backendUrl, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit, soundEnabled, reportWidgetHealth } = useDashboard()
+export function WidgetShell({ config, contentHeight, snapshotKey }: { config: WidgetConfig; contentHeight: number; snapshotKey?: string }) {
+  const { ctx, backendUrl, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit, soundEnabled, reportWidgetHealth, registerWidgetData } = useDashboard()
   // Title interpolation is lenient — partial substitution is fine for a
   // human-facing string. Source interpolation is strict (resolveSource).
   const title = useMemo(
@@ -229,6 +229,19 @@ export function WidgetShell({ config, contentHeight }: { config: WidgetConfig; c
   const source = resolution.source
   const { data, loading, error, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(source)
   const Component = getWidget(config.component)
+
+  // Snapshot capture: expose the current rendered data to the dashboard
+  // via a ref-backed getter so "Share" can freeze exactly what's on
+  // screen without re-fetching (which would regenerate AI content).
+  // Only grid widgets pass a snapshotKey — fullscreen/embed re-renders
+  // omit it so they don't clobber the grid entry. The ref always holds
+  // the latest data; registration runs once per key.
+  const dataRef = useRef<unknown>(data)
+  dataRef.current = data
+  useEffect(() => {
+    if (!snapshotKey) return
+    return registerWidgetData(snapshotKey, () => dataRef.current)
+  }, [snapshotKey, registerWidgetData])
   // Reflect the resolved source so a dashboard-level refresh interval
   // override still drives the "last updated" badge.
   const isLive = !!source?.stream || !!(source?.refreshIntervalMs ?? source?.refreshInterval)

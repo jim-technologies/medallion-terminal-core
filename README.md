@@ -127,6 +127,22 @@ Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus 
 
 When a streaming source disconnects, the widget header shows an amber `retry Ns` countdown. When data hasn't updated within `staleAfterMs`, the timestamp turns amber and the badge reads `stale · Xs ago` — data is still displayed; silent freeze is worse than visible staleness.
 
+## Static snapshots (sharing)
+
+A live dashboard is dynamic by default. To **share** one as a frozen artifact — so AI-generated analysis and metrics aren't recomputed or regenerated for the recipient — the toolbar **Share** button captures *exactly what's on screen* and bakes each widget's current data into `source.inline`, dropping every live source. The result is a self-contained `Template` that renders offline with the same widgets, layout, and interactivity (fullscreen, hover-sync, export) — only the feed is gone. Capture is on-screen, **never a re-fetch**, so the recipient sees the precise frame you approved.
+
+```tsx
+// App-driven: upload the frozen template and mint a share link.
+<Dashboard template={live} backendUrl={api}
+  onShare={async (snapshot) => {
+    const url = await uploadToBucket(snapshot)   // your files / object store
+    showShareLink(url)                            // e.g. embed.html?template=<url>
+  }}
+/>
+```
+
+With no `onShare`, Share downloads the snapshot JSON. A frozen template carries `frozenAt`; the viewer shows a `Snapshot · <date>` badge and suppresses the live controls. Detect one with `isStaticTemplate(template)`; build one headlessly with `buildSnapshot(...)`. Binary media (image/video/PDF) stays referenced by URL, not inlined — snapshots stay small and a 2-hour video still seeks by Range.
+
 ## Actions
 
 `SubmitAction` is the generic write surface. `WatchAction` streams lifecycle updates back. Both carry a `client_request_id` for idempotency — the Trade widget generates one per click; backends MUST treat repeats as the same action.

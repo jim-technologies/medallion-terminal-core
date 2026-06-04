@@ -113,6 +113,13 @@ Widgets retarget each other via `ctx`:
 - `source.staleAfterMs` flips the timestamp badge amber and prepends `stale ·` when N ms passes without an update.
 - Header `X ago` badge updates every second via a shared 1Hz `NowContext` that ref-counts subscribers.
 
+## Static snapshots (sharing)
+
+- Toolbar **Share** freezes the live dashboard into a self-contained static `Template`: each widget's *current on-screen* data is baked into `source.inline`, every live source dropped. Capture is the in-memory frame — **never a re-fetch** — so AI-generated analysis/metrics are not regenerated for the recipient.
+- Plumbing: each grid `WidgetShell` registers a ref-backed getter (`registerWidgetData`, keyed by `widgetSnapshotKey(widget, i)`); `Dashboard.snapshot()` reads them via `buildSnapshot(template, widgets, ctx, getData, frozenAt)` (`core/snapshot.ts`). Ref registry → no re-renders, no per-tick churn.
+- `onShare?(snapshot)` prop receives the frozen template (upload to bucket → mint share URL, e.g. `embed.html?template=<url>`); with no handler, Share downloads the JSON. Hidden when already frozen.
+- `Template.frozenAt` (ISO-8601) marks a snapshot → viewer shows a `Snapshot · <date>` badge and hides live controls. `isStaticTemplate(template)` detects one. Binary media stays URL-referenced (never inlined).
+
 ## Keyboard
 
 | Key | Action |
