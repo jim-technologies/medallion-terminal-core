@@ -6,8 +6,9 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/medallion-terminal-core.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/medallion-terminal-core.js"
     },
     "./proto": {
       "types": "./dist/proto.d.ts"

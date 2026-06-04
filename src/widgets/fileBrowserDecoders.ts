@@ -96,8 +96,19 @@ interface FFmpegLike {
   exec: (args: string[]) => Promise<number>
 }
 
+// Load an optional, browser-only heavy dependency at runtime WITHOUT letting
+// any bundler try to resolve it — neither this library's build nor a downstream
+// app's (Next/webpack/turbopack). The specifier is passed as a variable so it
+// stays opaque in the output, which keeps @ffmpeg/ffmpeg (and its Worker, which
+// is hostile to webpack/turbopack) and heic2any out of every consumer's bundle.
+// Apps that actually use the FileBrowser media preview provide these at runtime.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function importOptional(specifier: string): Promise<any> {
+  return import(/* @vite-ignore */ /* webpackIgnore: true */ specifier)
+}
+
 export async function decodeHeic(blob: Blob): Promise<Blob> {
-  const { default: heic2any } = await import('heic2any')
+  const { default: heic2any } = await importOptional('heic2any')
   const out = await heic2any({ blob, toType: 'image/jpeg', quality: 0.92 })
   // heic2any returns Blob OR Blob[] for multi-image containers; take the first.
   return Array.isArray(out) ? out[0] : out
@@ -130,7 +141,7 @@ export async function remuxMkvToMp4(url: string, onProgress?: (msg: string) => v
 
 async function loadFFmpeg(): Promise<FFmpegLike> {
   if (ffmpegInstance) return ffmpegInstance
-  const { FFmpeg } = await import('@ffmpeg/ffmpeg')
+  const { FFmpeg } = await importOptional('@ffmpeg/ffmpeg')
   const ffmpeg = new FFmpeg() as unknown as FFmpegLike
   await ffmpeg.load()
   ffmpegInstance = ffmpeg
