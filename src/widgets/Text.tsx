@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
+import { normalize, type TextItem } from './textNormalize'
 
 const FLASH_MS = 1500
 
@@ -54,8 +55,22 @@ export function Text({ data }: WidgetProps) {
             className={`flex gap-3 border-b border-zinc-800/60 pb-3 last:border-0 rounded-sm transition-colors duration-700 ${flashClass}`}
           >
             <div className="flex-1 min-w-0">
-              {item.title && (
-                <h4 className="text-sm font-medium text-zinc-100 mb-1 leading-snug">{item.title}</h4>
+              {(item.title || item.url) && (
+                <h4 className="text-sm font-medium text-zinc-100 mb-1 leading-snug">
+                  {item.url ? (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-sky-400 hover:underline"
+                    >
+                      {item.title || hostLabel(item.url)}
+                      <span className="ml-1 text-xs text-zinc-500" aria-hidden="true">↗</span>
+                    </a>
+                  ) : (
+                    item.title
+                  )}
+                </h4>
               )}
               {item.meta && (
                 <div className="text-xs text-zinc-500 mb-1.5">{item.meta}</div>
@@ -88,15 +103,6 @@ export function Text({ data }: WidgetProps) {
   )
 }
 
-interface TextItem {
-  id?: string
-  title?: string
-  meta?: string
-  body?: string
-  tags?: string[]
-  image?: string
-}
-
 // Stable-ish identity for flash tracking. Prefer an explicit `id` from
 // the backend; fall back to a title+body-prefix fingerprint that's
 // almost always unique within a feed window.
@@ -105,46 +111,10 @@ function itemKey(item: TextItem): string {
   return `t:${item.title ?? ''}|b:${(item.body ?? '').slice(0, 60)}`
 }
 
-function normalize(data: unknown): TextItem[] {
-  if (!data) return []
-
-  // Single string
-  if (typeof data === 'string') return [{ body: data }]
-
-  // Single object — unwrap a top-level `items` array first (matches the
-  // proto's TextPayload.items field). Otherwise treat the whole object
-  // as one item.
-  if (!Array.isArray(data) && typeof data === 'object' && data !== null) {
-    const obj = data as Record<string, unknown>
-    if (Array.isArray(obj.items)) return normalize(obj.items)
-    return [normalizeItem(obj)]
-  }
-
-  // Array
-  if (Array.isArray(data)) {
-    return data.map(item => {
-      if (typeof item === 'string') return { body: item }
-      if (typeof item === 'object' && item !== null) return normalizeItem(item as Record<string, unknown>)
-      return { body: String(item) }
-    })
-  }
-
-  return []
-}
-
-function normalizeItem(obj: Record<string, unknown>): TextItem {
-  return {
-    id: obj.id != null ? String(obj.id) : undefined,
-    title: obj.title != null ? String(obj.title) : undefined,
-    meta: obj.meta ?? obj.source ?? obj.date ?? obj.author
-      ? [obj.source, obj.author, obj.date].filter(Boolean).map(String).join(' · ')
-      : undefined,
-    body: obj.body ?? obj.content ?? obj.summary ?? obj.text
-      ? String(obj.body ?? obj.content ?? obj.summary ?? obj.text)
-      : undefined,
-    tags: Array.isArray(obj.tags) ? obj.tags.map(String) : undefined,
-    image: obj.image != null ? String(obj.image) :
-           obj.image_url != null ? String(obj.image_url) :
-           obj.thumbnail != null ? String(obj.thumbnail) : undefined,
+function hostLabel(url: string): string {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return url
   }
 }
