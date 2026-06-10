@@ -4,7 +4,7 @@ import {
 } from 'recharts'
 import { useHover } from '../core/HoverContext'
 import { abbreviateAxis, makeTimestampLabel, makeTimestampTick, timeAxisMeta } from './format'
-import { TOOLTIP_STYLE } from './colors'
+import { TOOLTIP_STYLE, assignSeriesColors } from './colors'
 import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
@@ -44,6 +44,10 @@ export function Timeseries({ data, options }: WidgetProps) {
       labelFormatter: makeTimestampLabel(meta),
     }
   }, [chart])
+  const lineColors = useMemo(
+    () => assignSeriesColors(chart?.keys ?? [], COLORS),
+    [chart],
+  )
   const showBrush = options?.brush === true
   if (!chart) return <Empty>No data</Empty>
 
@@ -90,7 +94,7 @@ export function Timeseries({ data, options }: WidgetProps) {
             key={key}
             type="monotone"
             dataKey={key}
-            stroke={COLORS[i % COLORS.length]}
+            stroke={lineColors[i]}
             dot={false}
             strokeWidth={2}
           />

@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts'
-import { PALETTE, SEMANTIC, TOOLTIP_STYLE } from './colors'
+import { PALETTE, SEMANTIC, TOOLTIP_STYLE, assignSeriesColors } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 import { normalizeBars, type SingleBar } from './barNormalize'
@@ -22,6 +22,7 @@ export function BarChart({ data }: WidgetProps) {
   }
 
   if (normalized.kind === 'grouped') {
+    const seriesColors = assignSeriesColors(normalized.series, PALETTE)
     return (
       <ResponsiveContainer width="100%" height="100%">
         <ReBarChart data={normalized.rows} margin={{ top: 8, right: 8, bottom: 4, left: 0 }}>
@@ -47,7 +48,7 @@ export function BarChart({ data }: WidgetProps) {
             <Bar
               key={s}
               dataKey={s}
-              fill={PALETTE[i % PALETTE.length]}
+              fill={seriesColors[i]}
               radius={[2, 2, 0, 0]}
             />
           ))}

@@ -8,3 +8,5 @@ export declare const TOOLTIP_STYLE: {
     readonly color: "#fafafa";
 };
 export declare function resolveColor(name: string | undefined, i: number): string;
+export declare function brandSeriesColor(name: string | undefined): string | null;
+export declare function assignSeriesColors(names: readonly string[], fallback?: readonly string[]): string[];
