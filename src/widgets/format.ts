@@ -50,6 +50,25 @@ export function formatTimestamp(ts: unknown): string {
   }
 }
 
+// Full date+time in the viewer's locale/timezone. Backends bake ISO-8601
+// UTC strings (with Z); the browser converts on render. Falls back to the
+// raw string when the value doesn't parse.
+export function formatDateTime(ts: unknown): string {
+  if (ts == null) return ''
+  try {
+    const d = new Date(ts as string | number)
+    if (isNaN(d.getTime())) return String(ts)
+    return d.toLocaleString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    })
+  } catch {
+    return String(ts)
+  }
+}
+
 // =================================================================
 // Finance-specific formatters. Centralized so dashboards present
 // percent, currency, and bps numbers consistently across widgets.

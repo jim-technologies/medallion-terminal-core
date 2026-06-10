@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import { Empty } from './states'
-import { formatCurrency, formatPercent, formatBps, formatCompact } from './format'
+import { formatCurrency, formatPercent, formatBps, formatCompact, formatDateTime } from './format'
 import type { WidgetProps } from '../types/template'
 
 const DEFAULT_PAGE_SIZE = 25
@@ -456,6 +456,9 @@ function formatCell(value: unknown): string {
 //   compact                      1.2K / 3.4M
 function formatWith(value: unknown, hint: string): string {
   if (value == null) return '\u2014'
+  // datetime accepts strings (ISO) and epoch numbers; check before the
+  // numeric short-circuit below.
+  if (hint.split(':')[0] === 'datetime') return formatDateTime(value)
   if (typeof value !== 'number') return formatCell(value)
   const [head, ...args] = hint.split(':')
   const argSet = new Set(args)

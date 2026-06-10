@@ -8,4 +8,5 @@ export interface TextItem {
     url?: string;
 }
 export declare function safeUrl(value: unknown): string | undefined;
+export declare function localDate(value: unknown): unknown;
 export declare function normalize(data: unknown): TextItem[];

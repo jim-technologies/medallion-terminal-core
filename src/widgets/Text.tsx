@@ -60,12 +60,13 @@ export function Text({ data }: WidgetProps) {
                   {item.url ? (
                     <a
                       href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      {...(item.url.startsWith('/')
+                        ? {}
+                        : { target: '_blank', rel: 'noopener noreferrer' })}
                       className="hover:text-sky-400 hover:underline"
                     >
                       {item.title || hostLabel(item.url)}
-                      <span className="ml-1 text-xs text-zinc-500" aria-hidden="true">↗</span>
+                      <span className="ml-1 text-xs text-zinc-500" aria-hidden="true">{item.url.startsWith('/') ? '→' : '↗'}</span>
                     </a>
                   ) : (
                     item.title

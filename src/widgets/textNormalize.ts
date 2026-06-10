@@ -9,12 +9,31 @@ export interface TextItem {
 }
 
 // Feed items come from third-party sources (RSS, scraped articles), so
-// hrefs are restricted to web URLs — anything else is dropped.
+// hrefs are restricted to web URLs — plus root-relative paths for
+// internal deep-links (e.g. a model profile page). Anything else
+// (javascript:, data:, protocol-relative //host) is dropped.
 export function safeUrl(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined
   const trimmed = value.trim()
-  if (!/^https?:\/\//i.test(trimmed)) return undefined
-  return trimmed
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  if (/^\/(?!\/)/.test(trimmed)) return trimmed
+  return undefined
+}
+
+// Render ISO timestamps (with explicit timezone) in the viewer's locale.
+// Anything that isn't clearly an ISO datetime passes through untouched —
+// backends sometimes send already-formatted display strings.
+const ISO_DATETIME = /^\d{4}-\d{2}-\d{2}T[\d:.]+(Z|[+-]\d{2}:?\d{2})$/
+export function localDate(value: unknown): unknown {
+  if (typeof value !== 'string' || !ISO_DATETIME.test(value.trim())) return value
+  const d = new Date(value)
+  if (isNaN(d.getTime())) return value
+  return d.toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }
 
 export function normalize(data: unknown): TextItem[] {
@@ -49,7 +68,7 @@ function normalizeItem(obj: Record<string, unknown>): TextItem {
     id: obj.id != null ? String(obj.id) : undefined,
     title: obj.title != null ? String(obj.title) : undefined,
     meta: obj.meta ?? obj.source ?? obj.date ?? obj.author
-      ? [obj.source, obj.author, obj.date].filter(Boolean).map(String).join(' · ')
+      ? [obj.source, obj.author, localDate(obj.date)].filter(Boolean).map(String).join(' · ')
       : undefined,
     body: obj.body ?? obj.content ?? obj.summary ?? obj.text
       ? String(obj.body ?? obj.content ?? obj.summary ?? obj.text)
