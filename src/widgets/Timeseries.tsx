@@ -3,7 +3,7 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceDot, ReferenceLine, ReferenceArea, Brush,
 } from 'recharts'
 import { useHover } from '../core/HoverContext'
-import { abbreviateAxis, formatTimestamp } from './format'
+import { abbreviateAxis, makeTimestampLabel, makeTimestampTick, timeAxisMeta } from './format'
 import { TOOLTIP_STYLE } from './colors'
 import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
@@ -34,6 +34,16 @@ export function Timeseries({ data, options }: WidgetProps) {
   const { hoverTime, setHoverTime } = useHover()
   const lastEmitted = useRef<string | null>(null)
   const chart = useMemo(() => normalize(data), [data])
+  // Span-aware time formatting: intraday charts tick clock time instead
+  // of repeating the same date on every tick; tooltips get the full
+  // datetime whenever timestamps carry a time-of-day.
+  const { tickFormatter, labelFormatter } = useMemo(() => {
+    const meta = timeAxisMeta(chart?.points.map(p => p._ts) ?? [])
+    return {
+      tickFormatter: makeTimestampTick(meta),
+      labelFormatter: makeTimestampLabel(meta),
+    }
+  }, [chart])
   const showBrush = options?.brush === true
   if (!chart) return <Empty>No data</Empty>
 
@@ -62,7 +72,7 @@ export function Timeseries({ data, options }: WidgetProps) {
           dataKey="_ts"
           stroke="#3f3f46"
           tick={{ fontSize: 11, fill: '#a1a1aa' }}
-          tickFormatter={formatTimestamp}
+          tickFormatter={tickFormatter}
         />
         <YAxis
           stroke="#3f3f46"
@@ -73,7 +83,7 @@ export function Timeseries({ data, options }: WidgetProps) {
         <Tooltip
           contentStyle={TOOLTIP_STYLE}
           labelStyle={{ color: '#a1a1aa' }}
-          labelFormatter={formatTimestamp}
+          labelFormatter={labelFormatter}
         />
         {chart.keys.map((key, i) => (
           <Line
@@ -92,7 +102,7 @@ export function Timeseries({ data, options }: WidgetProps) {
             stroke="#3f3f46"
             fill="#18181b"
             travellerWidth={6}
-            tickFormatter={formatTimestamp}
+            tickFormatter={tickFormatter}
           />
         )}
         {showSyncLine && (

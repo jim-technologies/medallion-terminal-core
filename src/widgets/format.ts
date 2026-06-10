@@ -50,6 +50,60 @@ export function formatTimestamp(ts: unknown): string {
   }
 }
 
+const DAY_MS = 86_400_000
+
+export interface TimeAxisMeta {
+  hasTime: boolean
+  spanMs: number
+}
+
+// Inspect a chart's timestamps once: do they carry a time-of-day at all
+// (string contains ':'), and how wide is the domain? Drives span-aware
+// axis ticks below. Detection is string-based on purpose — parsing a
+// date-only string yields UTC midnight, which would read as "has time"
+// in any non-UTC locale.
+export function timeAxisMeta(timestamps: unknown[]): TimeAxisMeta {
+  let hasTime = false
+  let min = Infinity
+  let max = -Infinity
+  for (const t of timestamps) {
+    const s = String(t ?? '')
+    if (!hasTime && s.includes(':')) hasTime = true
+    const ms = new Date(s as string).getTime()
+    if (!isNaN(ms)) {
+      if (ms < min) min = ms
+      if (ms > max) max = ms
+    }
+  }
+  return { hasTime, spanMs: max > min ? max - min : 0 }
+}
+
+// Span-aware axis tick formatter. Intraday windows tick clock time,
+// multi-day intraday data ticks date+time, anything wider (or date-only
+// data) falls back to the date. Tooltips show the full datetime via
+// formatTimestampLabel, so ticks can stay terse.
+export function makeTimestampTick(meta: TimeAxisMeta): (ts: unknown) => string {
+  if (!meta.hasTime) return formatTimestamp
+  if (meta.spanMs <= 2 * DAY_MS) {
+    return ts => {
+      try {
+        const d = new Date(ts as string | number)
+        if (isNaN(d.getTime())) return String(ts)
+        return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+      } catch {
+        return String(ts)
+      }
+    }
+  }
+  if (meta.spanMs <= 14 * DAY_MS) return formatDateTime
+  return formatTimestamp
+}
+
+// Tooltip label: full date+time whenever the data carries time-of-day.
+export function makeTimestampLabel(meta: TimeAxisMeta): (ts: unknown) => string {
+  return meta.hasTime ? formatDateTime : formatTimestamp
+}
+
 // Full date+time in the viewer's locale/timezone. Backends bake ISO-8601
 // UTC strings (with Z); the browser converts on render. Falls back to the
 // raw string when the value doesn't parse.
