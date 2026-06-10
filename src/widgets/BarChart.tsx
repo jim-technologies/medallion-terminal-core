@@ -5,26 +5,58 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  Legend,
   Cell,
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts'
-import { SEMANTIC, TOOLTIP_STYLE } from './colors'
+import { PALETTE, SEMANTIC, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
-
-interface Bar {
-  label: string
-  value: number
-  color?: string
-}
+import { normalizeBars, type SingleBar } from './barNormalize'
 
 export function BarChart({ data }: WidgetProps) {
-  const bars = useMemo(() => normalize(data), [data])
-  if (!bars || bars.length === 0) {
+  const normalized = useMemo(() => normalizeBars(data), [data])
+  if (!normalized) {
     return <Empty>No data</Empty>
   }
 
+  if (normalized.kind === 'grouped') {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <ReBarChart data={normalized.rows} margin={{ top: 8, right: 8, bottom: 4, left: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+          <XAxis
+            dataKey="label"
+            stroke="#3f3f46"
+            tick={{ fontSize: 11, fill: '#a1a1aa' }}
+            interval={0}
+          />
+          <YAxis
+            stroke="#3f3f46"
+            tick={{ fontSize: 11, fill: '#a1a1aa' }}
+            tickFormatter={abbreviate}
+            width={50}
+          />
+          <Tooltip
+            contentStyle={TOOLTIP_STYLE}
+            cursor={{ fill: 'rgba(82, 82, 91, 0.2)' }}
+          />
+          <Legend wrapperStyle={{ fontSize: 11 }} />
+          {normalized.series.map((s, i) => (
+            <Bar
+              key={s}
+              dataKey={s}
+              fill={PALETTE[i % PALETTE.length]}
+              radius={[2, 2, 0, 0]}
+            />
+          ))}
+        </ReBarChart>
+      </ResponsiveContainer>
+    )
+  }
+
+  const bars = normalized.bars
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ReBarChart data={bars} margin={{ top: 8, right: 8, bottom: 4, left: 0 }}>
@@ -53,29 +85,7 @@ export function BarChart({ data }: WidgetProps) {
   )
 }
 
-function normalize(data: unknown): Bar[] | null {
-  let raw: unknown[] | null = null
-  if (Array.isArray(data)) raw = data
-  else if (data && typeof data === 'object') {
-    const d = data as Record<string, unknown>
-    if (Array.isArray(d.bars)) raw = d.bars
-    else if (Array.isArray(d.rows)) raw = d.rows
-  }
-  if (!raw) return null
-  const bars: Bar[] = raw
-    .map(r => {
-      const rr = r as Record<string, unknown>
-      return {
-        label: String(rr.label ?? rr.name ?? ''),
-        value: Number(rr.value ?? 0),
-        color: rr.color != null ? String(rr.color) : undefined,
-      }
-    })
-    .filter(b => Number.isFinite(b.value))
-  return bars.length > 0 ? bars : null
-}
-
-function resolveColor(b: Bar): string {
+function resolveColor(b: SingleBar): string {
   if (b.color && SEMANTIC[b.color]) return SEMANTIC[b.color]
   if (b.color && b.color.startsWith('#')) return b.color
   // Auto: red for negative, sky for positive — matches money-direction intuition.
