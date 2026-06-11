@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import { Empty } from './states'
 import { formatCurrency, formatPercent, formatBps, formatCompact, formatDateTime } from './format'
+import { safeUrl } from './textNormalize'
 import type { WidgetProps } from '../types/template'
 
 const DEFAULT_PAGE_SIZE = 25
@@ -260,6 +261,37 @@ export function DataTable({ data, options }: WidgetProps) {
                   // an array we can coerce) and we render a tiny inline
                   // SVG instead of formatted text. The signed coloring
                   // and heat-cell tinting don't apply.
+                  // Link column: value is a URL string or {label, url}.
+                  // Internal (root-relative) links navigate in-tab;
+                  // external ones open a new tab. Empty/unsafe urls fall
+                  // back to plain text.
+                  if (fmt === 'link' && value != null) {
+                    const obj = typeof value === 'object' && !Array.isArray(value)
+                      ? value as {label?: unknown; url?: unknown}
+                      : { label: undefined, url: value }
+                    const url = safeUrl(obj.url)
+                    const label = obj.label != null && obj.label !== ''
+                      ? String(obj.label)
+                      : url ?? ''
+                    return (
+                      <td key={col} className="px-3 py-2.5 whitespace-nowrap" style={heatStyle}>
+                        {url ? (
+                          <a
+                            href={url}
+                            {...(url.startsWith('/')
+                              ? {}
+                              : { target: '_blank', rel: 'noopener noreferrer' })}
+                            className="text-sky-400 hover:underline"
+                          >
+                            {label}
+                            <span className="ml-1 text-xs text-zinc-500" aria-hidden="true">{url.startsWith('/') ? '→' : '↗'}</span>
+                          </a>
+                        ) : (
+                          <span className="text-zinc-100">{label}</span>
+                        )}
+                      </td>
+                    )
+                  }
                   if (fmt === 'sparkline' && Array.isArray(value)) {
                     return (
                       <td key={col} className="px-3 py-2.5 whitespace-nowrap" style={heatStyle}>
@@ -397,6 +429,9 @@ function heatColor(value: number, min: number, max: number): string {
 // CSV-escape: wrap in quotes when needed, double internal quotes.
 function csvEscape(v: unknown): string {
   if (v == null) return ''
+  if (typeof v === 'object' && !Array.isArray(v) && 'url' in (v as object)) {
+    return csvEscape((v as {url?: unknown}).url)
+  }
   const s = typeof v === 'number' ? String(v) : String(v)
   if (/[,"\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`
   return s
