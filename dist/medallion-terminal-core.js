@@ -6154,8 +6154,8 @@ function bc({ data: e, options: t, widgetId: n }) {
             /* @__PURE__ */ s("tbody", { children: xe.map((N, q) => /* @__PURE__ */ f(
               "tr",
               {
-                onClick: () => Pe(N),
-                className: "border-b border-zinc-800/40 hover:bg-zinc-800/40 cursor-pointer",
+                onDoubleClick: () => Pe(N),
+                className: "border-b border-zinc-800/40 hover:bg-zinc-800/40 cursor-pointer select-none",
                 children: [
                   /* @__PURE__ */ s("td", { className: "px-3 py-1.5 select-none", children: Fe(N) ? "📁" : "📄" }),
                   /* @__PURE__ */ s("td", { className: "px-3 py-1.5 text-zinc-100 truncate", children: N.name }),
@@ -6320,8 +6320,8 @@ function gc({
     return /* @__PURE__ */ f(
       "button",
       {
-        onClick: () => t(r),
-        className: "flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left",
+        onDoubleClick: () => t(r),
+        className: "flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left select-none",
         children: [
           /* @__PURE__ */ s("div", { className: "w-full aspect-square bg-zinc-950 rounded flex items-center justify-center overflow-hidden", children: a ? /* @__PURE__ */ s("span", { className: "text-4xl select-none", children: "📁" }) : l && r.name ? /* @__PURE__ */ s(
             "img",
@@ -6499,7 +6499,7 @@ function xc({
         /* @__PURE__ */ f(
           "div",
           {
-            className: "flex-1 flex items-center justify-center overflow-auto p-4 relative",
+            className: "flex-1 flex items-center justify-center overflow-auto px-4 pt-4 pb-24 relative",
             onClick: se,
             children: [
               c && !m && /* @__PURE__ */ s("div", { className: "absolute inset-0 flex items-center justify-center pointer-events-none", children: /* @__PURE__ */ s("div", { className: "text-zinc-500 text-xs uppercase tracking-wider", children: A }) }),

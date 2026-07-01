@@ -290,6 +290,9 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const entryFullPath = (e: FileBrowserEntry): string =>
     e.path && e.path !== '' ? e.path : joinPath(currentPath, e.name ?? '')
 
+  // Row activation is bound to double-click (not single) so a stray click never
+  // opens/downloads a file by accident. Folders navigate; previewable files open
+  // the overlay; everything else downloads.
   const onRowClick = (e: FileBrowserEntry) => {
     if (isFolder(e)) {
       // From a search result, jumping into a folder leaves search mode.
@@ -545,8 +548,8 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
               {sorted.map((e, i) => (
                 <tr
                   key={`${e.kind ?? ''}:${e.name ?? i}`}
-                  onClick={() => onRowClick(e)}
-                  className="border-b border-zinc-800/40 hover:bg-zinc-800/40 cursor-pointer"
+                  onDoubleClick={() => onRowClick(e)}
+                  className="border-b border-zinc-800/40 hover:bg-zinc-800/40 cursor-pointer select-none"
                 >
                   <td className="px-3 py-1.5 select-none">{isFolder(e) ? '📁' : '📄'}</td>
                   <td className="px-3 py-1.5 text-zinc-100 truncate">{e.name}</td>
@@ -707,8 +710,8 @@ function GalleryGrid({
         return (
           <button
             key={`${e.kind ?? ''}:${e.name ?? i}`}
-            onClick={() => onClick(e)}
-            className="flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left"
+            onDoubleClick={() => onClick(e)}
+            className="flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left select-none"
           >
             <div className="w-full aspect-square bg-zinc-950 rounded flex items-center justify-center overflow-hidden">
               {folder ? (
@@ -972,7 +975,7 @@ function PreviewOverlay({
         </button>
       </div>
       <div
-        className="flex-1 flex items-center justify-center overflow-auto p-4 relative"
+        className="flex-1 flex items-center justify-center overflow-auto px-4 pt-4 pb-24 relative"
         onClick={backdropClose}
       >
         {loading && !failed && (
