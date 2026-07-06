@@ -4,9 +4,9 @@ import tradingFloor from '../../public/examples/trading-floor.json'
 import predictionMarket from '../../public/examples/prediction-market.json'
 import botOperator from '../../public/examples/bot-operator.json'
 import optionsDesk from '../../public/examples/options-desk.json'
-import binanceClone from '../../public/examples/binance-clone.json'
-import uniswapClone from '../../public/examples/uniswap-clone.json'
-import grafanaOps from '../../public/examples/grafana-ops.json'
+import spotMarket from '../../public/examples/spot-market.json'
+import liquidityPool from '../../public/examples/liquidity-pool.json'
+import serviceOps from '../../public/examples/service-ops.json'
 import workflowOrchestrator from '../../public/examples/workflow-orchestrator.json'
 import sportsBetting from '../../public/examples/sports-betting.json'
 import mlMonitoring from '../../public/examples/ml-monitoring.json'
@@ -34,9 +34,9 @@ const EXAMPLES: Record<string, Json> = {
   'prediction-market':  predictionMarket,
   'bot-operator':       botOperator,
   'options-desk':       optionsDesk,
-  'binance-clone':      binanceClone,
-  'uniswap-clone':      uniswapClone,
-  'grafana-ops':            grafanaOps,
+  'spot-market':            spotMarket,
+  'liquidity-pool':         liquidityPool,
+  'service-ops':            serviceOps,
   'workflow-orchestrator':  workflowOrchestrator,
   'sports-betting':         sportsBetting,
   'ml-monitoring':          mlMonitoring,

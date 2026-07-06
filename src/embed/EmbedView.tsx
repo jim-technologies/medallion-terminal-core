@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Dashboard } from '../core/Dashboard'
+import { Dashboard, type DashboardTheme } from '../core/Dashboard'
 import type { DashboardEvent } from '../core/DashboardContext'
 import type { Template, WidgetConfig } from '../types/template'
 import type { EmbedConfig } from './embedConfig'
@@ -16,6 +16,7 @@ export interface EmbedViewProps {
   // Telemetry passthrough (alerts, widget errors) — handy when the host
   // wants to forward embed events to its own logging.
   onEvent?: (event: DashboardEvent) => void
+  theme?: DashboardTheme
 }
 
 // Build a one-widget Template from the single-widget embed config. The
@@ -42,7 +43,7 @@ function singleWidgetTemplate(config: EmbedConfig): Template | null {
   }
 }
 
-export function EmbedView({ config, onEvent }: EmbedViewProps) {
+export function EmbedView({ config, onEvent, theme = 'dark' }: EmbedViewProps) {
   const [fetched, setFetched] = useState<{ template?: Template; error?: string }>({})
 
   // Full-dashboard mode: fetch the template JSON from templateUrl.
@@ -83,39 +84,45 @@ export function EmbedView({ config, onEvent }: EmbedViewProps) {
   const template = config.templateUrl ? fetched.template : singleTemplate
 
   if (config.templateUrl && fetched.error) {
-    return <EmbedMessage title="Embed error" body={fetched.error} />
+    return <EmbedMessage title="Embed error" body={fetched.error} theme={theme} />
   }
   if (config.templateUrl && !template) {
-    return <EmbedMessage title="Loading…" body="Fetching dashboard template" />
+    return <EmbedMessage title="Loading…" body="Fetching dashboard template" theme={theme} />
   }
   if (!template) {
     return (
       <EmbedMessage
         title="Nothing to embed"
         body="Pass a ?template= URL, or a ?src= source id (with &backend=), or a ?url= data URL."
+        theme={theme}
       />
     )
   }
 
   return (
+    <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
     <div className="min-h-screen bg-zinc-950">
       <Dashboard
         template={template}
         backendUrl={config.backendUrl}
         chrome={config.chrome === 'full' ? 'full' : 'minimal'}
         onEvent={onEvent}
+        theme={theme}
       />
+    </div>
     </div>
   )
 }
 
-function EmbedMessage({ title, body }: { title: string; body: string }) {
+function EmbedMessage({ title, body, theme }: { title: string; body: string; theme: DashboardTheme }) {
   return (
+    <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
       <div className="text-center max-w-md">
         <div className="text-sm font-medium text-zinc-200 mb-1">{title}</div>
         <div className="text-xs text-zinc-500">{body}</div>
       </div>
+    </div>
     </div>
   )
 }

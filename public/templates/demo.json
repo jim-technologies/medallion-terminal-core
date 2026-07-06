@@ -50,30 +50,30 @@
         "data": [
           {
             "title": "Bitcoin Breaks $73K as ETF Inflows Hit Record",
-            "source": "CoinDesk",
+            "source": "Market Wire",
             "date": "Mar 14",
             "body": "Bitcoin surged past $73,000 for the first time as spot ETF products saw $1.05B in single-day inflows, driven by institutional demand.",
             "tags": ["BTC", "ETF"]
           },
           {
             "title": "Ethereum Dencun Upgrade Goes Live",
-            "source": "The Block",
+            "source": "Market Desk",
             "date": "Mar 13",
             "body": "The long-awaited Dencun upgrade activated on mainnet, introducing proto-danksharding to dramatically reduce L2 transaction costs.",
             "tags": ["ETH", "L2"]
           },
           {
             "title": "SEC Delays Decision on Solana ETF Filing",
-            "source": "Bloomberg",
+            "source": "Market Wire",
             "date": "Mar 12",
-            "body": "The Securities and Exchange Commission extended its review period for the VanEck Solana Trust application by 45 days.",
+            "body": "The Securities and Exchange Commission extended its review period for the Solana ETF application by 45 days.",
             "tags": ["SOL", "Regulation"]
           },
           {
-            "title": "MicroStrategy Acquires Additional 12,000 BTC",
-            "source": "Reuters",
+            "title": "Corporate treasury Acquires Additional 12,000 BTC",
+            "source": "News Wire",
             "date": "Mar 11",
-            "body": "Michael Saylor's firm purchased another 12,000 Bitcoin for approximately $821 million, bringing total holdings to 217,000 BTC."
+            "body": "The company purchased another 12,000 Bitcoin for approximately $821 million, bringing total holdings to 217,000 BTC."
           }
         ]
       }

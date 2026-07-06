@@ -14,7 +14,7 @@ interface MultiSelectOptions {
 // Multiple-choice variant of `select`. Stores the chosen values in ctx
 // as a comma-separated string so URL state and cmd-k integrations keep
 // working. Substitution-friendly: a widget binding a param to
-// `${ctx.venues}` gets "binance,coinbase".
+// `${ctx.venues}` gets "venue-a,venue-b".
 //
 // Renders as a row of toggle chips — natural at any width, no popovers.
 export function MultiSelect({ options }: WidgetProps) {

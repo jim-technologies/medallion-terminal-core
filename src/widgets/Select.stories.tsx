@@ -19,7 +19,7 @@ export default meta
 type Story = StoryObj<typeof Select>
 
 export const StringChoices: Story = {
-  args: { options: { key: 'venue', label: 'Venue', choices: ['binance', 'coinbase', 'kraken', 'okx', 'bybit'] } },
+  args: { options: { key: 'venue', label: 'Venue', choices: ['venue-a', 'venue-b', 'venue-c', 'venue-d', 'venue-e'] } },
 }
 
 export const ObjectChoices: Story = {

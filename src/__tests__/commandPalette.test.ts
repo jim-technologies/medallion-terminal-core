@@ -40,9 +40,9 @@ describe('command palette parser — multi-pair commands', () => {
     })
   })
   it('parses three pairs with mixed colon/equals', () => {
-    expect(parseCommand('symbol:BTC range=1d venue:binance', 'symbol')).toEqual({
+    expect(parseCommand('symbol:BTC range=1d venue:venue-a', 'symbol')).toEqual({
       kind: 'set_many',
-      pairs: [['symbol', 'BTC'], ['range', '1d'], ['venue', 'binance']],
+      pairs: [['symbol', 'BTC'], ['range', '1d'], ['venue', 'venue-a']],
     })
   })
   it('falls back to single set when a token isn\'t a pair', () => {

@@ -297,7 +297,7 @@ export type Source = Message<"medallion.terminal.v1.Source"> & {
     streamable: boolean;
     /**
      * Free-form tags for grouping in catalog UIs and search
-     * (e.g. "crypto", "sentiment", "ops", "polymarket").
+     * (e.g. "crypto", "sentiment", "ops", "prediction").
      *
      * @generated from field: repeated string tags = 7;
      */
@@ -352,7 +352,7 @@ export type SourceJson = {
     streamable?: boolean;
     /**
      * Free-form tags for grouping in catalog UIs and search
-     * (e.g. "crypto", "sentiment", "ops", "polymarket").
+     * (e.g. "crypto", "sentiment", "ops", "prediction").
      *
      * @generated from field: repeated string tags = 7;
      */

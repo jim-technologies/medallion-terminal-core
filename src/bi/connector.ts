@@ -1,6 +1,5 @@
 // BI connector descriptor — the typed, client-side contract an external
-// BI tool (Power BI, Looker Studio, Superset, Grafana) consumes to point
-// at a Medallion data endpoint.
+// BI or reporting tool consumes to point at a terminal data endpoint.
 //
 // IMPORTANT SCOPE: the actual SQL/DuckDB gateway lives in a separate
 // backend service (NOT this repo). This module defines and documents
@@ -38,8 +37,7 @@ export type BiShape =
 //   - "connect": the ConnectRPC TerminalService (Get returns a payload
 //     the BI connector flattens — same flatten() this library exports).
 //   - "sql": a SQL/Arrow-Flight/DuckDB HTTP gateway (served by a
-//     separate backend service) that BI tools with a generic SQL/ODBC connector
-//     (Power BI, Superset, Grafana, Looker) point at directly.
+//     separate backend service) for generic SQL/ODBC connectors.
 export type BiProtocol = 'connect' | 'sql'
 
 // Column data type, normalized to the small set BI tools understand.
@@ -53,7 +51,7 @@ export interface BiColumn {
   type: BiColumnType
   // Human label (falls back to name in BI UIs).
   label?: string
-  // True when the column is the table's time axis (Grafana / time-series
+  // True when the column is the table's time axis (reporting / time-series
   // BI panels need to know which column is time).
   isTime?: boolean
   description?: string
@@ -69,7 +67,7 @@ export interface BiTable {
   // connector pick the right flatten() projection for "connect" mode.
   shape?: BiShape
   // Whether the underlying source streams (live). BI tools that support
-  // live panels (Grafana) can enable streaming for these.
+  // live panels can enable streaming for these.
   streamable?: boolean
   // Column schema. May be empty when the backend can't pre-declare it
   // (the connector then infers from a sample row).
@@ -96,7 +94,7 @@ export interface BiConnectorDescriptor {
   // Descriptor schema version — bump on breaking changes so connectors
   // can guard. Starts at 1.
   version: 1
-  // Display name of the medallion deployment this points at.
+  // Display name of the deployment this points at.
   name: string
   protocol: BiProtocol
   // Base endpoint URL. For "connect": the TerminalService base (the
@@ -115,7 +113,7 @@ export interface BiConnectorDescriptor {
   auth?: {
     kind: 'none' | 'bearer' | 'header'
     // For kind "header": the header name the operator sets (e.g.
-    // "X-Medallion-Key"). For "bearer": always "Authorization".
+    // "X-Terminal-Key"). For "bearer": always "Authorization".
     headerName?: string
   }
   tables: BiTable[]

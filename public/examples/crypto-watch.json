@@ -139,9 +139,9 @@
       "title": "Latest",
       "source": {
         "inline": [
-          { "title": "Spot ETF flows moderate after weeks of inflows", "source": "CoinDesk",    "date": "2h ago",  "body": "Net flows for US spot Bitcoin ETFs slowed to $120M, the lowest single day in three weeks, as price action chops below all-time highs.", "tags": ["BTC", "ETF"] },
-          { "title": "Mt. Gox trustee distributions resume",            "source": "The Block",   "date": "6h ago",  "body": "Roughly 14,000 BTC was moved to creditor wallets overnight. The market absorbed the supply with limited impact on price.",                "tags": ["BTC"] },
-          { "title": "MicroStrategy adds to position",                  "source": "Reuters",     "date": "1d ago",  "body": "MSTR purchased an additional 7,000 BTC for ~$472M, taking total holdings above 224,000 coins.",                                          "tags": ["BTC", "Treasury"] },
+          { "title": "Spot ETF flows moderate after weeks of inflows", "source": "Market Wire", "date": "2h ago",  "body": "Net flows for US spot Bitcoin ETFs slowed to $120M, the lowest single day in three weeks, as price action chops below all-time highs.", "tags": ["BTC", "ETF"] },
+          { "title": "Creditor distributions resume",                    "source": "Market Desk", "date": "6h ago",  "body": "Roughly 14,000 BTC was moved to creditor wallets overnight. The market absorbed the supply with limited impact on price.",                "tags": ["BTC"] },
+          { "title": "Corporate treasury adds to position",             "source": "News Wire",   "date": "1d ago",  "body": "A public treasury desk purchased an additional 7,000 BTC for ~$472M, taking total holdings above 224,000 coins.",                              "tags": ["BTC", "Treasury"] },
           { "title": "Hash rate hits new ATH",                          "source": "Glassnode",   "date": "1d ago",  "body": "Network hash rate reached a new all-time high of 712 EH/s, with difficulty up 5.4% on the latest adjustment.",                          "tags": ["BTC", "Mining"] }
         ]
       }

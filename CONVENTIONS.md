@@ -23,7 +23,7 @@ one-line rationale so it doesn't read as accidental drift).
 | 10 | The backend SQL/DuckDB gateway is documented as the consumer contract (a separate backend concern, not this repo) | Conforms | `bi/connector.ts` header states "IMPORTANT SCOPE: the actual SQL/DuckDB gateway lives in a separate backend service ... this module defines the CLIENT-SIDE contract." README §"BI-connector descriptor" repeats it: this repo emits the descriptor; a separate backend runs the `protocol: 'sql'` DuckDB/Arrow-Flight gateway. |
 | 11 | Chart category palette: shared `PALETTE` vs Timeseries/AreaChart local `COLORS` | Intentional deviation | See "Palette decision" below — kept separate on purpose. |
 | 12 | Axis tick abbreviation: shared `abbreviateAxis` vs BarChart local `abbreviate` | Intentional deviation | See "Abbreviate decision" below — kept separate on purpose. |
-| 13 | Radar "same color palette as Timeseries" (PRD decision) | Intentional deviation | Radar uses the shared `PALETTE`, not Timeseries' local `COLORS`; see "Palette decision". The CHANGELOG "byte-identical" note refers to Radar's former private array (which equaled `PALETTE`'s prefix), and is accurate. |
+| 13 | Radar "same color palette as Timeseries" (PRD decision) | Intentional deviation | Radar uses the shared `PALETTE`, not Timeseries' local `COLORS`; see "Palette decision". The CHANGELOG "byte-identical" note refers to Radar's former widget-local array (which equaled `PALETTE`'s prefix), and is accurate. |
 
 ## Palette decision (items 11 + 13)
 
@@ -44,7 +44,7 @@ design (line-on-dark legibility vs. categorical fill distinctness), and
 collapsing them would change rendered pixels in Timeseries/AreaChart —
 a behavior change this audit explicitly disallows. The PRD's "same
 palette as Timeseries" line for Radar predates the `PALETTE`/`COLORS`
-split; Radar in fact uses `PALETTE` (its former private array was the
+split; Radar in fact uses `PALETTE` (its former widget-local array was the
 `PALETTE` prefix, hence the CHANGELOG's correct "byte-identical" note).
 The two-palette state is therefore the intended, documented design, not
 drift. (If a future change wants true cross-chart palette unity, that is

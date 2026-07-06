@@ -4,10 +4,20 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Changed
+
+- **Scoped themes for SDK embedding.** Dashboard styles now live under
+  `.mtc-root`, `Dashboard` accepts `theme="dark" | "light"`, and the
+  public CSS variables (`--mtc-*`) let host apps tune colors and fonts
+  without the library styling `html`, `body`, or the host root.
+- **Public examples stay generic.** Clone/vendor-specific example names,
+  source labels, comments, and docs were replaced with neutral dashboard,
+  monitoring, workflow, and analytics examples.
+
 ### Added
 
 - **BI export / embedding surface.** The product-goal capability gap
-  (export/serve to Power BI, Looker Studio, Superset, Grafana) is now
+  (export/serve to BI and reporting tools) is now
   built out:
   - **Unified export** — `exportView(view, format)` flattens any
     canonical widget payload to a tidy `{ columns, rows }` table
@@ -23,7 +33,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   - **Embeddable mode** — `embed.html` is a standalone iframe entry
     driven entirely by the query string (`src`/`component`/`url`/
     `template`/`backend`/`ctx.*`/`stream`/`refreshMs`/`chrome`), so a
-    Grafana panel, Superset iframe, or BI report page can embed a single
+    reporting panel or iframe, or BI report page can embed a single
     live widget or a whole dashboard. Backed by `<EmbedView>` +
     `parseEmbedConfig` / `buildEmbedUrl` (exported). `<Dashboard>` gained
     a non-breaking `chrome?: 'full' | 'minimal'` prop (default `full`)
@@ -49,7 +59,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   `widgets/colors.ts` (Timeseries' `0.375rem` radius normalized to the
   equivalent `6`). The export-format menu list, previously duplicated in
   `ExportMenu` and `WidgetShell`, is now one `EXPORT_FORMATS` in
-  `export/serializers.ts`. `Radar` dropped its private color array in
+  `export/serializers.ts`. `Radar` dropped its widget-local color array in
   favor of the shared `PALETTE` (byte-identical colors). Minor whitespace
   tidy in the skeleton archetype map.
 
@@ -121,7 +131,7 @@ doing that — the widget no longer reads them.
 ### Changed
 
 - **FileBrowser idiom polish.** Drop three dead `PreviewOverlay` props (`mediaTemplate`, `namespace`, `backendUrl`) — vestigial from a pre-`onSelect` design where the overlay rebuilt next-track URLs itself. Tighter prop surface, no behavior change.
-- **TypeScript type guards.** Replace `(err as Error).message` catches with a shared `errorMessage(err)` helper that handles non-Error throws (`unknown` is the actual catch type). Replace `as Record<string, unknown>` casts in `extractPagination` / `normalizeEntries` with a private `isMetaRow` type guard. Replace `res.body!.getReader()` non-null assertion in `parseConnectStream` with an explicit guard.
+- **TypeScript type guards.** Replace `(err as Error).message` catches with a shared `errorMessage(err)` helper that handles non-Error throws (`unknown` is the actual catch type). Replace `as Record<string, unknown>` casts in `extractPagination` / `normalizeEntries` with a local `isMetaRow` type guard. Replace `res.body!.getReader()` non-null assertion in `parseConnectStream` with an explicit guard.
 
 ### Added
 

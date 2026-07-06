@@ -15,11 +15,17 @@ import type { WidgetProps } from '../types/template'
 const COLORS = ['#38bdf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6']
 
 const ANN_COLOR: Record<string, string> = {
-  buy:  '#10b981',
-  sell: '#ef4444',
-  info: '#0ea5e9',
-  warn: '#f59e0b',
+  buy:  'var(--mtc-ok)',
+  sell: 'var(--mtc-danger)',
+  info: 'var(--mtc-accent)',
+  warn: 'var(--mtc-warning)',
 }
+
+const GRID = 'var(--mtc-grid)'
+const AXIS = 'var(--mtc-border)'
+const TICK = 'var(--mtc-muted)'
+const CHART_BG = 'var(--mtc-surface)'
+const CURSOR = 'var(--mtc-muted-subtle)'
 
 interface Annotation {
   timestamp: string
@@ -71,22 +77,22 @@ export function Timeseries({ data, options }: WidgetProps) {
           setHoverTime(null)
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+        <CartesianGrid strokeDasharray="3 3" stroke={GRID} />
         <XAxis
           dataKey="_ts"
-          stroke="#3f3f46"
-          tick={{ fontSize: 11, fill: '#a1a1aa' }}
+          stroke={AXIS}
+          tick={{ fontSize: 11, fill: TICK }}
           tickFormatter={tickFormatter}
         />
         <YAxis
-          stroke="#3f3f46"
-          tick={{ fontSize: 11, fill: '#a1a1aa' }}
+          stroke={AXIS}
+          tick={{ fontSize: 11, fill: TICK }}
           tickFormatter={abbreviateAxis}
           width={60}
         />
         <Tooltip
           contentStyle={TOOLTIP_STYLE}
-          labelStyle={{ color: '#a1a1aa' }}
+          labelStyle={{ color: TICK }}
           labelFormatter={labelFormatter}
         />
         {chart.keys.map((key, i) => (
@@ -103,17 +109,17 @@ export function Timeseries({ data, options }: WidgetProps) {
           <Brush
             dataKey="_ts"
             height={20}
-            stroke="#3f3f46"
-            fill="#18181b"
+            stroke={AXIS}
+            fill={CHART_BG}
             travellerWidth={6}
             tickFormatter={tickFormatter}
           />
         )}
         {showSyncLine && (
-          <ReferenceLine x={hoverTime} stroke="#52525b" strokeDasharray="3 3" />
+          <ReferenceLine x={hoverTime} stroke={CURSOR} strokeDasharray="3 3" />
         )}
         {chart.annotations.map((a, i) => {
-          const color = a.color ?? (a.kind ? ANN_COLOR[a.kind] : null) ?? '#a1a1aa'
+          const color = a.color ?? (a.kind ? ANN_COLOR[a.kind] : null) ?? TICK
           // Range (band) annotation when both endpoints are present.
           if (a.endTimestamp) {
             const [x1, x2] = a.timestamp <= a.endTimestamp
@@ -142,7 +148,7 @@ export function Timeseries({ data, options }: WidgetProps) {
               y={a.value}
               r={6}
               fill={color}
-              stroke="#18181b"
+              stroke={CHART_BG}
               strokeWidth={2}
               ifOverflow="extendDomain"
               shape={(props) => <AnnotationGlyph {...props} kind={a.kind} color={color} label={a.label} />}
@@ -166,7 +172,7 @@ function AnnotationGlyph({ cx, cy, kind, color, label }: { cx?: number; cy?: num
   } else {
     return (
       <g>
-        <circle cx={cx} cy={cy} r={5} fill={color} stroke="#18181b" strokeWidth={2}>
+        <circle cx={cx} cy={cy} r={5} fill={color} stroke={CHART_BG} strokeWidth={2}>
           <title>{label}</title>
         </circle>
       </g>
@@ -174,7 +180,7 @@ function AnnotationGlyph({ cx, cy, kind, color, label }: { cx?: number; cy?: num
   }
   return (
     <g>
-      <path d={path} fill={color} stroke="#18181b" strokeWidth={1.5}>
+      <path d={path} fill={color} stroke={CHART_BG} strokeWidth={1.5}>
         <title>{label}</title>
       </path>
     </g>
@@ -279,4 +285,3 @@ function normalize(data: unknown): ChartData | null {
 
   return null
 }
-

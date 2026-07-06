@@ -330,7 +330,7 @@ export type Source = Message<"medallion.terminal.v1.Source"> & {
 
   /**
    * Free-form tags for grouping in catalog UIs and search
-   * (e.g. "crypto", "sentiment", "ops", "polymarket").
+   * (e.g. "crypto", "sentiment", "ops", "prediction").
    *
    * @generated from field: repeated string tags = 7;
    */
@@ -392,7 +392,7 @@ export type SourceJson = {
 
   /**
    * Free-form tags for grouping in catalog UIs and search
-   * (e.g. "crypto", "sentiment", "ops", "polymarket").
+   * (e.g. "crypto", "sentiment", "ops", "prediction").
    *
    * @generated from field: repeated string tags = 7;
    */

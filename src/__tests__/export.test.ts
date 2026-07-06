@@ -16,7 +16,7 @@ import { exportFilename, viewRowCount } from '../export/exportView'
 // =============================================================
 // Export serializers — flatten() + CSV / JSON / NDJSON / Parquet
 // round-trips. These are the BI-standard export formats the terminal
-// serves to Power BI / Looker / Superset / Grafana.
+// serves to BI and reporting tools.
 // =============================================================
 
 describe('flatten', () => {

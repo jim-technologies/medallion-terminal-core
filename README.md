@@ -1,6 +1,6 @@
 # Medallion Terminal Core
 
-Proto-driven dashboard framework. Implement one ConnectRPC service, get a Bloomberg-style terminal.
+Proto-driven dashboard and widget SDK. Implement one ConnectRPC service, get a terminal-style analytical dashboard that can be embedded in any host app.
 
 ## Quick Start
 
@@ -39,7 +39,7 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 
     // Escape hatch: arbitrary URL
     { "component": "timeseries", "span": 4,
-      "source": { "url": "https://my-api/prices.json",
+      "source": { "url": "https://api.example.com/prices.json",
                   "refreshIntervalMs": 5000 } },
 
     // Inline (demos, AI-generated dashboards)
@@ -54,7 +54,7 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 | Component | Payload shape | Notes |
 |-----------|---------------|-------|
 | `timeseries` | `{ points }` or `{ series: [{ name, points }] }` | Single or multi-line |
-| `candlestick` | `{ bars: [{ timestamp, open, high, low, close, volume? }], annotations? }` | TradingView |
+| `candlestick` | `{ bars: [{ timestamp, open, high, low, close, volume? }], annotations? }` | OHLCV chart |
 | `table` | `[{ key: val }]` or `{ columns, rows }` | Sort/page/export |
 | `metric` | `{ value, delta?, unit?, trend? }` | Headline number |
 | `gauge` | `{ value, min?, max?, bands? }` | Bounded scalar |
@@ -132,10 +132,10 @@ When a streaming source disconnects, the widget header shows an amber `retry Ns`
 A live dashboard is dynamic by default. To **share** one as a frozen artifact — so AI-generated analysis and metrics aren't recomputed or regenerated for the recipient — the toolbar **Share** button captures *exactly what's on screen* and bakes each widget's current data into `source.inline`, dropping every live source. The result is a self-contained `Template` that renders offline with the same widgets, layout, and interactivity (fullscreen, hover-sync, export) — only the feed is gone. Capture is on-screen, **never a re-fetch**, so the recipient sees the precise frame you approved.
 
 ```tsx
-// App-driven: upload the frozen template and mint a share link.
+// App-driven: store the frozen template and create a share link.
 <Dashboard template={live} backendUrl={api}
   onShare={async (snapshot) => {
-    const url = await uploadToBucket(snapshot)   // your object store / bucket
+    const url = await saveSnapshot(snapshot)      // your storage layer
     showShareLink(url)                            // e.g. embed.html?template=<url>
   }}
 />
@@ -256,7 +256,7 @@ Pass `onEvent` to `<Dashboard>` for a single sink covering alerts, widget errors
   onEvent={e => {
     switch (e.type) {
       case 'alert':         myAnalytics.track('alert', e); break
-      case 'widget_error':  Sentry.captureMessage(e.message, { extra: e }); break
+      case 'widget_error':  errorReporter.capture(e.message, { extra: e }); break
       case 'action':        if (e.terminal) myLedger.append(e); break
     }
   }}
@@ -275,8 +275,8 @@ Pass `onEvent` to `<Dashboard>` for a single sink covering alerts, widget errors
 ## BI export and embedding
 
 The terminal exports any view's data in BI-standard formats and serves a
-single widget or dashboard standalone so external BI tools (Power BI,
-Looker Studio, Superset, Grafana) can consume it.
+single widget or dashboard standalone so external BI and reporting tools
+can consume it.
 
 ### Export
 
@@ -309,7 +309,7 @@ supports. It renders a single widget or a whole dashboard with minimal
 chrome (no toolbar / status bar).
 
 ```
-embed.html?src=btc_candles&component=candlestick&backend=https://api.x&ctx.symbol=BTC&stream=1
+embed.html?src=btc_candles&component=candlestick&backend=https://api.example.com&ctx.symbol=BTC&stream=1
 embed.html?template=/examples/crypto-watch.json&ctx.symbol=ETH&chrome=full
 ```
 
@@ -339,9 +339,9 @@ source's canonical `Shape`), params, and the precomputed Get RPC URL.
 config UI.
 
 > The actual SQL/DuckDB/Arrow gateway is a **separate backend**
-> concern. To reach full Power BI / Looker / Superset / Grafana parity
-> the backend must serve either (a) the ConnectRPC `TerminalService.Get`
-> these tools call via a generic HTTP/JSON connector, or (b) a SQL/ODBC
+> concern. To reach full reporting-tool parity the backend must serve
+> either (a) the ConnectRPC `TerminalService.Get` these tools call via a
+> generic HTTP/JSON connector, or (b) a SQL/ODBC
 > or Arrow-Flight gateway over the same datasets (`protocol: 'sql'`).
 > This library defines and documents that contract and produces the
 > descriptor; it does not run the gateway.
@@ -368,6 +368,9 @@ For wiring this into a real product, in order:
    import { Dashboard } from 'medallion-terminal-core'
    import 'medallion-terminal-core/styles'
    ```
+   Styles are scoped under `.mtc-root`; the package does not style
+   `html`, `body`, or your host app root. Dashboard renders that root
+   automatically.
 
 2. **Implement `TerminalService`.** `buf generate` from `proto/medallion/terminal/v1/`. Required RPCs: `Get`, `Stream`, `ListSources`, `SubmitAction`, `WatchAction`. `Generate` is optional. Wire shapes from `shapes.proto`; backends do not invent shapes. Reference: `examples/backend/server.mjs` (one file, every RPC, fork-friendly).
 
@@ -390,9 +393,32 @@ For wiring this into a real product, in order:
 
 9. **Types.** Generated proto-derived JSON types are available at `medallion-terminal-core/proto`. Friendlier framework types (`Template`, `WidgetProps`, `DataSource`) are at the package root. Run `pnpm gen:proto` after editing protos; the lint step refuses stale generated types.
 
+## Styling And Themes
+
+`Dashboard` defaults to a dark technical surface and accepts
+`theme="dark"` or `theme="light"`:
+
+```tsx
+<Dashboard template={template} backendUrl={api} theme="light" />
+```
+
+Host apps can override the public variables after importing the styles:
+
+```css
+.my-shell .mtc-root {
+  --mtc-accent: #0f766e;
+  --mtc-font-sans: ui-sans-serif, system-ui, sans-serif;
+}
+```
+
+Public variables include `--mtc-bg`, `--mtc-surface`, `--mtc-panel`,
+`--mtc-border`, `--mtc-fg`, `--mtc-muted`, `--mtc-accent`,
+`--mtc-danger`, `--mtc-ok`, `--mtc-warning`, `--mtc-font-sans`, and
+`--mtc-font-mono`.
+
 ## Demo
 
-[Storybook](https://jim-technologies.github.io/medallion-terminal-core/)
+Run `pnpm storybook` for local component examples.
 
 ## License
 

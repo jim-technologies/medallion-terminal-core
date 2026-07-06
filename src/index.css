@@ -1,15 +1,205 @@
-@import "tailwindcss";
+@config "../tailwind.config.mjs";
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
 
-html, body, #root {
-  height: 100%;
+@theme {
+  --font-sans: var(--mtc-font-sans);
+  --font-mono: var(--mtc-font-mono);
+
+  --color-white: var(--mtc-fg);
+  --color-black: #000;
+  --color-zinc-50: var(--mtc-fg);
+  --color-zinc-100: var(--mtc-fg);
+  --color-zinc-200: var(--mtc-fg-soft);
+  --color-zinc-300: var(--mtc-fg-soft);
+  --color-zinc-400: var(--mtc-muted-strong);
+  --color-zinc-500: var(--mtc-muted);
+  --color-zinc-600: var(--mtc-muted-subtle);
+  --color-zinc-700: var(--mtc-border-strong);
+  --color-zinc-800: var(--mtc-panel);
+  --color-zinc-900: var(--mtc-surface);
+  --color-zinc-950: var(--mtc-bg);
+
+  --color-sky-200: var(--mtc-accent-soft);
+  --color-sky-300: var(--mtc-accent-soft);
+  --color-sky-400: var(--mtc-accent);
+  --color-sky-500: var(--mtc-accent);
+  --color-sky-600: var(--mtc-accent-strong);
+
+  --color-emerald-200: var(--mtc-ok-soft);
+  --color-emerald-300: var(--mtc-ok-soft);
+  --color-emerald-400: var(--mtc-ok);
+  --color-emerald-500: var(--mtc-ok);
+
+  --color-amber-200: var(--mtc-warning-soft);
+  --color-amber-300: var(--mtc-warning-soft);
+  --color-amber-400: var(--mtc-warning);
+  --color-amber-500: var(--mtc-warning);
+
+  --color-red-200: var(--mtc-danger-soft);
+  --color-red-300: var(--mtc-danger-soft);
+  --color-red-400: var(--mtc-danger);
+  --color-red-500: var(--mtc-danger);
+}
+
+.mtc-root {
+  --mtc-bg: #0b0d10;
+  --mtc-surface: #111418;
+  --mtc-panel: #1b2027;
+  --mtc-border: #2b323c;
+  --mtc-border-strong: #38414d;
+  --mtc-fg: #eef4fb;
+  --mtc-fg-soft: #c8d2df;
+  --mtc-muted: #8a95a3;
+  --mtc-muted-strong: #a7b1bf;
+  --mtc-muted-subtle: #5f6b7a;
+  --mtc-accent: #38bdf8;
+  --mtc-accent-strong: #0284c7;
+  --mtc-accent-soft: #7dd3fc;
+  --mtc-danger: #f87171;
+  --mtc-danger-soft: #fecaca;
+  --mtc-ok: #34d399;
+  --mtc-ok-soft: #a7f3d0;
+  --mtc-warning: #fbbf24;
+  --mtc-warning-soft: #fde68a;
+  --mtc-grid: #242b34;
+  --mtc-overlay: rgb(0 0 0 / 0.62);
+  --mtc-focus: rgb(56 189 248 / 0.48);
+  --mtc-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mtc-font-mono: "SFMono-Regular", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace;
+
+  min-height: 100%;
+  background: var(--mtc-bg);
+  color: var(--mtc-fg);
+  color-scheme: dark;
+  font-family: var(--mtc-font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.mtc-root[data-theme="dark"],
+.mtc-root.mtc-theme-dark {
+  color-scheme: dark;
+}
+
+.mtc-root[data-theme="light"],
+.mtc-root.mtc-theme-light {
+  --mtc-bg: #f6f8fb;
+  --mtc-surface: #ffffff;
+  --mtc-panel: #e7ecf3;
+  --mtc-border: #d3dbe6;
+  --mtc-border-strong: #b6c1cf;
+  --mtc-fg: #17202b;
+  --mtc-fg-soft: #334155;
+  --mtc-muted: #64748b;
+  --mtc-muted-strong: #475569;
+  --mtc-muted-subtle: #94a3b8;
+  --mtc-accent: #0284c7;
+  --mtc-accent-strong: #0369a1;
+  --mtc-accent-soft: #0ea5e9;
+  --mtc-danger: #dc2626;
+  --mtc-danger-soft: #991b1b;
+  --mtc-ok: #059669;
+  --mtc-ok-soft: #047857;
+  --mtc-warning: #b45309;
+  --mtc-warning-soft: #92400e;
+  --mtc-grid: #dbe3ee;
+  --mtc-overlay: rgb(15 23 42 / 0.42);
+  --mtc-focus: rgb(2 132 199 / 0.36);
+  color-scheme: light;
+}
+
+.mtc-root *,
+.mtc-root ::before,
+.mtc-root ::after {
+  box-sizing: border-box;
+}
+
+.mtc-root button,
+.mtc-root input,
+.mtc-root select,
+.mtc-root textarea {
+  margin: 0;
+  border: 0 solid;
+  border-radius: 0;
+  background-color: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.mtc-root h1,
+.mtc-root h2,
+.mtc-root h3,
+.mtc-root h4,
+.mtc-root h5,
+.mtc-root h6,
+.mtc-root p {
   margin: 0;
 }
 
-body {
-  background-color: #09090b;
-  color: #fafafa;
-  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
+.mtc-root h1,
+.mtc-root h2,
+.mtc-root h3,
+.mtc-root h4,
+.mtc-root h5,
+.mtc-root h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.mtc-root ol,
+.mtc-root ul,
+.mtc-root menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mtc-root a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.mtc-root button,
+.mtc-root input[type="button"],
+.mtc-root input[type="reset"],
+.mtc-root input[type="submit"] {
+  appearance: button;
+}
+
+.mtc-root button {
+  cursor: pointer;
+}
+
+.mtc-root button:disabled {
+  cursor: default;
+}
+
+.mtc-root table {
+  border-collapse: collapse;
+}
+
+.mtc-root img,
+.mtc-root svg,
+.mtc-root video,
+.mtc-root canvas,
+.mtc-root audio,
+.mtc-root iframe {
+  display: block;
+  vertical-align: middle;
+}
+
+.mtc-root img,
+.mtc-root video {
+  height: auto;
+  max-width: 100%;
+}
+
+.mtc-root ::selection {
+  background: color-mix(in oklab, var(--mtc-accent) 28%, transparent);
 }
 
 /* Fade-in for loaded widget content. Driven by Tailwind utility

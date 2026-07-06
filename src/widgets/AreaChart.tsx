@@ -19,6 +19,10 @@ import { Empty } from './states'
 // lighter hues for thin strokes/fills on dark. See CONVENTIONS.md
 // "Palette decision". Do not replace with PALETTE — visual change.
 const COLORS = ['#38bdf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6']
+const GRID = 'var(--mtc-grid)'
+const AXIS = 'var(--mtc-border)'
+const TICK = 'var(--mtc-muted)'
+const CHART_BG = 'var(--mtc-surface)'
 
 interface ChartData {
   points: Record<string, unknown>[]
@@ -40,22 +44,22 @@ export function AreaChart({ data, options }: WidgetProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ReAreaChart data={chart.points}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+        <CartesianGrid strokeDasharray="3 3" stroke={GRID} />
         <XAxis
           dataKey="_ts"
-          stroke="#3f3f46"
-          tick={{ fontSize: 11, fill: '#a1a1aa' }}
+          stroke={AXIS}
+          tick={{ fontSize: 11, fill: TICK }}
           tickFormatter={formatTimestamp}
         />
         <YAxis
-          stroke="#3f3f46"
-          tick={{ fontSize: 11, fill: '#a1a1aa' }}
+          stroke={AXIS}
+          tick={{ fontSize: 11, fill: TICK }}
           tickFormatter={abbreviateAxis}
           width={50}
         />
         <Tooltip
           contentStyle={TOOLTIP_STYLE}
-          labelStyle={{ color: '#a1a1aa' }}
+          labelStyle={{ color: TICK }}
           labelFormatter={formatTimestamp}
         />
         {chart.keys.map((key, i) => (
@@ -74,8 +78,8 @@ export function AreaChart({ data, options }: WidgetProps) {
           <Brush
             dataKey="_ts"
             height={20}
-            stroke="#3f3f46"
-            fill="#18181b"
+            stroke={AXIS}
+            fill={CHART_BG}
             travellerWidth={6}
             tickFormatter={formatTimestamp}
           />
@@ -130,4 +134,3 @@ function normalize(data: unknown): ChartData | null {
 
   return null
 }
-

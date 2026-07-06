@@ -1801,8 +1801,8 @@ export declare const PairedMeasureSchema: GenMessage<PairedMeasure, {
  *   { "url": "https://charts.example.com/btc.png", "label": "BTC, 1h" }
  *
  * JSON example (iframe with sandbox override):
- *   { "url": "https://embed.tradingview.com/...",
- *     "label": "TradingView BTC",
+ *   { "url": "https://charts.example.com/embed",
+ *     "label": "Candlestick BTC",
  *     "sandbox": "allow-scripts allow-same-origin allow-popups" }
  *
  * @generated from message medallion.terminal.v1.EmbedPayload
@@ -1838,8 +1838,8 @@ export type EmbedPayload = Message<"medallion.terminal.v1.EmbedPayload"> & {
  *   { "url": "https://charts.example.com/btc.png", "label": "BTC, 1h" }
  *
  * JSON example (iframe with sandbox override):
- *   { "url": "https://embed.tradingview.com/...",
- *     "label": "TradingView BTC",
+ *   { "url": "https://charts.example.com/embed",
+ *     "label": "Candlestick BTC",
  *     "sandbox": "allow-scripts allow-same-origin allow-popups" }
  *
  * @generated from message medallion.terminal.v1.EmbedPayload
@@ -1878,7 +1878,7 @@ export declare const EmbedPayloadSchema: GenMessage<EmbedPayload, {
  * JSON example:
  *   { "items": [
  *       { "title": "Bitcoin breaks $73K", "body": "...",
- *         "source": "CoinDesk", "date": "2026-04-14",
+ *         "source": "Market Wire", "date": "2026-04-14",
  *         "tags": ["BTC", "ETF"], "sentiment": 0.6 },
  *       { "title": "Daily summary", "body": "Markets rallied..." }
  *   ]}
@@ -1898,7 +1898,7 @@ export type TextPayload = Message<"medallion.terminal.v1.TextPayload"> & {
  * JSON example:
  *   { "items": [
  *       { "title": "Bitcoin breaks $73K", "body": "...",
- *         "source": "CoinDesk", "date": "2026-04-14",
+ *         "source": "Market Wire", "date": "2026-04-14",
  *         "tags": ["BTC", "ETF"], "sentiment": 0.6 },
  *       { "title": "Daily summary", "body": "Markets rallied..." }
  *   ]}

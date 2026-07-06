@@ -21,23 +21,23 @@ export const NewsFeed: Story = {
     data: [
       {
         title: 'Bitcoin Breaks $73K as ETF Inflows Hit Record',
-        source: 'CoinDesk',
+        source: 'Market Wire',
         date: 'Mar 14',
         body: 'Bitcoin surged past $73,000 for the first time as spot ETF products saw $1.05B in single-day inflows.',
         tags: ['BTC', 'ETF'],
       },
       {
         title: 'Ethereum Dencun Upgrade Goes Live',
-        source: 'The Block',
+        source: 'Protocol Desk',
         date: 'Mar 13',
         body: 'The long-awaited Dencun upgrade activated on mainnet, introducing proto-danksharding.',
         tags: ['ETH', 'L2'],
       },
       {
         title: 'SEC Delays Decision on Solana ETF Filing',
-        source: 'Bloomberg',
+        source: 'Market Wire',
         date: 'Mar 12',
-        body: 'The SEC extended its review period for the VanEck Solana Trust application by 45 days.',
+        body: 'The SEC extended its review period for the Solana ETF application by 45 days.',
         tags: ['SOL', 'Regulation'],
       },
     ],

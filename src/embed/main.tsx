@@ -7,8 +7,7 @@ import { parseEmbedConfig } from './embedConfig'
 // uses them still renders inside an embed.
 import '../../examples/widgets/registry'
 
-// Standalone embed entry. A BI tool (Grafana panel, Superset iframe,
-// Power BI / Looker report page) points an <iframe> at embed.html with
+// Standalone embed entry. A BI tool (reporting panel or iframe) points an <iframe> at embed.html with
 // query params describing what to render. Everything is driven by the
 // URL — see embedConfig.ts for the parameter grammar.
 const config = parseEmbedConfig(window.location.search)

@@ -2,7 +2,7 @@
 // tabular { columns, rows } shape so it can be serialized to a
 // BI-standard format (CSV / Parquet / JSON).
 //
-// BI tools (Power BI, Looker Studio, Superset, Grafana) consume flat,
+// BI and reporting tools consume flat,
 // columnar tables — not the rich nested shapes the terminal renders.
 // This is the one place that knows how to project each shape down to
 // rows. Widgets keep their convention-over-configuration data; export

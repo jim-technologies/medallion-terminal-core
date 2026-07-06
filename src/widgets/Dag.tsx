@@ -40,7 +40,7 @@ const NODE_GAP = 18
 const PAD = 16
 
 // Generic DAG (directed acyclic graph) viz. Use for workflow / pipeline /
-// dependency visualisations: Dagster asset graphs, Airflow DAGs, Temporal
+// dependency visualisations: asset graphs, workflow DAGs
 // child workflows, build-system dependency trees, etc.
 //
 // Layout: longest-path layered top-to-bottom (or left-to-right when wider

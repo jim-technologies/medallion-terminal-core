@@ -679,7 +679,7 @@ function corsHeaders() {
 // File storage demo — pairs with the file_browser widget.
 //
 // Hive-style partitioning convention: `key__value/` (double-
-// underscore as the `=` replacement, since GitHub-friendly paths
+// underscore as the `=` replacement, since repository-friendly paths
 // can't use `=`). Uploaded files dropped at the root are
 // auto-partitioned by content type (`type__video/`, `type__image/`,
 // `type__data/`, ...). Uploads into a subfolder are respected as-is

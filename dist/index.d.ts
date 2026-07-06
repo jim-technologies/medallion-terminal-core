@@ -1,5 +1,6 @@
 import './index.css';
 export { Dashboard } from './core/Dashboard';
+export type { DashboardTheme } from './core/Dashboard';
 export { MultiDashboard, useTabFromUrl } from './core/MultiDashboard';
 export { DashboardContext, useDashboard } from './core/DashboardContext';
 export { getWidget, registerWidget, BUILTIN_KEYS } from './core/WidgetRegistry';

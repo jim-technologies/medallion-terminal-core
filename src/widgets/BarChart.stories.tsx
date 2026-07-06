@@ -30,8 +30,8 @@ export const PnLByStrategy: Story = {
 export const VolumeByVenue: Story = {
   args: {
     data: [
-      { label: 'Binance', value: 28145 },
-      { label: 'Coinbase', value: 8420 },
+      { label: 'Venue A', value: 28145 },
+      { label: 'Venue B', value: 8420 },
       { label: 'Kraken', value: 3120 },
       { label: 'OKX', value: 6480 },
       { label: 'Bybit', value: 4280 },

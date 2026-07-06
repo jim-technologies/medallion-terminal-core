@@ -8,9 +8,9 @@ import tradingFloor from '../public/examples/trading-floor.json'
 import predictionMarket from '../public/examples/prediction-market.json'
 import botOperator from '../public/examples/bot-operator.json'
 import optionsDesk from '../public/examples/options-desk.json'
-import binanceClone from '../public/examples/binance-clone.json'
-import uniswapClone from '../public/examples/uniswap-clone.json'
-import grafanaOps from '../public/examples/grafana-ops.json'
+import spotMarket from '../public/examples/spot-market.json'
+import liquidityPool from '../public/examples/liquidity-pool.json'
+import serviceOps from '../public/examples/service-ops.json'
 import workflowOrchestrator from '../public/examples/workflow-orchestrator.json'
 import mlMonitoring from '../public/examples/ml-monitoring.json'
 import logisticsOps from '../public/examples/logistics-ops.json'
@@ -119,9 +119,9 @@ export const TradingFloor         = story(tradingFloor)
 export const PredictionMarket     = story(predictionMarket)
 export const BotOperator          = story(botOperator)
 export const OptionsDesk          = story(optionsDesk)
-export const BinancePair          = story(binanceClone)
-export const UniswapPool          = story(uniswapClone)
-export const GrafanaOps           = story(grafanaOps)
+export const SpotMarket           = story(spotMarket)
+export const LiquidityPool        = story(liquidityPool)
+export const ServiceOps           = story(serviceOps)
 export const WorkflowOrchestrator = story(workflowOrchestrator)
 export const MLMonitoring         = story(mlMonitoring)
 export const Logistics            = story(logisticsOps)

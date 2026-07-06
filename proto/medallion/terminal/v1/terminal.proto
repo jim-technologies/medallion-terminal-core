@@ -122,7 +122,7 @@ message Source {
   bool streamable = 6;
 
   // Free-form tags for grouping in catalog UIs and search
-  // (e.g. "crypto", "sentiment", "ops", "polymarket").
+  // (e.g. "crypto", "sentiment", "ops", "prediction").
   repeated string tags = 7;
 }
 

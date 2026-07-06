@@ -16,7 +16,7 @@ export default meta
 type Story = StoryObj<typeof Iframe>
 
 // Storybook can't fetch arbitrary embeds — this serves as a smoke test
-// only. Real embeds (TradingView, Polymarket) work the same way.
+// only. Real external embeds work the same way.
 export const PlainUrl: Story = {
   args: { data: { url: 'about:blank', title: 'Example embed' } },
 }

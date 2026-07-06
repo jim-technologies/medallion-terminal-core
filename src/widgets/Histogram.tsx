@@ -8,6 +8,10 @@ import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
 const DEFAULT_BINS = 20
+const GRID = 'var(--mtc-grid)'
+const AXIS = 'var(--mtc-border)'
+const TICK = 'var(--mtc-muted)'
+const CURSOR = 'color-mix(in oklab, var(--mtc-muted) 20%, transparent)'
 
 interface Bucket { bin: string; count: number; rangeStart: number; rangeEnd: number }
 
@@ -28,24 +32,24 @@ export function Histogram({ data, options }: WidgetProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={buckets} margin={{ top: 8, right: 8, bottom: 4, left: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+        <CartesianGrid strokeDasharray="3 3" stroke={GRID} />
         <XAxis
           dataKey="bin"
-          stroke="#3f3f46"
-          tick={{ fontSize: 10, fill: '#a1a1aa' }}
+          stroke={AXIS}
+          tick={{ fontSize: 10, fill: TICK }}
           interval="preserveStartEnd"
         />
         <YAxis
-          stroke="#3f3f46"
-          tick={{ fontSize: 11, fill: '#a1a1aa' }}
+          stroke={AXIS}
+          tick={{ fontSize: 11, fill: TICK }}
           allowDecimals={false}
           width={40}
         />
         <Tooltip
           contentStyle={TOOLTIP_STYLE}
-          cursor={{ fill: 'rgba(82, 82, 91, 0.2)' }}
+          cursor={{ fill: CURSOR }}
         />
-        <Bar dataKey="count" fill="#0ea5e9" radius={[2, 2, 0, 0]} />
+        <Bar dataKey="count" fill="var(--mtc-accent)" radius={[2, 2, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )
@@ -111,4 +115,3 @@ function bin(values: number[], n: number): Bucket[] {
   }
   return buckets
 }
-

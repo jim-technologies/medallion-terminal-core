@@ -35,7 +35,7 @@ export const Crypto: Story = {
 export const PredictionMarket: Story = {
   args: {
     data: {
-      venue: 'polymarket',
+      venue: 'reference',
       mid: 0.42, spread: 0.004,
       asks: [
         { price: 0.422, size: 3100 }, { price: 0.424, size: 5900 }, { price: 0.428, size: 9100 },

@@ -11,7 +11,7 @@ export function Metric({ data }: WidgetProps) {
 
   // Tick flash. On every value change after the first render, briefly
   // tint the headline green (uptick) or red (downtick). Matches the
-  // Bloomberg / Eikon convention so traders can read direction at a
+  // market-screen convention so traders can read direction at a
   // glance even when the magnitude doesn't move much.
   const prevRef = useRef<number | null>(null)
   const [flash, setFlash] = useState<'up' | 'down' | null>(null)

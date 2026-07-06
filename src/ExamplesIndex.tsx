@@ -24,26 +24,26 @@ const EXAMPLES: Example[] = [
   {
     path: '/examples/crypto-watch.json',
     title: 'Crypto Watch',
-    blurb: 'Perplexity-finance-style: AI summary, candles, peers (click-to-jump), sentiment gauge, news.',
-    tags: ['finance', 'perplexity'],
+    blurb: 'AI summary, candles, peers (click-to-jump), sentiment gauge, and news in a compact market view.',
+    tags: ['finance', 'ai'],
   },
   {
     path: '/examples/trading-floor.json',
     title: 'Trading Floor',
-    blurb: 'Bloomberg-dense multi-asset desk: 6-up metric strip, candles + correlation heatmap, depth, allocation, tape, positions.',
-    tags: ['finance', 'bloomberg'],
+    blurb: 'Dense multi-asset desk: 6-up metric strip, candles + correlation heatmap, depth, allocation, tape, positions.',
+    tags: ['finance', 'terminal'],
   },
   {
-    path: '/examples/binance-clone.json',
-    title: 'Binance Pair',
+    path: '/examples/spot-market.json',
+    title: 'Spot Market',
     blurb: 'Full read + act spot trading UI: stat strip, annotated candles, order book, order ticket (with confirm), watchlist with heat cells.',
-    tags: ['finance', 'binance', 'trade'],
+    tags: ['finance', 'spot', 'trade'],
   },
   {
-    path: '/examples/uniswap-clone.json',
-    title: 'Uniswap Pool',
-    blurb: 'DEX analytics + swap: TVL / volume / APR, price chart, swap ticket, pool composition, fee tier picker, recent swaps.',
-    tags: ['finance', 'uniswap', 'trade'],
+    path: '/examples/liquidity-pool.json',
+    title: 'Liquidity Pool',
+    blurb: 'Pool analytics + swap: TVL / volume / APR, price chart, swap ticket, composition, fee tier picker, recent swaps.',
+    tags: ['finance', 'liquidity', 'trade'],
   },
   {
     path: '/examples/options-desk.json',
@@ -54,19 +54,19 @@ const EXAMPLES: Example[] = [
   {
     path: '/examples/prediction-market.json',
     title: 'Prediction Market',
-    blurb: 'Polymarket-style binary event: yes-probability gauge, order book share donut, implied prob over time, top of book, trades.',
-    tags: ['finance', 'polymarket'],
+    blurb: 'Binary event market: probability gauge, order book share donut, implied probability over time, top of book, trades.',
+    tags: ['finance', 'prediction'],
   },
   {
-    path: '/examples/grafana-ops.json',
-    title: 'Grafana Ops',
+    path: '/examples/service-ops.json',
+    title: 'Service Ops',
     blurb: 'Service observability: latency p50/p95/p99, error budget gauge, queue depth, region heatmap, latency histogram + boxplot, incident log.',
-    tags: ['ops', 'grafana'],
+    tags: ['ops', 'monitoring'],
   },
   {
     path: '/examples/workflow-orchestrator.json',
     title: 'Workflow Orchestrator',
-    blurb: 'n8n / Temporal / Dagster patterns: active runs, task queue depth, asset×date partition heatmap, freshness, duration boxplot, run history.',
+    blurb: 'Workflow operations: active runs, task queue depth, asset × date partition heatmap, freshness, duration boxplot, run history.',
     tags: ['ops', 'workflows'],
   },
   {
@@ -115,7 +115,7 @@ const EXAMPLES: Example[] = [
 
 export function ExamplesIndex() {
   return (
-    <div className="min-h-full bg-zinc-950 text-zinc-100 p-6 md:p-10">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 p-6 md:p-10">
       <div className="max-w-6xl mx-auto">
         <header className="mb-8">
           <h1 className="text-2xl font-semibold tracking-tight mb-1">Medallion Terminal — Examples</h1>

@@ -63,6 +63,8 @@ const RANGES = ['1d', '5d', '1m', '3m', '1y', 'max']
 const RECENT_ACTIONS_CAP = 200
 const RECENT_ALERTS_CAP = 200
 
+export type DashboardTheme = 'dark' | 'light'
+
 function RangeSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
     <div className="flex bg-zinc-900 border border-zinc-800 rounded p-0.5 gap-0.5">
@@ -347,7 +349,7 @@ function downloadSnapshot(snapshot: Template): void {
 }
 
 export function Dashboard({
-  template, backendUrl, onEvent, onCtxChange, paletteSuggest, chrome = 'full', onShare,
+  template, backendUrl, onEvent, onCtxChange, paletteSuggest, chrome = 'full', onShare, theme = 'dark',
 }: {
   template: Template
   backendUrl?: string
@@ -355,7 +357,7 @@ export function Dashboard({
   // health pill, refresh/sound/density/snapshot controls) and the
   // status-bar footer. "minimal" hides both, leaving only the widget
   // grid (the dashboard title still shows if set) — used by the embed
-  // surface so a BI tool / Grafana panel can iframe a clean live view.
+  // surface so a BI or reporting panel can iframe a clean live view.
   chrome?: 'full' | 'minimal'
   // Optional telemetry sink. Receives alerts, widget errors, and
   // action submissions. Keep handler cheap — it runs on every event.
@@ -376,6 +378,9 @@ export function Dashboard({
   // omitted, Share downloads the snapshot JSON so the flow works
   // standalone. Hidden on a template that is already a snapshot.
   onShare?: (snapshot: Template) => void
+  // Visual theme for the scoped dashboard root. Host apps can also
+  // override the exposed --mtc-* CSS variables under .mtc-root.
+  theme?: DashboardTheme
 }) {
   const breakpoint = useBreakpoint()
   const columns = template.columns || 12
@@ -665,6 +670,7 @@ export function Dashboard({
 
   return (
     <DashboardContext.Provider value={contextValue}>
+     <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
      <NowProvider>
      <HoverProvider>
       <CommandPalette suggest={paletteSuggest} />
@@ -760,6 +766,7 @@ export function Dashboard({
       )}
      </HoverProvider>
      </NowProvider>
+     </div>
     </DashboardContext.Provider>
   )
 }

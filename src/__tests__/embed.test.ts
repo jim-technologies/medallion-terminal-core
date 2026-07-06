@@ -14,12 +14,12 @@ import {
 
 describe('parseEmbedConfig', () => {
   it('parses a single-widget embed with source id + ctx + chrome', () => {
-    const c = parseEmbedConfig('?src=btc_px&component=candlestick&backend=https://api.x&ctx.symbol=BTC&ctx.range=1d&stream=1')
+    const c = parseEmbedConfig('?src=btc_px&component=candlestick&backend=https://api.example.com&ctx.symbol=BTC&ctx.range=1d&stream=1')
     expect(c.widget).toBeDefined()
     expect(c.widget!.sourceId).toBe('btc_px')
     expect(c.widget!.component).toBe('candlestick')
     expect(c.widget!.stream).toBe(true)
-    expect(c.backendUrl).toBe('https://api.x')
+    expect(c.backendUrl).toBe('https://api.example.com')
     expect(c.ctx).toEqual({ symbol: 'BTC', range: '1d' })
     expect(c.chrome).toBe('none')
   })
@@ -59,9 +59,9 @@ describe('parseEmbedConfig', () => {
 
 describe('buildEmbedUrl round-trips parseEmbedConfig', () => {
   it('rebuilds a single-widget config', () => {
-    const url = buildEmbedUrl('https://t/embed.html', {
+    const url = buildEmbedUrl('https://terminal.example.com/embed.html', {
       widget: { component: 'timeseries', sourceId: 'px', stream: true, refreshIntervalMs: 2000 },
-      backendUrl: 'https://api.x',
+      backendUrl: 'https://api.example.com',
       ctx: { symbol: 'SOL' },
       chrome: 'none',
     })
@@ -70,7 +70,7 @@ describe('buildEmbedUrl round-trips parseEmbedConfig', () => {
     expect(c.widget!.sourceId).toBe('px')
     expect(c.widget!.stream).toBe(true)
     expect(c.widget!.refreshIntervalMs).toBe(2000)
-    expect(c.backendUrl).toBe('https://api.x')
+    expect(c.backendUrl).toBe('https://api.example.com')
     expect(c.ctx).toEqual({ symbol: 'SOL' })
   })
 
@@ -108,17 +108,17 @@ const SOURCES: SourceLike[] = [
 
 describe('buildBiDescriptor', () => {
   it('builds a connect descriptor with precomputed Get URL', () => {
-    const d = buildBiDescriptor(SOURCES, { name: 'Medallion', endpoint: 'https://api.x/' })
+    const d = buildBiDescriptor(SOURCES, { name: 'Medallion', endpoint: 'https://api.example.com/' })
     expect(d.version).toBe(1)
     expect(d.protocol).toBe('connect')
-    expect(d.endpoint).toBe('https://api.x')
+    expect(d.endpoint).toBe('https://api.example.com')
     expect(d.service).toBe('medallion.terminal.v1.TerminalService')
-    expect(d.getUrl).toBe('https://api.x/medallion.terminal.v1.TerminalService/Get')
+    expect(d.getUrl).toBe('https://api.example.com/medallion.terminal.v1.TerminalService/Get')
     expect(d.tables).toHaveLength(2)
   })
 
   it('derives candle columns from the shape and marks the time column', () => {
-    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.x' })
+    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.example.com' })
     const candles = d.tables.find((t) => t.id === 'btc_candles')!
     expect(candles.columns.map((c) => c.name)).toEqual(['timestamp', 'open', 'high', 'low', 'close', 'volume'])
     expect(candles.columns[0].isTime).toBe(true)
@@ -126,7 +126,7 @@ describe('buildBiDescriptor', () => {
   })
 
   it('maps params to BI column types', () => {
-    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.x' })
+    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.example.com' })
     const candles = d.tables.find((t) => t.id === 'btc_candles')!
     const limit = candles.params!.find((p) => p.key === 'limit')!
     expect(limit.type).toBe('integer')
@@ -135,27 +135,27 @@ describe('buildBiDescriptor', () => {
   })
 
   it('leaves table-shaped columns empty for connector inference', () => {
-    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.x' })
+    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.example.com' })
     const positions = d.tables.find((t) => t.id === 'positions')!
     expect(positions.columns).toEqual([])
   })
 
   it('omits connect fields for a sql-protocol descriptor', () => {
-    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://sql.x', protocol: 'sql' })
+    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://sql.example.com', protocol: 'sql' })
     expect(d.protocol).toBe('sql')
     expect(d.getUrl).toBeUndefined()
     expect(d.service).toBeUndefined()
   })
 
   it('serializes to JSON and round-trips', () => {
-    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.x' })
+    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.example.com' })
     expect(JSON.parse(descriptorToJson(d))).toEqual(d)
   })
 })
 
 describe('connectionFields', () => {
   it('lists the connect connection settings', () => {
-    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.x' })
+    const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://api.example.com' })
     const labels = connectionFields(d).map((f) => f.label)
     expect(labels).toContain('Get RPC URL')
     expect(labels).toContain('Method')
@@ -165,7 +165,7 @@ describe('connectionFields', () => {
   it('surfaces a bearer auth hint', () => {
     const d = buildBiDescriptor(SOURCES, {
       name: 'M',
-      endpoint: 'https://api.x',
+      endpoint: 'https://api.example.com',
       auth: { kind: 'bearer' },
     })
     const auth = connectionFields(d).find((f) => f.label === 'Auth')!

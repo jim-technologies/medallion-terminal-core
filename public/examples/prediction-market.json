@@ -62,8 +62,8 @@
       "source": {
         "inline": [{
           "title": "ETH/USD ≥ $4,000 close on Dec 31",
-          "body": "Source: Coinbase spot. Implied has drifted 38%→42% over 7d as ETH retook $3,400. Yes liquidity thinning at strikes above 0.50.",
-          "source": "Polymarket",
+          "body": "Source: reference spot index. Implied has drifted 38%→42% over 7d as ETH retook $3,400. Yes liquidity thinning at strikes above 0.50.",
+          "source": "Prediction venue",
           "date": "Apr 30, 2026"
         }]
       }
@@ -112,10 +112,10 @@
       "options": { "heat_columns": ["Spread"] },
       "source": {
         "inline": [
-          { "Venue": "Polymarket", "Bid": 0.418, "Ask": 0.422, "Spread": 0.004, "Vol":  482 },
-          { "Venue": "Kalshi",     "Bid": 0.412, "Ask": 0.428, "Spread": 0.016, "Vol":  124 },
-          { "Venue": "PredictIt",  "Bid": 0.405, "Ask": 0.435, "Spread": 0.030, "Vol":   38 },
-          { "Venue": "Manifold",   "Bid": 0.420, "Ask": 0.440, "Spread": 0.020, "Vol":   62 }
+          { "Venue": "Venue A", "Bid": 0.418, "Ask": 0.422, "Spread": 0.004, "Vol":  482 },
+          { "Venue": "Venue B",     "Bid": 0.412, "Ask": 0.428, "Spread": 0.016, "Vol":  124 },
+          { "Venue": "Venue C",  "Bid": 0.405, "Ask": 0.435, "Spread": 0.030, "Vol":   38 },
+          { "Venue": "Venue D",   "Bid": 0.420, "Ask": 0.440, "Spread": 0.020, "Vol":   62 }
         ]
       }
     },

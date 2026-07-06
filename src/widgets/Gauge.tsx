@@ -2,12 +2,12 @@ import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
 const COLORS: Record<string, string> = {
-  ok:     '#10b981',
-  warn:   '#f59e0b',
-  danger: '#ef4444',
-  error:  '#ef4444',
-  info:   '#0ea5e9',
-  muted:  '#71717a',
+  ok:     'var(--mtc-ok)',
+  warn:   'var(--mtc-warning)',
+  danger: 'var(--mtc-danger)',
+  error:  'var(--mtc-danger)',
+  info:   'var(--mtc-accent)',
+  muted:  'var(--mtc-muted)',
 }
 
 interface Band { from: number; to: number; color: string }
@@ -33,7 +33,7 @@ export function Gauge({ data }: WidgetProps) {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-1">
       <svg viewBox="0 0 200 120" className="w-full max-w-[260px]">
-        <path d={ARC_PATH} fill="none" stroke="#27272a" strokeWidth="16" pathLength="100" />
+        <path d={ARC_PATH} fill="none" stroke="var(--mtc-grid)" strokeWidth="16" pathLength="100" />
         {g.bands.map((b, i) => {
           const f = (b.from - g.min) / range
           const t = (b.to - g.min) / range
@@ -64,7 +64,7 @@ export function Gauge({ data }: WidgetProps) {
           x="100"
           y="92"
           textAnchor="middle"
-          fill="#fafafa"
+          fill="var(--mtc-fg)"
           style={{ fontSize: 22, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}
         >
           {formatValue(g.value, g.min, g.max)}

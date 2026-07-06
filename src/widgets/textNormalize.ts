@@ -10,7 +10,7 @@ export interface TextItem {
 
 // Feed items come from third-party sources (RSS, scraped articles), so
 // hrefs are restricted to web URLs — plus root-relative paths for
-// internal deep-links (e.g. a model profile page). Anything else
+// app-local deep-links (e.g. a detail page). Anything else
 // (javascript:, data:, protocol-relative //host) is dropped.
 export function safeUrl(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined

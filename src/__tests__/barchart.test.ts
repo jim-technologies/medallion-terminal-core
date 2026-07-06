@@ -16,13 +16,13 @@ describe('normalizeBars', () => {
 
   it('detects grouped wide rows and series order', () => {
     const out = normalizeBars([
-      { label: 'Mexico', Market: 55.1, 'GPT-5': 60, Elo: 58.2 },
-      { label: 'Draw', Market: 24.0, 'GPT-5': 22, Elo: 23.1 },
-      { label: 'South Africa', Market: 20.9, 'GPT-5': 18, Elo: 18.7 },
+      { label: 'Mexico', Market: 55.1, Model: 60, Baseline: 58.2 },
+      { label: 'Draw', Market: 24.0, Model: 22, Baseline: 23.1 },
+      { label: 'South Africa', Market: 20.9, Model: 18, Baseline: 18.7 },
     ])
     expect(out?.kind).toBe('grouped')
     if (out?.kind === 'grouped') {
-      expect(out.series).toEqual(['Market', 'GPT-5', 'Elo'])
+      expect(out.series).toEqual(['Market', 'Model', 'Baseline'])
       expect(out.rows).toHaveLength(3)
     }
   })
@@ -30,11 +30,11 @@ describe('normalizeBars', () => {
   it('unions series across rows with gaps', () => {
     const out = normalizeBars([
       { label: 'a', Market: 1 },
-      { label: 'b', Claude: 2 },
+      { label: 'b', SeriesB: 2 },
     ])
     expect(out?.kind).toBe('grouped')
     if (out?.kind === 'grouped') {
-      expect(out.series).toEqual(['Market', 'Claude'])
+      expect(out.series).toEqual(['Market', 'SeriesB'])
     }
   })
 

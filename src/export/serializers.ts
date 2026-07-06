@@ -64,7 +64,7 @@ export function toJson(table: FlatTable): string {
 }
 
 // --- NDJSON (newline-delimited; one JSON object per line) ---
-// The streaming-friendly form BigQuery / Superset / log pipelines ingest.
+// The streaming-friendly form warehouse and log pipelines ingest.
 
 export function toNdjson(table: FlatTable): string {
   return table.rows.map((row) => JSON.stringify(row)).join('\n')

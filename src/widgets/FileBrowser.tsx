@@ -469,7 +469,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
             </div>
           )}
           {/* Upload: opens a dialog to pick a destination repo + filename,
-              and either choose a local file or paste a media URL (YouTube /
+              and either choose a local file or paste a media URL (HTTP(S) /
               .m3u8) the server fetches itself. Distinct from drag-drop,
               which always targets the current folder. */}
           {(uploadUrl || uploadActionId || ingestUrl) && (
@@ -631,7 +631,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
                 placeholder="e.g. year=2026/name=avatar"
                 className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
               />
-              <span className="text-zinc-600">The git-clone partition. Becomes a GitHub repo.</span>
+              <span className="text-zinc-600">The repository partition. Becomes a source key.</span>
             </label>
 
             <label className="flex flex-col gap-1 text-xs text-zinc-400">
@@ -654,10 +654,10 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
                     type="url"
                     value={dlgSrcURL}
                     onChange={(e) => setDlgSrcURL(e.target.value)}
-                    placeholder="https://youtu.be/… or https://…/playlist.m3u8"
+                    placeholder="https://example.com/media.mp4 or https://example.com/playlist.m3u8"
                     className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
                   />
-                  <span className="text-zinc-600">YouTube, a supported site, or a raw HLS playlist. Fetched server-side.</span>
+                  <span className="text-zinc-600">HTTP(S) media URL or raw HLS playlist. Fetched server-side.</span>
                 </label>
                 <button
                   onClick={() => void submitIngest()}

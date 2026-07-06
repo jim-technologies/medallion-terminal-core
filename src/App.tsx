@@ -44,7 +44,7 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-zinc-950 text-zinc-500">
+      <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-zinc-500">
         Loading terminal...
       </div>
     )
@@ -52,7 +52,7 @@ export default function App() {
 
   if (error || !tabs || tabs.length === 0) {
     return (
-      <div className="h-full flex flex-col items-center justify-center bg-zinc-950 text-zinc-400 gap-2">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-950 text-zinc-400 gap-2">
         <div className="text-red-400">{error || 'No template loaded'}</div>
         <a className="text-sm text-sky-400 hover:text-sky-300" href="/">← back to examples</a>
       </div>

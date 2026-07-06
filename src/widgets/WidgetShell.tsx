@@ -338,7 +338,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey }: { config: Wi
   // for users who don't know about j/k yet.
   const onShellClick = config.id ? () => setFocusedId(config.id!) : undefined
   // Focused state: replace the double-border ring with a soft single
-  // border + outer glow. Looks more like a Bloomberg highlight, less
+  // border + outer glow. Looks more like a focused highlight, less
   // like a bright outline.
   const focusClass = isFocused
     ? 'border-sky-400/60 shadow-[0_0_12px_-2px_rgba(56,189,248,0.4)]'

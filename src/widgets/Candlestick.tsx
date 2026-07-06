@@ -32,20 +32,42 @@ interface Annotation {
 // Bar positions only — keeps the shape simple. Backends that want a
 // specific price-anchor can use the Timeseries widget which supports
 // arbitrary y values.
-const MARKER_STYLE: Record<string, { shape: SeriesMarkerShape; position: SeriesMarkerBarPosition; color: string }> = {
-  buy:  { shape: 'arrowUp',   position: 'belowBar', color: '#10b981' },
-  sell: { shape: 'arrowDown', position: 'aboveBar', color: '#ef4444' },
-  info: { shape: 'circle',    position: 'aboveBar', color: '#0ea5e9' },
-  warn: { shape: 'circle',    position: 'aboveBar', color: '#f59e0b' },
+const MARKER_STYLE: Record<string, { shape: SeriesMarkerShape; position: SeriesMarkerBarPosition; color: keyof ThemeColors }> = {
+  buy:  { shape: 'arrowUp',   position: 'belowBar', color: 'ok' },
+  sell: { shape: 'arrowDown', position: 'aboveBar', color: 'danger' },
+  info: { shape: 'circle',    position: 'aboveBar', color: 'accent' },
+  warn: { shape: 'circle',    position: 'aboveBar', color: 'warning' },
 }
-const DEFAULT_MARKER: { shape: SeriesMarkerShape; position: SeriesMarkerBarPosition; color: string } = {
+const DEFAULT_MARKER: { shape: SeriesMarkerShape; position: SeriesMarkerBarPosition; color: keyof ThemeColors } = {
   shape: 'circle',
   position: 'aboveBar',
-  color: '#71717a',
+  color: 'muted',
 }
 
 type SeriesMarkerShape = 'arrowUp' | 'arrowDown' | 'circle' | 'square'
 type SeriesMarkerBarPosition = 'aboveBar' | 'belowBar'
+type VolumeDatum = HistogramData & { direction?: 'up' | 'down' }
+interface ThemeColors {
+  accent: string
+  danger: string
+  ok: string
+  warning: string
+  muted: string
+  mutedSubtle: string
+  border: string
+  grid: string
+}
+
+const FALLBACK_THEME_COLORS: ThemeColors = {
+  accent: '#38bdf8',
+  danger: '#f87171',
+  ok: '#34d399',
+  warning: '#fbbf24',
+  muted: '#8a95a3',
+  mutedSubtle: '#5f6b7a',
+  border: '#2b323c',
+  grid: '#242b34',
+}
 
 export function Candlestick({ data }: WidgetProps) {
   const { hoverTime, setHoverTime } = useHover()
@@ -55,30 +77,33 @@ export function Candlestick({ data }: WidgetProps) {
   const volumeRef = useRef<AnySeries>(null)
   const markersRef = useRef<MarkersPrimitive>(null)
   const lastEmitted = useRef<string | null>(null)
+  const colorsRef = useRef<ThemeColors>(FALLBACK_THEME_COLORS)
 
   // Create chart once
   useEffect(() => {
     if (!containerRef.current) return
+    const colors = readThemeColors(containerRef.current)
+    colorsRef.current = colors
 
     const chart = createChart(containerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: '#a1a1aa',
+        textColor: colors.muted,
         fontSize: 11,
       },
       grid: {
-        vertLines: { color: '#27272a' },
-        horzLines: { color: '#27272a' },
+        vertLines: { color: colors.grid },
+        horzLines: { color: colors.grid },
       },
       crosshair: {
-        vertLine: { color: '#52525b', width: 1, style: 2 },
-        horzLine: { color: '#52525b', width: 1, style: 2 },
+        vertLine: { color: colors.mutedSubtle, width: 1, style: 2 },
+        horzLine: { color: colors.mutedSubtle, width: 1, style: 2 },
       },
       rightPriceScale: {
-        borderColor: '#3f3f46',
+        borderColor: colors.border,
       },
       timeScale: {
-        borderColor: '#3f3f46',
+        borderColor: colors.border,
         timeVisible: true,
       },
       handleScroll: true,
@@ -86,12 +111,12 @@ export function Candlestick({ data }: WidgetProps) {
     })
 
     const candles = chart.addSeries(CandlestickSeries, {
-      upColor: '#34d399',
-      downColor: '#f87171',
-      borderDownColor: '#f87171',
-      borderUpColor: '#34d399',
-      wickDownColor: '#f87171',
-      wickUpColor: '#34d399',
+      upColor: colors.ok,
+      downColor: colors.danger,
+      borderDownColor: colors.danger,
+      borderUpColor: colors.ok,
+      wickDownColor: colors.danger,
+      wickUpColor: colors.ok,
     })
 
     const volumes = chart.addSeries(HistogramSeries, {
@@ -166,10 +191,14 @@ export function Candlestick({ data }: WidgetProps) {
 
     candleRef.current.setData(result.candles)
     if (result.volumes.length > 0 && volumeRef.current) {
-      volumeRef.current.setData(result.volumes)
+      const colors = colorsRef.current
+      volumeRef.current.setData(result.volumes.map(v => ({
+        ...v,
+        color: v.direction === 'down' ? withAlpha(colors.danger, 0.3) : withAlpha(colors.ok, 0.3),
+      })))
     }
     if (markersRef.current) {
-      markersRef.current.setMarkers(toMarkers(result.annotations))
+      markersRef.current.setMarkers(toMarkers(result.annotations, colorsRef.current))
     }
 
     chartRef.current?.timeScale().fitContent()
@@ -191,14 +220,14 @@ export function Candlestick({ data }: WidgetProps) {
   )
 }
 
-function toMarkers(annotations: Annotation[]): SeriesMarker<Time>[] {
+function toMarkers(annotations: Annotation[], colors: ThemeColors): SeriesMarker<Time>[] {
   return annotations.map(a => {
     const style = a.kind ? MARKER_STYLE[a.kind] ?? DEFAULT_MARKER : DEFAULT_MARKER
     return {
       time: toTime(a.timestamp) as Time,
       position: style.position,
       shape: style.shape,
-      color: a.color ?? style.color,
+      color: a.color ?? colors[style.color],
       text: a.label,
     }
   })
@@ -239,8 +268,8 @@ function toTime(val: unknown): string | number {
   return s.split(' ')[0].split('T')[0]
 }
 
-function normalize(data: unknown): { candles: CandlestickData[]; volumes: HistogramData[]; annotations: Annotation[] } {
-  const empty = { candles: [] as CandlestickData[], volumes: [] as HistogramData[], annotations: [] as Annotation[] }
+function normalize(data: unknown): { candles: CandlestickData[]; volumes: VolumeDatum[]; annotations: Annotation[] } {
+  const empty = { candles: [] as CandlestickData[], volumes: [] as VolumeDatum[], annotations: [] as Annotation[] }
   if (!data) return empty
 
   // Accept either [bar, bar, ...] (shorthand) or { bars, annotations } (canonical CandlePayload).
@@ -281,7 +310,7 @@ function normalize(data: unknown): { candles: CandlestickData[]; volumes: Histog
   if (!tsKey || !openKey || !highKey || !lowKey || !closeKey) return { ...empty, annotations }
 
   const candles: CandlestickData[] = []
-  const volumes: HistogramData[] = []
+  const volumes: VolumeDatum[] = []
 
   for (const item of arr) {
     const row = item as Record<string, unknown>
@@ -297,10 +326,39 @@ function normalize(data: unknown): { candles: CandlestickData[]; volumes: Histog
       volumes.push({
         time,
         value: Number(row[volumeKey]),
-        color: close >= open ? 'rgba(52, 211, 153, 0.3)' : 'rgba(248, 113, 113, 0.3)',
+        direction: close >= open ? 'up' : 'down',
       })
     }
   }
 
   return { candles, volumes, annotations }
+}
+
+function readThemeColors(el: HTMLElement): ThemeColors {
+  const style = getComputedStyle(el)
+  const read = (name: string, fallback: string) => style.getPropertyValue(name).trim() || fallback
+  return {
+    accent: read('--mtc-accent', FALLBACK_THEME_COLORS.accent),
+    danger: read('--mtc-danger', FALLBACK_THEME_COLORS.danger),
+    ok: read('--mtc-ok', FALLBACK_THEME_COLORS.ok),
+    warning: read('--mtc-warning', FALLBACK_THEME_COLORS.warning),
+    muted: read('--mtc-muted', FALLBACK_THEME_COLORS.muted),
+    mutedSubtle: read('--mtc-muted-subtle', FALLBACK_THEME_COLORS.mutedSubtle),
+    border: read('--mtc-border', FALLBACK_THEME_COLORS.border),
+    grid: read('--mtc-grid', FALLBACK_THEME_COLORS.grid),
+  }
+}
+
+function withAlpha(color: string, alpha: number): string {
+  const hex = color.trim().match(/^#([0-9a-f]{6})$/i)
+  if (hex) {
+    const n = parseInt(hex[1], 16)
+    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`
+  }
+  const rgb = color.trim().match(/^rgba?\(([^)]+)\)$/i)
+  if (rgb) {
+    const parts = rgb[1].split(/[\s,\/]+/).map(Number).filter(Number.isFinite)
+    if (parts.length >= 3) return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${alpha})`
+  }
+  return color
 }

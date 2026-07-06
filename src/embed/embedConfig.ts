@@ -1,7 +1,6 @@
 // embedConfig — parse an embed URL's query string into a typed config.
 //
-// The embed surface lets a BI tool (Grafana panel, Superset iframe,
-// Power BI / Looker report page) render a single live widget or a whole
+// The embed surface lets a BI tool (reporting panel or iframe) render a single live widget or a whole
 // dashboard with minimal chrome. The host points an <iframe> at the
 // embed entry and passes everything via the query string — no JS bridge
 // required, which is the lowest common denominator every BI tool

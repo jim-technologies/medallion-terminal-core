@@ -523,8 +523,8 @@ message PairedMeasure {
 //   { "url": "https://charts.example.com/btc.png", "label": "BTC, 1h" }
 //
 // JSON example (iframe with sandbox override):
-//   { "url": "https://embed.tradingview.com/...",
-//     "label": "TradingView BTC",
+//   { "url": "https://charts.example.com/embed",
+//     "label": "Candlestick BTC",
 //     "sandbox": "allow-scripts allow-same-origin allow-popups" }
 message EmbedPayload {
   // The URL the widget renders. For `image`, src; for `iframe`, src.
@@ -543,7 +543,7 @@ message EmbedPayload {
 // JSON example:
 //   { "items": [
 //       { "title": "Bitcoin breaks $73K", "body": "...",
-//         "source": "CoinDesk", "date": "2026-04-14",
+//         "source": "Market Wire", "date": "2026-04-14",
 //         "tags": ["BTC", "ETF"], "sentiment": 0.6 },
 //       { "title": "Daily summary", "body": "Markets rallied..." }
 //   ]}

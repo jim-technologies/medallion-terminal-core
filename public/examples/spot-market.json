@@ -53,7 +53,7 @@
       "title": "Order Book — ${ctx.symbol}",
       "source": {
         "inline": {
-          "venue": "binance",
+          "venue": "reference",
           "asks": [
             { "price": 67862.40, "size": 1.42 },
             { "price": 67860.10, "size": 0.84 },

@@ -8,6 +8,10 @@ import '../examples/widgets/registry'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <div className="mtc-root mtc-theme-dark" data-theme="dark">
+      <div className="min-h-screen">
+        <App />
+      </div>
+    </div>
   </StrictMode>,
 )

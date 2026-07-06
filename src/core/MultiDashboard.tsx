@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Dashboard } from './Dashboard'
+import { Dashboard, type DashboardTheme } from './Dashboard'
 import type { Template } from '../types/template'
 
-// Cmd+1..9 / Ctrl+1..9 selects tab N. Common Bloomberg / browser
+// Cmd+1..9 / Ctrl+1..9 selects tab N. Common browser
 // shortcut. Mounted once at the MultiDashboard level so adding it
 // per-Dashboard isn't needed.
 function useTabHotkeys(tabCount: number, onSelect: (i: number) => void) {
@@ -37,11 +37,13 @@ export function MultiDashboard({
   activeIndex,
   onSelect,
   backendUrl,
+  theme = 'dark',
 }: {
   tabs: Tab[]
   activeIndex: number
   onSelect: (index: number) => void
   backendUrl?: string
+  theme?: DashboardTheme
 }) {
   const safeIndex = Math.max(0, Math.min(activeIndex, tabs.length - 1))
   useTabHotkeys(tabs.length, onSelect)
@@ -55,13 +57,15 @@ export function MultiDashboard({
   if (tabs.length === 0) return null
 
   return (
-    <div className="min-h-full bg-zinc-950">
-      <TabStrip tabs={tabs} activeIndex={safeIndex} onSelect={onSelect} />
-      {tabs.map((tab, i) => (
-        <div key={i} style={{ display: i === safeIndex ? 'block' : 'none' }}>
-          {activated.has(i) && <Dashboard template={tab.template} backendUrl={backendUrl} />}
-        </div>
-      ))}
+    <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
+      <div className="min-h-full bg-zinc-950">
+        <TabStrip tabs={tabs} activeIndex={safeIndex} onSelect={onSelect} />
+        {tabs.map((tab, i) => (
+          <div key={i} style={{ display: i === safeIndex ? 'block' : 'none' }}>
+            {activated.has(i) && <Dashboard template={tab.template} backendUrl={backendUrl} theme={theme} />}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

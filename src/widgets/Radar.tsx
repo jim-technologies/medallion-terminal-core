@@ -13,6 +13,11 @@ import type { WidgetProps } from '../types/template'
 import { PALETTE, TOOLTIP_STYLE } from './colors'
 import { Empty } from './states'
 
+const GRID = 'var(--mtc-grid)'
+const AXIS = 'var(--mtc-border)'
+const TICK = 'var(--mtc-muted)'
+const TICK_FAINT = 'var(--mtc-muted-subtle)'
+
 interface ChartData {
   rows: Record<string, unknown>[]
   series: string[]
@@ -28,12 +33,12 @@ export function Radar({ data }: WidgetProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <RadarChart data={chart.rows} outerRadius="75%">
-        <PolarGrid stroke="#27272a" />
-        <PolarAngleAxis dataKey="metric" stroke="#3f3f46" tick={{ fontSize: 11, fill: '#a1a1aa' }} />
-        <PolarRadiusAxis stroke="#3f3f46" tick={{ fontSize: 9, fill: '#52525b' }} />
+        <PolarGrid stroke={GRID} />
+        <PolarAngleAxis dataKey="metric" stroke={AXIS} tick={{ fontSize: 11, fill: TICK }} />
+        <PolarRadiusAxis stroke={AXIS} tick={{ fontSize: 9, fill: TICK_FAINT }} />
         <Tooltip contentStyle={TOOLTIP_STYLE} />
         {chart.series.length > 1 && (
-          <Legend wrapperStyle={{ fontSize: 11, color: '#a1a1aa' }} />
+          <Legend wrapperStyle={{ fontSize: 11, color: TICK }} />
         )}
         {chart.series.map((s, i) => (
           <ReRadar

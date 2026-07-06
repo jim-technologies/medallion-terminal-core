@@ -18,7 +18,7 @@ type Story = StoryObj<typeof Tape>
 const t0 = Date.now()
 const ts = (offset: number) => new Date(t0 - offset).toISOString()
 
-// Mixed bid/ask prints — what a Binance / Coinbase trades feed looks
+// Mixed bid/ask prints — what a spot-market trades feed looks
 // like under the hood. The component prepends newest, flashes new
 // inserts, and dedupes by id (here we omit id and rely on the
 // timestamp+price+size fingerprint).

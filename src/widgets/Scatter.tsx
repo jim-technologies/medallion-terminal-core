@@ -13,6 +13,11 @@ import { SEMANTIC, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
+const GRID = 'var(--mtc-grid)'
+const AXIS = 'var(--mtc-border)'
+const TICK = 'var(--mtc-muted)'
+const CURSOR = 'var(--mtc-muted-subtle)'
+
 interface Point {
   x: number
   y: number
@@ -34,28 +39,28 @@ export function Scatter({ data }: WidgetProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ScatterChart margin={{ top: 8, right: 8, bottom: 4, left: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+        <CartesianGrid strokeDasharray="3 3" stroke={GRID} />
         <XAxis
           type="number"
           dataKey="x"
-          stroke="#3f3f46"
-          tick={{ fontSize: 11, fill: '#a1a1aa' }}
+          stroke={AXIS}
+          tick={{ fontSize: 11, fill: TICK }}
         />
         <YAxis
           type="number"
           dataKey="y"
-          stroke="#3f3f46"
-          tick={{ fontSize: 11, fill: '#a1a1aa' }}
+          stroke={AXIS}
+          tick={{ fontSize: 11, fill: TICK }}
           width={50}
         />
         {hasSize && <ZAxis type="number" dataKey="size" range={[40, 280]} />}
         <Tooltip
-          cursor={{ strokeDasharray: '3 3', stroke: '#52525b' }}
+          cursor={{ strokeDasharray: '3 3', stroke: CURSOR }}
           contentStyle={TOOLTIP_STYLE}
         />
         <ReScatter
           data={points}
-          fill="#0ea5e9"
+          fill="var(--mtc-accent)"
           shape={(props: { cx?: number; cy?: number; payload?: Point }) => {
             const { cx, cy, payload } = props
             if (cx == null || cy == null || !payload) return <circle cx={0} cy={0} r={0} />
@@ -105,5 +110,5 @@ function normalize(data: unknown): Point[] | null {
 function resolveColor(p: Point): string {
   if (p.color && SEMANTIC[p.color]) return SEMANTIC[p.color]
   if (p.color && p.color.startsWith('#')) return p.color
-  return '#0ea5e9'
+  return 'var(--mtc-accent)'
 }

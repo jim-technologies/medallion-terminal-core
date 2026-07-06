@@ -19,7 +19,7 @@ export default meta
 type Story = StoryObj<typeof MultiSelect>
 
 export const Venues: Story = {
-  args: { options: { key: 'venues', label: 'Venues', choices: ['binance', 'coinbase', 'kraken', 'okx', 'bybit'] } },
+  args: { options: { key: 'venues', label: 'Venues', choices: ['venue-a', 'venue-b', 'venue-c', 'venue-d', 'venue-e'] } },
 }
 
 export const Tags: Story = {
