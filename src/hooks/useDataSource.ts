@@ -21,10 +21,6 @@ function isAbortLikeError(err: unknown): boolean {
 
 function abortController(controller: AbortController) {
   if (controller.signal.aborted) return
-  if (typeof DOMException !== 'undefined') {
-    controller.abort(new DOMException('Data source disposed', 'AbortError'))
-    return
-  }
   controller.abort()
 }
 
@@ -259,7 +255,6 @@ export function useDataSource(source?: DataSource): DataSourceState {
     }
 
     // --- Regular fetch (+ polling) ---
-    const controller = new AbortController()
     let disposed = false
 
     const fetchData = async () => {
@@ -269,10 +264,10 @@ export function useDataSource(source?: DataSource): DataSourceState {
           method: source.method || 'GET',
           headers: source.headers,
           body: source.body ? JSON.stringify(source.body) : undefined,
-          signal: controller.signal,
         })
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        handleData(await res.json())
+        const body = await res.json()
+        if (!disposed) handleData(body)
       } catch (err: unknown) {
         if (!disposed && err instanceof Error && !isAbortLikeError(err)) setError(err.message)
       } finally {
@@ -290,7 +285,6 @@ export function useDataSource(source?: DataSource): DataSourceState {
 
     return () => {
       disposed = true
-      abortController(controller)
       if (interval) clearInterval(interval)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
