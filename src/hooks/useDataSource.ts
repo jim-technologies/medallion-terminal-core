@@ -13,6 +13,21 @@ function getRefreshMs(s: DataSource): number | undefined {
   return s.refreshIntervalMs ?? s.refreshInterval
 }
 
+function isAbortLikeError(err: unknown): boolean {
+  if (!(err instanceof Error)) return false
+  if (err.name === 'AbortError') return true
+  return /\babort(?:ed)?\b/i.test(err.message)
+}
+
+function abortController(controller: AbortController) {
+  if (controller.signal.aborted) return
+  if (typeof DOMException !== 'undefined') {
+    controller.abort(new DOMException('Data source disposed', 'AbortError'))
+    return
+  }
+  controller.abort()
+}
+
 const MAX_RECONNECT_DELAY = 30000
 const INITIAL_RECONNECT_DELAY = 1000
 
@@ -192,7 +207,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
           reader.releaseLock()
         } catch (err: unknown) {
           // AbortError on cleanup is expected; surface anything else.
-          if (!disposed && err instanceof Error && err.name !== 'AbortError') setError(err.message)
+          if (!disposed && err instanceof Error && !isAbortLikeError(err)) setError(err.message)
         } finally {
           if (!disposed) {
             setConnected(false)
@@ -209,7 +224,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
       connect()
       return () => {
         disposed = true
-        ctrl.abort()
+        abortController(ctrl)
         clearTimeout(reconnectTimer.current)
         setConnected(false)
         setNextRetryAt(null)
@@ -245,8 +260,10 @@ export function useDataSource(source?: DataSource): DataSourceState {
 
     // --- Regular fetch (+ polling) ---
     const controller = new AbortController()
+    let disposed = false
 
     const fetchData = async () => {
+      if (disposed) return
       try {
         const res = await fetch(source.url!, {
           method: source.method || 'GET',
@@ -257,21 +274,25 @@ export function useDataSource(source?: DataSource): DataSourceState {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         handleData(await res.json())
       } catch (err: unknown) {
-        if (err instanceof Error && err.name !== 'AbortError') setError(err.message)
+        if (!disposed && err instanceof Error && !isAbortLikeError(err)) setError(err.message)
       } finally {
-        setLoading(false)
+        if (!disposed) setLoading(false)
       }
     }
 
-    fetchData()
+    void fetchData()
 
     let interval: ReturnType<typeof setInterval> | undefined
     const refreshMs = getRefreshMs(source)
     if (refreshMs && refreshMs > 0) {
-      interval = setInterval(fetchData, refreshMs)
+      interval = setInterval(() => void fetchData(), refreshMs)
     }
 
-    return () => { controller.abort(); if (interval) clearInterval(interval) }
+    return () => {
+      disposed = true
+      abortController(controller)
+      if (interval) clearInterval(interval)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchKey, handleData, refreshTick])
 
