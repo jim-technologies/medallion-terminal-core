@@ -49,6 +49,75 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 }
 ```
 
+## Untrusted Template Policy
+
+`source_id` is the preferred integration path because the host backend
+owns the catalog and authorization. URL mode, widget URL options, and
+iframe/image embeds are intentionally available for trusted
+operator-authored dashboards, but customer-provided templates should be
+validated before rendering.
+
+`Dashboard` treats templates as untrusted by default. It runs
+`validateTemplateTrust(template, policy)` before mounting widgets and
+blocks rendering when the policy reports errors. The validator does not
+make authorization decisions; it gives the host a deterministic
+pre-render check for URL origins, request headers, iframe sandbox tokens,
+and polling limits.
+
+```ts
+import {
+  Dashboard,
+  validateTemplateTrust,
+  DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
+  type TemplateTrustPolicy,
+} from 'medallion-terminal-core'
+
+const policy: TemplateTrustPolicy = {
+  ...DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
+  allowedUrlOrigins: ['https://api.example.com'],
+  allowedIframeOrigins: ['https://dashboards.example.com'],
+  allowedHeaders: ['accept', 'content-type'],
+  minRefreshIntervalMs: 5000,
+  iframeSandbox: {
+    disallowedTokens: [
+      'allow-downloads',
+      'allow-popups-to-escape-sandbox',
+      'allow-top-navigation',
+      'allow-top-navigation-by-user-activation',
+    ],
+    allowScriptsWithSameOrigin: false,
+  },
+}
+
+render(
+  <Dashboard
+    template={template}
+    backendUrl={api}
+    templateTrustPolicy={policy}
+  />,
+)
+```
+
+The default untrusted policy rejects absolute URL origins unless the host
+allow-lists them, rejects sensitive headers such as `Authorization` and
+`Cookie`, disallows iframe sandbox escape tokens, and rejects polling
+intervals below 1s. The iframe widget's default `sandbox` is the strict
+empty sandbox. Trusted/operator-authored dashboards that intentionally
+use arbitrary URL mode or looser iframe permissions must opt in:
+
+```tsx
+<Dashboard template={template} backendUrl={api} templateTrust="trusted" />
+```
+
+Host apps should only set `templateTrust="trusted"` for dashboards that come
+from a curated/operator-owned source. User imports, customer-authored
+templates, shared JSON, and AI-generated templates should stay in untrusted
+mode with an explicit `templateTrustPolicy`; this SDK cannot infer ownership
+or authorization from template content.
+
+Hosts can make the untrusted policy stricter by disabling relative URLs
+or by requiring all widgets to use `source_id` or `inline`.
+
 ## Widget shapes
 
 | Component | Payload shape | Notes |
@@ -392,6 +461,12 @@ For wiring this into a real product, in order:
    - `__error_after` synthetic source exists for testing — remove or gate it.
 
 9. **Types.** Generated proto-derived JSON types are available at `medallion-terminal-core/proto`. Friendlier framework types (`Template`, `WidgetProps`, `DataSource`) are at the package root. Run `pnpm gen:proto` after editing protos; the lint step refuses stale generated types.
+
+10. **Release artifacts.** This package commits `dist/` as the npm
+    release artifact because `package.json` publishes only `dist` and
+    `proto`. Rebuild with `pnpm build:lib`; CI/release checks can run
+    `pnpm check:dist` or `make check-dist` from a clean checkout to fail
+    when committed dist files are stale.
 
 ## Styling And Themes
 

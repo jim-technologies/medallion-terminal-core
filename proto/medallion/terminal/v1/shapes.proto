@@ -525,7 +525,7 @@ message PairedMeasure {
 // JSON example (iframe with sandbox override):
 //   { "url": "https://charts.example.com/embed",
 //     "label": "Candlestick BTC",
-//     "sandbox": "allow-scripts allow-same-origin allow-popups" }
+//     "sandbox": "allow-scripts" }
 message EmbedPayload {
   // The URL the widget renders. For `image`, src; for `iframe`, src.
   string url = 1;

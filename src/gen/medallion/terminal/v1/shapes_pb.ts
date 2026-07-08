@@ -1982,7 +1982,7 @@ export const PairedMeasureSchema: GenMessage<PairedMeasure, {jsonType: PairedMea
  * JSON example (iframe with sandbox override):
  *   { "url": "https://charts.example.com/embed",
  *     "label": "Candlestick BTC",
- *     "sandbox": "allow-scripts allow-same-origin allow-popups" }
+ *     "sandbox": "allow-scripts" }
  *
  * @generated from message medallion.terminal.v1.EmbedPayload
  */
@@ -2022,7 +2022,7 @@ export type EmbedPayload = Message<"medallion.terminal.v1.EmbedPayload"> & {
  * JSON example (iframe with sandbox override):
  *   { "url": "https://charts.example.com/embed",
  *     "label": "Candlestick BTC",
- *     "sandbox": "allow-scripts allow-same-origin allow-popups" }
+ *     "sandbox": "allow-scripts" }
  *
  * @generated from message medallion.terminal.v1.EmbedPayload
  */

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Dashboard, type DashboardTheme } from './Dashboard'
+import { Dashboard, type DashboardTemplateTrust, type DashboardTheme } from './Dashboard'
+import type { TemplateTrustPolicy } from './templateSecurity'
 import type { Template } from '../types/template'
 
 // Cmd+1..9 / Ctrl+1..9 selects tab N. Common browser
@@ -38,12 +39,16 @@ export function MultiDashboard({
   onSelect,
   backendUrl,
   theme = 'dark',
+  templateTrust,
+  templateTrustPolicy,
 }: {
   tabs: Tab[]
   activeIndex: number
   onSelect: (index: number) => void
   backendUrl?: string
   theme?: DashboardTheme
+  templateTrust?: DashboardTemplateTrust
+  templateTrustPolicy?: TemplateTrustPolicy
 }) {
   const safeIndex = Math.max(0, Math.min(activeIndex, tabs.length - 1))
   useTabHotkeys(tabs.length, onSelect)
@@ -62,7 +67,15 @@ export function MultiDashboard({
         <TabStrip tabs={tabs} activeIndex={safeIndex} onSelect={onSelect} />
         {tabs.map((tab, i) => (
           <div key={i} style={{ display: i === safeIndex ? 'block' : 'none' }}>
-            {activated.has(i) && <Dashboard template={tab.template} backendUrl={backendUrl} theme={theme} />}
+            {activated.has(i) && (
+              <Dashboard
+                template={tab.template}
+                backendUrl={backendUrl}
+                theme={theme}
+                templateTrust={templateTrust}
+                templateTrustPolicy={templateTrustPolicy}
+              />
+            )}
           </div>
         ))}
       </div>

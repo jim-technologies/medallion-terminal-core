@@ -1,7 +1,6 @@
 import { Empty } from './states'
+import { DEFAULT_IFRAME_SANDBOX } from '../core/templateSecurity'
 import type { WidgetProps } from '../types/template'
-
-const DEFAULT_SANDBOX = 'allow-scripts allow-same-origin'
 
 // Sandboxed iframe widget for embedding external content
 // (third-party charts, legacy dashboards, model docs, etc.).
@@ -11,9 +10,9 @@ const DEFAULT_SANDBOX = 'allow-scripts allow-same-origin'
 //   { url, title?, sandbox? }                                → manual shape
 //   { url, label?, sandbox? }                                → EmbedPayload (proto)
 //
-// Sandbox defaults to `allow-scripts allow-same-origin`. Authors
-// can override per-widget if they need looser permissions, but
-// erring on the strict side keeps embeds safe by default.
+// Sandbox defaults to the strict empty sandbox. Trusted/operator
+// dashboards can loosen it per widget; customer-authored templates
+// should be checked by Dashboard's template trust policy first.
 export function Iframe({ data, options }: WidgetProps) {
   const { url, title, sandbox } = parse(data, options)
   if (!url) return <Empty>No URL</Empty>
@@ -34,7 +33,7 @@ function parse(
 ): { url: string | undefined; title: string; sandbox: string } {
   let url: string | undefined
   let title = 'embed'
-  let sandbox = DEFAULT_SANDBOX
+  let sandbox = DEFAULT_IFRAME_SANDBOX
   if (typeof data === 'string') {
     url = data
   } else if (data && typeof data === 'object') {
@@ -53,4 +52,3 @@ function parse(
   }
   return { url, title, sandbox }
 }
-

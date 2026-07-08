@@ -7,6 +7,7 @@ import optionsDesk from '../../public/examples/options-desk.json'
 import spotMarket from '../../public/examples/spot-market.json'
 import liquidityPool from '../../public/examples/liquidity-pool.json'
 import serviceOps from '../../public/examples/service-ops.json'
+import auditTrail from '../../public/examples/audit-trail.json'
 import workflowOrchestrator from '../../public/examples/workflow-orchestrator.json'
 import sportsBetting from '../../public/examples/sports-betting.json'
 import mlMonitoring from '../../public/examples/ml-monitoring.json'
@@ -37,6 +38,7 @@ const EXAMPLES: Record<string, Json> = {
   'spot-market':            spotMarket,
   'liquidity-pool':         liquidityPool,
   'service-ops':            serviceOps,
+  'audit-trail':            auditTrail,
   'workflow-orchestrator':  workflowOrchestrator,
   'sports-betting':         sportsBetting,
   'ml-monitoring':          mlMonitoring,

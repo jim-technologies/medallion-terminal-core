@@ -11,6 +11,7 @@ import optionsDesk from '../public/examples/options-desk.json'
 import spotMarket from '../public/examples/spot-market.json'
 import liquidityPool from '../public/examples/liquidity-pool.json'
 import serviceOps from '../public/examples/service-ops.json'
+import auditTrail from '../public/examples/audit-trail.json'
 import workflowOrchestrator from '../public/examples/workflow-orchestrator.json'
 import mlMonitoring from '../public/examples/ml-monitoring.json'
 import logisticsOps from '../public/examples/logistics-ops.json'
@@ -122,6 +123,7 @@ export const OptionsDesk          = story(optionsDesk)
 export const SpotMarket           = story(spotMarket)
 export const LiquidityPool        = story(liquidityPool)
 export const ServiceOps           = story(serviceOps)
+export const AuditTrail           = story(auditTrail)
 export const WorkflowOrchestrator = story(workflowOrchestrator)
 export const MLMonitoring         = story(mlMonitoring)
 export const Logistics            = story(logisticsOps)

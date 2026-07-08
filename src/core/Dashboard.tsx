@@ -12,6 +12,12 @@ import { CommandPalette, type PaletteSuggest } from './CommandPalette'
 import { ShortcutsOverlay } from './ShortcutsOverlay'
 import { Toaster, type Toast } from './Toaster'
 import { validateTemplate, type ValidationIssue } from './validateTemplate'
+import {
+  DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
+  validateTemplateTrust,
+  type TemplateSecurityIssue,
+  type TemplateTrustPolicy,
+} from './templateSecurity'
 import { buildSnapshot, isStaticTemplate, widgetSnapshotKey } from './snapshot'
 import { useNow } from './NowContext'
 
@@ -64,6 +70,8 @@ const RECENT_ACTIONS_CAP = 200
 const RECENT_ALERTS_CAP = 200
 
 export type DashboardTheme = 'dark' | 'light'
+export type DashboardTemplateTrust = 'untrusted' | 'trusted'
+type DashboardIssue = ValidationIssue | TemplateSecurityIssue
 
 function RangeSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
@@ -349,7 +357,16 @@ function downloadSnapshot(snapshot: Template): void {
 }
 
 export function Dashboard({
-  template, backendUrl, onEvent, onCtxChange, paletteSuggest, chrome = 'full', onShare, theme = 'dark',
+  template,
+  backendUrl,
+  onEvent,
+  onCtxChange,
+  paletteSuggest,
+  chrome = 'full',
+  onShare,
+  theme = 'dark',
+  templateTrust = 'untrusted',
+  templateTrustPolicy = DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
 }: {
   template: Template
   backendUrl?: string
@@ -381,6 +398,14 @@ export function Dashboard({
   // Visual theme for the scoped dashboard root. Host apps can also
   // override the exposed --mtc-* CSS variables under .mtc-root.
   theme?: DashboardTheme
+  // Untrusted is the default: URL mode, iframe/image URLs, request
+  // headers, and polling intervals are checked before widgets mount.
+  // Operator-authored dashboards that intentionally use arbitrary URL
+  // mode can pass "trusted" to bypass this SDK guardrail.
+  templateTrust?: DashboardTemplateTrust
+  // Host policy for customer-provided templates. Ignored when
+  // templateTrust="trusted".
+  templateTrustPolicy?: TemplateTrustPolicy
 }) {
   const breakpoint = useBreakpoint()
   const columns = template.columns || 12
@@ -388,8 +413,17 @@ export function Dashboard({
   // Validation runs once per template identity. Errors are loud and
   // persistent; warnings are dismissible. Authors get a banner on bad
   // templates instead of a blank widget tile and a console error.
-  const issues = useMemo(() => validateTemplate(template), [template])
+  const authoringIssues = useMemo(() => validateTemplate(template), [template])
+  const securityIssues = useMemo(
+    () => templateTrust === 'trusted' ? [] : validateTemplateTrust(template, templateTrustPolicy),
+    [template, templateTrust, templateTrustPolicy],
+  )
+  const issues = useMemo<DashboardIssue[]>(
+    () => [...authoringIssues, ...securityIssues],
+    [authoringIssues, securityIssues],
+  )
   const hasErrors = useMemo(() => issues.some(i => i.severity === 'error'), [issues])
+  const hasSecurityErrors = useMemo(() => securityIssues.some(i => i.severity === 'error'), [securityIssues])
   // A frozen template (shared snapshot) renders offline — suppress the
   // live controls (refresh/reload/share) and show a snapshot badge.
   const frozen = useMemo(() => !!template.frozenAt || isStaticTemplate(template), [template])
@@ -666,7 +700,7 @@ export function Dashboard({
     return () => document.removeEventListener('keydown', onKey)
   }, [widgets, focusedId, requestRefresh, template.shortcuts, setCtx])
 
-  const fullscreenWidget = fullscreenId ? widgets.find(w => w.id === fullscreenId) : null
+  const fullscreenWidget = !hasSecurityErrors && fullscreenId ? widgets.find(w => w.id === fullscreenId) : null
 
   return (
     <DashboardContext.Provider value={contextValue}>
@@ -739,7 +773,9 @@ export function Dashboard({
           className="grid gap-3 md:gap-4 items-start"
           style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
         >
-          {widgets.map((widget, i) => (
+          {hasSecurityErrors ? (
+            <TemplateBlocked issues={securityIssues} />
+          ) : widgets.map((widget, i) => (
             <div
               key={widget.id || i}
               // Stable DOM id so the keyboard nav effect can scroll the
@@ -777,7 +813,7 @@ export function Dashboard({
 // no use outside it.
 function ValidationBanner({
   issues, dismissible, onDismiss,
-}: { issues: ValidationIssue[]; dismissible: boolean; onDismiss: () => void }) {
+}: { issues: DashboardIssue[]; dismissible: boolean; onDismiss: () => void }) {
   const errors = issues.filter(i => i.severity === 'error')
   const warnings = issues.filter(i => i.severity === 'warn')
   const tone = errors.length > 0
@@ -811,6 +847,30 @@ function ValidationBanner({
           Dismiss
         </button>
       )}
+    </div>
+  )
+}
+
+function TemplateBlocked({ issues }: { issues: TemplateSecurityIssue[] }) {
+  const errors = issues.filter(i => i.severity === 'error')
+  return (
+    <div className="col-span-full border border-red-500/40 bg-red-500/10 rounded p-4 text-sm text-red-100">
+      <div className="font-medium text-xs uppercase tracking-wider mb-2">Template blocked</div>
+      <p className="text-red-200/80 mb-3">
+        This dashboard includes URL, header, iframe, or polling behavior that the host trust policy rejected.
+      </p>
+      <ul className="space-y-1">
+        {errors.slice(0, 6).map((issue, i) => (
+          <li key={i} className="font-mono text-[11px] leading-tight">
+            <span className="opacity-60">{issue.path || '<root>'}</span>
+            <span className="mx-1.5 opacity-40">·</span>
+            <span>{issue.message}</span>
+          </li>
+        ))}
+        {errors.length > 6 && (
+          <li className="opacity-60 text-[10px]">… and {errors.length - 6} more</li>
+        )}
+      </ul>
     </div>
   )
 }

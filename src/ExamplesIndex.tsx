@@ -64,6 +64,12 @@ const EXAMPLES: Example[] = [
     tags: ['ops', 'monitoring'],
   },
   {
+    path: '/examples/audit-trail.json',
+    title: 'Audit Trail',
+    blurb: 'First-client audit view: actor/action/resource table with before/after summaries, evidence links, and review queue metrics.',
+    tags: ['audit', 'security', 'workflow'],
+  },
+  {
     path: '/examples/workflow-orchestrator.json',
     title: 'Workflow Orchestrator',
     blurb: 'Workflow operations: active runs, task queue depth, asset × date partition heatmap, freshness, duration boxplot, run history.',

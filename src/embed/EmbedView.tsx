@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Dashboard, type DashboardTheme } from '../core/Dashboard'
+import { Dashboard, type DashboardTemplateTrust, type DashboardTheme } from '../core/Dashboard'
 import type { DashboardEvent } from '../core/DashboardContext'
+import type { TemplateTrustPolicy } from '../core/templateSecurity'
 import type { Template, WidgetConfig } from '../types/template'
 import type { EmbedConfig } from './embedConfig'
 
@@ -17,6 +18,8 @@ export interface EmbedViewProps {
   // wants to forward embed events to its own logging.
   onEvent?: (event: DashboardEvent) => void
   theme?: DashboardTheme
+  templateTrust?: DashboardTemplateTrust
+  templateTrustPolicy?: TemplateTrustPolicy
 }
 
 // Build a one-widget Template from the single-widget embed config. The
@@ -43,7 +46,13 @@ function singleWidgetTemplate(config: EmbedConfig): Template | null {
   }
 }
 
-export function EmbedView({ config, onEvent, theme = 'dark' }: EmbedViewProps) {
+export function EmbedView({
+  config,
+  onEvent,
+  theme = 'dark',
+  templateTrust,
+  templateTrustPolicy,
+}: EmbedViewProps) {
   const [fetched, setFetched] = useState<{ template?: Template; error?: string }>({})
 
   // Full-dashboard mode: fetch the template JSON from templateUrl.
@@ -108,6 +117,8 @@ export function EmbedView({ config, onEvent, theme = 'dark' }: EmbedViewProps) {
         chrome={config.chrome === 'full' ? 'full' : 'minimal'}
         onEvent={onEvent}
         theme={theme}
+        templateTrust={templateTrust}
+        templateTrustPolicy={templateTrustPolicy}
       />
     </div>
     </div>

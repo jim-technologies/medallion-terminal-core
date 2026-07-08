@@ -1,6 +1,6 @@
 import './index.css';
 export { Dashboard } from './core/Dashboard';
-export type { DashboardTheme } from './core/Dashboard';
+export type { DashboardTemplateTrust, DashboardTheme } from './core/Dashboard';
 export { MultiDashboard, useTabFromUrl } from './core/MultiDashboard';
 export { DashboardContext, useDashboard } from './core/DashboardContext';
 export { getWidget, registerWidget, BUILTIN_KEYS } from './core/WidgetRegistry';
@@ -16,6 +16,8 @@ export { getNested } from './core/getNested';
 export { evaluateAlert, canParsePredicate } from './core/alerts';
 export { validateTemplate, BUILTIN_COMPONENTS } from './core/validateTemplate';
 export type { ValidationIssue, ValidationSeverity } from './core/validateTemplate';
+export { validateTemplateTrust, DEFAULT_UNTRUSTED_TEMPLATE_POLICY, DEFAULT_SENSITIVE_TEMPLATE_HEADERS, DEFAULT_IFRAME_SANDBOX, DEFAULT_IFRAME_SANDBOX_DISALLOWED_TOKENS, } from './core/templateSecurity';
+export type { TemplateTrustPolicy, TemplateSecurityIssue, TemplateSecuritySeverity, IframeSandboxPolicy, } from './core/templateSecurity';
 export { buildSnapshot, isStaticTemplate, widgetSnapshotKey } from './core/snapshot';
 export { Timeseries } from './widgets/Timeseries';
 export { Candlestick } from './widgets/Candlestick';

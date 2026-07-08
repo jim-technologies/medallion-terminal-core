@@ -1,0 +1,146 @@
+{
+  "title": "Audit Trail",
+  "columns": 12,
+  "context": { "values": { "workspace": "alpha", "window": "24h" } },
+  "widgets": [
+    {
+      "id": "audit_count",
+      "component": "metric",
+      "span": 2,
+      "title": "Events",
+      "source": { "inline": { "value": 128, "delta": 0.08, "unit": "events", "label": "24h" } }
+    },
+    {
+      "id": "policy_coverage",
+      "component": "gauge",
+      "span": 3,
+      "title": "Evidence Coverage",
+      "source": {
+        "inline": {
+          "value": 94,
+          "min": 0,
+          "max": 100,
+          "bands": [
+            { "from": 0, "to": 70, "color": "danger" },
+            { "from": 70, "to": 90, "color": "warn" },
+            { "from": 90, "to": 100, "color": "ok" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "review_queue",
+      "component": "stat_strip",
+      "span": 7,
+      "title": "Review Queue",
+      "source": {
+        "inline": [
+          { "label": "Flagged", "value": 7, "unit": "events", "color": "warn" },
+          { "label": "Approved", "value": 112, "unit": "events", "color": "ok" },
+          { "label": "Rejected", "value": 9, "unit": "events", "color": "danger" },
+          { "label": "Median review", "value": 18, "unit": "min", "color": "info" }
+        ]
+      }
+    },
+    {
+      "id": "activity",
+      "component": "events",
+      "span": 4,
+      "height": 260,
+      "title": "Recent Activity",
+      "source": {
+        "inline": {
+          "events": [
+            {
+              "timestamp": "09:42:18",
+              "label": "maria.ramos approved role change on warehouse-reader",
+              "status": "EVENT_STATUS_OK",
+              "source": "audit"
+            },
+            {
+              "timestamp": "09:31:04",
+              "label": "api-token rotated ingest-service credential",
+              "status": "EVENT_STATUS_WARN",
+              "source": "audit"
+            },
+            {
+              "timestamp": "09:14:55",
+              "label": "jordan.lee exported customer-retention report",
+              "status": "EVENT_STATUS_OK",
+              "source": "audit"
+            },
+            {
+              "timestamp": "08:58:39",
+              "label": "policy-bot rejected unrestricted dataset share",
+              "status": "EVENT_STATUS_ERROR",
+              "source": "audit"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "evidence",
+      "component": "table",
+      "span": 8,
+      "height": 260,
+      "title": "Audit Evidence",
+      "options": {
+        "column_formats": {
+          "evidence_url": "link"
+        }
+      },
+      "source": {
+        "inline": {
+          "columns": [
+            { "key": "timestamp", "label": "Time" },
+            { "key": "actor", "label": "Actor" },
+            { "key": "action", "label": "Action" },
+            { "key": "resource", "label": "Resource" },
+            { "key": "before_summary", "label": "Before" },
+            { "key": "after_summary", "label": "After" },
+            { "key": "evidence_url", "label": "Evidence" }
+          ],
+          "rows": [
+            {
+              "timestamp": "2026-07-07T09:42:18Z",
+              "actor": "maria.ramos",
+              "action": "approve_role_change",
+              "resource": "role/warehouse-reader",
+              "before_summary": "pending access request",
+              "after_summary": "read-only warehouse scope approved",
+              "evidence_url": "/audit/evidence/evt-1042"
+            },
+            {
+              "timestamp": "2026-07-07T09:31:04Z",
+              "actor": "api-token",
+              "action": "rotate_credential",
+              "resource": "credential/ingest-service",
+              "before_summary": "key age 89 days",
+              "after_summary": "new key issued, old key disabled",
+              "evidence_url": "/audit/evidence/evt-1041"
+            },
+            {
+              "timestamp": "2026-07-07T09:14:55Z",
+              "actor": "jordan.lee",
+              "action": "export_report",
+              "resource": "report/customer-retention",
+              "before_summary": "report viewed in workspace",
+              "after_summary": "csv export generated",
+              "evidence_url": "/audit/evidence/evt-1039"
+            },
+            {
+              "timestamp": "2026-07-07T08:58:39Z",
+              "actor": "policy-bot",
+              "action": "reject_share",
+              "resource": "dataset/engagement-rollup",
+              "before_summary": "external share requested",
+              "after_summary": "blocked by data classification rule",
+              "evidence_url": "/audit/evidence/evt-1038"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
