@@ -94,7 +94,7 @@ export interface BiConnectorDescriptor {
   // Descriptor schema version — bump on breaking changes so connectors
   // can guard. Starts at 1.
   version: 1
-  // Display name of the deployment this points at.
+  // Display name of this connection.
   name: string
   protocol: BiProtocol
   // Base endpoint URL. For "connect": the TerminalService base (the

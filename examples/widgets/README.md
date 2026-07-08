@@ -1,4 +1,4 @@
-# Domain-pack widget example
+# Custom widget example
 
 This directory shows how to ship widgets *without forking the framework*. Each file is a self-contained widget that:
 

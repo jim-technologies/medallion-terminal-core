@@ -227,7 +227,7 @@
             { "timestamp": "14:20:11", "label": "DB connection pool saturation 82%",   "status": "EVENT_STATUS_WARN",  "source": "alertmanager", "body": "Pool util = 82% (>75%) on primary db",                   "tags": ["database"] },
             { "timestamp": "13:48:02", "label": "Cache miss rate elevated",            "status": "EVENT_STATUS_INFO",  "source": "alertmanager", "body": "Miss rate = 14% (baseline 8%)",                          "tags": ["cache"] },
             { "timestamp": "13:30:14", "label": "Deploy v2.4.1 promoted to prod",      "status": "EVENT_STATUS_OK",    "source": "argocd",       "body": "Rollout complete in 2m 14s, all health checks green",     "tags": ["deploy"] },
-            { "timestamp": "12:00:00", "label": "Daily snapshot complete",             "status": "EVENT_STATUS_OK",    "source": "scheduler",    "body": "Backed up 4.2 GB to s3://snaps/api-prod/",               "tags": ["backup"] }
+            { "timestamp": "12:00:00", "label": "Daily snapshot complete",             "status": "EVENT_STATUS_OK",    "source": "scheduler",    "body": "Archived 4.2 GB to object storage snapshot path",         "tags": ["backup"] }
           ]
         }
       }

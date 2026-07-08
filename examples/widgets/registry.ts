@@ -1,4 +1,4 @@
-// Domain-pack registry — call this once at app startup.
+// Custom widget registry — call this once at app startup.
 //
 // Pattern for shipping custom widgets without forking the framework:
 //

@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Proto-driven React framework for building composable, multi-domain analytical dashboards. Think "Bloomberg Terminal but domain-agnostic and open." Implement one ConnectRPC service (`TerminalService`), get a terminal.
+Proto-driven React framework for building composable, multi-domain analytical dashboards. Implement one ConnectRPC service (`TerminalService`), get a terminal-style dashboard.
 
 This repo is the **frontend framework only**. No backend (a reference Node implementation lives in `examples/backend/server.mjs`). Pure React + TypeScript.
 
@@ -256,10 +256,6 @@ React 19 + TypeScript 5.9. Vite 7, Tailwind v4, Recharts 3, lightweight-charts 5
 
 ## Related context
 
-Open-source core of the Medallion Terminal stack. A real deployment pairs this with:
-- Go backend services (ConnectRPC for the service, anything for ingestion).
-- TimescaleDB / Postgres for storage.
-- Domain Packs (separate repos) that translate domain data into the canonical shapes.
-- An AI router that returns typed `GenerateResponse` JSON, not generated code.
-
-Those concerns live in separate repositories. This repo is the rendering engine.
+This repo is the rendering engine. Host applications provide their own
+backend service, storage, ingestion, authentication, and optional
+generation layer.

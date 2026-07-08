@@ -217,7 +217,7 @@ function getFillsSnapshot() {
   return { events: { events: newFillsBuffer().reverse() } }
 }
 
-// Sports book sources — drive the Kelly domain-pack demo.
+// Sports book sources — drive the Kelly custom-widget demo.
 
 let homeFav = -3.5  // current spread point favored by the home team
 function tickSpread() {

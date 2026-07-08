@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import type { WidgetProps } from '../../src/types/template'
 import { getNested } from '../../src/core/getNested'
 
-// Kelly sizing widget — domain-pack example.
+// Kelly sizing widget — custom widget example.
 //
 // Proves the framework's extension story: this widget lives outside
 // src/, consumes only public types (WidgetProps), registers via

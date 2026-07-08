@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { kellyStake } from '../../examples/widgets/Kelly'
 
-// Validates the domain-pack widget's pure math. The widget itself is
+// Validates the custom widget's pure math. The widget itself is
 // covered by the framework-side render tests; this nails down the
 // formula so an over-eager refactor can't quietly change recommended
 // stakes.

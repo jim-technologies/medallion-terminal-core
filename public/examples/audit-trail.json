@@ -59,7 +59,7 @@
             },
             {
               "timestamp": "09:31:04",
-              "label": "api-token rotated ingest-service credential",
+              "label": "automation user rotated data import credential",
               "status": "EVENT_STATUS_WARN",
               "source": "audit"
             },
@@ -113,9 +113,9 @@
             },
             {
               "timestamp": "2026-07-07T09:31:04Z",
-              "actor": "api-token",
+              "actor": "automation.user",
               "action": "rotate_credential",
-              "resource": "credential/ingest-service",
+              "resource": "credential/data-import",
               "before_summary": "key age 89 days",
               "after_summary": "new key issued, old key disabled",
               "evidence_url": "/audit/evidence/evt-1041"

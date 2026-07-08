@@ -38,9 +38,9 @@ export function resolveColor(name: string | undefined, i: number): string {
   return PALETTE[i % PALETTE.length]
 }
 
-// Stable colors for a chart's series: palette by original index. This is
-// deliberately data-label agnostic so public SDK output does not imply
-// knowledge of proprietary products or vendors.
+// Stable colors for a chart's series: palette by original index. This stays
+// data-label agnostic so public SDK output does not imply vendor-specific
+// color systems.
 export function assignSeriesColors(
   names: readonly string[],
   fallback: readonly string[] = PALETTE,

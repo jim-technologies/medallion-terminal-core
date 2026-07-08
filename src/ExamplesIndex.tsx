@@ -66,7 +66,7 @@ const EXAMPLES: Example[] = [
   {
     path: '/examples/audit-trail.json',
     title: 'Audit Trail',
-    blurb: 'First-client audit view: actor/action/resource table with before/after summaries, evidence links, and review queue metrics.',
+    blurb: 'Audit workflow view: actor/action/resource table with before/after summaries, evidence links, and review queue metrics.',
     tags: ['audit', 'security', 'workflow'],
   },
   {
@@ -85,7 +85,7 @@ const EXAMPLES: Example[] = [
     path: '/examples/sports-betting.json',
     title: 'Sports Book',
     blurb: 'NBA spread ladder + Kelly sizing demo. Custom widget plugged in via registerWidget. Reads live odds from a paired_grid source.',
-    tags: ['sports', 'betting', 'kelly', 'domain-pack'],
+    tags: ['sports', 'betting', 'kelly', 'custom-widget'],
   },
   {
     path: '/examples/ml-monitoring.json',
