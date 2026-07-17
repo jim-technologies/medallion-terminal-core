@@ -166,11 +166,11 @@ export function CommandPalette({ suggest }: { suggest?: PaletteSuggest } = {}) {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/60 flex items-start justify-center pt-[20vh] px-4"
+      className="mtc-overlay fixed inset-0 z-50 flex items-start justify-center pt-[20vh] px-4"
       onClick={() => setOpen(false)}
     >
       <div
-        className="w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl overflow-hidden"
+        className="mtc-popover w-full max-w-lg overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         <input

@@ -1,0 +1,76 @@
+{
+  "title": "Data foundation · ${ctx.asset_id}",
+  "columns": 12,
+  "context": {
+    "values": {
+      "asset_id": "dataset.customer_360",
+      "asset_kind": "dataset",
+      "repository": "analytics",
+      "repo_ref": "main",
+      "repo_path": ""
+    }
+  },
+  "widgets": [
+    {
+      "id": "assets",
+      "component": "asset_catalog",
+      "span": 4,
+      "height": 520,
+      "title": "Assets",
+      "source": {
+        "source_id": "platform_assets"
+      }
+    },
+    {
+      "id": "object",
+      "component": "object_view",
+      "span": 8,
+      "height": 520,
+      "title": "Object · ${ctx.asset_id}",
+      "options": {
+        "enable_actions": true
+      },
+      "source": {
+        "source_id": "platform_object",
+        "params": {
+          "asset_id": "${ctx.asset_id}",
+          "asset_kind": "${ctx.asset_kind}"
+        }
+      }
+    },
+    {
+      "id": "lineage",
+      "component": "dag",
+      "span": 12,
+      "height": 430,
+      "title": "Lineage · ${ctx.asset_id}",
+      "options": {
+        "node_context": {
+          "key": "asset_id",
+          "kind_key": "asset_kind"
+        }
+      },
+      "source": {
+        "source_id": "platform_lineage",
+        "params": {
+          "asset_id": "${ctx.asset_id}"
+        }
+      }
+    },
+    {
+      "id": "repository",
+      "component": "code_browser",
+      "span": 12,
+      "height": 580,
+      "title": "Code · ${ctx.repository}@${ctx.repo_ref}",
+      "source": {
+        "source_id": "platform_repository",
+        "params": {
+          "repository": "${ctx.repository}",
+          "ref": "${ctx.repo_ref}",
+          "path": "${ctx.repo_path}"
+        }
+      }
+    }
+  ]
+}

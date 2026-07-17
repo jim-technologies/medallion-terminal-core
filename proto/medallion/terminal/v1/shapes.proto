@@ -571,3 +571,405 @@ message TextItem {
   // Optional sentiment score in [-1, 1]. Used to color the item.
   optional double sentiment = 8;
 }
+
+// --- Asset Catalog ---
+// Use for: governed discovery surfaces that list datasets, object
+// types, pipelines, models, repositories, dashboards, documents, and
+// other platform resources.
+//
+// JSON example:
+//   { "items": [
+//       { "id": "dataset.orders",
+//         "name": "Orders",
+//         "kind": "dataset",
+//         "owner": "commerce-data",
+//         "status": "healthy",
+//         "tags": ["gold", "pii"],
+//         "context": {
+//           "asset_id": "dataset.orders",
+//           "asset_kind": "dataset"
+//         } }
+//     ],
+//     "total": "1" }
+message AssetCatalogPayload {
+  repeated AssetCatalogItem items = 1;
+
+  // Total matches before pagination/filtering, when known.
+  optional int64 total = 2;
+
+  // Opaque cursor for a subsequent page. Empty/absent means no cursor
+  // was supplied. Pagination remains backend-defined via source params.
+  optional string next_page_token = 3;
+}
+
+message AssetCatalogItem {
+  // Stable identifier used by detail/lineage sources.
+  string id = 1;
+
+  string name = 2;
+
+  // Free-form platform kind: "dataset", "object_type", "pipeline",
+  // "model", "repository", "dashboard", "document", etc.
+  string kind = 3;
+
+  optional string description = 4;
+  optional string owner = 5;
+
+  // Free-form health/lifecycle state. Common values: "healthy",
+  // "warning", "error", "draft", "deprecated", "archived".
+  optional string status = 6;
+
+  // ISO 8601 when available; widgets render other display strings too.
+  optional string updated_at = 7;
+
+  repeated string tags = 8;
+
+  // Optional deep link to a host-owned detail page.
+  optional string url = 9;
+
+  // Additional structured metadata (row count, classification,
+  // retention policy, branch, language, quality score, etc.).
+  optional google.protobuf.Struct metadata = 10;
+
+  // Context values applied when the item is selected. This is the
+  // generic cross-widget bridge: selecting a repository can set
+  // {repository, ref}, while selecting a dataset can set
+  // {asset_id, asset_kind}.
+  map<string, string> context = 11;
+}
+
+// --- Record Set / Work Management ---
+// Use for: mutable business records with a declared field schema and
+// multiple saved views over the same underlying table. This is the
+// domain-neutral foundation for CRM lists, project trackers, inventory,
+// approvals, content calendars, hiring pipelines, and similar workflows.
+//
+// Get/Stream returns the records and schema. All writes still flow through
+// TerminalService.SubmitAction; capabilities declare the backend action ids.
+// Formula, lookup, and rollup values are computed by the backend and exposed
+// as read-only fields. The frontend never evaluates formulas.
+//
+// Linked values convention:
+//   single link: { "id": "customer-42", "label": "Acme" }
+//   multi link:  [{ "id": "customer-42", "label": "Acme" }]
+//
+// JSON example:
+//   {
+//     "workspace_id": "operations",
+//     "table_id": "projects",
+//     "table_name": "Projects",
+//     "primary_field": "name",
+//     "fields": [
+//       { "key": "name", "label": "Project",
+//         "type": "RECORD_FIELD_TYPE_TEXT", "required": true },
+//       { "key": "stage", "label": "Stage",
+//         "type": "RECORD_FIELD_TYPE_SINGLE_SELECT",
+//         "choices": [
+//           { "value": "planned", "label": "Planned" },
+//           { "value": "active", "label": "Active", "color": "info" }
+//         ] }
+//     ],
+//     "records": [
+//       { "id": "project-1", "values": {
+//           "name": "Warehouse launch", "stage": "active"
+//         }, "revision": "7" }
+//     ],
+//     "capabilities": {
+//       "create": true, "update": true, "delete": true,
+//       "create_action_id": "record_create",
+//       "update_action_id": "record_update",
+//       "delete_action_id": "record_delete"
+//     }
+//   }
+message RecordSetPayload {
+  string workspace_id = 1;
+  string table_id = 2;
+  string table_name = 3;
+
+  // Field used as the human-readable record title.
+  string primary_field = 4;
+
+  repeated RecordField fields = 5;
+  repeated WorkRecord records = 6;
+  repeated RecordView views = 7;
+
+  // View selected by the backend, when applicable.
+  optional string active_view_id = 8;
+
+  // Total records before pagination, when known.
+  optional int64 total = 9;
+  optional string next_page_token = 10;
+
+  RecordCapabilities capabilities = 11;
+}
+
+message WorkRecord {
+  string id = 1;
+  google.protobuf.Struct values = 2;
+  optional string created_at = 3;
+  optional string updated_at = 4;
+
+  // Opaque optimistic-concurrency token. Mutation handlers SHOULD reject
+  // a stale revision rather than silently overwriting a newer record.
+  optional string revision = 5;
+
+  // Context applied when the record is selected. The widget also emits
+  // table_id and record_id defaults when no explicit context is supplied.
+  map<string, string> context = 6;
+}
+
+message RecordField {
+  string key = 1;
+  string label = 2;
+  RecordFieldType type = 3;
+  optional string description = 4;
+  bool required = 5;
+  bool read_only = 6;
+  repeated RecordChoice choices = 7;
+
+  // Set for linked-record fields. Hosts resolve the linked table and enforce
+  // visibility; record payloads should include only labels the caller may see.
+  optional string linked_table_id = 8;
+  bool allow_multiple = 9;
+
+  // Display directive compatible with TableColumn.format where possible.
+  optional string format = 10;
+  optional google.protobuf.Value default_value = 11;
+}
+
+message RecordChoice {
+  string value = 1;
+  string label = 2;
+
+  // Semantic tone only: "info", "ok", "warn", "danger", or "neutral".
+  optional string color = 3;
+}
+
+enum RecordFieldType {
+  RECORD_FIELD_TYPE_UNSPECIFIED = 0;
+  RECORD_FIELD_TYPE_TEXT = 1;
+  RECORD_FIELD_TYPE_LONG_TEXT = 2;
+  RECORD_FIELD_TYPE_NUMBER = 3;
+  RECORD_FIELD_TYPE_CURRENCY = 4;
+  RECORD_FIELD_TYPE_PERCENT = 5;
+  RECORD_FIELD_TYPE_BOOLEAN = 6;
+  RECORD_FIELD_TYPE_DATE = 7;
+  RECORD_FIELD_TYPE_DATETIME = 8;
+  RECORD_FIELD_TYPE_SINGLE_SELECT = 9;
+  RECORD_FIELD_TYPE_MULTI_SELECT = 10;
+  RECORD_FIELD_TYPE_USER = 11;
+  RECORD_FIELD_TYPE_LINK = 12;
+  RECORD_FIELD_TYPE_ATTACHMENT = 13;
+  RECORD_FIELD_TYPE_URL = 14;
+  RECORD_FIELD_TYPE_EMAIL = 15;
+  RECORD_FIELD_TYPE_PHONE = 16;
+  RECORD_FIELD_TYPE_FORMULA = 17;
+  RECORD_FIELD_TYPE_LOOKUP = 18;
+  RECORD_FIELD_TYPE_ROLLUP = 19;
+  RECORD_FIELD_TYPE_CREATED_AT = 20;
+  RECORD_FIELD_TYPE_UPDATED_AT = 21;
+}
+
+message RecordView {
+  string id = 1;
+  string name = 2;
+  RecordViewType type = 3;
+  repeated string visible_fields = 4;
+
+  // BOARD: lane field. CALENDAR/TIMELINE: temporal field.
+  optional string group_by = 5;
+  optional string date_field = 6;
+  optional string title_field = 7;
+
+  repeated RecordSort sorts = 8;
+  repeated RecordFilter filters = 9;
+}
+
+enum RecordViewType {
+  RECORD_VIEW_TYPE_UNSPECIFIED = 0;
+  RECORD_VIEW_TYPE_GRID = 1;
+  RECORD_VIEW_TYPE_BOARD = 2;
+  RECORD_VIEW_TYPE_CALENDAR = 3;
+  RECORD_VIEW_TYPE_GALLERY = 4;
+  RECORD_VIEW_TYPE_LIST = 5;
+  RECORD_VIEW_TYPE_TIMELINE = 6;
+  RECORD_VIEW_TYPE_FORM = 7;
+}
+
+message RecordSort {
+  string field = 1;
+  bool descending = 2;
+}
+
+message RecordFilter {
+  string field = 1;
+
+  // Backend-defined operator. Recommended portable values:
+  // eq, neq, contains, in, gt, gte, lt, lte, empty, not_empty.
+  string operator = 2;
+  google.protobuf.Value value = 3;
+}
+
+message RecordCapabilities {
+  bool create = 1;
+  bool update = 2;
+  bool delete = 3;
+  string create_action_id = 4;
+  string update_action_id = 5;
+  string delete_action_id = 6;
+}
+
+// --- Semantic Object ---
+// Use for: ontology-backed object instances or type definitions. The
+// payload exposes typed identity, human-readable properties, links to
+// related objects, and optional no-input actions.
+//
+// JSON example:
+//   { "object_type": "Customer",
+//     "object_id": "cust-1042",
+//     "title": "Acme Corp",
+//     "properties": [
+//       { "key": "tier", "label": "Tier", "value": "Enterprise" },
+//       { "key": "arr", "label": "ARR", "value": 1250000,
+//         "format": "currency:USD", "group": "Commercial" }
+//     ],
+//     "links": [
+//       { "relation": "owns", "target_type": "Account",
+//         "target_id": "acct-9", "label": "Primary account" }
+//     ] }
+message ObjectPayload {
+  string object_type = 1;
+  string object_id = 2;
+  string title = 3;
+
+  optional string description = 4;
+  optional string status = 5;
+  optional string updated_at = 6;
+  repeated string tags = 7;
+
+  repeated ObjectProperty properties = 8;
+  repeated ObjectLink links = 9;
+  repeated ObjectAction actions = 10;
+}
+
+message ObjectProperty {
+  string key = 1;
+  string label = 2;
+
+  // Arbitrary JSON-compatible scalar/array/object.
+  google.protobuf.Value value = 3;
+
+  // Same display vocabulary as table columns where applicable:
+  // currency:USD, percent, datetime, date, compact, link, json.
+  optional string format = 4;
+  optional string description = 5;
+
+  // Properties with the same group render together. Empty = General.
+  optional string group = 6;
+}
+
+message ObjectLink {
+  string relation = 1;
+  string target_type = 2;
+  string target_id = 3;
+  string label = 4;
+
+  optional string status = 5;
+
+  // Context applied when the related object is selected. If omitted,
+  // the widget falls back to object_type/object_id.
+  map<string, string> context = 6;
+}
+
+message ObjectAction {
+  // Sent as ActionRequest.action_id through TerminalService.SubmitAction.
+  string id = 1;
+  string label = 2;
+  optional string description = 3;
+
+  // Visual semantic: "primary", "danger", or "neutral".
+  optional string style = 4;
+
+  // Require a second click before dispatch.
+  bool confirm = 5;
+
+  // Static action params. The widget also includes object_type/object_id.
+  optional google.protobuf.Struct params = 6;
+
+  bool disabled = 7;
+}
+
+// --- Directed Graph ---
+// Use for: dataset lineage, pipeline dependencies, build graphs, and
+// ontology type relationships that can be represented as a directed
+// graph. The built-in `dag` renderer expects an acyclic graph for the
+// cleanest layering, but tolerates cycles by placing cyclic nodes in a
+// final layer.
+message GraphPayload {
+  repeated GraphNode nodes = 1;
+  repeated GraphEdge edges = 2;
+}
+
+message GraphNode {
+  string id = 1;
+  string label = 2;
+  optional string kind = 3;
+  optional string status = 4;
+  optional string subtitle = 5;
+  repeated string tags = 6;
+  optional google.protobuf.Struct metadata = 7;
+  map<string, string> context = 8;
+}
+
+message GraphEdge {
+  string from = 1;
+  string to = 2;
+  optional string label = 3;
+  optional string kind = 4;
+  optional string status = 5;
+}
+
+// --- Code Repository ---
+// Use for: branch/ref-aware source browsing. A response contains the
+// entries at `path` and, when `path` points at a file, its text content.
+// Backends should omit `file.content` for binary files and may mark
+// large text files as truncated.
+message RepositoryPayload {
+  string repository = 1;
+  string ref = 2;
+  string path = 3;
+
+  repeated string refs = 4;
+  repeated RepositoryEntry entries = 5;
+  optional RepositoryFile file = 6;
+
+  // Optional host-owned repository URL.
+  optional string url = 7;
+}
+
+message RepositoryEntry {
+  string path = 1;
+  string name = 2;
+  RepositoryEntryKind kind = 3;
+  optional string language = 4;
+  optional int64 size_bytes = 5;
+  optional string updated_at = 6;
+}
+
+enum RepositoryEntryKind {
+  REPOSITORY_ENTRY_KIND_UNSPECIFIED = 0;
+  REPOSITORY_ENTRY_KIND_FILE = 1;
+  REPOSITORY_ENTRY_KIND_DIRECTORY = 2;
+  REPOSITORY_ENTRY_KIND_SYMLINK = 3;
+}
+
+message RepositoryFile {
+  string path = 1;
+  string content = 2;
+  optional string language = 3;
+  optional int64 size_bytes = 4;
+  bool truncated = 5;
+
+  // Optional raw/download URL owned by the host.
+  optional string url = 6;
+}

@@ -22,9 +22,11 @@
 //   refreshMs  — polling interval for the single-widget source.
 //   chrome     — "none" (default) hides the toolbar/status bar;
 //                "full" shows them. Embeds default to no chrome.
-//   theme      — reserved; only "dark" is supported today.
+//   theme      — "dark" (default), "operator", or "light".
 //
 // This module is pure (no DOM) so it is unit-testable in node.
+
+export type EmbedTheme = 'dark' | 'operator' | 'light'
 
 export interface EmbedConfig {
   // Full-dashboard mode: a template URL to fetch + render.
@@ -41,6 +43,7 @@ export interface EmbedConfig {
   backendUrl?: string
   ctx: Record<string, string>
   chrome: 'none' | 'full'
+  theme?: EmbedTheme
 }
 
 function truthy(v: string | null): boolean {
@@ -60,12 +63,16 @@ export function parseEmbedConfig(search: string): EmbedConfig {
   }
 
   const chrome: EmbedConfig['chrome'] = params.get('chrome') === 'full' ? 'full' : 'none'
+  const requestedTheme = params.get('theme')
+  const theme: EmbedTheme = requestedTheme === 'operator' || requestedTheme === 'light'
+    ? requestedTheme
+    : 'dark'
   const title = params.get('title') ?? undefined
   const backendUrl = params.get('backend') ?? undefined
 
   const templateUrl = params.get('template') ?? undefined
   if (templateUrl) {
-    return { templateUrl, title, backendUrl, ctx, chrome }
+    return { templateUrl, title, backendUrl, ctx, chrome, theme }
   }
 
   const sourceId = params.get('src') ?? undefined
@@ -85,11 +92,12 @@ export function parseEmbedConfig(search: string): EmbedConfig {
       backendUrl,
       ctx,
       chrome,
+      theme,
     }
   }
 
   // No data source — caller renders a help/placeholder state.
-  return { title, backendUrl, ctx, chrome }
+  return { title, backendUrl, ctx, chrome, theme }
 }
 
 // Build an embed URL from a config — the inverse of parseEmbedConfig.
@@ -108,6 +116,7 @@ export function buildEmbedUrl(base: string, config: Partial<EmbedConfig>): strin
   if (config.title) params.set('title', config.title)
   if (config.backendUrl) params.set('backend', config.backendUrl)
   if (config.chrome === 'full') params.set('chrome', 'full')
+  if (config.theme && config.theme !== 'dark') params.set('theme', config.theme)
   for (const [k, v] of Object.entries(config.ctx ?? {})) params.set(`ctx.${k}`, v)
   const qs = params.toString()
   return qs ? `${base}?${qs}` : base

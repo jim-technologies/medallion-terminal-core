@@ -7,7 +7,9 @@ import { canParsePredicate } from './alerts'
 // validator stays quiet for app-specific names.
 export const BUILTIN_COMPONENTS: ReadonlySet<string> = new Set([
   'timeseries', 'candlestick', 'table', 'metric', 'text', 'prompt',
-  'gauge', 'distribution', 'heatmap', 'events', 'catalog', 'orderbook',
+  'gauge', 'distribution', 'heatmap', 'events', 'catalog', 'asset_catalog',
+  'object_view', 'code_browser', 'record_grid', 'record_board',
+  'record_calendar', 'record_form', 'orderbook',
   'paired_grid', 'trade', 'ticker', 'volume_profile', 'stat_strip',
   'bar_chart', 'scatter', 'clock', 'treemap', 'image', 'iframe',
   'histogram', 'section', 'area_chart', 'slider', 'select', 'boxplot',

@@ -17,6 +17,13 @@ const ARCHETYPE: Record<string, string> = {
   orderbook: 'table',
   paired_grid: 'table',
   catalog: 'list',
+  asset_catalog: 'list',
+  object_view: 'list',
+  code_browser: 'table',
+  record_grid: 'table',
+  record_board: 'grid',
+  record_calendar: 'grid',
+  record_form: 'block',
   trade: 'block',
   ticker: 'block',
   volume_profile: 'list',
@@ -38,6 +45,10 @@ const ARCHETYPE: Record<string, string> = {
   multi_select: 'block',
   json: 'list',
   sparkline: 'chart',
+  action_log: 'list',
+  alert_log: 'list',
+  tape: 'list',
+  file_browser: 'table',
 }
 
 export function Skeleton({ component }: { component?: string }) {
@@ -166,7 +177,7 @@ function DonutSkeleton() {
     <div className="h-full flex flex-col">
       <div className="flex-1 flex items-center justify-center min-h-0">
         <svg viewBox="0 0 100 100" className="w-full h-full max-w-[160px] max-h-[160px] animate-pulse">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="#27272a" strokeWidth="14" />
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--mtc-panel)" strokeWidth="14" />
         </svg>
       </div>
       <div className="grid grid-cols-2 gap-2 mt-2">

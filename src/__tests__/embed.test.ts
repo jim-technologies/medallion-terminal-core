@@ -22,6 +22,7 @@ describe('parseEmbedConfig', () => {
     expect(c.backendUrl).toBe('https://api.example.com')
     expect(c.ctx).toEqual({ symbol: 'BTC', range: '1d' })
     expect(c.chrome).toBe('none')
+    expect(c.theme).toBe('dark')
   })
 
   it('defaults component to table and chrome to none', () => {
@@ -35,6 +36,12 @@ describe('parseEmbedConfig', () => {
     const c = parseEmbedConfig('src=x&chrome=full&refreshMs=5000')
     expect(c.chrome).toBe('full')
     expect(c.widget!.refreshIntervalMs).toBe(5000)
+  })
+
+  it('accepts operator and light themes and falls back safely', () => {
+    expect(parseEmbedConfig('src=x&theme=operator').theme).toBe('operator')
+    expect(parseEmbedConfig('src=x&theme=light').theme).toBe('light')
+    expect(parseEmbedConfig('src=x&theme=unknown').theme).toBe('dark')
   })
 
   it('ignores a non-positive / non-numeric refreshMs', () => {
@@ -64,6 +71,7 @@ describe('buildEmbedUrl round-trips parseEmbedConfig', () => {
       backendUrl: 'https://api.example.com',
       ctx: { symbol: 'SOL' },
       chrome: 'none',
+      theme: 'operator',
     })
     const c = parseEmbedConfig(new URL(url).search)
     expect(c.widget!.component).toBe('timeseries')
@@ -72,6 +80,7 @@ describe('buildEmbedUrl round-trips parseEmbedConfig', () => {
     expect(c.widget!.refreshIntervalMs).toBe(2000)
     expect(c.backendUrl).toBe('https://api.example.com')
     expect(c.ctx).toEqual({ symbol: 'SOL' })
+    expect(c.theme).toBe('operator')
   })
 
   it('rebuilds a template config with full chrome', () => {
@@ -132,6 +141,27 @@ describe('buildBiDescriptor', () => {
     expect(limit.type).toBe('integer')
     const range = candles.params!.find((p) => p.key === 'range')!
     expect(range.defaultValue).toBe('1d')
+  })
+
+  it('normalizes protobuf runtime enums and canonical lowerCamelCase params', () => {
+    const d = buildBiDescriptor([{
+      id: 'runtime-candles',
+      shape: 2,
+      params: [{
+        key: 'range',
+        type: 6,
+        defaultValue: '1d',
+        enumValues: ['1d', '5d'],
+      }],
+    }], { name: 'M', endpoint: '' })
+    expect(d.tables[0].shape).toBe('SHAPE_CANDLES')
+    expect(d.tables[0].columns.map(column => column.name)).toEqual([
+      'timestamp', 'open', 'high', 'low', 'close', 'volume',
+    ])
+    expect(d.tables[0].params?.[0]).toMatchObject({
+      defaultValue: '1d',
+      enumValues: ['1d', '5d'],
+    })
   })
 
   it('leaves table-shaped columns empty for connector inference', () => {

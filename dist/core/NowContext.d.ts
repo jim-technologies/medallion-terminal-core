@@ -7,5 +7,5 @@ export declare const NowContext: import("react").Context<NowContextValue>;
 export declare function useNow(enabled?: boolean): number;
 export declare function NowProvider({ children }: {
     children: ReactNode;
-}): import("react/jsx-runtime").JSX.Element;
+}): import("react").JSX.Element;
 export {};

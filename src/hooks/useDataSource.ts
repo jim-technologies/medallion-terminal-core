@@ -48,6 +48,11 @@ const DATA_RESPONSE_CASES = new Set([
   'orderbook',
   'paired_grid',
   'embed',
+  'assets',
+  'object',
+  'graph',
+  'repository',
+  'records',
 ])
 
 function unwrapDataResponse(raw: unknown): unknown {
@@ -120,10 +125,12 @@ export function useDataSource(source?: DataSource): DataSourceState {
     }
   }, [apply, source?.throttleMs])
 
-  // A stable string key that captures every field that should trigger a
-  // refetch. Crucially this includes `body` and `headers` — without them,
-  // params changing via ${ctx.x} substitution would build a new POST body
-  // but the effect would never re-run because the URL stays identical.
+  // A stable string key that captures every transport field that should
+  // trigger a refetch. Crucially this includes `body` and `headers` —
+  // without them, params changing via ${ctx.x} substitution would build a
+  // new POST body but the effect would never re-run because the URL stays
+  // identical. Inline payload identity is tracked separately below so large
+  // tables are not JSON-stringified merely to build an effect key.
   const fetchKey = useMemo(() => {
     if (!source) return ''
     return JSON.stringify([
@@ -136,11 +143,12 @@ export function useDataSource(source?: DataSource): DataSourceState {
       getRefreshMs(source),
       source.transform,
       source.throttleMs,
-      // Inline gets a separate key (truncated to keep the dep stable for
-      // payload-identity changes only when the value itself mutates).
+      // Distinguish inline mode from a sourceless config. The actual value is
+      // an effect dependency, preserving object identity without serializing.
       source.inline !== undefined || source.data !== undefined,
     ])
   }, [source])
+  const inline = source ? getInline(source) : undefined
 
   useEffect(() => {
     if (!source) {
@@ -149,7 +157,6 @@ export function useDataSource(source?: DataSource): DataSourceState {
     }
 
     // Inline data — fire and forget.
-    const inline = getInline(source)
     if (inline !== undefined) {
       handleData(inline)
       return
@@ -256,14 +263,20 @@ export function useDataSource(source?: DataSource): DataSourceState {
 
     // --- Regular fetch (+ polling) ---
     let disposed = false
+    let fetching = false
+    const ctrl = new AbortController()
 
     const fetchData = async () => {
-      if (disposed) return
+      // A slow endpoint must not accumulate overlapping poll requests. The
+      // next interval/manual refresh can try again after this one settles.
+      if (disposed || fetching) return
+      fetching = true
       try {
         const res = await fetch(source.url!, {
           method: source.method || 'GET',
           headers: source.headers,
           body: source.body ? JSON.stringify(source.body) : undefined,
+          signal: ctrl.signal,
         })
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const body = await res.json()
@@ -271,6 +284,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
       } catch (err: unknown) {
         if (!disposed && err instanceof Error && !isAbortLikeError(err)) setError(err.message)
       } finally {
+        fetching = false
         if (!disposed) setLoading(false)
       }
     }
@@ -285,10 +299,11 @@ export function useDataSource(source?: DataSource): DataSourceState {
 
     return () => {
       disposed = true
+      abortController(ctrl)
       if (interval) clearInterval(interval)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchKey, handleData, refreshTick])
+  }, [fetchKey, handleData, inline, refreshTick])
 
   // Drain pending throttled update on unmount so we don't leak timers.
   useEffect(() => () => {

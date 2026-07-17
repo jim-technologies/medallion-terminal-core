@@ -10,15 +10,10 @@ import {
   Brush,
 } from 'recharts'
 import { abbreviateAxis, formatTimestamp } from './format'
-import { TOOLTIP_STYLE } from './colors'
+import { PALETTE, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
-// Local line palette, shared byte-for-byte with Timeseries and
-// intentionally distinct from the categorical `PALETTE` (colors.ts):
-// lighter hues for thin strokes/fills on dark. See CONVENTIONS.md
-// "Palette decision". Do not replace with PALETTE — visual change.
-const COLORS = ['#38bdf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6']
 const GRID = 'var(--mtc-grid)'
 const AXIS = 'var(--mtc-border)'
 const TICK = 'var(--mtc-muted)'
@@ -67,8 +62,8 @@ export function AreaChart({ data, options }: WidgetProps) {
             key={key}
             type="monotone"
             dataKey={key}
-            stroke={COLORS[i % COLORS.length]}
-            fill={COLORS[i % COLORS.length]}
+            stroke={PALETTE[i % PALETTE.length]}
+            fill={PALETTE[i % PALETTE.length]}
             fillOpacity={0.35}
             strokeWidth={1.5}
             stackId={stack ? 'stack' : undefined}

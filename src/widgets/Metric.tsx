@@ -10,9 +10,8 @@ export function Metric({ data }: WidgetProps) {
   const animated = useAnimatedNumber(value)
 
   // Tick flash. On every value change after the first render, briefly
-  // tint the headline green (uptick) or red (downtick). Matches the
-  // market-screen convention so traders can read direction at a
-  // glance even when the magnitude doesn't move much.
+  // tint the headline by direction so an operator can read movement at a
+  // glance even when the magnitude barely changes.
   const prevRef = useRef<number | null>(null)
   const [flash, setFlash] = useState<'up' | 'down' | null>(null)
   useEffect(() => {
@@ -51,7 +50,7 @@ function Sparkline({ values }: { values: number[] }) {
   const max = Math.max(...values)
   const range = max - min || 1
   const up = values[values.length - 1] >= values[0]
-  const color = up ? '#10b981' : '#ef4444'
+  const color = up ? 'var(--mtc-ok)' : 'var(--mtc-danger)'
   const points = values
     .map((v, i) => {
       const x = (i / (values.length - 1)) * 100
@@ -96,4 +95,3 @@ function formatDelta(d: number): string {
   const pct = Math.abs(d) <= 1 ? d * 100 : d
   return `${Math.abs(pct).toFixed(2)}%`
 }
-

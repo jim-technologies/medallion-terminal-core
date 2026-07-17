@@ -13,6 +13,6 @@ export declare function MultiDashboard({ tabs, activeIndex, onSelect, backendUrl
     theme?: DashboardTheme;
     templateTrust?: DashboardTemplateTrust;
     templateTrustPolicy?: TemplateTrustPolicy;
-}): import("react/jsx-runtime").JSX.Element | null;
+}): import("react").JSX.Element | null;
 export declare function useTabFromUrl(defaultIndex?: number): [number, (i: number) => void];
 export {};

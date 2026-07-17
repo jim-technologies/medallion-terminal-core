@@ -6,9 +6,31 @@ interface Example {
   title: string
   blurb: string
   tags: string[]
+  featured?: boolean
 }
 
 const EXAMPLES: Example[] = [
+  {
+    path: '/examples/business-operations.json',
+    title: 'Business Operations',
+    blurb: 'Owner-focused command center for revenue, cash runway, sales pipeline, capacity, customer health, and the decisions that need attention now.',
+    tags: ['business', 'finance', 'sales', 'operations'],
+    featured: true,
+  },
+  {
+    path: '/examples/platform-foundation.json',
+    title: 'Data & Ontology Platform',
+    blurb: 'Governed asset discovery, semantic business objects, relationship and lineage navigation, and a ref-aware source repository browser.',
+    tags: ['catalog', 'ontology', 'lineage', 'code'],
+    featured: true,
+  },
+  {
+    path: '/examples/work-management.json',
+    title: 'Work Management',
+    blurb: 'Typed records with linked values, saved grid/board/calendar views, context-driven forms, inline editing, and revision-safe governed writes.',
+    tags: ['records', 'workflow', 'crm', 'projects'],
+    featured: true,
+  },
   {
     path: '/examples/medallion-terminal.json',
     title: 'Medallion Terminal',
@@ -121,52 +143,110 @@ const EXAMPLES: Example[] = [
 
 export function ExamplesIndex() {
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 p-6 md:p-10">
-      <div className="max-w-6xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight mb-1">Medallion Terminal — Examples</h1>
-          <p className="text-sm text-zinc-400">
-            Each card opens a dashboard built from generic widgets only.
-            Append <code className="text-zinc-200 bg-zinc-900 px-1.5 py-0.5 rounded">?template=URL</code> for any single example,
-            or <code className="text-zinc-200 bg-zinc-900 px-1.5 py-0.5 rounded">?tabs=URL1,URL2</code> for multi-tab.
-          </p>
-        </header>
+    <div className="mtc-workspace min-h-screen text-zinc-100">
+      <header className="mtc-toolbar px-6 md:px-10 py-3">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <span className="grid grid-cols-2 gap-0.5 w-5 h-5 p-1 border border-zinc-700 rounded-sm" aria-hidden="true">
+              <span className="bg-sky-400 rounded-sm" />
+              <span className="bg-zinc-600 rounded-sm" />
+              <span className="bg-zinc-600 rounded-sm" />
+              <span className="bg-zinc-400 rounded-sm" />
+            </span>
+            <span className="text-xs font-semibold uppercase tracking-[0.16em]">Medallion</span>
+          </div>
+          <span className="text-[9px] uppercase tracking-[0.16em] text-zinc-600">Operating intelligence</span>
+        </div>
+      </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {EXAMPLES.map(ex => (
-            <a
-              key={ex.path}
-              href={`?template=${encodeURIComponent(ex.path)}`}
-              className="block p-4 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-600 transition-colors"
-            >
-              <div className="flex items-baseline justify-between gap-3 mb-2">
-                <h2 className="text-base font-medium text-zinc-100">{ex.title}</h2>
-                <span className="text-[10px] uppercase tracking-wider text-zinc-600 font-mono shrink-0">
-                  {ex.path.split('/').pop()}
-                </span>
-              </div>
-              <p className="text-xs text-zinc-400 leading-relaxed mb-3">{ex.blurb}</p>
-              <div className="flex gap-1.5 flex-wrap">
-                {ex.tags.map(t => (
-                  <span key={t} className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-500 uppercase tracking-wider">
-                    {t}
-                  </span>
-                ))}
-              </div>
+      <main className="max-w-6xl mx-auto px-6 md:px-10">
+        <section className="py-12 md:py-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] gap-8 items-center border-b border-zinc-800">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.18em] text-sky-400 mb-3">Built for owners and operators</div>
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-100 max-w-3xl">
+              See the whole business. Act from one place.
+            </h1>
+            <p className="mt-4 text-sm md:text-base text-zinc-400 leading-relaxed max-w-2xl">
+              A composable operating layer for growing businesses—connecting finance, sales, customers, delivery, data, and the decisions behind them.
+            </p>
+            <div className="mt-6 flex items-center gap-3 flex-wrap">
+              <a
+                href="?template=%2Fexamples%2Fbusiness-operations.json"
+                className="mtc-control px-4 py-2 text-xs font-medium text-zinc-100 border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20"
+              >
+                Open business workspace →
+              </a>
+              <a
+                href="?template=%2Fexamples%2Fplatform-foundation.json&backend=http%3A%2F%2Flocalhost%3A3001"
+                className="mtc-control px-4 py-2 text-xs text-zinc-400 hover:text-zinc-100"
+              >
+                Explore platform foundation
+              </a>
+            </div>
+          </div>
+
+          <div className="mtc-landing-card p-5">
+            <div className="text-[10px] uppercase tracking-[0.16em] text-zinc-500 mb-4">One operating model</div>
+            <div className="grid grid-cols-2 gap-px bg-zinc-800 border border-zinc-800 rounded overflow-hidden">
+              {[
+                ['Business pulse', 'Cash, margin, pipeline'],
+                ['Shared records', 'Customer, order, project'],
+                ['Governed actions', 'Decide, assign, approve'],
+                ['Data foundation', 'Catalog, lineage, code'],
+              ].map(([title, detail]) => (
+                <div key={title} className="bg-zinc-900 p-3 min-h-[78px]">
+                  <div className="text-xs font-medium text-zinc-200">{title}</div>
+                  <div className="text-[10px] text-zinc-500 mt-1 leading-relaxed">{detail}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-10">
+          <div className="flex items-end justify-between gap-4 mb-5">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.16em] text-zinc-600 mb-1">Reference workspaces</div>
+              <h2 className="text-xl font-semibold tracking-tight text-zinc-100">Built from the same primitives</h2>
+            </div>
+            <span className="text-[10px] text-zinc-600 font-mono">{EXAMPLES.length} examples</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {EXAMPLES.map(ex => (
+              <a
+                key={ex.path}
+                href={`?template=${encodeURIComponent(ex.path)}`}
+                className={`mtc-landing-card block p-4 ${ex.featured ? 'border-sky-500/30' : ''}`}
+              >
+                <div className="flex items-baseline justify-between gap-3 mb-2">
+                  <h3 className="text-sm font-semibold text-zinc-100">{ex.title}</h3>
+                  {ex.featured && (
+                    <span className="text-[8px] uppercase tracking-[0.14em] text-sky-400 shrink-0">Foundation</span>
+                  )}
+                </div>
+                <p className="text-xs text-zinc-400 leading-relaxed mb-4 min-h-[3.9rem]">{ex.blurb}</p>
+                <div className="flex gap-1.5 flex-wrap">
+                  {ex.tags.map(t => (
+                    <span key={t} className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-500 uppercase tracking-wider">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </a>
+            ))}
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-zinc-800 flex items-center justify-between gap-4 flex-wrap">
+            <p className="text-xs text-zinc-500">
+              Developer utility: open the complete gallery while preserving tab state.
+            </p>
+            <a href={`?tabs=${EXAMPLES.map(e => e.path).join(',')}`} className="text-xs text-sky-400 hover:text-sky-300">
+              Open all {EXAMPLES.length} workspaces →
             </a>
-          ))}
-        </div>
-
-        <div className="mt-8 pt-6 border-t border-zinc-800">
-          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Open all as tabs</h3>
-          <a
-            href={`?tabs=${EXAMPLES.map(e => e.path).join(',')}`}
-            className="text-sm text-sky-400 hover:text-sky-300"
-          >
-            ?tabs={EXAMPLES.length} dashboards →
-          </a>
-        </div>
-      </div>
+          </div>
+        </section>
+      </main>
     </div>
   )
 }

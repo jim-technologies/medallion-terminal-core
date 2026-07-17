@@ -1,6 +1,14 @@
 {
   "title": "File browser — ${ctx.namespace}",
-  "context": { "values": { "namespace": "demo", "path": "" } },
+  "context": {
+    "values": {
+      "namespace": "demo",
+      "path": "",
+      "page": "1",
+      "page_size": "50",
+      "view_mode": "icons"
+    }
+  },
   "widgets": [
     {
       "id": "ns",
@@ -20,7 +28,7 @@
       "source": {
         "inline": {
           "items": [
-            { "body": "Drag any file into the browser to upload. Bare filenames are auto-partitioned by content type using the hive convention type__{kind}/. Drop a video and scrub the preview — the /media endpoint supports Range requests so seek works without re-downloading." }
+            { "body": "Open a folder and drag files into it, or use Upload to choose a destination folder. Drop a video and scrub the preview — the /media endpoint supports Range requests so seek works without re-downloading." }
           ]
         }
       }
@@ -35,14 +43,23 @@
       "refresh_policy": "self",
       "options": {
         "path_ctx": "path",
-        "namespace_ctx": "namespace",
+        "bucket_ctx": "namespace",
+        "bucket_param": "namespace",
+        "page_ctx": "page",
+        "page_size_ctx": "page_size",
+        "view_mode_ctx": "view_mode",
         "upload_action_id": "upload",
         "download_url": "/files.v1.FileService/Download",
-        "media_url_template": "/media/{namespace}/{object_id}"
+        "media_url_template": "/media?namespace={namespace}&path={path}"
       },
       "source": {
         "source_id": "files",
-        "params": { "namespace": "${ctx.namespace}", "path": "${ctx.path}" }
+        "params": {
+          "namespace": "${ctx.namespace}",
+          "path": "${ctx.path}",
+          "page": "${ctx.page}",
+          "page_size": "${ctx.page_size}"
+        }
       }
     },
 

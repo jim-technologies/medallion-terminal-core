@@ -44,12 +44,12 @@ export interface WidgetConfig {
   // transitions false → true. Cleared when it returns to false.
   alert?: WidgetAlert
   // How this widget responds to refresh pulses (`r` on focus, toolbar
-  // Reload, requestRefresh from sibling widgets after an action). Does
+  // Refresh, requestRefresh from sibling widgets after an action). Does
   // NOT affect streaming sources or the source's own refreshIntervalMs
   // polling — those are continuous data flows the author opted into.
   //   "global" (default) — refreshes on '*' pulses and own-id pulses.
   //   "self"             — refreshes only on own-id pulses; ignores '*'.
-  //                        Use when global Reload would discard local
+  //                        Use when global Refresh would discard local
   //                        UI state the user cares about.
   //   "manual"           — ignores pulses entirely. Refetch is only
   //                        triggered by the action menu's Refresh item

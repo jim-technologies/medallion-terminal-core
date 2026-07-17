@@ -31,7 +31,7 @@ export function Treemap({ data }: WidgetProps) {
         data={nodes}
         dataKey="value"
         nameKey="name"
-        stroke="#18181b"
+        stroke="var(--mtc-surface)"
         isAnimationActive={false}
         content={<Tile />}
       >
@@ -62,9 +62,9 @@ function Tile(props: TileProps) {
   const showLabel = width > 60 && height > 24
   return (
     <g>
-      <rect x={x} y={y} width={width} height={height} fill={color} fillOpacity={0.85} stroke="#18181b" strokeWidth={2} />
+      <rect x={x} y={y} width={width} height={height} fill={color} fillOpacity={0.85} stroke="var(--mtc-surface)" strokeWidth={2} />
       {showLabel && name && (
-        <text x={x + 6} y={y + 16} fill="#fafafa" fontSize={11} style={{ pointerEvents: 'none' }}>
+        <text x={x + 6} y={y + 16} fill="var(--mtc-fg)" fontSize={11} style={{ pointerEvents: 'none' }}>
           {name}
         </text>
       )}

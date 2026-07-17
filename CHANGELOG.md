@@ -6,16 +6,75 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
-- **Scoped themes for SDK embedding.** Dashboard styles now live under
-  `.mtc-root`, `Dashboard` accepts `theme="dark" | "light"`, and the
-  public CSS variables (`--mtc-*`) let host apps tune colors and fonts
-  without the library styling `html`, `body`, or the host root.
+- **Current reproducible toolchain.** Flox now locks Node 24.16, pnpm 11.9,
+  and Buf 1.71 across supported platforms. The application stack moves to
+  React 19.2, TypeScript 7.0, Vite 8.1, Tailwind 4.3, Recharts 3.9,
+  lightweight-charts 5.2, Vitest 4.1, and Storybook 10.5. Node typings remain
+  on the Node 24 line to match the runtime. pnpm's build allowlist lives only
+  in `pnpm-workspace.yaml`, as required by pnpm 11. CI moves to the Node
+  24-based checkout/cache and Pages action majors.
+- **Generated-artifact checks work in dirty feature branches.** `pnpm lint`
+  snapshots `src/gen` around Buf generation, and `pnpm check:dist` snapshots
+  `dist/` around the library build. Both compare before/after content instead
+  of comparing to Git HEAD, so synchronized source/proto/artifact edits can
+  pass locally before they are committed.
+- **Published-package contract is release-gated.** `pnpm check:package`
+  imports the built entry, verifies the declared files and critical public
+  exports/widget registrations, rejects accidental source/example
+  publication, and enforces 80 KiB JavaScript / 12 KiB CSS gzip ceilings.
+- **Professional scoped themes for SDK embedding.** Dashboard styles live
+  under `.mtc-root`; `Dashboard` accepts `theme="dark" | "operator" |
+  "light"`. Graphite/cobalt is the default, the optional operator preset
+  uses a near-black/citrine language, and public semantic/chart variables
+  let hosts tune the identity without styling `html`, `body`, or their root.
+- **Theme contrast guardrails.** Action, status, and ordinary text colors now
+  maintain AA contrast across canvas, widget, and selected-panel surfaces in
+  all three presets; non-essential metadata maintains at least 3:1. A focused
+  test parses the public CSS tokens so future palette edits cannot silently
+  weaken those guarantees.
 - **Public examples stay generic.** Clone/vendor-specific example names,
   source labels, comments, and docs were replaced with neutral dashboard,
   monitoring, workflow, and analytics examples.
 
 ### Added
 
+- **SME operating-intelligence direction.** `DESIGN.md` defines owner-first
+  product hierarchy, visual roles, typography/density rules, originality
+  guardrails, and a UI definition of done. `business-operations.json` adds an
+  owner-facing workspace for revenue, cash, pipeline, capacity, customer
+  health, and decisions; the example gallery now presents this product
+  direction before the technical platform surfaces.
+
+- **Generic record-work foundation.** `RecordSetPayload` adds typed fields,
+  stable record identity, linked values, saved grid/board/calendar/list/
+  gallery/timeline/form metadata, optimistic revision tokens, pagination,
+  and declared create/update/delete capabilities. New `record_grid`,
+  `record_board`, `record_calendar`, and `record_form` built-ins project the
+  same payload into searchable rows, grouped workflow lanes, date planning,
+  and context-driven create/edit/detail. Formula, lookup, rollup, and timestamp
+  fields remain backend-computed and read-only.
+- **Governed record lifecycle and reference workspace.** The generic
+  `useSubmitAction` hook centralizes idempotency, lifecycle telemetry,
+  asynchronous `WatchAction`, toasts, and coherent workspace refresh.
+  The reference backend now demonstrates idempotent create, partial update,
+  delete, field validation, computed margin, and stale-revision rejection.
+  `work-management.json`, shared stories, export coverage, integration tests,
+  and `RECORDS.md` make the seam runnable and extensible without introducing
+  CRM/project/vendor concepts into framework code.
+
+- **Data-platform foundation.** New canonical proto payloads and built-ins
+  cover governed asset discovery (`AssetCatalogPayload` / `asset_catalog`),
+  semantic object detail, links, and policy-gated actions
+  (`ObjectPayload` / `object_view`), lineage/dependency graphs
+  (`GraphPayload` / `dag`), and branch/ref-aware source browsing
+  (`RepositoryPayload` / `code_browser`). All accept snake_case or Connect
+  lowerCamelCase JSON, participate in context retargeting, export to tidy
+  tables, appear in the BI descriptor, and ship with Storybook stories.
+- **Platform reference stack.** The Node reference backend exposes catalog,
+  object, lineage, and repository sources; `platform-foundation.json` composes
+  them into a runnable dashboard. `PLATFORM.md` maps the frontend primitives to
+  the metadata, ontology, policy, data, code, lineage, action, and AI services
+  a production host still owns.
 - **BI export / embedding surface.** The product-goal capability gap
   (export/serve to BI and reporting tools) is now
   built out:
@@ -32,7 +91,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
     **Export** submenu (CSV / Parquet / JSON / NDJSON) via `WidgetShell`.
   - **Embeddable mode** — `embed.html` is a standalone iframe entry
     driven entirely by the query string (`src`/`component`/`url`/
-    `template`/`backend`/`ctx.*`/`stream`/`refreshMs`/`chrome`), so a
+    `template`/`backend`/`ctx.*`/`stream`/`refreshMs`/`chrome`/`theme`), so a
     reporting panel or iframe, or BI report page can embed a single
     live widget or a whole dashboard. Backed by `<EmbedView>` +
     `parseEmbedConfig` / `buildEmbedUrl` (exported). `<Dashboard>` gained
@@ -53,11 +112,12 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Internal
 
-- **Consistency/readability pass.** No behavior or API changes. The
+- **Consistency/readability pass.** The
   Recharts tooltip `contentStyle`, duplicated inline across all eight
   chart widgets, is now a single shared `TOOLTIP_STYLE` in
-  `widgets/colors.ts` (Timeseries' `0.375rem` radius normalized to the
-  equivalent `6`). The export-format menu list, previously duplicated in
+  `widgets/colors.ts`. All production chart widgets now consume scoped
+  semantic and `--mtc-chart-*` tokens instead of fixed dark-only palettes.
+  The export-format menu list, previously duplicated in
   `ExportMenu` and `WidgetShell`, is now one `EXPORT_FORMATS` in
   `export/serializers.ts`. `Radar` dropped its widget-local color array in
   favor of the shared `PALETTE` (byte-identical colors). Minor whitespace
@@ -65,6 +125,41 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Fixed
 
+- **Action lifecycle correctness.** Generic writes now use a synchronous
+  one-request lock, reject empty action ids, accept same-origin backends, fail
+  closed on unknown statuses or streams that end before a terminal update,
+  and always surface transport/watch failures. Object actions and Connect
+  trades share that lifecycle; record edit/delete context only clears after
+  terminal success, and asynchronous Share handlers are awaited with a busy
+  guard and visible failure state.
+- **Record projections preserve backend intent.** Edit forms no longer replace
+  absent values with create defaults, explicit `null` remains distinct from an
+  absent value, numeric fields reject non-finite input, board moves honor
+  `allow_move: false`, and calendar colors come only from schema-declared
+  choice semantics instead of business-word guesses.
+- **File operations fail closed.** Search, ingest, dialog upload, and drop
+  upload close same-turn duplicate-request windows; clearing search aborts the
+  active request. Endpoint resolution preserves absolute CDN URLs and
+  same-origin paths, Connect downloads surface error trailers and truncated
+  streams, and HTTP-200 action failures can no longer be reported as uploads.
+- **Runtime payload changes stay live.** Replaced inline sources now update
+  without a source-mode change, slow polling requests cannot overlap, numeric
+  protobuf enums normalize in repository and BI descriptors, and BI parameter
+  metadata accepts canonical lower-camel ProtoJSON as well as legacy
+  snake-case aliases.
+- **Scoped Tailwind colors now resolve correctly.** Theme aliases use
+  `@theme inline`, so utilities resolve `--mtc-*` variables on each mounted
+  dashboard. Previously aliases were computed at document `:root`, where the
+  scoped variables did not exist, causing invalid colors and browser-default
+  white borders/backgrounds. The scoped reset also lives in Tailwind's base
+  layer, preserving utility typography, radius, and background declarations.
+
+- **File-browser contract drift.** The bundled example and reference backend
+  now match the path-based FileBrowser contract introduced in 0.4.0:
+  `bucket_ctx`/`bucket_param`, `{namespace}` + `{path}` media URLs,
+  `TablePayload.rows` listings, path-based upload responses, pagination,
+  HTTP Range preview, and Connect-framed download. The complete flow is covered
+  by an integration test.
 - **DataTable** now renders the canonical `TablePayload` — `columns` as
   `{ key, label?, format? }` objects with `rows` as keyed objects (Structs),
   using `label` for headers and the per-column `format` for cell formatting

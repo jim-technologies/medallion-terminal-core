@@ -1,1 +1,1 @@
-export declare function Catalog(): import("react/jsx-runtime").JSX.Element;
+export declare function Catalog(): import("react").JSX.Element;

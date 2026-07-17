@@ -147,28 +147,22 @@ function normalize(data: unknown): HeatmapData | null {
   return { rows, columns, cells, min, max, scale }
 }
 
-// Linear interpolation between two RGB endpoints. Inputs in 0..255, t in 0..1.
-function lerp(a: number, b: number, t: number): number {
-  return Math.round(a + (b - a) * t)
-}
-
-// zinc-800 baseline → emerald-500 (positive) or red-500 (negative) for diverging,
-// → sky-500 for sequential. Keeps the chart readable on a zinc-900 surface.
+// Theme panel baseline → status colors for diverging, accent for sequential.
+// CSS color-mix keeps every preset and host-defined theme coherent.
 function colorFor(value: number, min: number, max: number, scale: 'sequential' | 'diverging'): string {
-  if (max === min) return 'rgb(63 63 70)' // zinc-700
+  if (max === min) return 'var(--mtc-panel)'
 
   if (scale === 'diverging') {
     const span = Math.max(Math.abs(min), Math.abs(max)) || 1
     const t = Math.max(-1, Math.min(1, value / span))
     if (t >= 0) {
-      return `rgb(${lerp(39, 16, t)} ${lerp(39, 185, t)} ${lerp(42, 129, t)})`
+      return `color-mix(in oklab, var(--mtc-ok) ${85 * t}%, var(--mtc-panel))`
     }
-    const a = -t
-    return `rgb(${lerp(39, 239, a)} ${lerp(39, 68, a)} ${lerp(42, 68, a)})`
+    return `color-mix(in oklab, var(--mtc-danger) ${85 * -t}%, var(--mtc-panel))`
   }
 
   const t = Math.max(0, Math.min(1, (value - min) / (max - min)))
-  return `rgb(${lerp(39, 14, t)} ${lerp(39, 165, t)} ${lerp(42, 233, t)})`
+  return `color-mix(in oklab, var(--mtc-accent) ${15 + 75 * t}%, var(--mtc-panel))`
 }
 
 function formatCell(v: number): string {

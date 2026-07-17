@@ -7,16 +7,16 @@ const preview: Preview = {
     (Story) => createElement(
       'div',
       { className: 'mtc-root mtc-theme-dark', 'data-theme': 'dark' },
-      createElement('div', { className: 'min-h-screen bg-zinc-950 text-zinc-100' }, createElement(Story)),
+      createElement('div', { className: 'mtc-workspace min-h-screen text-zinc-100' }, createElement(Story)),
     ),
   ],
   parameters: {
     backgrounds: {
-      default: 'terminal',
+      default: 'graphite',
       values: [
-        { name: 'terminal', value: '#09090b' },
-        { name: 'dark', value: '#18181b' },
-        { name: 'light', value: '#ffffff' },
+        { name: 'graphite', value: '#0a0d10' },
+        { name: 'operator', value: '#080a09' },
+        { name: 'light', value: '#f3f5f6' },
       ],
     },
   },

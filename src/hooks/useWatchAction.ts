@@ -25,6 +25,11 @@ export const TERMINAL_ACTION_STATUSES = new Set([
   'ACTION_STATUS_CANCELLED',
 ])
 
+export const NON_TERMINAL_ACTION_STATUSES = new Set([
+  'ACTION_STATUS_ACCEPTED',
+  'ACTION_STATUS_PENDING',
+])
+
 const ERROR_ACTION_STATUSES = new Set([
   'ACTION_STATUS_REJECTED',
   'ACTION_STATUS_FAILED',
@@ -37,6 +42,10 @@ export function isTerminalStatus(s: string | undefined): boolean {
 
 export function isErrorStatus(s: string | undefined): boolean {
   return !!s && ERROR_ACTION_STATUSES.has(s)
+}
+
+export function isNonTerminalStatus(s: string | undefined): boolean {
+  return !!s && NON_TERMINAL_ACTION_STATUSES.has(s)
 }
 
 interface UseWatchActionState {
@@ -71,15 +80,21 @@ export function useWatchAction(
   const [updates, setUpdates] = useState<ActionUpdate[]>([])
   const [done, setDone] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [stateKey, setStateKey] = useState('')
+  const requestedKey = target
+    ? JSON.stringify([backendUrl, target.clientRequestId, target.id, target.actionId])
+    : ''
 
   useEffect(() => {
-    if (!backendUrl || !target) return
+    // An empty backend URL intentionally means same-origin.
+    if (backendUrl === undefined || !target) return
     const hasIdentifier = !!(target.clientRequestId || target.id || target.actionId)
     if (!hasIdentifier) return
 
     setUpdates([])
     setDone(false)
     setError(null)
+    setStateKey(requestedKey)
 
     const ctrl = new AbortController()
     let disposed = false
@@ -136,8 +151,14 @@ export function useWatchAction(
       disposed = true
       ctrl.abort()
     }
-  }, [backendUrl, target?.clientRequestId, target?.id, target?.actionId])
+  }, [backendUrl, requestedKey, target?.actionId, target?.clientRequestId, target?.id])
 
+  // State updates from the previous target remain visible until this effect
+  // commits. Mask them synchronously so a newly armed action can never
+  // consume the prior action's terminal update or error.
+  if (stateKey !== requestedKey) {
+    return { updates: [], latest: null, done: false, error: null }
+  }
   return {
     updates,
     latest: updates.length > 0 ? updates[updates.length - 1] : null,

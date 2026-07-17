@@ -20,6 +20,7 @@ export declare function prevInQueue(queue: FileBrowserEntry[], currentName: stri
 export type PreviewKind = 'video' | 'audio' | 'image' | 'pdf' | 'heic' | 'mkv' | 'text' | 'json' | 'yaml' | 'markdown' | 'csv' | null;
 export declare function previewKind(contentType?: string, filename?: string): PreviewKind;
 export declare function buildMediaUrl(template: string, bucket: string, path: string): string;
+export declare function resolveEndpointUrl(backendUrl: string | undefined, endpoint: string): string;
 export declare function arrayBufferToBase64(buf: ArrayBuffer): string;
 export declare function readConnectErrorMessage(res: Response): Promise<string>;
 export declare function parseConnectStream(res: Response, mime?: string): Promise<Blob>;

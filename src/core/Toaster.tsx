@@ -37,7 +37,7 @@ function ToastView({ toast, dismiss }: { toast: Toast; dismiss: (id: number) => 
   return (
     <div
       onClick={() => dismiss(toast.id)}
-      className={`pointer-events-auto cursor-pointer text-xs px-3 py-2 rounded border shadow-lg backdrop-blur-sm ${COLOR[toast.severity]} motion-safe:animate-[fadeIn_180ms_ease-out]`}
+      className={`mtc-popover pointer-events-auto cursor-pointer text-xs px-3 py-2 border ${COLOR[toast.severity]} motion-safe:animate-[fadeIn_180ms_ease-out]`}
     >
       {toast.message}
     </div>

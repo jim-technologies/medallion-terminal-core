@@ -5,4 +5,4 @@ export interface ExportMenuProps {
     onExport?: (format: ExportFormat, ok: boolean) => void;
     variant?: 'button' | 'row';
 }
-export declare function ExportMenu({ view, filenameBase, onExport, variant }: ExportMenuProps): import("react/jsx-runtime").JSX.Element;
+export declare function ExportMenu({ view, filenameBase, onExport, variant }: ExportMenuProps): import("react").JSX.Element;

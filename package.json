@@ -2,6 +2,7 @@
   "name": "medallion-terminal-core",
   "version": "0.4.20",
   "type": "module",
+  "packageManager": "pnpm@11.9.0",
   "main": "./dist/medallion-terminal-core.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -21,7 +22,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "lint": "tsc --noEmit && buf format --diff --exit-code && buf lint && buf build && pnpm gen:proto && git diff --exit-code src/gen",
+    "lint": "tsc --noEmit && buf format --diff --exit-code && buf lint && buf build && node scripts/check-generated.mjs",
     "gen:proto": "PATH=\"$PWD/node_modules/.bin:$PATH\" buf generate",
     "format": "buf format --write",
     "test": "vitest run",
@@ -30,12 +31,13 @@
     "build:lib": "vite build --config vite.config.lib.ts && tsc -p tsconfig.build.json",
     "prepack": "pnpm build:lib",
     "preview": "vite preview",
-    "check:dist": "pnpm build:lib && git diff --exit-code dist",
-    "check": "pnpm lint && pnpm test && pnpm build && pnpm build:lib",
+    "check:dist": "node scripts/check-dist.mjs",
+    "check:package": "node scripts/check-package.mjs",
+    "check": "pnpm lint && pnpm test && pnpm build && pnpm build:lib && pnpm check:package",
     "backend": "node examples/backend/server.mjs",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build",
-    "ci": "pnpm install --frozen-lockfile && pnpm lint && pnpm test && pnpm build && pnpm build:lib && pnpm check:dist && pnpm build:storybook"
+    "ci": "pnpm install --frozen-lockfile && pnpm lint && pnpm test && pnpm build && pnpm check:dist && pnpm check:package && pnpm build:storybook"
   },
   "peerDependencies": {
     "lightweight-charts": "^5.0.0",
@@ -46,36 +48,31 @@
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
-    "dompurify": "^3.4.7",
+    "dompurify": "^3.4.12",
     "heic2any": "^0.0.4",
-    "hyparquet-writer": "^0.15.6",
-    "lightweight-charts": "^5.1.0",
-    "marked": "^18.0.4",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "recharts": "^3.8.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
+    "hyparquet-writer": "^0.16.1",
+    "lightweight-charts": "^5.2.0",
+    "marked": "^18.0.6",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "recharts": "^3.9.2"
   },
   "devDependencies": {
-    "@bufbuild/protobuf": "^2.12.0",
-    "@bufbuild/protoc-gen-es": "^2.12.0",
-    "@storybook/react": "^10.2.19",
-    "@storybook/react-vite": "^10.2.19",
-    "@tailwindcss/vite": "^4.2.1",
-    "@types/node": "^25.6.0",
-    "@types/react": "^19.2.14",
+    "@bufbuild/protobuf": "^2.12.1",
+    "@bufbuild/protoc-gen-es": "^2.12.1",
+    "@storybook/react": "^10.5.1",
+    "@storybook/react-vite": "^10.5.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.2.0",
-    "esbuild": "^0.27.4",
-    "hyparquet": "^1.26.0",
-    "storybook": "^10.2.19",
-    "tailwindcss": "^4.2.1",
-    "typescript": "~5.9.3",
-    "vite": "^7.3.1",
-    "vitest": "^4.1.0"
+    "@vitejs/plugin-react": "^6.0.3",
+    "esbuild": "^0.28.1",
+    "hyparquet": "^1.26.2",
+    "storybook": "^10.5.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~7.0.2",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10"
   }
 }

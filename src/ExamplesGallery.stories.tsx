@@ -19,6 +19,10 @@ import clinicalIcu from '../public/examples/clinical-icu.json'
 import energyGrid from '../public/examples/energy-grid.json'
 import sportsBetting from '../public/examples/sports-betting.json'
 import referenceBackend from '../public/examples/reference-backend.json'
+import platformFoundation from '../public/examples/platform-foundation.json'
+import businessOperations from '../public/examples/business-operations.json'
+import workManagement from '../public/examples/work-management.json'
+import { RECORD_SET_STORY_DATA } from './widgets/recordStories.fixture'
 
 import '../examples/widgets/registry'
 
@@ -114,7 +118,125 @@ const referenceBackendSamples: Record<string, unknown> = {
   },
 }
 
+const platformSamples: Record<string, unknown> = {
+  platform_assets: {
+    total: 4,
+    items: [
+      {
+        id: 'dataset.customer_360',
+        name: 'Customer 360',
+        kind: 'dataset',
+        owner: 'growth-data',
+        status: 'healthy',
+        description: 'Curated customer, account, product, and engagement facts.',
+        tags: ['gold', 'pii'],
+        metadata: { rows: '18.4M', quality: '99.7%' },
+      },
+      {
+        id: 'object_type.Customer',
+        name: 'Customer',
+        kind: 'object_type',
+        owner: 'ontology',
+        status: 'published',
+        description: 'Semantic customer type with governed properties, links, and actions.',
+        tags: ['ontology'],
+      },
+      {
+        id: 'pipeline.customer_features',
+        name: 'Customer features',
+        kind: 'pipeline',
+        owner: 'ml-platform',
+        status: 'warning',
+        metadata: { schedule: 'hourly', freshness: '18m' },
+      },
+      {
+        id: 'repository.analytics',
+        name: 'analytics',
+        kind: 'repository',
+        owner: 'data-platform',
+        status: 'active',
+        context: { repository: 'analytics', repo_ref: 'main', repo_path: '' },
+      },
+    ],
+  },
+  platform_object: {
+    object_type: 'dataset',
+    object_id: 'dataset.customer_360',
+    title: 'Customer 360',
+    description: 'Curated customer, account, product, and engagement facts.',
+    status: 'healthy',
+    tags: ['gold', 'pii'],
+    properties: [
+      { key: 'owner', label: 'Owner', value: 'growth-data', group: 'Governance' },
+      { key: 'classification', label: 'Classification', value: 'restricted', group: 'Governance' },
+      { key: 'rows', label: 'Rows', value: 18400000, format: 'compact', group: 'Technical' },
+      { key: 'quality', label: 'Quality', value: 0.997, format: 'percent', group: 'Technical' },
+    ],
+    links: [
+      { relation: 'upstream', target_type: 'dataset', target_id: 'dataset.clean_orders', label: 'Clean orders' },
+      { relation: 'used by', target_type: 'model', target_id: 'model.churn_v4', label: 'Churn risk v4' },
+    ],
+    actions: [
+      { id: 'acknowledge_asset', label: 'Acknowledge', style: 'primary' },
+      { id: 'request_asset_review', label: 'Request review', confirm: true },
+    ],
+  },
+  platform_lineage: {
+    nodes: [
+      { id: 'dataset.raw_orders', label: 'raw_orders', kind: 'dataset', status: 'ok', subtitle: 'bronze' },
+      { id: 'dataset.clean_orders', label: 'clean_orders', kind: 'dataset', status: 'ok', subtitle: 'silver' },
+      { id: 'dataset.customer_360', label: 'customer_360', kind: 'dataset', status: 'info', subtitle: 'gold' },
+      { id: 'pipeline.customer_features', label: 'customer_features', kind: 'pipeline', status: 'running', subtitle: 'hourly' },
+      { id: 'model.churn_v4', label: 'churn_v4', kind: 'model', status: 'ok', subtitle: 'production' },
+    ],
+    edges: [
+      { from: 'dataset.raw_orders', to: 'dataset.clean_orders', label: 'normalize' },
+      { from: 'dataset.clean_orders', to: 'dataset.customer_360', label: 'join' },
+      { from: 'dataset.customer_360', to: 'pipeline.customer_features', label: 'features' },
+      { from: 'pipeline.customer_features', to: 'model.churn_v4', label: 'score' },
+    ],
+  },
+  platform_repository: {
+    repository: 'analytics',
+    ref: 'main',
+    path: 'src/customer.ts',
+    refs: ['main', 'release/2026.07'],
+    entries: [
+      { path: 'src/customer.ts', name: 'customer.ts', kind: 'REPOSITORY_ENTRY_KIND_FILE', language: 'typescript', size_bytes: 278 },
+      { path: 'src/index.ts', name: 'index.ts', kind: 'REPOSITORY_ENTRY_KIND_FILE', language: 'typescript', size_bytes: 52 },
+      { path: 'src/types.ts', name: 'types.ts', kind: 'REPOSITORY_ENTRY_KIND_FILE', language: 'typescript', size_bytes: 96 },
+    ],
+    file: {
+      path: 'src/customer.ts',
+      language: 'typescript',
+      content: [
+        "import type { Customer } from './types.js'",
+        '',
+        'export function customerHealth(customer: Customer): number {',
+        '  const usage = Math.min(customer.activeUsers / customer.seats, 1)',
+        '  return Math.max(0, usage - customer.openCases * 0.05)',
+        '}',
+      ].join('\n'),
+    },
+  },
+}
+
+const workManagementStatic = inlineFallback(workManagement as Template, {
+  business_records: RECORD_SET_STORY_DATA,
+})
+
 export const MedallionTerminal    = story(medallionTerminal)
+export const BusinessOperations   = story(businessOperations)
+export const WorkManagement       = story(workManagementStatic)
+export const WorkManagementOperator: Story = {
+  args: { template: workManagementStatic, theme: 'operator' },
+}
+export const WorkManagementLight: Story = {
+  args: { template: workManagementStatic, theme: 'light' },
+}
+export const OperatorTheme: Story = {
+  args: { template: businessOperations as Template, theme: 'operator' },
+}
 export const CryptoWatch          = story(cryptoWatch)
 export const TradingFloor         = story(tradingFloor)
 export const PredictionMarket     = story(predictionMarket)
@@ -131,3 +253,4 @@ export const ClinicalICU          = story(clinicalIcu)
 export const EnergyGrid           = story(energyGrid)
 export const SportsBetting        = story(inlineFallback(sportsBetting as Template, sportsBettingSamples))
 export const ReferenceBackend     = story(inlineFallback(referenceBackend as Template, referenceBackendSamples))
+export const PlatformFoundation   = story(inlineFallback(platformFoundation as Template, platformSamples))

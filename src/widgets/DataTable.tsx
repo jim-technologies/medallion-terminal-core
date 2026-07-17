@@ -412,18 +412,19 @@ function normalize(data: unknown): NormalizedTable {
 }
 
 // Diverging when the column straddles 0 (% change), sequential otherwise.
-// Returns a translucent rgba so the row's hover effect still shows through.
+// Returns a translucent theme color so the row's hover effect still shows
+// through and host/operator themes remain consistent.
 function heatColor(value: number, min: number, max: number): string {
   if (max === min) return 'transparent'
   if (min < 0 && max > 0) {
     const span = Math.max(Math.abs(min), Math.abs(max))
     const t = Math.max(-1, Math.min(1, value / span))
     return t >= 0
-      ? `rgba(16, 185, 129, ${0.35 * t})`        // emerald
-      : `rgba(239, 68, 68, ${0.35 * -t})`        // red
+      ? `color-mix(in oklab, var(--mtc-ok) ${35 * t}%, transparent)`
+      : `color-mix(in oklab, var(--mtc-danger) ${35 * -t}%, transparent)`
   }
   const t = (value - min) / (max - min)
-  return `rgba(14, 165, 233, ${0.35 * t})`       // sky
+  return `color-mix(in oklab, var(--mtc-accent) ${35 * t}%, transparent)`
 }
 
 // CSV-escape: wrap in quotes when needed, double internal quotes.
@@ -448,7 +449,7 @@ function SparklineCell({ values }: { values: unknown[] }) {
   const max = Math.max(...nums)
   const range = max - min || 1
   const up = nums[nums.length - 1] >= nums[0]
-  const color = up ? '#10b981' : '#ef4444'
+  const color = up ? 'var(--mtc-ok)' : 'var(--mtc-danger)'
   const points = nums
     .map((v, i) => {
       const x = (i / (nums.length - 1)) * 100

@@ -87,6 +87,109 @@ describe('flatten', () => {
     expect(t.rows[0]).toEqual({ value: 42 })
   })
 
+  it('flattens governed asset catalog rows', () => {
+    const t = flatten({
+      items: [{
+        id: 'dataset.customers',
+        name: 'Customers',
+        kind: 'dataset',
+        owner: 'data-platform',
+        tags: ['gold'],
+        metadata: { rows: 12 },
+      }],
+    }, 'asset_catalog')
+    expect(t.columns).toEqual(expect.arrayContaining(['id', 'name', 'kind', 'owner', 'metadata']))
+    expect(t.rows[0]).toMatchObject({
+      id: 'dataset.customers',
+      kind: 'dataset',
+      tags: '["gold"]',
+      metadata: '{"rows":12}',
+    })
+  })
+
+  it('flattens semantic object properties into one export row', () => {
+    const t = flatten({
+      object_type: 'Customer',
+      object_id: 'cust-1',
+      title: 'Acme',
+      properties: [
+        { key: 'arr', value: 1250000 },
+        { key: 'active', value: true },
+      ],
+    }, 'object_view')
+    expect(t.rows[0]).toMatchObject({
+      object_type: 'Customer',
+      object_id: 'cust-1',
+      title: 'Acme',
+      arr: 1250000,
+      active: true,
+    })
+  })
+
+  it('flattens graph nodes and edges with record_type tags', () => {
+    const t = flatten({
+      nodes: [{ id: 'a', label: 'A', kind: 'dataset' }],
+      edges: [{ from: 'a', to: 'b', label: 'feeds' }],
+    }, 'dag')
+    expect(t.rows).toEqual(expect.arrayContaining([
+      expect.objectContaining({ record_type: 'node', id: 'a', kind: 'dataset' }),
+      expect.objectContaining({ record_type: 'edge', from: 'a', to: 'b', label: 'feeds' }),
+    ]))
+  })
+
+  it('flattens repository listings with ref and size metadata', () => {
+    const t = flatten({
+      repository: 'analytics',
+      ref: 'main',
+      entries: [{
+        path: 'src/index.ts',
+        name: 'index.ts',
+        kind: 'REPOSITORY_ENTRY_KIND_FILE',
+        language: 'typescript',
+        size_bytes: 42,
+      }],
+    }, 'code_browser')
+    expect(t.rows[0]).toMatchObject({
+      repository: 'analytics',
+      ref: 'main',
+      path: 'src/index.ts',
+      kind: 'file',
+      size_bytes: 42,
+    })
+  })
+
+  it('flattens record sets while preserving identity and revision metadata', () => {
+    const t = flatten({
+      table_id: 'work_items',
+      fields: [
+        { key: 'name', type: 'RECORD_FIELD_TYPE_TEXT' },
+        { key: 'customer', type: 'RECORD_FIELD_TYPE_LINK' },
+      ],
+      records: [{
+        id: 'work-1',
+        revision: '7',
+        updated_at: '2026-07-16T12:00:00Z',
+        values: {
+          name: 'Northstar rollout',
+          customer: { id: 'customer-7', label: 'Northstar' },
+        },
+      }],
+    }, 'record_grid')
+    expect(t.columns).toEqual(expect.arrayContaining([
+      'id',
+      'name',
+      'customer',
+      'updated_at',
+      'revision',
+    ]))
+    expect(t.rows[0]).toMatchObject({
+      id: 'work-1',
+      name: 'Northstar rollout',
+      customer: '{"id":"customer-7","label":"Northstar"}',
+      revision: '7',
+    })
+  })
+
   it('auto-detects shape without a hint', () => {
     const t = flatten({ bars: [{ timestamp: 't', open: 1, high: 2, low: 1, close: 2 }] })
     expect(t.columns).toContain('open')

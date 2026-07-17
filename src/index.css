@@ -1,8 +1,13 @@
 @config "../tailwind.config.mjs";
+@layer theme, base, utilities;
 @import "tailwindcss/theme" layer(theme);
 @import "tailwindcss/utilities" layer(utilities);
 
-@theme {
+/* `inline` is important here. The public --mtc-* variables live on the
+   dashboard root so each mounted dashboard can carry its own theme. Without
+   inline aliases Tailwind resolves these variables on :root, before the
+   scoped theme exists, and utility colors become invalid. */
+@theme inline {
   --font-sans: var(--mtc-font-sans);
   --font-mono: var(--mtc-font-mono);
 
@@ -43,28 +48,50 @@
 }
 
 .mtc-root {
-  --mtc-bg: #0b0d10;
-  --mtc-surface: #111418;
-  --mtc-panel: #1b2027;
-  --mtc-border: #2b323c;
-  --mtc-border-strong: #38414d;
-  --mtc-fg: #eef4fb;
-  --mtc-fg-soft: #c8d2df;
-  --mtc-muted: #8a95a3;
-  --mtc-muted-strong: #a7b1bf;
-  --mtc-muted-subtle: #5f6b7a;
-  --mtc-accent: #38bdf8;
-  --mtc-accent-strong: #0284c7;
-  --mtc-accent-soft: #7dd3fc;
-  --mtc-danger: #f87171;
-  --mtc-danger-soft: #fecaca;
-  --mtc-ok: #34d399;
-  --mtc-ok-soft: #a7f3d0;
-  --mtc-warning: #fbbf24;
-  --mtc-warning-soft: #fde68a;
-  --mtc-grid: #242b34;
-  --mtc-overlay: rgb(0 0 0 / 0.62);
-  --mtc-focus: rgb(56 189 248 / 0.48);
+  /* Graphite + cobalt is the default operating theme: neutral enough for a
+     business workspace, with color reserved for state and action. */
+  --mtc-bg: #0a0d10;
+  --mtc-surface: #11151a;
+  --mtc-surface-raised: #151a20;
+  --mtc-panel: #1b2128;
+  --mtc-panel-hover: #222a33;
+  --mtc-border: #28313a;
+  --mtc-border-strong: #3a4652;
+  --mtc-highlight: rgb(255 255 255 / 0.045);
+  --mtc-fg: #f1f4f6;
+  --mtc-fg-soft: #c8cfd6;
+  --mtc-muted: #87929e;
+  --mtc-muted-strong: #aab3bd;
+  --mtc-muted-subtle: #5f6c79;
+  --mtc-accent: #5a8dee;
+  --mtc-accent-strong: #3f70cf;
+  --mtc-accent-soft: #8eb1f5;
+  --mtc-signal: #c6a45f;
+  --mtc-danger: #df6972;
+  --mtc-danger-soft: #f1a0a6;
+  --mtc-ok: #4fb184;
+  --mtc-ok-soft: #8bd0ae;
+  --mtc-warning: #d6a354;
+  --mtc-warning-soft: #edc98c;
+  --mtc-grid: #20272e;
+  --mtc-overlay: rgb(3 6 8 / 0.76);
+  --mtc-focus: rgb(90 141 238 / 0.42);
+  --mtc-shadow: 0 12px 32px rgb(0 0 0 / 0.18);
+  --mtc-shadow-raised: 0 18px 48px rgb(0 0 0 / 0.34);
+  --mtc-radius: 6px;
+
+  --mtc-chart-1: #5a8dee;
+  --mtc-chart-2: #4fb184;
+  --mtc-chart-3: #d6a354;
+  --mtc-chart-4: #df6972;
+  --mtc-chart-5: #9382d8;
+  --mtc-chart-6: #53a9b8;
+  --mtc-chart-7: #bc7fa1;
+  --mtc-chart-8: #87929e;
+  --mtc-code-key: #b5bec8;
+  --mtc-code-string: #72bd98;
+  --mtc-code-number: #dfb267;
+  --mtc-code-literal: #7fa5ef;
   --mtc-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mtc-font-mono: "SFMono-Regular", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace;
 
@@ -73,6 +100,7 @@
   color: var(--mtc-fg);
   color-scheme: dark;
   font-family: var(--mtc-font-sans);
+  font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -85,121 +113,327 @@
   color-scheme: dark;
 }
 
+/* An optional high-contrast operator preset. It takes the black + signal
+   language associated with modern industrial systems, but uses an original,
+   softened citrine instead of reproducing another company's brand palette. */
+.mtc-root[data-theme="operator"],
+.mtc-root.mtc-theme-operator {
+  --mtc-bg: #080a09;
+  --mtc-surface: #101310;
+  --mtc-surface-raised: #151915;
+  --mtc-panel: #1b211b;
+  --mtc-panel-hover: #252d24;
+  --mtc-border: #2b342b;
+  --mtc-border-strong: #465245;
+  --mtc-highlight: rgb(242 246 225 / 0.05);
+  --mtc-fg: #f2f4eb;
+  --mtc-fg-soft: #ccd1c4;
+  --mtc-muted: #8f978a;
+  --mtc-muted-strong: #b0b7aa;
+  --mtc-muted-subtle: #656d62;
+  --mtc-accent: #c8d765;
+  --mtc-accent-strong: #9eaf3f;
+  --mtc-accent-soft: #e0e9a1;
+  --mtc-signal: #c8d765;
+  --mtc-danger: #e36d69;
+  --mtc-danger-soft: #f0a5a2;
+  --mtc-ok: #64b88a;
+  --mtc-ok-soft: #9bd3b2;
+  --mtc-warning: #dda858;
+  --mtc-warning-soft: #edca91;
+  --mtc-grid: #202620;
+  --mtc-overlay: rgb(0 0 0 / 0.8);
+  --mtc-focus: rgb(200 215 101 / 0.38);
+  --mtc-chart-1: #c8d765;
+  --mtc-chart-2: #64b88a;
+  --mtc-chart-3: #dda858;
+  --mtc-chart-4: #e36d69;
+  --mtc-chart-5: #9a8bd5;
+  --mtc-chart-6: #60a9b0;
+  --mtc-chart-7: #c27f99;
+  --mtc-chart-8: #8f978a;
+  --mtc-code-key: #c6ccbd;
+  --mtc-code-string: #86c6a2;
+  --mtc-code-number: #e3b86f;
+  --mtc-code-literal: #c8d765;
+  color-scheme: dark;
+}
+
 .mtc-root[data-theme="light"],
 .mtc-root.mtc-theme-light {
-  --mtc-bg: #f6f8fb;
+  --mtc-bg: #f3f5f6;
   --mtc-surface: #ffffff;
-  --mtc-panel: #e7ecf3;
-  --mtc-border: #d3dbe6;
-  --mtc-border-strong: #b6c1cf;
-  --mtc-fg: #17202b;
-  --mtc-fg-soft: #334155;
-  --mtc-muted: #64748b;
-  --mtc-muted-strong: #475569;
-  --mtc-muted-subtle: #94a3b8;
-  --mtc-accent: #0284c7;
-  --mtc-accent-strong: #0369a1;
-  --mtc-accent-soft: #0ea5e9;
-  --mtc-danger: #dc2626;
-  --mtc-danger-soft: #991b1b;
-  --mtc-ok: #059669;
-  --mtc-ok-soft: #047857;
-  --mtc-warning: #b45309;
-  --mtc-warning-soft: #92400e;
-  --mtc-grid: #dbe3ee;
-  --mtc-overlay: rgb(15 23 42 / 0.42);
-  --mtc-focus: rgb(2 132 199 / 0.36);
+  --mtc-surface-raised: #fbfcfc;
+  --mtc-panel: #e8ecef;
+  --mtc-panel-hover: #dde3e7;
+  --mtc-border: #d2d9de;
+  --mtc-border-strong: #aeb8c1;
+  --mtc-highlight: rgb(255 255 255 / 0.7);
+  --mtc-fg: #18212a;
+  --mtc-fg-soft: #35414c;
+  --mtc-muted: #5b6671;
+  --mtc-muted-strong: #4d5964;
+  --mtc-muted-subtle: #78838d;
+  --mtc-accent: #2f65b5;
+  --mtc-accent-strong: #285ba5;
+  --mtc-accent-soft: #3569b5;
+  --mtc-signal: #9a712d;
+  --mtc-danger: #ad3740;
+  --mtc-danger-soft: #8f2e35;
+  --mtc-ok: #246d4c;
+  --mtc-ok-soft: #216847;
+  --mtc-warning: #87591c;
+  --mtc-warning-soft: #754b16;
+  --mtc-grid: #dce2e6;
+  --mtc-overlay: rgb(15 23 42 / 0.46);
+  --mtc-focus: rgb(53 111 196 / 0.32);
+  --mtc-shadow: 0 10px 30px rgb(23 32 42 / 0.08);
+  --mtc-shadow-raised: 0 18px 44px rgb(23 32 42 / 0.14);
+  --mtc-chart-1: #356fc4;
+  --mtc-chart-2: #287a55;
+  --mtc-chart-3: #a36c22;
+  --mtc-chart-4: #bd4049;
+  --mtc-chart-5: #6957aa;
+  --mtc-chart-6: #267c8c;
+  --mtc-chart-7: #915474;
+  --mtc-chart-8: #65717c;
+  --mtc-code-key: #47535e;
+  --mtc-code-string: #287a55;
+  --mtc-code-number: #94621f;
+  --mtc-code-literal: #356fc4;
   color-scheme: light;
 }
 
-.mtc-root *,
-.mtc-root ::before,
-.mtc-root ::after {
-  box-sizing: border-box;
-}
+@layer base {
+  .mtc-root *,
+  .mtc-root ::before,
+  .mtc-root ::after {
+    box-sizing: border-box;
+  }
 
-.mtc-root button,
-.mtc-root input,
-.mtc-root select,
-.mtc-root textarea {
-  margin: 0;
-  border: 0 solid;
-  border-radius: 0;
-  background-color: transparent;
-  color: inherit;
-  font: inherit;
-}
+  .mtc-root button,
+  .mtc-root input,
+  .mtc-root select,
+  .mtc-root textarea {
+    margin: 0;
+    border: 0 solid;
+    border-radius: 0;
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+  }
 
-.mtc-root h1,
-.mtc-root h2,
-.mtc-root h3,
-.mtc-root h4,
-.mtc-root h5,
-.mtc-root h6,
-.mtc-root p {
-  margin: 0;
-}
+  .mtc-root h1,
+  .mtc-root h2,
+  .mtc-root h3,
+  .mtc-root h4,
+  .mtc-root h5,
+  .mtc-root h6,
+  .mtc-root p {
+    margin: 0;
+  }
 
-.mtc-root h1,
-.mtc-root h2,
-.mtc-root h3,
-.mtc-root h4,
-.mtc-root h5,
-.mtc-root h6 {
-  font-size: inherit;
-  font-weight: inherit;
-}
+  .mtc-root h1,
+  .mtc-root h2,
+  .mtc-root h3,
+  .mtc-root h4,
+  .mtc-root h5,
+  .mtc-root h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
 
-.mtc-root ol,
-.mtc-root ul,
-.mtc-root menu {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
+  .mtc-root ol,
+  .mtc-root ul,
+  .mtc-root menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
-.mtc-root a {
-  color: inherit;
-  text-decoration: inherit;
-}
+  .mtc-root a {
+    color: inherit;
+    text-decoration: inherit;
+  }
 
-.mtc-root button,
-.mtc-root input[type="button"],
-.mtc-root input[type="reset"],
-.mtc-root input[type="submit"] {
-  appearance: button;
-}
+  .mtc-root button,
+  .mtc-root input[type="button"],
+  .mtc-root input[type="reset"],
+  .mtc-root input[type="submit"] {
+    appearance: button;
+  }
 
-.mtc-root button {
-  cursor: pointer;
-}
+  .mtc-root button {
+    cursor: pointer;
+    transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease, opacity 120ms ease;
+  }
 
-.mtc-root button:disabled {
-  cursor: default;
-}
+  .mtc-root button:disabled {
+    cursor: default;
+  }
 
-.mtc-root table {
-  border-collapse: collapse;
-}
+  .mtc-root table {
+    border-collapse: collapse;
+  }
 
-.mtc-root img,
-.mtc-root svg,
-.mtc-root video,
-.mtc-root canvas,
-.mtc-root audio,
-.mtc-root iframe {
-  display: block;
-  vertical-align: middle;
-}
+  .mtc-root img,
+  .mtc-root svg,
+  .mtc-root video,
+  .mtc-root canvas,
+  .mtc-root audio,
+  .mtc-root iframe {
+    display: block;
+    vertical-align: middle;
+  }
 
-.mtc-root img,
-.mtc-root video {
-  height: auto;
-  max-width: 100%;
+  .mtc-root img,
+  .mtc-root video {
+    height: auto;
+    max-width: 100%;
+  }
 }
 
 .mtc-root ::selection {
   background: color-mix(in oklab, var(--mtc-accent) 28%, transparent);
+}
+
+.mtc-root :where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--mtc-accent);
+  outline-offset: 2px;
+}
+
+.mtc-root :where(input, textarea)::placeholder {
+  color: var(--mtc-muted-subtle);
+  opacity: 1;
+}
+
+.mtc-root :where(input, select, textarea) {
+  accent-color: var(--mtc-accent);
+}
+
+.mtc-root :where(*) {
+  scrollbar-color: var(--mtc-border-strong) transparent;
+  scrollbar-width: thin;
+}
+
+/* Shared chrome. These classes carry the product's visual grammar while the
+   utility colors continue to make every existing widget theme-aware. */
+.mtc-workspace {
+  background-color: var(--mtc-bg);
+  background-image:
+    radial-gradient(circle at 82% -10%, color-mix(in oklab, var(--mtc-accent) 5%, transparent), transparent 28rem),
+    linear-gradient(180deg, color-mix(in oklab, var(--mtc-surface) 28%, var(--mtc-bg)) 0, var(--mtc-bg) 15rem);
+}
+
+.mtc-toolbar {
+  position: relative;
+  border-bottom: 1px solid var(--mtc-border);
+  background: color-mix(in oklab, var(--mtc-surface) 76%, var(--mtc-bg));
+  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+}
+
+.mtc-dashboard-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  letter-spacing: -0.012em;
+}
+
+.mtc-dashboard-title::before {
+  width: 3px;
+  height: 1.15rem;
+  border-radius: 999px;
+  background: var(--mtc-signal);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--mtc-signal) 22%, transparent);
+  content: "";
+  flex: 0 0 auto;
+}
+
+.mtc-control,
+.mtc-context-chip {
+  border: 1px solid var(--mtc-border);
+  border-radius: 4px;
+  background: var(--mtc-surface);
+  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+}
+
+.mtc-control:hover {
+  border-color: var(--mtc-border-strong);
+  background: var(--mtc-surface-raised);
+}
+
+.mtc-segmented {
+  border: 1px solid var(--mtc-border);
+  border-radius: 5px;
+  background: color-mix(in oklab, var(--mtc-bg) 62%, var(--mtc-surface));
+  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+}
+
+.mtc-widget {
+  border: 1px solid var(--mtc-border);
+  border-radius: var(--mtc-radius);
+  background: var(--mtc-surface);
+  box-shadow: inset 0 1px 0 var(--mtc-highlight), var(--mtc-shadow);
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.mtc-widget:hover {
+  border-color: var(--mtc-border-strong);
+}
+
+.mtc-widget[data-focused="true"] {
+  border-color: color-mix(in oklab, var(--mtc-accent) 72%, var(--mtc-border));
+  box-shadow: inset 0 1px 0 var(--mtc-highlight), 0 0 0 2px var(--mtc-focus), var(--mtc-shadow-raised);
+}
+
+.mtc-widget-header {
+  min-height: 2.5rem;
+  border-bottom: 1px solid var(--mtc-border);
+  background: color-mix(in oklab, var(--mtc-surface-raised) 76%, var(--mtc-surface));
+  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+}
+
+.mtc-popover {
+  border: 1px solid var(--mtc-border-strong);
+  border-radius: var(--mtc-radius);
+  background: var(--mtc-surface-raised);
+  box-shadow: var(--mtc-shadow-raised);
+}
+
+.mtc-overlay {
+  background: var(--mtc-overlay);
+  backdrop-filter: blur(6px);
+}
+
+.mtc-tabstrip {
+  border-bottom: 1px solid var(--mtc-border);
+  background: color-mix(in oklab, var(--mtc-surface) 58%, var(--mtc-bg));
+  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+}
+
+.mtc-tab-active {
+  border-color: var(--mtc-border);
+  background: var(--mtc-surface);
+  box-shadow: inset 0 2px 0 var(--mtc-accent);
+}
+
+.mtc-statusbar {
+  border-top: 1px solid var(--mtc-border);
+  background: color-mix(in oklab, var(--mtc-surface) 72%, var(--mtc-bg));
+  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+}
+
+.mtc-landing-card {
+  border: 1px solid var(--mtc-border);
+  border-radius: var(--mtc-radius);
+  background: color-mix(in oklab, var(--mtc-surface) 94%, transparent);
+  box-shadow: inset 0 1px 0 var(--mtc-highlight), var(--mtc-shadow);
+}
+
+.mtc-landing-card:hover {
+  border-color: var(--mtc-border-strong);
+  background: var(--mtc-surface-raised);
+  transform: translateY(-1px);
 }
 
 /* Fade-in for loaded widget content. Driven by Tailwind utility

@@ -63,7 +63,7 @@ export function MultiDashboard({
 
   return (
     <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
-      <div className="min-h-full bg-zinc-950">
+      <div className="mtc-workspace min-h-full">
         <TabStrip tabs={tabs} activeIndex={safeIndex} onSelect={onSelect} />
         {tabs.map((tab, i) => (
           <div key={i} style={{ display: i === safeIndex ? 'block' : 'none' }}>
@@ -88,7 +88,7 @@ function TabStrip({
 }: { tabs: Tab[]; activeIndex: number; onSelect: (i: number) => void }) {
   const isMac = typeof navigator !== 'undefined' && /mac/i.test(navigator.platform)
   return (
-    <div className="flex gap-0.5 px-3 md:px-5 pt-3 border-b border-zinc-800 overflow-x-auto items-end">
+    <div className="mtc-tabstrip flex gap-0.5 px-3 md:px-5 pt-3 overflow-x-auto items-end">
       {tabs.map((tab, i) => {
         const active = i === activeIndex
         const hint = i < 9 ? `${isMac ? '⌘' : 'Ctrl'}${i + 1}` : null
@@ -98,7 +98,7 @@ function TabStrip({
             onClick={() => onSelect(i)}
             className={`px-3 py-1.5 text-xs font-medium rounded-t whitespace-nowrap transition-colors flex items-center gap-2 ${
               active
-                ? 'bg-zinc-900 text-zinc-100 border-x border-t border-zinc-800'
+                ? 'mtc-tab-active text-zinc-100 border-x border-t'
                 : 'text-zinc-500 hover:text-zinc-300'
             }`}
             title={hint ? `Switch with ${hint}` : undefined}

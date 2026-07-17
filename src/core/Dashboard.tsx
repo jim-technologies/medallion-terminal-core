@@ -33,6 +33,13 @@ const DEFAULT_HEIGHTS: Record<string, number> = {
   heatmap: 320,
   events: 320,
   catalog: 480,
+  asset_catalog: 520,
+  object_view: 520,
+  code_browser: 560,
+  record_grid: 520,
+  record_board: 520,
+  record_calendar: 560,
+  record_form: 520,
   orderbook: 380,
   paired_grid: 420,
   trade: 280,
@@ -59,6 +66,7 @@ const DEFAULT_HEIGHTS: Record<string, number> = {
   action_log: 320,
   alert_log: 320,
   tape: 320,
+  file_browser: 520,
 }
 
 const RANGES = ['1d', '5d', '1m', '3m', '1y', 'max']
@@ -69,13 +77,13 @@ const RANGES = ['1d', '5d', '1m', '3m', '1y', 'max']
 const RECENT_ACTIONS_CAP = 200
 const RECENT_ALERTS_CAP = 200
 
-export type DashboardTheme = 'dark' | 'light'
+export type DashboardTheme = 'dark' | 'operator' | 'light'
 export type DashboardTemplateTrust = 'untrusted' | 'trusted'
 type DashboardIssue = ValidationIssue | TemplateSecurityIssue
 
 function RangeSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <div className="flex bg-zinc-900 border border-zinc-800 rounded p-0.5 gap-0.5">
+    <div className="mtc-segmented flex p-0.5 gap-0.5">
       {RANGES.map(r => {
         const active = value.toLowerCase() === r
         return (
@@ -83,7 +91,7 @@ function RangeSelector({ value, onChange }: { value: string; onChange: (v: strin
             key={r}
             onClick={() => onChange(r)}
             className={`px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${
-              active ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'
+              active ? 'bg-sky-500/20 text-sky-200' : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
             {r}
@@ -104,7 +112,7 @@ const REFRESH_OPTIONS: Array<{ label: string; ms: number | null }> = [
 
 function RefreshPicker({ value, onChange }: { value: number | null; onChange: (ms: number | null) => void }) {
   return (
-    <div className="flex bg-zinc-900 border border-zinc-800 rounded p-0.5 gap-0.5">
+    <div className="mtc-segmented flex p-0.5 gap-0.5">
       {REFRESH_OPTIONS.map(opt => {
         const active = value === opt.ms
         return (
@@ -112,7 +120,7 @@ function RefreshPicker({ value, onChange }: { value: number | null; onChange: (m
             key={opt.label}
             onClick={() => onChange(opt.ms)}
             className={`px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${
-              active ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'
+              active ? 'bg-sky-500/20 text-sky-200' : 'text-zinc-400 hover:text-zinc-200'
             }`}
             title={opt.ms ? `Refresh every ${opt.label}` : 'No auto-refresh'}
           >
@@ -134,7 +142,7 @@ function OpenPaletteHint() {
   return (
     <button
       onClick={trigger}
-      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded font-mono"
+      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 font-mono"
       title="Open command palette"
     >
       {isMac ? '⌘' : 'Ctrl'} K
@@ -183,7 +191,7 @@ function StatusBar() {
     'text-zinc-400'
 
   return (
-    <div className="border-t border-zinc-800 bg-zinc-900/70 px-3 md:px-5 py-1 flex items-center gap-4 text-[10px] font-mono text-zinc-500 shrink-0">
+    <div className="mtc-statusbar px-3 md:px-5 py-1 flex items-center gap-4 text-[10px] font-mono text-zinc-500 shrink-0">
       <div className="flex-1 min-w-0 truncate">
         {latest ? (
           <span className="flex items-center gap-2">
@@ -230,7 +238,7 @@ function HealthPill({ health }: { health: Record<string, WidgetHealth> }) {
   if (streams.length === 0 && errored.length === 0) return null
   const errorTitles = errored.map(e => e.title).join('\n')
   return (
-    <div className="flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider bg-zinc-900 border border-zinc-800 rounded">
+    <div className="mtc-control flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider">
       {streams.length > 0 && (
         <span
           className={liveStreams === streams.length ? 'text-emerald-400' : 'text-amber-400'}
@@ -249,14 +257,14 @@ function HealthPill({ health }: { health: Record<string, WidgetHealth> }) {
   )
 }
 
-function ReloadAllButton({ onClick }: { onClick: () => void }) {
+function RefreshAllButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded"
+      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
       title="Refresh every widget"
     >
-      Reload
+      Refresh
     </button>
   )
 }
@@ -265,10 +273,10 @@ function SoundToggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => 
   return (
     <button
       onClick={onToggle}
-      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded"
+      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
       title={enabled ? 'Mute alert sounds' : 'Enable alert sounds (warn/error)'}
     >
-      {enabled ? '\u{1F50A} On' : '\u{1F507} Off'}
+      Sound {enabled ? 'on' : 'off'}
     </button>
   )
 }
@@ -277,7 +285,7 @@ function DensityToggle({ compact, onToggle }: { compact: boolean; onToggle: () =
   return (
     <button
       onClick={onToggle}
-      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded"
+      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
       title={compact ? 'Switch to comfortable density' : 'Switch to compact density'}
     >
       {compact ? 'Cozy' : 'Compact'}
@@ -299,10 +307,10 @@ function SnapshotButton({ onCopied }: { onCopied: () => void }) {
   return (
     <button
       onClick={copy}
-      className="px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded"
+      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
       title="Copy current dashboard URL"
     >
-      Snapshot
+      Copy link
     </button>
   )
 }
@@ -311,19 +319,20 @@ function SnapshotButton({ onCopied }: { onCopied: () => void }) {
 // app passes onShare to upload the frozen Template to a bucket and mint
 // a share link; with no handler it downloads the snapshot JSON so the
 // flow is testable standalone.
-function ShareButton({ onClick }: { onClick: () => void }) {
+function ShareButton({ onClick, busy }: { onClick: () => void; busy: boolean }) {
   return (
     <button
       onClick={onClick}
-      className="px-2 py-1 text-[10px] uppercase tracking-wider text-emerald-400/80 hover:text-emerald-300 bg-zinc-900 border border-emerald-500/30 rounded"
+      disabled={busy}
+      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-sky-300 hover:text-sky-200 border-sky-500/40"
       title="Freeze data into a static, self-contained dashboard to share — nothing re-fetches or regenerates"
     >
-      Share
+      {busy ? 'Sharing…' : 'Share view'}
     </button>
   )
 }
 
-// Shown instead of the live controls when viewing a frozen snapshot.
+// Shown instead of live controls when viewing a static or frozen view.
 function SnapshotBadge({ frozenAt }: { frozenAt?: string }) {
   const when = frozenAt ? new Date(frozenAt) : null
   const label = when && !Number.isNaN(when.getTime())
@@ -331,11 +340,11 @@ function SnapshotBadge({ frozenAt }: { frozenAt?: string }) {
     : null
   return (
     <span
-      className="flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400 bg-zinc-900 border border-zinc-800 rounded"
-      title={label ? `Static snapshot frozen ${label} — data does not refresh` : 'Static snapshot — data does not refresh'}
+      className="mtc-control flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400"
+      title={label ? `Static snapshot frozen ${label} — data does not refresh` : 'Static view — data does not refresh'}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-zinc-500" />
-      Snapshot{label ? <span className="text-zinc-600 normal-case tracking-normal">· {label}</span> : null}
+      {label ? 'Snapshot' : 'Static view'}{label ? <span className="text-zinc-600 normal-case tracking-normal">· {label}</span> : null}
     </span>
   )
 }
@@ -394,7 +403,7 @@ export function Dashboard({
   // it here. Typically: upload to a bucket and mint a share URL. When
   // omitted, Share downloads the snapshot JSON so the flow works
   // standalone. Hidden on a template that is already a snapshot.
-  onShare?: (snapshot: Template) => void
+  onShare?: (snapshot: Template) => void | Promise<void>
   // Visual theme for the scoped dashboard root. Host apps can also
   // override the exposed --mtc-* CSS variables under .mtc-root.
   theme?: DashboardTheme
@@ -448,7 +457,9 @@ export function Dashboard({
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const [refreshPulse, setRefreshPulse] = useState<{ id: string; n: number } | null>(null)
   const [toasts, setToasts] = useState<Toast[]>([])
+  const [sharing, setSharing] = useState(false)
   const toastIdRef = useRef(0)
+  const sharingRef = useRef(false)
 
   // Monotonic — every bump increments. Widgets compare against their
   // last-seen `n` to decide whether to refetch, so the counter must
@@ -561,6 +572,24 @@ export function Dashboard({
     const id = toastIdRef.current
     setToasts(prev => [...prev, { id, message, severity }])
   }, [])
+
+  const shareSnapshot = useCallback(async () => {
+    if (sharingRef.current) return
+    sharingRef.current = true
+    setSharing(true)
+    try {
+      const snap = snapshot()
+      if (onShare) await onShare(snap)
+      else downloadSnapshot(snap)
+      toast(onShare ? 'Snapshot shared' : 'Snapshot downloaded', 'ok')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Snapshot sharing failed'
+      toast(`Snapshot failed: ${message}`, 'error')
+    } finally {
+      sharingRef.current = false
+      setSharing(false)
+    }
+  }, [onShare, snapshot, toast])
 
   const dismissToast = useCallback((id: number) => {
     setToasts(prev => prev.filter(t => t.id !== id))
@@ -717,58 +746,59 @@ export function Dashboard({
           onDismiss={() => setBannerDismissed(true)}
         />
       )}
-      <div className="min-h-full bg-zinc-950 flex flex-col">
-       <div className="flex-1 p-3 md:p-5">
+      <div className="mtc-workspace min-h-full flex flex-col">
+       <div className="flex-1">
         {(template.title || chrome === 'full') && (
-        <div className="mb-4 flex items-center gap-3 flex-wrap">
-          {template.title && (
-            <h1 className="text-lg font-semibold text-zinc-100 tracking-tight mr-1">
-              {interpolate(template.title, ctx)}
-            </h1>
-          )}
-          {chrome === 'full' && Object.entries(ctx).map(([k, v]) => {
-            if (k === 'range') {
-              return <RangeSelector key={k} value={v} onChange={val => setCtx(k, val)} />
-            }
-            return (
-              <div
-                key={k}
-                className="px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-xs"
-              >
-                <span className="text-zinc-500 uppercase tracking-wider mr-1">{k}</span>
-                <span className="text-zinc-100 font-mono">{v}</span>
-              </div>
-            )
-          })}
-          {chrome === 'full' && (
-          <div className="ml-auto flex items-center gap-2">
-            {frozen ? (
-              <SnapshotBadge frozenAt={template.frozenAt} />
-            ) : (
-              <>
-                <HealthPill health={widgetHealth} />
-                <RefreshPicker value={refreshIntervalMs} onChange={setRefreshIntervalMs} />
-                <ReloadAllButton onClick={() => requestRefresh('*')} />
-              </>
+        <div className="mtc-toolbar">
+          <div className="px-3 md:px-5 py-3 flex items-center gap-3 flex-wrap">
+            {template.title && (
+              <h1 className="mtc-dashboard-title text-base font-semibold text-zinc-100 mr-1">
+                {interpolate(template.title, ctx)}
+              </h1>
             )}
-            <SoundToggle enabled={soundEnabled} onToggle={() => setSoundEnabled(s => !s)} />
-            <DensityToggle compact={compact} onToggle={() => setCompact(c => !c)} />
-            {!frozen && (
-              <ShareButton
-                onClick={() => {
-                  const snap = snapshot()
-                  if (onShare) onShare(snap)
-                  else downloadSnapshot(snap)
-                  toast(onShare ? 'Snapshot shared' : 'Snapshot downloaded', 'ok')
-                }}
-              />
+            {chrome === 'full' && (
+            <div className="ml-auto flex items-center gap-2 flex-wrap">
+              {frozen ? (
+                <SnapshotBadge frozenAt={template.frozenAt} />
+              ) : (
+                <>
+                  <HealthPill health={widgetHealth} />
+                  <RefreshPicker value={refreshIntervalMs} onChange={setRefreshIntervalMs} />
+                  <RefreshAllButton onClick={() => requestRefresh('*')} />
+                </>
+              )}
+              <SoundToggle enabled={soundEnabled} onToggle={() => setSoundEnabled(s => !s)} />
+              <DensityToggle compact={compact} onToggle={() => setCompact(c => !c)} />
+              {!frozen && (
+                <ShareButton
+                  onClick={() => void shareSnapshot()}
+                  busy={sharing}
+                />
+              )}
+              <SnapshotButton onCopied={() => toast('URL copied', 'ok')} />
+              <OpenPaletteHint />
+            </div>
             )}
-            <SnapshotButton onCopied={() => toast('URL copied', 'ok')} />
-            <OpenPaletteHint />
           </div>
+          {chrome === 'full' && Object.keys(ctx).length > 0 && (
+            <div className="px-3 md:px-5 pb-3 flex items-center gap-2 flex-wrap">
+              <span className="text-[9px] uppercase tracking-[0.14em] text-zinc-600 mr-1">Context</span>
+              {Object.entries(ctx).map(([k, v]) => {
+                if (k === 'range') {
+                  return <RangeSelector key={k} value={v} onChange={val => setCtx(k, val)} />
+                }
+                return (
+                  <div key={k} className="mtc-context-chip px-2 py-1 text-[11px]">
+                    <span className="text-zinc-500 uppercase tracking-wider mr-1">{k}</span>
+                    <span className="text-zinc-100 font-mono">{v}</span>
+                  </div>
+                )
+              })}
+            </div>
           )}
         </div>
         )}
+        <div className="p-3 md:p-5">
         <div
           className="grid gap-3 md:gap-4 items-start"
           style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
@@ -793,6 +823,7 @@ export function Dashboard({
               />
             </div>
           ))}
+        </div>
         </div>
        </div>
        {chrome === 'full' && <StatusBar />}
@@ -889,7 +920,7 @@ function FullscreenOverlay({ widget, onClose }: { widget: WidgetConfig; onClose:
         </span>
         <button
           onClick={onClose}
-          className="text-zinc-500 hover:text-zinc-200 px-2 py-0.5 text-xs rounded border border-zinc-800"
+          className="mtc-control text-zinc-500 hover:text-zinc-200 px-2 py-0.5 text-xs"
         >
           Close
         </button>
@@ -920,6 +951,6 @@ function writePref(key: string, value: unknown): void {
   try {
     window.localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value))
   } catch {
-    // Quota or denied — leave silent. Reload defaults are fine.
+    // Quota or denied — leave silent. Defaults are fine.
   }
 }

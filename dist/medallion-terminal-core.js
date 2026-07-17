@@ -1,7272 +1,9289 @@
-import { jsxs as m, jsx as o, Fragment as ft } from "react/jsx-runtime";
-import { useState as v, useEffect as R, useCallback as ce, useRef as U, useMemo as L, lazy as _r, Component as Tr, useContext as Ut, createContext as Bt, Suspense as $r } from "react";
-import { ResponsiveContainer as Ae, LineChart as Cr, CartesianGrid as He, XAxis as We, YAxis as qe, Tooltip as _e, Line as Er, Brush as Fn, ReferenceLine as Or, ReferenceArea as Mr, ReferenceDot as Rr, PieChart as jr, Pie as Ir, Cell as Un, BarChart as jt, Legend as Bn, Bar as It, ScatterChart as Lr, ZAxis as Pr, Scatter as Dr, Treemap as Fr, AreaChart as Ur, Area as Br, RadarChart as Kr, PolarGrid as Hr, PolarAngleAxis as Wr, PolarRadiusAxis as qr, Radar as Gr } from "recharts";
-import { createChart as Vr, ColorType as Jr, CandlestickSeries as Xr, HistogramSeries as Yr, createSeriesMarkers as Zr } from "lightweight-charts";
-function Wt() {
-  if (typeof window > "u") return "desktop";
-  const e = window.innerWidth;
-  return e < 768 ? "mobile" : e < 1024 ? "tablet" : "desktop";
-}
-function Qr() {
-  const [e, t] = v(Wt);
-  return R(() => {
-    const n = () => t(Wt());
-    return window.addEventListener("resize", n), () => window.removeEventListener("resize", n);
-  }, []), e;
-}
-const Kn = "application/connect+json", qt = new TextDecoder();
-async function Hn(e, t) {
-  let n = new Uint8Array(0), r = 0;
-  for (; !t.isDisposed(); ) {
-    const { done: s, value: i } = await e.read();
-    if (s) break;
-    if (i && i.length > 0) {
-      const l = n.length - r, a = new Uint8Array(l + i.length);
-      l > 0 && a.set(n.subarray(r), 0), a.set(i, l), n = a, r = 0;
-    }
-    for (; n.length - r >= 5; ) {
-      const l = n[r], a = new DataView(n.buffer, n.byteOffset + r + 1, 4).getUint32(0);
-      if (n.length - r < 5 + a) break;
-      if (l & 2) {
-        const c = n.subarray(r + 5, r + 5 + a);
-        r += 5 + a;
-        let d = {};
-        try {
-          c.length > 0 && (d = JSON.parse(qt.decode(c)));
-        } catch {
-        }
-        t.isDisposed() || t.onTrailer?.(d);
-        return;
-      }
-      const u = n.subarray(r + 5, r + 5 + a);
-      r += 5 + a;
-      try {
-        const c = JSON.parse(qt.decode(u));
-        t.isDisposed() || t.onMessage(c);
-      } catch {
-      }
-    }
-  }
-}
-function Wn(e, t) {
-  return t ? t.split(".").reduce((n, r) => {
-    if (n != null) {
-      if (Array.isArray(n)) {
-        const s = Number(r);
-        return Number.isInteger(s) ? n[s] : void 0;
-      }
-      if (typeof n == "object")
-        return n[r];
-    }
-  }, e) : e;
-}
-function es(e) {
-  return e.inline ?? e.data;
-}
-function Gt(e) {
-  return e.refreshIntervalMs ?? e.refreshInterval;
-}
-function Vt(e) {
-  return e instanceof Error ? e.name === "AbortError" ? !0 : /\babort(?:ed)?\b/i.test(e.message) : !1;
-}
-function ts(e) {
-  e.signal.aborted || e.abort();
-}
-const Jt = 3e4, Nt = 1e3;
-function ns(e, t) {
-  return t ? Wn(e, t) : e;
-}
-const rs = /* @__PURE__ */ new Set([
-  "timeseries",
-  "candles",
-  "table",
-  "metric",
-  "gauge",
-  "heatmap",
-  "events",
-  "distribution",
-  "text",
-  "orderbook",
-  "paired_grid",
-  "embed"
-]);
-function ss(e) {
-  if (!e || typeof e != "object" || Array.isArray(e)) return e;
-  const t = Object.keys(e);
-  return t.length === 1 && rs.has(t[0]) ? e[t[0]] : e;
-}
-function os(e) {
-  const [t, n] = v(null), [r, s] = v(!0), [i, l] = v(null), [a, u] = v(null), [c, d] = v(!1), [f, h] = v(null), [p, g] = v(0), b = ce(() => g((I) => I + 1), []), w = U(Nt), A = U(void 0), $ = U(null), j = U(void 0), E = U(0), x = ce((I) => {
-    const G = ns(ss(I), e?.transform);
-    n(G), l(null), s(!1), u(Date.now()), E.current = Date.now();
-  }, [e?.transform]), T = ce((I) => {
-    const G = e?.throttleMs ?? 0;
-    if (G <= 0) {
-      x(I);
-      return;
-    }
-    const Z = Date.now() - E.current;
-    if (Z >= G) {
-      x(I);
-      return;
-    }
-    $.current = I, j.current || (j.current = setTimeout(() => {
-      $.current !== null && x($.current), $.current = null, j.current = void 0;
-    }, G - Z));
-  }, [x, e?.throttleMs]), O = L(() => e ? JSON.stringify([
-    e.url,
-    e.source_id,
-    e.method,
-    e.body,
-    e.headers,
-    e.stream,
-    Gt(e),
-    e.transform,
-    e.throttleMs,
-    // Inline gets a separate key (truncated to keep the dep stable for
-    // payload-identity changes only when the value itself mutates).
-    e.inline !== void 0 || e.data !== void 0
-  ]) : "", [e]);
-  return R(() => {
-    if (!e) {
-      s(!1);
-      return;
-    }
-    const I = es(e);
-    if (I !== void 0) {
-      T(I);
-      return;
-    }
-    if (!e.url) {
-      s(!1);
-      return;
-    }
-    if (e.stream === "connect") {
-      let P = !1;
-      const K = new AbortController(), q = async () => {
-        if (!P)
-          try {
-            const z = await fetch(e.url, {
-              method: "POST",
-              // Spread author headers first so the protocol Content-Type
-              // wins. Otherwise a stray Content-Type header on the source
-              // overrides the connect+json marker.
-              headers: { ...e.headers, "Content-Type": Kn },
-              body: JSON.stringify(e.body ?? {}),
-              signal: K.signal
-            });
-            if (!z.ok) throw new Error(`ConnectRPC: HTTP ${z.status}`);
-            if (!z.body) throw new Error("ConnectRPC: no response body");
-            d(!0), h(null), l(null), w.current = Nt;
-            const H = z.body.getReader();
-            await Hn(H, {
-              onMessage: T,
-              onTrailer: (ee) => {
-                if (ee.error) {
-                  const Q = ee.error.code ?? "unknown", oe = ee.error.message ?? "stream error";
-                  P || l(`${Q}: ${oe}`);
-                }
-              },
-              isDisposed: () => P
-            }), H.releaseLock();
-          } catch (z) {
-            !P && z instanceof Error && !Vt(z) && l(z.message);
-          } finally {
-            if (!P) {
-              d(!1);
-              const z = w.current;
-              h(Date.now() + z), A.current = setTimeout(() => {
-                w.current = Math.min(w.current * 2, Jt), q();
-              }, z);
-            }
-          }
-      };
-      return q(), () => {
-        P = !0, ts(K), clearTimeout(A.current), d(!1), h(null);
-      };
-    }
-    if (e.stream === !0) {
-      let P = null, K = !1;
-      const q = () => {
-        K || (P = new EventSource(e.url), P.onopen = () => {
-          d(!0), h(null), l(null), w.current = Nt;
-        }, P.onmessage = (z) => {
-          try {
-            T(JSON.parse(z.data));
-          } catch {
-            l("Failed to parse stream");
-          }
-        }, P.onerror = () => {
-          if (P?.close(), d(!1), !K) {
-            const z = w.current;
-            h(Date.now() + z), A.current = setTimeout(() => {
-              w.current = Math.min(w.current * 2, Jt), q();
-            }, z);
-          }
-        });
-      };
-      return q(), () => {
-        K = !0, clearTimeout(A.current), P?.close(), d(!1), h(null);
-      };
-    }
-    let G = !1;
-    const Z = async () => {
-      if (!G)
-        try {
-          const P = await fetch(e.url, {
-            method: e.method || "GET",
-            headers: e.headers,
-            body: e.body ? JSON.stringify(e.body) : void 0
-          });
-          if (!P.ok) throw new Error(`HTTP ${P.status}`);
-          const K = await P.json();
-          G || T(K);
-        } catch (P) {
-          !G && P instanceof Error && !Vt(P) && l(P.message);
-        } finally {
-          G || s(!1);
-        }
-    };
-    Z();
-    let X;
-    const Y = Gt(e);
-    return Y && Y > 0 && (X = setInterval(() => {
-      Z();
-    }, Y)), () => {
-      G = !0, X && clearInterval(X);
-    };
-  }, [O, T, p]), R(() => () => {
-    j.current && clearTimeout(j.current);
-  }, []), { data: t, loading: r, error: i, lastUpdated: a, connected: c, nextRetryAt: f, refresh: b };
-}
-const is = {
-  timeseries: "chart",
-  candlestick: "chart",
-  table: "table",
-  text: "list",
-  events: "list",
-  metric: "single",
-  gauge: "single",
-  distribution: "donut",
-  heatmap: "grid",
-  prompt: "block",
-  orderbook: "table",
-  paired_grid: "table",
-  catalog: "list",
-  trade: "block",
-  ticker: "block",
-  volume_profile: "list",
-  stat_strip: "block",
-  bar_chart: "chart",
-  scatter: "chart",
-  clock: "block",
-  treemap: "grid",
-  image: "block",
-  iframe: "block",
-  histogram: "chart",
-  section: "block",
-  area_chart: "chart",
-  slider: "block",
-  select: "block",
-  boxplot: "chart",
-  radar: "chart",
-  dag: "grid",
-  multi_select: "block",
-  json: "list",
-  sparkline: "chart"
+import { n as e, t } from "./connectFraming-C7uFpPlK.js";
+import { n, r, t as i } from "./states-DIrF7Fp0.js";
+import { n as a, t as o } from "./DashboardContext-BKgLoCrb.js";
+import { a as s, c, i as l, l as u, n as d, o as f, r as p, s as m, t as h } from "./resolveSource-BZ3Z0pkp.js";
+import { n as g, r as _, t as v } from "./NowContext-9hD6X8q-.js";
+import { i as y, n as b, r as x, t as S } from "./platformShapes-B_Kc4Hcr.js";
+import { a as C, c as w, d as T, i as E, l as D, n as O, o as k, r as A, s as j, t as M, u as N } from "./recordShapes-wPKS5pGj.js";
+import { n as P, r as F, t as I } from "./HoverContext-CPeSKkmc.js";
+import { a as L, c as ee, d as te, i as ne, l as re, n as ie, o as ae, r as oe, s as se, t as ce, u as le } from "./format-V6rpoQ-_.js";
+import { a as ue, i as de, n as R, r as z, t as B } from "./colors-DjPEDFCT.js";
+import { n as fe, r as V, t as pe } from "./textNormalize-Ba1I6dwH.js";
+import { t as me } from "./useAnimatedNumber-R8_seRAC.js";
+import { i as he, n as ge, r as _e, t as H } from "./useWatchAction-DzSgZqJt.js";
+import { t as ve } from "./useSubmitAction-DySSpR_6.js";
+import { _ as ye, a as be, c as xe, d as Se, f as Ce, g as we, h as Te, i as Ee, l as De, m as Oe, n as ke, o as Ae, p as je, r as Me, s as Ne, t as Pe, u as Fe } from "./fileBrowserHelpers-BhGqOPPa.js";
+import { n as Ie, t as Le } from "./RecordFields-D2lNy29U.js";
+import { Component as Re, Suspense as ze, lazy as Be, useCallback as U, useEffect as W, useId as Ve, useMemo as G, useRef as K, useState as q } from "react";
+import { Fragment as He, jsx as J, jsxs as Y } from "react/jsx-runtime";
+import { Area as Ue, AreaChart as We, Bar as Ge, BarChart as Ke, Brush as qe, CartesianGrid as Je, Cell as Ye, Legend as Xe, Line as Ze, LineChart as Qe, Pie as $e, PieChart as et, PolarAngleAxis as tt, PolarGrid as nt, PolarRadiusAxis as rt, Radar as it, RadarChart as at, ReferenceArea as ot, ReferenceDot as st, ReferenceLine as ct, ResponsiveContainer as lt, Scatter as ut, ScatterChart as dt, Tooltip as ft, Treemap as pt, XAxis as mt, YAxis as ht, ZAxis as gt } from "recharts";
+import { CandlestickSeries as _t, ColorType as vt, HistogramSeries as yt, createChart as bt, createSeriesMarkers as xt } from "lightweight-charts";
+//#region \0rolldown/runtime.js
+var St = Object.defineProperty, X = (e, t) => {
+	let n = {};
+	for (var r in e) St(n, r, {
+		get: e[r],
+		enumerable: !0
+	});
+	return t || St(n, Symbol.toStringTag, { value: "Module" }), n;
 };
-function Xt({ component: e }) {
-  switch (e ? is[e] : "block") {
-    case "chart":
-      return /* @__PURE__ */ o(as, {});
-    case "table":
-      return /* @__PURE__ */ o(cs, {});
-    case "list":
-      return /* @__PURE__ */ o(us, {});
-    case "single":
-      return /* @__PURE__ */ o(ds, {});
-    case "donut":
-      return /* @__PURE__ */ o(fs, {});
-    case "grid":
-      return /* @__PURE__ */ o(ms, {});
-    default:
-      return /* @__PURE__ */ o(ps, {});
-  }
-}
-function D({ children: e, padded: t }) {
-  return /* @__PURE__ */ m(
-    "div",
-    {
-      className: `flex flex-col items-center justify-center h-full gap-1.5 text-zinc-500 text-sm${t ? " px-4 text-center" : ""}`,
-      children: [
-        /* @__PURE__ */ o("span", { className: "text-zinc-700 text-xs uppercase tracking-[0.2em] leading-none", children: "·  ·  ·" }),
-        e
-      ]
-    }
-  );
-}
-function Yt({ message: e, onRetry: t }) {
-  return /* @__PURE__ */ m("div", { className: "h-full flex flex-col items-center justify-center gap-2 px-2", children: [
-    /* @__PURE__ */ m("div", { className: "flex items-center gap-2 text-sm max-w-full", children: [
-      /* @__PURE__ */ o("span", { className: "text-red-400 shrink-0", children: "⚠" }),
-      /* @__PURE__ */ o("span", { className: "text-zinc-400 font-mono text-xs truncate", children: e })
-    ] }),
-    t && /* @__PURE__ */ o(
-      "button",
-      {
-        onClick: t,
-        className: "text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800",
-        children: "Retry"
-      }
-    )
-  ] });
-}
-const ls = [40, 60, 35, 75, 55, 85, 50, 70, 90, 45, 65, 80, 55, 95, 60, 50, 75, 65, 80, 70];
-function as() {
-  return /* @__PURE__ */ o("div", { className: "h-full flex items-end gap-1", children: ls.map((e, t) => /* @__PURE__ */ o(
-    "div",
-    {
-      className: "flex-1 bg-zinc-800 rounded-sm animate-pulse",
-      style: { height: `${e}%`, animationDelay: `${t * 40}ms` }
-    },
-    t
-  )) });
-}
-function cs() {
-  const t = [80, 64, 96];
-  return /* @__PURE__ */ m("div", { className: "h-full flex flex-col gap-2.5", children: [
-    /* @__PURE__ */ o("div", { className: "flex gap-4 pb-2 border-b border-zinc-800", children: t.map((n, r) => /* @__PURE__ */ o("div", { className: "h-3 bg-zinc-800 rounded animate-pulse", style: { width: n } }, r)) }),
-    Array.from({ length: 5 }).map((n, r) => /* @__PURE__ */ o("div", { className: "flex gap-4", children: t.map((s, i) => /* @__PURE__ */ o(
-      "div",
-      {
-        className: "h-3 bg-zinc-800 rounded animate-pulse",
-        style: { width: s, animationDelay: `${(r * 3 + i) * 50}ms` }
-      },
-      i
-    )) }, r))
-  ] });
-}
-function us() {
-  return /* @__PURE__ */ o("div", { className: "h-full flex flex-col gap-3.5", children: Array.from({ length: 5 }).map((e, t) => /* @__PURE__ */ m("div", { className: "flex gap-3 items-start pt-1", children: [
-    /* @__PURE__ */ o("div", { className: "w-2 h-2 rounded-full bg-zinc-700 mt-1 shrink-0 animate-pulse" }),
-    /* @__PURE__ */ m("div", { className: "flex-1 flex flex-col gap-1.5 min-w-0", children: [
-      /* @__PURE__ */ o(
-        "div",
-        {
-          className: "h-2.5 bg-zinc-800 rounded animate-pulse",
-          style: { width: `${55 + t * 11 % 30}%`, animationDelay: `${t * 80}ms` }
-        }
-      ),
-      /* @__PURE__ */ o(
-        "div",
-        {
-          className: "h-2 bg-zinc-800/60 rounded animate-pulse",
-          style: { width: `${35 + t * 7 % 25}%`, animationDelay: `${t * 80 + 40}ms` }
-        }
-      )
-    ] })
-  ] }, t)) });
-}
-function ds() {
-  return /* @__PURE__ */ m("div", { className: "h-full flex flex-col items-center justify-center gap-2", children: [
-    /* @__PURE__ */ o("div", { className: "w-32 h-7 bg-zinc-800 rounded animate-pulse" }),
-    /* @__PURE__ */ o("div", { className: "w-20 h-3 bg-zinc-800/60 rounded animate-pulse", style: { animationDelay: "120ms" } })
-  ] });
-}
-function fs() {
-  return /* @__PURE__ */ m("div", { className: "h-full flex flex-col", children: [
-    /* @__PURE__ */ o("div", { className: "flex-1 flex items-center justify-center min-h-0", children: /* @__PURE__ */ o("svg", { viewBox: "0 0 100 100", className: "w-full h-full max-w-[160px] max-h-[160px] animate-pulse", children: /* @__PURE__ */ o("circle", { cx: "50", cy: "50", r: "40", fill: "none", stroke: "#27272a", strokeWidth: "14" }) }) }),
-    /* @__PURE__ */ o("div", { className: "grid grid-cols-2 gap-2 mt-2", children: Array.from({ length: 4 }).map((e, t) => /* @__PURE__ */ m("div", { className: "flex gap-2 items-center", children: [
-      /* @__PURE__ */ o("div", { className: "w-2 h-2 bg-zinc-800 rounded-sm animate-pulse" }),
-      /* @__PURE__ */ o(
-        "div",
-        {
-          className: "flex-1 h-2 bg-zinc-800 rounded animate-pulse",
-          style: { animationDelay: `${t * 60}ms` }
-        }
-      )
-    ] }, t)) })
-  ] });
-}
-function ms() {
-  return /* @__PURE__ */ o(
-    "div",
-    {
-      className: "h-full grid gap-1",
-      style: { gridTemplateColumns: "repeat(8, 1fr)", gridTemplateRows: "repeat(5, 1fr)" },
-      children: Array.from({ length: 40 }).map((t, n) => /* @__PURE__ */ o(
-        "div",
-        {
-          className: "bg-zinc-800 rounded-sm animate-pulse",
-          style: { animationDelay: `${n * 25}ms` }
-        },
-        n
-      ))
-    }
-  );
-}
-function ps() {
-  return /* @__PURE__ */ o("div", { className: "h-full w-full bg-zinc-800 rounded animate-pulse" });
-}
-function hs(e) {
-  return /* @__PURE__ */ o(D, { children: "Unknown widget type" });
-}
-const B = (e, t) => _r(() => e().then((n) => ({ default: n[t] }))), Kt = /* @__PURE__ */ new Map([
-  ["timeseries", B(() => Promise.resolve().then(() => zi), "Timeseries")],
-  ["candlestick", B(() => Promise.resolve().then(() => Oi), "Candlestick")],
-  ["table", B(() => Promise.resolve().then(() => Bi), "DataTable")],
-  ["metric", B(() => Promise.resolve().then(() => Ji), "Metric")],
-  ["text", B(() => Promise.resolve().then(() => Qi), "Text")],
-  ["prompt", B(() => Promise.resolve().then(() => tl), "Prompt")],
-  ["gauge", B(() => Promise.resolve().then(() => ol), "Gauge")],
-  ["distribution", B(() => Promise.resolve().then(() => cl), "Distribution")],
-  ["heatmap", B(() => Promise.resolve().then(() => bl), "Heatmap")],
-  ["events", B(() => Promise.resolve().then(() => vl), "Events")],
-  ["catalog", B(() => Promise.resolve().then(() => Sl), "Catalog")],
-  ["orderbook", B(() => Promise.resolve().then(() => _l), "OrderBook")],
-  ["paired_grid", B(() => Promise.resolve().then(() => Ml), "PairedGrid")],
-  ["trade", B(() => Promise.resolve().then(() => Dl), "Trade")],
-  ["ticker", B(() => Promise.resolve().then(() => Hl), "Ticker")],
-  ["volume_profile", B(() => Promise.resolve().then(() => Jl), "VolumeProfile")],
-  ["stat_strip", B(() => Promise.resolve().then(() => ta), "StatStrip")],
-  ["bar_chart", B(() => Promise.resolve().then(() => oa), "BarChart")],
-  ["scatter", B(() => Promise.resolve().then(() => da), "Scatter")],
-  ["clock", B(() => Promise.resolve().then(() => ya), "Clock")],
-  ["treemap", B(() => Promise.resolve().then(() => Sa), "Treemap")],
-  ["image", B(() => Promise.resolve().then(() => _a), "Image")],
-  ["iframe", B(() => Promise.resolve().then(() => Ca), "Iframe")],
-  ["histogram", B(() => Promise.resolve().then(() => La), "Histogram")],
-  ["section", B(() => Promise.resolve().then(() => Da), "Section")],
-  ["area_chart", B(() => Promise.resolve().then(() => qa), "AreaChart")],
-  ["slider", B(() => Promise.resolve().then(() => Ja), "Slider")],
-  ["select", B(() => Promise.resolve().then(() => ec), "Select")],
-  ["boxplot", B(() => Promise.resolve().then(() => oc), "Boxplot")],
-  ["radar", B(() => Promise.resolve().then(() => uc), "Radar")],
-  ["dag", B(() => Promise.resolve().then(() => bc), "Dag")],
-  ["multi_select", B(() => Promise.resolve().then(() => xc), "MultiSelect")],
-  ["json", B(() => Promise.resolve().then(() => wc), "Json")],
-  ["sparkline", B(() => Promise.resolve().then(() => Sc), "Sparkline")],
-  ["action_log", B(() => Promise.resolve().then(() => Ec), "ActionLog")],
-  ["alert_log", B(() => Promise.resolve().then(() => Rc), "AlertLog")],
-  ["tape", B(() => Promise.resolve().then(() => Hc), "Tape")],
-  ["file_browser", B(() => Promise.resolve().then(() => pu), "FileBrowser")]
-]), Nu = new Set(Kt.keys());
-function bs(e) {
-  return Kt.get(e) || hs;
-}
-function Su(e, t) {
-  Kt.set(e, t);
-}
-class gs extends Tr {
-  state = { error: null };
-  static getDerivedStateFromError(t) {
-    return { error: t };
-  }
-  componentDidCatch(t, n) {
-    console.error("[MedallionTerminal] Widget error:", t, n.componentStack), this.props.onError?.(t);
-  }
-  render() {
-    return this.state.error ? /* @__PURE__ */ o("div", { className: "flex items-center justify-center h-full text-red-400/80 text-sm p-4 text-center", children: /* @__PURE__ */ m("div", { children: [
-      /* @__PURE__ */ o("div", { className: "font-medium mb-1", children: "Widget Error" }),
-      /* @__PURE__ */ o("div", { className: "text-zinc-500 text-xs", children: this.state.error.message })
-    ] }) }) : this.props.children;
-  }
-}
-const xs = {
-  dispatch: () => {
-  },
-  ctx: {},
-  setCtx: () => {
-  },
-  widgets: [],
-  toast: () => {
-  },
-  compact: !1,
-  fullscreenId: null,
-  setFullscreenId: () => {
-  },
-  focusedId: null,
-  setFocusedId: () => {
-  },
-  refreshPulse: null,
-  requestRefresh: () => {
-  },
-  emit: () => {
-  },
-  recentActions: [],
-  clearRecentActions: () => {
-  },
-  recentAlerts: [],
-  clearRecentAlerts: () => {
-  },
-  soundEnabled: !1,
-  widgetHealth: {},
-  reportWidgetHealth: () => {
-  },
-  registerWidgetData: () => () => {
-  },
-  snapshot: () => ({ widgets: [] })
-}, qn = Bt(xs);
-function ae() {
-  return Ut(qn);
-}
-const bt = "medallion.terminal.v1.TerminalService";
-function ys(e) {
-  return `${e.replace(/\/$/, "")}/${bt}/Generate`;
-}
-function vs(e, t, n) {
-  return {
-    prompt: e,
-    context: { values: t },
-    current_widgets: n
-  };
-}
-function Gn(e) {
-  return `${e.replace(/\/$/, "")}/${bt}/SubmitAction`;
-}
-function ws(e) {
-  return `${e.replace(/\/$/, "")}/${bt}/WatchAction`;
-}
-function Vn(e) {
-  return { action_id: e.actionId, params: e.params, client_request_id: e.clientRequestId };
-}
-function ks(e) {
-  return {
-    action_id: e.actionId ?? "",
-    id: e.id ?? "",
-    client_request_id: e.clientRequestId ?? ""
-  };
-}
-function Jn() {
-  return typeof globalThis.crypto?.randomUUID == "function" ? globalThis.crypto.randomUUID() : `cr-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 11)}`;
-}
-let Zt = !1;
-class Ns extends Error {
-  constructor(t) {
-    super(`Missing context key: \${ctx.${t}}`), this.key = t, this.name = "InterpolationError";
-  }
-}
-function Be(e, t, n) {
-  return e.replace(/\$\{ctx\.([a-zA-Z_][a-zA-Z0-9_]*)\}/g, (r, s) => {
-    if (s in t) return t[s];
-    if (n?.strict) throw new Ns(s);
-    return "";
-  });
-}
-function Ss(e, t, n) {
-  if (e.source_id) {
-    if (n === void 0)
-      return Zt || (console.warn(
-        `[medallion] source_id "${e.source_id}" requires a backendUrl on <Dashboard>; widget will not load until one is set.`
-      ), Zt = !0), e;
-    const s = e.stream ? "Stream" : "Get", i = n.replace(/\/$/, ""), l = {};
-    if (e.params)
-      for (const [a, u] of Object.entries(e.params))
-        l[a] = Be(u, t, { strict: !0 });
-    return {
-      url: `${i}/${bt}/${s}`,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: { source_id: e.source_id, params: l },
-      stream: e.stream ? "connect" : !1,
-      refreshIntervalMs: e.refreshIntervalMs ?? e.refreshInterval
-    };
-  }
-  if (!e.url && !e.params) return e;
-  const r = { ...e };
-  if (e.url) {
-    let s = Be(e.url, t, { strict: !0 });
-    if (e.params && Object.keys(e.params).length > 0) {
-      const i = Object.entries(e.params).map(([l, a]) => `${encodeURIComponent(l)}=${encodeURIComponent(Be(a, t, { strict: !0 }))}`).join("&");
-      s = s.includes("?") ? `${s}&${i}` : `${s}?${i}`;
-    }
-    r.url = s;
-  }
-  return r;
-}
-const Xn = Bt({
-  now: 0,
-  subscribe: () => () => {
-  }
-});
-function gt(e = !0) {
-  const { now: t, subscribe: n } = Ut(Xn);
-  return R(() => {
-    if (e)
-      return n();
-  }, [e, n]), t;
-}
-function zs({ children: e }) {
-  const [t, n] = v(() => Date.now()), r = U(0), s = U(null), i = L(() => ({
-    now: t,
-    subscribe: () => (r.current += 1, s.current == null && (s.current = setInterval(() => n(Date.now()), 1e3)), () => {
-      r.current = Math.max(0, r.current - 1), r.current === 0 && s.current != null && (clearInterval(s.current), s.current = null);
-    })
-  }), [t]);
-  return R(() => () => {
-    s.current != null && clearInterval(s.current);
-  }, []), /* @__PURE__ */ o(Xn.Provider, { value: i, children: e });
-}
-const As = /^(\S.*?)\s+(>=|<=|==|!=|>|<)\s+(.+)$/;
-function _s(e, t) {
-  const n = Yn(t);
-  return n ? Es(n, e) : !1;
-}
-function Ts(e) {
-  return Yn(e) !== null;
-}
-function Yn(e) {
-  const t = e.trim();
-  if (!t) return null;
-  const n = Qt(t, "||"), r = [];
-  for (const s of n) {
-    const i = Qt(s, "&&"), l = [];
-    for (const a of i) {
-      const u = $s(a);
-      if (!u) return null;
-      l.push(u);
-    }
-    if (l.length === 0) return null;
-    r.push(l);
-  }
-  return r.length === 0 ? null : r;
-}
-function Qt(e, t) {
-  const n = [];
-  let r = 0, s = !1;
-  for (let i = 0; i < e.length; i++)
-    if (e[i] === '"' && (s = !s), !s && !s && e.startsWith(t, i)) {
-      n.push(e.slice(r, i)), r = i + t.length, i += t.length - 1;
-      continue;
-    }
-  return n.push(e.slice(r)), n.map((i) => i.trim());
-}
-function $s(e) {
-  const t = e.trim().match(As);
-  if (!t) return null;
-  const [, n, r, s] = t;
-  return { path: n.trim(), op: r, rhs: Cs(s.trim()) };
-}
-function Cs(e) {
-  if (e === "true") return !0;
-  if (e === "false") return !1;
-  if (e === "null") return null;
-  if (e.length >= 2 && e.startsWith('"') && e.endsWith('"'))
-    return e.slice(1, -1);
-  const t = Number(e);
-  return Number.isNaN(t) ? e : t;
-}
-function Es(e, t) {
-  for (const n of e) {
-    let r = !0;
-    for (const s of n)
-      if (!Os(Wn(t, s.path), s.op, s.rhs)) {
-        r = !1;
-        break;
-      }
-    if (r) return !0;
-  }
-  return !1;
-}
-function Os(e, t, n) {
-  if (t === ">" || t === ">=" || t === "<" || t === "<=") {
-    const r = Number(e), s = Number(n);
-    if (!Number.isFinite(r) || !Number.isFinite(s)) return !1;
-    switch (t) {
-      case ">":
-        return r > s;
-      case ">=":
-        return r >= s;
-      case "<":
-        return r < s;
-      case "<=":
-        return r <= s;
-    }
-  }
-  return t === "==" ? e === n || typeof e == "number" && typeof n == "number" && e === n : t === "!=" ? !(e === n || typeof e == "number" && typeof n == "number" && e === n) : !1;
-}
-const Ms = {
-  warn: 720,
-  // mid
-  error: 480
-  // low — more alarming
-}, en = 160, Rs = 0.08;
-let nt = null;
-function js() {
-  if (typeof window > "u") return null;
-  if (nt) return nt;
-  const e = window, t = window.AudioContext || e.webkitAudioContext;
-  return t ? (nt = new t(), nt) : null;
-}
-function Is(e) {
-  const t = Ms[e];
-  if (!t) return;
-  const n = js();
-  if (!n) return;
-  n.state === "suspended" && n.resume().catch(() => {
-  });
-  const r = n.createOscillator(), s = n.createGain();
-  r.type = "sine", r.frequency.value = t, s.gain.value = 0, r.connect(s), s.connect(n.destination);
-  const i = n.currentTime;
-  s.gain.linearRampToValueAtTime(Rs, i + 0.02), s.gain.linearRampToValueAtTime(0, i + en / 1e3), r.start(i), r.stop(i + en / 1e3 + 0.05);
-}
-const mt = { columns: [], rows: [] };
-function ze(e) {
-  if (e == null) return null;
-  const t = typeof e;
-  if (t === "number" || t === "boolean" || t === "string") return e;
-  try {
-    return JSON.stringify(e);
-  } catch {
-    return String(e);
-  }
-}
-function fe(e) {
-  const t = [], n = /* @__PURE__ */ new Set();
-  for (const s of e)
-    for (const i of Object.keys(s))
-      n.has(i) || (n.add(i), t.push(i));
-  const r = e.map((s) => {
-    const i = {};
-    for (const l of t) i[l] = ze(s[l]);
-    return i;
-  });
-  return { columns: t, rows: r };
-}
-function le(e) {
-  return typeof e == "object" && e !== null && !Array.isArray(e);
-}
-function ut(e) {
-  const t = (r) => Array.isArray(r) ? r : le(r) && Array.isArray(r.points) ? r.points : null;
-  if (le(e) && Array.isArray(e.series)) {
-    const r = e.series, s = /* @__PURE__ */ new Map(), i = [];
-    for (let l = 0; l < r.length; l++) {
-      const a = r[l], u = a.name ?? `series_${l + 1}`;
-      i.push(u);
-      const c = a.points ?? a.data ?? [];
-      for (const d of c) {
-        const f = String(d.timestamp ?? ""), h = s.get(f) ?? { timestamp: f };
-        h[u] = ze(d.value), s.set(f, h);
-      }
-    }
-    return { columns: ["timestamp", ...i], rows: [...s.values()] };
-  }
-  const n = t(e);
-  return n ? {
-    columns: ["timestamp", "value"],
-    rows: n.map((r) => ({ timestamp: ze(r.timestamp), value: ze(r.value) }))
-  } : null;
-}
-function Zn(e) {
-  return le(e) && Array.isArray(e.bars) ? fe(e.bars) : null;
-}
-function Qn(e) {
-  if (Array.isArray(e) && e.length > 0 && le(e[0]))
-    return fe(e);
-  if (le(e) && "rows" in e) {
-    const t = e, n = Array.isArray(t.columns) ? t.columns : [];
-    if (n.length > 0 && le(n[0])) {
-      const i = n.map((a) => a.key), l = t.rows.map(
-        (a) => Array.isArray(a) ? Object.fromEntries(i.map((u, c) => [u, ze(a[c])])) : tn(a, i)
-      );
-      return { columns: i, rows: l };
-    }
-    if (n.length > 0 && typeof n[0] == "string") {
-      const s = n, i = t.rows.map(
-        (l) => Array.isArray(l) ? Object.fromEntries(s.map((a, u) => [a, ze(l[u])])) : tn(l, s)
-      );
-      return { columns: s, rows: i };
-    }
-    const r = t.rows;
-    return r.length > 0 && le(r[0]) ? fe(r) : mt;
-  }
-  return null;
-}
-function tn(e, t) {
-  const n = {};
-  for (const r of t) n[r] = ze(e[r]);
-  return n;
-}
-function er(e) {
-  return le(e) && Array.isArray(e.cells) ? fe(e.cells) : null;
-}
-function tr(e) {
-  return le(e) && Array.isArray(e.slices) ? fe(e.slices) : null;
-}
-function Je(e) {
-  return le(e) && Array.isArray(e.events) ? fe(e.events) : null;
-}
-function Lt(e) {
-  return le(e) && Array.isArray(e.items) ? fe(e.items) : null;
-}
-function nr(e) {
-  if (le(e) && (Array.isArray(e.bids) || Array.isArray(e.asks))) {
-    const t = e.bids ?? [], n = e.asks ?? [], r = [
-      ...t.map((s) => ({ side: "bid", ...s })),
-      ...n.map((s) => ({ side: "ask", ...s }))
-    ];
-    return fe(r);
-  }
-  return null;
-}
-function rr(e) {
-  return typeof e == "number" ? { columns: ["value"], rows: [{ value: e }] } : le(e) && "value" in e && typeof e.value != "object" ? fe([e]) : null;
-}
-function sr(e) {
-  if (le(e) && "value" in e) {
-    const { value: t, min: n, max: r } = e;
-    return fe([{ value: t, min: n, max: r }]);
-  }
-  return null;
-}
-const Ls = {
-  timeseries: ut,
-  area_chart: ut,
-  sparkline: ut,
-  candlestick: Zn,
-  table: Qn,
-  heatmap: er,
-  distribution: tr,
-  events: Je,
-  tape: Je,
-  action_log: Je,
-  alert_log: Je,
-  text: Lt,
-  ticker: Lt,
-  orderbook: nr,
-  metric: rr,
-  gauge: sr
-};
-function Ps(e) {
-  if (e == null) return mt;
-  if (Array.isArray(e))
-    return e.length === 0 ? mt : le(e[0]) ? fe(e) : { columns: ["value"], rows: e.map((t) => ({ value: ze(t) })) };
-  if (le(e)) {
-    const t = Object.entries(e).find(([, n]) => Array.isArray(n));
-    return t && le(t[1][0]) ? fe(t[1]) : fe([e]);
-  }
-  return { columns: ["value"], rows: [{ value: ze(e) }] };
-}
-function Ds(e, t) {
-  if (e == null) return mt;
-  if (t) {
-    const n = Ls[t];
-    if (n) {
-      const r = n(e);
-      if (r) return r;
-    }
-  }
-  for (const n of [
-    ut,
-    Zn,
-    er,
-    tr,
-    Je,
-    Lt,
-    nr,
-    sr,
-    rr,
-    Qn
-  ]) {
-    const r = n(e);
-    if (r && r.rows.length > 0) return r;
-  }
-  return Ps(e);
-}
-const nn = {
-  csv: "text/csv;charset=utf-8",
-  json: "application/json;charset=utf-8",
-  ndjson: "application/x-ndjson;charset=utf-8",
-  parquet: "application/vnd.apache.parquet"
-}, Fs = {
-  csv: "csv",
-  json: "json",
-  ndjson: "ndjson",
-  parquet: "parquet"
-}, or = [
-  { key: "csv", label: "CSV" },
-  { key: "parquet", label: "Parquet" },
-  { key: "json", label: "JSON" },
-  { key: "ndjson", label: "NDJSON" }
-];
-function rn(e) {
-  if (e == null) return "";
-  const t = String(e);
-  return /[",\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
-}
-function Us(e) {
-  const { columns: t, rows: n } = e, r = t.map(rn).join(","), s = n.map((i) => t.map((l) => rn(i[l])).join(","));
-  return [r, ...s].join(`
-`);
-}
-function Bs(e) {
-  return JSON.stringify(e.rows, null, 2);
-}
-function Ks(e) {
-  return e.rows.map((t) => JSON.stringify(t)).join(`
-`);
-}
-function Hs(e) {
-  return e.columns.map((t) => ({
-    name: t,
-    data: e.rows.map((n) => n[t] ?? null)
-  }));
-}
-async function Ws(e) {
-  const { parquetWriteBuffer: t } = await import("./index-BKASYduw.js"), n = e.columns.length > 0 ? Hs(e) : [{ name: "value", data: [] }], r = t({ columnData: n });
-  return new Uint8Array(r);
-}
-function qs(e, t) {
-  switch (t) {
-    case "csv":
-      return Us(e);
-    case "json":
-      return Bs(e);
-    case "ndjson":
-      return Ks(e);
-  }
-}
-function ir(e) {
-  return e.table ?? Ds(e.data, e.component);
-}
-async function Gs(e, t) {
-  const n = ir(e);
-  if (t === "parquet") {
-    const s = await Ws(n);
-    return new Blob([s.slice().buffer], { type: nn.parquet });
-  }
-  const r = qs(n, t);
-  return new Blob([r], { type: nn[t] });
-}
-function lr(e) {
-  return ir(e).rows.length;
-}
-function Vs(e, t) {
-  return `${(e ?? "export").trim().replace(/[^\w.-]+/g, "_").replace(/^_+|_+$/g, "") || "export"}.${Fs[t]}`;
-}
-async function ar(e, t, n) {
-  if (typeof document > "u" || typeof URL?.createObjectURL != "function")
-    return !1;
-  const r = await Gs(e, t), s = URL.createObjectURL(r), i = document.createElement("a");
-  return i.href = s, i.download = Vs(n, t), document.body.appendChild(i), i.click(), i.remove(), setTimeout(() => URL.revokeObjectURL(s), 0), !0;
-}
-function Js(e, t) {
-  if (!t) return null;
-  const n = Math.floor((e - t) / 1e3);
-  if (n < 5) return "just now";
-  if (n < 60) return `${n}s ago`;
-  const r = Math.floor(n / 60);
-  return r < 60 ? `${r}m ago` : `${Math.floor(r / 60)}h ago`;
-}
-function Xs(e) {
-  const { resolution: t, loading: n, error: r, data: s, options: i, component: l, widgetId: a, Component: u, onRenderError: c, onRetry: d } = e;
-  return t.error ? /* @__PURE__ */ o(Yt, { message: t.error }) : n ? /* @__PURE__ */ o(Xt, { component: l }) : r ? /* @__PURE__ */ o(Yt, { message: r, onRetry: d }) : /* @__PURE__ */ o("div", { className: "h-full motion-safe:animate-[fadeIn_200ms_ease-out]", children: /* @__PURE__ */ o(gs, { onError: c, children: /* @__PURE__ */ o($r, { fallback: /* @__PURE__ */ o(Xt, { component: l }), children: /* @__PURE__ */ o(u, { data: s, options: i, widgetId: a }) }) }) });
-}
-function Ys({
-  widget: e,
-  data: t,
-  onRefresh: n,
-  onCopy: r,
-  onToast: s
-}) {
-  const { dispatch: i, fullscreenId: l, setFullscreenId: a } = ae(), [u, c] = v(!1), [d, f] = v(!1), [h, p] = v(!1), g = U(null);
-  R(() => {
-    if (!u) return;
-    const O = (I) => {
-      g.current && !g.current.contains(I.target) && (c(!1), f(!1));
-    };
-    return document.addEventListener("mousedown", O), () => document.removeEventListener("mousedown", O);
-  }, [u]);
-  const b = e.source, w = b?.data !== void 0 && !b.url && !b.source_id, A = !!b && !w, $ = !!e.id, j = !!e.id && l !== e.id, E = t == null ? 0 : lr({ data: t, component: e.component }), x = E > 0, T = async (O) => {
-    p(!0);
-    try {
-      const I = await ar(
-        { data: t, component: e.component },
-        O,
-        e.title ?? e.id ?? e.component
-      );
-      s(
-        I ? `Exported ${E.toLocaleString()} rows as ${O.toUpperCase()}` : "Export failed",
-        I ? "ok" : "warn"
-      );
-    } catch {
-      s("Export failed", "error");
-    } finally {
-      p(!1), c(!1), f(!1);
-    }
-  };
-  return /* @__PURE__ */ m("div", { className: "relative", ref: g, children: [
-    /* @__PURE__ */ o(
-      "button",
-      {
-        onClick: () => c((O) => !O),
-        className: "text-zinc-600 hover:text-zinc-300 px-1.5 text-base leading-none rounded",
-        "aria-label": "Widget actions",
-        children: "⋮"
-      }
-    ),
-    u && /* @__PURE__ */ m("div", { className: "absolute right-0 top-full mt-1 bg-zinc-900 border border-zinc-700 rounded shadow-lg py-1 z-20 min-w-[140px]", children: [
-      A && /* @__PURE__ */ o(
-        "button",
-        {
-          onClick: () => {
-            n(), c(!1);
-          },
-          className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800",
-          children: "Refresh"
-        }
-      ),
-      /* @__PURE__ */ o(
-        "button",
-        {
-          onClick: async () => {
-            await r(), c(!1);
-          },
-          className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800",
-          children: "Copy data"
-        }
-      ),
-      x && /* @__PURE__ */ m("div", { children: [
-        /* @__PURE__ */ m(
-          "button",
-          {
-            onClick: () => f((O) => !O),
-            className: "w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 flex items-center justify-between",
-            "aria-expanded": d,
-            children: [
-              /* @__PURE__ */ m("span", { children: [
-                "Export",
-                h ? "…" : ""
-              ] }),
-              /* @__PURE__ */ o("span", { className: "text-zinc-600", children: d ? "▾" : "▸" })
-            ]
-          }
-        ),
-        d && /* @__PURE__ */ o("div", { className: "bg-zinc-950/60", children: or.map((O) => /* @__PURE__ */ o(
-          "button",
-          {
-            onClick: () => T(O.key),
-            disabled: h,
-            className: "block w-full text-left pl-6 pr-3 py-1.5 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 disabled:opacity-50",
-            children: O.label
-          },
-          O.key
-        )) })
-      ] }),
-      j && /* @__PURE__ */ o(
-        "button",
-        {
-          onClick: () => {
-            a(e.id), c(!1);
-          },
-          className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800",
-          children: "Fullscreen"
-        }
-      ),
-      $ && /* @__PURE__ */ o(
-        "button",
-        {
-          onClick: () => {
-            i([{ targetId: e.id, remove: !0 }]), c(!1);
-          },
-          className: "block w-full text-left px-3 py-1.5 text-xs text-red-400 hover:bg-zinc-800",
-          children: "Remove"
-        }
-      )
-    ] })
-  ] });
-}
-function cr({ config: e, contentHeight: t, snapshotKey: n }) {
-  const { ctx: r, backendUrl: s, refreshIntervalMs: i, compact: l, toast: a, focusedId: u, setFocusedId: c, refreshPulse: d, emit: f, soundEnabled: h, reportWidgetHealth: p, registerWidgetData: g } = ae(), b = L(
-    () => e.title ? Be(e.title, r) : e.title,
-    [e.title, r]
-  ), w = L(() => {
-    if (!e.source) return { source: void 0, error: null };
-    try {
-      const k = Ss(e.source, r, s);
-      return i && i > 0 && !k.stream ? { source: { ...k, refreshIntervalMs: i }, error: null } : { source: k, error: null };
-    } catch (k) {
-      return { source: void 0, error: k instanceof Error ? k.message : "Resolution error" };
-    }
-  }, [e.source, r, s, i]), A = w.source, { data: $, loading: j, error: E, lastUpdated: x, connected: T, nextRetryAt: O, refresh: I } = os(A), G = bs(e.component), Z = U($);
-  Z.current = $, R(() => {
-    if (n)
-      return g(n, () => Z.current);
-  }, [n, g]);
-  const X = !!A?.stream || !!(A?.refreshIntervalMs ?? A?.refreshInterval), Y = A?.staleAfterMs, P = X && x != null || O != null || !!Y && x != null, K = gt(P), q = !!Y && x != null && K - x > Y, z = U(0);
-  R(() => {
-    if (!d) return;
-    const k = e.refresh_policy ?? "global";
-    if (k === "manual") return;
-    const _ = d.id === "*";
-    _ && k === "self" || !(_ || d.id === e.id) || d.n > z.current && (z.current = d.n, I());
-  }, [d, e.id, e.refresh_policy, I]);
-  const H = U(!1);
-  R(() => {
-    const k = e.alert;
-    if (!k || $ == null) {
-      H.current = !1;
-      return;
-    }
-    const _ = _s($, k.when);
-    if (_ && !H.current) {
-      const M = Be(k.message, r), W = k.severity ?? "warn";
-      a(M, W), f({ type: "alert", widgetId: e.id, severity: W, message: M, predicate: k.when }), h && Is(W);
-    }
-    H.current = _;
-  }, [$, e.alert, r, a, f, e.id, h]);
-  const ee = U(null);
-  R(() => {
-    const k = w.error ?? E, _ = w.error ? "resolve" : "data";
-    k && k !== ee.current ? (f({ type: "widget_error", widgetId: e.id, component: e.component, message: k, source: _ }), ee.current = k) : k || (ee.current = null);
-  }, [w.error, E, f, e.id, e.component]), R(() => {
-    if (!e.id) return;
-    const k = !!A?.stream;
-    return p(e.id, {
-      title: b || e.title || e.component,
-      streaming: k,
-      connected: k ? T : !0,
-      error: w.error ?? E,
-      stale: q
-    }), () => p(e.id, null);
-  }, [e.id, b, e.title, e.component, A?.stream, T, w.error, E, q, p]);
-  const Q = !!e.id && u === e.id, oe = e.id ? () => c(e.id) : void 0;
-  return /* @__PURE__ */ m(
-    "div",
-    {
-      onClick: oe,
-      className: `bg-zinc-900 border ${Q ? "border-sky-400/60 shadow-[0_0_12px_-2px_rgba(56,189,248,0.4)]" : "border-zinc-800"} ${l ? "rounded" : "rounded-lg"} overflow-hidden transition-shadow`,
-      children: [
-        b && /* @__PURE__ */ m("div", { className: `${l ? "px-2.5 py-1.5" : "px-4 py-2.5"} border-b border-zinc-800 flex items-center justify-between`, children: [
-          /* @__PURE__ */ o("h3", { className: `${l ? "text-xs" : "text-sm"} font-medium text-zinc-100 truncate`, children: b }),
-          /* @__PURE__ */ m("div", { className: "flex items-center gap-2 shrink-0 ml-2", children: [
-            X && x && /* @__PURE__ */ m("span", { className: `text-[10px] ${q ? "text-amber-400/80" : "text-zinc-600"}`, children: [
-              q ? "stale · " : "",
-              Js(K, x)
-            ] }),
-            e.source?.stream && !T && O != null && /* @__PURE__ */ m("span", { className: "text-[10px] text-amber-400/80 tabular-nums", title: "Reconnecting", children: [
-              "retry ",
-              Math.max(0, Math.ceil((O - K) / 1e3)),
-              "s"
-            ] }),
-            e.source?.stream && /* @__PURE__ */ o(
-              "span",
-              {
-                className: `w-2 h-2 rounded-full shrink-0 ${T ? "bg-emerald-400 animate-pulse" : "bg-amber-500/70"}`,
-                title: T ? "Connected" : O ? "Reconnecting" : "Disconnected"
-              }
-            ),
-            /* @__PURE__ */ o(
-              Ys,
-              {
-                widget: e,
-                data: $,
-                onToast: a,
-                onRefresh: I,
-                onCopy: async () => {
-                  if ($ == null)
-                    return a("No data to copy", "warn"), !1;
-                  if (typeof navigator > "u" || !navigator.clipboard)
-                    return a("Clipboard unavailable", "warn"), !1;
-                  try {
-                    return await navigator.clipboard.writeText(JSON.stringify($, null, 2)), a(`${e.title ?? e.component} copied`, "ok"), !0;
-                  } catch {
-                    return a("Clipboard blocked", "warn"), !1;
-                  }
-                }
-              }
-            )
-          ] })
-        ] }),
-        /* @__PURE__ */ o("div", { className: l ? "p-2.5" : "p-4", style: { height: l ? Math.round(t * 0.92) : t }, children: Xs({
-          resolution: w,
-          loading: j,
-          error: E,
-          data: $,
-          options: e.options,
-          component: e.component,
-          widgetId: e.id,
-          Component: G,
-          onRenderError: (k) => f({
-            type: "widget_error",
-            widgetId: e.id,
-            component: e.component,
-            message: k.message,
-            source: "render"
-          }),
-          // Inline-data sources can't retry; only offer the button
-          // when there's an actual fetch/stream behind the widget.
-          onRetry: A && !(A.inline !== void 0 || A.data !== void 0) ? I : void 0
-        }) })
-      ]
-    }
-  );
-}
-const ur = Bt({
-  hoverTime: null,
-  setHoverTime: () => {
-  }
-});
-function dr() {
-  return Ut(ur);
-}
-function Zs({ children: e }) {
-  const [t, n] = v(null), r = L(() => ({ hoverTime: t, setHoverTime: n }), [t]);
-  return /* @__PURE__ */ o(ur.Provider, { value: r, children: e });
-}
-function Qs(e, t, n) {
-  const r = n?.replaceAll ? [] : [...e];
-  for (const s of t) {
-    const i = r.findIndex((l) => l.id === s.targetId);
-    if (s.remove) {
-      i >= 0 && r.splice(i, 1);
-      continue;
-    }
-    i >= 0 ? r[i] = {
-      ...r[i],
-      ...s.component !== void 0 && { component: s.component },
-      ...s.title !== void 0 && { title: s.title },
-      ...s.span !== void 0 && { span: s.span },
-      ...s.height !== void 0 && { height: s.height },
-      ...s.source !== void 0 && { source: s.source },
-      ...s.options !== void 0 && { options: s.options }
-    } : r.push({
-      id: s.targetId,
-      component: s.component || "placeholder",
-      title: s.title,
-      span: s.span,
-      height: s.height,
-      source: s.source,
-      options: s.options
-    });
-  }
-  return r;
-}
-const pt = "ctx.";
-function eo(e) {
-  const t = {}, n = new URLSearchParams(e);
-  for (const [r, s] of n)
-    r.startsWith(pt) && (t[r.slice(pt.length)] = s);
-  return t;
-}
-function to(e, t) {
-  const n = new URLSearchParams(e);
-  for (const r of [...n.keys()])
-    r.startsWith(pt) && n.delete(r);
-  for (const [r, s] of Object.entries(t))
-    n.set(`${pt}${r}`, s);
-  return n.toString();
-}
-const Ye = "medallion-terminal:view:";
-function no(e, t) {
-  if (!(!e || typeof window > "u" || !window.localStorage))
-    try {
-      window.localStorage.setItem(Ye + e, JSON.stringify(t));
-    } catch {
-    }
-}
-function ro(e) {
-  if (!e || typeof window > "u" || !window.localStorage) return null;
-  try {
-    const t = window.localStorage.getItem(Ye + e);
-    if (t == null) return null;
-    const n = JSON.parse(t);
-    if (!n || typeof n != "object") return null;
-    const r = {};
-    for (const [s, i] of Object.entries(n))
-      typeof i == "string" && (r[s] = i);
-    return r;
-  } catch {
-    return null;
-  }
-}
-function so() {
-  if (typeof window > "u" || !window.localStorage) return [];
-  const e = [];
-  for (let t = 0; t < window.localStorage.length; t++) {
-    const n = window.localStorage.key(t);
-    n && n.startsWith(Ye) && e.push(n.slice(Ye.length));
-  }
-  return e.sort();
-}
-function oo(e) {
-  if (!(!e || typeof window > "u" || !window.localStorage))
-    try {
-      window.localStorage.removeItem(Ye + e);
-    } catch {
-    }
-}
-const io = /* @__PURE__ */ new Set(["1d", "5d", "1m", "3m", "1y", "max"]), lo = 150, ao = 8;
-function co(e, t) {
-  const n = e.trim();
-  if (!n) return null;
-  if (n.startsWith("/")) {
-    const [l, ...a] = n.slice(1).split(/\s+/), u = a.join(" ").trim();
-    switch (l.toLowerCase()) {
-      case "save":
-        return u ? { kind: "save", name: u } : null;
-      case "load":
-      case "open":
-        return u ? { kind: "load", name: u } : null;
-      case "delete":
-      case "rm":
-        return u ? { kind: "delete", name: u } : null;
-      default:
-        return { kind: "noop" };
-    }
-  }
-  const r = n.split(/\s+/);
-  if (r.length > 1) {
-    const l = [];
-    let a = !0;
-    for (const u of r) {
-      const c = u.match(/^([a-zA-Z_][a-zA-Z0-9_]*)[:=](.+)$/);
-      if (!c) {
-        a = !1;
-        break;
-      }
-      l.push([c[1].toLowerCase(), c[2]]);
-    }
-    if (a && l.length > 1) return { kind: "set_many", pairs: l };
-  }
-  const s = n.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*[:=]\s*(.+)$/);
-  if (s) return { kind: "set", key: s[1].toLowerCase(), value: s[2].trim() };
-  const i = n.indexOf(" ");
-  return i > 0 ? { kind: "set", key: n.slice(0, i).toLowerCase(), value: n.slice(i + 1).trim() } : io.has(n.toLowerCase()) ? { kind: "set", key: "range", value: n.toLowerCase() } : { kind: "set", key: t, value: n };
-}
-function uo({ suggest: e } = {}) {
-  const { ctx: t, setCtx: n, toast: r } = ae(), [s, i] = v(!1), [l, a] = v(""), [u, c] = v([]), [d, f] = v(-1), h = U(null), [p, g] = v([]), b = U(0);
-  R(() => {
-    const x = (T) => {
-      (T.metaKey || T.ctrlKey) && T.key.toLowerCase() === "k" ? (T.preventDefault(), i((O) => !O)) : T.key === "Escape" && i(!1);
-    };
-    return document.addEventListener("keydown", x), () => document.removeEventListener("keydown", x);
-  }, []), R(() => {
-    s ? h.current?.focus() : (a(""), f(-1), g([]));
-  }, [s]), R(() => {
-    if (!e || !s) return;
-    const x = l.trim();
-    if (!x) {
-      g([]);
-      return;
-    }
-    const T = ++b.current, O = setTimeout(async () => {
-      try {
-        const I = await e(x);
-        if (T !== b.current) return;
-        g(I.slice(0, ao));
-      } catch {
-        T === b.current && g([]);
-      }
-    }, lo);
-    return () => clearTimeout(O);
-  }, [l, s, e]);
-  const w = L(() => Object.keys(t)[0] ?? "symbol", [t]), A = L(() => s ? so() : [], [s, u]);
-  if (!s) return null;
-  const $ = () => {
-    const x = co(l, w);
-    if (!x || x.kind === "noop") {
-      i(!1);
-      return;
-    }
-    if (x.kind === "save")
-      no(x.name, t), r(`Saved "${x.name}"`, "ok");
-    else if (x.kind === "load") {
-      const T = ro(x.name);
-      if (!T)
-        r(`No view named "${x.name}"`, "warn");
-      else {
-        for (const [O, I] of Object.entries(T)) n(O, I);
-        r(`Loaded "${x.name}"`, "ok");
-      }
-    } else if (x.kind === "delete")
-      oo(x.name), r(`Deleted "${x.name}"`, "ok");
-    else if (x.kind === "set")
-      n(x.key, x.value);
-    else if (x.kind === "set_many")
-      for (const [T, O] of x.pairs) n(T, O);
-    c((T) => [l, ...T.filter((O) => O !== l)].slice(0, 5)), i(!1);
-  }, j = (x) => {
-    if (u.length === 0) return;
-    const T = Math.max(-1, Math.min(u.length - 1, d + x));
-    f(T), a(T === -1 ? "" : u[T]);
-  }, E = (x) => {
-    for (const [T, O] of Object.entries(x.ctx)) n(T, O);
-    i(!1);
-  };
-  return /* @__PURE__ */ o(
-    "div",
-    {
-      className: "fixed inset-0 z-50 bg-black/60 flex items-start justify-center pt-[20vh] px-4",
-      onClick: () => i(!1),
-      children: /* @__PURE__ */ m(
-        "div",
-        {
-          className: "w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl overflow-hidden",
-          onClick: (x) => x.stopPropagation(),
-          children: [
-            /* @__PURE__ */ o(
-              "input",
-              {
-                ref: h,
-                type: "text",
-                value: l,
-                onChange: (x) => a(x.target.value),
-                onKeyDown: (x) => {
-                  x.key === "Enter" ? (x.preventDefault(), $()) : x.key === "ArrowUp" ? (x.preventDefault(), j(1)) : x.key === "ArrowDown" && (x.preventDefault(), j(-1));
-                },
-                placeholder: "symbol:BTC range:1d  ·  /save view  ·  /load view",
-                className: "w-full bg-transparent text-zinc-100 px-4 py-3 text-sm outline-none placeholder-zinc-500 border-b border-zinc-800"
-              }
-            ),
-            p.length > 0 && /* @__PURE__ */ o("div", { className: "border-b border-zinc-800 max-h-72 overflow-auto", children: p.map((x, T) => /* @__PURE__ */ m(
-              "button",
-              {
-                onClick: () => E(x),
-                className: "block w-full text-left px-4 py-1.5 text-sm hover:bg-zinc-800/60 group",
-                children: [
-                  /* @__PURE__ */ o("span", { className: "text-zinc-100", children: x.label }),
-                  x.hint && /* @__PURE__ */ o("span", { className: "ml-2 text-[10px] text-zinc-500 font-mono", children: x.hint }),
-                  /* @__PURE__ */ o("span", { className: "ml-2 text-[10px] text-zinc-700 font-mono opacity-0 group-hover:opacity-100", children: Object.entries(x.ctx).map(([O, I]) => `${O}=${I}`).join(" · ") })
-                ]
-              },
-              `${x.label}-${T}`
-            )) }),
-            Object.entries(t).length > 0 && /* @__PURE__ */ m("div", { className: "px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap", children: [
-              /* @__PURE__ */ o("span", { className: "text-[10px] uppercase tracking-wider text-zinc-600 self-center", children: "current" }),
-              Object.entries(t).map(([x, T]) => /* @__PURE__ */ m("span", { className: "text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-mono", children: [
-                x,
-                "=",
-                T
-              ] }, x))
-            ] }),
-            A.length > 0 && /* @__PURE__ */ m("div", { className: "px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap", children: [
-              /* @__PURE__ */ o("span", { className: "text-[10px] uppercase tracking-wider text-zinc-600 self-center", children: "views" }),
-              A.map((x) => /* @__PURE__ */ o(
-                "button",
-                {
-                  onClick: () => a(`/load ${x}`),
-                  className: "text-[10px] px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 font-mono",
-                  title: `Load view "${x}"`,
-                  children: x
-                },
-                x
-              ))
-            ] }),
-            u.length > 0 && /* @__PURE__ */ m("div", { className: "px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap", children: [
-              /* @__PURE__ */ o("span", { className: "text-[10px] uppercase tracking-wider text-zinc-600 self-center", children: "recent" }),
-              u.map((x, T) => /* @__PURE__ */ o(
-                "button",
-                {
-                  onClick: () => a(x),
-                  className: "text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 font-mono",
-                  children: x
-                },
-                T
-              ))
-            ] }),
-            /* @__PURE__ */ m("div", { className: "px-4 py-2 text-[10px] text-zinc-600 flex justify-between", children: [
-              /* @__PURE__ */ o("span", { children: "↵ apply  ·  ↑↓ recall" }),
-              /* @__PURE__ */ o("span", { children: "esc close" })
-            ] })
-          ]
-        }
-      )
-    }
-  );
-}
-const fo = [
-  { keys: "⌘ K / Ctrl K", description: "Open command palette (set ctx, save/load views)" },
-  { keys: "j / ↓", description: "Focus next widget" },
-  { keys: "k / ↑", description: "Focus previous widget" },
-  { keys: "f", description: "Fullscreen focused widget" },
-  { keys: "r", description: "Refresh focused widget" },
-  { keys: "↵", description: "In palette: apply current input" },
-  { keys: "Esc", description: "Clear focus / close palette / close fullscreen" },
-  { keys: "⌘ 1 — 9", description: "In multi-tab: jump to tab N" },
-  { keys: "?", description: "Show this shortcuts cheat sheet" },
-  { keys: "/save <name>", description: "In palette: save current ctx as a named view" },
-  { keys: "/load <name>", description: "In palette: restore a saved view" },
-  { keys: "/delete <name>", description: "In palette: delete a saved view" }
-];
-function mo(e) {
-  return e.label ? e.label : `Set ${Object.entries(e.ctx).map(([n, r]) => `${n}=${r}`).join(" · ")}`;
-}
-function po({ templateShortcuts: e }) {
-  const [t, n] = v(!1);
-  return R(() => {
-    const r = (s) => {
-      const i = s.target?.tagName, l = i === "INPUT" || i === "TEXTAREA" || s.target?.isContentEditable;
-      s.key === "?" && !l ? (s.preventDefault(), n((a) => !a)) : s.key === "Escape" && n(!1);
-    };
-    return document.addEventListener("keydown", r), () => document.removeEventListener("keydown", r);
-  }, []), t ? /* @__PURE__ */ o(
-    "div",
-    {
-      className: "fixed inset-0 z-40 bg-black/60 flex items-center justify-center px-4",
-      onClick: () => n(!1),
-      children: /* @__PURE__ */ m(
-        "div",
-        {
-          className: "w-full max-w-md bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl overflow-hidden motion-safe:animate-[fadeIn_180ms_ease-out]",
-          onClick: (r) => r.stopPropagation(),
-          children: [
-            /* @__PURE__ */ m("div", { className: "px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between", children: [
-              /* @__PURE__ */ o("h3", { className: "text-sm font-medium text-zinc-100", children: "Keyboard shortcuts" }),
-              /* @__PURE__ */ o("span", { className: "text-[10px] text-zinc-500", children: "esc to close" })
-            ] }),
-            /* @__PURE__ */ m("div", { className: "px-4 py-3 flex flex-col gap-1.5", children: [
-              fo.map((r, s) => /* @__PURE__ */ m("div", { className: "flex items-baseline gap-3", children: [
-                /* @__PURE__ */ o("kbd", { className: "text-[10px] font-mono text-zinc-300 bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 shrink-0", children: r.keys }),
-                /* @__PURE__ */ o("span", { className: "text-xs text-zinc-400", children: r.description })
-              ] }, s)),
-              e && e.length > 0 && /* @__PURE__ */ m(ft, { children: [
-                /* @__PURE__ */ o("div", { className: "text-[10px] uppercase tracking-wider text-zinc-500 mt-3 mb-1", children: "Dashboard shortcuts" }),
-                e.map((r, s) => /* @__PURE__ */ m("div", { className: "flex items-baseline gap-3", children: [
-                  /* @__PURE__ */ o("kbd", { className: "text-[10px] font-mono text-zinc-300 bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 shrink-0", children: r.key }),
-                  /* @__PURE__ */ o("span", { className: "text-xs text-zinc-400", children: mo(r) })
-                ] }, `tpl-${s}`))
-              ] })
-            ] })
-          ]
-        }
-      )
-    }
-  ) : null;
-}
-const ho = {
-  ok: "border-emerald-500/40 bg-emerald-500/10 text-emerald-200",
-  warn: "border-amber-500/40   bg-amber-500/10   text-amber-200",
-  error: "border-red-500/40     bg-red-500/10     text-red-200",
-  info: "border-sky-500/40     bg-sky-500/10     text-sky-200"
-}, bo = 3500;
-function go({ toasts: e, dismiss: t }) {
-  return e.length === 0 ? null : /* @__PURE__ */ o("div", { className: "fixed bottom-4 right-4 z-40 flex flex-col gap-2 max-w-sm pointer-events-none", children: e.map((n) => /* @__PURE__ */ o(xo, { toast: n, dismiss: t }, n.id)) });
-}
-function xo({ toast: e, dismiss: t }) {
-  return R(() => {
-    const n = setTimeout(() => t(e.id), bo);
-    return () => clearTimeout(n);
-  }, [e.id, t]), /* @__PURE__ */ o(
-    "div",
-    {
-      onClick: () => t(e.id),
-      className: `pointer-events-auto cursor-pointer text-xs px-3 py-2 rounded border shadow-lg backdrop-blur-sm ${ho[e.severity]} motion-safe:animate-[fadeIn_180ms_ease-out]`,
-      children: e.message
-    }
-  );
-}
-const sn = /* @__PURE__ */ new Set([
-  "timeseries",
-  "candlestick",
-  "table",
-  "metric",
-  "text",
-  "prompt",
-  "gauge",
-  "distribution",
-  "heatmap",
-  "events",
-  "catalog",
-  "orderbook",
-  "paired_grid",
-  "trade",
-  "ticker",
-  "volume_profile",
-  "stat_strip",
-  "bar_chart",
-  "scatter",
-  "clock",
-  "treemap",
-  "image",
-  "iframe",
-  "histogram",
-  "section",
-  "area_chart",
-  "slider",
-  "select",
-  "boxplot",
-  "radar",
-  "dag",
-  "multi_select",
-  "json",
-  "sparkline",
-  "action_log",
-  "alert_log",
-  "tape",
-  "file_browser"
-]);
-function yo(e, t) {
-  const n = [];
-  if (!e || typeof e != "object")
-    return n.push({ path: "", severity: "error", message: "template is not an object" }), n;
-  if (!Array.isArray(e.widgets))
-    return n.push({ path: "widgets", severity: "error", message: "widgets must be an array" }), n;
-  const r = t ? /* @__PURE__ */ new Set([...sn, ...t]) : sn;
-  return e.widgets.forEach((s, i) => {
-    const l = `widgets[${i}]`;
-    if (!s || typeof s != "object") {
-      n.push({ path: l, severity: "error", message: "widget is not an object" });
-      return;
-    }
-    if (!s.component || typeof s.component != "string" ? n.push({ path: `${l}.component`, severity: "error", message: "missing component" }) : r.has(s.component) || n.push({
-      path: `${l}.component`,
-      severity: "warn",
-      message: `unknown component "${s.component}" — register via registerWidget() or fix the spelling`
-    }), s.span != null && (!Number.isInteger(s.span) || s.span < 1 || s.span > 12) && n.push({ path: `${l}.span`, severity: "warn", message: `span ${s.span} out of range 1..12` }), s.refresh_policy != null && s.refresh_policy !== "global" && s.refresh_policy !== "self" && s.refresh_policy !== "manual" && n.push({
-      path: `${l}.refresh_policy`,
-      severity: "error",
-      message: `refresh_policy ${JSON.stringify(s.refresh_policy)} must be "global" | "self" | "manual"`
-    }), s.source) {
-      const a = s.source, u = [];
-      a.source_id && u.push("source_id"), a.url && u.push("url"), (a.inline !== void 0 || a.data !== void 0) && u.push("inline"), u.length > 1 ? n.push({
-        path: `${l}.source`,
-        severity: "error",
-        message: `multiple source modes set (${u.join(", ")}); pick one`
-      }) : u.length === 0 && n.push({
-        path: `${l}.source`,
-        severity: "warn",
-        message: "source declared but no mode (source_id / url / inline)"
-      }), a.stream && (a.refreshIntervalMs ?? a.refreshInterval) && n.push({
-        path: `${l}.source`,
-        severity: "warn",
-        message: "stream + refreshIntervalMs both set; refresh is ignored on streaming sources"
-      });
-    }
-    s.alert && ((typeof s.alert.when != "string" || !Ts(s.alert.when)) && n.push({
-      path: `${l}.alert.when`,
-      severity: "error",
-      message: `alert predicate ${JSON.stringify(s.alert.when)} does not parse`
-    }), (typeof s.alert.message != "string" || !s.alert.message) && n.push({ path: `${l}.alert.message`, severity: "warn", message: "alert has no message" }));
-  }), n;
-}
-const fr = "", vo = [
-  "authorization",
-  "cookie",
-  "proxy-authorization",
-  "set-cookie",
-  "x-api-key",
-  "x-auth-token",
-  "x-csrf-token",
-  "x-xsrf-token"
-], wo = [
-  "allow-downloads",
-  "allow-popups-to-escape-sandbox",
-  "allow-top-navigation",
-  "allow-top-navigation-by-user-activation"
-], Me = {
-  allowRelativeUrls: !0,
-  allowedUrlOrigins: [],
-  disallowedHeaders: vo,
-  minRefreshIntervalMs: 1e3,
-  iframeSandbox: {
-    disallowedTokens: wo,
-    allowScriptsWithSameOrigin: !1
-  }
-}, ko = [
-  "url",
-  "upload_url",
-  "search_url",
-  "ingest_url",
-  "download_url",
-  "media_url_template"
-];
-function No(e, t = Me) {
-  const n = [], r = So(t);
-  return !e || typeof e != "object" || !Array.isArray(e.widgets) ? [{ path: "widgets", severity: "error", message: "template.widgets must be an array" }] : (e.widgets.forEach((s, i) => {
-    if (!s || typeof s != "object") return;
-    const l = `widgets[${i}]`;
-    s.source && zo(s.source, `${l}.source`, r, n), Ao(s, l, r, n), s.component === "iframe" && _o(s, l, r, n), s.component === "image" && To(s, l, r, n);
-  }), n);
-}
-function So(e) {
-  const t = Me.iframeSandbox;
-  return {
-    allowedUrlOrigins: on(
-      e.allowedUrlOrigins ?? Me.allowedUrlOrigins
-    ),
-    allowedIframeOrigins: on(e.allowedIframeOrigins ?? e.allowedUrlOrigins ?? []),
-    allowRelativeUrls: e.allowRelativeUrls ?? Me.allowRelativeUrls,
-    allowedHeaders: e.allowedHeaders ? ln(e.allowedHeaders) : void 0,
-    disallowedHeaders: ln(e.disallowedHeaders ?? Me.disallowedHeaders),
-    minRefreshIntervalMs: e.minRefreshIntervalMs ?? Me.minRefreshIntervalMs,
-    maxRefreshIntervalMs: e.maxRefreshIntervalMs,
-    iframeSandbox: {
-      requiredTokens: [...t.requiredTokens ?? [], ...e.iframeSandbox?.requiredTokens ?? []],
-      disallowedTokens: [
-        ...t.disallowedTokens ?? [],
-        ...e.iframeSandbox?.disallowedTokens ?? []
-      ],
-      allowScriptsWithSameOrigin: e.iframeSandbox?.allowScriptsWithSameOrigin ?? t.allowScriptsWithSameOrigin ?? !1
-    }
-  };
-}
-function on(e) {
-  const t = /* @__PURE__ */ new Set();
-  for (const n of e)
-    try {
-      t.add(new URL(n).origin);
-    } catch {
-    }
-  return t;
-}
-function ln(e) {
-  return new Set(e.map((t) => t.trim().toLowerCase()).filter(Boolean));
-}
-function zo(e, t, n, r) {
-  typeof e.url == "string" && xt(e.url, `${t}.url`, n.allowedUrlOrigins, n.allowRelativeUrls, r), e.headers && typeof e.headers == "object" && Co(e.headers, `${t}.headers`, n, r), Eo(e.refreshIntervalMs ?? e.refreshInterval, t, n, r);
-}
-function Ao(e, t, n, r) {
-  const s = e.options;
-  if (!(!s || typeof s != "object"))
-    for (const i of ko) {
-      if (e.component === "iframe" && i === "url") continue;
-      const l = s[i];
-      typeof l != "string" || l === "" || xt(l, `${t}.options.${i}`, n.allowedUrlOrigins, n.allowRelativeUrls, r);
-    }
-}
-function _o(e, t, n, r) {
-  const { url: s, sandbox: i } = $o(e);
-  s && xt(s, `${t}.iframe.url`, n.allowedIframeOrigins, n.allowRelativeUrls, r), Oo(i, `${t}.iframe.sandbox`, n, r);
-}
-function To(e, t, n, r) {
-  const s = mr(e.source), i = typeof s == "string" ? s : s && typeof s == "object" && typeof s.url == "string" ? s.url : void 0;
-  i && xt(i, `${t}.image.url`, n.allowedIframeOrigins, n.allowRelativeUrls, r);
-}
-function $o(e) {
-  const t = e.options, n = mr(e.source);
-  let r, s = fr;
-  if (typeof n == "string")
-    r = n;
-  else if (n && typeof n == "object") {
-    const i = n;
-    typeof i.url == "string" && (r = i.url), typeof i.sandbox == "string" && (s = i.sandbox);
-  }
-  return t && typeof t == "object" && (!r && typeof t.url == "string" && (r = t.url), typeof t.sandbox == "string" && (s = t.sandbox)), { url: r, sandbox: s };
-}
-function mr(e) {
-  return e?.inline ?? e?.data;
-}
-function Co(e, t, n, r) {
-  for (const s of Object.keys(e)) {
-    const i = s.trim().toLowerCase();
-    if (!i) {
-      r.push({ path: t, severity: "error", message: "header names must be non-empty" });
-      continue;
-    }
-    n.disallowedHeaders.has(i) && r.push({ path: `${t}.${s}`, severity: "error", message: `header "${s}" is not allowed` }), n.allowedHeaders && !n.allowedHeaders.has(i) && r.push({ path: `${t}.${s}`, severity: "error", message: `header "${s}" is not in the allow-list` });
-  }
-}
-function Eo(e, t, n, r) {
-  if (!(e == null || e === 0)) {
-    if (!Number.isFinite(e) || e < 0) {
-      r.push({ path: `${t}.refreshIntervalMs`, severity: "error", message: "refreshIntervalMs must be >= 0" });
-      return;
-    }
-    n.minRefreshIntervalMs != null && e < n.minRefreshIntervalMs && r.push({
-      path: `${t}.refreshIntervalMs`,
-      severity: "error",
-      message: `refreshIntervalMs ${e} is below host minimum ${n.minRefreshIntervalMs}`
-    }), n.maxRefreshIntervalMs != null && e > n.maxRefreshIntervalMs && r.push({
-      path: `${t}.refreshIntervalMs`,
-      severity: "error",
-      message: `refreshIntervalMs ${e} is above host maximum ${n.maxRefreshIntervalMs}`
-    });
-  }
-}
-function xt(e, t, n, r, s) {
-  const i = e.trim();
-  if (!i) {
-    s.push({ path: t, severity: "error", message: "URL must be non-empty" });
-    return;
-  }
-  if (Mo(i)) {
-    if (Ro(i)) {
-      s.push({
-        path: t,
-        severity: "error",
-        message: "relative URL template substitution must appear after a path, query, or hash delimiter"
-      });
-      return;
-    }
-    r || s.push({ path: t, severity: "error", message: "relative URLs are not allowed by host policy" });
-    return;
-  }
-  if (jo(i).includes("${")) {
-    s.push({ path: t, severity: "error", message: "URL origin may not contain template substitution" });
-    return;
-  }
-  let l;
-  try {
-    l = new URL(i.replace(/\{[A-Za-z0-9_]+\}/g, "value"));
-  } catch {
-    s.push({ path: t, severity: "error", message: `URL ${JSON.stringify(e)} does not parse` });
-    return;
-  }
-  if (l.protocol !== "http:" && l.protocol !== "https:") {
-    s.push({ path: t, severity: "error", message: `URL protocol ${l.protocol} is not allowed` });
-    return;
-  }
-  n.has(l.origin) || s.push({ path: t, severity: "error", message: `URL origin ${l.origin} is not allowed` });
-}
-function Oo(e, t, n, r) {
-  const s = new Set(e.split(/\s+/).map((i) => i.trim()).filter(Boolean));
-  for (const i of n.iframeSandbox.requiredTokens)
-    s.has(i) || r.push({ path: t, severity: "error", message: `iframe sandbox must include ${i}` });
-  for (const i of n.iframeSandbox.disallowedTokens)
-    s.has(i) && r.push({ path: t, severity: "error", message: `iframe sandbox token ${i} is not allowed` });
-  !n.iframeSandbox.allowScriptsWithSameOrigin && s.has("allow-scripts") && s.has("allow-same-origin") && r.push({
-    path: t,
-    severity: "error",
-    message: "iframe sandbox may not combine allow-scripts and allow-same-origin"
-  });
-}
-function Mo(e) {
-  return !e.startsWith("//") && !/^[A-Za-z][A-Za-z0-9+.-]*:/.test(e);
-}
-function Ro(e) {
-  const t = e.indexOf("${");
-  if (t === -1) return !1;
-  const n = e.slice(0, t);
-  return /[/?#]/.test(n) ? /^\/+$/.test(n) : !0;
-}
-function jo(e) {
-  if (e.startsWith("//")) {
-    const n = e.slice(2).search(/[/?#]/);
-    return n === -1 ? e : e.slice(0, n + 2);
-  }
-  const t = e.match(/^[A-Za-z][A-Za-z0-9+.-]*:\/\/[^/?#]*/);
-  return t ? t[0] : "";
-}
-function an(e, t) {
-  return e.id || `__mt_idx_${t}`;
-}
-function Io(e) {
-  const t = e?.widgets;
-  return !Array.isArray(t) || t.length === 0 ? !1 : t.every((n) => {
-    const r = n.source;
-    if (!r) return !0;
-    const s = r.inline !== void 0 || r.data !== void 0, i = !!(r.source_id || r.url);
-    return s || !i;
-  });
-}
-function Lo(e, t, n, r, s) {
-  const i = t.map((a, u) => {
-    const c = r(a, u);
-    if (c === void 0) {
-      const d = a.source;
-      return d && (d.source_id || d.url || d.stream) ? { ...a, source: { inline: null } } : a;
-    }
-    return { ...a, source: { inline: c } };
-  }), l = {
-    ...e,
-    context: { values: { ...n } },
-    widgets: i
-  };
-  return s && (l.frozenAt = s), l;
-}
-const Po = {
-  metric: 120,
-  timeseries: 300,
-  candlestick: 400,
-  table: 350,
-  text: 350,
-  prompt: 60,
-  gauge: 220,
-  distribution: 280,
-  heatmap: 320,
-  events: 320,
-  catalog: 480,
-  orderbook: 380,
-  paired_grid: 420,
-  trade: 280,
-  ticker: 56,
-  volume_profile: 380,
-  stat_strip: 90,
-  bar_chart: 320,
-  scatter: 360,
-  clock: 100,
-  treemap: 380,
-  image: 320,
-  iframe: 360,
-  histogram: 280,
-  section: 24,
-  area_chart: 280,
-  slider: 80,
-  select: 80,
-  boxplot: 360,
-  radar: 380,
-  dag: 420,
-  multi_select: 100,
-  json: 360,
-  sparkline: 60,
-  action_log: 320,
-  alert_log: 320,
-  tape: 320
-}, Do = ["1d", "5d", "1m", "3m", "1y", "max"], Fo = 200, Uo = 200;
-function Bo({ value: e, onChange: t }) {
-  return /* @__PURE__ */ o("div", { className: "flex bg-zinc-900 border border-zinc-800 rounded p-0.5 gap-0.5", children: Do.map((n) => {
-    const r = e.toLowerCase() === n;
-    return /* @__PURE__ */ o(
-      "button",
-      {
-        onClick: () => t(n),
-        className: `px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${r ? "bg-zinc-700 text-white" : "text-zinc-400 hover:text-zinc-200"}`,
-        children: n
-      },
-      n
-    );
-  }) });
-}
-const Ko = [
-  { label: "Off", ms: null },
-  { label: "5s", ms: 5e3 },
-  { label: "30s", ms: 3e4 },
-  { label: "1m", ms: 6e4 },
-  { label: "5m", ms: 3e5 }
-];
-function Ho({ value: e, onChange: t }) {
-  return /* @__PURE__ */ o("div", { className: "flex bg-zinc-900 border border-zinc-800 rounded p-0.5 gap-0.5", children: Ko.map((n) => {
-    const r = e === n.ms;
-    return /* @__PURE__ */ o(
-      "button",
-      {
-        onClick: () => t(n.ms),
-        className: `px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${r ? "bg-zinc-700 text-white" : "text-zinc-400 hover:text-zinc-200"}`,
-        title: n.ms ? `Refresh every ${n.label}` : "No auto-refresh",
-        children: n.label
-      },
-      n.label
-    );
-  }) });
-}
-function Wo() {
-  const e = typeof navigator < "u" && /mac/i.test(navigator.platform);
-  return /* @__PURE__ */ m(
-    "button",
-    {
-      onClick: () => {
-        document.dispatchEvent(
-          new KeyboardEvent("keydown", { key: "k", metaKey: e, ctrlKey: !e, bubbles: !0 })
-        );
-      },
-      className: "px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded font-mono",
-      title: "Open command palette",
-      children: [
-        e ? "⌘" : "Ctrl",
-        " K"
-      ]
-    }
-  );
-}
-function qo(e) {
-  const t = new Date(e), n = String(t.getHours()).padStart(2, "0"), r = String(t.getMinutes()).padStart(2, "0"), s = String(t.getSeconds()).padStart(2, "0");
-  return `${n}:${r}:${s}`;
-}
-function Go(e, t) {
-  const n = Math.floor((e - t) / 1e3);
-  if (n < 5) return "now";
-  if (n < 60) return `${n}s`;
-  const r = Math.floor(n / 60);
-  return r < 60 ? `${r}m` : `${Math.floor(r / 60)}h`;
-}
-function Vo() {
-  const { recentActions: e, widgetHealth: t } = ae(), n = gt(!0), r = e[0], s = Object.values(t), i = s.filter((d) => d.streaming), l = i.filter((d) => d.connected && !d.error).length, a = s.filter((d) => d.error).length, u = s.filter((d) => d.stale).length, c = r?.status?.endsWith("_OK") ? "text-emerald-400/80" : r?.status?.endsWith("_PENDING") || r?.status?.endsWith("_ACCEPTED") ? "text-amber-400/80" : r && (r.status?.endsWith("_REJECTED") || r.status?.endsWith("_FAILED") || r.status?.endsWith("_CANCELLED")) ? "text-red-400/80" : "text-zinc-400";
-  return /* @__PURE__ */ m("div", { className: "border-t border-zinc-800 bg-zinc-900/70 px-3 md:px-5 py-1 flex items-center gap-4 text-[10px] font-mono text-zinc-500 shrink-0", children: [
-    /* @__PURE__ */ o("div", { className: "flex-1 min-w-0 truncate", children: r ? /* @__PURE__ */ m("span", { className: "flex items-center gap-2", children: [
-      /* @__PURE__ */ o("span", { className: "tabular-nums w-7 shrink-0", children: Go(n, r.receivedAt) }),
-      /* @__PURE__ */ o("span", { className: "text-zinc-300 shrink-0", children: r.actionId }),
-      /* @__PURE__ */ o("span", { className: `uppercase tracking-wider shrink-0 ${c}`, children: r.status.replace(/^ACTION_STATUS_/, "").toLowerCase() }),
-      r.message && /* @__PURE__ */ o("span", { className: "truncate text-zinc-400", children: r.message })
-    ] }) : /* @__PURE__ */ o("span", { className: "text-zinc-600", children: "idle" }) }),
-    i.length > 0 && /* @__PURE__ */ m(
-      "span",
-      {
-        className: l === i.length ? "text-emerald-400/80" : "text-amber-400/80",
-        title: `${l} of ${i.length} streams connected`,
-        children: [
-          /* @__PURE__ */ m("span", { className: "tabular-nums", children: [
-            l,
-            "/",
-            i.length
-          ] }),
-          " ",
-          /* @__PURE__ */ o("span", { className: "opacity-60", children: "↑" })
-        ]
-      }
-    ),
-    u > 0 && /* @__PURE__ */ m("span", { className: "text-amber-400/80 tabular-nums", title: `${u} widget(s) without recent updates`, children: [
-      u,
-      " stale"
-    ] }),
-    a > 0 && /* @__PURE__ */ m("span", { className: "text-red-400 tabular-nums", children: [
-      a,
-      " err"
-    ] }),
-    /* @__PURE__ */ o("span", { className: "tabular-nums text-zinc-300", children: qo(n) })
-  ] });
-}
-function Jo({ health: e }) {
-  const t = Object.values(e);
-  if (t.length === 0) return null;
-  const n = t.filter((l) => l.streaming), r = n.filter((l) => l.connected && !l.error).length, s = t.filter((l) => l.error);
-  if (n.length === 0 && s.length === 0) return null;
-  const i = s.map((l) => l.title).join(`
-`);
-  return /* @__PURE__ */ m("div", { className: "flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider bg-zinc-900 border border-zinc-800 rounded", children: [
-    n.length > 0 && /* @__PURE__ */ m(
-      "span",
-      {
-        className: r === n.length ? "text-emerald-400" : "text-amber-400",
-        title: `${r} of ${n.length} streams connected`,
-        children: [
-          /* @__PURE__ */ m("span", { className: "tabular-nums", children: [
-            r,
-            "/",
-            n.length
-          ] }),
-          /* @__PURE__ */ o("span", { className: "ml-0.5", children: "↑" })
-        ]
-      }
-    ),
-    s.length > 0 && /* @__PURE__ */ m("span", { className: "text-red-400 tabular-nums", title: i, children: [
-      s.length,
-      " err",
-      s.length === 1 ? "" : "s"
-    ] })
-  ] });
-}
-function Xo({ onClick: e }) {
-  return /* @__PURE__ */ o(
-    "button",
-    {
-      onClick: e,
-      className: "px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded",
-      title: "Refresh every widget",
-      children: "Reload"
-    }
-  );
-}
-function Yo({ enabled: e, onToggle: t }) {
-  return /* @__PURE__ */ o(
-    "button",
-    {
-      onClick: t,
-      className: "px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded",
-      title: e ? "Mute alert sounds" : "Enable alert sounds (warn/error)",
-      children: e ? "🔊 On" : "🔇 Off"
-    }
-  );
-}
-function Zo({ compact: e, onToggle: t }) {
-  return /* @__PURE__ */ o(
-    "button",
-    {
-      onClick: t,
-      className: "px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded",
-      title: e ? "Switch to comfortable density" : "Switch to compact density",
-      children: e ? "Cozy" : "Compact"
-    }
-  );
-}
-function Qo({ onCopied: e }) {
-  return /* @__PURE__ */ o(
-    "button",
-    {
-      onClick: async () => {
-        if (!(typeof navigator > "u" || !navigator.clipboard))
-          try {
-            await navigator.clipboard.writeText(window.location.href), e();
-          } catch {
-          }
-      },
-      className: "px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 rounded",
-      title: "Copy current dashboard URL",
-      children: "Snapshot"
-    }
-  );
-}
-function ei({ onClick: e }) {
-  return /* @__PURE__ */ o(
-    "button",
-    {
-      onClick: e,
-      className: "px-2 py-1 text-[10px] uppercase tracking-wider text-emerald-400/80 hover:text-emerald-300 bg-zinc-900 border border-emerald-500/30 rounded",
-      title: "Freeze data into a static, self-contained dashboard to share — nothing re-fetches or regenerates",
-      children: "Share"
-    }
-  );
-}
-function ti({ frozenAt: e }) {
-  const t = e ? new Date(e) : null, n = t && !Number.isNaN(t.getTime()) ? t.toLocaleString(void 0, { dateStyle: "medium", timeStyle: "short" }) : null;
-  return /* @__PURE__ */ m(
-    "span",
-    {
-      className: "flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400 bg-zinc-900 border border-zinc-800 rounded",
-      title: n ? `Static snapshot frozen ${n} — data does not refresh` : "Static snapshot — data does not refresh",
-      children: [
-        /* @__PURE__ */ o("span", { className: "w-1.5 h-1.5 rounded-full bg-zinc-500" }),
-        "Snapshot",
-        n ? /* @__PURE__ */ m("span", { className: "text-zinc-600 normal-case tracking-normal", children: [
-          "· ",
-          n
-        ] }) : null
-      ]
-    }
-  );
-}
-function ni(e) {
-  if (typeof document > "u" || typeof URL?.createObjectURL != "function") return;
-  const t = (e.title || "dashboard").trim().replace(/[^\w.-]+/g, "_").replace(/^_+|_+$/g, "") || "dashboard", n = new Blob([JSON.stringify(e, null, 2)], { type: "application/json" }), r = URL.createObjectURL(n), s = document.createElement("a");
-  s.href = r, s.download = `${t}.snapshot.json`, document.body.appendChild(s), s.click(), s.remove(), setTimeout(() => URL.revokeObjectURL(r), 0);
-}
-function pr({
-  template: e,
-  backendUrl: t,
-  onEvent: n,
-  onCtxChange: r,
-  paletteSuggest: s,
-  chrome: i = "full",
-  onShare: l,
-  theme: a = "dark",
-  templateTrust: u = "untrusted",
-  templateTrustPolicy: c = Me
-}) {
-  const d = Qr(), f = e.columns || 12, [h, p] = v(e.widgets), g = L(() => yo(e), [e]), b = L(
-    () => u === "trusted" ? [] : No(e, c),
-    [e, u, c]
-  ), w = L(
-    () => [...g, ...b],
-    [g, b]
-  ), A = L(() => w.some((S) => S.severity === "error"), [w]), $ = L(() => b.some((S) => S.severity === "error"), [b]), j = L(() => !!e.frozenAt || Io(e), [e]), [E, x] = v(!1), [T, O] = v(() => {
-    const S = e.context?.values ?? {};
-    return typeof window > "u" ? S : { ...S, ...eo(window.location.search) };
-  }), [I, G] = v(() => St("refreshIntervalMs", null)), [Z, X] = v(() => St("compact", !1)), [Y, P] = v(() => St("soundEnabled", !1));
-  R(() => {
-    zt("refreshIntervalMs", I);
-  }, [I]), R(() => {
-    zt("compact", Z);
-  }, [Z]), R(() => {
-    zt("soundEnabled", Y);
-  }, [Y]);
-  const [K, q] = v(null), [z, H] = v(null), [ee, Q] = v(null), [oe, y] = v([]), k = U(0), _ = ce((S) => {
-    Q((C) => ({ id: S, n: (C?.n ?? 0) + 1 }));
-  }, []), M = U(n);
-  R(() => {
-    M.current = n;
-  }, [n]);
-  const [W, V] = v([]), ne = ce(() => V([]), []), [te, se] = v([]), me = ce(() => se([]), []), [$e, Ee] = v({}), Le = ce((S, C) => {
-    Ee((J) => {
-      const ue = J[S];
-      if (C === null) {
-        if (!ue) return J;
-        const ge = { ...J };
-        return delete ge[S], ge;
-      }
-      return ue && ue.streaming === C.streaming && ue.connected === C.connected && ue.error === C.error && ue.title === C.title && ue.stale === C.stale ? J : { ...J, [S]: C };
-    });
-  }, []), pe = U(/* @__PURE__ */ new Map()), be = ce((S, C) => (pe.current.set(S, C), () => {
-    pe.current.get(S) === C && pe.current.delete(S);
-  }), []), he = U({ widgets: h, ctx: T, template: e });
-  he.current = { widgets: h, ctx: T, template: e };
-  const ye = ce(() => {
-    const { widgets: S, ctx: C, template: J } = he.current;
-    return Lo(J, S, C, (ue, ge) => {
-      const xe = pe.current.get(an(ue, ge));
-      return xe ? xe() : void 0;
-    }, (/* @__PURE__ */ new Date()).toISOString());
-  }, []), Pe = ce((S) => {
-    M.current?.(S), S.type === "action" ? V((C) => [{
-      receivedAt: Date.now(),
-      actionId: S.actionId,
-      clientRequestId: S.clientRequestId,
-      status: S.status,
-      message: S.message,
-      terminal: S.terminal
-    }, ...C].slice(0, Fo)) : S.type === "alert" && se((C) => [{
-      receivedAt: Date.now(),
-      widgetId: S.widgetId,
-      severity: S.severity,
-      message: S.message,
-      predicate: S.predicate
-    }, ...C].slice(0, Uo));
-  }, []), ve = ce((S, C = "info") => {
-    k.current += 1;
-    const J = k.current;
-    y((ue) => [...ue, { id: J, message: S, severity: C }]);
-  }, []), Qe = ce((S) => {
-    y((C) => C.filter((J) => J.id !== S));
-  }, []), Oe = ce((S, C) => {
-    O((J) => J[S] === C ? J : { ...J, [S]: C });
-  }, []);
-  R(() => {
-    if (typeof window > "u") return;
-    const S = to(window.location.search, T), C = `${window.location.pathname}${S ? `?${S}` : ""}${window.location.hash}`;
-    window.history.replaceState(null, "", C);
-  }, [T]);
-  const Ve = U(r);
-  R(() => {
-    Ve.current = r;
-  }, [r]), R(() => {
-    Ve.current?.(T);
-  }, [T]);
-  const De = ce((S, C) => {
-    p((J) => Qs(J, S, C));
-  }, []), yt = (S) => d === "mobile" ? f : d === "tablet" ? Math.min(S, Math.floor(f / 2)) : Math.min(S, f), vt = L(
-    () => ({
-      dispatch: De,
-      ctx: T,
-      setCtx: Oe,
-      backendUrl: t,
-      widgets: h,
-      refreshIntervalMs: I ?? void 0,
-      toast: ve,
-      compact: Z,
-      fullscreenId: K,
-      setFullscreenId: q,
-      focusedId: z,
-      setFocusedId: H,
-      refreshPulse: ee,
-      requestRefresh: _,
-      emit: Pe,
-      recentActions: W,
-      clearRecentActions: ne,
-      recentAlerts: te,
-      clearRecentAlerts: me,
-      soundEnabled: Y,
-      widgetHealth: $e,
-      reportWidgetHealth: Le,
-      registerWidgetData: be,
-      snapshot: ye
-    }),
-    [
-      De,
-      T,
-      Oe,
-      t,
-      h,
-      I,
-      ve,
-      Z,
-      K,
-      z,
-      ee,
-      _,
-      Pe,
-      W,
-      ne,
-      te,
-      me,
-      Y,
-      $e,
-      Le,
-      be,
-      ye
-    ]
-  );
-  R(() => {
-    if (!K) return;
-    const S = (C) => {
-      C.key === "Escape" && q(null);
-    };
-    return document.addEventListener("keydown", S), () => document.removeEventListener("keydown", S);
-  }, [K]), R(() => {
-    if (!z || typeof document > "u") return;
-    document.getElementById(`mt-widget-${z}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  }, [z]), R(() => {
-    const S = (C) => {
-      if (C.metaKey || C.ctrlKey || C.altKey) return;
-      const J = C.target?.tagName;
-      if (J === "INPUT" || J === "TEXTAREA" || C.target?.isContentEditable) return;
-      const ge = e.shortcuts?.find((F) => F.key === C.key);
-      if (ge) {
-        C.preventDefault();
-        for (const [F, re] of Object.entries(ge.ctx)) Oe(F, re);
-        return;
-      }
-      const xe = h.map((F) => F.id).filter((F) => !!F);
-      if (xe.length === 0) return;
-      const N = (F) => {
-        const re = z ? xe.indexOf(z) : -1, ie = xe[(re + F + xe.length) % xe.length];
-        H(ie);
-      };
-      switch (C.key) {
-        case "j":
-        case "ArrowDown":
-          C.preventDefault(), N(1);
-          break;
-        case "k":
-        case "ArrowUp":
-          C.preventDefault(), N(-1);
-          break;
-        case "f":
-          z && (C.preventDefault(), q(z));
-          break;
-        case "r":
-          z && (C.preventDefault(), _(z));
-          break;
-        case "Escape":
-          z && H(null);
-          break;
-      }
-    };
-    return document.addEventListener("keydown", S), () => document.removeEventListener("keydown", S);
-  }, [h, z, _, e.shortcuts, Oe]);
-  const et = !$ && K ? h.find((S) => S.id === K) : null;
-  return /* @__PURE__ */ o(qn.Provider, { value: vt, children: /* @__PURE__ */ o("div", { className: `mtc-root mtc-theme-${a}`, "data-theme": a, children: /* @__PURE__ */ o(zs, { children: /* @__PURE__ */ m(Zs, { children: [
-    /* @__PURE__ */ o(uo, { suggest: s }),
-    /* @__PURE__ */ o(po, { templateShortcuts: e.shortcuts }),
-    /* @__PURE__ */ o(go, { toasts: oe, dismiss: Qe }),
-    w.length > 0 && (!E || A) && /* @__PURE__ */ o(
-      ri,
-      {
-        issues: w,
-        dismissible: !A,
-        onDismiss: () => x(!0)
-      }
-    ),
-    /* @__PURE__ */ m("div", { className: "min-h-full bg-zinc-950 flex flex-col", children: [
-      /* @__PURE__ */ m("div", { className: "flex-1 p-3 md:p-5", children: [
-        (e.title || i === "full") && /* @__PURE__ */ m("div", { className: "mb-4 flex items-center gap-3 flex-wrap", children: [
-          e.title && /* @__PURE__ */ o("h1", { className: "text-lg font-semibold text-zinc-100 tracking-tight mr-1", children: Be(e.title, T) }),
-          i === "full" && Object.entries(T).map(([S, C]) => S === "range" ? /* @__PURE__ */ o(Bo, { value: C, onChange: (J) => Oe(S, J) }, S) : /* @__PURE__ */ m(
-            "div",
-            {
-              className: "px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-xs",
-              children: [
-                /* @__PURE__ */ o("span", { className: "text-zinc-500 uppercase tracking-wider mr-1", children: S }),
-                /* @__PURE__ */ o("span", { className: "text-zinc-100 font-mono", children: C })
-              ]
-            },
-            S
-          )),
-          i === "full" && /* @__PURE__ */ m("div", { className: "ml-auto flex items-center gap-2", children: [
-            j ? /* @__PURE__ */ o(ti, { frozenAt: e.frozenAt }) : /* @__PURE__ */ m(ft, { children: [
-              /* @__PURE__ */ o(Jo, { health: $e }),
-              /* @__PURE__ */ o(Ho, { value: I, onChange: G }),
-              /* @__PURE__ */ o(Xo, { onClick: () => _("*") })
-            ] }),
-            /* @__PURE__ */ o(Yo, { enabled: Y, onToggle: () => P((S) => !S) }),
-            /* @__PURE__ */ o(Zo, { compact: Z, onToggle: () => X((S) => !S) }),
-            !j && /* @__PURE__ */ o(
-              ei,
-              {
-                onClick: () => {
-                  const S = ye();
-                  l ? l(S) : ni(S), ve(l ? "Snapshot shared" : "Snapshot downloaded", "ok");
-                }
-              }
-            ),
-            /* @__PURE__ */ o(Qo, { onCopied: () => ve("URL copied", "ok") }),
-            /* @__PURE__ */ o(Wo, {})
-          ] })
-        ] }),
-        /* @__PURE__ */ o(
-          "div",
-          {
-            className: "grid gap-3 md:gap-4 items-start",
-            style: { gridTemplateColumns: `repeat(${f}, 1fr)` },
-            children: $ ? /* @__PURE__ */ o(si, { issues: b }) : h.map((S, C) => /* @__PURE__ */ o(
-              "div",
-              {
-                id: S.id ? `mt-widget-${S.id}` : void 0,
-                style: {
-                  gridColumn: `span ${yt(S.span || 6)}`
-                },
-                children: /* @__PURE__ */ o(
-                  cr,
-                  {
-                    config: S,
-                    contentHeight: S.height || Po[S.component] || 280,
-                    snapshotKey: an(S, C)
-                  }
-                )
-              },
-              S.id || C
-            ))
-          }
-        )
-      ] }),
-      i === "full" && /* @__PURE__ */ o(Vo, {})
-    ] }),
-    et && /* @__PURE__ */ o(oi, { widget: et, onClose: () => q(null) })
-  ] }) }) }) });
-}
-function ri({
-  issues: e,
-  dismissible: t,
-  onDismiss: n
-}) {
-  const r = e.filter((a) => a.severity === "error"), s = e.filter((a) => a.severity === "warn"), i = r.length > 0 ? "bg-red-500/10 border-red-500/40 text-red-200" : "bg-amber-500/10 border-amber-500/40 text-amber-200", l = r.length > 0 ? "Template errors" : "Template warnings";
-  return /* @__PURE__ */ m("div", { className: `border-b ${i} px-3 md:px-5 py-2 text-xs flex items-start gap-3`, children: [
-    /* @__PURE__ */ m("div", { className: "flex-1 min-w-0", children: [
-      /* @__PURE__ */ m("div", { className: "font-medium uppercase tracking-wider text-[10px] mb-1", children: [
-        l,
-        " (",
-        r.length + s.length,
-        ")"
-      ] }),
-      /* @__PURE__ */ m("ul", { className: "space-y-0.5", children: [
-        [...r, ...s].slice(0, 8).map((a, u) => /* @__PURE__ */ m("li", { className: "font-mono text-[11px] leading-tight", children: [
-          /* @__PURE__ */ o("span", { className: "opacity-60", children: a.path || "<root>" }),
-          /* @__PURE__ */ o("span", { className: "mx-1.5 opacity-40", children: "·" }),
-          /* @__PURE__ */ o("span", { children: a.message })
-        ] }, u)),
-        e.length > 8 && /* @__PURE__ */ m("li", { className: "opacity-60 text-[10px]", children: [
-          "… and ",
-          e.length - 8,
-          " more"
-        ] })
-      ] })
-    ] }),
-    t && /* @__PURE__ */ o(
-      "button",
-      {
-        onClick: n,
-        className: "text-[10px] uppercase tracking-wider opacity-70 hover:opacity-100 shrink-0",
-        children: "Dismiss"
-      }
-    )
-  ] });
-}
-function si({ issues: e }) {
-  const t = e.filter((n) => n.severity === "error");
-  return /* @__PURE__ */ m("div", { className: "col-span-full border border-red-500/40 bg-red-500/10 rounded p-4 text-sm text-red-100", children: [
-    /* @__PURE__ */ o("div", { className: "font-medium text-xs uppercase tracking-wider mb-2", children: "Template blocked" }),
-    /* @__PURE__ */ o("p", { className: "text-red-200/80 mb-3", children: "This dashboard includes URL, header, iframe, or polling behavior that the host trust policy rejected." }),
-    /* @__PURE__ */ m("ul", { className: "space-y-1", children: [
-      t.slice(0, 6).map((n, r) => /* @__PURE__ */ m("li", { className: "font-mono text-[11px] leading-tight", children: [
-        /* @__PURE__ */ o("span", { className: "opacity-60", children: n.path || "<root>" }),
-        /* @__PURE__ */ o("span", { className: "mx-1.5 opacity-40", children: "·" }),
-        /* @__PURE__ */ o("span", { children: n.message })
-      ] }, r)),
-      t.length > 6 && /* @__PURE__ */ m("li", { className: "opacity-60 text-[10px]", children: [
-        "… and ",
-        t.length - 6,
-        " more"
-      ] })
-    ] })
-  ] });
-}
-function oi({ widget: e, onClose: t }) {
-  const n = typeof window < "u" ? Math.floor(window.innerHeight * 0.82) : 600;
-  return /* @__PURE__ */ m(
-    "div",
-    {
-      className: "fixed inset-0 z-30 bg-zinc-950/95 backdrop-blur-sm p-4 md:p-8 flex flex-col motion-safe:animate-[fadeIn_180ms_ease-out]",
-      onClick: t,
-      children: [
-        /* @__PURE__ */ m("div", { className: "flex items-center justify-between mb-3 shrink-0", children: [
-          /* @__PURE__ */ o("span", { className: "text-[10px] uppercase tracking-wider text-zinc-500", children: "Fullscreen — esc to close" }),
-          /* @__PURE__ */ o(
-            "button",
-            {
-              onClick: t,
-              className: "text-zinc-500 hover:text-zinc-200 px-2 py-0.5 text-xs rounded border border-zinc-800",
-              children: "Close"
-            }
-          )
-        ] }),
-        /* @__PURE__ */ o("div", { onClick: (r) => r.stopPropagation(), className: "flex-1 min-h-0", children: /* @__PURE__ */ o(cr, { config: e, contentHeight: n }) })
-      ]
-    }
-  );
-}
-const hr = "medallion-terminal:";
-function St(e, t) {
-  if (typeof window > "u" || !window.localStorage) return t;
-  try {
-    const n = window.localStorage.getItem(hr + e);
-    return n == null ? t : JSON.parse(n);
-  } catch {
-    return t;
-  }
-}
-function zt(e, t) {
-  if (!(typeof window > "u" || !window.localStorage))
-    try {
-      window.localStorage.setItem(hr + e, JSON.stringify(t));
-    } catch {
-    }
-}
-function ii(e, t) {
-  R(() => {
-    const n = (r) => {
-      if (!(r.metaKey || r.ctrlKey)) return;
-      const s = Number(r.key);
-      Number.isFinite(s) && s >= 1 && s <= 9 && s <= e && (r.preventDefault(), t(s - 1));
-    };
-    return document.addEventListener("keydown", n), () => document.removeEventListener("keydown", n);
-  }, [e, t]);
-}
-function zu({
-  tabs: e,
-  activeIndex: t,
-  onSelect: n,
-  backendUrl: r,
-  theme: s = "dark",
-  templateTrust: i,
-  templateTrustPolicy: l
-}) {
-  const a = Math.max(0, Math.min(t, e.length - 1));
-  ii(e.length, n);
-  const [u, c] = v(() => /* @__PURE__ */ new Set([a]));
-  return R(() => {
-    c((d) => d.has(a) ? d : /* @__PURE__ */ new Set([...d, a]));
-  }, [a]), e.length === 0 ? null : /* @__PURE__ */ o("div", { className: `mtc-root mtc-theme-${s}`, "data-theme": s, children: /* @__PURE__ */ m("div", { className: "min-h-full bg-zinc-950", children: [
-    /* @__PURE__ */ o(li, { tabs: e, activeIndex: a, onSelect: n }),
-    e.map((d, f) => /* @__PURE__ */ o("div", { style: { display: f === a ? "block" : "none" }, children: u.has(f) && /* @__PURE__ */ o(
-      pr,
-      {
-        template: d.template,
-        backendUrl: r,
-        theme: s,
-        templateTrust: i,
-        templateTrustPolicy: l
-      }
-    ) }, f))
-  ] }) });
-}
-function li({
-  tabs: e,
-  activeIndex: t,
-  onSelect: n
-}) {
-  const r = typeof navigator < "u" && /mac/i.test(navigator.platform);
-  return /* @__PURE__ */ o("div", { className: "flex gap-0.5 px-3 md:px-5 pt-3 border-b border-zinc-800 overflow-x-auto items-end", children: e.map((s, i) => {
-    const l = i === t, a = i < 9 ? `${r ? "⌘" : "Ctrl"}${i + 1}` : null;
-    return /* @__PURE__ */ m(
-      "button",
-      {
-        onClick: () => n(i),
-        className: `px-3 py-1.5 text-xs font-medium rounded-t whitespace-nowrap transition-colors flex items-center gap-2 ${l ? "bg-zinc-900 text-zinc-100 border-x border-t border-zinc-800" : "text-zinc-500 hover:text-zinc-300"}`,
-        title: a ? `Switch with ${a}` : void 0,
-        children: [
-          /* @__PURE__ */ o("span", { children: s.label || `Tab ${i + 1}` }),
-          a && /* @__PURE__ */ o("span", { className: "text-[9px] text-zinc-600 font-mono uppercase tracking-wider", children: a })
-        ]
-      },
-      i
-    );
-  }) });
-}
-function Au(e = 0) {
-  const [t, n] = v(() => {
-    if (typeof window > "u") return e;
-    const s = Number(new URLSearchParams(window.location.search).get("tab"));
-    return Number.isFinite(s) && s >= 0 ? s : e;
-  });
-  return [t, (s) => {
-    if (n(s), typeof window < "u") {
-      const i = new URLSearchParams(window.location.search);
-      i.set("tab", String(s)), window.history.replaceState(null, "", `${window.location.pathname}?${i.toString()}${window.location.hash}`);
-    }
-  }];
-}
-function br(e) {
-  return typeof e != "number" ? String(e) : Math.abs(e) >= 1e9 ? (e / 1e9).toFixed(1) + "B" : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(1) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(1) + "K" : e.toFixed(Number.isInteger(e) ? 0 : 2);
-}
-function Ge(e) {
-  return Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 0 }) : Math.abs(e) < 1 ? e.toFixed(2) : e.toFixed(1);
-}
-function gr(e) {
-  return Math.abs(e) >= 1e12 ? (e / 1e12).toFixed(2) + "T" : Math.abs(e) >= 1e9 ? (e / 1e9).toFixed(2) + "B" : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(2) + "M" : Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 2 }) : e.toLocaleString(void 0, { maximumFractionDigits: 4 });
-}
-function Ie(e) {
-  if (e == null) return "";
-  try {
-    const t = new Date(e);
-    return isNaN(t.getTime()) ? String(e) : t.toLocaleDateString(void 0, { month: "short", day: "numeric" });
-  } catch {
-    return String(e);
-  }
-}
-const cn = 864e5;
-function ai(e) {
-  let t = !1, n = 1 / 0, r = -1 / 0;
-  for (const s of e) {
-    const i = String(s ?? "");
-    !t && i.includes(":") && (t = !0);
-    const l = new Date(i).getTime();
-    isNaN(l) || (l < n && (n = l), l > r && (r = l));
-  }
-  return { hasTime: t, spanMs: r > n ? r - n : 0 };
-}
-function ci(e) {
-  return e.hasTime ? e.spanMs <= 2 * cn ? (t) => {
-    try {
-      const n = new Date(t);
-      return isNaN(n.getTime()) ? String(t) : n.toLocaleTimeString(void 0, { hour: "2-digit", minute: "2-digit" });
-    } catch {
-      return String(t);
-    }
-  } : e.spanMs <= 14 * cn ? Ht : Ie : Ie;
-}
-function ui(e) {
-  return e.hasTime ? Ht : Ie;
-}
-function Ht(e) {
-  if (e == null) return "";
-  try {
-    const t = new Date(e);
-    return isNaN(t.getTime()) ? String(e) : t.toLocaleString(void 0, {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit"
-    });
-  } catch {
-    return String(e);
-  }
-}
-function di(e, t = {}) {
-  const { decimals: n = 2, as: r = "fraction", signed: s = !1 } = t, i = r === "fraction" ? e * 100 : e;
-  return `${s && i > 0 ? "+" : ""}${i.toFixed(n)}%`;
-}
-function fi(e, t = "USD", n = {}) {
-  const { compact: r = !1, decimals: s } = n;
-  try {
-    return e.toLocaleString(void 0, {
-      style: "currency",
-      currency: t,
-      maximumFractionDigits: s ?? (r ? 0 : Math.abs(e) >= 100 ? 2 : 4),
-      minimumFractionDigits: s ?? (r || Math.abs(e) >= 100 ? 0 : 2)
-    });
-  } catch {
-    return e.toLocaleString();
-  }
-}
-function mi(e, t = {}) {
-  const { signed: n = !1, as: r = "fraction" } = t, s = r === "fraction" ? e * 1e4 : e * 100;
-  return `${n && s > 0 ? "+" : ""}${Math.round(s)} bps`;
-}
-const Ce = {
-  ok: "var(--mtc-ok)",
-  warn: "var(--mtc-warning)",
-  danger: "var(--mtc-danger)",
-  error: "var(--mtc-danger)",
-  info: "var(--mtc-accent)",
-  muted: "var(--mtc-muted)"
-}, de = [
-  "#38bdf8",
-  "#34d399",
-  "#fbbf24",
-  "#f87171",
-  "#a78bfa",
-  "#f472b6",
-  "#22d3ee",
-  "#94a3b8"
-], Te = {
-  backgroundColor: "var(--mtc-surface)",
-  border: "1px solid var(--mtc-border)",
-  borderRadius: 6,
-  fontSize: 12,
-  color: "var(--mtc-fg)"
-};
-function pi(e, t) {
-  return e ? e in Ce ? Ce[e] : e.startsWith("#") ? e : de[t % de.length] : de[t % de.length];
-}
-function xr(e, t = de) {
-  return e.map((n, r) => t[r % t.length]);
-}
-const hi = ["#38bdf8", "#34d399", "#fbbf24", "#f87171", "#a78bfa", "#f472b6"], bi = {
-  buy: "var(--mtc-ok)",
-  sell: "var(--mtc-danger)",
-  info: "var(--mtc-accent)",
-  warn: "var(--mtc-warning)"
-}, gi = "var(--mtc-grid)", At = "var(--mtc-border)", rt = "var(--mtc-muted)", ht = "var(--mtc-surface)", xi = "var(--mtc-muted-subtle)";
-function yi({ data: e, options: t }) {
-  const { hoverTime: n, setHoverTime: r } = dr(), s = U(null), i = L(() => Si(e), [e]), { tickFormatter: l, labelFormatter: a } = L(() => {
-    const f = ai(i?.points.map((h) => h._ts) ?? []);
-    return {
-      tickFormatter: ci(f),
-      labelFormatter: ui(f)
-    };
-  }, [i]), u = L(
-    () => xr(i?.keys ?? [], hi),
-    [i]
-  ), c = t?.brush === !0;
-  if (!i) return /* @__PURE__ */ o(D, { children: "No data" });
-  const d = n != null && n !== s.current;
-  return /* @__PURE__ */ o(Ae, { width: "100%", height: "100%", children: /* @__PURE__ */ m(
-    Cr,
-    {
-      data: i.points,
-      onMouseMove: (f) => {
-        const h = f?.activeLabel;
-        if (h != null) {
-          const p = String(h);
-          s.current = p, r(p);
-        }
-      },
-      onMouseLeave: () => {
-        s.current = null, r(null);
-      },
-      children: [
-        /* @__PURE__ */ o(He, { strokeDasharray: "3 3", stroke: gi }),
-        /* @__PURE__ */ o(
-          We,
-          {
-            dataKey: "_ts",
-            stroke: At,
-            tick: { fontSize: 11, fill: rt },
-            tickFormatter: l
-          }
-        ),
-        /* @__PURE__ */ o(
-          qe,
-          {
-            stroke: At,
-            tick: { fontSize: 11, fill: rt },
-            tickFormatter: br,
-            width: 60
-          }
-        ),
-        /* @__PURE__ */ o(
-          _e,
-          {
-            contentStyle: Te,
-            labelStyle: { color: rt },
-            labelFormatter: a
-          }
-        ),
-        i.keys.map((f, h) => /* @__PURE__ */ o(
-          Er,
-          {
-            type: "monotone",
-            dataKey: f,
-            stroke: u[h],
-            dot: !1,
-            strokeWidth: 2
-          },
-          f
-        )),
-        c && i.points.length > 4 && /* @__PURE__ */ o(
-          Fn,
-          {
-            dataKey: "_ts",
-            height: 20,
-            stroke: At,
-            fill: ht,
-            travellerWidth: 6,
-            tickFormatter: l
-          }
-        ),
-        d && /* @__PURE__ */ o(Or, { x: n, stroke: xi, strokeDasharray: "3 3" }),
-        i.annotations.map((f, h) => {
-          const p = f.color ?? (f.kind ? bi[f.kind] : null) ?? rt;
-          if (f.endTimestamp) {
-            const [g, b] = f.timestamp <= f.endTimestamp ? [f.timestamp, f.endTimestamp] : [f.endTimestamp, f.timestamp];
-            return /* @__PURE__ */ o(
-              Mr,
-              {
-                x1: g,
-                x2: b,
-                fill: p,
-                fillOpacity: 0.1,
-                stroke: p,
-                strokeOpacity: 0.4,
-                strokeDasharray: "3 3",
-                label: { value: f.label, position: "insideTopLeft", fontSize: 10, fill: p }
-              },
-              h
-            );
-          }
-          return f.value === void 0 ? null : /* @__PURE__ */ o(
-            Rr,
-            {
-              x: f.timestamp,
-              y: f.value,
-              r: 6,
-              fill: p,
-              stroke: ht,
-              strokeWidth: 2,
-              ifOverflow: "extendDomain",
-              shape: (g) => /* @__PURE__ */ o(vi, { ...g, kind: f.kind, color: p, label: f.label })
-            },
-            h
-          );
-        })
-      ]
-    }
-  ) });
-}
-function vi({ cx: e, cy: t, kind: n, color: r, label: s }) {
-  if (e == null || t == null) return null;
-  let i;
-  if (n === "buy")
-    i = `M${e} ${t - 7} L${e + 6} ${t + 4} L${e - 6} ${t + 4} Z`;
-  else if (n === "sell")
-    i = `M${e} ${t + 7} L${e + 6} ${t - 4} L${e - 6} ${t - 4} Z`;
-  else
-    return /* @__PURE__ */ o("g", { children: /* @__PURE__ */ o("circle", { cx: e, cy: t, r: 5, fill: r, stroke: ht, strokeWidth: 2, children: /* @__PURE__ */ o("title", { children: s }) }) });
-  return /* @__PURE__ */ o("g", { children: /* @__PURE__ */ o("path", { d: i, fill: r, stroke: ht, strokeWidth: 1.5, children: /* @__PURE__ */ o("title", { children: s }) }) });
-}
-const wi = ["timestamp", "date", "time", "datetime", "ts", "x", "t"];
-function ki(e) {
-  for (const t of wi)
-    if (t in e) return t;
-  return null;
-}
-function Ni(e) {
-  if (!e || typeof e != "object" || Array.isArray(e)) return [];
-  const t = e.annotations;
-  return Array.isArray(t) ? t.map((n) => {
-    const r = n;
-    return {
-      timestamp: String(r.timestamp ?? ""),
-      endTimestamp: r.end_timestamp != null ? String(r.end_timestamp) : r.endTimestamp != null ? String(r.endTimestamp) : void 0,
-      value: typeof r.value == "number" ? r.value : void 0,
-      label: String(r.label ?? ""),
-      kind: r.kind != null ? String(r.kind) : void 0,
-      color: r.color != null ? String(r.color) : void 0
-    };
-  }) : [];
-}
-function Si(e) {
-  if (!e) return null;
-  const t = Ni(e);
-  if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object" && e[0] !== null) {
-    const n = e[0], r = ki(n);
-    if (!r) return null;
-    const s = Object.keys(n).filter(
-      (l) => l !== r && typeof n[l] == "number"
-    );
-    return s.length === 0 ? null : { points: e.map((l) => {
-      const a = l, u = { _ts: a[r] };
-      for (const c of s) u[c] = a[c];
-      return u;
-    }), keys: s, annotations: t };
-  }
-  if (typeof e == "object" && e !== null && "points" in e) {
-    const n = e.points;
-    return !Array.isArray(n) || n.length === 0 ? null : { points: n.map((s) => {
-      const i = s;
-      return { _ts: i.timestamp ?? i.date ?? i.time ?? i.x, value: i.value ?? i.y ?? i.v };
-    }), keys: ["value"], annotations: t };
-  }
-  if (typeof e == "object" && e !== null && "series" in e) {
-    const n = e.series;
-    if (!Array.isArray(n)) return null;
-    const r = /* @__PURE__ */ new Map(), s = [];
-    for (const i of n) {
-      const l = i, a = String(l.name || l.label || `s${s.length}`);
-      s.push(a);
-      const u = l.data ?? l.points;
-      if (Array.isArray(u))
-        for (const c of u) {
-          const d = String(c.timestamp ?? c.date ?? c.time ?? c.x ?? "");
-          r.has(d) || r.set(d, { _ts: d }), r.get(d)[a] = c.value ?? c.y ?? c.v;
-        }
-    }
-    return { points: Array.from(r.values()), keys: s, annotations: t };
-  }
-  return null;
-}
-const zi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Timeseries: yi
-}, Symbol.toStringTag, { value: "Module" })), Ai = {
-  buy: { shape: "arrowUp", position: "belowBar", color: "ok" },
-  sell: { shape: "arrowDown", position: "aboveBar", color: "danger" },
-  info: { shape: "circle", position: "aboveBar", color: "accent" },
-  warn: { shape: "circle", position: "aboveBar", color: "warning" }
-}, un = {
-  shape: "circle",
-  position: "aboveBar",
-  color: "muted"
-}, Se = {
-  accent: "#38bdf8",
-  danger: "#f87171",
-  ok: "#34d399",
-  warning: "#fbbf24",
-  muted: "#8a95a3",
-  mutedSubtle: "#5f6b7a",
-  border: "#2b323c",
-  grid: "#242b34"
-};
-function _i({ data: e }) {
-  const { hoverTime: t, setHoverTime: n } = dr(), r = U(null), s = U(null), i = U(null), l = U(null), a = U(null), u = U(null), c = U(Se);
-  R(() => {
-    if (!r.current) return;
-    const f = Ei(r.current);
-    c.current = f;
-    const h = Vr(r.current, {
-      layout: {
-        background: { type: Jr.Solid, color: "transparent" },
-        textColor: f.muted,
-        fontSize: 11
-      },
-      grid: {
-        vertLines: { color: f.grid },
-        horzLines: { color: f.grid }
-      },
-      crosshair: {
-        vertLine: { color: f.mutedSubtle, width: 1, style: 2 },
-        horzLine: { color: f.mutedSubtle, width: 1, style: 2 }
-      },
-      rightPriceScale: {
-        borderColor: f.border
-      },
-      timeScale: {
-        borderColor: f.border,
-        timeVisible: !0
-      },
-      handleScroll: !0,
-      handleScale: !0
-    }), p = h.addSeries(Xr, {
-      upColor: f.ok,
-      downColor: f.danger,
-      borderDownColor: f.danger,
-      borderUpColor: f.ok,
-      wickDownColor: f.danger,
-      wickUpColor: f.ok
-    }), g = h.addSeries(Yr, {
-      priceFormat: { type: "volume" },
-      priceScaleId: "volume"
-    });
-    h.priceScale("volume").applyOptions({
-      scaleMargins: { top: 0.8, bottom: 0 }
-    }), s.current = h, i.current = p, l.current = g, a.current = Zr(p, []), h.subscribeCrosshairMove((w) => {
-      if (w.time != null) {
-        const A = String(w.time);
-        u.current = A, n(A);
-      } else
-        u.current = null, n(null);
-    });
-    const b = new ResizeObserver((w) => {
-      const { width: A, height: $ } = w[0].contentRect;
-      h.applyOptions({ width: A, height: $ });
-    });
-    return b.observe(r.current), () => {
-      b.disconnect(), h.remove(), s.current = null, i.current = null, l.current = null, a.current = null;
-    };
-  }, []), R(() => {
-    const f = s.current, h = i.current;
-    if (!f || !h) return;
-    if (t == null) {
-      f.clearCrosshairPosition();
-      return;
-    }
-    if (t === u.current) return;
-    const p = h.data?.()[0]?.close ?? 0;
-    f.setCrosshairPosition(p, t, h);
-  }, [t]);
-  const d = L(() => Ci(e), [e]);
-  return R(() => {
-    if (i.current && d.candles.length !== 0) {
-      if (i.current.setData(d.candles), d.volumes.length > 0 && l.current) {
-        const f = c.current;
-        l.current.setData(d.volumes.map((h) => ({
-          ...h,
-          color: h.direction === "down" ? dn(f.danger, 0.3) : dn(f.ok, 0.3)
-        })));
-      }
-      a.current && a.current.setMarkers(Ti(d.annotations, c.current)), s.current?.timeScale().fitContent();
-    }
-  }, [d]), /* @__PURE__ */ m("div", { className: "relative w-full h-full", children: [
-    /* @__PURE__ */ o("div", { ref: r, className: "w-full h-full" }),
-    d.candles.length === 0 && /* @__PURE__ */ o("div", { className: "absolute inset-0 flex items-center justify-center pointer-events-none", children: /* @__PURE__ */ o(D, { children: "No data" }) })
-  ] });
-}
-function Ti(e, t) {
-  return e.map((n) => {
-    const r = n.kind ? Ai[n.kind] ?? un : un;
-    return {
-      time: yr(n.timestamp),
-      position: r.position,
-      shape: r.shape,
-      color: n.color ?? t[r.color],
-      text: n.label
-    };
-  });
-}
-const $i = ["timestamp", "date", "time", "datetime", "ts", "t"];
-function Ue(e, t) {
-  for (const r of t)
-    if (r in e) return r;
-  const n = Object.keys(e).reduce((r, s) => (r[s.toLowerCase()] = s, r), {});
-  for (const r of t)
-    if (n[r]) return n[r];
-  return null;
-}
-function yr(e) {
-  if (typeof e == "number")
-    return e > 1e12 ? Math.floor(e / 1e3) : e;
-  const t = String(e).trim();
-  if (t.includes("T") || / \d/.test(t)) {
-    const n = new Date(t.replace(" ", "T"));
-    if (!isNaN(n.getTime())) return Math.floor(n.getTime() / 1e3);
-  }
-  return t.split(" ")[0].split("T")[0];
-}
-function Ci(e) {
-  const t = { candles: [], volumes: [], annotations: [] };
-  if (!e) return t;
-  let n, r = [];
-  if (Array.isArray(e))
-    n = e;
-  else if (typeof e == "object" && e !== null) {
-    const p = e;
-    n = Array.isArray(p.bars) ? p.bars : [], Array.isArray(p.annotations) && (r = p.annotations.map((g) => {
-      const b = g;
-      return {
-        timestamp: String(b.timestamp ?? ""),
-        value: typeof b.value == "number" ? b.value : void 0,
-        label: String(b.label ?? ""),
-        kind: b.kind != null ? String(b.kind) : void 0,
-        color: b.color != null ? String(b.color) : void 0
-      };
-    }));
-  } else
-    n = [];
-  if (n.length === 0 || typeof n[0] != "object" || n[0] === null)
-    return { ...t, annotations: r };
-  const s = n[0], i = Ue(s, $i), l = Ue(s, ["open", "o"]), a = Ue(s, ["high", "h"]), u = Ue(s, ["low", "l"]), c = Ue(s, ["close", "c"]), d = Ue(s, ["volume", "vol", "v"]);
-  if (!i || !l || !a || !u || !c) return { ...t, annotations: r };
-  const f = [], h = [];
-  for (const p of n) {
-    const g = p, b = yr(g[i]), w = Number(g[l]), A = Number(g[a]), $ = Number(g[u]), j = Number(g[c]);
-    f.push({ time: b, open: w, high: A, low: $, close: j }), d && g[d] != null && h.push({
-      time: b,
-      value: Number(g[d]),
-      direction: j >= w ? "up" : "down"
-    });
-  }
-  return { candles: f, volumes: h, annotations: r };
-}
-function Ei(e) {
-  const t = getComputedStyle(e), n = (r, s) => t.getPropertyValue(r).trim() || s;
-  return {
-    accent: n("--mtc-accent", Se.accent),
-    danger: n("--mtc-danger", Se.danger),
-    ok: n("--mtc-ok", Se.ok),
-    warning: n("--mtc-warning", Se.warning),
-    muted: n("--mtc-muted", Se.muted),
-    mutedSubtle: n("--mtc-muted-subtle", Se.mutedSubtle),
-    border: n("--mtc-border", Se.border),
-    grid: n("--mtc-grid", Se.grid)
-  };
-}
-function dn(e, t) {
-  const n = e.trim().match(/^#([0-9a-f]{6})$/i);
-  if (n) {
-    const s = parseInt(n[1], 16);
-    return `rgba(${s >> 16 & 255}, ${s >> 8 & 255}, ${s & 255}, ${t})`;
-  }
-  const r = e.trim().match(/^rgba?\(([^)]+)\)$/i);
-  if (r) {
-    const s = r[1].split(/[\s,\/]+/).map(Number).filter(Number.isFinite);
-    if (s.length >= 3) return `rgba(${s[0]}, ${s[1]}, ${s[2]}, ${t})`;
-  }
-  return e;
-}
-const Oi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Candlestick: _i
-}, Symbol.toStringTag, { value: "Module" }));
-function vr(e) {
-  if (typeof e != "string") return;
-  const t = e.trim();
-  if (/^https?:\/\//i.test(t) || /^\/(?!\/)/.test(t)) return t;
-}
-const Mi = /^\d{4}-\d{2}-\d{2}T[\d:.]+(Z|[+-]\d{2}:?\d{2})$/;
-function Ri(e) {
-  if (typeof e != "string" || !Mi.test(e.trim())) return e;
-  const t = new Date(e);
-  return isNaN(t.getTime()) ? e : t.toLocaleString(void 0, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
-  });
-}
-function wr(e) {
-  if (!e) return [];
-  if (typeof e == "string") return [{ body: e }];
-  if (!Array.isArray(e) && typeof e == "object" && e !== null) {
-    const t = e;
-    return Array.isArray(t.items) ? wr(t.items) : [fn(t)];
-  }
-  return Array.isArray(e) ? e.map((t) => typeof t == "string" ? { body: t } : typeof t == "object" && t !== null ? fn(t) : { body: String(t) }) : [];
-}
-function fn(e) {
-  return {
-    id: e.id != null ? String(e.id) : void 0,
-    title: e.title != null ? String(e.title) : void 0,
-    meta: e.meta ?? e.source ?? e.date ?? e.author ? [e.source, e.author, Ri(e.date)].filter(Boolean).map(String).join(" · ") : void 0,
-    body: e.body ?? e.content ?? e.summary ?? e.text ? String(e.body ?? e.content ?? e.summary ?? e.text) : void 0,
-    tags: Array.isArray(e.tags) ? e.tags.map(String) : void 0,
-    image: e.image != null ? String(e.image) : e.image_url != null ? String(e.image_url) : e.thumbnail != null ? String(e.thumbnail) : void 0,
-    url: vr(e.url ?? e.uri ?? e.link ?? e.href)
-  };
-}
-const ji = 25, Ii = 600;
-function Li({ data: e, options: t }) {
-  const { setCtx: n } = ae(), r = t?.pageSize || ji, s = t?.row_context, i = t?.heat_columns ?? [], l = t?.export === !0, a = t?.tick_flash === !0, u = t?.search === !0, c = t?.column_formats ?? {}, { columns: d, rows: f, labels: h, formats: p } = L(() => Pi(e), [e]), g = L(() => ({ ...p, ...c }), [p, c]), [b, w] = v(null), [A, $] = v(!0), [j, E] = v(0), [x, T] = v(""), O = (y, k) => {
-    const _ = d[0] != null ? y[d[0]] : void 0;
-    return _ == null ? `_idx_${k}` : String(_);
-  }, I = U(/* @__PURE__ */ new Map()), [G, Z] = v(/* @__PURE__ */ new Map());
-  R(() => {
-    if (!a) return;
-    const y = /* @__PURE__ */ new Map();
-    for (let _ = 0; _ < f.length; _++) {
-      const M = f[_], W = O(M, _), V = I.current.get(W), ne = {};
-      let te = null;
-      for (const se of d) {
-        const me = M[se];
-        typeof me == "number" && (ne[se] = me, te == null && V && V[se] != null && V[se] !== me && (te = me > V[se] ? "up" : "down"));
-      }
-      I.current.set(W, ne), te && y.set(W, te);
-    }
-    if (y.size === 0) return;
-    Z((_) => {
-      const M = new Map(_);
-      for (const [W, V] of y) M.set(W, V);
-      return M;
-    });
-    const k = setTimeout(() => {
-      Z((_) => {
-        const M = new Map(_);
-        for (const [W, V] of y)
-          M.get(W) === V && M.delete(W);
-        return M;
-      });
-    }, Ii);
-    return () => clearTimeout(k);
-  }, [f, a]);
-  const X = L(() => {
-    const y = {};
-    for (const k of i) {
-      let _ = 1 / 0, M = -1 / 0;
-      for (const W of f) {
-        const V = W[k];
-        typeof V == "number" && Number.isFinite(V) && (V < _ && (_ = V), V > M && (M = V));
-      }
-      Number.isFinite(_) && Number.isFinite(M) && (y[k] = { min: _, max: M });
-    }
-    return y;
-  }, [f, i]), Y = (y) => {
-    if (!s) return;
-    const k = s.field ?? d[0], _ = y[k];
-    _ != null && n(s.key, String(_));
-  }, P = L(() => {
-    const y = x.trim().toLowerCase();
-    return y ? f.filter(
-      (k) => d.some((_) => {
-        const M = k[_];
-        return M != null && String(M).toLowerCase().includes(y);
-      })
-    ) : f;
-  }, [f, d, x]), K = L(() => b ? [...P].sort((y, k) => {
-    const _ = y[b], M = k[b];
-    if (_ == null && M == null) return 0;
-    if (_ == null) return 1;
-    if (M == null) return -1;
-    const W = typeof _ == "number" && typeof M == "number" ? _ - M : String(_).localeCompare(String(M));
-    return A ? W : -W;
-  }) : P, [P, b, A]), q = Math.max(1, Math.ceil(K.length / r)), z = Math.min(j, q - 1), H = K.slice(z * r, (z + 1) * r), ee = K.length > r, Q = (y) => {
-    b === y ? $(!A) : (w(y), $(!0)), E(0);
-  };
-  return d.length === 0 ? /* @__PURE__ */ o(D, { children: "No data" }) : /* @__PURE__ */ m("div", { className: "flex flex-col h-full", children: [
-    (u || l) && /* @__PURE__ */ m("div", { className: "flex items-center gap-2 pb-1", children: [
-      u && /* @__PURE__ */ o(
-        "input",
-        {
-          type: "text",
-          value: x,
-          onChange: (y) => {
-            T(y.target.value), E(0);
-          },
-          placeholder: "filter…",
-          className: "flex-1 bg-zinc-950 border border-zinc-800 rounded px-2 py-0.5 text-xs text-zinc-200 placeholder-zinc-600 outline-none focus:border-zinc-600"
-        }
-      ),
-      l && /* @__PURE__ */ o(
-        "button",
-        {
-          onClick: () => {
-            const y = [
-              d.map(Pt).join(","),
-              ...K.map((W) => d.map((V) => Pt(W[V])).join(","))
-            ], k = new Blob([y.join(`
-`)], { type: "text/csv;charset=utf-8" }), _ = URL.createObjectURL(k), M = document.createElement("a");
-            M.href = _, M.download = "export.csv", M.click(), URL.revokeObjectURL(_);
-          },
-          className: "text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800 shrink-0",
-          title: "Download as CSV",
-          children: "↓ CSV"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ o("div", { className: "overflow-auto flex-1 min-h-0", children: /* @__PURE__ */ m("table", { className: "w-full text-sm", children: [
-      /* @__PURE__ */ o("thead", { className: "sticky top-0 bg-zinc-900", children: /* @__PURE__ */ o("tr", { children: d.map((y) => {
-        const k = g[y], _ = k && k !== "sparkline" && /^(currency|percent|bps|compact)(:|$)/.test(k);
-        return /* @__PURE__ */ m(
-          "th",
-          {
-            onClick: () => Q(y),
-            className: `px-3 py-2 text-zinc-400 border-b border-zinc-700 cursor-pointer hover:text-zinc-100 select-none whitespace-nowrap font-medium ${_ ? "text-right" : "text-left"}`,
-            children: [
-              h[y] ?? y,
-              b === y && /* @__PURE__ */ o("span", { className: "ml-1 text-zinc-500", children: A ? "↑" : "↓" })
-            ]
-          },
-          y
-        );
-      }) }) }),
-      /* @__PURE__ */ o("tbody", { children: H.map((y, k) => {
-        const _ = G.get(O(y, k));
-        return /* @__PURE__ */ o(
-          "tr",
-          {
-            onClick: s ? () => Y(y) : void 0,
-            className: `border-b border-zinc-800/60 transition-colors duration-300 ${_ === "up" ? "bg-emerald-500/15" : _ === "down" ? "bg-red-500/15" : ""} ${s ? "cursor-pointer hover:bg-zinc-800" : "hover:bg-zinc-800/40"}`,
-            children: d.map((W) => {
-              const V = X[W], ne = y[W], te = V && typeof ne == "number" ? { backgroundColor: Di(ne, V.min, V.max) } : void 0, se = g[W];
-              if (se === "link" && ne != null) {
-                const be = typeof ne == "object" && !Array.isArray(ne) ? ne : { label: void 0, url: ne }, he = vr(be.url), ye = be.label != null && be.label !== "" ? String(be.label) : he ?? "";
-                return /* @__PURE__ */ o("td", { className: "px-3 py-2.5 whitespace-nowrap", style: te, children: he ? /* @__PURE__ */ m(
-                  "a",
-                  {
-                    href: he,
-                    ...he.startsWith("/") ? {} : { target: "_blank", rel: "noopener noreferrer" },
-                    className: "text-sky-400 hover:underline",
-                    children: [
-                      ye,
-                      /* @__PURE__ */ o("span", { className: "ml-1 text-xs text-zinc-500", "aria-hidden": "true", children: he.startsWith("/") ? "→" : "↗" })
-                    ]
-                  }
-                ) : /* @__PURE__ */ o("span", { className: "text-zinc-100", children: ye }) }, W);
-              }
-              if (se === "sparkline" && Array.isArray(ne))
-                return /* @__PURE__ */ o("td", { className: "px-3 py-2.5 whitespace-nowrap", style: te, children: /* @__PURE__ */ o(Fi, { values: ne }) }, W);
-              const me = se ? Ui(ne, se) : Dt(ne), $e = se ? se.split(":").slice(1).includes("signed") : !1, Le = se && se !== "sparkline" && /^(currency|percent|bps|compact)(:|$)/.test(se) ? "text-right" : "", pe = $e && typeof ne == "number" ? ne > 0 ? "text-emerald-400" : ne < 0 ? "text-red-400" : "text-zinc-100" : "text-zinc-100";
-              return /* @__PURE__ */ o(
-                "td",
-                {
-                  className: `px-3 py-2.5 whitespace-nowrap tabular-nums ${Le} ${pe}`,
-                  style: te,
-                  children: me
-                },
-                W
-              );
-            })
-          },
-          k
-        );
-      }) })
-    ] }) }),
-    ee && /* @__PURE__ */ m("div", { className: "flex items-center justify-between px-3 py-2 border-t border-zinc-800 text-xs text-zinc-400", children: [
-      /* @__PURE__ */ m("span", { children: [
-        K.length,
-        " rows"
-      ] }),
-      /* @__PURE__ */ m("div", { className: "flex items-center gap-1", children: [
-        /* @__PURE__ */ o("button", { onClick: () => E(0), disabled: z === 0, className: "px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30", children: "«" }),
-        /* @__PURE__ */ o("button", { onClick: () => E((y) => y - 1), disabled: z === 0, className: "px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30", children: "‹" }),
-        /* @__PURE__ */ m("span", { className: "px-2 text-zinc-300", children: [
-          z + 1,
-          " / ",
-          q
-        ] }),
-        /* @__PURE__ */ o("button", { onClick: () => E((y) => y + 1), disabled: z >= q - 1, className: "px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30", children: "›" }),
-        /* @__PURE__ */ o("button", { onClick: () => E(q - 1), disabled: z >= q - 1, className: "px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30", children: "»" })
-      ] })
-    ] })
-  ] });
-}
-function Pi(e) {
-  const t = { columns: [], rows: [], labels: {}, formats: {} };
-  if (!e) return t;
-  if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object") {
-    const n = [...new Set(e.flatMap((r) => Object.keys(r)))];
-    return { ...t, columns: n, rows: e };
-  }
-  if (typeof e == "object" && e !== null && "rows" in e) {
-    const n = e, r = Array.isArray(n.columns) ? n.columns : [];
-    if (r.length > 0 && typeof r[0] == "object") {
-      const i = r, l = i.map((d) => d.key), a = {}, u = {};
-      for (const d of i)
-        d.label && (a[d.key] = d.label), d.format && (u[d.key] = d.format);
-      const c = n.rows.map(
-        (d) => Array.isArray(d) ? Object.fromEntries(l.map((f, h) => [f, d[h]])) : d
-      );
-      return { columns: l, rows: c, labels: a, formats: u };
-    }
-    if (r.length > 0) {
-      const i = r, l = n.rows.map(
-        (a) => Array.isArray(a) ? Object.fromEntries(i.map((u, c) => [u, a[c]])) : a
-      );
-      return { ...t, columns: i, rows: l };
-    }
-    const s = n.rows;
-    if (s.length > 0 && typeof s[0] == "object" && !Array.isArray(s[0])) {
-      const i = [...new Set(s.flatMap((l) => Object.keys(l)))];
-      return { ...t, columns: i, rows: s };
-    }
-  }
-  return t;
-}
-function Di(e, t, n) {
-  if (n === t) return "transparent";
-  if (t < 0 && n > 0) {
-    const s = Math.max(Math.abs(t), Math.abs(n)), i = Math.max(-1, Math.min(1, e / s));
-    return i >= 0 ? `rgba(16, 185, 129, ${0.35 * i})` : `rgba(239, 68, 68, ${0.35 * -i})`;
-  }
-  return `rgba(14, 165, 233, ${0.35 * ((e - t) / (n - t))})`;
-}
-function Pt(e) {
-  if (e == null) return "";
-  if (typeof e == "object" && !Array.isArray(e) && "url" in e)
-    return Pt(e.url);
-  const t = String(e);
-  return /[,"\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
-}
-function Fi({ values: e }) {
-  const t = e.map((u) => Number(u)).filter((u) => Number.isFinite(u));
-  if (t.length < 2) return /* @__PURE__ */ o("span", { className: "text-zinc-600", children: "—" });
-  const n = Math.min(...t), s = Math.max(...t) - n || 1, l = t[t.length - 1] >= t[0] ? "#10b981" : "#ef4444", a = t.map((u, c) => {
-    const d = c / (t.length - 1) * 100, f = 16 - (u - n) / s * 14 - 1;
-    return `${d.toFixed(1)},${f.toFixed(1)}`;
-  }).join(" ");
-  return /* @__PURE__ */ o("svg", { viewBox: "0 0 100 16", className: "w-20 h-4", preserveAspectRatio: "none", children: /* @__PURE__ */ o(
-    "polyline",
-    {
-      fill: "none",
-      stroke: l,
-      strokeWidth: "1.5",
-      points: a,
-      vectorEffect: "non-scaling-stroke"
-    }
-  ) });
+//#endregion
+//#region src/hooks/useBreakpoint.ts
+function Ct() {
+	if (typeof window > "u") return "desktop";
+	let e = window.innerWidth;
+	return e < 768 ? "mobile" : e < 1024 ? "tablet" : "desktop";
+}
+function wt() {
+	let [e, t] = q(Ct);
+	return W(() => {
+		let e = () => t(Ct());
+		return window.addEventListener("resize", e), () => window.removeEventListener("resize", e);
+	}, []), e;
+}
+//#endregion
+//#region src/core/getNested.ts
+function Tt(e, t) {
+	return t ? t.split(".").reduce((e, t) => {
+		if (e != null) {
+			if (Array.isArray(e)) {
+				let n = Number(t);
+				return Number.isInteger(n) ? e[n] : void 0;
+			}
+			if (typeof e == "object") return e[t];
+		}
+	}, e) : e;
+}
+//#endregion
+//#region src/hooks/useDataSource.ts
+function Et(e) {
+	return e.inline ?? e.data;
 }
 function Dt(e) {
-  return e == null ? "—" : typeof e == "number" ? Number.isInteger(e) ? e.toLocaleString() : e.toLocaleString(void 0, { minimumFractionDigits: 2, maximumFractionDigits: 4 }) : typeof e == "boolean" ? e ? "Yes" : "No" : String(e);
+	return e.refreshIntervalMs ?? e.refreshInterval;
 }
-function Ui(e, t) {
-  if (e == null) return "—";
-  if (t.split(":")[0] === "datetime") return Ht(e);
-  if (typeof e != "number") return Dt(e);
-  const [n, ...r] = t.split(":"), s = new Set(r), i = s.has("signed");
-  switch (n) {
-    case "currency": {
-      const l = r.find((a) => a !== "signed") ?? "USD";
-      return fi(e, l);
-    }
-    case "percent": {
-      const l = s.has("p") ? "percent" : "fraction";
-      return di(e, { signed: i, as: l });
-    }
-    case "bps":
-      return mi(e, { signed: i });
-    case "compact":
-      return Ge(e);
-    default:
-      return Dt(e);
-  }
+function Ot(e) {
+	return e instanceof Error ? e.name === "AbortError" || /\babort(?:ed)?\b/i.test(e.message) : !1;
 }
-const Bi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  DataTable: Li
-}, Symbol.toStringTag, { value: "Module" })), Ki = 400;
-function kr(e, t = Ki) {
-  const [n, r] = v(e), s = U(e), i = U(0), l = U(void 0);
-  return R(() => {
-    if (typeof window > "u" || !Number.isFinite(e)) {
-      r(e);
-      return;
-    }
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      r(e);
-      return;
-    }
-    if (e === n) return;
-    s.current = n, i.current = performance.now();
-    const u = (c) => {
-      const d = Math.min(1, (c - i.current) / t), f = 1 - Math.pow(1 - d, 3), h = s.current + (e - s.current) * f;
-      r(h), d < 1 && (l.current = requestAnimationFrame(u));
-    };
-    return l.current = requestAnimationFrame(u), () => {
-      l.current && cancelAnimationFrame(l.current);
-    };
-  }, [e, t]), n;
+function kt(e) {
+	e.signal.aborted || e.abort();
 }
-const Hi = 600;
-function Wi({ data: e }) {
-  const { value: t, delta: n, unit: r, label: s, trend: i } = Gi(e), l = kr(t), a = U(null), [u, c] = v(null);
-  return R(() => {
-    const f = a.current;
-    if (a.current = t, f == null || f === t) return;
-    c(t > f ? "up" : "down");
-    const h = setTimeout(() => c(null), Hi);
-    return () => clearTimeout(h);
-  }, [t]), /* @__PURE__ */ m("div", { className: "flex flex-col items-center justify-center h-full gap-1", children: [
-    /* @__PURE__ */ m("div", { className: `text-3xl font-bold tabular-nums transition-colors duration-300 ${u === "up" ? "text-emerald-300" : u === "down" ? "text-red-300" : "text-white"}`, children: [
-      gr(l),
-      r && /* @__PURE__ */ o("span", { className: "text-base font-normal text-zinc-400 ml-1", children: r })
-    ] }),
-    n != null && /* @__PURE__ */ m("div", { className: `text-sm font-medium ${n >= 0 ? "text-emerald-400" : "text-red-400"}`, children: [
-      n >= 0 ? "▲" : "▼",
-      " ",
-      Vi(n)
-    ] }),
-    i && i.length >= 2 && /* @__PURE__ */ o(qi, { values: i }),
-    s && /* @__PURE__ */ o("div", { className: "text-xs text-zinc-500", children: s })
-  ] });
+var At = 3e4, jt = 1e3;
+function Mt(e, t) {
+	return t ? Tt(e, t) : e;
 }
-function qi({ values: e }) {
-  const t = Math.min(...e), r = Math.max(...e) - t || 1, i = e[e.length - 1] >= e[0] ? "#10b981" : "#ef4444", l = e.map((a, u) => {
-    const c = u / (e.length - 1) * 100, d = 18 - (a - t) / r * 16 - 1;
-    return `${c.toFixed(1)},${d.toFixed(1)}`;
-  }).join(" ");
-  return /* @__PURE__ */ o("svg", { viewBox: "0 0 100 18", className: "w-full max-w-[120px] h-5", preserveAspectRatio: "none", children: /* @__PURE__ */ o(
-    "polyline",
-    {
-      fill: "none",
-      stroke: i,
-      strokeWidth: "1.5",
-      points: l,
-      vectorEffect: "non-scaling-stroke"
-    }
-  ) });
+var Nt = /* @__PURE__ */ new Set([
+	"timeseries",
+	"candles",
+	"table",
+	"metric",
+	"gauge",
+	"heatmap",
+	"events",
+	"distribution",
+	"text",
+	"orderbook",
+	"paired_grid",
+	"embed",
+	"assets",
+	"object",
+	"graph",
+	"repository",
+	"records"
+]);
+function Pt(e) {
+	if (!e || typeof e != "object" || Array.isArray(e)) return e;
+	let t = Object.keys(e);
+	return t.length === 1 && Nt.has(t[0]) ? e[t[0]] : e;
 }
-function Gi(e) {
-  if (typeof e == "number") return { value: e };
-  if (typeof e == "object" && e !== null) {
-    const t = e;
-    return {
-      value: Number(t.value ?? 0),
-      delta: t.delta != null ? Number(t.delta) : void 0,
-      unit: t.unit != null ? String(t.unit) : void 0,
-      label: t.label != null ? String(t.label) : void 0,
-      trend: Array.isArray(t.trend) && t.trend.every((n) => typeof n == "number") ? t.trend : void 0
-    };
-  }
-  return { value: 0 };
+function Ft(n) {
+	let [r, i] = q(null), [a, o] = q(!0), [s, c] = q(null), [l, u] = q(null), [d, f] = q(!1), [p, m] = q(null), [h, g] = q(0), _ = U(() => g((e) => e + 1), []), v = K(jt), y = K(void 0), b = K(null), x = K(void 0), S = K(0), C = U((e) => {
+		let t = Mt(Pt(e), n?.transform);
+		i(t), c(null), o(!1), u(Date.now()), S.current = Date.now();
+	}, [n?.transform]), w = U((e) => {
+		let t = n?.throttleMs ?? 0;
+		if (t <= 0) {
+			C(e);
+			return;
+		}
+		let r = Date.now() - S.current;
+		if (r >= t) {
+			C(e);
+			return;
+		}
+		b.current = e, x.current ||= setTimeout(() => {
+			b.current !== null && C(b.current), b.current = null, x.current = void 0;
+		}, t - r);
+	}, [C, n?.throttleMs]), T = G(() => n ? JSON.stringify([
+		n.url,
+		n.source_id,
+		n.method,
+		n.body,
+		n.headers,
+		n.stream,
+		Dt(n),
+		n.transform,
+		n.throttleMs,
+		n.inline !== void 0 || n.data !== void 0
+	]) : "", [n]), E = n ? Et(n) : void 0;
+	return W(() => {
+		if (!n) {
+			o(!1);
+			return;
+		}
+		if (E !== void 0) {
+			w(E);
+			return;
+		}
+		if (!n.url) {
+			o(!1);
+			return;
+		}
+		if (n.stream === "connect") {
+			let r = !1, i = new AbortController(), a = async () => {
+				if (!r) try {
+					let a = await fetch(n.url, {
+						method: "POST",
+						headers: {
+							...n.headers,
+							"Content-Type": t
+						},
+						body: JSON.stringify(n.body ?? {}),
+						signal: i.signal
+					});
+					if (!a.ok) throw Error(`ConnectRPC: HTTP ${a.status}`);
+					if (!a.body) throw Error("ConnectRPC: no response body");
+					f(!0), m(null), c(null), v.current = jt;
+					let o = a.body.getReader();
+					await e(o, {
+						onMessage: w,
+						onTrailer: (e) => {
+							if (e.error) {
+								let t = e.error.code ?? "unknown", n = e.error.message ?? "stream error";
+								r || c(`${t}: ${n}`);
+							}
+						},
+						isDisposed: () => r
+					}), o.releaseLock();
+				} catch (e) {
+					!r && e instanceof Error && !Ot(e) && c(e.message);
+				} finally {
+					if (!r) {
+						f(!1);
+						let e = v.current;
+						m(Date.now() + e), y.current = setTimeout(() => {
+							v.current = Math.min(v.current * 2, At), a();
+						}, e);
+					}
+				}
+			};
+			return a(), () => {
+				r = !0, kt(i), clearTimeout(y.current), f(!1), m(null);
+			};
+		}
+		if (n.stream === !0) {
+			let e = null, t = !1, r = () => {
+				t || (e = new EventSource(n.url), e.onopen = () => {
+					f(!0), m(null), c(null), v.current = jt;
+				}, e.onmessage = (e) => {
+					try {
+						w(JSON.parse(e.data));
+					} catch {
+						c("Failed to parse stream");
+					}
+				}, e.onerror = () => {
+					if (e?.close(), f(!1), !t) {
+						let e = v.current;
+						m(Date.now() + e), y.current = setTimeout(() => {
+							v.current = Math.min(v.current * 2, At), r();
+						}, e);
+					}
+				});
+			};
+			return r(), () => {
+				t = !0, clearTimeout(y.current), e?.close(), f(!1), m(null);
+			};
+		}
+		let r = !1, i = !1, a = new AbortController(), s = async () => {
+			if (!(r || i)) {
+				i = !0;
+				try {
+					let e = await fetch(n.url, {
+						method: n.method || "GET",
+						headers: n.headers,
+						body: n.body ? JSON.stringify(n.body) : void 0,
+						signal: a.signal
+					});
+					if (!e.ok) throw Error(`HTTP ${e.status}`);
+					let t = await e.json();
+					r || w(t);
+				} catch (e) {
+					!r && e instanceof Error && !Ot(e) && c(e.message);
+				} finally {
+					i = !1, r || o(!1);
+				}
+			}
+		};
+		s();
+		let l, u = Dt(n);
+		return u && u > 0 && (l = setInterval(() => void s(), u)), () => {
+			r = !0, kt(a), l && clearInterval(l);
+		};
+	}, [
+		T,
+		w,
+		E,
+		h
+	]), W(() => () => {
+		x.current && clearTimeout(x.current);
+	}, []), {
+		data: r,
+		loading: a,
+		error: s,
+		lastUpdated: l,
+		connected: d,
+		nextRetryAt: p,
+		refresh: _
+	};
 }
-function Vi(e) {
-  const t = Math.abs(e) <= 1 ? e * 100 : e;
-  return `${Math.abs(t).toFixed(2)}%`;
+//#endregion
+//#region src/widgets/Placeholder.tsx
+function It(e) {
+	return /* @__PURE__ */ J(i, { children: "Unknown widget type" });
 }
-const Ji = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Metric: Wi
-}, Symbol.toStringTag, { value: "Module" })), Xi = 1500;
-function Yi({ data: e }) {
-  const t = wr(e), n = U(/* @__PURE__ */ new Set()), r = U(!1), [s, i] = v(/* @__PURE__ */ new Set());
-  return R(() => {
-    const l = t.map(mn);
-    if (!r.current) {
-      r.current = !0;
-      for (const c of l) n.current.add(c);
-      return;
-    }
-    const a = l.filter((c) => !n.current.has(c));
-    for (const c of l) n.current.add(c);
-    if (a.length === 0) return;
-    i((c) => {
-      const d = new Set(c);
-      for (const f of a) d.add(f);
-      return d;
-    });
-    const u = setTimeout(() => {
-      i((c) => {
-        const d = new Set(c);
-        for (const f of a) d.delete(f);
-        return d;
-      });
-    }, Xi);
-    return () => clearTimeout(u);
-  }, [t]), t.length === 0 ? /* @__PURE__ */ o(D, { children: "No content" }) : /* @__PURE__ */ o("div", { className: "overflow-auto h-full space-y-3", children: t.map((l, a) => {
-    const u = mn(l), c = s.has(u) ? "bg-sky-500/5" : "";
-    return /* @__PURE__ */ m(
-      "article",
-      {
-        className: `flex gap-3 border-b border-zinc-800/60 pb-3 last:border-0 rounded-sm transition-colors duration-700 ${c}`,
-        children: [
-          /* @__PURE__ */ m("div", { className: "flex-1 min-w-0", children: [
-            (l.title || l.url) && /* @__PURE__ */ o("h4", { className: "text-sm font-medium text-zinc-100 mb-1 leading-snug", children: l.url ? /* @__PURE__ */ m(
-              "a",
-              {
-                href: l.url,
-                ...l.url.startsWith("/") ? {} : { target: "_blank", rel: "noopener noreferrer" },
-                className: "hover:text-sky-400 hover:underline",
-                children: [
-                  l.title || Zi(l.url),
-                  /* @__PURE__ */ o("span", { className: "ml-1 text-xs text-zinc-500", "aria-hidden": "true", children: l.url.startsWith("/") ? "→" : "↗" })
-                ]
-              }
-            ) : l.title }),
-            l.meta && /* @__PURE__ */ o("div", { className: "text-xs text-zinc-500 mb-1.5", children: l.meta }),
-            l.body && /* @__PURE__ */ o("p", { className: "text-sm text-zinc-300 leading-relaxed", children: l.body }),
-            l.tags && l.tags.length > 0 && /* @__PURE__ */ o("div", { className: "flex gap-1.5 mt-2 flex-wrap", children: l.tags.map((d, f) => /* @__PURE__ */ o("span", { className: "text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400", children: d }, f)) })
-          ] }),
-          l.image && /* @__PURE__ */ o(
-            "img",
-            {
-              src: l.image,
-              alt: "",
-              className: "w-14 h-14 rounded object-cover shrink-0 bg-zinc-800",
-              loading: "lazy"
-            }
-          )
-        ]
-      },
-      a
-    );
-  }) });
+//#endregion
+//#region src/core/WidgetRegistry.ts
+var Z = (e, t) => Be(() => e().then((e) => ({ default: e[t] }))), Lt = /* @__PURE__ */ new Map([
+	["timeseries", Z(() => Promise.resolve().then(() => mi), "Timeseries")],
+	["candlestick", Z(() => Promise.resolve().then(() => Di), "Candlestick")],
+	["table", Z(() => Promise.resolve().then(() => zi), "DataTable")],
+	["metric", Z(() => Promise.resolve().then(() => Yi), "Metric")],
+	["text", Z(() => Promise.resolve().then(() => ta), "Text")],
+	["prompt", Z(() => Promise.resolve().then(() => oa), "Prompt")],
+	["gauge", Z(() => Promise.resolve().then(() => ca), "Gauge")],
+	["distribution", Z(() => Promise.resolve().then(() => ma), "Distribution")],
+	["heatmap", Z(() => Promise.resolve().then(() => va), "Heatmap")],
+	["events", Z(() => Promise.resolve().then(() => Ea), "Events")],
+	["catalog", Z(() => Promise.resolve().then(() => Aa), "Catalog")],
+	["asset_catalog", Z(() => Promise.resolve().then(() => Pa), "AssetCatalog")],
+	["object_view", Z(() => Promise.resolve().then(() => za), "ObjectView")],
+	["code_browser", Z(() => Promise.resolve().then(() => qa), "CodeBrowser")],
+	["record_grid", Z(() => Promise.resolve().then(() => Xa), "RecordGrid")],
+	["record_board", Z(() => Promise.resolve().then(() => eo), "RecordBoard")],
+	["record_calendar", Z(() => Promise.resolve().then(() => ao), "RecordCalendar")],
+	["record_form", Z(() => Promise.resolve().then(() => po), "RecordForm")],
+	["orderbook", Z(() => Promise.resolve().then(() => go), "OrderBook")],
+	["paired_grid", Z(() => Promise.resolve().then(() => wo), "PairedGrid")],
+	["trade", Z(() => Promise.resolve().then(() => Mo), "Trade")],
+	["ticker", Z(() => Promise.resolve().then(() => Fo), "Ticker")],
+	["volume_profile", Z(() => Promise.resolve().then(() => Vo), "VolumeProfile")],
+	["stat_strip", Z(() => Promise.resolve().then(() => Ko), "StatStrip")],
+	["bar_chart", Z(() => Promise.resolve().then(() => $o), "BarChart")],
+	["scatter", Z(() => Promise.resolve().then(() => ss), "Scatter")],
+	["clock", Z(() => Promise.resolve().then(() => hs), "Clock")],
+	["treemap", Z(() => Promise.resolve().then(() => Cs), "Treemap")],
+	["image", Z(() => Promise.resolve().then(() => Os), "Image")],
+	["iframe", Z(() => Promise.resolve().then(() => js), "Iframe")],
+	["histogram", Z(() => Promise.resolve().then(() => Ps), "Histogram")],
+	["section", Z(() => Promise.resolve().then(() => Us), "Section")],
+	["area_chart", Z(() => Promise.resolve().then(() => Gs), "AreaChart")],
+	["slider", Z(() => Promise.resolve().then(() => ec), "Slider")],
+	["select", Z(() => Promise.resolve().then(() => ac), "Select")],
+	["boxplot", Z(() => Promise.resolve().then(() => lc), "Boxplot")],
+	["radar", Z(() => Promise.resolve().then(() => hc), "Radar")],
+	["dag", Z(() => Promise.resolve().then(() => Sc), "Dag")],
+	["multi_select", Z(() => Promise.resolve().then(() => Nc), "MultiSelect")],
+	["json", Z(() => Promise.resolve().then(() => Fc), "Json")],
+	["sparkline", Z(() => Promise.resolve().then(() => Rc), "Sparkline")],
+	["action_log", Z(() => Promise.resolve().then(() => Vc), "ActionLog")],
+	["alert_log", Z(() => Promise.resolve().then(() => Jc), "AlertLog")],
+	["tape", Z(() => Promise.resolve().then(() => Qc), "Tape")],
+	["file_browser", Z(() => Promise.resolve().then(() => yl), "FileBrowser")]
+]), Rt = new Set(Lt.keys());
+function zt(e) {
+	return Lt.get(e) || It;
+}
+function Bt(e, t) {
+	Lt.set(e, t);
+}
+//#endregion
+//#region src/core/ErrorBoundary.tsx
+var Vt = class extends Re {
+	state = { error: null };
+	static getDerivedStateFromError(e) {
+		return { error: e };
+	}
+	componentDidCatch(e, t) {
+		console.error("[MedallionTerminal] Widget error:", e, t.componentStack), this.props.onError?.(e);
+	}
+	render() {
+		return this.state.error ? /* @__PURE__ */ J("div", {
+			className: "flex items-center justify-center h-full text-red-400/80 text-sm p-4 text-center",
+			children: /* @__PURE__ */ Y("div", { children: [/* @__PURE__ */ J("div", {
+				className: "font-medium mb-1",
+				children: "Widget Error"
+			}), /* @__PURE__ */ J("div", {
+				className: "text-zinc-500 text-xs",
+				children: this.state.error.message
+			})] })
+		}) : this.props.children;
+	}
+}, Ht = /^(\S.*?)\s+(>=|<=|==|!=|>|<)\s+(.+)$/;
+function Ut(e, t) {
+	let n = Gt(t);
+	return n ? Yt(n, e) : !1;
+}
+function Wt(e) {
+	return Gt(e) !== null;
+}
+function Gt(e) {
+	let t = e.trim();
+	if (!t) return null;
+	let n = Kt(t, "||"), r = [];
+	for (let e of n) {
+		let t = Kt(e, "&&"), n = [];
+		for (let e of t) {
+			let t = qt(e);
+			if (!t) return null;
+			n.push(t);
+		}
+		if (n.length === 0) return null;
+		r.push(n);
+	}
+	return r.length === 0 ? null : r;
+}
+function Kt(e, t) {
+	let n = [], r = 0, i = 0, a = !1;
+	for (let o = 0; o < e.length; o++) {
+		let s = e[o];
+		if (s === "\"" && (a = !a), !a) {
+			if (!a && e.startsWith(t, o)) {
+				n.push(e.slice(i, o)), i = o + t.length, o += t.length - 1;
+				continue;
+			}
+			s === "(" && r++, s === ")" && r--;
+		}
+	}
+	return n.push(e.slice(i)), n.map((e) => e.trim());
+}
+function qt(e) {
+	let t = e.trim().match(Ht);
+	if (!t) return null;
+	let [, n, r, i] = t;
+	return {
+		path: n.trim(),
+		op: r,
+		rhs: Jt(i.trim())
+	};
+}
+function Jt(e) {
+	if (e === "true") return !0;
+	if (e === "false") return !1;
+	if (e === "null") return null;
+	if (e.length >= 2 && e.startsWith("\"") && e.endsWith("\"")) return e.slice(1, -1);
+	let t = Number(e);
+	return Number.isNaN(t) ? e : t;
+}
+function Yt(e, t) {
+	for (let n of e) {
+		let e = !0;
+		for (let r of n) if (!Xt(Tt(t, r.path), r.op, r.rhs)) {
+			e = !1;
+			break;
+		}
+		if (e) return !0;
+	}
+	return !1;
+}
+function Xt(e, t, n) {
+	if (t === ">" || t === ">=" || t === "<" || t === "<=") {
+		let r = Number(e), i = Number(n);
+		if (!Number.isFinite(r) || !Number.isFinite(i)) return !1;
+		switch (t) {
+			case ">": return r > i;
+			case ">=": return r >= i;
+			case "<": return r < i;
+			case "<=": return r <= i;
+		}
+	}
+	return t === "==" ? e === n || typeof e == "number" && typeof n == "number" && e === n : t === "!=" && !(e === n || typeof e == "number" && typeof n == "number" && e === n);
+}
+//#endregion
+//#region src/core/sound.ts
+var Zt = {
+	warn: 720,
+	error: 480
+}, Qt = 160, $t = .08, en = null;
+function tn() {
+	if (typeof window > "u") return null;
+	if (en) return en;
+	let e = window, t = window.AudioContext || e.webkitAudioContext;
+	return t ? (en = new t(), en) : null;
+}
+function nn(e) {
+	let t = Zt[e];
+	if (!t) return;
+	let n = tn();
+	if (!n) return;
+	n.state === "suspended" && n.resume().catch(() => {});
+	let r = n.createOscillator(), i = n.createGain();
+	r.type = "sine", r.frequency.value = t, i.gain.value = 0, r.connect(i), i.connect(n.destination);
+	let a = n.currentTime;
+	i.gain.linearRampToValueAtTime($t, a + .02), i.gain.linearRampToValueAtTime(0, a + Qt / 1e3), r.start(a), r.stop(a + Qt / 1e3 + .05);
+}
+//#endregion
+//#region src/export/flatten.ts
+var rn = {
+	columns: [],
+	rows: []
+};
+function an(e) {
+	if (e == null) return null;
+	let t = typeof e;
+	if (t === "number" || t === "boolean" || t === "string") return e;
+	try {
+		return JSON.stringify(e);
+	} catch {
+		return String(e);
+	}
+}
+function Q(e) {
+	let t = [], n = /* @__PURE__ */ new Set();
+	for (let r of e) for (let e of Object.keys(r)) n.has(e) || (n.add(e), t.push(e));
+	return {
+		columns: t,
+		rows: e.map((e) => {
+			let n = {};
+			for (let r of t) n[r] = an(e[r]);
+			return n;
+		})
+	};
+}
+function $(e) {
+	return typeof e == "object" && !!e && !Array.isArray(e);
+}
+function on(e) {
+	let t = (e) => Array.isArray(e) ? e : $(e) && Array.isArray(e.points) ? e.points : null;
+	if ($(e) && Array.isArray(e.series)) {
+		let t = e.series, n = /* @__PURE__ */ new Map(), r = [];
+		for (let e = 0; e < t.length; e++) {
+			let i = t[e], a = i.name ?? `series_${e + 1}`;
+			r.push(a);
+			let o = i.points ?? i.data ?? [];
+			for (let e of o) {
+				let t = String(e.timestamp ?? ""), r = n.get(t) ?? { timestamp: t };
+				r[a] = an(e.value), n.set(t, r);
+			}
+		}
+		return {
+			columns: ["timestamp", ...r],
+			rows: [...n.values()]
+		};
+	}
+	let n = t(e);
+	return n ? {
+		columns: ["timestamp", "value"],
+		rows: n.map((e) => ({
+			timestamp: an(e.timestamp),
+			value: an(e.value)
+		}))
+	} : null;
+}
+function sn(e) {
+	return $(e) && Array.isArray(e.bars) ? Q(e.bars) : null;
+}
+function cn(e) {
+	if (Array.isArray(e) && e.length > 0 && $(e[0])) return Q(e);
+	if ($(e) && "rows" in e) {
+		let t = e, n = Array.isArray(t.columns) ? t.columns : [];
+		if (n.length > 0 && $(n[0])) {
+			let e = n.map((e) => e.key);
+			return {
+				columns: e,
+				rows: t.rows.map((t) => Array.isArray(t) ? Object.fromEntries(e.map((e, n) => [e, an(t[n])])) : ln(t, e))
+			};
+		}
+		if (n.length > 0 && typeof n[0] == "string") {
+			let e = n;
+			return {
+				columns: e,
+				rows: t.rows.map((t) => Array.isArray(t) ? Object.fromEntries(e.map((e, n) => [e, an(t[n])])) : ln(t, e))
+			};
+		}
+		let r = t.rows;
+		return r.length > 0 && $(r[0]) ? Q(r) : rn;
+	}
+	return null;
+}
+function ln(e, t) {
+	let n = {};
+	for (let r of t) n[r] = an(e[r]);
+	return n;
+}
+function un(e) {
+	return $(e) && Array.isArray(e.cells) ? Q(e.cells) : null;
+}
+function dn(e) {
+	return $(e) && Array.isArray(e.slices) ? Q(e.slices) : null;
+}
+function fn(e) {
+	return $(e) && Array.isArray(e.events) ? Q(e.events) : null;
+}
+function pn(e) {
+	return $(e) && Array.isArray(e.items) ? Q(e.items) : null;
 }
 function mn(e) {
-  return e.id ? `id:${e.id}` : `t:${e.title ?? ""}|b:${(e.body ?? "").slice(0, 60)}`;
+	if ($(e) && (Array.isArray(e.bids) || Array.isArray(e.asks))) {
+		let t = e.bids ?? [], n = e.asks ?? [];
+		return Q([...t.map((e) => ({
+			side: "bid",
+			...e
+		})), ...n.map((e) => ({
+			side: "ask",
+			...e
+		}))]);
+	}
+	return null;
 }
-function Zi(e) {
-  try {
-    return new URL(e).hostname;
-  } catch {
-    return e;
-  }
-}
-const Qi = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Text: Yi
-}, Symbol.toStringTag, { value: "Module" }));
-function el({ options: e }) {
-  const { dispatch: t, ctx: n, setCtx: r, backendUrl: s, widgets: i } = ae(), [l, a] = v(""), [u, c] = v(!1), [d, f] = v(null), [h, p] = v(null), g = e?.url, b = !!s, w = ce(async () => {
-    const $ = l.trim();
-    if (!(!$ || u) && !(!b && !g)) {
-      c(!0), p(null), f(null);
-      try {
-        const j = b ? await fetch(ys(s), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(vs($, n, i))
-        }) : await fetch(g, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: $ })
-        });
-        if (!j.ok) throw new Error(`HTTP ${j.status}`);
-        const E = await j.json(), x = E.text ?? E.dialogue?.text;
-        if (x && f(x), E.context?.values)
-          for (const [T, O] of Object.entries(E.context.values)) r(T, O);
-        E.actions && E.actions.length > 0 && t(E.actions, { replaceAll: E.replace_all }), a("");
-      } catch (j) {
-        p(j instanceof Error ? j.message : "Request failed");
-      } finally {
-        c(!1);
-      }
-    }
-  }, [l, u, b, s, g, n, i, t, r]), A = ($) => {
-    $.key === "Enter" && !$.shiftKey && ($.preventDefault(), w());
-  };
-  return !b && !g ? /* @__PURE__ */ o(D, { padded: !0, children: "Set a backendUrl on Dashboard or options.url on this widget" }) : /* @__PURE__ */ m("div", { className: "flex flex-col gap-2 h-full justify-center", children: [
-    /* @__PURE__ */ m("div", { className: "flex gap-2", children: [
-      /* @__PURE__ */ o(
-        "input",
-        {
-          type: "text",
-          className: `flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100
-            placeholder-zinc-500 outline-none focus:border-zinc-500 disabled:opacity-50`,
-          placeholder: "Ask anything... (Enter to send)",
-          value: l,
-          onChange: ($) => a($.target.value),
-          onKeyDown: A,
-          disabled: u
-        }
-      ),
-      /* @__PURE__ */ o(
-        "button",
-        {
-          onClick: w,
-          disabled: u || !l.trim(),
-          className: `px-4 py-2 bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 disabled:cursor-default
-            rounded-lg text-sm text-zinc-200 font-medium shrink-0`,
-          children: u ? "..." : "Send"
-        }
-      )
-    ] }),
-    d && /* @__PURE__ */ o("div", { className: "text-xs text-zinc-400 leading-relaxed", children: d }),
-    h && /* @__PURE__ */ o("div", { className: "text-xs text-red-400", children: h })
-  ] });
-}
-const tl = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Prompt: el
-}, Symbol.toStringTag, { value: "Module" })), st = {
-  ok: "var(--mtc-ok)",
-  warn: "var(--mtc-warning)",
-  danger: "var(--mtc-danger)",
-  error: "var(--mtc-danger)",
-  info: "var(--mtc-accent)",
-  muted: "var(--mtc-muted)"
-}, _t = "M 16 104 A 84 84 0 0 1 184 104";
-function nl({ data: e }) {
-  const t = rl(e);
-  if (!t) return /* @__PURE__ */ o(D, { children: "No data" });
-  const n = t.max - t.min, r = n > 0 ? Math.max(0, Math.min(1, (t.value - t.min) / n)) : 0, s = t.bands.find((l) => t.value >= l.from && t.value <= l.to), i = st[s?.color ?? "info"] ?? st.info;
-  return /* @__PURE__ */ m("div", { className: "flex flex-col items-center justify-center h-full gap-1", children: [
-    /* @__PURE__ */ m("svg", { viewBox: "0 0 200 120", className: "w-full max-w-[260px]", children: [
-      /* @__PURE__ */ o("path", { d: _t, fill: "none", stroke: "var(--mtc-grid)", strokeWidth: "16", pathLength: "100" }),
-      t.bands.map((l, a) => {
-        const u = (l.from - t.min) / n, c = (l.to - t.min) / n;
-        return /* @__PURE__ */ o(
-          "path",
-          {
-            d: _t,
-            fill: "none",
-            stroke: st[l.color] ?? st.muted,
-            strokeWidth: "16",
-            opacity: 0.22,
-            pathLength: "100",
-            strokeDasharray: `${(c - u) * 100} 100`,
-            strokeDashoffset: -u * 100
-          },
-          a
-        );
-      }),
-      /* @__PURE__ */ o(
-        "path",
-        {
-          d: _t,
-          fill: "none",
-          stroke: i,
-          strokeWidth: "16",
-          strokeLinecap: "round",
-          pathLength: "100",
-          strokeDasharray: `${r * 100} 100`
-        }
-      ),
-      /* @__PURE__ */ o(
-        "text",
-        {
-          x: "100",
-          y: "92",
-          textAnchor: "middle",
-          fill: "var(--mtc-fg)",
-          style: { fontSize: 22, fontWeight: 700, fontVariantNumeric: "tabular-nums" },
-          children: sl(t.value, t.min, t.max)
-        }
-      )
-    ] }),
-    t.label && /* @__PURE__ */ o("div", { className: "text-xs text-zinc-500 text-center px-2 truncate max-w-full", children: t.label })
-  ] });
-}
-function rl(e) {
-  if (typeof e != "object" || e === null) return null;
-  const t = e;
-  if (typeof t.value != "number") return null;
-  const n = typeof t.min == "number" ? t.min : 0, r = typeof t.max == "number" ? t.max : 1, s = Array.isArray(t.bands) ? t.bands.map((i) => {
-    const l = i;
-    return {
-      from: Number(l.from ?? 0),
-      to: Number(l.to ?? 0),
-      color: String(l.color ?? "info")
-    };
-  }) : [];
-  return {
-    value: t.value,
-    min: n,
-    max: r,
-    bands: s,
-    label: t.label != null ? String(t.label) : void 0
-  };
-}
-function sl(e, t, n) {
-  return t === 0 && n === 1 ? `${(e * 100).toFixed(1)}%` : t === -1 && n === 1 ? e >= 0 ? `+${e.toFixed(2)}` : e.toFixed(2) : e.toLocaleString(void 0, { maximumFractionDigits: 2 });
-}
-const ol = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Gauge: nl
-}, Symbol.toStringTag, { value: "Module" }));
-function il({ data: e }) {
-  const t = L(() => ll(e), [e]);
-  if (!t) return /* @__PURE__ */ o(D, { children: "No data" });
-  const { slices: n, total: r } = t, s = n.map((a, u) => pi(a.color, u)), i = n.reduce((a, u) => u.value > a.value ? u : a), l = i.value / r * 100;
-  return /* @__PURE__ */ m("div", { className: "flex flex-col h-full", children: [
-    /* @__PURE__ */ m("div", { className: "flex-1 relative min-h-0", children: [
-      /* @__PURE__ */ o(Ae, { width: "100%", height: "100%", children: /* @__PURE__ */ m(jr, { children: [
-        /* @__PURE__ */ o(
-          Ir,
-          {
-            data: n,
-            dataKey: "value",
-            nameKey: "label",
-            innerRadius: "60%",
-            outerRadius: "92%",
-            paddingAngle: 2,
-            stroke: "none",
-            isAnimationActive: !1,
-            children: n.map((a, u) => /* @__PURE__ */ o(Un, { fill: s[u] }, u))
-          }
-        ),
-        /* @__PURE__ */ o(
-          _e,
-          {
-            contentStyle: Te,
-            formatter: (a) => {
-              const u = Number(a) || 0;
-              return [`${al(u)} (${(u / r * 100).toFixed(1)}%)`, ""];
-            }
-          }
-        )
-      ] }) }),
-      /* @__PURE__ */ m("div", { className: "absolute inset-0 flex flex-col items-center justify-center pointer-events-none", children: [
-        /* @__PURE__ */ o("div", { className: "text-[10px] uppercase tracking-wider text-zinc-500 truncate max-w-[60%]", children: i.label }),
-        /* @__PURE__ */ m("div", { className: "text-2xl font-bold text-white tabular-nums", children: [
-          l.toFixed(1),
-          "%"
-        ] })
-      ] })
-    ] }),
-    /* @__PURE__ */ o("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-1 mt-2 text-xs", children: n.map((a, u) => /* @__PURE__ */ m("div", { className: "flex items-center gap-1.5 min-w-0", children: [
-      /* @__PURE__ */ o("span", { className: "w-2 h-2 rounded-sm shrink-0", style: { backgroundColor: s[u] } }),
-      /* @__PURE__ */ o("span", { className: "text-zinc-300 truncate", children: a.label }),
-      /* @__PURE__ */ m("span", { className: "text-zinc-500 ml-auto tabular-nums shrink-0", children: [
-        (a.value / r * 100).toFixed(1),
-        "%"
-      ] })
-    ] }, u)) })
-  ] });
-}
-function ll(e) {
-  if (typeof e != "object" || e === null) return null;
-  const t = e, n = Array.isArray(t.slices) ? t.slices : null;
-  if (!n) return null;
-  const r = n.map((l) => {
-    const a = l;
-    return {
-      label: String(a.label ?? ""),
-      value: Number(a.value ?? 0),
-      color: a.color != null ? String(a.color) : void 0
-    };
-  }).filter((l) => l.value > 0);
-  if (r.length === 0) return null;
-  const i = (typeof t.total == "number" ? t.total : null) ?? r.reduce((l, a) => l + a.value, 0);
-  return { slices: r, total: i };
-}
-function al(e) {
-  return Math.abs(e) >= 1e9 ? (e / 1e9).toFixed(2) + "B" : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(2) + "M" : Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 0 }) : e.toLocaleString(void 0, { maximumFractionDigits: 2 });
-}
-const cl = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Distribution: il
-}, Symbol.toStringTag, { value: "Module" })), ul = 96, dl = 22;
-function fl({ data: e, options: t }) {
-  const { setCtx: n } = ae(), r = L(() => pl(e), [e]);
-  if (!r) return /* @__PURE__ */ o(D, { children: "No data" });
-  const s = t?.row_context, i = t?.col_context, l = !!(s || i), a = (w, A) => {
-    s && n(s.key, r.rows[w]), i && n(i.key, r.columns[A]);
-  }, { rows: u, columns: c, cells: d, min: f, max: h, scale: p } = r, g = d.length <= 60, b = L(() => {
-    const w = u.map(() => Array(c.length).fill(void 0));
-    for (const A of d) w[A.row][A.col] = A;
-    return w;
-  }, [u, c, d]);
-  return /* @__PURE__ */ m("div", { className: "h-full w-full overflow-auto flex flex-col", children: [
-    /* @__PURE__ */ m(
-      "div",
-      {
-        className: "inline-grid min-w-full",
-        style: {
-          gridTemplateColumns: `${ul}px repeat(${c.length}, minmax(28px, 1fr))`,
-          gap: 2
-        },
-        children: [
-          /* @__PURE__ */ o("div", { className: "sticky left-0 top-0 z-20 bg-zinc-900" }),
-          c.map((w) => /* @__PURE__ */ o(
-            "div",
-            {
-              className: "text-[10px] text-zinc-400 truncate text-center flex items-center justify-center sticky top-0 z-10 bg-zinc-900",
-              style: { height: dl },
-              children: w
-            },
-            `c-${w}`
-          )),
-          u.flatMap((w, A) => [
-            /* @__PURE__ */ o(
-              "div",
-              {
-                className: "text-xs text-zinc-300 truncate pr-2 flex items-center justify-end sticky left-0 z-10 bg-zinc-900",
-                style: { minHeight: 30 },
-                children: w
-              },
-              `rl-${A}`
-            ),
-            ...c.map(($, j) => {
-              const E = b[A][j];
-              if (!E) return /* @__PURE__ */ o("div", { className: "bg-zinc-900 rounded-sm" }, `e-${A}-${j}`);
-              const x = Nr(E.value, f, h, p);
-              return /* @__PURE__ */ o(
-                "div",
-                {
-                  onClick: l ? () => a(A, j) : void 0,
-                  className: `rounded-sm flex items-center justify-center text-[10px] font-medium tabular-nums ${l ? "cursor-pointer hover:ring-1 hover:ring-zinc-400" : ""}`,
-                  style: { backgroundColor: x, minHeight: 30 },
-                  title: `${w} × ${c[j]}: ${E.label ?? E.value.toFixed(2)}`,
-                  children: g && /* @__PURE__ */ o("span", { className: "text-white/90", children: E.label ?? hl(E.value) })
-                },
-                `cell-${A}-${j}`
-              );
-            })
-          ])
-        ]
-      }
-    ),
-    /* @__PURE__ */ o(ml, { min: f, max: h, scale: p })
-  ] });
-}
-function ml({ min: e, max: t, scale: n }) {
-  const r = n === "diverging" ? [-1, -0.5, 0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1], s = t - e;
-  return /* @__PURE__ */ m("div", { className: "flex items-center gap-2 mt-2 text-[10px] text-zinc-500 shrink-0", children: [
-    /* @__PURE__ */ o("span", { className: "tabular-nums", children: Ge(e) }),
-    /* @__PURE__ */ o("div", { className: "flex-1 max-w-[160px] flex h-2 rounded-sm overflow-hidden", children: r.map((i, l) => {
-      const a = n === "diverging" ? i * Math.max(Math.abs(e), Math.abs(t)) : e + i * s;
-      return /* @__PURE__ */ o("div", { className: "flex-1", style: { backgroundColor: Nr(a, e, t, n) } }, l);
-    }) }),
-    /* @__PURE__ */ o("span", { className: "tabular-nums", children: Ge(t) })
-  ] });
-}
-function pl(e) {
-  if (typeof e != "object" || e === null) return null;
-  const t = e, n = Array.isArray(t.rows) ? t.rows.map(String) : null, r = Array.isArray(t.columns) ? t.columns.map(String) : null, s = Array.isArray(t.cells) ? t.cells : null;
-  if (!n || !r || !s) return null;
-  const i = s.map((d) => {
-    const f = d;
-    return {
-      row: Number(f.row ?? 0),
-      col: Number(f.col ?? 0),
-      value: Number(f.value ?? 0),
-      label: f.label != null ? String(f.label) : void 0
-    };
-  }).filter((d) => d.row >= 0 && d.row < n.length && d.col >= 0 && d.col < r.length);
-  if (i.length === 0) return null;
-  const l = i.map((d) => d.value), a = typeof t.min == "number" ? t.min : Math.min(...l), u = typeof t.max == "number" ? t.max : Math.max(...l), c = t.scale === "diverging" ? "diverging" : "sequential";
-  return { rows: n, columns: r, cells: i, min: a, max: u, scale: c };
-}
-function ke(e, t, n) {
-  return Math.round(e + (t - e) * n);
-}
-function Nr(e, t, n, r) {
-  if (n === t) return "rgb(63 63 70)";
-  if (r === "diverging") {
-    const i = Math.max(Math.abs(t), Math.abs(n)) || 1, l = Math.max(-1, Math.min(1, e / i));
-    if (l >= 0)
-      return `rgb(${ke(39, 16, l)} ${ke(39, 185, l)} ${ke(42, 129, l)})`;
-    const a = -l;
-    return `rgb(${ke(39, 239, a)} ${ke(39, 68, a)} ${ke(42, 68, a)})`;
-  }
-  const s = Math.max(0, Math.min(1, (e - t) / (n - t)));
-  return `rgb(${ke(39, 14, s)} ${ke(39, 165, s)} ${ke(42, 233, s)})`;
-}
-function hl(e) {
-  return Math.abs(e) < 1 ? e.toFixed(2) : Math.abs(e) < 100 ? e.toFixed(1) : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(1) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(1) + "K" : Math.round(e).toString();
-}
-const bl = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Heatmap: fl
-}, Symbol.toStringTag, { value: "Module" })), gl = {
-  EVENT_STATUS_OK: "bg-emerald-500",
-  EVENT_STATUS_WARN: "bg-amber-500",
-  EVENT_STATUS_ERROR: "bg-red-500",
-  EVENT_STATUS_INFO: "bg-sky-500",
-  EVENT_STATUS_PENDING: "bg-zinc-500 animate-pulse",
-  ok: "bg-emerald-500",
-  warn: "bg-amber-500",
-  error: "bg-red-500",
-  info: "bg-sky-500",
-  pending: "bg-zinc-500 animate-pulse"
-};
-function xl({ data: e, options: t }) {
-  const n = L(() => yl(e), [e]), r = t?.filter === !0, [s, i] = v(""), l = L(() => {
-    if (!n) return null;
-    if (!s.trim()) return n;
-    const a = s.toLowerCase();
-    return n.filter(
-      (u) => u.label.toLowerCase().includes(a) || (u.body?.toLowerCase().includes(a) ?? !1) || (u.source?.toLowerCase().includes(a) ?? !1) || (u.tags?.some((c) => c.toLowerCase().includes(a)) ?? !1)
-    );
-  }, [n, s]);
-  return !n || n.length === 0 ? /* @__PURE__ */ o(D, { children: "No events" }) : /* @__PURE__ */ m("div", { className: "h-full flex flex-col", children: [
-    r && /* @__PURE__ */ o(
-      "input",
-      {
-        type: "text",
-        placeholder: "Filter events…",
-        value: s,
-        onChange: (a) => i(a.target.value),
-        className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-500 mb-2 shrink-0"
-      }
-    ),
-    /* @__PURE__ */ m("div", { className: "flex-1 overflow-auto min-h-0", children: [
-      l.length === 0 && /* @__PURE__ */ o("div", { className: "flex items-center justify-center h-full text-zinc-500 text-xs", children: "No matches" }),
-      l.map((a, u) => /* @__PURE__ */ m("div", { className: "flex gap-3 px-1 py-2.5 border-b border-zinc-800 last:border-0", children: [
-        /* @__PURE__ */ o("div", { className: "flex flex-col items-center pt-1.5 shrink-0", children: /* @__PURE__ */ o("span", { className: `w-2 h-2 rounded-full ${gl[a.status ?? ""] ?? "bg-zinc-600"}` }) }),
-        /* @__PURE__ */ m("div", { className: "min-w-0 flex-1", children: [
-          /* @__PURE__ */ m("div", { className: "flex items-baseline gap-2", children: [
-            /* @__PURE__ */ o("span", { className: "text-xs text-zinc-500 tabular-nums shrink-0 font-mono", children: a.timestamp }),
-            /* @__PURE__ */ o("span", { className: "text-sm text-zinc-100 truncate", children: a.label })
-          ] }),
-          a.body && /* @__PURE__ */ o("div", { className: "text-xs text-zinc-400 mt-0.5 line-clamp-2", children: a.body }),
-          (a.source || a.tags && a.tags.length > 0) && /* @__PURE__ */ m("div", { className: "flex items-center gap-2 mt-1 text-[10px] text-zinc-500 flex-wrap", children: [
-            a.source && /* @__PURE__ */ o("span", { className: "text-zinc-500", children: a.source }),
-            a.tags?.map((c, d) => /* @__PURE__ */ o("span", { className: "px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400", children: c }, d))
-          ] })
-        ] })
-      ] }, u))
-    ] })
-  ] });
-}
-function yl(e) {
-  let t = null;
-  if (Array.isArray(e))
-    t = e;
-  else if (e && typeof e == "object") {
-    const n = e;
-    Array.isArray(n.events) && (t = n.events);
-  }
-  return t ? t.map((n) => {
-    const r = n;
-    return {
-      timestamp: String(r.timestamp ?? ""),
-      label: String(r.label ?? ""),
-      status: r.status != null ? String(r.status) : void 0,
-      body: r.body != null ? String(r.body) : void 0,
-      source: r.source != null ? String(r.source) : void 0,
-      tags: Array.isArray(r.tags) ? r.tags.map(String) : void 0
-    };
-  }) : null;
-}
-const vl = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Events: xl
-}, Symbol.toStringTag, { value: "Module" })), wl = "medallion.terminal.v1.TerminalService", kl = {
-  SHAPE_TIMESERIES: "timeseries",
-  SHAPE_CANDLES: "candles",
-  SHAPE_TABLE: "table",
-  SHAPE_METRIC: "metric",
-  SHAPE_GAUGE: "gauge",
-  SHAPE_HEATMAP: "heatmap",
-  SHAPE_EVENTS: "events",
-  SHAPE_DISTRIBUTION: "distribution",
-  SHAPE_TEXT: "text",
-  SHAPE_ORDERBOOK: "orderbook",
-  SHAPE_PAIRED_GRID: "paired_grid",
-  SHAPE_EMBED: "embed"
-};
-function Nl() {
-  const { backendUrl: e } = ae(), [t, n] = v(null), [r, s] = v(!0), [i, l] = v(null);
-  if (R(() => {
-    if (!e) {
-      s(!1), n(null);
-      return;
-    }
-    s(!0), l(null);
-    const u = new AbortController();
-    return fetch(`${e.replace(/\/$/, "")}/${wl}/ListSources`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}",
-      signal: u.signal
-    }).then((c) => c.ok ? c.json() : Promise.reject(new Error(`HTTP ${c.status}`))).then((c) => n(c.sources ?? [])).catch((c) => {
-      c.name !== "AbortError" && l(c.message);
-    }).finally(() => s(!1)), () => u.abort();
-  }, [e]), !e) return /* @__PURE__ */ o(D, { padded: !0, children: "No backendUrl configured on Dashboard" });
-  if (r) return /* @__PURE__ */ o(D, { padded: !0, children: "Loading catalog…" });
-  if (i) return /* @__PURE__ */ m(D, { padded: !0, children: [
-    "Failed to load: ",
-    i
-  ] });
-  if (!t || t.length === 0) return /* @__PURE__ */ o(D, { padded: !0, children: "No sources registered" });
-  const a = {};
-  for (const u of t) {
-    const c = u.shape && kl[u.shape] || "other";
-    a[c] || (a[c] = []), a[c].push(u);
-  }
-  return /* @__PURE__ */ o("div", { className: "h-full overflow-auto pr-1", children: Object.entries(a).map(([u, c]) => /* @__PURE__ */ m("div", { className: "mb-4 last:mb-0", children: [
-    /* @__PURE__ */ m("div", { className: "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5", children: [
-      u,
-      " ",
-      /* @__PURE__ */ m("span", { className: "text-zinc-700", children: [
-        "— ",
-        c.length
-      ] })
-    ] }),
-    c.map((d) => /* @__PURE__ */ m("div", { className: "py-2 border-b border-zinc-800/60 last:border-0", children: [
-      /* @__PURE__ */ m("div", { className: "flex items-baseline gap-2 flex-wrap", children: [
-        /* @__PURE__ */ o("span", { className: "text-sm text-zinc-100 font-mono", children: d.id }),
-        d.streamable && /* @__PURE__ */ o("span", { className: "text-[9px] uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded", children: "live" }),
-        d.name && /* @__PURE__ */ m("span", { className: "text-xs text-zinc-400", children: [
-          "— ",
-          d.name
-        ] })
-      ] }),
-      d.description && /* @__PURE__ */ o("div", { className: "text-xs text-zinc-500 mt-0.5", children: d.description }),
-      d.params && d.params.length > 0 && /* @__PURE__ */ m("div", { className: "text-[10px] text-zinc-500 mt-1 font-mono", children: [
-        "params:",
-        " ",
-        d.params.map((f) => f.required ? `${f.key}*` : f.key).join(", ")
-      ] }),
-      d.tags && d.tags.length > 0 && /* @__PURE__ */ o("div", { className: "flex gap-1 mt-1 flex-wrap", children: d.tags.map((f) => /* @__PURE__ */ o("span", { className: "text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400", children: f }, f)) })
-    ] }, d.id))
-  ] }, u)) });
-}
-const Sl = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Catalog: Nl
-}, Symbol.toStringTag, { value: "Module" })), pn = 10;
-function zl({ data: e, options: t }) {
-  const { setCtx: n } = ae(), r = L(() => Al(e), [e]), s = t?.price_context, i = s ? (p, g) => {
-    n(s.key, String(p)), s.side_key && n(s.side_key, g === "bid" ? "buy" : "sell");
-  } : void 0;
-  if (!r) return /* @__PURE__ */ o(D, { children: "No data" });
-  const l = r.bids[0]?.price, a = r.asks[0]?.price, u = r.mid ?? (l != null && a != null ? (l + a) / 2 : 0), c = r.spread ?? (l != null && a != null ? a - l : 0), d = r.bids.slice(0, pn), f = r.asks.slice(0, pn).reverse(), h = Math.max(...r.bids.map((p) => p.size), ...r.asks.map((p) => p.size), 1);
-  return /* @__PURE__ */ m("div", { className: "h-full flex flex-col text-xs font-mono", children: [
-    /* @__PURE__ */ m("div", { className: "grid grid-cols-3 gap-2 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 border-b border-zinc-800", children: [
-      /* @__PURE__ */ o("span", { children: "Price" }),
-      /* @__PURE__ */ o("span", { className: "text-right", children: "Size" }),
-      /* @__PURE__ */ o("span", { className: "text-right", children: "Cum" })
-    ] }),
-    /* @__PURE__ */ m("div", { className: "flex-1 flex flex-col min-h-0", children: [
-      /* @__PURE__ */ o("div", { className: "flex-1 overflow-auto", children: f.map((p, g) => {
-        const b = f.slice(g).reduce((w, A) => w + A.size, 0);
-        return /* @__PURE__ */ o(hn, { side: "ask", level: p, cum: b, maxSize: h, onPrice: i }, `ask-${g}`);
-      }) }),
-      /* @__PURE__ */ m("div", { className: "border-y border-zinc-700 bg-zinc-900/60 px-2 py-1.5 flex items-center justify-between shrink-0", children: [
-        /* @__PURE__ */ o("span", { className: "text-zinc-200 tabular-nums", children: Ft(u) }),
-        /* @__PURE__ */ m("span", { className: "text-zinc-500 text-[10px]", children: [
-          "spread ",
-          Ft(c)
-        ] })
-      ] }),
-      /* @__PURE__ */ o("div", { className: "flex-1 overflow-auto", children: d.map((p, g) => {
-        const b = d.slice(0, g + 1).reduce((w, A) => w + A.size, 0);
-        return /* @__PURE__ */ o(hn, { side: "bid", level: p, cum: b, maxSize: h, onPrice: i }, `bid-${g}`);
-      }) })
-    ] }),
-    r.venue && /* @__PURE__ */ o("div", { className: "text-[10px] text-zinc-500 px-2 py-1 border-t border-zinc-800 shrink-0", children: r.venue })
-  ] });
-}
-function hn({
-  side: e,
-  level: t,
-  cum: n,
-  maxSize: r,
-  onPrice: s
-}) {
-  const i = t.size / r * 100, l = e === "bid" ? "bg-emerald-500/10" : "bg-red-500/10", a = e === "bid" ? "text-emerald-400" : "text-red-400";
-  return /* @__PURE__ */ m(
-    "div",
-    {
-      onClick: s ? () => s(t.price, e) : void 0,
-      className: `relative grid grid-cols-3 gap-2 px-2 py-0.5 ${s ? "cursor-pointer hover:bg-zinc-800/40" : ""}`,
-      children: [
-        /* @__PURE__ */ o("div", { className: `absolute inset-y-0 right-0 ${l}`, style: { width: `${i}%` } }),
-        /* @__PURE__ */ o("span", { className: `relative ${a} tabular-nums`, children: Ft(t.price) }),
-        /* @__PURE__ */ o("span", { className: "relative text-right text-zinc-200 tabular-nums", children: gn(t.size) }),
-        /* @__PURE__ */ o("span", { className: "relative text-right text-zinc-500 tabular-nums", children: gn(n) })
-      ]
-    }
-  );
-}
-function Al(e) {
-  if (!e || typeof e != "object" || Array.isArray(e)) return null;
-  const t = e, n = bn(t.bids), r = bn(t.asks);
-  return n.length === 0 && r.length === 0 ? null : {
-    bids: n,
-    asks: r,
-    mid: typeof t.mid == "number" ? t.mid : void 0,
-    spread: typeof t.spread == "number" ? t.spread : void 0,
-    venue: typeof t.venue == "string" ? t.venue : void 0
-  };
-}
-function bn(e) {
-  return Array.isArray(e) ? e.map((t) => {
-    const n = t;
-    return { price: Number(n.price ?? 0), size: Number(n.size ?? 0) };
-  }).filter((t) => Number.isFinite(t.price) && Number.isFinite(t.size) && t.size > 0) : [];
-}
-function Ft(e) {
-  return Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 2 }) : e.toFixed(2);
+function hn(e) {
+	return typeof e == "number" ? {
+		columns: ["value"],
+		rows: [{ value: e }]
+	} : $(e) && "value" in e && typeof e.value != "object" ? Q([e]) : null;
 }
 function gn(e) {
-  return Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(2) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(2) + "K" : Math.abs(e) >= 1 ? e.toFixed(2) : e.toFixed(4);
+	if ($(e) && "value" in e) {
+		let { value: t, min: n, max: r } = e;
+		return Q([{
+			value: t,
+			min: n,
+			max: r
+		}]);
+	}
+	return null;
 }
-const _l = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  OrderBook: zl
-}, Symbol.toStringTag, { value: "Module" })), Tl = 6;
-function $l({ data: e, options: t }) {
-  const { setCtx: n } = ae(), r = L(() => Cl(e), [e]), s = L(
-    () => r ? [...r.rows].sort((c, d) => c.key - d.key) : [],
-    [r]
-  );
-  if (!r) return /* @__PURE__ */ o(D, { children: "No data" });
-  const i = r.subject_value, l = s.length >= 2 ? s[1].key - s[0].key : 0, a = r.measures, u = t?.row_context;
-  return /* @__PURE__ */ m("div", { className: "h-full flex flex-col text-xs", children: [
-    /* @__PURE__ */ m("div", { className: "px-3 py-2 border-b border-zinc-800 flex items-baseline gap-3 flex-wrap shrink-0", children: [
-      /* @__PURE__ */ o("span", { className: "text-zinc-100 font-medium", children: r.subject }),
-      r.dimension && /* @__PURE__ */ o("span", { className: "text-zinc-500", children: r.dimension }),
-      i != null && /* @__PURE__ */ o("span", { className: "text-zinc-300 tabular-nums", children: i.toLocaleString() }),
-      r.venue && /* @__PURE__ */ o("span", { className: "ml-auto text-zinc-500 text-[10px] uppercase tracking-wider", children: r.venue })
-    ] }),
-    /* @__PURE__ */ o("div", { className: "flex-1 overflow-auto min-h-0", children: /* @__PURE__ */ m("table", { className: "w-full font-mono tabular-nums", children: [
-      /* @__PURE__ */ m("thead", { className: "sticky top-0 bg-zinc-900 z-10", children: [
-        /* @__PURE__ */ m("tr", { className: "text-[10px] text-zinc-600 border-b border-zinc-800/60", children: [
-          /* @__PURE__ */ o("th", { colSpan: a.length, className: "text-center py-1 text-emerald-400 uppercase tracking-wider", children: r.left_label }),
-          /* @__PURE__ */ o("th", { className: "bg-zinc-950" }),
-          /* @__PURE__ */ o("th", { colSpan: a.length, className: "text-center py-1 text-red-400 uppercase tracking-wider", children: r.right_label })
-        ] }),
-        /* @__PURE__ */ m("tr", { className: "text-[10px] uppercase tracking-wider text-zinc-500 border-b border-zinc-800", children: [
-          a.map((c) => /* @__PURE__ */ o("th", { className: "text-right px-2 py-1.5", children: c.label }, `l-${c.key}`)),
-          /* @__PURE__ */ o("th", { className: "text-center px-2 py-1.5 bg-zinc-950", children: r.key_label }),
-          a.map((c) => /* @__PURE__ */ o("th", { className: "text-right px-2 py-1.5", children: c.label }, `r-${c.key}`))
-        ] })
-      ] }),
-      /* @__PURE__ */ o("tbody", { children: s.map((c, d) => {
-        const f = i != null && l > 0 && Math.abs(c.key - i) < l, h = !!u;
-        return /* @__PURE__ */ m(
-          "tr",
-          {
-            onClick: h ? () => n(u.key, String(c.key)) : void 0,
-            className: `border-b border-zinc-800/40 ${`${f ? "bg-zinc-800/40" : "hover:bg-zinc-800/20"} ${h ? "cursor-pointer" : ""}`}`,
-            children: [
-              a.map((g) => /* @__PURE__ */ o("td", { className: "text-right px-2 py-1 text-zinc-300", children: yn(c.left?.values?.[g.key], g.format) }, `l-${g.key}`)),
-              /* @__PURE__ */ o("td", { className: `text-center px-2 py-1 font-medium ${f ? "text-zinc-100 bg-zinc-950/60" : "text-zinc-300 bg-zinc-950/40"}`, children: c.key.toLocaleString() }),
-              a.map((g) => /* @__PURE__ */ o("td", { className: "text-right px-2 py-1 text-zinc-300", children: yn(c.right?.values?.[g.key], g.format) }, `r-${g.key}`))
-            ]
-          },
-          d
-        );
-      }) })
-    ] }) })
-  ] });
-}
-function Cl(e) {
-  if (!e || typeof e != "object" || Array.isArray(e)) return null;
-  const t = e;
-  if (!Array.isArray(t.rows) || t.rows.length === 0) return null;
-  const n = t.rows.map((i) => {
-    const l = i;
-    return {
-      // Accept legacy options shape (`strike`/`call`/`put`) so authored
-      // fixtures keep rendering during migration.
-      key: Number(l.key ?? l.strike ?? 0),
-      left: xn(l.left ?? l.call),
-      right: xn(l.right ?? l.put)
-    };
-  }), r = El(t.measures), s = r.length > 0 ? r : Ol(n);
-  return {
-    subject: String(t.subject ?? t.underlying ?? ""),
-    dimension: typeof t.dimension == "string" ? t.dimension : typeof t.expiry == "string" ? t.expiry : void 0,
-    subject_value: typeof t.subject_value == "number" ? t.subject_value : typeof t.underlying_price == "number" ? t.underlying_price : void 0,
-    venue: typeof t.venue == "string" ? t.venue : void 0,
-    rows: n,
-    left_label: String(t.left_label ?? "Left"),
-    right_label: String(t.right_label ?? "Right"),
-    key_label: String(t.key_label ?? "Key"),
-    measures: s
-  };
-}
-function El(e) {
-  if (!Array.isArray(e)) return [];
-  const t = [];
-  for (const n of e) {
-    if (!n || typeof n != "object") continue;
-    const r = n;
-    typeof r.key == "string" && t.push({
-      key: r.key,
-      label: typeof r.label == "string" && r.label ? r.label : r.key,
-      format: typeof r.format == "string" ? r.format : void 0
-    });
-  }
-  return t;
-}
-function Ol(e) {
-  const t = /* @__PURE__ */ new Set();
-  for (const n of e)
-    for (const r of [n.left, n.right])
-      if (r?.values) for (const s of Object.keys(r.values)) t.add(s);
-  return Array.from(t).slice(0, Tl).map((n) => ({ key: n, label: n }));
-}
-function xn(e) {
-  if (!e || typeof e != "object") return;
-  const t = e;
-  if (t.values && typeof t.values == "object" && !Array.isArray(t.values)) {
-    const r = {};
-    for (const [s, i] of Object.entries(t.values))
-      typeof i == "number" && (r[s] = i);
-    return Object.keys(r).length === 0 ? void 0 : { values: r };
-  }
-  const n = {};
-  for (const [r, s] of Object.entries(t))
-    typeof s == "number" && (n[r] = s);
-  return Object.keys(n).length === 0 ? void 0 : { values: n };
-}
-function yn(e, t) {
-  if (e == null) return "·";
-  if (t === "percent") return `${(e * 100).toFixed(0)}%`;
-  if (t === "compact")
-    return Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 0 }) : e.toFixed(2);
-  if (t === "delta")
-    return `${e > 0 ? "+" : ""}${e.toFixed(2)}`;
-  if (t?.startsWith("currency")) {
-    const n = t.split(":")[1] ?? "USD";
-    return e.toLocaleString(void 0, { style: "currency", currency: n, maximumFractionDigits: 0 });
-  }
-  return e.toFixed(2);
-}
-const Ml = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  PairedGrid: $l
-}, Symbol.toStringTag, { value: "Module" })), Rl = /* @__PURE__ */ new Set([
-  "ACTION_STATUS_OK",
-  "ACTION_STATUS_REJECTED",
-  "ACTION_STATUS_FAILED",
-  "ACTION_STATUS_CANCELLED"
-]), jl = /* @__PURE__ */ new Set([
-  "ACTION_STATUS_REJECTED",
-  "ACTION_STATUS_FAILED",
-  "ACTION_STATUS_CANCELLED"
-]);
-function dt(e) {
-  return !!e && Rl.has(e);
+function _n(e) {
+	let t = S(e);
+	return t.items.length === 0 ? null : Q(t.items.map((e) => ({
+		id: e.id,
+		name: e.name,
+		kind: e.kind,
+		description: e.description,
+		owner: e.owner,
+		status: e.status,
+		updated_at: e.updatedAt,
+		tags: e.tags,
+		url: e.url,
+		metadata: e.metadata,
+		context: e.context
+	})));
 }
 function vn(e) {
-  return !!e && jl.has(e);
+	let t = x(e);
+	if (!t) return null;
+	let n = {
+		object_type: t.objectType,
+		object_id: t.objectId,
+		title: t.title,
+		description: t.description,
+		status: t.status,
+		updated_at: t.updatedAt,
+		tags: t.tags
+	};
+	for (let e of t.properties) n[e.key] = e.value;
+	return t.links.length > 0 && (n.links = t.links), t.actions.length > 0 && (n.actions = t.actions), Q([n]);
 }
-const Il = 64;
-function Ll(e, t) {
-  const [n, r] = v([]), [s, i] = v(!1), [l, a] = v(null);
-  return R(() => {
-    if (!e || !t || !!!(t.clientRequestId || t.id || t.actionId)) return;
-    r([]), i(!1), a(null);
-    const c = new AbortController();
-    let d = !1;
-    return (async () => {
-      try {
-        const f = await fetch(ws(e), {
-          method: "POST",
-          headers: { "Content-Type": Kn },
-          body: JSON.stringify(ks(t)),
-          signal: c.signal
-        });
-        if (!f.ok) throw new Error(`WatchAction: HTTP ${f.status}`);
-        if (!f.body) throw new Error("WatchAction: no response body");
-        const h = f.body.getReader();
-        await Hn(h, {
-          onMessage: (p) => {
-            const g = p;
-            r((b) => b.length >= Il ? [...b.slice(1), g] : [...b, g]), dt(g.status) && i(!0);
-          },
-          onTrailer: (p) => {
-            if (p.error) {
-              const g = p.error.code ?? "unknown", b = p.error.message ?? "watch error";
-              a(`${g}: ${b}`);
-            }
-            i(!0);
-          },
-          isDisposed: () => d
-        }), h.releaseLock();
-      } catch (f) {
-        !d && f instanceof Error && f.name !== "AbortError" && (a(f.message), i(!0));
-      } finally {
-        d || i(!0);
-      }
-    })(), () => {
-      d = !0, c.abort();
-    };
-  }, [e, t?.clientRequestId, t?.id, t?.actionId]), {
-    updates: n,
-    latest: n.length > 0 ? n[n.length - 1] : null,
-    done: s,
-    error: l
-  };
+function yn(e) {
+	let t = b(e);
+	return t ? Q([...t.nodes.map((e) => ({
+		record_type: "node",
+		id: e.id,
+		label: e.label,
+		kind: e.kind,
+		status: e.status,
+		subtitle: e.subtitle,
+		tags: e.tags,
+		metadata: e.metadata,
+		context: e.context
+	})), ...t.edges.map((e) => ({
+		record_type: "edge",
+		from: e.from,
+		to: e.to,
+		label: e.label,
+		kind: e.kind,
+		status: e.status
+	}))]) : null;
 }
-function Pl({ options: e }) {
-  const t = e ?? {}, { ctx: n, toast: r, backendUrl: s, emit: i } = ae(), l = t.symbol ?? n.symbol ?? "", a = t.url, u = t.action_id ?? "place_order", c = s ? "connect" : a ? "url" : null, [d, f] = v("buy"), [h, p] = v(""), [g, b] = v(""), w = U(n.price);
-  R(() => {
-    n.price !== w.current && (w.current = n.price, n.price != null && b(n.price));
-  }, [n.price]);
-  const A = U(n.side);
-  R(() => {
-    n.side !== A.current && (A.current = n.side, (n.side === "buy" || n.side === "sell") && f(n.side));
-  }, [n.side]);
-  const [$, j] = v(!1), [E, x] = v(null), [T, O] = v(null), [I, G] = v(!1), [Z, X] = v(null), Y = Ll(c === "connect" ? s : void 0, Z);
-  R(() => {
-    if (!Y.latest) return;
-    const z = Y.latest;
-    z.message && x(z.message);
-    const H = dt(z.status);
-    i({
-      type: "action",
-      actionId: z.action_id ?? u,
-      clientRequestId: z.client_request_id ?? "",
-      status: String(z.status ?? ""),
-      message: z.message,
-      terminal: H
-    }), H && (z.message && r(z.message, vn(z.status) ? "error" : "ok"), X(null));
-  }, [Y.latest, r, i, u]), R(() => {
-    I && G(!1);
-  }, [h, g, d]);
-  const P = ce(async () => {
-    if (!c || $) return;
-    const z = Number(h);
-    if (!Number.isFinite(z) || z <= 0) {
-      O("Amount must be a positive number");
-      return;
-    }
-    const H = g ? Number(g) : void 0;
-    if (g && (!Number.isFinite(H) || H <= 0)) {
-      O("Price must be positive");
-      return;
-    }
-    if (t.confirm && !I) {
-      G(!0), O(null), x(null);
-      return;
-    }
-    const ee = {
-      symbol: l,
-      side: d,
-      amount: z,
-      type: H == null ? "market" : "limit",
-      ...H != null && { price: H }
-    };
-    j(!0), O(null), x(null);
-    const Q = Jn();
-    try {
-      const oe = c === "connect" ? await fetch(Gn(s), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(Vn({ actionId: u, params: ee, clientRequestId: Q }))
-      }) : await fetch(a, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Idempotency-Key": Q },
-        body: JSON.stringify(ee)
-      });
-      if (!oe.ok) throw new Error(`HTTP ${oe.status}`);
-      const y = await oe.json().catch(() => ({})), k = typeof y.message == "string" ? y.message : "Order submitted", _ = typeof y.status == "string" ? y.status : "";
-      i({
-        type: "action",
-        actionId: u,
-        clientRequestId: Q,
-        status: _,
-        message: k,
-        terminal: dt(_)
-      }), vn(y.status) ? (O(k), r(k, "error")) : (x(k), r(k, "ok"), p(""), b(""), G(!1)), c === "connect" && !dt(y.status) && X({ clientRequestId: Q });
-    } catch (oe) {
-      const y = oe instanceof Error ? oe.message : "Submit failed";
-      O(y), r(y, "error"), i({
-        type: "action",
-        actionId: u,
-        clientRequestId: Q,
-        status: "ACTION_STATUS_FAILED",
-        message: y,
-        terminal: !0
-      });
-    } finally {
-      j(!1);
-    }
-  }, [c, s, a, u, $, h, g, l, d, t.confirm, I, r, i]);
-  if (R(() => {
-    if (!I) return;
-    const z = (H) => {
-      H.key === "Escape" && G(!1);
-    };
-    return document.addEventListener("keydown", z), () => document.removeEventListener("keydown", z);
-  }, [I]), !c)
-    return /* @__PURE__ */ o(D, { children: "Trade requires backendUrl or options.url" });
-  const K = (z) => `flex-1 py-1.5 text-xs font-semibold uppercase tracking-wider rounded transition-colors ${d === z ? z === "buy" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400" : "text-zinc-500 hover:text-zinc-300"}`, q = d === "buy" ? "bg-emerald-500/80 hover:bg-emerald-500 text-zinc-900" : "bg-red-500/80 hover:bg-red-500 text-zinc-900";
-  if (I) {
-    const z = g ? Number(g) : null, H = `${d.toUpperCase()} ${h}${t.quote_unit ? ` ${t.quote_unit}` : ""} ${z ? `@ ${z.toLocaleString()}` : "at market"}`;
-    return /* @__PURE__ */ m("div", { className: "flex flex-col gap-2 h-full justify-center", children: [
-      /* @__PURE__ */ o("div", { className: "text-[10px] uppercase tracking-wider text-zinc-500", children: "Confirm" }),
-      /* @__PURE__ */ o("div", { className: `text-sm font-medium ${d === "buy" ? "text-emerald-300" : "text-red-300"}`, children: H }),
-      l && /* @__PURE__ */ o("div", { className: "text-xs text-zinc-500", children: l }),
-      /* @__PURE__ */ m("div", { className: "flex gap-2 mt-1", children: [
-        /* @__PURE__ */ o(
-          "button",
-          {
-            onClick: () => G(!1),
-            className: "flex-1 py-2 rounded text-xs font-semibold uppercase tracking-wider bg-zinc-800 hover:bg-zinc-700 text-zinc-200",
-            children: "Cancel"
-          }
-        ),
-        /* @__PURE__ */ o(
-          "button",
-          {
-            onClick: P,
-            disabled: $,
-            className: `flex-1 py-2 rounded text-xs font-semibold uppercase tracking-wider disabled:opacity-30 ${q}`,
-            children: $ ? "..." : "Confirm"
-          }
-        )
-      ] }),
-      T && /* @__PURE__ */ o("div", { className: "text-xs text-red-400", children: T })
-    ] });
-  }
-  return /* @__PURE__ */ m("div", { className: "flex flex-col gap-2 h-full", children: [
-    /* @__PURE__ */ m("div", { className: "flex gap-1 bg-zinc-950 rounded p-1", children: [
-      /* @__PURE__ */ o("button", { onClick: () => f("buy"), className: K("buy"), children: "Buy" }),
-      /* @__PURE__ */ o("button", { onClick: () => f("sell"), className: K("sell"), children: "Sell" })
-    ] }),
-    l && /* @__PURE__ */ m("div", { className: "text-[10px] uppercase tracking-wider text-zinc-500", children: [
-      l,
-      t.available != null && /* @__PURE__ */ m("span", { className: "ml-2 text-zinc-400 normal-case", children: [
-        "avail ",
-        /* @__PURE__ */ o("span", { className: "tabular-nums text-zinc-200", children: t.available.toLocaleString() }),
-        t.quote_unit && /* @__PURE__ */ o("span", { className: "ml-1", children: t.quote_unit })
-      ] })
-    ] }),
-    /* @__PURE__ */ o(
-      wn,
-      {
-        label: "Amount",
-        unit: t.quote_unit,
-        value: h,
-        onChange: p,
-        disabled: $
-      }
-    ),
-    t.quick_amounts && t.quick_amounts.length > 0 && t.available != null && /* @__PURE__ */ o("div", { className: "flex gap-1", children: t.quick_amounts.map((z, H) => {
-      const Q = (t.available * z).toFixed(6).replace(/\.?0+$/, "");
-      return /* @__PURE__ */ m(
-        "button",
-        {
-          onClick: () => p(Q),
-          disabled: $,
-          className: "flex-1 text-[10px] uppercase tracking-wider text-zinc-400 hover:text-zinc-100 bg-zinc-800/60 hover:bg-zinc-800 rounded py-1 disabled:opacity-30",
-          title: `${(z * 100).toFixed(0)}% of available`,
-          children: [
-            (z * 100).toFixed(0),
-            "%"
-          ]
-        },
-        H
-      );
-    }) }),
-    /* @__PURE__ */ o(
-      wn,
-      {
-        label: "Price",
-        placeholder: "market",
-        value: g,
-        onChange: b,
-        disabled: $
-      }
-    ),
-    /* @__PURE__ */ o(
-      "button",
-      {
-        onClick: P,
-        disabled: $ || !h,
-        className: `mt-1 py-2 rounded text-sm font-semibold uppercase tracking-wider disabled:opacity-30 ${q}`,
-        children: $ ? "..." : d === "buy" ? `Buy ${t.quote_unit ?? ""}`.trim() : `Sell ${t.quote_unit ?? ""}`.trim()
-      }
-    ),
-    E && /* @__PURE__ */ o("div", { className: "text-xs text-emerald-400", children: E }),
-    T && /* @__PURE__ */ o("div", { className: "text-xs text-red-400", children: T })
-  ] });
+function bn(e) {
+	let t = y(e);
+	return t ? t.entries.length > 0 ? Q(t.entries.map((e) => ({
+		repository: t.repository,
+		ref: t.ref,
+		path: e.path,
+		name: e.name,
+		kind: e.kind,
+		language: e.language,
+		size_bytes: e.sizeBytes,
+		updated_at: e.updatedAt
+	}))) : t.file ? Q([{
+		repository: t.repository,
+		ref: t.ref,
+		path: t.file.path,
+		language: t.file.language,
+		size_bytes: t.file.sizeBytes,
+		truncated: t.file.truncated,
+		content: t.file.content,
+		url: t.file.url
+	}]) : null : null;
 }
-function wn({
-  label: e,
-  unit: t,
-  placeholder: n,
-  value: r,
-  onChange: s,
-  disabled: i
-}) {
-  return /* @__PURE__ */ m("div", { className: "flex items-center gap-2 bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 focus-within:border-zinc-500", children: [
-    /* @__PURE__ */ o("span", { className: "text-[10px] uppercase tracking-wider text-zinc-500 w-12 shrink-0", children: e }),
-    /* @__PURE__ */ o(
-      "input",
-      {
-        type: "number",
-        inputMode: "decimal",
-        placeholder: n ?? "0.00",
-        value: r,
-        onChange: (l) => s(l.target.value),
-        disabled: i,
-        className: "flex-1 bg-transparent outline-none text-right text-sm text-zinc-100 tabular-nums disabled:opacity-50"
-      }
-    ),
-    t && /* @__PURE__ */ o("span", { className: "text-xs text-zinc-500 shrink-0", children: t })
-  ] });
+function xn(e) {
+	let t = k(e);
+	return t ? Q(t.records.map((e) => ({
+		id: e.id,
+		...e.values,
+		created_at: e.createdAt,
+		updated_at: e.updatedAt,
+		revision: e.revision
+	}))) : null;
 }
-const Dl = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Trade: Pl
-}, Symbol.toStringTag, { value: "Module" })), Fl = {
-  EVENT_STATUS_OK: "border-emerald-500/40 text-emerald-300",
-  EVENT_STATUS_WARN: "border-amber-500/40   text-amber-300",
-  EVENT_STATUS_ERROR: "border-red-500/40     text-red-300",
-  EVENT_STATUS_INFO: "border-sky-500/40     text-sky-300",
-  EVENT_STATUS_PENDING: "border-zinc-500/40    text-zinc-300",
-  ok: "border-emerald-500/40 text-emerald-300",
-  warn: "border-amber-500/40   text-amber-300",
-  error: "border-red-500/40     text-red-300",
-  info: "border-sky-500/40     text-sky-300",
-  pending: "border-zinc-500/40    text-zinc-300"
-}, Ul = "border-zinc-700 text-zinc-300";
-function Bl({ data: e, options: t }) {
-  const n = L(() => Kl(e), [e]);
-  if (!n || n.length === 0)
-    return /* @__PURE__ */ o(D, { children: "No items" });
-  const s = Math.max(5, (t ?? {}).speed_seconds ?? 30);
-  return /* @__PURE__ */ o("div", { className: "h-full overflow-hidden flex items-center group", children: /* @__PURE__ */ m(
-    "div",
-    {
-      className: "flex items-center gap-2 shrink-0 motion-safe:animate-[marquee_30s_linear_infinite] motion-safe:group-hover:[animation-play-state:paused]",
-      style: { animationDuration: `${s}s` },
-      children: [
-        n.map((i, l) => /* @__PURE__ */ o(kn, { item: i }, `a-${l}`)),
-        n.map((i, l) => /* @__PURE__ */ o(kn, { item: i, "aria-hidden": !0 }, `b-${l}`))
-      ]
-    }
-  ) });
+var Sn = {
+	timeseries: on,
+	area_chart: on,
+	sparkline: on,
+	candlestick: sn,
+	table: cn,
+	heatmap: un,
+	distribution: dn,
+	events: fn,
+	tape: fn,
+	action_log: fn,
+	alert_log: fn,
+	text: pn,
+	ticker: pn,
+	orderbook: mn,
+	metric: hn,
+	gauge: gn,
+	asset_catalog: _n,
+	object_view: vn,
+	dag: yn,
+	code_browser: bn,
+	record_grid: xn,
+	record_board: xn,
+	record_calendar: xn,
+	record_form: xn,
+	SHAPE_TIMESERIES: on,
+	SHAPE_CANDLES: sn,
+	SHAPE_TABLE: cn,
+	SHAPE_METRIC: hn,
+	SHAPE_GAUGE: gn,
+	SHAPE_HEATMAP: un,
+	SHAPE_EVENTS: fn,
+	SHAPE_DISTRIBUTION: dn,
+	SHAPE_TEXT: pn,
+	SHAPE_ORDERBOOK: mn,
+	SHAPE_ASSET_CATALOG: _n,
+	SHAPE_OBJECT: vn,
+	SHAPE_GRAPH: yn,
+	SHAPE_REPOSITORY: bn,
+	SHAPE_RECORD_SET: xn
+};
+function Cn(e) {
+	if (e == null) return rn;
+	if (Array.isArray(e)) return e.length === 0 ? rn : $(e[0]) ? Q(e) : {
+		columns: ["value"],
+		rows: e.map((e) => ({ value: an(e) }))
+	};
+	if ($(e)) {
+		let t = Object.entries(e).find(([, e]) => Array.isArray(e));
+		return t && $(t[1][0]) ? Q(t[1]) : Q([e]);
+	}
+	return {
+		columns: ["value"],
+		rows: [{ value: an(e) }]
+	};
 }
-function kn({ item: e, ...t }) {
-  const n = Fl[e.status ?? ""] ?? Ul;
-  return /* @__PURE__ */ m(
-    "div",
-    {
-      ...t,
-      className: `shrink-0 px-2.5 py-1 rounded border bg-zinc-900/40 text-xs flex items-center gap-2 font-mono ${n}`,
-      children: [
-        /* @__PURE__ */ o("span", { className: "text-[10px] text-zinc-500 tabular-nums", children: e.timestamp }),
-        /* @__PURE__ */ o("span", { children: e.label })
-      ]
-    }
-  );
+function wn(e, t) {
+	if (e == null) return rn;
+	if (t) {
+		let n = Sn[t];
+		if (n) {
+			let t = n(e);
+			if (t) return t;
+		}
+	}
+	for (let t of [
+		on,
+		sn,
+		un,
+		dn,
+		fn,
+		pn,
+		mn,
+		_n,
+		vn,
+		yn,
+		bn,
+		xn,
+		gn,
+		hn,
+		cn
+	]) {
+		let n = t(e);
+		if (n && n.rows.length > 0) return n;
+	}
+	return Cn(e);
 }
-function Kl(e) {
-  let t = null;
-  if (Array.isArray(e))
-    t = e;
-  else if (e && typeof e == "object") {
-    const n = e;
-    Array.isArray(n.events) ? t = n.events : Array.isArray(n.items) && (t = n.items);
-  }
-  return t ? t.map((n) => {
-    const r = n;
-    return {
-      timestamp: String(r.timestamp ?? ""),
-      label: String(r.label ?? ""),
-      status: r.status != null ? String(r.status) : void 0
-    };
-  }) : null;
+//#endregion
+//#region src/export/serializers.ts
+var Tn = {
+	csv: "text/csv;charset=utf-8",
+	json: "application/json;charset=utf-8",
+	ndjson: "application/x-ndjson;charset=utf-8",
+	parquet: "application/vnd.apache.parquet"
+}, En = {
+	csv: "csv",
+	json: "json",
+	ndjson: "ndjson",
+	parquet: "parquet"
+}, Dn = [
+	{
+		key: "csv",
+		label: "CSV"
+	},
+	{
+		key: "parquet",
+		label: "Parquet"
+	},
+	{
+		key: "json",
+		label: "JSON"
+	},
+	{
+		key: "ndjson",
+		label: "NDJSON"
+	}
+];
+function On(e) {
+	if (e == null) return "";
+	let t = String(e);
+	return /[",\n\r]/.test(t) ? `"${t.replace(/"/g, "\"\"")}"` : t;
 }
-const Hl = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Ticker: Bl
-}, Symbol.toStringTag, { value: "Module" }));
-function Wl({ data: e }) {
-  const t = L(() => ql(e), [e]);
-  if (!t || t.length === 0)
-    return /* @__PURE__ */ o(D, { children: "No data" });
-  const n = Math.max(...t.map((r) => r.volume), 1);
-  return /* @__PURE__ */ o("div", { className: "h-full overflow-auto", children: /* @__PURE__ */ o("div", { className: "flex flex-col gap-px font-mono text-[10px]", children: t.map((r, s) => {
-    const i = r.volume / n * 100;
-    return /* @__PURE__ */ m("div", { className: "relative flex items-center px-2 py-0.5", title: `${r.price} — ${r.volume.toLocaleString()}`, children: [
-      /* @__PURE__ */ o(
-        "div",
-        {
-          className: "absolute inset-y-0.5 left-16 bg-sky-500/20 rounded-sm",
-          style: { width: `${i}%`, maxWidth: "calc(100% - 4.5rem)" }
-        }
-      ),
-      /* @__PURE__ */ o("span", { className: "relative w-14 shrink-0 text-zinc-300 tabular-nums", children: Gl(r.price) }),
-      /* @__PURE__ */ o("span", { className: "relative ml-auto text-zinc-400 tabular-nums", children: Vl(r.volume) })
-    ] }, s);
-  }) }) });
+function kn(e) {
+	let { columns: t, rows: n } = e;
+	return [t.map(On).join(","), ...n.map((e) => t.map((t) => On(e[t])).join(","))].join("\n");
 }
-function ql(e) {
-  let t = null;
-  if (Array.isArray(e)) t = e;
-  else if (e && typeof e == "object") {
-    const r = e;
-    Array.isArray(r.rows) ? t = r.rows : Array.isArray(r.levels) && (t = r.levels);
-  }
-  if (!t) return null;
-  const n = t.map((r) => {
-    const s = r;
-    return { price: Number(s.price ?? 0), volume: Number(s.volume ?? s.size ?? 0) };
-  }).filter((r) => Number.isFinite(r.price) && Number.isFinite(r.volume) && r.volume > 0);
-  return n.length === 0 ? null : (n.sort((r, s) => s.price - r.price), n);
+function An(e) {
+	return JSON.stringify(e.rows, null, 2);
 }
-function Gl(e) {
-  return Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 0 }) : e.toFixed(2);
+function jn(e) {
+	return e.rows.map((e) => JSON.stringify(e)).join("\n");
 }
-function Vl(e) {
-  return Math.abs(e) >= 1e9 ? (e / 1e9).toFixed(2) + "B" : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(2) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(1) + "K" : e.toFixed(0);
+function Mn(e) {
+	return e.columns.map((t) => ({
+		name: t,
+		data: e.rows.map((e) => e[t] ?? null)
+	}));
 }
-const Jl = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  VolumeProfile: Wl
-}, Symbol.toStringTag, { value: "Module" }));
-function Xl({ data: e }) {
-  const t = L(() => Ql(e), [e]);
-  return !t || t.length === 0 ? /* @__PURE__ */ o(D, { children: "No data" }) : /* @__PURE__ */ o("div", { className: "h-full overflow-x-auto overflow-y-hidden", children: /* @__PURE__ */ o("div", { className: "flex items-stretch gap-3 h-full", children: t.map((n, r) => /* @__PURE__ */ o(Yl, { stat: n }, r)) }) });
+async function Nn(e) {
+	let { parquetWriteBuffer: t } = await import("./src-BZ5QG4y5.js"), n = t({ columnData: e.columns.length > 0 ? Mn(e) : [{
+		name: "value",
+		data: []
+	}] });
+	return new Uint8Array(n);
 }
-function Yl({ stat: e }) {
-  const t = kr(e.value), n = e.delta == null ? "" : e.delta >= 0 ? "text-emerald-400" : "text-red-400";
-  return /* @__PURE__ */ m("div", { className: "shrink-0 min-w-[120px] max-w-[180px] flex flex-col justify-center px-3 py-1 border-l border-zinc-800 first:border-l-0", children: [
-    /* @__PURE__ */ o("div", { className: "text-[10px] uppercase tracking-wider text-zinc-500 truncate", children: e.label }),
-    /* @__PURE__ */ m("div", { className: "flex items-baseline gap-1", children: [
-      /* @__PURE__ */ o("span", { className: "text-base font-semibold text-zinc-100 tabular-nums truncate", children: gr(t) }),
-      e.unit && /* @__PURE__ */ o("span", { className: "text-[10px] text-zinc-500 shrink-0", children: e.unit })
-    ] }),
-    /* @__PURE__ */ m("div", { className: "flex items-center gap-2", children: [
-      e.delta != null && /* @__PURE__ */ m("span", { className: `text-[10px] font-medium tabular-nums ${n}`, children: [
-        e.delta >= 0 ? "▲" : "▼",
-        " ",
-        ea(e.delta)
-      ] }),
-      e.trend && e.trend.length >= 2 && /* @__PURE__ */ o(Zl, { values: e.trend })
-    ] })
-  ] });
+function Pn(e, t) {
+	switch (t) {
+		case "csv": return kn(e);
+		case "json": return An(e);
+		case "ndjson": return jn(e);
+	}
 }
-function Zl({ values: e }) {
-  const t = Math.min(...e), r = Math.max(...e) - t || 1, s = e[e.length - 1] >= e[0], i = e.map((l, a) => {
-    const u = a / (e.length - 1) * 100, c = 18 - (l - t) / r * 16 - 1;
-    return `${u.toFixed(1)},${c.toFixed(1)}`;
-  }).join(" ");
-  return /* @__PURE__ */ o("svg", { viewBox: "0 0 100 18", className: "w-12 h-3.5", preserveAspectRatio: "none", children: /* @__PURE__ */ o(
-    "polyline",
-    {
-      fill: "none",
-      stroke: s ? "#10b981" : "#ef4444",
-      strokeWidth: "1.5",
-      points: i,
-      vectorEffect: "non-scaling-stroke"
-    }
-  ) });
+//#endregion
+//#region src/export/exportView.ts
+function Fn(e) {
+	return e.table ?? wn(e.data, e.component);
 }
-function Ql(e) {
-  let t = null;
-  if (Array.isArray(e)) t = e;
-  else if (e && typeof e == "object") {
-    const r = e;
-    Array.isArray(r.stats) ? t = r.stats : Array.isArray(r.metrics) && (t = r.metrics);
-  }
-  if (!t) return null;
-  const n = t.map((r) => {
-    const s = r;
-    return {
-      label: String(s.label ?? ""),
-      value: Number(s.value ?? 0),
-      delta: typeof s.delta == "number" ? s.delta : void 0,
-      unit: s.unit != null ? String(s.unit) : void 0,
-      trend: Array.isArray(s.trend) && s.trend.every((i) => typeof i == "number") ? s.trend : void 0
-    };
-  }).filter((r) => Number.isFinite(r.value));
-  return n.length > 0 ? n : null;
+async function In(e, t) {
+	let n = Fn(e);
+	if (t === "parquet") {
+		let e = await Nn(n);
+		return new Blob([e.slice().buffer], { type: Tn.parquet });
+	}
+	let r = Pn(n, t);
+	return new Blob([r], { type: Tn[t] });
+}
+function Ln(e) {
+	return Fn(e).rows.length;
+}
+function Rn(e, t) {
+	return `${(e ?? "export").trim().replace(/[^\w.-]+/g, "_").replace(/^_+|_+$/g, "") || "export"}.${En[t]}`;
+}
+async function zn(e, t, n) {
+	if (typeof document > "u" || typeof URL?.createObjectURL != "function") return !1;
+	let r = await In(e, t), i = URL.createObjectURL(r), a = document.createElement("a");
+	return a.href = i, a.download = Rn(n, t), document.body.appendChild(a), a.click(), a.remove(), setTimeout(() => URL.revokeObjectURL(i), 0), !0;
+}
+//#endregion
+//#region src/widgets/WidgetShell.tsx
+function Bn(e, t) {
+	if (!t) return null;
+	let n = Math.floor((e - t) / 1e3);
+	if (n < 5) return "just now";
+	if (n < 60) return `${n}s ago`;
+	let r = Math.floor(n / 60);
+	return r < 60 ? `${r}m ago` : `${Math.floor(r / 60)}h ago`;
+}
+function Vn(e) {
+	let { resolution: t, loading: i, error: a, data: o, options: s, component: c, widgetId: l, Component: u, onRenderError: d, onRetry: f } = e;
+	return t.error ? /* @__PURE__ */ J(n, { message: t.error }) : i ? /* @__PURE__ */ J(r, { component: c }) : a ? /* @__PURE__ */ J(n, {
+		message: a,
+		onRetry: f
+	}) : /* @__PURE__ */ J("div", {
+		className: "h-full motion-safe:animate-[fadeIn_200ms_ease-out]",
+		children: /* @__PURE__ */ J(Vt, {
+			onError: d,
+			children: /* @__PURE__ */ J(ze, {
+				fallback: /* @__PURE__ */ J(r, { component: c }),
+				children: /* @__PURE__ */ J(u, {
+					data: o,
+					options: s,
+					widgetId: l
+				})
+			})
+		})
+	});
+}
+function Hn({ widget: e, data: t, onRefresh: n, onCopy: r, onToast: i }) {
+	let { dispatch: o, fullscreenId: s, setFullscreenId: c } = a(), [l, u] = q(!1), [d, f] = q(!1), [p, m] = q(!1), h = K(null);
+	W(() => {
+		if (!l) return;
+		let e = (e) => {
+			h.current && !h.current.contains(e.target) && (u(!1), f(!1));
+		};
+		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
+	}, [l]);
+	let g = e.source, _ = g?.data !== void 0 && !g.url && !g.source_id, v = !!g && !_, y = !!e.id, b = !!e.id && s !== e.id, x = t == null ? 0 : Ln({
+		data: t,
+		component: e.component
+	}), S = x > 0, C = async (n) => {
+		m(!0);
+		try {
+			let r = await zn({
+				data: t,
+				component: e.component
+			}, n, e.title ?? e.id ?? e.component);
+			i(r ? `Exported ${x.toLocaleString()} rows as ${n.toUpperCase()}` : "Export failed", r ? "ok" : "warn");
+		} catch {
+			i("Export failed", "error");
+		} finally {
+			m(!1), u(!1), f(!1);
+		}
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "relative",
+		ref: h,
+		children: [/* @__PURE__ */ J("button", {
+			onClick: () => u((e) => !e),
+			className: "text-zinc-600 hover:text-zinc-300 px-1.5 py-0.5 text-base leading-none rounded",
+			"aria-label": "Widget actions",
+			children: "⋮"
+		}), l && /* @__PURE__ */ Y("div", {
+			className: "mtc-popover absolute right-0 top-full mt-1 py-1 z-20 min-w-[140px]",
+			children: [
+				v && /* @__PURE__ */ J("button", {
+					onClick: () => {
+						n(), u(!1);
+					},
+					className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800",
+					children: "Refresh"
+				}),
+				/* @__PURE__ */ J("button", {
+					onClick: async () => {
+						await r(), u(!1);
+					},
+					className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800",
+					children: "Copy data"
+				}),
+				S && /* @__PURE__ */ Y("div", { children: [/* @__PURE__ */ Y("button", {
+					onClick: () => f((e) => !e),
+					className: "w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 flex items-center justify-between",
+					"aria-expanded": d,
+					children: [/* @__PURE__ */ Y("span", { children: ["Export", p ? "…" : ""] }), /* @__PURE__ */ J("span", {
+						className: "text-zinc-600",
+						children: d ? "▾" : "▸"
+					})]
+				}), d && /* @__PURE__ */ J("div", {
+					className: "bg-zinc-950/60",
+					children: Dn.map((e) => /* @__PURE__ */ J("button", {
+						onClick: () => C(e.key),
+						disabled: p,
+						className: "block w-full text-left pl-6 pr-3 py-1.5 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 disabled:opacity-50",
+						children: e.label
+					}, e.key))
+				})] }),
+				b && /* @__PURE__ */ J("button", {
+					onClick: () => {
+						c(e.id), u(!1);
+					},
+					className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800",
+					children: "Fullscreen"
+				}),
+				y && /* @__PURE__ */ J("button", {
+					onClick: () => {
+						o([{
+							targetId: e.id,
+							remove: !0
+						}]), u(!1);
+					},
+					className: "block w-full text-left px-3 py-1.5 text-xs text-red-400 hover:bg-zinc-800",
+					children: "Remove"
+				})
+			]
+		})]
+	});
+}
+function Un({ config: e, contentHeight: t, snapshotKey: n }) {
+	let { ctx: r, backendUrl: i, refreshIntervalMs: o, compact: s, toast: c, focusedId: l, setFocusedId: d, refreshPulse: f, emit: p, soundEnabled: h, reportWidgetHealth: g, registerWidgetData: v } = a(), y = G(() => e.title ? m(e.title, r) : e.title, [e.title, r]), b = G(() => {
+		if (!e.source) return {
+			source: void 0,
+			error: null
+		};
+		try {
+			let t = u(e.source, r, i);
+			return o && o > 0 && !t.stream ? {
+				source: {
+					...t,
+					refreshIntervalMs: o
+				},
+				error: null
+			} : {
+				source: t,
+				error: null
+			};
+		} catch (e) {
+			return {
+				source: void 0,
+				error: e instanceof Error ? e.message : "Resolution error"
+			};
+		}
+	}, [
+		e.source,
+		r,
+		i,
+		o
+	]), x = b.source, { data: S, loading: C, error: w, lastUpdated: T, connected: E, nextRetryAt: D, refresh: O } = Ft(x), k = zt(e.component), A = K(S);
+	A.current = S, W(() => {
+		if (n) return v(n, () => A.current);
+	}, [n, v]);
+	let j = !!x?.stream || !!(x?.refreshIntervalMs ?? x?.refreshInterval), M = x?.staleAfterMs, N = _(j && T != null || D != null || !!M && T != null), P = !!M && T != null && N - T > M, F = K(0);
+	W(() => {
+		if (!f) return;
+		let t = e.refresh_policy ?? "global";
+		if (t === "manual") return;
+		let n = f.id === "*";
+		n && t === "self" || (n || f.id === e.id) && f.n > F.current && (F.current = f.n, O());
+	}, [
+		f,
+		e.id,
+		e.refresh_policy,
+		O
+	]);
+	let I = K(!1);
+	W(() => {
+		let t = e.alert;
+		if (!t || S == null) {
+			I.current = !1;
+			return;
+		}
+		let n = Ut(S, t.when);
+		if (n && !I.current) {
+			let n = m(t.message, r), i = t.severity ?? "warn";
+			c(n, i), p({
+				type: "alert",
+				widgetId: e.id,
+				severity: i,
+				message: n,
+				predicate: t.when
+			}), h && nn(i);
+		}
+		I.current = n;
+	}, [
+		S,
+		e.alert,
+		r,
+		c,
+		p,
+		e.id,
+		h
+	]);
+	let L = K(null);
+	W(() => {
+		let t = b.error ?? w, n = b.error ? "resolve" : "data";
+		t && t !== L.current ? (p({
+			type: "widget_error",
+			widgetId: e.id,
+			component: e.component,
+			message: t,
+			source: n
+		}), L.current = t) : t || (L.current = null);
+	}, [
+		b.error,
+		w,
+		p,
+		e.id,
+		e.component
+	]), W(() => {
+		if (!e.id) return;
+		let t = !!x?.stream;
+		return g(e.id, {
+			title: y || e.title || e.component,
+			streaming: t,
+			connected: !t || E,
+			error: b.error ?? w,
+			stale: P
+		}), () => g(e.id, null);
+	}, [
+		e.id,
+		y,
+		e.title,
+		e.component,
+		x?.stream,
+		E,
+		b.error,
+		w,
+		P,
+		g
+	]);
+	let ee = !!e.id && l === e.id;
+	return /* @__PURE__ */ Y("div", {
+		onClick: e.id ? () => d(e.id) : void 0,
+		className: "mtc-widget overflow-hidden",
+		"data-focused": ee ? "true" : "false",
+		children: [y && /* @__PURE__ */ Y("div", {
+			className: `mtc-widget-header ${s ? "px-2.5 py-1.5" : "px-4 py-2.5"} flex items-center justify-between`,
+			children: [/* @__PURE__ */ J("h3", {
+				className: `${s ? "text-[11px]" : "text-xs"} font-semibold tracking-[0.01em] text-zinc-100 truncate`,
+				children: y
+			}), /* @__PURE__ */ Y("div", {
+				className: "flex items-center gap-2 shrink-0 ml-2",
+				children: [
+					j && T && /* @__PURE__ */ Y("span", {
+						className: `text-[10px] ${P ? "text-amber-400/80" : "text-zinc-600"}`,
+						children: [P ? "stale · " : "", Bn(N, T)]
+					}),
+					e.source?.stream && !E && D != null && /* @__PURE__ */ Y("span", {
+						className: "text-[10px] text-amber-400/80 tabular-nums",
+						title: "Reconnecting",
+						children: [
+							"retry ",
+							Math.max(0, Math.ceil((D - N) / 1e3)),
+							"s"
+						]
+					}),
+					e.source?.stream && /* @__PURE__ */ J("span", {
+						className: `w-2 h-2 rounded-full shrink-0 ${E ? "bg-emerald-400 animate-pulse" : "bg-amber-500/70"}`,
+						title: E ? "Connected" : D ? "Reconnecting" : "Disconnected"
+					}),
+					/* @__PURE__ */ J(Hn, {
+						widget: e,
+						data: S,
+						onToast: c,
+						onRefresh: O,
+						onCopy: async () => {
+							if (S == null) return c("No data to copy", "warn"), !1;
+							if (typeof navigator > "u" || !navigator.clipboard) return c("Clipboard unavailable", "warn"), !1;
+							try {
+								return await navigator.clipboard.writeText(JSON.stringify(S, null, 2)), c(`${e.title ?? e.component} copied`, "ok"), !0;
+							} catch {
+								return c("Clipboard blocked", "warn"), !1;
+							}
+						}
+					})
+				]
+			})]
+		}), /* @__PURE__ */ J("div", {
+			className: s ? "p-2.5" : "p-4",
+			style: { height: s ? Math.round(t * .92) : t },
+			children: Vn({
+				resolution: b,
+				loading: C,
+				error: w,
+				data: S,
+				options: e.options,
+				component: e.component,
+				widgetId: e.id,
+				Component: k,
+				onRenderError: (t) => p({
+					type: "widget_error",
+					widgetId: e.id,
+					component: e.component,
+					message: t.message,
+					source: "render"
+				}),
+				onRetry: x && !(x.inline !== void 0 || x.data !== void 0) ? O : void 0
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/core/applyActions.ts
+function Wn(e, t, n) {
+	let r = n?.replaceAll ? [] : [...e];
+	for (let e of t) {
+		let t = r.findIndex((t) => t.id === e.targetId);
+		if (e.remove) {
+			t >= 0 && r.splice(t, 1);
+			continue;
+		}
+		t >= 0 ? r[t] = {
+			...r[t],
+			...e.component !== void 0 && { component: e.component },
+			...e.title !== void 0 && { title: e.title },
+			...e.span !== void 0 && { span: e.span },
+			...e.height !== void 0 && { height: e.height },
+			...e.source !== void 0 && { source: e.source },
+			...e.options !== void 0 && { options: e.options }
+		} : r.push({
+			id: e.targetId,
+			component: e.component || "placeholder",
+			title: e.title,
+			span: e.span,
+			height: e.height,
+			source: e.source,
+			options: e.options
+		});
+	}
+	return r;
+}
+//#endregion
+//#region src/core/urlState.ts
+var Gn = "ctx.";
+function Kn(e) {
+	let t = {}, n = new URLSearchParams(e);
+	for (let [e, r] of n) e.startsWith(Gn) && (t[e.slice(4)] = r);
+	return t;
+}
+function qn(e, t) {
+	let n = new URLSearchParams(e);
+	for (let e of [...n.keys()]) e.startsWith(Gn) && n.delete(e);
+	for (let [e, r] of Object.entries(t)) n.set(`${Gn}${e}`, r);
+	return n.toString();
+}
+//#endregion
+//#region src/core/savedViews.ts
+var Jn = "medallion-terminal:view:";
+function Yn(e, t) {
+	if (!(!e || typeof window > "u" || !window.localStorage)) try {
+		window.localStorage.setItem(Jn + e, JSON.stringify(t));
+	} catch {}
+}
+function Xn(e) {
+	if (!e || typeof window > "u" || !window.localStorage) return null;
+	try {
+		let t = window.localStorage.getItem(Jn + e);
+		if (t == null) return null;
+		let n = JSON.parse(t);
+		if (!n || typeof n != "object") return null;
+		let r = {};
+		for (let [e, t] of Object.entries(n)) typeof t == "string" && (r[e] = t);
+		return r;
+	} catch {
+		return null;
+	}
+}
+function Zn() {
+	if (typeof window > "u" || !window.localStorage) return [];
+	let e = [];
+	for (let t = 0; t < window.localStorage.length; t++) {
+		let n = window.localStorage.key(t);
+		n && n.startsWith(Jn) && e.push(n.slice(24));
+	}
+	return e.sort();
+}
+function Qn(e) {
+	if (!(!e || typeof window > "u" || !window.localStorage)) try {
+		window.localStorage.removeItem(Jn + e);
+	} catch {}
+}
+//#endregion
+//#region src/core/CommandPalette.tsx
+var $n = /* @__PURE__ */ new Set([
+	"1d",
+	"5d",
+	"1m",
+	"3m",
+	"1y",
+	"max"
+]), er = 150, tr = 8;
+function nr(e, t) {
+	let n = e.trim();
+	if (!n) return null;
+	if (n.startsWith("/")) {
+		let [e, ...t] = n.slice(1).split(/\s+/), r = t.join(" ").trim();
+		switch (e.toLowerCase()) {
+			case "save": return r ? {
+				kind: "save",
+				name: r
+			} : null;
+			case "load":
+			case "open": return r ? {
+				kind: "load",
+				name: r
+			} : null;
+			case "delete":
+			case "rm": return r ? {
+				kind: "delete",
+				name: r
+			} : null;
+			default: return { kind: "noop" };
+		}
+	}
+	let r = n.split(/\s+/);
+	if (r.length > 1) {
+		let e = [], t = !0;
+		for (let n of r) {
+			let r = n.match(/^([a-zA-Z_][a-zA-Z0-9_]*)[:=](.+)$/);
+			if (!r) {
+				t = !1;
+				break;
+			}
+			e.push([r[1].toLowerCase(), r[2]]);
+		}
+		if (t && e.length > 1) return {
+			kind: "set_many",
+			pairs: e
+		};
+	}
+	let i = n.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*[:=]\s*(.+)$/);
+	if (i) return {
+		kind: "set",
+		key: i[1].toLowerCase(),
+		value: i[2].trim()
+	};
+	let a = n.indexOf(" ");
+	return a > 0 ? {
+		kind: "set",
+		key: n.slice(0, a).toLowerCase(),
+		value: n.slice(a + 1).trim()
+	} : $n.has(n.toLowerCase()) ? {
+		kind: "set",
+		key: "range",
+		value: n.toLowerCase()
+	} : {
+		kind: "set",
+		key: t,
+		value: n
+	};
+}
+function rr({ suggest: e } = {}) {
+	let { ctx: t, setCtx: n, toast: r } = a(), [i, o] = q(!1), [s, c] = q(""), [l, u] = q([]), [d, f] = q(-1), p = K(null), [m, h] = q([]), g = K(0);
+	W(() => {
+		let e = (e) => {
+			(e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k" ? (e.preventDefault(), o((e) => !e)) : e.key === "Escape" && o(!1);
+		};
+		return document.addEventListener("keydown", e), () => document.removeEventListener("keydown", e);
+	}, []), W(() => {
+		i ? p.current?.focus() : (c(""), f(-1), h([]));
+	}, [i]), W(() => {
+		if (!e || !i) return;
+		let t = s.trim();
+		if (!t) {
+			h([]);
+			return;
+		}
+		let n = ++g.current, r = setTimeout(async () => {
+			try {
+				let r = await e(t);
+				if (n !== g.current) return;
+				h(r.slice(0, tr));
+			} catch {
+				n === g.current && h([]);
+			}
+		}, er);
+		return () => clearTimeout(r);
+	}, [
+		s,
+		i,
+		e
+	]);
+	let _ = G(() => Object.keys(t)[0] ?? "symbol", [t]), v = G(() => i ? Zn() : [], [i, l]);
+	if (!i) return null;
+	let y = () => {
+		let e = nr(s, _);
+		if (!e || e.kind === "noop") {
+			o(!1);
+			return;
+		}
+		if (e.kind === "save") Yn(e.name, t), r(`Saved "${e.name}"`, "ok");
+		else if (e.kind === "load") {
+			let t = Xn(e.name);
+			if (!t) r(`No view named "${e.name}"`, "warn");
+			else {
+				for (let [e, r] of Object.entries(t)) n(e, r);
+				r(`Loaded "${e.name}"`, "ok");
+			}
+		} else if (e.kind === "delete") Qn(e.name), r(`Deleted "${e.name}"`, "ok");
+		else if (e.kind === "set") n(e.key, e.value);
+		else if (e.kind === "set_many") for (let [t, r] of e.pairs) n(t, r);
+		u((e) => [s, ...e.filter((e) => e !== s)].slice(0, 5)), o(!1);
+	}, b = (e) => {
+		if (l.length === 0) return;
+		let t = Math.max(-1, Math.min(l.length - 1, d + e));
+		f(t), c(t === -1 ? "" : l[t]);
+	}, x = (e) => {
+		for (let [t, r] of Object.entries(e.ctx)) n(t, r);
+		o(!1);
+	};
+	return /* @__PURE__ */ J("div", {
+		className: "mtc-overlay fixed inset-0 z-50 flex items-start justify-center pt-[20vh] px-4",
+		onClick: () => o(!1),
+		children: /* @__PURE__ */ Y("div", {
+			className: "mtc-popover w-full max-w-lg overflow-hidden",
+			onClick: (e) => e.stopPropagation(),
+			children: [
+				/* @__PURE__ */ J("input", {
+					ref: p,
+					type: "text",
+					value: s,
+					onChange: (e) => c(e.target.value),
+					onKeyDown: (e) => {
+						e.key === "Enter" ? (e.preventDefault(), y()) : e.key === "ArrowUp" ? (e.preventDefault(), b(1)) : e.key === "ArrowDown" && (e.preventDefault(), b(-1));
+					},
+					placeholder: "symbol:BTC range:1d  ·  /save view  ·  /load view",
+					className: "w-full bg-transparent text-zinc-100 px-4 py-3 text-sm outline-none placeholder-zinc-500 border-b border-zinc-800"
+				}),
+				m.length > 0 && /* @__PURE__ */ J("div", {
+					className: "border-b border-zinc-800 max-h-72 overflow-auto",
+					children: m.map((e, t) => /* @__PURE__ */ Y("button", {
+						onClick: () => x(e),
+						className: "block w-full text-left px-4 py-1.5 text-sm hover:bg-zinc-800/60 group",
+						children: [
+							/* @__PURE__ */ J("span", {
+								className: "text-zinc-100",
+								children: e.label
+							}),
+							e.hint && /* @__PURE__ */ J("span", {
+								className: "ml-2 text-[10px] text-zinc-500 font-mono",
+								children: e.hint
+							}),
+							/* @__PURE__ */ J("span", {
+								className: "ml-2 text-[10px] text-zinc-700 font-mono opacity-0 group-hover:opacity-100",
+								children: Object.entries(e.ctx).map(([e, t]) => `${e}=${t}`).join(" · ")
+							})
+						]
+					}, `${e.label}-${t}`))
+				}),
+				Object.entries(t).length > 0 && /* @__PURE__ */ Y("div", {
+					className: "px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap",
+					children: [/* @__PURE__ */ J("span", {
+						className: "text-[10px] uppercase tracking-wider text-zinc-600 self-center",
+						children: "current"
+					}), Object.entries(t).map(([e, t]) => /* @__PURE__ */ Y("span", {
+						className: "text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-mono",
+						children: [
+							e,
+							"=",
+							t
+						]
+					}, e))]
+				}),
+				v.length > 0 && /* @__PURE__ */ Y("div", {
+					className: "px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap",
+					children: [/* @__PURE__ */ J("span", {
+						className: "text-[10px] uppercase tracking-wider text-zinc-600 self-center",
+						children: "views"
+					}), v.map((e) => /* @__PURE__ */ J("button", {
+						onClick: () => c(`/load ${e}`),
+						className: "text-[10px] px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 font-mono",
+						title: `Load view "${e}"`,
+						children: e
+					}, e))]
+				}),
+				l.length > 0 && /* @__PURE__ */ Y("div", {
+					className: "px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap",
+					children: [/* @__PURE__ */ J("span", {
+						className: "text-[10px] uppercase tracking-wider text-zinc-600 self-center",
+						children: "recent"
+					}), l.map((e, t) => /* @__PURE__ */ J("button", {
+						onClick: () => c(e),
+						className: "text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 font-mono",
+						children: e
+					}, t))]
+				}),
+				/* @__PURE__ */ Y("div", {
+					className: "px-4 py-2 text-[10px] text-zinc-600 flex justify-between",
+					children: [/* @__PURE__ */ J("span", { children: "↵ apply  ·  ↑↓ recall" }), /* @__PURE__ */ J("span", { children: "esc close" })]
+				})
+			]
+		})
+	});
+}
+//#endregion
+//#region src/core/ShortcutsOverlay.tsx
+var ir = [
+	{
+		keys: "⌘ K / Ctrl K",
+		description: "Open command palette (set ctx, save/load views)"
+	},
+	{
+		keys: "j / ↓",
+		description: "Focus next widget"
+	},
+	{
+		keys: "k / ↑",
+		description: "Focus previous widget"
+	},
+	{
+		keys: "f",
+		description: "Fullscreen focused widget"
+	},
+	{
+		keys: "r",
+		description: "Refresh focused widget"
+	},
+	{
+		keys: "↵",
+		description: "In palette: apply current input"
+	},
+	{
+		keys: "Esc",
+		description: "Clear focus / close palette / close fullscreen"
+	},
+	{
+		keys: "⌘ 1 — 9",
+		description: "In multi-tab: jump to tab N"
+	},
+	{
+		keys: "?",
+		description: "Show this shortcuts cheat sheet"
+	},
+	{
+		keys: "/save <name>",
+		description: "In palette: save current ctx as a named view"
+	},
+	{
+		keys: "/load <name>",
+		description: "In palette: restore a saved view"
+	},
+	{
+		keys: "/delete <name>",
+		description: "In palette: delete a saved view"
+	}
+];
+function ar(e) {
+	return e.label ? e.label : `Set ${Object.entries(e.ctx).map(([e, t]) => `${e}=${t}`).join(" · ")}`;
+}
+function or({ templateShortcuts: e }) {
+	let [t, n] = q(!1);
+	return W(() => {
+		let e = (e) => {
+			let t = e.target?.tagName, r = t === "INPUT" || t === "TEXTAREA" || e.target?.isContentEditable;
+			e.key === "?" && !r ? (e.preventDefault(), n((e) => !e)) : e.key === "Escape" && n(!1);
+		};
+		return document.addEventListener("keydown", e), () => document.removeEventListener("keydown", e);
+	}, []), t ? /* @__PURE__ */ J("div", {
+		className: "mtc-overlay fixed inset-0 z-40 flex items-center justify-center px-4",
+		onClick: () => n(!1),
+		children: /* @__PURE__ */ Y("div", {
+			className: "mtc-popover w-full max-w-md overflow-hidden motion-safe:animate-[fadeIn_180ms_ease-out]",
+			onClick: (e) => e.stopPropagation(),
+			children: [/* @__PURE__ */ Y("div", {
+				className: "px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between",
+				children: [/* @__PURE__ */ J("h3", {
+					className: "text-sm font-medium text-zinc-100",
+					children: "Keyboard shortcuts"
+				}), /* @__PURE__ */ J("span", {
+					className: "text-[10px] text-zinc-500",
+					children: "esc to close"
+				})]
+			}), /* @__PURE__ */ Y("div", {
+				className: "px-4 py-3 flex flex-col gap-1.5",
+				children: [ir.map((e, t) => /* @__PURE__ */ Y("div", {
+					className: "flex items-baseline gap-3",
+					children: [/* @__PURE__ */ J("kbd", {
+						className: "text-[10px] font-mono text-zinc-300 bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 shrink-0",
+						children: e.keys
+					}), /* @__PURE__ */ J("span", {
+						className: "text-xs text-zinc-400",
+						children: e.description
+					})]
+				}, t)), e && e.length > 0 && /* @__PURE__ */ Y(He, { children: [/* @__PURE__ */ J("div", {
+					className: "text-[10px] uppercase tracking-wider text-zinc-500 mt-3 mb-1",
+					children: "Dashboard shortcuts"
+				}), e.map((e, t) => /* @__PURE__ */ Y("div", {
+					className: "flex items-baseline gap-3",
+					children: [/* @__PURE__ */ J("kbd", {
+						className: "text-[10px] font-mono text-zinc-300 bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 shrink-0",
+						children: e.key
+					}), /* @__PURE__ */ J("span", {
+						className: "text-xs text-zinc-400",
+						children: ar(e)
+					})]
+				}, `tpl-${t}`))] })]
+			})]
+		})
+	}) : null;
+}
+//#endregion
+//#region src/core/Toaster.tsx
+var sr = {
+	ok: "border-emerald-500/40 bg-emerald-500/10 text-emerald-200",
+	warn: "border-amber-500/40   bg-amber-500/10   text-amber-200",
+	error: "border-red-500/40     bg-red-500/10     text-red-200",
+	info: "border-sky-500/40     bg-sky-500/10     text-sky-200"
+}, cr = 3500;
+function lr({ toasts: e, dismiss: t }) {
+	return e.length === 0 ? null : /* @__PURE__ */ J("div", {
+		className: "fixed bottom-4 right-4 z-40 flex flex-col gap-2 max-w-sm pointer-events-none",
+		children: e.map((e) => /* @__PURE__ */ J(ur, {
+			toast: e,
+			dismiss: t
+		}, e.id))
+	});
+}
+function ur({ toast: e, dismiss: t }) {
+	return W(() => {
+		let n = setTimeout(() => t(e.id), cr);
+		return () => clearTimeout(n);
+	}, [e.id, t]), /* @__PURE__ */ J("div", {
+		onClick: () => t(e.id),
+		className: `mtc-popover pointer-events-auto cursor-pointer text-xs px-3 py-2 border ${sr[e.severity]} motion-safe:animate-[fadeIn_180ms_ease-out]`,
+		children: e.message
+	});
+}
+//#endregion
+//#region src/core/validateTemplate.ts
+var dr = /* @__PURE__ */ new Set(/* @__PURE__ */ "timeseries.candlestick.table.metric.text.prompt.gauge.distribution.heatmap.events.catalog.asset_catalog.object_view.code_browser.record_grid.record_board.record_calendar.record_form.orderbook.paired_grid.trade.ticker.volume_profile.stat_strip.bar_chart.scatter.clock.treemap.image.iframe.histogram.section.area_chart.slider.select.boxplot.radar.dag.multi_select.json.sparkline.action_log.alert_log.tape.file_browser".split("."));
+function fr(e, t) {
+	let n = [];
+	if (!e || typeof e != "object") return n.push({
+		path: "",
+		severity: "error",
+		message: "template is not an object"
+	}), n;
+	if (!Array.isArray(e.widgets)) return n.push({
+		path: "widgets",
+		severity: "error",
+		message: "widgets must be an array"
+	}), n;
+	let r = t ? /* @__PURE__ */ new Set([...dr, ...t]) : dr;
+	return e.widgets.forEach((e, t) => {
+		let i = `widgets[${t}]`;
+		if (!e || typeof e != "object") {
+			n.push({
+				path: i,
+				severity: "error",
+				message: "widget is not an object"
+			});
+			return;
+		}
+		if (!e.component || typeof e.component != "string" ? n.push({
+			path: `${i}.component`,
+			severity: "error",
+			message: "missing component"
+		}) : r.has(e.component) || n.push({
+			path: `${i}.component`,
+			severity: "warn",
+			message: `unknown component "${e.component}" — register via registerWidget() or fix the spelling`
+		}), e.span != null && (!Number.isInteger(e.span) || e.span < 1 || e.span > 12) && n.push({
+			path: `${i}.span`,
+			severity: "warn",
+			message: `span ${e.span} out of range 1..12`
+		}), e.refresh_policy != null && e.refresh_policy !== "global" && e.refresh_policy !== "self" && e.refresh_policy !== "manual" && n.push({
+			path: `${i}.refresh_policy`,
+			severity: "error",
+			message: `refresh_policy ${JSON.stringify(e.refresh_policy)} must be "global" | "self" | "manual"`
+		}), e.source) {
+			let t = e.source, r = [];
+			t.source_id && r.push("source_id"), t.url && r.push("url"), (t.inline !== void 0 || t.data !== void 0) && r.push("inline"), r.length > 1 ? n.push({
+				path: `${i}.source`,
+				severity: "error",
+				message: `multiple source modes set (${r.join(", ")}); pick one`
+			}) : r.length === 0 && n.push({
+				path: `${i}.source`,
+				severity: "warn",
+				message: "source declared but no mode (source_id / url / inline)"
+			}), t.stream && (t.refreshIntervalMs ?? t.refreshInterval) && n.push({
+				path: `${i}.source`,
+				severity: "warn",
+				message: "stream + refreshIntervalMs both set; refresh is ignored on streaming sources"
+			});
+		}
+		e.alert && ((typeof e.alert.when != "string" || !Wt(e.alert.when)) && n.push({
+			path: `${i}.alert.when`,
+			severity: "error",
+			message: `alert predicate ${JSON.stringify(e.alert.when)} does not parse`
+		}), (typeof e.alert.message != "string" || !e.alert.message) && n.push({
+			path: `${i}.alert.message`,
+			severity: "warn",
+			message: "alert has no message"
+		}));
+	}), n;
+}
+//#endregion
+//#region src/core/templateSecurity.ts
+var pr = "", mr = [
+	"authorization",
+	"cookie",
+	"proxy-authorization",
+	"set-cookie",
+	"x-api-key",
+	"x-auth-token",
+	"x-csrf-token",
+	"x-xsrf-token"
+], hr = [
+	"allow-downloads",
+	"allow-popups-to-escape-sandbox",
+	"allow-top-navigation",
+	"allow-top-navigation-by-user-activation"
+], gr = {
+	allowRelativeUrls: !0,
+	allowedUrlOrigins: [],
+	disallowedHeaders: mr,
+	minRefreshIntervalMs: 1e3,
+	iframeSandbox: {
+		disallowedTokens: hr,
+		allowScriptsWithSameOrigin: !1
+	}
+}, _r = [
+	"url",
+	"upload_url",
+	"search_url",
+	"ingest_url",
+	"download_url",
+	"media_url_template"
+];
+function vr(e, t = gr) {
+	let n = [], r = yr(t);
+	return !e || typeof e != "object" || !Array.isArray(e.widgets) ? [{
+		path: "widgets",
+		severity: "error",
+		message: "template.widgets must be an array"
+	}] : (e.widgets.forEach((e, t) => {
+		if (!e || typeof e != "object") return;
+		let i = `widgets[${t}]`;
+		e.source && Sr(e.source, `${i}.source`, r, n), Cr(e, i, r, n), e.component === "iframe" && wr(e, i, r, n), e.component === "image" && Tr(e, i, r, n);
+	}), n);
+}
+function yr(e) {
+	let t = gr.iframeSandbox;
+	return {
+		allowedUrlOrigins: br(e.allowedUrlOrigins ?? gr.allowedUrlOrigins),
+		allowedIframeOrigins: br(e.allowedIframeOrigins ?? e.allowedUrlOrigins ?? []),
+		allowRelativeUrls: e.allowRelativeUrls ?? gr.allowRelativeUrls,
+		allowedHeaders: e.allowedHeaders ? xr(e.allowedHeaders) : void 0,
+		disallowedHeaders: xr(e.disallowedHeaders ?? gr.disallowedHeaders),
+		minRefreshIntervalMs: e.minRefreshIntervalMs ?? gr.minRefreshIntervalMs,
+		maxRefreshIntervalMs: e.maxRefreshIntervalMs,
+		iframeSandbox: {
+			requiredTokens: [...t.requiredTokens ?? [], ...e.iframeSandbox?.requiredTokens ?? []],
+			disallowedTokens: [...t.disallowedTokens ?? [], ...e.iframeSandbox?.disallowedTokens ?? []],
+			allowScriptsWithSameOrigin: e.iframeSandbox?.allowScriptsWithSameOrigin ?? t.allowScriptsWithSameOrigin ?? !1
+		}
+	};
+}
+function br(e) {
+	let t = /* @__PURE__ */ new Set();
+	for (let n of e) try {
+		t.add(new URL(n).origin);
+	} catch {}
+	return t;
+}
+function xr(e) {
+	return new Set(e.map((e) => e.trim().toLowerCase()).filter(Boolean));
+}
+function Sr(e, t, n, r) {
+	typeof e.url == "string" && Ar(e.url, `${t}.url`, n.allowedUrlOrigins, n.allowRelativeUrls, r), e.headers && typeof e.headers == "object" && Or(e.headers, `${t}.headers`, n, r), kr(e.refreshIntervalMs ?? e.refreshInterval, t, n, r);
+}
+function Cr(e, t, n, r) {
+	let i = e.options;
+	if (!(!i || typeof i != "object")) for (let a of _r) {
+		if (e.component === "iframe" && a === "url") continue;
+		let o = i[a];
+		typeof o != "string" || o === "" || Ar(o, `${t}.options.${a}`, n.allowedUrlOrigins, n.allowRelativeUrls, r);
+	}
+}
+function wr(e, t, n, r) {
+	let { url: i, sandbox: a } = Er(e);
+	i && Ar(i, `${t}.iframe.url`, n.allowedIframeOrigins, n.allowRelativeUrls, r), jr(a, `${t}.iframe.sandbox`, n, r);
+}
+function Tr(e, t, n, r) {
+	let i = Dr(e.source), a = typeof i == "string" ? i : i && typeof i == "object" && typeof i.url == "string" ? i.url : void 0;
+	a && Ar(a, `${t}.image.url`, n.allowedIframeOrigins, n.allowRelativeUrls, r);
+}
+function Er(e) {
+	let t = e.options, n = Dr(e.source), r, i = "";
+	if (typeof n == "string") r = n;
+	else if (n && typeof n == "object") {
+		let e = n;
+		typeof e.url == "string" && (r = e.url), typeof e.sandbox == "string" && (i = e.sandbox);
+	}
+	return t && typeof t == "object" && (!r && typeof t.url == "string" && (r = t.url), typeof t.sandbox == "string" && (i = t.sandbox)), {
+		url: r,
+		sandbox: i
+	};
+}
+function Dr(e) {
+	return e?.inline ?? e?.data;
+}
+function Or(e, t, n, r) {
+	for (let i of Object.keys(e)) {
+		let e = i.trim().toLowerCase();
+		if (!e) {
+			r.push({
+				path: t,
+				severity: "error",
+				message: "header names must be non-empty"
+			});
+			continue;
+		}
+		n.disallowedHeaders.has(e) && r.push({
+			path: `${t}.${i}`,
+			severity: "error",
+			message: `header "${i}" is not allowed`
+		}), n.allowedHeaders && !n.allowedHeaders.has(e) && r.push({
+			path: `${t}.${i}`,
+			severity: "error",
+			message: `header "${i}" is not in the allow-list`
+		});
+	}
+}
+function kr(e, t, n, r) {
+	if (!(e == null || e === 0)) {
+		if (!Number.isFinite(e) || e < 0) {
+			r.push({
+				path: `${t}.refreshIntervalMs`,
+				severity: "error",
+				message: "refreshIntervalMs must be >= 0"
+			});
+			return;
+		}
+		n.minRefreshIntervalMs != null && e < n.minRefreshIntervalMs && r.push({
+			path: `${t}.refreshIntervalMs`,
+			severity: "error",
+			message: `refreshIntervalMs ${e} is below host minimum ${n.minRefreshIntervalMs}`
+		}), n.maxRefreshIntervalMs != null && e > n.maxRefreshIntervalMs && r.push({
+			path: `${t}.refreshIntervalMs`,
+			severity: "error",
+			message: `refreshIntervalMs ${e} is above host maximum ${n.maxRefreshIntervalMs}`
+		});
+	}
+}
+function Ar(e, t, n, r, i) {
+	let a = e.trim();
+	if (!a) {
+		i.push({
+			path: t,
+			severity: "error",
+			message: "URL must be non-empty"
+		});
+		return;
+	}
+	if (Mr(a)) {
+		if (Nr(a)) {
+			i.push({
+				path: t,
+				severity: "error",
+				message: "relative URL template substitution must appear after a path, query, or hash delimiter"
+			});
+			return;
+		}
+		r || i.push({
+			path: t,
+			severity: "error",
+			message: "relative URLs are not allowed by host policy"
+		});
+		return;
+	}
+	if (Pr(a).includes("${")) {
+		i.push({
+			path: t,
+			severity: "error",
+			message: "URL origin may not contain template substitution"
+		});
+		return;
+	}
+	let o;
+	try {
+		o = new URL(a.replace(/\{[A-Za-z0-9_]+\}/g, "value"));
+	} catch {
+		i.push({
+			path: t,
+			severity: "error",
+			message: `URL ${JSON.stringify(e)} does not parse`
+		});
+		return;
+	}
+	if (o.protocol !== "http:" && o.protocol !== "https:") {
+		i.push({
+			path: t,
+			severity: "error",
+			message: `URL protocol ${o.protocol} is not allowed`
+		});
+		return;
+	}
+	n.has(o.origin) || i.push({
+		path: t,
+		severity: "error",
+		message: `URL origin ${o.origin} is not allowed`
+	});
+}
+function jr(e, t, n, r) {
+	let i = new Set(e.split(/\s+/).map((e) => e.trim()).filter(Boolean));
+	for (let e of n.iframeSandbox.requiredTokens) i.has(e) || r.push({
+		path: t,
+		severity: "error",
+		message: `iframe sandbox must include ${e}`
+	});
+	for (let e of n.iframeSandbox.disallowedTokens) i.has(e) && r.push({
+		path: t,
+		severity: "error",
+		message: `iframe sandbox token ${e} is not allowed`
+	});
+	!n.iframeSandbox.allowScriptsWithSameOrigin && i.has("allow-scripts") && i.has("allow-same-origin") && r.push({
+		path: t,
+		severity: "error",
+		message: "iframe sandbox may not combine allow-scripts and allow-same-origin"
+	});
+}
+function Mr(e) {
+	return !e.startsWith("//") && !/^[A-Za-z][A-Za-z0-9+.-]*:/.test(e);
+}
+function Nr(e) {
+	let t = e.indexOf("${");
+	if (t === -1) return !1;
+	let n = e.slice(0, t);
+	return !/[/?#]/.test(n) || /^\/+$/.test(n);
+}
+function Pr(e) {
+	if (e.startsWith("//")) {
+		let t = e.slice(2).search(/[/?#]/);
+		return t === -1 ? e : e.slice(0, t + 2);
+	}
+	let t = e.match(/^[A-Za-z][A-Za-z0-9+.-]*:\/\/[^/?#]*/);
+	return t ? t[0] : "";
+}
+//#endregion
+//#region src/core/snapshot.ts
+function Fr(e, t) {
+	return e.id || `__mt_idx_${t}`;
+}
+function Ir(e) {
+	let t = e?.widgets;
+	return !Array.isArray(t) || t.length === 0 ? !1 : t.every((e) => {
+		let t = e.source;
+		if (!t) return !0;
+		let n = t.inline !== void 0 || t.data !== void 0, r = !!(t.source_id || t.url);
+		return n || !r;
+	});
+}
+function Lr(e, t, n, r, i) {
+	let a = t.map((e, t) => {
+		let n = r(e, t);
+		if (n === void 0) {
+			let t = e.source;
+			return t && (t.source_id || t.url || t.stream) ? {
+				...e,
+				source: { inline: null }
+			} : e;
+		}
+		return {
+			...e,
+			source: { inline: n }
+		};
+	}), o = {
+		...e,
+		context: { values: { ...n } },
+		widgets: a
+	};
+	return i && (o.frozenAt = i), o;
+}
+//#endregion
+//#region src/core/Dashboard.tsx
+var Rr = {
+	metric: 120,
+	timeseries: 300,
+	candlestick: 400,
+	table: 350,
+	text: 350,
+	prompt: 60,
+	gauge: 220,
+	distribution: 280,
+	heatmap: 320,
+	events: 320,
+	catalog: 480,
+	asset_catalog: 520,
+	object_view: 520,
+	code_browser: 560,
+	record_grid: 520,
+	record_board: 520,
+	record_calendar: 560,
+	record_form: 520,
+	orderbook: 380,
+	paired_grid: 420,
+	trade: 280,
+	ticker: 56,
+	volume_profile: 380,
+	stat_strip: 90,
+	bar_chart: 320,
+	scatter: 360,
+	clock: 100,
+	treemap: 380,
+	image: 320,
+	iframe: 360,
+	histogram: 280,
+	section: 24,
+	area_chart: 280,
+	slider: 80,
+	select: 80,
+	boxplot: 360,
+	radar: 380,
+	dag: 420,
+	multi_select: 100,
+	json: 360,
+	sparkline: 60,
+	action_log: 320,
+	alert_log: 320,
+	tape: 320,
+	file_browser: 520
+}, zr = [
+	"1d",
+	"5d",
+	"1m",
+	"3m",
+	"1y",
+	"max"
+], Br = 200, Vr = 200;
+function Hr({ value: e, onChange: t }) {
+	return /* @__PURE__ */ J("div", {
+		className: "mtc-segmented flex p-0.5 gap-0.5",
+		children: zr.map((n) => /* @__PURE__ */ J("button", {
+			onClick: () => t(n),
+			className: `px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${e.toLowerCase() === n ? "bg-sky-500/20 text-sky-200" : "text-zinc-400 hover:text-zinc-200"}`,
+			children: n
+		}, n))
+	});
+}
+var Ur = [
+	{
+		label: "Off",
+		ms: null
+	},
+	{
+		label: "5s",
+		ms: 5e3
+	},
+	{
+		label: "30s",
+		ms: 3e4
+	},
+	{
+		label: "1m",
+		ms: 6e4
+	},
+	{
+		label: "5m",
+		ms: 3e5
+	}
+];
+function Wr({ value: e, onChange: t }) {
+	return /* @__PURE__ */ J("div", {
+		className: "mtc-segmented flex p-0.5 gap-0.5",
+		children: Ur.map((n) => /* @__PURE__ */ J("button", {
+			onClick: () => t(n.ms),
+			className: `px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${e === n.ms ? "bg-sky-500/20 text-sky-200" : "text-zinc-400 hover:text-zinc-200"}`,
+			title: n.ms ? `Refresh every ${n.label}` : "No auto-refresh",
+			children: n.label
+		}, n.label))
+	});
+}
+function Gr() {
+	let e = typeof navigator < "u" && /mac/i.test(navigator.platform);
+	return /* @__PURE__ */ Y("button", {
+		onClick: () => {
+			document.dispatchEvent(new KeyboardEvent("keydown", {
+				key: "k",
+				metaKey: e,
+				ctrlKey: !e,
+				bubbles: !0
+			}));
+		},
+		className: "mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 font-mono",
+		title: "Open command palette",
+		children: [e ? "⌘" : "Ctrl", " K"]
+	});
+}
+function Kr(e) {
+	let t = new Date(e);
+	return `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}:${String(t.getSeconds()).padStart(2, "0")}`;
+}
+function qr(e, t) {
+	let n = Math.floor((e - t) / 1e3);
+	if (n < 5) return "now";
+	if (n < 60) return `${n}s`;
+	let r = Math.floor(n / 60);
+	return r < 60 ? `${r}m` : `${Math.floor(r / 60)}h`;
+}
+function Jr() {
+	let { recentActions: e, widgetHealth: t } = a(), n = _(!0), r = e[0], i = Object.values(t), o = i.filter((e) => e.streaming), s = o.filter((e) => e.connected && !e.error).length, c = i.filter((e) => e.error).length, l = i.filter((e) => e.stale).length, u = r?.status?.endsWith("_OK") ? "text-emerald-400/80" : r?.status?.endsWith("_PENDING") || r?.status?.endsWith("_ACCEPTED") ? "text-amber-400/80" : r && (r.status?.endsWith("_REJECTED") || r.status?.endsWith("_FAILED") || r.status?.endsWith("_CANCELLED")) ? "text-red-400/80" : "text-zinc-400";
+	return /* @__PURE__ */ Y("div", {
+		className: "mtc-statusbar px-3 md:px-5 py-1 flex items-center gap-4 text-[10px] font-mono text-zinc-500 shrink-0",
+		children: [
+			/* @__PURE__ */ J("div", {
+				className: "flex-1 min-w-0 truncate",
+				children: r ? /* @__PURE__ */ Y("span", {
+					className: "flex items-center gap-2",
+					children: [
+						/* @__PURE__ */ J("span", {
+							className: "tabular-nums w-7 shrink-0",
+							children: qr(n, r.receivedAt)
+						}),
+						/* @__PURE__ */ J("span", {
+							className: "text-zinc-300 shrink-0",
+							children: r.actionId
+						}),
+						/* @__PURE__ */ J("span", {
+							className: `uppercase tracking-wider shrink-0 ${u}`,
+							children: r.status.replace(/^ACTION_STATUS_/, "").toLowerCase()
+						}),
+						r.message && /* @__PURE__ */ J("span", {
+							className: "truncate text-zinc-400",
+							children: r.message
+						})
+					]
+				}) : /* @__PURE__ */ J("span", {
+					className: "text-zinc-600",
+					children: "idle"
+				})
+			}),
+			o.length > 0 && /* @__PURE__ */ Y("span", {
+				className: s === o.length ? "text-emerald-400/80" : "text-amber-400/80",
+				title: `${s} of ${o.length} streams connected`,
+				children: [
+					/* @__PURE__ */ Y("span", {
+						className: "tabular-nums",
+						children: [
+							s,
+							"/",
+							o.length
+						]
+					}),
+					" ",
+					/* @__PURE__ */ J("span", {
+						className: "opacity-60",
+						children: "↑"
+					})
+				]
+			}),
+			l > 0 && /* @__PURE__ */ Y("span", {
+				className: "text-amber-400/80 tabular-nums",
+				title: `${l} widget(s) without recent updates`,
+				children: [l, " stale"]
+			}),
+			c > 0 && /* @__PURE__ */ Y("span", {
+				className: "text-red-400 tabular-nums",
+				children: [c, " err"]
+			}),
+			/* @__PURE__ */ J("span", {
+				className: "tabular-nums text-zinc-300",
+				children: Kr(n)
+			})
+		]
+	});
+}
+function Yr({ health: e }) {
+	let t = Object.values(e);
+	if (t.length === 0) return null;
+	let n = t.filter((e) => e.streaming), r = n.filter((e) => e.connected && !e.error).length, i = t.filter((e) => e.error);
+	if (n.length === 0 && i.length === 0) return null;
+	let a = i.map((e) => e.title).join("\n");
+	return /* @__PURE__ */ Y("div", {
+		className: "mtc-control flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider",
+		children: [n.length > 0 && /* @__PURE__ */ Y("span", {
+			className: r === n.length ? "text-emerald-400" : "text-amber-400",
+			title: `${r} of ${n.length} streams connected`,
+			children: [/* @__PURE__ */ Y("span", {
+				className: "tabular-nums",
+				children: [
+					r,
+					"/",
+					n.length
+				]
+			}), /* @__PURE__ */ J("span", {
+				className: "ml-0.5",
+				children: "↑"
+			})]
+		}), i.length > 0 && /* @__PURE__ */ Y("span", {
+			className: "text-red-400 tabular-nums",
+			title: a,
+			children: [
+				i.length,
+				" err",
+				i.length === 1 ? "" : "s"
+			]
+		})]
+	});
+}
+function Xr({ onClick: e }) {
+	return /* @__PURE__ */ J("button", {
+		onClick: e,
+		className: "mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200",
+		title: "Refresh every widget",
+		children: "Refresh"
+	});
+}
+function Zr({ enabled: e, onToggle: t }) {
+	return /* @__PURE__ */ Y("button", {
+		onClick: t,
+		className: "mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200",
+		title: e ? "Mute alert sounds" : "Enable alert sounds (warn/error)",
+		children: ["Sound ", e ? "on" : "off"]
+	});
+}
+function Qr({ compact: e, onToggle: t }) {
+	return /* @__PURE__ */ J("button", {
+		onClick: t,
+		className: "mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200",
+		title: e ? "Switch to comfortable density" : "Switch to compact density",
+		children: e ? "Cozy" : "Compact"
+	});
+}
+function $r({ onCopied: e }) {
+	return /* @__PURE__ */ J("button", {
+		onClick: async () => {
+			if (!(typeof navigator > "u" || !navigator.clipboard)) try {
+				await navigator.clipboard.writeText(window.location.href), e();
+			} catch {}
+		},
+		className: "mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200",
+		title: "Copy current dashboard URL",
+		children: "Copy link"
+	});
+}
+function ei({ onClick: e, busy: t }) {
+	return /* @__PURE__ */ J("button", {
+		onClick: e,
+		disabled: t,
+		className: "mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-sky-300 hover:text-sky-200 border-sky-500/40",
+		title: "Freeze data into a static, self-contained dashboard to share — nothing re-fetches or regenerates",
+		children: t ? "Sharing…" : "Share view"
+	});
+}
+function ti({ frozenAt: e }) {
+	let t = e ? new Date(e) : null, n = t && !Number.isNaN(t.getTime()) ? t.toLocaleString(void 0, {
+		dateStyle: "medium",
+		timeStyle: "short"
+	}) : null;
+	return /* @__PURE__ */ Y("span", {
+		className: "mtc-control flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400",
+		title: n ? `Static snapshot frozen ${n} — data does not refresh` : "Static view — data does not refresh",
+		children: [
+			/* @__PURE__ */ J("span", { className: "w-1.5 h-1.5 rounded-full bg-zinc-500" }),
+			n ? "Snapshot" : "Static view",
+			n ? /* @__PURE__ */ Y("span", {
+				className: "text-zinc-600 normal-case tracking-normal",
+				children: ["· ", n]
+			}) : null
+		]
+	});
+}
+function ni(e) {
+	if (typeof document > "u" || typeof URL?.createObjectURL != "function") return;
+	let t = (e.title || "dashboard").trim().replace(/[^\w.-]+/g, "_").replace(/^_+|_+$/g, "") || "dashboard", n = new Blob([JSON.stringify(e, null, 2)], { type: "application/json" }), r = URL.createObjectURL(n), i = document.createElement("a");
+	i.href = r, i.download = `${t}.snapshot.json`, document.body.appendChild(i), i.click(), i.remove(), setTimeout(() => URL.revokeObjectURL(r), 0);
+}
+function ri({ template: e, backendUrl: t, onEvent: n, onCtxChange: r, paletteSuggest: i, chrome: a = "full", onShare: s, theme: c = "dark", templateTrust: l = "untrusted", templateTrustPolicy: u = gr }) {
+	let d = wt(), f = e.columns || 12, [p, h] = q(e.widgets), _ = G(() => fr(e), [e]), v = G(() => l === "trusted" ? [] : vr(e, u), [
+		e,
+		l,
+		u
+	]), y = G(() => [..._, ...v], [_, v]), b = G(() => y.some((e) => e.severity === "error"), [y]), x = G(() => v.some((e) => e.severity === "error"), [v]), S = G(() => !!e.frozenAt || Ir(e), [e]), [C, w] = q(!1), [T, E] = q(() => {
+		let t = e.context?.values ?? {};
+		return typeof window > "u" ? t : {
+			...t,
+			...Kn(window.location.search)
+		};
+	}), [D, O] = q(() => ci("refreshIntervalMs", null)), [k, A] = q(() => ci("compact", !1)), [j, M] = q(() => ci("soundEnabled", !1));
+	W(() => {
+		li("refreshIntervalMs", D);
+	}, [D]), W(() => {
+		li("compact", k);
+	}, [k]), W(() => {
+		li("soundEnabled", j);
+	}, [j]);
+	let [N, F] = q(null), [I, L] = q(null), [ee, te] = q(null), [ne, re] = q([]), [ie, ae] = q(!1), oe = K(0), se = K(!1), ce = U((e) => {
+		te((t) => ({
+			id: e,
+			n: (t?.n ?? 0) + 1
+		}));
+	}, []), le = K(n);
+	W(() => {
+		le.current = n;
+	}, [n]);
+	let [ue, de] = q([]), R = U(() => de([]), []), [z, B] = q([]), fe = U(() => B([]), []), [V, pe] = q({}), me = U((e, t) => {
+		pe((n) => {
+			let r = n[e];
+			if (t === null) {
+				if (!r) return n;
+				let t = { ...n };
+				return delete t[e], t;
+			}
+			return r && r.streaming === t.streaming && r.connected === t.connected && r.error === t.error && r.title === t.title && r.stale === t.stale ? n : {
+				...n,
+				[e]: t
+			};
+		});
+	}, []), he = K(/* @__PURE__ */ new Map()), ge = U((e, t) => (he.current.set(e, t), () => {
+		he.current.get(e) === t && he.current.delete(e);
+	}), []), _e = K({
+		widgets: p,
+		ctx: T,
+		template: e
+	});
+	_e.current = {
+		widgets: p,
+		ctx: T,
+		template: e
+	};
+	let H = U(() => {
+		let { widgets: e, ctx: t, template: n } = _e.current;
+		return Lr(n, e, t, (e, t) => {
+			let n = he.current.get(Fr(e, t));
+			return n ? n() : void 0;
+		}, (/* @__PURE__ */ new Date()).toISOString());
+	}, []), ve = U((e) => {
+		le.current?.(e), e.type === "action" ? de((t) => [{
+			receivedAt: Date.now(),
+			actionId: e.actionId,
+			clientRequestId: e.clientRequestId,
+			status: e.status,
+			message: e.message,
+			terminal: e.terminal
+		}, ...t].slice(0, Br)) : e.type === "alert" && B((t) => [{
+			receivedAt: Date.now(),
+			widgetId: e.widgetId,
+			severity: e.severity,
+			message: e.message,
+			predicate: e.predicate
+		}, ...t].slice(0, Vr));
+	}, []), ye = U((e, t = "info") => {
+		oe.current += 1;
+		let n = oe.current;
+		re((r) => [...r, {
+			id: n,
+			message: e,
+			severity: t
+		}]);
+	}, []), be = U(async () => {
+		if (!se.current) {
+			se.current = !0, ae(!0);
+			try {
+				let e = H();
+				s ? await s(e) : ni(e), ye(s ? "Snapshot shared" : "Snapshot downloaded", "ok");
+			} catch (e) {
+				let t = e instanceof Error ? e.message : "Snapshot sharing failed";
+				ye(`Snapshot failed: ${t}`, "error");
+			} finally {
+				se.current = !1, ae(!1);
+			}
+		}
+	}, [
+		s,
+		H,
+		ye
+	]), xe = U((e) => {
+		re((t) => t.filter((t) => t.id !== e));
+	}, []), Se = U((e, t) => {
+		E((n) => n[e] === t ? n : {
+			...n,
+			[e]: t
+		});
+	}, []);
+	W(() => {
+		if (typeof window > "u") return;
+		let e = qn(window.location.search, T), t = `${window.location.pathname}${e ? `?${e}` : ""}${window.location.hash}`;
+		window.history.replaceState(null, "", t);
+	}, [T]);
+	let Ce = K(r);
+	W(() => {
+		Ce.current = r;
+	}, [r]), W(() => {
+		Ce.current?.(T);
+	}, [T]);
+	let we = U((e, t) => {
+		h((n) => Wn(n, e, t));
+	}, []), Te = (e) => d === "mobile" ? f : d === "tablet" ? Math.min(e, Math.floor(f / 2)) : Math.min(e, f), Ee = G(() => ({
+		dispatch: we,
+		ctx: T,
+		setCtx: Se,
+		backendUrl: t,
+		widgets: p,
+		refreshIntervalMs: D ?? void 0,
+		toast: ye,
+		compact: k,
+		fullscreenId: N,
+		setFullscreenId: F,
+		focusedId: I,
+		setFocusedId: L,
+		refreshPulse: ee,
+		requestRefresh: ce,
+		emit: ve,
+		recentActions: ue,
+		clearRecentActions: R,
+		recentAlerts: z,
+		clearRecentAlerts: fe,
+		soundEnabled: j,
+		widgetHealth: V,
+		reportWidgetHealth: me,
+		registerWidgetData: ge,
+		snapshot: H
+	}), [
+		we,
+		T,
+		Se,
+		t,
+		p,
+		D,
+		ye,
+		k,
+		N,
+		I,
+		ee,
+		ce,
+		ve,
+		ue,
+		R,
+		z,
+		fe,
+		j,
+		V,
+		me,
+		ge,
+		H
+	]);
+	W(() => {
+		if (!N) return;
+		let e = (e) => {
+			e.key === "Escape" && F(null);
+		};
+		return document.addEventListener("keydown", e), () => document.removeEventListener("keydown", e);
+	}, [N]), W(() => {
+		!I || typeof document > "u" || document.getElementById(`mt-widget-${I}`)?.scrollIntoView({
+			block: "nearest",
+			behavior: "smooth"
+		});
+	}, [I]), W(() => {
+		let t = (t) => {
+			if (t.metaKey || t.ctrlKey || t.altKey) return;
+			let n = t.target?.tagName;
+			if (n === "INPUT" || n === "TEXTAREA" || t.target?.isContentEditable) return;
+			let r = e.shortcuts?.find((e) => e.key === t.key);
+			if (r) {
+				t.preventDefault();
+				for (let [e, t] of Object.entries(r.ctx)) Se(e, t);
+				return;
+			}
+			let i = p.map((e) => e.id).filter((e) => !!e);
+			if (i.length === 0) return;
+			let a = (e) => {
+				let t = I ? i.indexOf(I) : -1, n = i[(t + e + i.length) % i.length];
+				L(n);
+			};
+			switch (t.key) {
+				case "j":
+				case "ArrowDown":
+					t.preventDefault(), a(1);
+					break;
+				case "k":
+				case "ArrowUp":
+					t.preventDefault(), a(-1);
+					break;
+				case "f":
+					I && (t.preventDefault(), F(I));
+					break;
+				case "r":
+					I && (t.preventDefault(), ce(I));
+					break;
+				case "Escape":
+					I && L(null);
+					break;
+			}
+		};
+		return document.addEventListener("keydown", t), () => document.removeEventListener("keydown", t);
+	}, [
+		p,
+		I,
+		ce,
+		e.shortcuts,
+		Se
+	]);
+	let De = !x && N ? p.find((e) => e.id === N) : null;
+	return /* @__PURE__ */ J(o.Provider, {
+		value: Ee,
+		children: /* @__PURE__ */ J("div", {
+			className: `mtc-root mtc-theme-${c}`,
+			"data-theme": c,
+			children: /* @__PURE__ */ J(g, { children: /* @__PURE__ */ Y(P, { children: [
+				/* @__PURE__ */ J(rr, { suggest: i }),
+				/* @__PURE__ */ J(or, { templateShortcuts: e.shortcuts }),
+				/* @__PURE__ */ J(lr, {
+					toasts: ne,
+					dismiss: xe
+				}),
+				y.length > 0 && (!C || b) && /* @__PURE__ */ J(ii, {
+					issues: y,
+					dismissible: !b,
+					onDismiss: () => w(!0)
+				}),
+				/* @__PURE__ */ Y("div", {
+					className: "mtc-workspace min-h-full flex flex-col",
+					children: [/* @__PURE__ */ Y("div", {
+						className: "flex-1",
+						children: [(e.title || a === "full") && /* @__PURE__ */ Y("div", {
+							className: "mtc-toolbar",
+							children: [/* @__PURE__ */ Y("div", {
+								className: "px-3 md:px-5 py-3 flex items-center gap-3 flex-wrap",
+								children: [e.title && /* @__PURE__ */ J("h1", {
+									className: "mtc-dashboard-title text-base font-semibold text-zinc-100 mr-1",
+									children: m(e.title, T)
+								}), a === "full" && /* @__PURE__ */ Y("div", {
+									className: "ml-auto flex items-center gap-2 flex-wrap",
+									children: [
+										S ? /* @__PURE__ */ J(ti, { frozenAt: e.frozenAt }) : /* @__PURE__ */ Y(He, { children: [
+											/* @__PURE__ */ J(Yr, { health: V }),
+											/* @__PURE__ */ J(Wr, {
+												value: D,
+												onChange: O
+											}),
+											/* @__PURE__ */ J(Xr, { onClick: () => ce("*") })
+										] }),
+										/* @__PURE__ */ J(Zr, {
+											enabled: j,
+											onToggle: () => M((e) => !e)
+										}),
+										/* @__PURE__ */ J(Qr, {
+											compact: k,
+											onToggle: () => A((e) => !e)
+										}),
+										!S && /* @__PURE__ */ J(ei, {
+											onClick: () => void be(),
+											busy: ie
+										}),
+										/* @__PURE__ */ J($r, { onCopied: () => ye("URL copied", "ok") }),
+										/* @__PURE__ */ J(Gr, {})
+									]
+								})]
+							}), a === "full" && Object.keys(T).length > 0 && /* @__PURE__ */ Y("div", {
+								className: "px-3 md:px-5 pb-3 flex items-center gap-2 flex-wrap",
+								children: [/* @__PURE__ */ J("span", {
+									className: "text-[9px] uppercase tracking-[0.14em] text-zinc-600 mr-1",
+									children: "Context"
+								}), Object.entries(T).map(([e, t]) => e === "range" ? /* @__PURE__ */ J(Hr, {
+									value: t,
+									onChange: (t) => Se(e, t)
+								}, e) : /* @__PURE__ */ Y("div", {
+									className: "mtc-context-chip px-2 py-1 text-[11px]",
+									children: [/* @__PURE__ */ J("span", {
+										className: "text-zinc-500 uppercase tracking-wider mr-1",
+										children: e
+									}), /* @__PURE__ */ J("span", {
+										className: "text-zinc-100 font-mono",
+										children: t
+									})]
+								}, e))]
+							})]
+						}), /* @__PURE__ */ J("div", {
+							className: "p-3 md:p-5",
+							children: /* @__PURE__ */ J("div", {
+								className: "grid gap-3 md:gap-4 items-start",
+								style: { gridTemplateColumns: `repeat(${f}, 1fr)` },
+								children: x ? /* @__PURE__ */ J(ai, { issues: v }) : p.map((e, t) => /* @__PURE__ */ J("div", {
+									id: e.id ? `mt-widget-${e.id}` : void 0,
+									style: { gridColumn: `span ${Te(e.span || 6)}` },
+									children: /* @__PURE__ */ J(Un, {
+										config: e,
+										contentHeight: e.height || Rr[e.component] || 280,
+										snapshotKey: Fr(e, t)
+									})
+								}, e.id || t))
+							})
+						})]
+					}), a === "full" && /* @__PURE__ */ J(Jr, {})]
+				}),
+				De && /* @__PURE__ */ J(oi, {
+					widget: De,
+					onClose: () => F(null)
+				})
+			] }) })
+		})
+	});
+}
+function ii({ issues: e, dismissible: t, onDismiss: n }) {
+	let r = e.filter((e) => e.severity === "error"), i = e.filter((e) => e.severity === "warn"), a = r.length > 0 ? "bg-red-500/10 border-red-500/40 text-red-200" : "bg-amber-500/10 border-amber-500/40 text-amber-200", o = r.length > 0 ? "Template errors" : "Template warnings";
+	return /* @__PURE__ */ Y("div", {
+		className: `border-b ${a} px-3 md:px-5 py-2 text-xs flex items-start gap-3`,
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex-1 min-w-0",
+			children: [/* @__PURE__ */ Y("div", {
+				className: "font-medium uppercase tracking-wider text-[10px] mb-1",
+				children: [
+					o,
+					" (",
+					r.length + i.length,
+					")"
+				]
+			}), /* @__PURE__ */ Y("ul", {
+				className: "space-y-0.5",
+				children: [[...r, ...i].slice(0, 8).map((e, t) => /* @__PURE__ */ Y("li", {
+					className: "font-mono text-[11px] leading-tight",
+					children: [
+						/* @__PURE__ */ J("span", {
+							className: "opacity-60",
+							children: e.path || "<root>"
+						}),
+						/* @__PURE__ */ J("span", {
+							className: "mx-1.5 opacity-40",
+							children: "·"
+						}),
+						/* @__PURE__ */ J("span", { children: e.message })
+					]
+				}, t)), e.length > 8 && /* @__PURE__ */ Y("li", {
+					className: "opacity-60 text-[10px]",
+					children: [
+						"… and ",
+						e.length - 8,
+						" more"
+					]
+				})]
+			})]
+		}), t && /* @__PURE__ */ J("button", {
+			onClick: n,
+			className: "text-[10px] uppercase tracking-wider opacity-70 hover:opacity-100 shrink-0",
+			children: "Dismiss"
+		})]
+	});
+}
+function ai({ issues: e }) {
+	let t = e.filter((e) => e.severity === "error");
+	return /* @__PURE__ */ Y("div", {
+		className: "col-span-full border border-red-500/40 bg-red-500/10 rounded p-4 text-sm text-red-100",
+		children: [
+			/* @__PURE__ */ J("div", {
+				className: "font-medium text-xs uppercase tracking-wider mb-2",
+				children: "Template blocked"
+			}),
+			/* @__PURE__ */ J("p", {
+				className: "text-red-200/80 mb-3",
+				children: "This dashboard includes URL, header, iframe, or polling behavior that the host trust policy rejected."
+			}),
+			/* @__PURE__ */ Y("ul", {
+				className: "space-y-1",
+				children: [t.slice(0, 6).map((e, t) => /* @__PURE__ */ Y("li", {
+					className: "font-mono text-[11px] leading-tight",
+					children: [
+						/* @__PURE__ */ J("span", {
+							className: "opacity-60",
+							children: e.path || "<root>"
+						}),
+						/* @__PURE__ */ J("span", {
+							className: "mx-1.5 opacity-40",
+							children: "·"
+						}),
+						/* @__PURE__ */ J("span", { children: e.message })
+					]
+				}, t)), t.length > 6 && /* @__PURE__ */ Y("li", {
+					className: "opacity-60 text-[10px]",
+					children: [
+						"… and ",
+						t.length - 6,
+						" more"
+					]
+				})]
+			})
+		]
+	});
+}
+function oi({ widget: e, onClose: t }) {
+	let n = typeof window < "u" ? Math.floor(window.innerHeight * .82) : 600;
+	return /* @__PURE__ */ Y("div", {
+		className: "fixed inset-0 z-30 bg-zinc-950/95 backdrop-blur-sm p-4 md:p-8 flex flex-col motion-safe:animate-[fadeIn_180ms_ease-out]",
+		onClick: t,
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex items-center justify-between mb-3 shrink-0",
+			children: [/* @__PURE__ */ J("span", {
+				className: "text-[10px] uppercase tracking-wider text-zinc-500",
+				children: "Fullscreen — esc to close"
+			}), /* @__PURE__ */ J("button", {
+				onClick: t,
+				className: "mtc-control text-zinc-500 hover:text-zinc-200 px-2 py-0.5 text-xs",
+				children: "Close"
+			})]
+		}), /* @__PURE__ */ J("div", {
+			onClick: (e) => e.stopPropagation(),
+			className: "flex-1 min-h-0",
+			children: /* @__PURE__ */ J(Un, {
+				config: e,
+				contentHeight: n
+			})
+		})]
+	});
+}
+var si = "medallion-terminal:";
+function ci(e, t) {
+	if (typeof window > "u" || !window.localStorage) return t;
+	try {
+		let n = window.localStorage.getItem(si + e);
+		return n == null ? t : JSON.parse(n);
+	} catch {
+		return t;
+	}
+}
+function li(e, t) {
+	if (!(typeof window > "u" || !window.localStorage)) try {
+		window.localStorage.setItem(si + e, JSON.stringify(t));
+	} catch {}
+}
+//#endregion
+//#region src/core/MultiDashboard.tsx
+function ui(e, t) {
+	W(() => {
+		let n = (n) => {
+			if (!(n.metaKey || n.ctrlKey)) return;
+			let r = Number(n.key);
+			Number.isFinite(r) && r >= 1 && r <= 9 && r <= e && (n.preventDefault(), t(r - 1));
+		};
+		return document.addEventListener("keydown", n), () => document.removeEventListener("keydown", n);
+	}, [e, t]);
+}
+function di({ tabs: e, activeIndex: t, onSelect: n, backendUrl: r, theme: i = "dark", templateTrust: a, templateTrustPolicy: o }) {
+	let s = Math.max(0, Math.min(t, e.length - 1));
+	ui(e.length, n);
+	let [c, l] = q(() => /* @__PURE__ */ new Set([s]));
+	return W(() => {
+		l((e) => e.has(s) ? e : /* @__PURE__ */ new Set([...e, s]));
+	}, [s]), e.length === 0 ? null : /* @__PURE__ */ J("div", {
+		className: `mtc-root mtc-theme-${i}`,
+		"data-theme": i,
+		children: /* @__PURE__ */ Y("div", {
+			className: "mtc-workspace min-h-full",
+			children: [/* @__PURE__ */ J(fi, {
+				tabs: e,
+				activeIndex: s,
+				onSelect: n
+			}), e.map((e, t) => /* @__PURE__ */ J("div", {
+				style: { display: t === s ? "block" : "none" },
+				children: c.has(t) && /* @__PURE__ */ J(ri, {
+					template: e.template,
+					backendUrl: r,
+					theme: i,
+					templateTrust: a,
+					templateTrustPolicy: o
+				})
+			}, t))]
+		})
+	});
+}
+function fi({ tabs: e, activeIndex: t, onSelect: n }) {
+	let r = typeof navigator < "u" && /mac/i.test(navigator.platform);
+	return /* @__PURE__ */ J("div", {
+		className: "mtc-tabstrip flex gap-0.5 px-3 md:px-5 pt-3 overflow-x-auto items-end",
+		children: e.map((e, i) => {
+			let a = i === t, o = i < 9 ? `${r ? "⌘" : "Ctrl"}${i + 1}` : null;
+			return /* @__PURE__ */ Y("button", {
+				onClick: () => n(i),
+				className: `px-3 py-1.5 text-xs font-medium rounded-t whitespace-nowrap transition-colors flex items-center gap-2 ${a ? "mtc-tab-active text-zinc-100 border-x border-t" : "text-zinc-500 hover:text-zinc-300"}`,
+				title: o ? `Switch with ${o}` : void 0,
+				children: [/* @__PURE__ */ J("span", { children: e.label || `Tab ${i + 1}` }), o && /* @__PURE__ */ J("span", {
+					className: "text-[9px] text-zinc-600 font-mono uppercase tracking-wider",
+					children: o
+				})]
+			}, i);
+		})
+	});
+}
+function pi(e = 0) {
+	let [t, n] = q(() => {
+		if (typeof window > "u") return e;
+		let t = Number(new URLSearchParams(window.location.search).get("tab"));
+		return Number.isFinite(t) && t >= 0 ? t : e;
+	});
+	return [t, (e) => {
+		if (n(e), typeof window < "u") {
+			let t = new URLSearchParams(window.location.search);
+			t.set("tab", String(e)), window.history.replaceState(null, "", `${window.location.pathname}?${t.toString()}${window.location.hash}`);
+		}
+	}];
+}
+//#endregion
+//#region src/widgets/Timeseries.tsx
+var mi = /* @__PURE__ */ X({ Timeseries: () => xi }), hi = {
+	buy: "var(--mtc-ok)",
+	sell: "var(--mtc-danger)",
+	info: "var(--mtc-accent)",
+	warn: "var(--mtc-warning)"
+}, gi = "var(--mtc-grid)", _i = "var(--mtc-border)", vi = "var(--mtc-muted)", yi = "var(--mtc-surface)", bi = "var(--mtc-muted-subtle)";
+function xi({ data: e, options: t }) {
+	let { hoverTime: n, setHoverTime: r } = F(), a = K(null), o = G(() => Ei(e), [e]), { tickFormatter: s, labelFormatter: c } = G(() => {
+		let e = te(o?.points.map((e) => e._ts) ?? []);
+		return {
+			tickFormatter: le(e),
+			labelFormatter: re(e)
+		};
+	}, [o]), l = G(() => de(o?.keys ?? [], B), [o]), u = t?.brush === !0;
+	if (!o) return /* @__PURE__ */ J(i, { children: "No data" });
+	let d = n != null && n !== a.current;
+	return /* @__PURE__ */ J(lt, {
+		width: "100%",
+		height: "100%",
+		children: /* @__PURE__ */ Y(Qe, {
+			data: o.points,
+			onMouseMove: (e) => {
+				let t = e?.activeLabel;
+				if (t != null) {
+					let e = String(t);
+					a.current = e, r(e);
+				}
+			},
+			onMouseLeave: () => {
+				a.current = null, r(null);
+			},
+			children: [
+				/* @__PURE__ */ J(Je, {
+					strokeDasharray: "3 3",
+					stroke: gi
+				}),
+				/* @__PURE__ */ J(mt, {
+					dataKey: "_ts",
+					stroke: _i,
+					tick: {
+						fontSize: 11,
+						fill: vi
+					},
+					tickFormatter: s
+				}),
+				/* @__PURE__ */ J(ht, {
+					stroke: _i,
+					tick: {
+						fontSize: 11,
+						fill: vi
+					},
+					tickFormatter: ce,
+					width: 60
+				}),
+				/* @__PURE__ */ J(ft, {
+					contentStyle: z,
+					labelStyle: { color: vi },
+					labelFormatter: c
+				}),
+				o.keys.map((e, t) => /* @__PURE__ */ J(Ze, {
+					type: "monotone",
+					dataKey: e,
+					stroke: l[t],
+					dot: !1,
+					strokeWidth: 2
+				}, e)),
+				u && o.points.length > 4 && /* @__PURE__ */ J(qe, {
+					dataKey: "_ts",
+					height: 20,
+					stroke: _i,
+					fill: yi,
+					travellerWidth: 6,
+					tickFormatter: s
+				}),
+				d && /* @__PURE__ */ J(ct, {
+					x: n,
+					stroke: bi,
+					strokeDasharray: "3 3"
+				}),
+				o.annotations.map((e, t) => {
+					let n = e.color ?? (e.kind ? hi[e.kind] : null) ?? vi;
+					if (e.endTimestamp) {
+						let [r, i] = e.timestamp <= e.endTimestamp ? [e.timestamp, e.endTimestamp] : [e.endTimestamp, e.timestamp];
+						return /* @__PURE__ */ J(ot, {
+							x1: r,
+							x2: i,
+							fill: n,
+							fillOpacity: .1,
+							stroke: n,
+							strokeOpacity: .4,
+							strokeDasharray: "3 3",
+							label: {
+								value: e.label,
+								position: "insideTopLeft",
+								fontSize: 10,
+								fill: n
+							}
+						}, t);
+					}
+					return e.value === void 0 ? null : /* @__PURE__ */ J(st, {
+						x: e.timestamp,
+						y: e.value,
+						r: 6,
+						fill: n,
+						stroke: yi,
+						strokeWidth: 2,
+						ifOverflow: "extendDomain",
+						shape: (t) => /* @__PURE__ */ J(Si, {
+							...t,
+							kind: e.kind,
+							color: n,
+							label: e.label
+						})
+					}, t);
+				})
+			]
+		})
+	});
+}
+function Si({ cx: e, cy: t, kind: n, color: r, label: i }) {
+	if (e == null || t == null) return null;
+	let a;
+	if (n === "buy") a = `M${e} ${t - 7} L${e + 6} ${t + 4} L${e - 6} ${t + 4} Z`;
+	else if (n === "sell") a = `M${e} ${t + 7} L${e + 6} ${t - 4} L${e - 6} ${t - 4} Z`;
+	else return /* @__PURE__ */ J("g", { children: /* @__PURE__ */ J("circle", {
+		cx: e,
+		cy: t,
+		r: 5,
+		fill: r,
+		stroke: yi,
+		strokeWidth: 2,
+		children: /* @__PURE__ */ J("title", { children: i })
+	}) });
+	return /* @__PURE__ */ J("g", { children: /* @__PURE__ */ J("path", {
+		d: a,
+		fill: r,
+		stroke: yi,
+		strokeWidth: 1.5,
+		children: /* @__PURE__ */ J("title", { children: i })
+	}) });
+}
+var Ci = [
+	"timestamp",
+	"date",
+	"time",
+	"datetime",
+	"ts",
+	"x",
+	"t"
+];
+function wi(e) {
+	for (let t of Ci) if (t in e) return t;
+	return null;
+}
+function Ti(e) {
+	if (!e || typeof e != "object" || Array.isArray(e)) return [];
+	let t = e.annotations;
+	return Array.isArray(t) ? t.map((e) => {
+		let t = e;
+		return {
+			timestamp: String(t.timestamp ?? ""),
+			endTimestamp: t.end_timestamp == null ? t.endTimestamp == null ? void 0 : String(t.endTimestamp) : String(t.end_timestamp),
+			value: typeof t.value == "number" ? t.value : void 0,
+			label: String(t.label ?? ""),
+			kind: t.kind == null ? void 0 : String(t.kind),
+			color: t.color == null ? void 0 : String(t.color)
+		};
+	}) : [];
+}
+function Ei(e) {
+	if (!e) return null;
+	let t = Ti(e);
+	if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object" && e[0] !== null) {
+		let n = e[0], r = wi(n);
+		if (!r) return null;
+		let i = Object.keys(n).filter((e) => e !== r && typeof n[e] == "number");
+		return i.length === 0 ? null : {
+			points: e.map((e) => {
+				let t = e, n = { _ts: t[r] };
+				for (let e of i) n[e] = t[e];
+				return n;
+			}),
+			keys: i,
+			annotations: t
+		};
+	}
+	if (typeof e == "object" && e && "points" in e) {
+		let n = e.points;
+		return !Array.isArray(n) || n.length === 0 ? null : {
+			points: n.map((e) => {
+				let t = e;
+				return {
+					_ts: t.timestamp ?? t.date ?? t.time ?? t.x,
+					value: t.value ?? t.y ?? t.v
+				};
+			}),
+			keys: ["value"],
+			annotations: t
+		};
+	}
+	if (typeof e == "object" && e && "series" in e) {
+		let n = e.series;
+		if (!Array.isArray(n)) return null;
+		let r = /* @__PURE__ */ new Map(), i = [];
+		for (let e of n) {
+			let t = e, n = String(t.name || t.label || `s${i.length}`);
+			i.push(n);
+			let a = t.data ?? t.points;
+			if (Array.isArray(a)) for (let e of a) {
+				let t = String(e.timestamp ?? e.date ?? e.time ?? e.x ?? "");
+				r.has(t) || r.set(t, { _ts: t }), r.get(t)[n] = e.value ?? e.y ?? e.v;
+			}
+		}
+		return {
+			points: Array.from(r.values()),
+			keys: i,
+			annotations: t
+		};
+	}
+	return null;
+}
+//#endregion
+//#region src/widgets/Candlestick.tsx
+var Di = /* @__PURE__ */ X({ Candlestick: () => ji }), Oi = {
+	buy: {
+		shape: "arrowUp",
+		position: "belowBar",
+		color: "ok"
+	},
+	sell: {
+		shape: "arrowDown",
+		position: "aboveBar",
+		color: "danger"
+	},
+	info: {
+		shape: "circle",
+		position: "aboveBar",
+		color: "accent"
+	},
+	warn: {
+		shape: "circle",
+		position: "aboveBar",
+		color: "warning"
+	}
+}, ki = {
+	shape: "circle",
+	position: "aboveBar",
+	color: "muted"
+}, Ai = {
+	accent: "#5a8dee",
+	danger: "#df6972",
+	ok: "#4fb184",
+	warning: "#d6a354",
+	muted: "#87929e",
+	mutedSubtle: "#596571",
+	border: "#28313a",
+	grid: "#20272e"
+};
+function ji({ data: e }) {
+	let { hoverTime: t, setHoverTime: n } = F(), r = K(null), a = K(null), o = K(null), s = K(null), c = K(null), l = K(null), u = K(Ai);
+	W(() => {
+		if (!r.current) return;
+		let e = Li(r.current);
+		u.current = e;
+		let t = bt(r.current, {
+			layout: {
+				background: {
+					type: vt.Solid,
+					color: "transparent"
+				},
+				textColor: e.muted,
+				fontSize: 11
+			},
+			grid: {
+				vertLines: { color: e.grid },
+				horzLines: { color: e.grid }
+			},
+			crosshair: {
+				vertLine: {
+					color: e.mutedSubtle,
+					width: 1,
+					style: 2
+				},
+				horzLine: {
+					color: e.mutedSubtle,
+					width: 1,
+					style: 2
+				}
+			},
+			rightPriceScale: { borderColor: e.border },
+			timeScale: {
+				borderColor: e.border,
+				timeVisible: !0
+			},
+			handleScroll: !0,
+			handleScale: !0
+		}), i = t.addSeries(_t, {
+			upColor: e.ok,
+			downColor: e.danger,
+			borderDownColor: e.danger,
+			borderUpColor: e.ok,
+			wickDownColor: e.danger,
+			wickUpColor: e.ok
+		}), d = t.addSeries(yt, {
+			priceFormat: { type: "volume" },
+			priceScaleId: "volume"
+		});
+		t.priceScale("volume").applyOptions({ scaleMargins: {
+			top: .8,
+			bottom: 0
+		} }), a.current = t, o.current = i, s.current = d, c.current = xt(i, []), t.subscribeCrosshairMove((e) => {
+			if (e.time != null) {
+				let t = String(e.time);
+				l.current = t, n(t);
+			} else l.current = null, n(null);
+		});
+		let f = new ResizeObserver((e) => {
+			let { width: n, height: r } = e[0].contentRect;
+			t.applyOptions({
+				width: n,
+				height: r
+			});
+		});
+		return f.observe(r.current), () => {
+			f.disconnect(), t.remove(), a.current = null, o.current = null, s.current = null, c.current = null;
+		};
+	}, []), W(() => {
+		let e = a.current, n = o.current;
+		if (!e || !n) return;
+		if (t == null) {
+			e.clearCrosshairPosition();
+			return;
+		}
+		if (t === l.current) return;
+		let r = n.data?.()[0]?.close ?? 0;
+		e.setCrosshairPosition(r, t, n);
+	}, [t]);
+	let d = G(() => Ii(e), [e]);
+	return W(() => {
+		if (o.current && d.candles.length !== 0) {
+			if (o.current.setData(d.candles), d.volumes.length > 0 && s.current) {
+				let e = u.current;
+				s.current.setData(d.volumes.map((t) => ({
+					...t,
+					color: t.direction === "down" ? Ri(e.danger, .3) : Ri(e.ok, .3)
+				})));
+			}
+			c.current && c.current.setMarkers(Mi(d.annotations, u.current)), a.current?.timeScale().fitContent();
+		}
+	}, [d]), /* @__PURE__ */ Y("div", {
+		className: "relative w-full h-full",
+		children: [/* @__PURE__ */ J("div", {
+			ref: r,
+			className: "w-full h-full"
+		}), d.candles.length === 0 && /* @__PURE__ */ J("div", {
+			className: "absolute inset-0 flex items-center justify-center pointer-events-none",
+			children: /* @__PURE__ */ J(i, { children: "No data" })
+		})]
+	});
+}
+function Mi(e, t) {
+	return e.map((e) => {
+		let n = e.kind ? Oi[e.kind] ?? ki : ki;
+		return {
+			time: Fi(e.timestamp),
+			position: n.position,
+			shape: n.shape,
+			color: e.color ?? t[n.color],
+			text: e.label
+		};
+	});
+}
+var Ni = [
+	"timestamp",
+	"date",
+	"time",
+	"datetime",
+	"ts",
+	"t"
+];
+function Pi(e, t) {
+	for (let n of t) if (n in e) return n;
+	let n = Object.keys(e).reduce((e, t) => (e[t.toLowerCase()] = t, e), {});
+	for (let e of t) if (n[e]) return n[e];
+	return null;
+}
+function Fi(e) {
+	if (typeof e == "number") return e > 0xe8d4a51000 ? Math.floor(e / 1e3) : e;
+	let t = String(e).trim();
+	if (t.includes("T") || / \d/.test(t)) {
+		let e = new Date(t.replace(" ", "T"));
+		if (!isNaN(e.getTime())) return Math.floor(e.getTime() / 1e3);
+	}
+	return t.split(" ")[0].split("T")[0];
+}
+function Ii(e) {
+	let t = {
+		candles: [],
+		volumes: [],
+		annotations: []
+	};
+	if (!e) return t;
+	let n, r = [];
+	if (Array.isArray(e)) n = e;
+	else if (typeof e == "object" && e) {
+		let t = e;
+		n = Array.isArray(t.bars) ? t.bars : [], Array.isArray(t.annotations) && (r = t.annotations.map((e) => {
+			let t = e;
+			return {
+				timestamp: String(t.timestamp ?? ""),
+				value: typeof t.value == "number" ? t.value : void 0,
+				label: String(t.label ?? ""),
+				kind: t.kind == null ? void 0 : String(t.kind),
+				color: t.color == null ? void 0 : String(t.color)
+			};
+		}));
+	} else n = [];
+	if (n.length === 0 || typeof n[0] != "object" || n[0] === null) return {
+		...t,
+		annotations: r
+	};
+	let i = n[0], a = Pi(i, Ni), o = Pi(i, ["open", "o"]), s = Pi(i, ["high", "h"]), c = Pi(i, ["low", "l"]), l = Pi(i, ["close", "c"]), u = Pi(i, [
+		"volume",
+		"vol",
+		"v"
+	]);
+	if (!a || !o || !s || !c || !l) return {
+		...t,
+		annotations: r
+	};
+	let d = [], f = [];
+	for (let e of n) {
+		let t = e, n = Fi(t[a]), r = Number(t[o]), i = Number(t[s]), p = Number(t[c]), m = Number(t[l]);
+		d.push({
+			time: n,
+			open: r,
+			high: i,
+			low: p,
+			close: m
+		}), u && t[u] != null && f.push({
+			time: n,
+			value: Number(t[u]),
+			direction: m >= r ? "up" : "down"
+		});
+	}
+	return {
+		candles: d,
+		volumes: f,
+		annotations: r
+	};
+}
+function Li(e) {
+	let t = getComputedStyle(e), n = (e, n) => t.getPropertyValue(e).trim() || n;
+	return {
+		accent: n("--mtc-accent", Ai.accent),
+		danger: n("--mtc-danger", Ai.danger),
+		ok: n("--mtc-ok", Ai.ok),
+		warning: n("--mtc-warning", Ai.warning),
+		muted: n("--mtc-muted", Ai.muted),
+		mutedSubtle: n("--mtc-muted-subtle", Ai.mutedSubtle),
+		border: n("--mtc-border", Ai.border),
+		grid: n("--mtc-grid", Ai.grid)
+	};
+}
+function Ri(e, t) {
+	let n = e.trim().match(/^#([0-9a-f]{6})$/i);
+	if (n) {
+		let e = parseInt(n[1], 16);
+		return `rgba(${e >> 16 & 255}, ${e >> 8 & 255}, ${e & 255}, ${t})`;
+	}
+	let r = e.trim().match(/^rgba?\(([^)]+)\)$/i);
+	if (r) {
+		let e = r[1].split(/[\s,\/]+/).map(Number).filter(Number.isFinite);
+		if (e.length >= 3) return `rgba(${e[0]}, ${e[1]}, ${e[2]}, ${t})`;
+	}
+	return e;
+}
+//#endregion
+//#region src/widgets/DataTable.tsx
+var zi = /* @__PURE__ */ X({ DataTable: () => Hi }), Bi = 25, Vi = 600;
+function Hi({ data: e, options: t }) {
+	let { setCtx: n } = a(), r = t?.pageSize || Bi, o = t?.row_context, s = t?.heat_columns ?? [], c = t?.export === !0, l = t?.tick_flash === !0, u = t?.search === !0, d = t?.column_formats ?? {}, { columns: f, rows: p, labels: m, formats: h } = G(() => Ui(e), [e]), g = G(() => ({
+		...h,
+		...d
+	}), [h, d]), [_, v] = q(null), [y, b] = q(!0), [x, S] = q(0), [C, w] = q(""), T = (e, t) => {
+		let n = f[0] == null ? void 0 : e[f[0]];
+		return n == null ? `_idx_${t}` : String(n);
+	}, E = K(/* @__PURE__ */ new Map()), [D, O] = q(/* @__PURE__ */ new Map());
+	W(() => {
+		if (!l) return;
+		let e = /* @__PURE__ */ new Map();
+		for (let t = 0; t < p.length; t++) {
+			let n = p[t], r = T(n, t), i = E.current.get(r), a = {}, o = null;
+			for (let e of f) {
+				let t = n[e];
+				typeof t == "number" && (a[e] = t, o == null && i && i[e] != null && i[e] !== t && (o = t > i[e] ? "up" : "down"));
+			}
+			E.current.set(r, a), o && e.set(r, o);
+		}
+		if (e.size === 0) return;
+		O((t) => {
+			let n = new Map(t);
+			for (let [t, r] of e) n.set(t, r);
+			return n;
+		});
+		let t = setTimeout(() => {
+			O((t) => {
+				let n = new Map(t);
+				for (let [t, r] of e) n.get(t) === r && n.delete(t);
+				return n;
+			});
+		}, Vi);
+		return () => clearTimeout(t);
+	}, [p, l]);
+	let k = G(() => {
+		let e = {};
+		for (let t of s) {
+			let n = Infinity, r = -Infinity;
+			for (let e of p) {
+				let i = e[t];
+				typeof i == "number" && Number.isFinite(i) && (i < n && (n = i), i > r && (r = i));
+			}
+			Number.isFinite(n) && Number.isFinite(r) && (e[t] = {
+				min: n,
+				max: r
+			});
+		}
+		return e;
+	}, [p, s]), A = (e) => {
+		if (!o) return;
+		let t = e[o.field ?? f[0]];
+		t != null && n(o.key, String(t));
+	}, j = G(() => {
+		let e = C.trim().toLowerCase();
+		return e ? p.filter((t) => f.some((n) => {
+			let r = t[n];
+			return r != null && String(r).toLowerCase().includes(e);
+		})) : p;
+	}, [
+		p,
+		f,
+		C
+	]), M = G(() => _ ? [...j].sort((e, t) => {
+		let n = e[_], r = t[_];
+		if (n == null && r == null) return 0;
+		if (n == null) return 1;
+		if (r == null) return -1;
+		let i = typeof n == "number" && typeof r == "number" ? n - r : String(n).localeCompare(String(r));
+		return y ? i : -i;
+	}) : j, [
+		j,
+		_,
+		y
+	]), N = Math.max(1, Math.ceil(M.length / r)), P = Math.min(x, N - 1), F = M.slice(P * r, (P + 1) * r), I = M.length > r, L = (e) => {
+		_ === e ? b(!y) : (v(e), b(!0)), S(0);
+	};
+	return f.length === 0 ? /* @__PURE__ */ J(i, { children: "No data" }) : /* @__PURE__ */ Y("div", {
+		className: "flex flex-col h-full",
+		children: [
+			(u || c) && /* @__PURE__ */ Y("div", {
+				className: "flex items-center gap-2 pb-1",
+				children: [u && /* @__PURE__ */ J("input", {
+					type: "text",
+					value: C,
+					onChange: (e) => {
+						w(e.target.value), S(0);
+					},
+					placeholder: "filter…",
+					className: "flex-1 bg-zinc-950 border border-zinc-800 rounded px-2 py-0.5 text-xs text-zinc-200 placeholder-zinc-600 outline-none focus:border-zinc-600"
+				}), c && /* @__PURE__ */ J("button", {
+					onClick: () => {
+						let e = [f.map(Gi).join(","), ...M.map((e) => f.map((t) => Gi(e[t])).join(","))], t = new Blob([e.join("\n")], { type: "text/csv;charset=utf-8" }), n = URL.createObjectURL(t), r = document.createElement("a");
+						r.href = n, r.download = "export.csv", r.click(), URL.revokeObjectURL(n);
+					},
+					className: "text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800 shrink-0",
+					title: "Download as CSV",
+					children: "↓ CSV"
+				})]
+			}),
+			/* @__PURE__ */ J("div", {
+				className: "overflow-auto flex-1 min-h-0",
+				children: /* @__PURE__ */ Y("table", {
+					className: "w-full text-sm",
+					children: [/* @__PURE__ */ J("thead", {
+						className: "sticky top-0 bg-zinc-900",
+						children: /* @__PURE__ */ J("tr", { children: f.map((e) => {
+							let t = g[e];
+							return /* @__PURE__ */ Y("th", {
+								onClick: () => L(e),
+								className: `px-3 py-2 text-zinc-400 border-b border-zinc-700 cursor-pointer hover:text-zinc-100 select-none whitespace-nowrap font-medium ${t && t !== "sparkline" && /^(currency|percent|bps|compact)(:|$)/.test(t) ? "text-right" : "text-left"}`,
+								children: [m[e] ?? e, _ === e && /* @__PURE__ */ J("span", {
+									className: "ml-1 text-zinc-500",
+									children: y ? "↑" : "↓"
+								})]
+							}, e);
+						}) })
+					}), /* @__PURE__ */ J("tbody", { children: F.map((e, t) => {
+						let n = D.get(T(e, t));
+						return /* @__PURE__ */ J("tr", {
+							onClick: o ? () => A(e) : void 0,
+							className: `border-b border-zinc-800/60 transition-colors duration-300 ${n === "up" ? "bg-emerald-500/15" : n === "down" ? "bg-red-500/15" : ""} ${o ? "cursor-pointer hover:bg-zinc-800" : "hover:bg-zinc-800/40"}`,
+							children: f.map((t) => {
+								let n = k[t], r = e[t], i = n && typeof r == "number" ? { backgroundColor: Wi(r, n.min, n.max) } : void 0, a = g[t];
+								if (a === "link" && r != null) {
+									let e = typeof r == "object" && !Array.isArray(r) ? r : {
+										label: void 0,
+										url: r
+									}, n = V(e.url), a = e.label != null && e.label !== "" ? String(e.label) : n ?? "";
+									return /* @__PURE__ */ J("td", {
+										className: "px-3 py-2.5 whitespace-nowrap",
+										style: i,
+										children: n ? /* @__PURE__ */ Y("a", {
+											href: n,
+											...n.startsWith("/") ? {} : {
+												target: "_blank",
+												rel: "noopener noreferrer"
+											},
+											className: "text-sky-400 hover:underline",
+											children: [a, /* @__PURE__ */ J("span", {
+												className: "ml-1 text-xs text-zinc-500",
+												"aria-hidden": "true",
+												children: n.startsWith("/") ? "→" : "↗"
+											})]
+										}) : /* @__PURE__ */ J("span", {
+											className: "text-zinc-100",
+											children: a
+										})
+									}, t);
+								}
+								if (a === "sparkline" && Array.isArray(r)) return /* @__PURE__ */ J("td", {
+									className: "px-3 py-2.5 whitespace-nowrap",
+									style: i,
+									children: /* @__PURE__ */ J(Ki, { values: r })
+								}, t);
+								let o = a ? Ji(r, a) : qi(r), s = a ? a.split(":").slice(1).includes("signed") : !1;
+								return /* @__PURE__ */ J("td", {
+									className: `px-3 py-2.5 whitespace-nowrap tabular-nums ${a && a !== "sparkline" && /^(currency|percent|bps|compact)(:|$)/.test(a) ? "text-right" : ""} ${s && typeof r == "number" ? r > 0 ? "text-emerald-400" : r < 0 ? "text-red-400" : "text-zinc-100" : "text-zinc-100"}`,
+									style: i,
+									children: o
+								}, t);
+							})
+						}, t);
+					}) })]
+				})
+			}),
+			I && /* @__PURE__ */ Y("div", {
+				className: "flex items-center justify-between px-3 py-2 border-t border-zinc-800 text-xs text-zinc-400",
+				children: [/* @__PURE__ */ Y("span", { children: [M.length, " rows"] }), /* @__PURE__ */ Y("div", {
+					className: "flex items-center gap-1",
+					children: [
+						/* @__PURE__ */ J("button", {
+							onClick: () => S(0),
+							disabled: P === 0,
+							className: "px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30",
+							children: "«"
+						}),
+						/* @__PURE__ */ J("button", {
+							onClick: () => S((e) => e - 1),
+							disabled: P === 0,
+							className: "px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30",
+							children: "‹"
+						}),
+						/* @__PURE__ */ Y("span", {
+							className: "px-2 text-zinc-300",
+							children: [
+								P + 1,
+								" / ",
+								N
+							]
+						}),
+						/* @__PURE__ */ J("button", {
+							onClick: () => S((e) => e + 1),
+							disabled: P >= N - 1,
+							className: "px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30",
+							children: "›"
+						}),
+						/* @__PURE__ */ J("button", {
+							onClick: () => S(N - 1),
+							disabled: P >= N - 1,
+							className: "px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30",
+							children: "»"
+						})
+					]
+				})]
+			})
+		]
+	});
+}
+function Ui(e) {
+	let t = {
+		columns: [],
+		rows: [],
+		labels: {},
+		formats: {}
+	};
+	if (!e) return t;
+	if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object") {
+		let n = [...new Set(e.flatMap((e) => Object.keys(e)))];
+		return {
+			...t,
+			columns: n,
+			rows: e
+		};
+	}
+	if (typeof e == "object" && e && "rows" in e) {
+		let n = e, r = Array.isArray(n.columns) ? n.columns : [];
+		if (r.length > 0 && typeof r[0] == "object") {
+			let e = r, t = e.map((e) => e.key), i = {}, a = {};
+			for (let t of e) t.label && (i[t.key] = t.label), t.format && (a[t.key] = t.format);
+			return {
+				columns: t,
+				rows: n.rows.map((e) => Array.isArray(e) ? Object.fromEntries(t.map((t, n) => [t, e[n]])) : e),
+				labels: i,
+				formats: a
+			};
+		}
+		if (r.length > 0) {
+			let e = r, i = n.rows.map((t) => Array.isArray(t) ? Object.fromEntries(e.map((e, n) => [e, t[n]])) : t);
+			return {
+				...t,
+				columns: e,
+				rows: i
+			};
+		}
+		let i = n.rows;
+		if (i.length > 0 && typeof i[0] == "object" && !Array.isArray(i[0])) {
+			let e = [...new Set(i.flatMap((e) => Object.keys(e)))];
+			return {
+				...t,
+				columns: e,
+				rows: i
+			};
+		}
+	}
+	return t;
+}
+function Wi(e, t, n) {
+	if (n === t) return "transparent";
+	if (t < 0 && n > 0) {
+		let r = Math.max(-1, Math.min(1, e / Math.max(Math.abs(t), Math.abs(n))));
+		return r >= 0 ? `color-mix(in oklab, var(--mtc-ok) ${35 * r}%, transparent)` : `color-mix(in oklab, var(--mtc-danger) ${35 * -r}%, transparent)`;
+	}
+	return `color-mix(in oklab, var(--mtc-accent) ${35 * ((e - t) / (n - t))}%, transparent)`;
+}
+function Gi(e) {
+	if (e == null) return "";
+	if (typeof e == "object" && !Array.isArray(e) && "url" in e) return Gi(e.url);
+	let t = String(e);
+	return /[,"\n\r]/.test(t) ? `"${t.replace(/"/g, "\"\"")}"` : t;
+}
+function Ki({ values: e }) {
+	let t = e.map((e) => Number(e)).filter((e) => Number.isFinite(e));
+	if (t.length < 2) return /* @__PURE__ */ J("span", {
+		className: "text-zinc-600",
+		children: "—"
+	});
+	let n = Math.min(...t), r = Math.max(...t) - n || 1;
+	return /* @__PURE__ */ J("svg", {
+		viewBox: "0 0 100 16",
+		className: "w-20 h-4",
+		preserveAspectRatio: "none",
+		children: /* @__PURE__ */ J("polyline", {
+			fill: "none",
+			stroke: t[t.length - 1] >= t[0] ? "var(--mtc-ok)" : "var(--mtc-danger)",
+			strokeWidth: "1.5",
+			points: t.map((e, i) => {
+				let a = i / (t.length - 1) * 100, o = 16 - (e - n) / r * 14 - 1;
+				return `${a.toFixed(1)},${o.toFixed(1)}`;
+			}).join(" "),
+			vectorEffect: "non-scaling-stroke"
+		})
+	});
+}
+function qi(e) {
+	return e == null ? "—" : typeof e == "number" ? Number.isInteger(e) ? e.toLocaleString() : e.toLocaleString(void 0, {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 4
+	}) : typeof e == "boolean" ? e ? "Yes" : "No" : String(e);
+}
+function Ji(e, t) {
+	if (e == null) return "—";
+	if (t.split(":")[0] === "datetime") return L(e);
+	if (typeof e != "number") return qi(e);
+	let [n, ...r] = t.split(":"), i = new Set(r), a = i.has("signed");
+	switch (n) {
+		case "currency": return ne(e, r.find((e) => e !== "signed") ?? "USD");
+		case "percent": return ae(e, {
+			signed: a,
+			as: i.has("p") ? "percent" : "fraction"
+		});
+		case "bps": return ie(e, { signed: a });
+		case "compact": return oe(e);
+		default: return qi(e);
+	}
+}
+//#endregion
+//#region src/widgets/Metric.tsx
+var Yi = /* @__PURE__ */ X({ Metric: () => Zi }), Xi = 600;
+function Zi({ data: e }) {
+	let { value: t, delta: n, unit: r, label: i, trend: a } = $i(e), o = me(t), s = K(null), [c, l] = q(null);
+	return W(() => {
+		let e = s.current;
+		if (s.current = t, e == null || e === t) return;
+		l(t > e ? "up" : "down");
+		let n = setTimeout(() => l(null), Xi);
+		return () => clearTimeout(n);
+	}, [t]), /* @__PURE__ */ Y("div", {
+		className: "flex flex-col items-center justify-center h-full gap-1",
+		children: [
+			/* @__PURE__ */ Y("div", {
+				className: `text-3xl font-bold tabular-nums transition-colors duration-300 ${c === "up" ? "text-emerald-300" : c === "down" ? "text-red-300" : "text-white"}`,
+				children: [se(o), r && /* @__PURE__ */ J("span", {
+					className: "text-base font-normal text-zinc-400 ml-1",
+					children: r
+				})]
+			}),
+			n != null && /* @__PURE__ */ Y("div", {
+				className: `text-sm font-medium ${n >= 0 ? "text-emerald-400" : "text-red-400"}`,
+				children: [
+					n >= 0 ? "▲" : "▼",
+					" ",
+					ea(n)
+				]
+			}),
+			a && a.length >= 2 && /* @__PURE__ */ J(Qi, { values: a }),
+			i && /* @__PURE__ */ J("div", {
+				className: "text-xs text-zinc-500",
+				children: i
+			})
+		]
+	});
+}
+function Qi({ values: e }) {
+	let t = Math.min(...e), n = Math.max(...e) - t || 1;
+	return /* @__PURE__ */ J("svg", {
+		viewBox: "0 0 100 18",
+		className: "w-full max-w-[120px] h-5",
+		preserveAspectRatio: "none",
+		children: /* @__PURE__ */ J("polyline", {
+			fill: "none",
+			stroke: e[e.length - 1] >= e[0] ? "var(--mtc-ok)" : "var(--mtc-danger)",
+			strokeWidth: "1.5",
+			points: e.map((r, i) => {
+				let a = i / (e.length - 1) * 100, o = 18 - (r - t) / n * 16 - 1;
+				return `${a.toFixed(1)},${o.toFixed(1)}`;
+			}).join(" "),
+			vectorEffect: "non-scaling-stroke"
+		})
+	});
+}
+function $i(e) {
+	if (typeof e == "number") return { value: e };
+	if (typeof e == "object" && e) {
+		let t = e;
+		return {
+			value: Number(t.value ?? 0),
+			delta: t.delta == null ? void 0 : Number(t.delta),
+			unit: t.unit == null ? void 0 : String(t.unit),
+			label: t.label == null ? void 0 : String(t.label),
+			trend: Array.isArray(t.trend) && t.trend.every((e) => typeof e == "number") ? t.trend : void 0
+		};
+	}
+	return { value: 0 };
 }
 function ea(e) {
-  const t = Math.abs(e) <= 1 ? e * 100 : e;
-  return `${Math.abs(t).toFixed(2)}%`;
+	let t = Math.abs(e) <= 1 ? e * 100 : e;
+	return `${Math.abs(t).toFixed(2)}%`;
 }
-const ta = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  StatStrip: Xl
-}, Symbol.toStringTag, { value: "Module" }));
-function na(e) {
-  let t = null;
-  if (Array.isArray(e)) t = e;
-  else if (e && typeof e == "object") {
-    const i = e;
-    Array.isArray(i.bars) ? t = i.bars : Array.isArray(i.rows) && (t = i.rows);
-  }
-  if (!t) return null;
-  const n = t.filter(
-    (i) => i != null && typeof i == "object"
-  );
-  if (n.length === 0) return null;
-  if (n.every((i) => "value" in i)) {
-    const i = n.map((l) => ({
-      label: String(l.label ?? l.name ?? ""),
-      value: Number(l.value ?? 0),
-      color: l.color != null ? String(l.color) : void 0
-    })).filter((l) => Number.isFinite(l.value));
-    return i.length > 0 ? { kind: "single", bars: i } : null;
-  }
-  const r = [];
-  for (const i of n)
-    for (const [l, a] of Object.entries(i))
-      l === "label" || l === "name" || l === "color" || typeof a == "number" && Number.isFinite(a) && !r.includes(l) && r.push(l);
-  return r.length === 0 ? null : { kind: "grouped", rows: n.map((i) => ({
-    ...i,
-    label: String(i.label ?? i.name ?? "")
-  })), series: r };
-}
-const Nn = "var(--mtc-grid)", ot = "var(--mtc-border)", it = "var(--mtc-muted)", Sn = "color-mix(in oklab, var(--mtc-muted) 20%, transparent)";
+//#endregion
+//#region src/widgets/Text.tsx
+var ta = /* @__PURE__ */ X({ Text: () => ra }), na = 1500;
 function ra({ data: e }) {
-  const t = L(() => na(e), [e]);
-  if (!t)
-    return /* @__PURE__ */ o(D, { children: "No data" });
-  if (t.kind === "grouped") {
-    const r = xr(t.series, de);
-    return /* @__PURE__ */ o(Ae, { width: "100%", height: "100%", children: /* @__PURE__ */ m(jt, { data: t.rows, margin: { top: 8, right: 8, bottom: 4, left: 0 }, children: [
-      /* @__PURE__ */ o(He, { strokeDasharray: "3 3", stroke: Nn }),
-      /* @__PURE__ */ o(
-        We,
-        {
-          dataKey: "label",
-          stroke: ot,
-          tick: { fontSize: 11, fill: it },
-          interval: 0
-        }
-      ),
-      /* @__PURE__ */ o(
-        qe,
-        {
-          stroke: ot,
-          tick: { fontSize: 11, fill: it },
-          tickFormatter: zn,
-          width: 50
-        }
-      ),
-      /* @__PURE__ */ o(
-        _e,
-        {
-          contentStyle: Te,
-          cursor: { fill: Sn }
-        }
-      ),
-      /* @__PURE__ */ o(Bn, { wrapperStyle: { fontSize: 11 } }),
-      t.series.map((s, i) => /* @__PURE__ */ o(
-        It,
-        {
-          dataKey: s,
-          fill: r[i],
-          radius: [2, 2, 0, 0]
-        },
-        s
-      ))
-    ] }) });
-  }
-  const n = t.bars;
-  return /* @__PURE__ */ o(Ae, { width: "100%", height: "100%", children: /* @__PURE__ */ m(jt, { data: n, margin: { top: 8, right: 8, bottom: 4, left: 0 }, children: [
-    /* @__PURE__ */ o(He, { strokeDasharray: "3 3", stroke: Nn }),
-    /* @__PURE__ */ o(
-      We,
-      {
-        dataKey: "label",
-        stroke: ot,
-        tick: { fontSize: 11, fill: it },
-        interval: 0
-      }
-    ),
-    /* @__PURE__ */ o(
-      qe,
-      {
-        stroke: ot,
-        tick: { fontSize: 11, fill: it },
-        tickFormatter: zn,
-        width: 50
-      }
-    ),
-    /* @__PURE__ */ o(
-      _e,
-      {
-        contentStyle: Te,
-        cursor: { fill: Sn }
-      }
-    ),
-    /* @__PURE__ */ o(It, { dataKey: "value", radius: [2, 2, 0, 0], children: n.map((r, s) => /* @__PURE__ */ o(Un, { fill: sa(r) }, s)) })
-  ] }) });
+	let t = fe(e), n = K(/* @__PURE__ */ new Set()), r = K(!1), [a, o] = q(/* @__PURE__ */ new Set());
+	return W(() => {
+		let e = t.map(ia);
+		if (!r.current) {
+			r.current = !0;
+			for (let t of e) n.current.add(t);
+			return;
+		}
+		let i = e.filter((e) => !n.current.has(e));
+		for (let t of e) n.current.add(t);
+		if (i.length === 0) return;
+		o((e) => {
+			let t = new Set(e);
+			for (let e of i) t.add(e);
+			return t;
+		});
+		let a = setTimeout(() => {
+			o((e) => {
+				let t = new Set(e);
+				for (let e of i) t.delete(e);
+				return t;
+			});
+		}, na);
+		return () => clearTimeout(a);
+	}, [t]), t.length === 0 ? /* @__PURE__ */ J(i, { children: "No content" }) : /* @__PURE__ */ J("div", {
+		className: "overflow-auto h-full space-y-3",
+		children: t.map((e, t) => {
+			let n = ia(e);
+			return /* @__PURE__ */ Y("article", {
+				className: `flex gap-3 border-b border-zinc-800/60 pb-3 last:border-0 rounded-sm transition-colors duration-700 ${a.has(n) ? "bg-sky-500/5" : ""}`,
+				children: [/* @__PURE__ */ Y("div", {
+					className: "flex-1 min-w-0",
+					children: [
+						(e.title || e.url) && /* @__PURE__ */ J("h4", {
+							className: "text-sm font-medium text-zinc-100 mb-1 leading-snug",
+							children: e.url ? /* @__PURE__ */ Y("a", {
+								href: e.url,
+								...e.url.startsWith("/") ? {} : {
+									target: "_blank",
+									rel: "noopener noreferrer"
+								},
+								className: "hover:text-sky-400 hover:underline",
+								children: [e.title || aa(e.url), /* @__PURE__ */ J("span", {
+									className: "ml-1 text-xs text-zinc-500",
+									"aria-hidden": "true",
+									children: e.url.startsWith("/") ? "→" : "↗"
+								})]
+							}) : e.title
+						}),
+						e.meta && /* @__PURE__ */ J("div", {
+							className: "text-xs text-zinc-500 mb-1.5",
+							children: e.meta
+						}),
+						e.body && /* @__PURE__ */ J("p", {
+							className: "text-sm text-zinc-300 leading-relaxed",
+							children: e.body
+						}),
+						e.tags && e.tags.length > 0 && /* @__PURE__ */ J("div", {
+							className: "flex gap-1.5 mt-2 flex-wrap",
+							children: e.tags.map((e, t) => /* @__PURE__ */ J("span", {
+								className: "text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400",
+								children: e
+							}, t))
+						})
+					]
+				}), e.image && /* @__PURE__ */ J("img", {
+					src: e.image,
+					alt: "",
+					className: "w-14 h-14 rounded object-cover shrink-0 bg-zinc-800",
+					loading: "lazy"
+				})]
+			}, t);
+		})
+	});
 }
-function sa(e) {
-  return e.color && Ce[e.color] ? Ce[e.color] : e.color && e.color.startsWith("#") ? e.color : e.value < 0 ? "var(--mtc-danger)" : "var(--mtc-accent)";
+function ia(e) {
+	return e.id ? `id:${e.id}` : `t:${e.title ?? ""}|b:${(e.body ?? "").slice(0, 60)}`;
 }
-function zn(e) {
-  return typeof e != "number" ? String(e) : Math.abs(e) >= 1e9 ? (e / 1e9).toFixed(1) + "B" : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(1) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(1) + "K" : e.toFixed(Number.isInteger(e) ? 0 : 1);
+function aa(e) {
+	try {
+		return new URL(e).hostname;
+	} catch {
+		return e;
+	}
 }
-const oa = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  BarChart: ra
-}, Symbol.toStringTag, { value: "Module" })), ia = "var(--mtc-grid)", An = "var(--mtc-border)", _n = "var(--mtc-muted)", la = "var(--mtc-muted-subtle)";
-function aa({ data: e }) {
-  const t = L(() => ca(e), [e]);
-  if (!t || t.length === 0)
-    return /* @__PURE__ */ o(D, { children: "No data" });
-  const n = t.some((r) => r.size != null);
-  return /* @__PURE__ */ o(Ae, { width: "100%", height: "100%", children: /* @__PURE__ */ m(Lr, { margin: { top: 8, right: 8, bottom: 4, left: 0 }, children: [
-    /* @__PURE__ */ o(He, { strokeDasharray: "3 3", stroke: ia }),
-    /* @__PURE__ */ o(
-      We,
-      {
-        type: "number",
-        dataKey: "x",
-        stroke: An,
-        tick: { fontSize: 11, fill: _n }
-      }
-    ),
-    /* @__PURE__ */ o(
-      qe,
-      {
-        type: "number",
-        dataKey: "y",
-        stroke: An,
-        tick: { fontSize: 11, fill: _n },
-        width: 50
-      }
-    ),
-    n && /* @__PURE__ */ o(Pr, { type: "number", dataKey: "size", range: [40, 280] }),
-    /* @__PURE__ */ o(
-      _e,
-      {
-        cursor: { strokeDasharray: "3 3", stroke: la },
-        contentStyle: Te
-      }
-    ),
-    /* @__PURE__ */ o(
-      Dr,
-      {
-        data: t,
-        fill: "var(--mtc-accent)",
-        shape: (r) => {
-          const { cx: s, cy: i, payload: l } = r;
-          if (s == null || i == null || !l) return /* @__PURE__ */ o("circle", { cx: 0, cy: 0, r: 0 });
-          const a = ua(l), c = l.size != null ? Math.min(20, Math.max(3, Math.sqrt(l.size) * 2)) : 5;
-          return /* @__PURE__ */ o("g", { children: /* @__PURE__ */ o("circle", { cx: s, cy: i, r: c, fill: a, fillOpacity: 0.7, stroke: a, strokeWidth: 1, children: l.label && /* @__PURE__ */ o("title", { children: l.label }) }) });
-        }
-      }
-    )
-  ] }) });
+//#endregion
+//#region src/widgets/Prompt.tsx
+var oa = /* @__PURE__ */ X({ Prompt: () => sa });
+function sa({ options: e }) {
+	let { dispatch: t, ctx: n, setCtx: r, backendUrl: o, widgets: s } = a(), [c, u] = q(""), [d, f] = q(!1), [m, h] = q(null), [g, _] = q(null), v = K(!1), y = e?.url, b = o !== void 0, x = U(async () => {
+		let e = c.trim();
+		if (!(!e || d || v.current) && !(!b && !y)) {
+			v.current = !0, f(!0), _(null), h(null);
+			try {
+				let i = b ? await fetch(l(o), {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(p(e, n, s))
+				}) : await fetch(y, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ query: e })
+				});
+				if (!i.ok) throw Error(`HTTP ${i.status}`);
+				let a = await i.json(), c = a.text ?? a.dialogue?.text;
+				if (c && h(c), a.context?.values) for (let [e, t] of Object.entries(a.context.values)) r(e, t);
+				a.actions && a.actions.length > 0 && t(a.actions, { replaceAll: a.replace_all }), u("");
+			} catch (e) {
+				_(e instanceof Error ? e.message : "Request failed");
+			} finally {
+				v.current = !1, f(!1);
+			}
+		}
+	}, [
+		c,
+		d,
+		b,
+		o,
+		y,
+		n,
+		s,
+		t,
+		r
+	]);
+	return !b && !y ? /* @__PURE__ */ J(i, {
+		padded: !0,
+		children: "Set a backendUrl on Dashboard or options.url on this widget"
+	}) : /* @__PURE__ */ Y("div", {
+		className: "flex flex-col gap-2 h-full justify-center",
+		children: [
+			/* @__PURE__ */ Y("div", {
+				className: "flex gap-2",
+				children: [/* @__PURE__ */ J("input", {
+					type: "text",
+					className: "flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100\n            placeholder-zinc-500 outline-none focus:border-zinc-500 disabled:opacity-50",
+					placeholder: "Ask anything... (Enter to send)",
+					value: c,
+					onChange: (e) => u(e.target.value),
+					onKeyDown: (e) => {
+						e.key === "Enter" && !e.shiftKey && (e.preventDefault(), x());
+					},
+					disabled: d
+				}), /* @__PURE__ */ J("button", {
+					onClick: x,
+					disabled: d || !c.trim(),
+					className: "px-4 py-2 bg-zinc-700 hover:bg-zinc-600 disabled:opacity-30 disabled:cursor-default\n            rounded-lg text-sm text-zinc-200 font-medium shrink-0",
+					children: d ? "..." : "Send"
+				})]
+			}),
+			m && /* @__PURE__ */ J("div", {
+				className: "text-xs text-zinc-400 leading-relaxed",
+				children: m
+			}),
+			g && /* @__PURE__ */ J("div", {
+				className: "text-xs text-red-400",
+				children: g
+			})
+		]
+	});
 }
-function ca(e) {
-  let t = null;
-  if (Array.isArray(e)) t = e;
-  else if (e && typeof e == "object") {
-    const r = e;
-    Array.isArray(r.points) && (t = r.points);
-  }
-  if (!t) return null;
-  const n = t.map((r) => {
-    const s = r;
-    return {
-      x: Number(s.x ?? 0),
-      y: Number(s.y ?? 0),
-      label: s.label != null ? String(s.label) : void 0,
-      size: typeof s.size == "number" ? s.size : void 0,
-      color: s.color != null ? String(s.color) : void 0
-    };
-  }).filter((r) => Number.isFinite(r.x) && Number.isFinite(r.y));
-  return n.length > 0 ? n : null;
+//#endregion
+//#region src/widgets/Gauge.tsx
+var ca = /* @__PURE__ */ X({ Gauge: () => da }), la = {
+	ok: "var(--mtc-ok)",
+	warn: "var(--mtc-warning)",
+	danger: "var(--mtc-danger)",
+	error: "var(--mtc-danger)",
+	info: "var(--mtc-accent)",
+	muted: "var(--mtc-muted)"
+}, ua = "M 16 104 A 84 84 0 0 1 184 104";
+function da({ data: e }) {
+	let t = fa(e);
+	if (!t) return /* @__PURE__ */ J(i, { children: "No data" });
+	let n = t.max - t.min, r = n > 0 ? Math.max(0, Math.min(1, (t.value - t.min) / n)) : 0, a = la[t.bands.find((e) => t.value >= e.from && t.value <= e.to)?.color ?? "info"] ?? la.info;
+	return /* @__PURE__ */ Y("div", {
+		className: "flex flex-col items-center justify-center h-full gap-1",
+		children: [/* @__PURE__ */ Y("svg", {
+			viewBox: "0 0 200 120",
+			className: "w-full max-w-[260px]",
+			children: [
+				/* @__PURE__ */ J("path", {
+					d: ua,
+					fill: "none",
+					stroke: "var(--mtc-grid)",
+					strokeWidth: "16",
+					pathLength: "100"
+				}),
+				t.bands.map((e, r) => {
+					let i = (e.from - t.min) / n, a = (e.to - t.min) / n;
+					return /* @__PURE__ */ J("path", {
+						d: ua,
+						fill: "none",
+						stroke: la[e.color] ?? la.muted,
+						strokeWidth: "16",
+						opacity: .22,
+						pathLength: "100",
+						strokeDasharray: `${(a - i) * 100} 100`,
+						strokeDashoffset: -i * 100
+					}, r);
+				}),
+				/* @__PURE__ */ J("path", {
+					d: ua,
+					fill: "none",
+					stroke: a,
+					strokeWidth: "16",
+					strokeLinecap: "round",
+					pathLength: "100",
+					strokeDasharray: `${r * 100} 100`
+				}),
+				/* @__PURE__ */ J("text", {
+					x: "100",
+					y: "92",
+					textAnchor: "middle",
+					fill: "var(--mtc-fg)",
+					style: {
+						fontSize: 22,
+						fontWeight: 700,
+						fontVariantNumeric: "tabular-nums"
+					},
+					children: pa(t.value, t.min, t.max)
+				})
+			]
+		}), t.label && /* @__PURE__ */ J("div", {
+			className: "text-xs text-zinc-500 text-center px-2 truncate max-w-full",
+			children: t.label
+		})]
+	});
 }
-function ua(e) {
-  return e.color && Ce[e.color] ? Ce[e.color] : e.color && e.color.startsWith("#") ? e.color : "var(--mtc-accent)";
+function fa(e) {
+	if (typeof e != "object" || !e) return null;
+	let t = e;
+	if (typeof t.value != "number") return null;
+	let n = typeof t.min == "number" ? t.min : 0, r = typeof t.max == "number" ? t.max : 1, i = Array.isArray(t.bands) ? t.bands.map((e) => {
+		let t = e;
+		return {
+			from: Number(t.from ?? 0),
+			to: Number(t.to ?? 0),
+			color: String(t.color ?? "info")
+		};
+	}) : [];
+	return {
+		value: t.value,
+		min: n,
+		max: r,
+		bands: i,
+		label: t.label == null ? void 0 : String(t.label)
+	};
 }
-const da = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Scatter: aa
-}, Symbol.toStringTag, { value: "Module" })), fa = ["America/New_York", "Europe/London", "Asia/Singapore"];
-function ma({ options: e }) {
-  const t = e ?? {}, n = t.zones?.length ? t.zones : fa, r = t.format === "12h", [s, i] = v(() => /* @__PURE__ */ new Date());
-  return R(() => {
-    const l = setInterval(() => i(/* @__PURE__ */ new Date()), 1e3);
-    return () => clearInterval(l);
-  }, []), /* @__PURE__ */ o("div", { className: "h-full flex items-center justify-around gap-3", children: n.map((l) => {
-    const a = ba(s, l, r), u = ga(s, l), c = ha(l), d = xa(l, s);
-    return /* @__PURE__ */ m("div", { className: "flex flex-col items-center", children: [
-      /* @__PURE__ */ m("div", { className: "text-[10px] uppercase tracking-wider text-zinc-500 flex items-center gap-1.5", children: [
-        /* @__PURE__ */ o("span", { children: c }),
-        /* @__PURE__ */ o("span", { className: `w-1.5 h-1.5 rounded-full ${d}` })
-      ] }),
-      /* @__PURE__ */ o("div", { className: "text-base font-semibold text-zinc-100 tabular-nums", children: a }),
-      /* @__PURE__ */ o("div", { className: "text-[10px] text-zinc-600 tabular-nums", children: u })
-    ] }, l);
-  }) });
+function pa(e, t, n) {
+	return t === 0 && n === 1 ? `${(e * 100).toFixed(1)}%` : t === -1 && n === 1 ? e >= 0 ? `+${e.toFixed(2)}` : e.toFixed(2) : e.toLocaleString(void 0, { maximumFractionDigits: 2 });
 }
-const pa = {
-  "America/New_York": "NY",
-  "America/Los_Angeles": "LA",
-  "America/Chicago": "CHI",
-  "Europe/London": "LDN",
-  "Europe/Frankfurt": "FRA",
-  "Asia/Tokyo": "TYO",
-  "Asia/Singapore": "SGP",
-  "Asia/Hong_Kong": "HKG",
-  "Asia/Shanghai": "SHA",
-  "Australia/Sydney": "SYD",
-  UTC: "UTC"
+//#endregion
+//#region src/widgets/Distribution.tsx
+var ma = /* @__PURE__ */ X({ Distribution: () => ha });
+function ha({ data: e }) {
+	let t = G(() => ga(e), [e]);
+	if (!t) return /* @__PURE__ */ J(i, { children: "No data" });
+	let { slices: n, total: r } = t, a = n.map((e, t) => ue(e.color, t)), o = n.reduce((e, t) => t.value > e.value ? t : e), s = o.value / r * 100;
+	return /* @__PURE__ */ Y("div", {
+		className: "flex flex-col h-full",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex-1 relative min-h-0",
+			children: [/* @__PURE__ */ J(lt, {
+				width: "100%",
+				height: "100%",
+				children: /* @__PURE__ */ Y(et, { children: [/* @__PURE__ */ J($e, {
+					data: n,
+					dataKey: "value",
+					nameKey: "label",
+					innerRadius: "60%",
+					outerRadius: "92%",
+					paddingAngle: 2,
+					stroke: "none",
+					isAnimationActive: !1,
+					children: n.map((e, t) => /* @__PURE__ */ J(Ye, { fill: a[t] }, t))
+				}), /* @__PURE__ */ J(ft, {
+					contentStyle: z,
+					formatter: (e) => {
+						let t = Number(e) || 0;
+						return [`${_a(t)} (${(t / r * 100).toFixed(1)}%)`, ""];
+					}
+				})] })
+			}), /* @__PURE__ */ Y("div", {
+				className: "absolute inset-0 flex flex-col items-center justify-center pointer-events-none",
+				children: [/* @__PURE__ */ J("div", {
+					className: "text-[10px] uppercase tracking-wider text-zinc-500 truncate max-w-[60%]",
+					children: o.label
+				}), /* @__PURE__ */ Y("div", {
+					className: "text-2xl font-bold text-white tabular-nums",
+					children: [s.toFixed(1), "%"]
+				})]
+			})]
+		}), /* @__PURE__ */ J("div", {
+			className: "grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-1 mt-2 text-xs",
+			children: n.map((e, t) => /* @__PURE__ */ Y("div", {
+				className: "flex items-center gap-1.5 min-w-0",
+				children: [
+					/* @__PURE__ */ J("span", {
+						className: "w-2 h-2 rounded-sm shrink-0",
+						style: { backgroundColor: a[t] }
+					}),
+					/* @__PURE__ */ J("span", {
+						className: "text-zinc-300 truncate",
+						children: e.label
+					}),
+					/* @__PURE__ */ Y("span", {
+						className: "text-zinc-500 ml-auto tabular-nums shrink-0",
+						children: [(e.value / r * 100).toFixed(1), "%"]
+					})
+				]
+			}, t))
+		})]
+	});
+}
+function ga(e) {
+	if (typeof e != "object" || !e) return null;
+	let t = e, n = Array.isArray(t.slices) ? t.slices : null;
+	if (!n) return null;
+	let r = n.map((e) => {
+		let t = e;
+		return {
+			label: String(t.label ?? ""),
+			value: Number(t.value ?? 0),
+			color: t.color == null ? void 0 : String(t.color)
+		};
+	}).filter((e) => e.value > 0);
+	return r.length === 0 ? null : {
+		slices: r,
+		total: (typeof t.total == "number" ? t.total : null) ?? r.reduce((e, t) => e + t.value, 0)
+	};
+}
+function _a(e) {
+	return Math.abs(e) >= 1e9 ? (e / 1e9).toFixed(2) + "B" : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(2) + "M" : Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 0 }) : e.toLocaleString(void 0, { maximumFractionDigits: 2 });
+}
+//#endregion
+//#region src/widgets/Heatmap.tsx
+var va = /* @__PURE__ */ X({ Heatmap: () => xa }), ya = 96, ba = 22;
+function xa({ data: e, options: t }) {
+	let { setCtx: n } = a(), r = G(() => Ca(e), [e]);
+	if (!r) return /* @__PURE__ */ J(i, { children: "No data" });
+	let o = t?.row_context, s = t?.col_context, c = !!(o || s), l = (e, t) => {
+		o && n(o.key, r.rows[e]), s && n(s.key, r.columns[t]);
+	}, { rows: u, columns: d, cells: f, min: p, max: m, scale: h } = r, g = f.length <= 60, _ = G(() => {
+		let e = u.map(() => Array(d.length).fill(void 0));
+		for (let t of f) e[t.row][t.col] = t;
+		return e;
+	}, [
+		u,
+		d,
+		f
+	]);
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full w-full overflow-auto flex flex-col",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "inline-grid min-w-full",
+			style: {
+				gridTemplateColumns: `${ya}px repeat(${d.length}, minmax(28px, 1fr))`,
+				gap: 2
+			},
+			children: [
+				/* @__PURE__ */ J("div", { className: "sticky left-0 top-0 z-20 bg-zinc-900" }),
+				d.map((e) => /* @__PURE__ */ J("div", {
+					className: "text-[10px] text-zinc-400 truncate text-center flex items-center justify-center sticky top-0 z-10 bg-zinc-900",
+					style: { height: ba },
+					children: e
+				}, `c-${e}`)),
+				u.flatMap((e, t) => [/* @__PURE__ */ J("div", {
+					className: "text-xs text-zinc-300 truncate pr-2 flex items-center justify-end sticky left-0 z-10 bg-zinc-900",
+					style: { minHeight: 30 },
+					children: e
+				}, `rl-${t}`), ...d.map((n, r) => {
+					let i = _[t][r];
+					if (!i) return /* @__PURE__ */ J("div", { className: "bg-zinc-900 rounded-sm" }, `e-${t}-${r}`);
+					let a = wa(i.value, p, m, h);
+					return /* @__PURE__ */ J("div", {
+						onClick: c ? () => l(t, r) : void 0,
+						className: `rounded-sm flex items-center justify-center text-[10px] font-medium tabular-nums ${c ? "cursor-pointer hover:ring-1 hover:ring-zinc-400" : ""}`,
+						style: {
+							backgroundColor: a,
+							minHeight: 30
+						},
+						title: `${e} × ${d[r]}: ${i.label ?? i.value.toFixed(2)}`,
+						children: g && /* @__PURE__ */ J("span", {
+							className: "text-white/90",
+							children: i.label ?? Ta(i.value)
+						})
+					}, `cell-${t}-${r}`);
+				})])
+			]
+		}), /* @__PURE__ */ J(Sa, {
+			min: p,
+			max: m,
+			scale: h
+		})]
+	});
+}
+function Sa({ min: e, max: t, scale: n }) {
+	let r = n === "diverging" ? [
+		-1,
+		-.5,
+		0,
+		.5,
+		1
+	] : [
+		0,
+		.25,
+		.5,
+		.75,
+		1
+	], i = t - e;
+	return /* @__PURE__ */ Y("div", {
+		className: "flex items-center gap-2 mt-2 text-[10px] text-zinc-500 shrink-0",
+		children: [
+			/* @__PURE__ */ J("span", {
+				className: "tabular-nums",
+				children: oe(e)
+			}),
+			/* @__PURE__ */ J("div", {
+				className: "flex-1 max-w-[160px] flex h-2 rounded-sm overflow-hidden",
+				children: r.map((r, a) => /* @__PURE__ */ J("div", {
+					className: "flex-1",
+					style: { backgroundColor: wa(n === "diverging" ? r * Math.max(Math.abs(e), Math.abs(t)) : e + r * i, e, t, n) }
+				}, a))
+			}),
+			/* @__PURE__ */ J("span", {
+				className: "tabular-nums",
+				children: oe(t)
+			})
+		]
+	});
+}
+function Ca(e) {
+	if (typeof e != "object" || !e) return null;
+	let t = e, n = Array.isArray(t.rows) ? t.rows.map(String) : null, r = Array.isArray(t.columns) ? t.columns.map(String) : null, i = Array.isArray(t.cells) ? t.cells : null;
+	if (!n || !r || !i) return null;
+	let a = i.map((e) => {
+		let t = e;
+		return {
+			row: Number(t.row ?? 0),
+			col: Number(t.col ?? 0),
+			value: Number(t.value ?? 0),
+			label: t.label == null ? void 0 : String(t.label)
+		};
+	}).filter((e) => e.row >= 0 && e.row < n.length && e.col >= 0 && e.col < r.length);
+	if (a.length === 0) return null;
+	let o = a.map((e) => e.value);
+	return {
+		rows: n,
+		columns: r,
+		cells: a,
+		min: typeof t.min == "number" ? t.min : Math.min(...o),
+		max: typeof t.max == "number" ? t.max : Math.max(...o),
+		scale: t.scale === "diverging" ? "diverging" : "sequential"
+	};
+}
+function wa(e, t, n, r) {
+	if (n === t) return "var(--mtc-panel)";
+	if (r === "diverging") {
+		let r = Math.max(-1, Math.min(1, e / (Math.max(Math.abs(t), Math.abs(n)) || 1)));
+		return r >= 0 ? `color-mix(in oklab, var(--mtc-ok) ${85 * r}%, var(--mtc-panel))` : `color-mix(in oklab, var(--mtc-danger) ${85 * -r}%, var(--mtc-panel))`;
+	}
+	return `color-mix(in oklab, var(--mtc-accent) ${15 + 75 * Math.max(0, Math.min(1, (e - t) / (n - t)))}%, var(--mtc-panel))`;
+}
+function Ta(e) {
+	return Math.abs(e) < 1 ? e.toFixed(2) : Math.abs(e) < 100 ? e.toFixed(1) : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(1) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(1) + "K" : Math.round(e).toString();
+}
+//#endregion
+//#region src/widgets/Events.tsx
+var Ea = /* @__PURE__ */ X({ Events: () => Oa }), Da = {
+	EVENT_STATUS_OK: "bg-emerald-500",
+	EVENT_STATUS_WARN: "bg-amber-500",
+	EVENT_STATUS_ERROR: "bg-red-500",
+	EVENT_STATUS_INFO: "bg-sky-500",
+	EVENT_STATUS_PENDING: "bg-zinc-500 animate-pulse",
+	ok: "bg-emerald-500",
+	warn: "bg-amber-500",
+	error: "bg-red-500",
+	info: "bg-sky-500",
+	pending: "bg-zinc-500 animate-pulse"
 };
-function ha(e) {
-  return pa[e] ?? e.split("/").pop() ?? e;
+function Oa({ data: e, options: t }) {
+	let n = G(() => ka(e), [e]), r = t?.filter === !0, [a, o] = q(""), s = G(() => {
+		if (!n) return null;
+		if (!a.trim()) return n;
+		let e = a.toLowerCase();
+		return n.filter((t) => t.label.toLowerCase().includes(e) || (t.body?.toLowerCase().includes(e) ?? !1) || (t.source?.toLowerCase().includes(e) ?? !1) || (t.tags?.some((t) => t.toLowerCase().includes(e)) ?? !1));
+	}, [n, a]);
+	return !n || n.length === 0 ? /* @__PURE__ */ J(i, { children: "No events" }) : /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col",
+		children: [r && /* @__PURE__ */ J("input", {
+			type: "text",
+			placeholder: "Filter events…",
+			value: a,
+			onChange: (e) => o(e.target.value),
+			className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-500 mb-2 shrink-0"
+		}), /* @__PURE__ */ Y("div", {
+			className: "flex-1 overflow-auto min-h-0",
+			children: [s.length === 0 && /* @__PURE__ */ J("div", {
+				className: "flex items-center justify-center h-full text-zinc-500 text-xs",
+				children: "No matches"
+			}), s.map((e, t) => /* @__PURE__ */ Y("div", {
+				className: "flex gap-3 px-1 py-2.5 border-b border-zinc-800 last:border-0",
+				children: [/* @__PURE__ */ J("div", {
+					className: "flex flex-col items-center pt-1.5 shrink-0",
+					children: /* @__PURE__ */ J("span", { className: `w-2 h-2 rounded-full ${Da[e.status ?? ""] ?? "bg-zinc-600"}` })
+				}), /* @__PURE__ */ Y("div", {
+					className: "min-w-0 flex-1",
+					children: [
+						/* @__PURE__ */ Y("div", {
+							className: "flex items-baseline gap-2",
+							children: [/* @__PURE__ */ J("span", {
+								className: "text-xs text-zinc-500 tabular-nums shrink-0 font-mono",
+								children: e.timestamp
+							}), /* @__PURE__ */ J("span", {
+								className: "text-sm text-zinc-100 truncate",
+								children: e.label
+							})]
+						}),
+						e.body && /* @__PURE__ */ J("div", {
+							className: "text-xs text-zinc-400 mt-0.5 line-clamp-2",
+							children: e.body
+						}),
+						(e.source || e.tags && e.tags.length > 0) && /* @__PURE__ */ Y("div", {
+							className: "flex items-center gap-2 mt-1 text-[10px] text-zinc-500 flex-wrap",
+							children: [e.source && /* @__PURE__ */ J("span", {
+								className: "text-zinc-500",
+								children: e.source
+							}), e.tags?.map((e, t) => /* @__PURE__ */ J("span", {
+								className: "px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400",
+								children: e
+							}, t))]
+						})
+					]
+				})]
+			}, t))]
+		})]
+	});
 }
-function ba(e, t, n) {
-  try {
-    return new Intl.DateTimeFormat("en-US", {
-      timeZone: t,
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: n
-    }).format(e);
-  } catch {
-    return "—";
-  }
+function ka(e) {
+	let t = null;
+	if (Array.isArray(e)) t = e;
+	else if (e && typeof e == "object") {
+		let n = e;
+		Array.isArray(n.events) && (t = n.events);
+	}
+	return t ? t.map((e) => {
+		let t = e;
+		return {
+			timestamp: String(t.timestamp ?? ""),
+			label: String(t.label ?? ""),
+			status: t.status == null ? void 0 : String(t.status),
+			body: t.body == null ? void 0 : String(t.body),
+			source: t.source == null ? void 0 : String(t.source),
+			tags: Array.isArray(t.tags) ? t.tags.map(String) : void 0
+		};
+	}) : null;
 }
-function ga(e, t) {
-  try {
-    return new Intl.DateTimeFormat("en-US", { timeZone: t, timeZoneName: "shortOffset" }).formatToParts(e).find((i) => i.type === "timeZoneName")?.value ?? "";
-  } catch {
-    return "";
-  }
+//#endregion
+//#region src/widgets/Catalog.tsx
+var Aa = /* @__PURE__ */ X({ Catalog: () => Na }), ja = "medallion.terminal.v1.TerminalService", Ma = {
+	SHAPE_TIMESERIES: "timeseries",
+	SHAPE_CANDLES: "candles",
+	SHAPE_TABLE: "table",
+	SHAPE_METRIC: "metric",
+	SHAPE_GAUGE: "gauge",
+	SHAPE_HEATMAP: "heatmap",
+	SHAPE_EVENTS: "events",
+	SHAPE_DISTRIBUTION: "distribution",
+	SHAPE_TEXT: "text",
+	SHAPE_ORDERBOOK: "orderbook",
+	SHAPE_PAIRED_GRID: "paired_grid",
+	SHAPE_EMBED: "embed",
+	SHAPE_ASSET_CATALOG: "asset_catalog",
+	SHAPE_OBJECT: "object",
+	SHAPE_GRAPH: "graph",
+	SHAPE_REPOSITORY: "repository",
+	SHAPE_RECORD_SET: "record_set"
+};
+function Na() {
+	let { backendUrl: e } = a(), [t, n] = q(null), [r, o] = q(!0), [s, c] = q(null);
+	if (W(() => {
+		if (e === void 0) {
+			o(!1), n(null);
+			return;
+		}
+		let t = !1;
+		o(!0), c(null);
+		let r = new AbortController();
+		return fetch(`${e.replace(/\/$/, "")}/${ja}/ListSources`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: "{}",
+			signal: r.signal
+		}).then((e) => e.ok ? e.json() : Promise.reject(/* @__PURE__ */ Error(`HTTP ${e.status}`))).then((e) => {
+			t || n(e.sources ?? []);
+		}).catch((e) => {
+			!t && e.name !== "AbortError" && c(e.message);
+		}).finally(() => {
+			t || o(!1);
+		}), () => {
+			t = !0, r.abort();
+		};
+	}, [e]), e === void 0) return /* @__PURE__ */ J(i, {
+		padded: !0,
+		children: "No backendUrl configured on Dashboard"
+	});
+	if (r) return /* @__PURE__ */ J(i, {
+		padded: !0,
+		children: "Loading catalog…"
+	});
+	if (s) return /* @__PURE__ */ Y(i, {
+		padded: !0,
+		children: ["Failed to load: ", s]
+	});
+	if (!t || t.length === 0) return /* @__PURE__ */ J(i, {
+		padded: !0,
+		children: "No sources registered"
+	});
+	let l = {};
+	for (let e of t) {
+		let t = e.shape && Ma[e.shape] || "other";
+		l[t] || (l[t] = []), l[t].push(e);
+	}
+	return /* @__PURE__ */ J("div", {
+		className: "h-full overflow-auto pr-1",
+		children: Object.entries(l).map(([e, t]) => /* @__PURE__ */ Y("div", {
+			className: "mb-4 last:mb-0",
+			children: [/* @__PURE__ */ Y("div", {
+				className: "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5",
+				children: [
+					e,
+					" ",
+					/* @__PURE__ */ Y("span", {
+						className: "text-zinc-700",
+						children: ["— ", t.length]
+					})
+				]
+			}), t.map((e) => /* @__PURE__ */ Y("div", {
+				className: "py-2 border-b border-zinc-800/60 last:border-0",
+				children: [
+					/* @__PURE__ */ Y("div", {
+						className: "flex items-baseline gap-2 flex-wrap",
+						children: [
+							/* @__PURE__ */ J("span", {
+								className: "text-sm text-zinc-100 font-mono",
+								children: e.id
+							}),
+							e.streamable && /* @__PURE__ */ J("span", {
+								className: "text-[9px] uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded",
+								children: "live"
+							}),
+							e.name && /* @__PURE__ */ Y("span", {
+								className: "text-xs text-zinc-400",
+								children: ["— ", e.name]
+							})
+						]
+					}),
+					e.description && /* @__PURE__ */ J("div", {
+						className: "text-xs text-zinc-500 mt-0.5",
+						children: e.description
+					}),
+					e.params && e.params.length > 0 && /* @__PURE__ */ Y("div", {
+						className: "text-[10px] text-zinc-500 mt-1 font-mono",
+						children: [
+							"params:",
+							" ",
+							e.params.map((e) => e.required ? `${e.key}*` : e.key).join(", ")
+						]
+					}),
+					e.tags && e.tags.length > 0 && /* @__PURE__ */ J("div", {
+						className: "flex gap-1 mt-1 flex-wrap",
+						children: e.tags.map((e) => /* @__PURE__ */ J("span", {
+							className: "text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400",
+							children: e
+						}, e))
+					})
+				]
+			}, e.id))]
+		}, e))
+	});
 }
-function xa(e, t) {
-  try {
-    const n = new Intl.DateTimeFormat("en-US", { timeZone: e, hour: "2-digit", hour12: !1 }).format(t), r = Number(n);
-    return Number.isFinite(r) ? r >= 9 && r < 17 ? "bg-emerald-500" : r === 8 || r === 17 ? "bg-amber-500" : "bg-zinc-700" : "bg-zinc-700";
-  } catch {
-    return "bg-zinc-700";
-  }
+//#endregion
+//#region src/widgets/AssetCatalog.tsx
+var Pa = /* @__PURE__ */ X({ AssetCatalog: () => Ia }), Fa = {
+	dataset: "▦",
+	object_type: "◇",
+	object: "◆",
+	pipeline: "⇢",
+	model: "◈",
+	repository: "⌘",
+	dashboard: "▤",
+	document: "≡"
+};
+function Ia({ data: e, options: t }) {
+	let n = t ?? {}, { ctx: r, setCtx: o } = a(), s = G(() => S(e), [e]), [c, l] = q(""), [u, d] = q("all"), f = n.item_context?.key ?? "asset_id", p = n.item_context?.kind_key ?? "asset_kind", m = n.item_context?.owner_key, h = G(() => [...new Set(s.items.map((e) => e.kind))].sort(), [s.items]), g = G(() => {
+		let e = c.trim().toLowerCase();
+		return s.items.filter((t) => u !== "all" && t.kind !== u ? !1 : !e || [
+			t.id,
+			t.name,
+			t.kind,
+			t.description,
+			t.owner,
+			t.status,
+			...t.tags,
+			...Object.values(t.metadata)
+		].filter(Boolean).join(" ").toLowerCase().includes(e));
+	}, [
+		s.items,
+		u,
+		c
+	]), _ = (e) => {
+		for (let [t, n] of Object.entries(e.context)) o(t, n);
+		f in e.context || o(f, e.id), p in e.context || o(p, e.kind), m && e.owner && !(m in e.context) && o(m, e.owner);
+	};
+	return s.items.length === 0 ? /* @__PURE__ */ J(i, { children: "No assets" }) : /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col min-h-0",
+		children: [
+			(n.search !== !1 || n.kind_filter !== !1 && h.length > 1) && /* @__PURE__ */ Y("div", {
+				className: "flex flex-col gap-2 pb-2 border-b border-zinc-800 shrink-0",
+				children: [n.search !== !1 && /* @__PURE__ */ J("input", {
+					type: "search",
+					value: c,
+					onChange: (e) => l(e.target.value),
+					placeholder: "Search assets…",
+					className: "w-full bg-zinc-950 border border-zinc-800 rounded px-2.5 py-1.5 text-xs text-zinc-100 placeholder-zinc-600 outline-none focus:border-zinc-600"
+				}), n.kind_filter !== !1 && h.length > 1 && /* @__PURE__ */ J("div", {
+					className: "flex gap-1 overflow-x-auto pb-0.5",
+					children: ["all", ...h].map((e) => /* @__PURE__ */ J("button", {
+						onClick: () => d(e),
+						className: `px-2 py-1 rounded text-[10px] uppercase tracking-wider whitespace-nowrap ${u === e ? "bg-sky-500/15 text-sky-300 border border-sky-500/30" : "bg-zinc-900 text-zinc-500 border border-zinc-800 hover:text-zinc-200"}`,
+						children: Ra(e)
+					}, e))
+				})]
+			}),
+			/* @__PURE__ */ Y("div", {
+				className: "flex items-center justify-between py-1.5 text-[10px] uppercase tracking-wider text-zinc-600 shrink-0",
+				children: [/* @__PURE__ */ Y("span", { children: [g.length.toLocaleString(), " shown"] }), s.total != null && /* @__PURE__ */ Y("span", { children: [s.total.toLocaleString(), " total"] })]
+			}),
+			/* @__PURE__ */ J("div", {
+				className: "flex-1 overflow-auto min-h-0",
+				children: g.length === 0 ? /* @__PURE__ */ J(i, { children: "No matching assets" }) : /* @__PURE__ */ J("div", {
+					className: "divide-y divide-zinc-800/70",
+					children: g.map((e) => {
+						let t = V(e.url), n = r[f] === e.id, i = Object.entries(e.metadata).filter(([, e]) => e == null || [
+							"string",
+							"number",
+							"boolean"
+						].includes(typeof e)).slice(0, 3);
+						return /* @__PURE__ */ Y("div", {
+							className: `flex items-start gap-2 px-2 py-2.5 border-l-2 transition-colors ${n ? "border-sky-500 bg-sky-500/10" : "border-transparent hover:bg-zinc-800/30"}`,
+							children: [/* @__PURE__ */ Y("button", {
+								onClick: () => _(e),
+								className: "flex-1 min-w-0 text-left group",
+								title: `Select ${e.name}`,
+								children: [
+									/* @__PURE__ */ Y("div", {
+										className: "flex items-center gap-2 min-w-0",
+										children: [
+											/* @__PURE__ */ J("span", {
+												className: "w-5 text-center text-zinc-500 shrink-0",
+												"aria-hidden": "true",
+												children: Fa[e.kind] ?? "·"
+											}),
+											/* @__PURE__ */ J("span", {
+												className: "text-sm text-zinc-100 truncate group-hover:text-sky-300",
+												children: e.name
+											}),
+											e.status && /* @__PURE__ */ J("span", {
+												className: `text-[9px] uppercase tracking-wider shrink-0 ${La(e.status)}`,
+												children: e.status
+											})
+										]
+									}),
+									/* @__PURE__ */ Y("div", {
+										className: "ml-7 mt-0.5 flex items-center gap-2 text-[10px] text-zinc-600 min-w-0",
+										children: [
+											/* @__PURE__ */ J("span", {
+												className: "font-mono truncate",
+												children: e.id
+											}),
+											/* @__PURE__ */ J("span", {
+												className: "shrink-0",
+												children: Ra(e.kind)
+											}),
+											e.owner && /* @__PURE__ */ Y("span", {
+												className: "truncate",
+												children: ["owner ", e.owner]
+											})
+										]
+									}),
+									e.description && /* @__PURE__ */ J("div", {
+										className: "ml-7 mt-1 text-xs text-zinc-500 line-clamp-2",
+										children: e.description
+									}),
+									(i.length > 0 || e.updatedAt) && /* @__PURE__ */ Y("div", {
+										className: "ml-7 mt-1 flex gap-x-3 gap-y-1 flex-wrap text-[10px] text-zinc-600",
+										children: [i.map(([e, t]) => /* @__PURE__ */ Y("span", { children: [
+											Ra(e),
+											" ",
+											/* @__PURE__ */ J("span", {
+												className: "text-zinc-400",
+												children: String(t)
+											})
+										] }, e)), e.updatedAt && /* @__PURE__ */ Y("span", { children: ["updated ", /* @__PURE__ */ J("span", {
+											className: "text-zinc-400",
+											children: String(pe(e.updatedAt))
+										})] })]
+									}),
+									e.tags.length > 0 && /* @__PURE__ */ J("div", {
+										className: "ml-7 mt-1.5 flex gap-1 flex-wrap",
+										children: e.tags.map((e) => /* @__PURE__ */ J("span", {
+											className: "text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400",
+											children: e
+										}, e))
+									})
+								]
+							}), t && /* @__PURE__ */ J("a", {
+								href: t,
+								...t.startsWith("/") ? {} : {
+									target: "_blank",
+									rel: "noopener noreferrer"
+								},
+								className: "text-xs text-zinc-600 hover:text-sky-300 px-1 shrink-0",
+								title: "Open asset page",
+								children: "↗"
+							})]
+						}, `${e.kind}:${e.id}`);
+					})
+				})
+			})
+		]
+	});
 }
-const ya = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Clock: ma
-}, Symbol.toStringTag, { value: "Module" }));
-function va({ data: e }) {
-  const t = L(() => Na(e), [e]);
-  return !t || t.length === 0 ? /* @__PURE__ */ o(D, { children: "No data" }) : /* @__PURE__ */ o(Ae, { width: "100%", height: "100%", children: /* @__PURE__ */ o(
-    Fr,
-    {
-      data: t,
-      dataKey: "value",
-      nameKey: "name",
-      stroke: "#18181b",
-      isAnimationActive: !1,
-      content: /* @__PURE__ */ o(wa, {}),
-      children: /* @__PURE__ */ o(
-        _e,
-        {
-          contentStyle: Te,
-          formatter: (n) => [String(n), ""]
-        }
-      )
-    }
-  ) });
+function La(e) {
+	let t = e.toLowerCase();
+	return /(healthy|ready|active|ok|published)/.test(t) ? "text-emerald-400" : /(warn|stale|draft|pending)/.test(t) ? "text-amber-400" : /(error|failed|deprecated|archived|blocked)/.test(t) ? "text-red-400" : "text-zinc-500";
 }
-function wa(e) {
-  const { x: t = 0, y: n = 0, width: r = 0, height: s = 0, index: i = 0, name: l, payload: a } = e, u = ka(a, i), c = r > 60 && s > 24;
-  return /* @__PURE__ */ m("g", { children: [
-    /* @__PURE__ */ o("rect", { x: t, y: n, width: r, height: s, fill: u, fillOpacity: 0.85, stroke: "#18181b", strokeWidth: 2 }),
-    c && l && /* @__PURE__ */ o("text", { x: t + 6, y: n + 16, fill: "#fafafa", fontSize: 11, style: { pointerEvents: "none" }, children: l })
-  ] });
+function Ra(e) {
+	return e.replace(/_/g, " ");
 }
-function ka(e, t) {
-  return e ? e.color && Ce[e.color] ? Ce[e.color] : e.color && e.color.startsWith("#") ? e.color : de[t % de.length] : de[t % de.length];
+//#endregion
+//#region src/widgets/ObjectView.tsx
+var za = /* @__PURE__ */ X({ ObjectView: () => Ba });
+function Ba({ data: e, options: t, widgetId: n }) {
+	let r = G(() => x(e), [e]), o = t ?? {}, { setCtx: s } = a(), c = ve(n), [l, u] = q(null), [d, f] = q(null);
+	if (!r) return /* @__PURE__ */ J(i, { children: "No object" });
+	let p = Va(r.properties), m = o.link_context?.type_key ?? "object_type", h = o.link_context?.id_key ?? "object_id", g = (e) => {
+		if (Object.keys(e.context).length > 0) for (let [t, n] of Object.entries(e.context)) s(t, n);
+		else e.targetType && s(m, e.targetType), s(h, e.targetId);
+	}, _ = async (e) => {
+		if (!(e.disabled || c.submitting || l)) {
+			if (e.confirm && d !== e.id) {
+				f(e.id);
+				return;
+			}
+			u(e.id), f(null), await c.submit({
+				actionId: e.id,
+				params: {
+					...e.params,
+					object_type: r.objectType,
+					object_id: r.objectId
+				},
+				successMessage: e.label,
+				refreshTarget: n ?? "*",
+				onComplete: () => u(null)
+			}) || u(null);
+		}
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full overflow-auto pr-1",
+		children: [
+			/* @__PURE__ */ Y("div", {
+				className: "pb-3 border-b border-zinc-800",
+				children: [
+					/* @__PURE__ */ Y("div", {
+						className: "flex items-start justify-between gap-3",
+						children: [/* @__PURE__ */ Y("div", {
+							className: "min-w-0",
+							children: [
+								/* @__PURE__ */ J("div", {
+									className: "text-[10px] uppercase tracking-wider text-zinc-500",
+									children: r.objectType || "object"
+								}),
+								/* @__PURE__ */ J("h4", {
+									className: "text-base text-zinc-100 mt-0.5 truncate",
+									children: r.title
+								}),
+								r.objectId && /* @__PURE__ */ J("div", {
+									className: "text-[10px] font-mono text-zinc-600 mt-0.5 truncate",
+									children: r.objectId
+								})
+							]
+						}), r.status && /* @__PURE__ */ J("span", {
+							className: `text-[10px] uppercase tracking-wider shrink-0 ${Ga(r.status)}`,
+							children: r.status
+						})]
+					}),
+					r.description && /* @__PURE__ */ J("p", {
+						className: "text-xs text-zinc-500 leading-relaxed mt-2",
+						children: r.description
+					}),
+					/* @__PURE__ */ Y("div", {
+						className: "flex items-center gap-1.5 flex-wrap mt-2",
+						children: [r.tags.map((e) => /* @__PURE__ */ J("span", {
+							className: "text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400",
+							children: e
+						}, e)), r.updatedAt && /* @__PURE__ */ Y("span", {
+							className: "text-[10px] text-zinc-600 ml-auto",
+							children: ["updated ", String(pe(r.updatedAt))]
+						})]
+					})
+				]
+			}),
+			p.map(([e, t]) => /* @__PURE__ */ Y("section", {
+				className: "py-3 border-b border-zinc-800/70 last:border-0",
+				children: [/* @__PURE__ */ J("h5", {
+					className: "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5",
+					children: e
+				}), /* @__PURE__ */ J("dl", { children: t.map((e) => /* @__PURE__ */ Y("div", {
+					className: "grid grid-cols-[minmax(7rem,0.42fr)_minmax(0,1fr)] gap-3 py-1.5",
+					children: [/* @__PURE__ */ J("dt", {
+						className: "text-xs text-zinc-500",
+						title: e.description,
+						children: e.label
+					}), /* @__PURE__ */ J("dd", {
+						className: "text-xs text-zinc-200 min-w-0",
+						children: /* @__PURE__ */ J(Ha, { property: e })
+					})]
+				}, e.key)) })]
+			}, e)),
+			r.links.length > 0 && /* @__PURE__ */ Y("section", {
+				className: "py-3 border-b border-zinc-800/70",
+				children: [/* @__PURE__ */ J("h5", {
+					className: "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5",
+					children: "Relationships"
+				}), /* @__PURE__ */ J("div", {
+					className: "space-y-1",
+					children: r.links.map((e, t) => /* @__PURE__ */ Y("button", {
+						onClick: () => g(e),
+						className: "w-full flex items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-zinc-800/60 group",
+						children: [
+							/* @__PURE__ */ J("span", {
+								className: "text-[10px] uppercase tracking-wider text-zinc-600 w-24 truncate shrink-0",
+								children: e.relation || "related"
+							}),
+							/* @__PURE__ */ J("span", {
+								className: "text-xs text-zinc-200 truncate group-hover:text-sky-300",
+								children: e.label
+							}),
+							/* @__PURE__ */ J("span", {
+								className: "text-[10px] font-mono text-zinc-600 truncate ml-auto",
+								children: e.targetType
+							}),
+							e.status && /* @__PURE__ */ J("span", {
+								className: Ga(e.status),
+								children: "●"
+							}),
+							/* @__PURE__ */ J("span", {
+								className: "text-zinc-600",
+								children: "→"
+							})
+						]
+					}, `${e.relation}:${e.targetType}:${e.targetId}:${t}`))
+				})]
+			}),
+			o.enable_actions === !0 && r.actions.length > 0 && /* @__PURE__ */ Y("section", {
+				className: "pt-3",
+				children: [
+					/* @__PURE__ */ J("h5", {
+						className: "text-[10px] uppercase tracking-wider text-zinc-500 mb-2",
+						children: "Actions"
+					}),
+					/* @__PURE__ */ Y("div", {
+						className: "flex gap-2 flex-wrap",
+						children: [r.actions.map((e) => {
+							let t = d === e.id, n = l === e.id && c.submitting;
+							return /* @__PURE__ */ J("button", {
+								onClick: () => void _(e),
+								disabled: e.disabled || c.submitting || l != null,
+								title: e.description,
+								className: `px-3 py-1.5 rounded border text-xs disabled:opacity-40 ${Ka(e.style, t)}`,
+								children: n ? "Working…" : t ? `Confirm ${e.label}` : e.label
+							}, e.id);
+						}), d && /* @__PURE__ */ J("button", {
+							onClick: () => f(null),
+							disabled: c.submitting,
+							className: "px-3 py-1.5 rounded border border-zinc-700 text-xs text-zinc-400 hover:text-zinc-100",
+							children: "Cancel"
+						})]
+					}),
+					c.result && /* @__PURE__ */ J("div", {
+						className: `mt-2 text-xs ${H(c.result.status) ? "text-red-400" : "text-zinc-500"}`,
+						children: c.result.message ?? c.result.status
+					})
+				]
+			})
+		]
+	});
 }
-function Na(e) {
-  let t = null;
-  if (Array.isArray(e)) t = e;
-  else if (e && typeof e == "object") {
-    const s = e;
-    Array.isArray(s.slices) ? t = s.slices : Array.isArray(s.nodes) && (t = s.nodes);
-  }
-  if (!t) return null;
-  const n = (s) => {
-    if (!s || typeof s != "object") return null;
-    const i = s, l = String(i.label ?? i.name ?? ""), a = typeof i.value == "number" ? i.value : void 0, u = i.color != null ? String(i.color) : void 0, c = Array.isArray(i.children) ? i.children : Array.isArray(i.slices) ? i.slices : null, d = c ? c.map(n).filter((f) => f != null) : void 0;
-    return !d && (!Number.isFinite(a) || (a ?? 0) <= 0) ? null : { name: l, value: a, color: u, children: d };
-  }, r = t.map(n).filter((s) => s != null);
-  return r.length > 0 ? r : null;
+function Va(e) {
+	let t = /* @__PURE__ */ new Map();
+	for (let n of e) {
+		let e = n.group ?? "General", r = t.get(e) ?? [];
+		r.push(n), t.set(e, r);
+	}
+	return [...t.entries()];
 }
-const Sa = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Treemap: va
-}, Symbol.toStringTag, { value: "Module" }));
-function za({ data: e }) {
-  const { url: t, alt: n } = Aa(e);
-  return t ? /* @__PURE__ */ o("div", { className: "h-full w-full flex items-center justify-center", children: /* @__PURE__ */ o(
-    "img",
-    {
-      src: t,
-      alt: n,
-      loading: "lazy",
-      className: "max-w-full max-h-full object-contain"
-    }
-  ) }) : /* @__PURE__ */ o(D, { children: "No image" });
+function Ha({ property: e }) {
+	let t = e.format === "link" ? V(e.value) : void 0;
+	return t ? /* @__PURE__ */ J("a", {
+		href: t,
+		...t.startsWith("/") ? {} : {
+			target: "_blank",
+			rel: "noopener noreferrer"
+		},
+		className: "text-sky-400 hover:underline break-all",
+		children: t
+	}) : e.value == null ? /* @__PURE__ */ J("span", {
+		className: "text-zinc-600",
+		children: "—"
+	}) : typeof e.value == "object" ? /* @__PURE__ */ J("pre", {
+		className: "font-mono text-[10px] whitespace-pre-wrap break-words text-zinc-400",
+		children: Wa(e.value)
+	}) : /* @__PURE__ */ J("span", {
+		className: "break-words",
+		children: Ua(e.value, e.format)
+	});
 }
-function Aa(e) {
-  if (typeof e == "string") return { url: e, alt: "" };
-  if (e && typeof e == "object") {
-    const t = e, n = typeof t.label == "string" ? t.label : typeof t.alt == "string" ? t.alt : "";
-    return {
-      url: typeof t.url == "string" ? t.url : void 0,
-      alt: n
-    };
-  }
-  return { url: void 0, alt: "" };
-}
-const _a = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Image: za
-}, Symbol.toStringTag, { value: "Module" }));
-function Ta({ data: e, options: t }) {
-  const { url: n, title: r, sandbox: s } = $a(e, t);
-  return n ? /* @__PURE__ */ o(
-    "iframe",
-    {
-      src: n,
-      title: r,
-      sandbox: s,
-      loading: "lazy",
-      className: "w-full h-full border-0 rounded"
-    }
-  ) : /* @__PURE__ */ o(D, { children: "No URL" });
-}
-function $a(e, t) {
-  let n, r = "embed", s = fr;
-  if (typeof e == "string")
-    n = e;
-  else if (e && typeof e == "object") {
-    const i = e;
-    typeof i.url == "string" && (n = i.url), typeof i.label == "string" ? r = i.label : typeof i.title == "string" && (r = i.title), typeof i.sandbox == "string" && (s = i.sandbox);
-  }
-  return t && (typeof t.url == "string" && !n && (n = t.url), typeof t.title == "string" && r === "embed" && (r = t.title), typeof t.sandbox == "string" && (s = t.sandbox)), { url: n, title: r, sandbox: s };
-}
-const Ca = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Iframe: Ta
-}, Symbol.toStringTag, { value: "Module" })), Ea = 20, Oa = "var(--mtc-grid)", Tn = "var(--mtc-border)", $n = "var(--mtc-muted)", Ma = "color-mix(in oklab, var(--mtc-muted) 20%, transparent)";
-function Ra({ data: e, options: t }) {
-  const n = L(() => ja(e, t), [e, t]);
-  return !n || n.length === 0 ? /* @__PURE__ */ o(D, { children: "No data" }) : /* @__PURE__ */ o(Ae, { width: "100%", height: "100%", children: /* @__PURE__ */ m(jt, { data: n, margin: { top: 8, right: 8, bottom: 4, left: 0 }, children: [
-    /* @__PURE__ */ o(He, { strokeDasharray: "3 3", stroke: Oa }),
-    /* @__PURE__ */ o(
-      We,
-      {
-        dataKey: "bin",
-        stroke: Tn,
-        tick: { fontSize: 10, fill: $n },
-        interval: "preserveStartEnd"
-      }
-    ),
-    /* @__PURE__ */ o(
-      qe,
-      {
-        stroke: Tn,
-        tick: { fontSize: 11, fill: $n },
-        allowDecimals: !1,
-        width: 40
-      }
-    ),
-    /* @__PURE__ */ o(
-      _e,
-      {
-        contentStyle: Te,
-        cursor: { fill: Ma }
-      }
-    ),
-    /* @__PURE__ */ o(It, { dataKey: "count", fill: "var(--mtc-accent)", radius: [2, 2, 0, 0] })
-  ] }) });
-}
-function ja(e, t) {
-  if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object" && e[0] !== null && "count" in e[0])
-    return e.map((i) => {
-      const l = i, a = typeof l.rangeStart == "number" ? l.rangeStart : 0, u = typeof l.rangeEnd == "number" ? l.rangeEnd : 0;
-      return {
-        bin: String(l.bin ?? ""),
-        count: Number(l.count ?? 0),
-        rangeStart: a,
-        rangeEnd: u
-      };
-    }).filter((i) => Number.isFinite(i.count));
-  let n = null, r = Ea;
-  if (Array.isArray(e) && e.every((s) => typeof s == "number"))
-    n = e;
-  else if (e && typeof e == "object") {
-    const s = e;
-    Array.isArray(s.values) && s.values.every((i) => typeof i == "number") && (n = s.values), typeof s.bins == "number" && (r = s.bins);
-  }
-  return typeof t?.bins == "number" && (r = t.bins), !n || (n = n.filter((s) => Number.isFinite(s)), n.length === 0) ? null : Ia(n, r);
-}
-function Ia(e, t) {
-  const n = Math.min(...e), r = Math.max(...e);
-  if (n === r) return [{ bin: Ge(n), count: e.length, rangeStart: n, rangeEnd: r }];
-  const s = (r - n) / t, i = Array.from({ length: t }, (l, a) => {
-    const u = n + a * s, c = a === t - 1 ? r : u + s;
-    return { bin: Ge((u + c) / 2), count: 0, rangeStart: u, rangeEnd: c };
-  });
-  for (const l of e) {
-    let a = Math.floor((l - n) / s);
-    a >= t && (a = t - 1), i[a].count += 1;
-  }
-  return i;
-}
-const La = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Histogram: Ra
-}, Symbol.toStringTag, { value: "Module" }));
-function Pa({ options: e }) {
-  const t = typeof e?.label == "string" ? e.label : "";
-  return /* @__PURE__ */ m("div", { className: "h-full flex items-center gap-3 px-1", children: [
-    t && /* @__PURE__ */ o("span", { className: "text-[10px] uppercase tracking-[0.15em] text-zinc-500 shrink-0", children: t }),
-    /* @__PURE__ */ o("div", { className: "flex-1 h-px bg-zinc-800" })
-  ] });
-}
-const Da = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Section: Pa
-}, Symbol.toStringTag, { value: "Module" })), lt = ["#38bdf8", "#34d399", "#fbbf24", "#f87171", "#a78bfa", "#f472b6"], Fa = "var(--mtc-grid)", Tt = "var(--mtc-border)", $t = "var(--mtc-muted)", Ua = "var(--mtc-surface)", Ba = ["timestamp", "date", "time", "datetime", "ts", "x", "t"];
-function Ka({ data: e, options: t }) {
-  const n = L(() => Wa(e), [e]), r = t?.brush === !0;
-  if (!n) return /* @__PURE__ */ o(D, { children: "No data" });
-  const s = n.keys.length > 1;
-  return /* @__PURE__ */ o(Ae, { width: "100%", height: "100%", children: /* @__PURE__ */ m(Ur, { data: n.points, children: [
-    /* @__PURE__ */ o(He, { strokeDasharray: "3 3", stroke: Fa }),
-    /* @__PURE__ */ o(
-      We,
-      {
-        dataKey: "_ts",
-        stroke: Tt,
-        tick: { fontSize: 11, fill: $t },
-        tickFormatter: Ie
-      }
-    ),
-    /* @__PURE__ */ o(
-      qe,
-      {
-        stroke: Tt,
-        tick: { fontSize: 11, fill: $t },
-        tickFormatter: br,
-        width: 50
-      }
-    ),
-    /* @__PURE__ */ o(
-      _e,
-      {
-        contentStyle: Te,
-        labelStyle: { color: $t },
-        labelFormatter: Ie
-      }
-    ),
-    n.keys.map((i, l) => /* @__PURE__ */ o(
-      Br,
-      {
-        type: "monotone",
-        dataKey: i,
-        stroke: lt[l % lt.length],
-        fill: lt[l % lt.length],
-        fillOpacity: 0.35,
-        strokeWidth: 1.5,
-        stackId: s ? "stack" : void 0
-      },
-      i
-    )),
-    r && n.points.length > 4 && /* @__PURE__ */ o(
-      Fn,
-      {
-        dataKey: "_ts",
-        height: 20,
-        stroke: Tt,
-        fill: Ua,
-        travellerWidth: 6,
-        tickFormatter: Ie
-      }
-    )
-  ] }) });
-}
-function Ha(e) {
-  for (const t of Ba) if (t in e) return t;
-  return null;
+function Ua(e, t) {
+	return t?.startsWith("currency") && typeof e == "number" ? ne(e, t.split(":")[1] ?? "USD") : t?.startsWith("percent") && typeof e == "number" ? ae(e) : t === "compact" && typeof e == "number" ? oe(e) : (t === "datetime" || t === "date") && typeof e == "string" ? String(pe(e)) : typeof e == "boolean" ? e ? "true" : "false" : String(e);
 }
 function Wa(e) {
-  if (!e) return null;
-  if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object" && e[0] !== null) {
-    const t = e[0], n = Ha(t);
-    if (!n) return null;
-    const r = Object.keys(t).filter((i) => i !== n && typeof t[i] == "number");
-    return r.length === 0 ? null : { points: e.map((i) => {
-      const l = i, a = { _ts: l[n] };
-      for (const u of r) a[u] = l[u];
-      return a;
-    }), keys: r };
-  }
-  if (typeof e == "object" && e !== null && "series" in e) {
-    const t = e.series;
-    if (!Array.isArray(t)) return null;
-    const n = /* @__PURE__ */ new Map(), r = [];
-    for (const s of t) {
-      const i = s, l = String(i.name || i.label || `s${r.length}`);
-      r.push(l);
-      const a = i.data ?? i.points;
-      if (Array.isArray(a))
-        for (const u of a) {
-          const c = String(u.timestamp ?? u.date ?? u.time ?? u.x ?? "");
-          n.has(c) || n.set(c, { _ts: c }), n.get(c)[l] = u.value ?? u.y ?? u.v;
-        }
-    }
-    return { points: Array.from(n.values()), keys: r };
-  }
-  return null;
+	try {
+		return JSON.stringify(e, null, 2);
+	} catch {
+		return String(e);
+	}
 }
-const qa = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  AreaChart: Ka
-}, Symbol.toStringTag, { value: "Module" })), Ga = 100;
-function Va({ options: e }) {
-  const t = e ?? {}, { ctx: n, setCtx: r } = ae(), s = t.min ?? 0, i = t.max ?? 100, l = t.step ?? 1, a = t.label ?? t.key ?? "value", u = (() => {
-    if (t.key && n[t.key] != null) {
-      const p = Number(n[t.key]);
-      if (Number.isFinite(p)) return p;
-    }
-    return t.default != null ? t.default : s;
-  })(), [c, d] = v(u), f = U(null);
-  if (R(() => {
-    if (!t.key) return;
-    const p = n[t.key];
-    if (p == null) return;
-    const g = Number(p);
-    Number.isFinite(g) && g !== c && d(g);
-  }, [t.key, n[t.key ?? ""]]), !t.key)
-    return /* @__PURE__ */ o(D, { children: "Slider requires options.key" });
-  const h = (p) => {
-    d(p), f.current && clearTimeout(f.current), f.current = setTimeout(() => {
-      r(t.key, String(p));
-    }, Ga);
-  };
-  return /* @__PURE__ */ m("div", { className: "flex flex-col h-full justify-center gap-2 px-2", children: [
-    /* @__PURE__ */ m("div", { className: "flex items-baseline justify-between", children: [
-      /* @__PURE__ */ o("span", { className: "text-[10px] uppercase tracking-wider text-zinc-500", children: a }),
-      /* @__PURE__ */ m("span", { className: "text-sm font-semibold text-zinc-100 tabular-nums", children: [
-        Ct(c, l),
-        t.unit && /* @__PURE__ */ o("span", { className: "text-zinc-500 ml-1", children: t.unit })
-      ] })
-    ] }),
-    /* @__PURE__ */ o(
-      "input",
-      {
-        type: "range",
-        min: s,
-        max: i,
-        step: l,
-        value: c,
-        onChange: (p) => h(Number(p.target.value)),
-        className: "w-full accent-sky-500"
-      }
-    ),
-    /* @__PURE__ */ m("div", { className: "flex justify-between text-[10px] text-zinc-600 tabular-nums", children: [
-      /* @__PURE__ */ o("span", { children: Ct(s, l) }),
-      /* @__PURE__ */ o("span", { children: Ct(i, l) })
-    ] })
-  ] });
+function Ga(e) {
+	let t = e.toLowerCase();
+	return /(healthy|ready|active|ok|published|open)/.test(t) ? "text-emerald-400" : /(warn|stale|draft|pending|review)/.test(t) ? "text-amber-400" : /(error|failed|deprecated|archived|blocked|closed)/.test(t) ? "text-red-400" : "text-zinc-500";
 }
-function Ct(e, t) {
-  const n = t >= 1 ? 0 : Math.min(4, -Math.floor(Math.log10(t)));
-  return e.toFixed(n);
+function Ka(e, t) {
+	return t || e === "danger" ? "border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20" : e === "primary" ? "border-sky-500/40 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20" : "border-zinc-700 text-zinc-300 hover:bg-zinc-800";
 }
-const Ja = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Slider: Va
-}, Symbol.toStringTag, { value: "Module" }));
-function Xa(e, t, n) {
-  if (e !== void 0 && e !== "")
-    return { current: e, shouldSync: !1 };
-  const r = t || n[0]?.value || "";
-  return { current: r, shouldSync: r !== "" };
+//#endregion
+//#region src/widgets/CodeBrowser.tsx
+var qa = /* @__PURE__ */ X({ CodeBrowser: () => Ja });
+function Ja({ data: e, options: t }) {
+	let n = G(() => y(e), [e]), r = t ?? {}, { setCtx: o } = a(), [s, c] = q(!1);
+	if (!n) return /* @__PURE__ */ J(i, { children: "No repository data" });
+	let l = r.repository_ctx ?? "repository", u = r.ref_ctx ?? "repo_ref", d = r.path_ctx ?? "repo_path", f = [...n.entries].sort((e, t) => e.kind === t.kind ? e.name.localeCompare(t.name) : e.kind === "directory" ? -1 : t.kind === "directory" ? 1 : e.name.localeCompare(t.name)), p = V(n.url), m = V(n.file?.url), h = n.path.split("/").filter(Boolean), g = () => {
+		n.repository && o(l, n.repository);
+	}, _ = (e) => {
+		o(u, e), o(d, "");
+	}, v = (e) => {
+		o(d, e.path);
+	}, b = async () => {
+		if (!(!n.file || typeof navigator > "u" || !navigator.clipboard)) try {
+			await navigator.clipboard.writeText(n.file.content), c(!0), setTimeout(() => c(!1), 1200);
+		} catch {
+			c(!1);
+		}
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col min-h-0",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex items-center gap-2 pb-2 border-b border-zinc-800 text-xs shrink-0 min-w-0",
+			children: [
+				/* @__PURE__ */ J("button", {
+					onClick: g,
+					className: "font-medium text-zinc-100 hover:text-sky-300 truncate",
+					title: n.repository,
+					children: n.repository || "repository"
+				}),
+				p && /* @__PURE__ */ J("a", {
+					href: p,
+					...p.startsWith("/") ? {} : {
+						target: "_blank",
+						rel: "noopener noreferrer"
+					},
+					className: "text-zinc-600 hover:text-sky-300 shrink-0",
+					title: "Open repository",
+					children: "↗"
+				}),
+				/* @__PURE__ */ J("span", {
+					className: "text-zinc-700",
+					children: "/"
+				}),
+				n.refs.length > 1 ? /* @__PURE__ */ J("select", {
+					value: n.ref,
+					onChange: (e) => _(e.target.value),
+					className: "bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-[11px] font-mono text-zinc-300 outline-none focus:border-zinc-600 shrink-0",
+					"aria-label": "Repository ref",
+					children: n.refs.map((e) => /* @__PURE__ */ J("option", {
+						value: e,
+						children: e
+					}, e))
+				}) : /* @__PURE__ */ J("span", {
+					className: "font-mono text-[11px] text-zinc-500 shrink-0",
+					children: n.ref || "HEAD"
+				}),
+				/* @__PURE__ */ Y("div", {
+					className: "flex items-center gap-1 min-w-0 overflow-hidden",
+					children: [/* @__PURE__ */ J("button", {
+						onClick: () => o(d, ""),
+						className: "text-sky-400 hover:underline shrink-0",
+						children: "root"
+					}), h.map((e, t) => {
+						let n = h.slice(0, t + 1).join("/");
+						return /* @__PURE__ */ Y("span", {
+							className: "flex items-center gap-1 min-w-0",
+							children: [/* @__PURE__ */ J("span", {
+								className: "text-zinc-700",
+								children: "/"
+							}), /* @__PURE__ */ J("button", {
+								onClick: () => o(d, n),
+								className: "text-sky-400 hover:underline truncate",
+								title: n,
+								children: e
+							})]
+						}, n);
+					})]
+				})
+			]
+		}), /* @__PURE__ */ Y("div", {
+			className: "flex-1 min-h-0 grid grid-cols-1 md:grid-cols-[minmax(14rem,0.34fr)_minmax(0,1fr)]",
+			children: [/* @__PURE__ */ J("div", {
+				className: "overflow-auto border-b md:border-b-0 md:border-r border-zinc-800 min-h-0",
+				children: f.length === 0 ? /* @__PURE__ */ J(i, { children: n.file ? "No sibling entries" : "Empty directory" }) : /* @__PURE__ */ J("div", {
+					className: "divide-y divide-zinc-800/50",
+					children: f.map((e) => /* @__PURE__ */ Y("button", {
+						onClick: () => v(e),
+						className: `w-full grid grid-cols-[1.25rem_minmax(0,1fr)_auto] items-center gap-2 px-2.5 py-1.5 text-left text-xs hover:bg-zinc-800/50 ${n.file?.path === e.path ? "bg-sky-500/10 text-sky-300" : "text-zinc-300"}`,
+						title: e.path,
+						children: [
+							/* @__PURE__ */ J("span", {
+								className: "text-zinc-600",
+								"aria-hidden": "true",
+								children: e.kind === "directory" ? "▸" : e.kind === "symlink" ? "↗" : "·"
+							}),
+							/* @__PURE__ */ J("span", {
+								className: "truncate",
+								children: e.name
+							}),
+							/* @__PURE__ */ J("span", {
+								className: "text-[9px] text-zinc-600 tabular-nums",
+								children: e.kind === "file" && e.sizeBytes != null ? Ee(e.sizeBytes) : ""
+							})
+						]
+					}, `${e.kind}:${e.path}`))
+				})
+			}), /* @__PURE__ */ J("div", {
+				className: "min-h-0 flex flex-col overflow-hidden",
+				children: n.file ? /* @__PURE__ */ Y(He, { children: [/* @__PURE__ */ Y("div", {
+					className: "flex items-center gap-2 px-3 py-1.5 border-b border-zinc-800 text-[10px] text-zinc-500 shrink-0",
+					children: [
+						/* @__PURE__ */ J("span", {
+							className: "font-mono truncate text-zinc-300",
+							children: n.file.path
+						}),
+						n.file.language && /* @__PURE__ */ J("span", {
+							className: "uppercase tracking-wider shrink-0",
+							children: n.file.language
+						}),
+						n.file.sizeBytes != null && /* @__PURE__ */ J("span", {
+							className: "tabular-nums shrink-0",
+							children: Ee(n.file.sizeBytes)
+						}),
+						n.file.truncated && /* @__PURE__ */ J("span", {
+							className: "text-amber-400 uppercase tracking-wider shrink-0",
+							children: "truncated"
+						}),
+						/* @__PURE__ */ J("button", {
+							onClick: () => void b(),
+							className: "ml-auto text-zinc-500 hover:text-zinc-200 shrink-0",
+							children: s ? "Copied" : "Copy"
+						}),
+						m && /* @__PURE__ */ J("a", {
+							href: m,
+							...m.startsWith("/") ? {} : {
+								target: "_blank",
+								rel: "noopener noreferrer"
+							},
+							className: "text-zinc-500 hover:text-sky-300 shrink-0",
+							children: "Raw ↗"
+						})
+					]
+				}), /* @__PURE__ */ J(Ya, {
+					content: n.file.content,
+					wrap: r.wrap === !0
+				})] }) : /* @__PURE__ */ J(i, {
+					padded: !0,
+					children: "Select a file to inspect its source"
+				})
+			})]
+		})]
+	});
 }
-function Ya({ data: e, options: t }) {
-  const n = t ?? {}, { ctx: r, setCtx: s } = ae(), i = n.key, l = Za(e, n), a = i ? r[i] : void 0, { current: u, shouldSync: c } = Xa(a, n.default, l);
-  return R(() => {
-    i && c && s(i, u);
-  }, [i, c, u, s]), i ? l.length === 0 ? /* @__PURE__ */ o(D, { children: "Select has no choices" }) : /* @__PURE__ */ m("div", { className: "flex flex-col h-full justify-center gap-1.5 px-2", children: [
-    /* @__PURE__ */ o("label", { className: "text-[10px] uppercase tracking-wider text-zinc-500", children: n.label ?? n.key }),
-    /* @__PURE__ */ o(
-      "select",
-      {
-        value: u,
-        onChange: (d) => s(n.key, d.target.value),
-        className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 outline-none focus:border-zinc-500",
-        children: l.map((d) => /* @__PURE__ */ o("option", { value: d.value, children: d.label }, d.value))
-      }
-    )
-  ] }) : /* @__PURE__ */ o(D, { children: "Select requires options.key" });
+function Ya({ content: e, wrap: t }) {
+	return /* @__PURE__ */ J("div", {
+		className: "flex-1 overflow-auto min-h-0 bg-zinc-950/50",
+		children: /* @__PURE__ */ J("table", {
+			className: "w-full font-mono text-[11px] leading-5",
+			children: /* @__PURE__ */ J("tbody", { children: e.split("\n").map((e, n) => /* @__PURE__ */ Y("tr", { children: [/* @__PURE__ */ J("td", {
+				className: "sticky left-0 w-12 px-2 text-right align-top select-none text-zinc-700 bg-zinc-950/95 border-r border-zinc-900",
+				children: n + 1
+			}), /* @__PURE__ */ J("td", {
+				className: `px-3 text-zinc-300 align-top ${t ? "whitespace-pre-wrap break-words" : "whitespace-pre"}`,
+				children: e || " "
+			})] }, n)) })
+		})
+	});
 }
-function Za(e, t) {
-  const n = Qa(e);
-  if (n.length > 0) {
-    const r = t.value_field ?? "value", s = t.label_field ?? "label";
-    return n.map((i) => {
-      if (typeof i == "string") return { value: i, label: i };
-      if (i && typeof i == "object") {
-        const l = i, a = l[r];
-        if (typeof a == "string") {
-          const u = l[s];
-          return { value: a, label: typeof u == "string" ? u : a };
-        }
-      }
-      return null;
-    }).filter((i) => i !== null);
-  }
-  return (t.choices ?? []).map(
-    (r) => typeof r == "string" ? { value: r, label: r } : { value: r.value, label: r.label ?? r.value }
-  );
+//#endregion
+//#region src/widgets/RecordGrid.tsx
+var Xa = /* @__PURE__ */ X({ RecordGrid: () => $a });
+function Za(e) {
+	return e.filter((e) => e.type === "grid" || e.type === "list");
 }
-function Qa(e) {
-  if (Array.isArray(e)) return e;
-  if (e && typeof e == "object") {
-    const t = e;
-    if (Array.isArray(t.rows)) return t.rows;
-    if (Array.isArray(t.entries)) return t.entries;
-  }
-  return [];
+function Qa(e, t) {
+	return e == null && t == null ? 0 : e == null ? 1 : t == null ? -1 : typeof e == "number" && typeof t == "number" ? e - t : T(e).localeCompare(T(t), void 0, {
+		numeric: !0,
+		sensitivity: "base"
+	});
 }
-const ec = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Select: Ya
-}, Symbol.toStringTag, { value: "Module" })), Ne = { top: 12, right: 12, bottom: 28, left: 44 }, Cn = ["#0ea5e9", "#10b981", "#a78bfa", "#f59e0b", "#f472b6", "#fbbf24"];
-function tc({ data: e }) {
-  const t = L(() => rc(e), [e]);
-  if (!t || t.length === 0)
-    return /* @__PURE__ */ o(D, { children: "No data" });
-  const n = t.flatMap((c) => [c.min, c.max, ...c.outliers]), r = Math.min(...n), s = Math.max(...n), i = (s - r) * 0.05 || 1, l = r - i, a = s + i, u = Array.from({ length: 5 }, (c, d) => l + (a - l) * d / 4);
-  return /* @__PURE__ */ o("svg", { viewBox: "0 0 600 320", className: "w-full h-full", preserveAspectRatio: "none", children: /* @__PURE__ */ o(
-    nc,
-    {
-      boxes: t,
-      yMin: l,
-      yMax: a,
-      ticks: u,
-      width: 600,
-      height: 320
-    }
-  ) });
+function $a({ data: e, options: t, widgetId: n }) {
+	let r = G(() => k(e), [e]), o = t ?? {}, { backendUrl: s, setCtx: c } = a(), l = ve(n), [u, d] = q(""), [f, p] = q(0), [m, h] = q(null), [g, _] = q(null), [v, y] = q(o.view_id ?? "");
+	if (W(() => {
+		y(o.view_id ?? "");
+	}, [o.view_id]), !r) return /* @__PURE__ */ J(i, { children: "No record set" });
+	let b = Za(r.views), x = b.find((e) => e.id === v) ?? b.find((e) => e.id === r.activeViewId) ?? b[0], S = (o.visible_fields?.length ? o.visible_fields : x?.visibleFields.length ? x.visibleFields : r.fields.map((e) => e.key)).map((e) => r.fields.find((t) => t.key === e)).filter((e) => !!e), w = Math.max(1, o.page_size ?? 25), E = o.record_id_key ?? "record_id", D = o.table_id_key ?? "table_id", O = r.capabilities.update && o.inline_edit !== !1 && s !== void 0, A = (() => {
+		let e = M(r.records, x), t = u.trim().toLowerCase();
+		return t && (e = e.filter((e) => S.some((n) => T(e.values[n.key]).toLowerCase().includes(t)))), m && (e = [...e].sort((e, t) => {
+			let n = Qa(e.values[m.field], t.values[m.field]);
+			return m.descending ? -n : n;
+		})), e;
+	})(), j = Math.max(1, Math.ceil(A.length / w)), P = Math.min(f, j - 1), F = A.slice(P * w, (P + 1) * w), I = (e) => {
+		c(D, r.tableId), c(E, e.id);
+		for (let [t, n] of Object.entries(e.context)) c(t, n);
+	}, L = () => {
+		c(D, r.tableId), c(E, o.new_record_value ?? "new");
+	}, ee = (e) => {
+		h((t) => t?.field === e ? {
+			field: e,
+			descending: !t.descending
+		} : {
+			field: e,
+			descending: !1
+		}), p(0);
+	}, te = async () => {
+		!g || l.submitting || await l.submit({
+			actionId: r.capabilities.updateActionId,
+			params: {
+				workspace_id: r.workspaceId,
+				table_id: r.tableId,
+				record_id: g.record.id,
+				revision: g.record.revision,
+				values: { [g.field.key]: g.value }
+			},
+			successMessage: `${N(r, g.record)} updated`,
+			refreshTarget: "*",
+			onComplete: (e) => {
+				H(e.status) || _(null);
+			}
+		});
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col min-h-0",
+		children: [
+			/* @__PURE__ */ Y("div", {
+				className: "flex items-center gap-2 pb-2",
+				children: [
+					o.search !== !1 && /* @__PURE__ */ J("input", {
+						type: "search",
+						value: u,
+						onChange: (e) => {
+							d(e.target.value), p(0);
+						},
+						placeholder: `Search ${r.tableName || "records"}…`,
+						className: "mtc-control min-w-0 flex-1 px-2 py-1.5 text-xs text-zinc-100 outline-none focus:border-sky-500"
+					}),
+					b.length > 1 && /* @__PURE__ */ J("select", {
+						value: x?.id ?? "",
+						onChange: (e) => {
+							y(e.target.value), p(0), h(null);
+						},
+						className: "mtc-control max-w-[12rem] px-2 py-1.5 text-xs text-zinc-300 outline-none",
+						"aria-label": "Saved view",
+						children: b.map((e) => /* @__PURE__ */ J("option", {
+							value: e.id,
+							children: e.name
+						}, e.id))
+					}),
+					r.capabilities.create && /* @__PURE__ */ J("button", {
+						type: "button",
+						onClick: L,
+						className: "mtc-control px-2.5 py-1.5 text-[10px] uppercase tracking-wider text-sky-300 border-sky-500/30 shrink-0",
+						children: "+ New"
+					})
+				]
+			}),
+			/* @__PURE__ */ Y("div", {
+				className: "overflow-auto flex-1 min-h-0 border border-zinc-800 rounded",
+				children: [/* @__PURE__ */ Y("table", {
+					className: "w-full text-xs",
+					children: [/* @__PURE__ */ J("thead", {
+						className: "sticky top-0 z-[1] bg-zinc-900",
+						children: /* @__PURE__ */ J("tr", { children: S.map((e) => /* @__PURE__ */ J("th", {
+							className: "border-b border-r last:border-r-0 border-zinc-800 px-2.5 py-2 text-left font-medium text-zinc-400 whitespace-nowrap",
+							children: /* @__PURE__ */ Y("button", {
+								type: "button",
+								onClick: () => ee(e.key),
+								className: "w-full flex items-center gap-1 text-left hover:text-zinc-100",
+								children: [
+									/* @__PURE__ */ J("span", { children: e.label }),
+									e.required && /* @__PURE__ */ J("span", {
+										className: "text-amber-400",
+										title: "Required",
+										children: "*"
+									}),
+									e.readOnly && /* @__PURE__ */ J("span", {
+										className: "text-zinc-600",
+										title: "Computed or read-only",
+										children: "◇"
+									}),
+									m?.field === e.key && /* @__PURE__ */ J("span", {
+										className: "ml-auto text-zinc-600",
+										children: m.descending ? "↓" : "↑"
+									})
+								]
+							})
+						}, e.key)) })
+					}), /* @__PURE__ */ J("tbody", { children: F.map((e) => /* @__PURE__ */ J("tr", {
+						onClick: () => I(e),
+						className: "border-b last:border-b-0 border-zinc-800/70 hover:bg-zinc-800/40 cursor-pointer",
+						children: S.map((t) => {
+							let n = g?.record.id === e.id && g.field.key === t.key, r = O && C(t);
+							return /* @__PURE__ */ J("td", {
+								className: "min-w-[9rem] max-w-[22rem] border-r last:border-r-0 border-zinc-800/70 px-2.5 py-2 text-zinc-200 align-top",
+								onClick: (e) => {
+									r && e.stopPropagation();
+								},
+								children: n ? /* @__PURE__ */ Y("div", {
+									className: "min-w-[10rem]",
+									children: [/* @__PURE__ */ J(Le, {
+										field: t,
+										value: g.value,
+										onChange: (e) => _((t) => t && {
+											...t,
+											value: e
+										}),
+										compact: !0,
+										autoFocus: !0,
+										disabled: l.submitting,
+										onCommit: () => void te(),
+										onCancel: () => _(null)
+									}), /* @__PURE__ */ Y("div", {
+										className: "flex items-center justify-end gap-1 mt-1",
+										children: [/* @__PURE__ */ J("button", {
+											type: "button",
+											onClick: () => _(null),
+											className: "px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200",
+											children: "Cancel"
+										}), /* @__PURE__ */ J("button", {
+											type: "button",
+											onClick: () => void te(),
+											disabled: l.submitting,
+											className: "px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-sky-300 disabled:opacity-40",
+											children: "Save"
+										})]
+									})]
+								}) : /* @__PURE__ */ J("button", {
+									type: "button",
+									onClick: () => {
+										r && _({
+											record: e,
+											field: t,
+											value: e.values[t.key]
+										});
+									},
+									className: `w-full min-h-5 text-left ${r ? "hover:text-sky-300" : "cursor-default"}`,
+									title: r ? `Edit ${t.label}` : void 0,
+									children: /* @__PURE__ */ J(Ie, {
+										field: t,
+										value: e.values[t.key]
+									})
+								})
+							}, t.key);
+						})
+					}, e.id)) })]
+				}), F.length === 0 && /* @__PURE__ */ J("div", {
+					className: "h-40",
+					children: /* @__PURE__ */ J(i, { children: "No matching records" })
+				})]
+			}),
+			/* @__PURE__ */ Y("div", {
+				className: "pt-2 flex items-center justify-between gap-3 text-[10px] text-zinc-500",
+				children: [/* @__PURE__ */ Y("span", { children: [
+					A.length,
+					" shown",
+					r.total != null && r.total !== A.length ? ` · ${r.total} total` : "",
+					x ? ` · ${x.name}` : ""
+				] }), j > 1 && /* @__PURE__ */ Y("div", {
+					className: "flex items-center gap-1",
+					children: [
+						/* @__PURE__ */ J("button", {
+							type: "button",
+							onClick: () => p((e) => Math.max(0, e - 1)),
+							disabled: P === 0,
+							className: "mtc-control px-2 py-0.5 disabled:opacity-30",
+							children: "Previous"
+						}),
+						/* @__PURE__ */ Y("span", {
+							className: "px-1 tabular-nums",
+							children: [
+								P + 1,
+								"/",
+								j
+							]
+						}),
+						/* @__PURE__ */ J("button", {
+							type: "button",
+							onClick: () => p((e) => Math.min(j - 1, e + 1)),
+							disabled: P === j - 1,
+							className: "mtc-control px-2 py-0.5 disabled:opacity-30",
+							children: "Next"
+						})
+					]
+				})]
+			})
+		]
+	});
 }
-function nc({
-  boxes: e,
-  yMin: t,
-  yMax: n,
-  ticks: r,
-  width: s,
-  height: i
-}) {
-  const l = s - Ne.left - Ne.right, a = i - Ne.top - Ne.bottom, u = l / e.length, c = Math.min(u * 0.5, 60), d = (f) => Ne.top + (1 - (f - t) / (n - t)) * a;
-  return /* @__PURE__ */ m("g", { children: [
-    r.map((f, h) => {
-      const p = d(f);
-      return /* @__PURE__ */ m("g", { children: [
-        /* @__PURE__ */ o("line", { x1: Ne.left, x2: Ne.left + l, y1: p, y2: p, stroke: "#27272a", strokeDasharray: "3 3" }),
-        /* @__PURE__ */ o("text", { x: Ne.left - 6, y: p + 3, textAnchor: "end", fontSize: 10, fill: "#a1a1aa", fontFamily: "ui-sans-serif", children: Ge(f) })
-      ] }, `g-${h}`);
-    }),
-    e.map((f, h) => {
-      const p = Ne.left + u * h + u / 2, g = p - c / 2, b = Cn[h % Cn.length], w = d(f.min), A = d(f.max), $ = d(f.q1), j = d(f.q3), E = d(f.median);
-      return /* @__PURE__ */ m("g", { children: [
-        /* @__PURE__ */ o("line", { x1: p, x2: p, y1: w, y2: A, stroke: b, strokeOpacity: 0.6 }),
-        /* @__PURE__ */ o("line", { x1: p - c / 4, x2: p + c / 4, y1: w, y2: w, stroke: b, strokeOpacity: 0.8 }),
-        /* @__PURE__ */ o("line", { x1: p - c / 4, x2: p + c / 4, y1: A, y2: A, stroke: b, strokeOpacity: 0.8 }),
-        /* @__PURE__ */ o("rect", { x: g, y: j, width: c, height: Math.max(1, $ - j), fill: b, fillOpacity: 0.25, stroke: b, strokeWidth: 1.5 }),
-        /* @__PURE__ */ o("line", { x1: g, x2: g + c, y1: E, y2: E, stroke: b, strokeWidth: 2 }),
-        f.outliers.map((x, T) => /* @__PURE__ */ o("circle", { cx: p, cy: d(x), r: 2.5, fill: b, fillOpacity: 0.7 }, T)),
-        /* @__PURE__ */ o("text", { x: p, y: i - 8, textAnchor: "middle", fontSize: 11, fill: "#a1a1aa", fontFamily: "ui-sans-serif", children: f.label })
-      ] }, h);
-    })
-  ] });
+//#endregion
+//#region src/widgets/RecordBoard.tsx
+var eo = /* @__PURE__ */ X({ RecordBoard: () => io });
+function to(e) {
+	return e.filter((e) => e.type === "board");
 }
-function rc(e) {
-  if (!Array.isArray(e) || e.length === 0) return null;
-  const t = e.map((n) => {
-    if (!n || typeof n != "object") return null;
-    const r = n, s = String(r.label ?? "");
-    if (typeof r.median == "number")
-      return {
-        label: s,
-        min: Number(r.min ?? r.median),
-        q1: Number(r.q1 ?? r.median),
-        median: Number(r.median),
-        q3: Number(r.q3 ?? r.median),
-        max: Number(r.max ?? r.median),
-        outliers: Array.isArray(r.outliers) ? r.outliers.filter((i) => typeof i == "number") : []
-      };
-    if (Array.isArray(r.values)) {
-      const i = r.values.filter((l) => typeof l == "number" && Number.isFinite(l));
-      return i.length === 0 ? null : sc(s, i);
-    }
-    return null;
-  }).filter((n) => n != null);
-  return t.length > 0 ? t : null;
+function no(e) {
+	if (e && typeof e == "object" && !Array.isArray(e)) {
+		let t = e;
+		return String(t.id ?? t.value ?? t.label ?? t.name ?? "");
+	}
+	return e == null ? "" : String(e);
+}
+function ro(e) {
+	switch (e?.toLowerCase()) {
+		case "ok":
+		case "green":
+		case "emerald": return "bg-emerald-400";
+		case "warn":
+		case "amber":
+		case "yellow":
+		case "orange": return "bg-amber-400";
+		case "danger":
+		case "red": return "bg-red-400";
+		case "info":
+		case "blue":
+		case "cyan":
+		case "purple": return "bg-sky-400";
+		default: return "bg-zinc-500";
+	}
+}
+function io({ data: e, options: t, widgetId: n }) {
+	let r = G(() => k(e), [e]), o = t ?? {}, { backendUrl: s, setCtx: c } = a(), l = ve(n), [u, d] = q(""), [f, p] = q(o.view_id ?? ""), [m, h] = q(null);
+	if (W(() => p(o.view_id ?? ""), [o.view_id]), !r) return /* @__PURE__ */ J(i, { children: "No record set" });
+	let g = to(r.views), _ = g.find((e) => e.id === f) ?? g.find((e) => e.id === r.activeViewId) ?? g[0], v = o.group_by ?? _?.groupBy, y = r.fields.find((e) => e.key === v);
+	if (!y) return /* @__PURE__ */ J(i, {
+		padded: !0,
+		children: "A board requires a group_by field or board view"
+	});
+	let b = o.record_id_key ?? "record_id", x = o.table_id_key ?? "table_id", S = o.allow_move !== !1 && r.capabilities.update && s !== void 0 && !y.readOnly, C = M(r.records, _), w = u.trim().toLowerCase(), E = w ? C.filter((e) => Object.values(e.values).some((e) => T(e).toLowerCase().includes(w))) : C, D = [...new Set(E.map((e) => no(e.values[y.key])))], O = [...y.choices.map((e) => e.value), ...D.filter((e) => !y.choices.some((t) => t.value === e))];
+	O.includes("") || O.push("");
+	let A = (o.card_fields?.length ? o.card_fields : _?.visibleFields.length ? _.visibleFields : r.fields.map((e) => e.key)).filter((e) => e !== (_?.titleField ?? r.primaryField) && e !== y.key).map((e) => r.fields.find((t) => t.key === e)).filter((e) => !!e).slice(0, 4), j = (e) => {
+		c(x, r.tableId), c(b, e.id);
+		for (let [t, n] of Object.entries(e.context)) c(t, n);
+	}, P = async (e, t) => {
+		!S || l.submitting || no(e.values[y.key]) === t || await l.submit({
+			actionId: r.capabilities.updateActionId,
+			params: {
+				workspace_id: r.workspaceId,
+				table_id: r.tableId,
+				record_id: e.id,
+				revision: e.revision,
+				values: { [y.key]: t || null }
+			},
+			successMessage: `${N(r, e, _?.titleField)} moved`,
+			refreshTarget: "*",
+			announce: !1
+		});
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col min-h-0",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex items-center gap-2 pb-2",
+			children: [
+				o.search !== !1 && /* @__PURE__ */ J("input", {
+					type: "search",
+					value: u,
+					onChange: (e) => d(e.target.value),
+					placeholder: `Search ${r.tableName || "records"}…`,
+					className: "mtc-control flex-1 min-w-0 px-2 py-1.5 text-xs outline-none focus:border-sky-500"
+				}),
+				g.length > 1 && /* @__PURE__ */ J("select", {
+					value: _?.id ?? "",
+					onChange: (e) => p(e.target.value),
+					className: "mtc-control max-w-[12rem] px-2 py-1.5 text-xs text-zinc-300 outline-none",
+					"aria-label": "Saved board view",
+					children: g.map((e) => /* @__PURE__ */ J("option", {
+						value: e.id,
+						children: e.name
+					}, e.id))
+				}),
+				r.capabilities.create && /* @__PURE__ */ J("button", {
+					type: "button",
+					onClick: () => {
+						c(x, r.tableId), c(b, o.new_record_value ?? "new");
+					},
+					className: "mtc-control px-2.5 py-1.5 text-[10px] uppercase tracking-wider text-sky-300 border-sky-500/30",
+					children: "+ New"
+				})
+			]
+		}), /* @__PURE__ */ J("div", {
+			className: "flex-1 min-h-0 overflow-x-auto overflow-y-hidden",
+			children: /* @__PURE__ */ J("div", {
+				className: "h-full flex gap-3 min-w-max",
+				children: O.map((e) => {
+					let t = y.choices.find((t) => t.value === e), n = E.filter((t) => no(t.values[y.key]) === e);
+					return /* @__PURE__ */ Y("section", {
+						className: "w-64 h-full flex flex-col rounded border border-zinc-800 bg-zinc-950/25",
+						onDragOver: (e) => {
+							S && e.preventDefault();
+						},
+						onDrop: (t) => {
+							t.preventDefault();
+							let n = t.dataTransfer.getData("text/record-id") || m, r = E.find((e) => e.id === n);
+							h(null), r && P(r, e);
+						},
+						children: [/* @__PURE__ */ Y("header", {
+							className: "flex items-center gap-2 px-3 py-2 border-b border-zinc-800",
+							children: [
+								/* @__PURE__ */ J("span", { className: `w-1.5 h-1.5 rounded-full ${ro(t?.color)}` }),
+								/* @__PURE__ */ J("span", {
+									className: "text-[10px] uppercase tracking-wider text-zinc-400 truncate",
+									children: (t?.label ?? e) || "Unassigned"
+								}),
+								/* @__PURE__ */ J("span", {
+									className: "ml-auto text-[10px] tabular-nums text-zinc-600",
+									children: n.length
+								})
+							]
+						}), /* @__PURE__ */ Y("div", {
+							className: "p-2 space-y-2 overflow-y-auto min-h-0",
+							children: [n.map((e) => /* @__PURE__ */ Y("article", {
+								draggable: S,
+								onDragStart: (t) => {
+									h(e.id), t.dataTransfer.effectAllowed = "move", t.dataTransfer.setData("text/record-id", e.id);
+								},
+								onDragEnd: () => h(null),
+								className: `mtc-landing-card p-3 ${m === e.id ? "opacity-50" : ""}`,
+								children: [/* @__PURE__ */ Y("button", {
+									type: "button",
+									onClick: () => j(e),
+									className: "block w-full text-left",
+									children: [
+										/* @__PURE__ */ J("h4", {
+											className: "text-xs font-semibold text-zinc-100 leading-snug",
+											children: N(r, e, _?.titleField)
+										}),
+										/* @__PURE__ */ J("span", {
+											className: "text-[9px] font-mono text-zinc-600",
+											children: e.id
+										}),
+										A.length > 0 && /* @__PURE__ */ J("dl", {
+											className: "mt-2 space-y-1.5",
+											children: A.map((t) => /* @__PURE__ */ Y("div", {
+												className: "grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2",
+												children: [/* @__PURE__ */ J("dt", {
+													className: "text-[9px] uppercase tracking-wider text-zinc-600 truncate",
+													children: t.label
+												}), /* @__PURE__ */ J("dd", {
+													className: "text-[10px] text-zinc-300 min-w-0 truncate",
+													children: /* @__PURE__ */ J(Ie, {
+														field: t,
+														value: e.values[t.key]
+													})
+												})]
+											}, t.key))
+										})
+									]
+								}), S && /* @__PURE__ */ J("select", {
+									value: no(e.values[y.key]),
+									onChange: (t) => void P(e, t.target.value),
+									disabled: l.submitting,
+									className: "mtc-control mt-2 w-full px-2 py-1 text-[10px] text-zinc-400 outline-none disabled:opacity-40",
+									"aria-label": `Move ${N(r, e, _?.titleField)} to lane`,
+									children: O.map((e) => /* @__PURE__ */ J("option", {
+										value: e,
+										children: (y.choices.find((t) => t.value === e)?.label ?? e) || "Unassigned"
+									}, e || "__unassigned"))
+								})]
+							}, e.id)), n.length === 0 && /* @__PURE__ */ J("div", {
+								className: "py-8 text-center text-[10px] text-zinc-700",
+								children: "No records"
+							})]
+						})]
+					}, e || "__unassigned");
+				})
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/widgets/RecordCalendar.tsx
+var ao = /* @__PURE__ */ X({ RecordCalendar: () => fo });
+function oo(e) {
+	return e.filter((e) => e.type === "calendar" || e.type === "timeline");
+}
+function so(e) {
+	return new Date(e.getFullYear(), e.getMonth(), 1);
+}
+function co(e, t) {
+	return new Date(e.getFullYear(), e.getMonth() + t, 1);
+}
+function lo(e, t) {
+	let n = so(e), r = (n.getDay() - t + 7) % 7, i = new Date(n.getFullYear(), n.getMonth(), 1 - r);
+	return Array.from({ length: 42 }, (e, t) => new Date(i.getFullYear(), i.getMonth(), i.getDate() + t));
+}
+function uo(e) {
+	switch (e?.toLowerCase()) {
+		case "ok":
+		case "green":
+		case "emerald": return "bg-emerald-400";
+		case "warn":
+		case "warning":
+		case "amber":
+		case "yellow":
+		case "orange": return "bg-amber-400";
+		case "danger":
+		case "error":
+		case "red": return "bg-red-400";
+		case "neutral":
+		case "muted":
+		case "gray":
+		case "grey": return "bg-zinc-500";
+		default: return "bg-sky-400";
+	}
+}
+function fo({ data: e, options: t }) {
+	let n = G(() => k(e), [e]), r = t ?? {}, { setCtx: o } = a(), s = r.initial_month ? /* @__PURE__ */ new Date(`${r.initial_month}-01T12:00:00`) : /* @__PURE__ */ new Date(), [c, l] = q(so(Number.isNaN(s.getTime()) ? /* @__PURE__ */ new Date() : s)), [u, d] = q(r.view_id ?? "");
+	if (W(() => d(r.view_id ?? ""), [r.view_id]), !n) return /* @__PURE__ */ J(i, { children: "No record set" });
+	let f = oo(n.views), p = f.find((e) => e.id === u) ?? f.find((e) => e.id === n.activeViewId) ?? f[0], m = r.date_field ?? p?.dateField, h = n.fields.find((e) => e.key === m);
+	if (!h) return /* @__PURE__ */ J(i, {
+		padded: !0,
+		children: "A calendar requires a date_field or calendar view"
+	});
+	let g = n.fields.find((e) => e.key === r.color_field), _ = r.week_starts_on ?? 1, v = lo(c, _), y = M(n.records, p), b = /* @__PURE__ */ new Map();
+	for (let e of y) {
+		let t = w(e.values[h.key]);
+		if (!t) continue;
+		let n = b.get(t) ?? [];
+		n.push(e), b.set(t, n);
+	}
+	let x = _ === 1 ? [
+		"Mon",
+		"Tue",
+		"Wed",
+		"Thu",
+		"Fri",
+		"Sat",
+		"Sun"
+	] : [
+		"Sun",
+		"Mon",
+		"Tue",
+		"Wed",
+		"Thu",
+		"Fri",
+		"Sat"
+	], S = w(Date.now()), C = r.record_id_key ?? "record_id", T = r.table_id_key ?? "table_id", E = (e) => {
+		o(T, n.tableId), o(C, e.id);
+		for (let [t, n] of Object.entries(e.context)) o(t, n);
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col min-h-0",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex items-center gap-2 pb-2",
+			children: [
+				/* @__PURE__ */ J("button", {
+					type: "button",
+					onClick: () => l((e) => co(e, -1)),
+					className: "mtc-control px-2 py-1 text-xs text-zinc-400",
+					"aria-label": "Previous month",
+					children: "←"
+				}),
+				/* @__PURE__ */ J("button", {
+					type: "button",
+					onClick: () => l(so(/* @__PURE__ */ new Date())),
+					className: "mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400",
+					children: "Today"
+				}),
+				/* @__PURE__ */ J("h4", {
+					className: "text-sm font-semibold text-zinc-100",
+					children: c.toLocaleDateString(void 0, {
+						month: "long",
+						year: "numeric"
+					})
+				}),
+				/* @__PURE__ */ J("button", {
+					type: "button",
+					onClick: () => l((e) => co(e, 1)),
+					className: "mtc-control px-2 py-1 text-xs text-zinc-400",
+					"aria-label": "Next month",
+					children: "→"
+				}),
+				f.length > 1 && /* @__PURE__ */ J("select", {
+					value: p?.id ?? "",
+					onChange: (e) => d(e.target.value),
+					className: "mtc-control ml-auto max-w-[12rem] px-2 py-1 text-xs text-zinc-300 outline-none",
+					"aria-label": "Saved calendar view",
+					children: f.map((e) => /* @__PURE__ */ J("option", {
+						value: e.id,
+						children: e.name
+					}, e.id))
+				})
+			]
+		}), /* @__PURE__ */ J("div", {
+			className: "flex-1 min-h-0 overflow-x-auto",
+			children: /* @__PURE__ */ Y("div", {
+				className: "h-full min-w-[42rem] flex flex-col",
+				children: [/* @__PURE__ */ J("div", {
+					className: "grid grid-cols-7 border-t border-l border-zinc-800 text-[9px] uppercase tracking-wider text-zinc-600",
+					children: x.map((e) => /* @__PURE__ */ J("div", {
+						className: "border-r border-b border-zinc-800 px-2 py-1",
+						children: e
+					}, e))
+				}), /* @__PURE__ */ J("div", {
+					className: "grid grid-cols-7 grid-rows-6 flex-1 min-h-0 border-l border-zinc-800 overflow-hidden",
+					children: v.map((e) => {
+						let t = w(e), r = b.get(t) ?? [], i = e.getMonth() === c.getMonth();
+						return /* @__PURE__ */ Y("div", {
+							className: `min-w-0 min-h-0 border-r border-b border-zinc-800 p-1.5 overflow-y-auto ${i ? "bg-zinc-900/35" : "bg-zinc-950/45"}`,
+							children: [/* @__PURE__ */ J("div", {
+								className: `text-[10px] tabular-nums mb-1 ${t === S ? "w-5 h-5 grid place-items-center rounded-full bg-sky-500 text-zinc-100" : i ? "text-zinc-400" : "text-zinc-700"}`,
+								children: e.getDate()
+							}), /* @__PURE__ */ Y("div", {
+								className: "space-y-1",
+								children: [r.slice(0, 4).map((e) => /* @__PURE__ */ Y("button", {
+									type: "button",
+									onClick: () => E(e),
+									className: "w-full flex items-start gap-1 rounded border border-zinc-800 bg-zinc-900 px-1.5 py-1 text-left hover:border-zinc-600",
+									title: N(n, e, p?.titleField),
+									children: [/* @__PURE__ */ J("span", { className: `mt-1 w-1.5 h-1.5 rounded-full shrink-0 ${uo(j(g, g ? e.values[g.key] : void 0))}` }), /* @__PURE__ */ J("span", {
+										className: "text-[9px] leading-tight text-zinc-300 line-clamp-2",
+										children: N(n, e, p?.titleField)
+									})]
+								}, e.id)), r.length > 4 && /* @__PURE__ */ Y("div", {
+									className: "text-[9px] text-zinc-600 px-1",
+									children: [
+										"+",
+										r.length - 4,
+										" more"
+									]
+								})]
+							})]
+						}, t);
+					})
+				})]
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/widgets/RecordForm.tsx
+var po = /* @__PURE__ */ X({ RecordForm: () => ho });
+function mo(e) {
+	return e == null || e === "" || Array.isArray(e) && e.length === 0;
+}
+function ho({ data: e, options: t, widgetId: n }) {
+	let r = G(() => k(e), [e]), o = t ?? {}, { backendUrl: s, ctx: c, setCtx: l, toast: u } = a(), d = ve(n), f = o.record_id_key ?? "record_id", p = o.table_id_key ?? "table_id", m = c[f], h = r?.records.find((e) => e.id === m), g = o.mode ?? "auto", _ = g === "edit" || g === "auto" && !!h, [v, y] = q({}), [b, x] = q({}), [S, w] = q(!1), T = r ? A(r, "form", o.view_id) : void 0, D = o.fields?.length ? o.fields : T?.visibleFields.length ? T.visibleFields : r?.fields.map((e) => e.key) ?? [], j = r ? D.map((e) => r.fields.find((t) => t.key === e)).filter((e) => !!e).filter((e) => o.show_read_only !== !1 || C(e)) : [];
+	if (W(() => {
+		y(E(j, _ ? h : void 0)), x({}), w(!1);
+	}, [
+		r?.tableId,
+		h?.id,
+		h?.revision,
+		_,
+		D.join("|")
+	]), !r) return /* @__PURE__ */ J(i, { children: "No record set" });
+	if (_ && !h) return /* @__PURE__ */ J(i, {
+		padded: !0,
+		children: "Select a record from a grid, board, or calendar to edit it"
+	});
+	let M = j.filter(C), P = s !== void 0 && (_ ? r.capabilities.update : r.capabilities.create), F = o.columns === 2 ? "md:grid-cols-2" : "grid-cols-1", I = (e, t) => {
+		y((n) => ({
+			...n,
+			[e]: t
+		})), x((t) => {
+			if (!t[e]) return t;
+			let n = { ...t };
+			return delete n[e], n;
+		});
+	}, L = (e) => {
+		if (H(e.status)) return;
+		let t = e.data?.record_id ?? e.data?.recordId ?? e.id;
+		!_ && t && (l(p, r.tableId), l(f, String(t)));
+	}, ee = async () => {
+		if (!P || d.submitting) return;
+		let e = {};
+		for (let t of M) t.required && mo(v[t.key]) && (e[t.key] = "Required");
+		if (x(e), Object.keys(e).length > 0) {
+			u("Complete the required fields", "warn");
+			return;
+		}
+		let t = _ ? O(M, v, h) : Object.fromEntries(M.map((e) => [e.key, v[e.key]]));
+		if (_ && Object.keys(t).length === 0) {
+			u("No changes to save", "info");
+			return;
+		}
+		await d.submit({
+			actionId: _ ? r.capabilities.updateActionId : r.capabilities.createActionId,
+			params: {
+				workspace_id: r.workspaceId,
+				table_id: r.tableId,
+				..._ ? {
+					record_id: h.id,
+					revision: h.revision
+				} : {},
+				values: t
+			},
+			successMessage: _ ? `${N(r, h, T?.titleField)} updated` : `${r.tableName || "Record"} created`,
+			refreshTarget: "*",
+			onComplete: L
+		});
+	}, te = async () => {
+		if (!(!h || !r.capabilities.delete || s === void 0 || d.submitting)) {
+			if (!S) {
+				w(!0);
+				return;
+			}
+			await d.submit({
+				actionId: r.capabilities.deleteActionId,
+				params: {
+					workspace_id: r.workspaceId,
+					table_id: r.tableId,
+					record_id: h.id,
+					revision: h.revision
+				},
+				successMessage: `${N(r, h, T?.titleField)} deleted`,
+				refreshTarget: "*",
+				onComplete: (e) => {
+					H(e.status) || (l(f, o.new_record_value ?? "new"), w(!1));
+				}
+			});
+		}
+	};
+	return /* @__PURE__ */ Y("form", {
+		className: "h-full flex flex-col min-h-0",
+		onSubmit: (e) => {
+			e.preventDefault(), ee();
+		},
+		children: [
+			/* @__PURE__ */ Y("div", {
+				className: "flex items-start justify-between gap-3 pb-3 border-b border-zinc-800",
+				children: [/* @__PURE__ */ Y("div", {
+					className: "min-w-0",
+					children: [
+						/* @__PURE__ */ Y("div", {
+							className: "text-[10px] uppercase tracking-wider text-zinc-500",
+							children: [
+								_ ? "Edit record" : "New record",
+								" · ",
+								r.tableName || r.tableId
+							]
+						}),
+						/* @__PURE__ */ J("h4", {
+							className: "text-sm font-semibold text-zinc-100 mt-0.5 truncate",
+							children: _ && h ? N(r, h, T?.titleField) : `Add to ${r.tableName || "table"}`
+						}),
+						_ && h && /* @__PURE__ */ Y("div", {
+							className: "text-[9px] font-mono text-zinc-600 mt-0.5",
+							children: [h.id, h.revision ? ` · rev ${h.revision}` : ""]
+						})
+					]
+				}), g === "auto" && /* @__PURE__ */ J("button", {
+					type: "button",
+					onClick: () => {
+						l(p, r.tableId), l(f, o.new_record_value ?? "new");
+					},
+					className: "mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400 shrink-0",
+					children: "New"
+				})]
+			}),
+			/* @__PURE__ */ J("div", {
+				className: `grid ${F} gap-x-4 gap-y-3 py-3 overflow-y-auto flex-1 min-h-0 pr-1`,
+				children: j.map((e) => /* @__PURE__ */ Y("label", {
+					className: e.type === "long_text" ? "md:col-span-2" : "",
+					children: [
+						/* @__PURE__ */ Y("span", {
+							className: "flex items-center gap-1 mb-1 text-[10px] uppercase tracking-wider text-zinc-500",
+							children: [
+								e.label,
+								e.required && /* @__PURE__ */ J("span", {
+									className: "text-amber-400",
+									children: "*"
+								}),
+								e.readOnly && /* @__PURE__ */ J("span", {
+									className: "normal-case tracking-normal text-zinc-700",
+									children: "computed"
+								}),
+								b[e.key] && /* @__PURE__ */ J("span", {
+									className: "ml-auto text-red-400 normal-case tracking-normal",
+									children: b[e.key]
+								})
+							]
+						}),
+						/* @__PURE__ */ J(Le, {
+							field: e,
+							value: v[e.key],
+							onChange: (t) => I(e.key, t),
+							disabled: d.submitting
+						}),
+						e.description && /* @__PURE__ */ J("span", {
+							className: "block text-[9px] text-zinc-600 mt-1 leading-relaxed",
+							children: e.description
+						})
+					]
+				}, e.key))
+			}),
+			/* @__PURE__ */ Y("div", {
+				className: "pt-3 border-t border-zinc-800 flex items-center gap-2",
+				children: [
+					_ && r.capabilities.delete && /* @__PURE__ */ J("button", {
+						type: "button",
+						onClick: () => void te(),
+						disabled: d.submitting || s === void 0,
+						className: `mtc-control px-2.5 py-1.5 text-[10px] uppercase tracking-wider disabled:opacity-40 ${S ? "text-red-300 border-red-500/40 bg-red-500/10" : "text-zinc-500"}`,
+						children: S ? "Confirm delete" : "Delete"
+					}),
+					/* @__PURE__ */ J("button", {
+						type: "button",
+						onClick: () => {
+							y(E(j, _ ? h : void 0)), x({}), w(!1);
+						},
+						disabled: d.submitting,
+						className: "mtc-control ml-auto px-2.5 py-1.5 text-[10px] uppercase tracking-wider text-zinc-500 disabled:opacity-40",
+						children: "Reset"
+					}),
+					/* @__PURE__ */ J("button", {
+						type: "submit",
+						disabled: !P || d.submitting,
+						className: "mtc-control px-3 py-1.5 text-[10px] uppercase tracking-wider text-sky-300 border-sky-500/40 bg-sky-500/10 disabled:opacity-40",
+						title: P ? void 0 : "This record set is read-only or backendUrl is missing",
+						children: d.submitting ? "Saving…" : o.submit_label ?? (_ ? "Save changes" : "Create record")
+					})
+				]
+			})
+		]
+	});
+}
+//#endregion
+//#region src/widgets/OrderBook.tsx
+var go = /* @__PURE__ */ X({ OrderBook: () => vo }), _o = 10;
+function vo({ data: e, options: t }) {
+	let { setCtx: n } = a(), r = G(() => bo(e), [e]), o = t?.price_context, s = o ? (e, t) => {
+		n(o.key, String(e)), o.side_key && n(o.side_key, t === "bid" ? "buy" : "sell");
+	} : void 0;
+	if (!r) return /* @__PURE__ */ J(i, { children: "No data" });
+	let c = r.bids[0]?.price, l = r.asks[0]?.price, u = r.mid ?? (c != null && l != null ? (c + l) / 2 : 0), d = r.spread ?? (c != null && l != null ? l - c : 0), f = r.bids.slice(0, _o), p = r.asks.slice(0, _o).reverse(), m = Math.max(...r.bids.map((e) => e.size), ...r.asks.map((e) => e.size), 1);
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col text-xs font-mono",
+		children: [
+			/* @__PURE__ */ Y("div", {
+				className: "grid grid-cols-3 gap-2 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 border-b border-zinc-800",
+				children: [
+					/* @__PURE__ */ J("span", { children: "Price" }),
+					/* @__PURE__ */ J("span", {
+						className: "text-right",
+						children: "Size"
+					}),
+					/* @__PURE__ */ J("span", {
+						className: "text-right",
+						children: "Cum"
+					})
+				]
+			}),
+			/* @__PURE__ */ Y("div", {
+				className: "flex-1 flex flex-col min-h-0",
+				children: [
+					/* @__PURE__ */ J("div", {
+						className: "flex-1 overflow-auto",
+						children: p.map((e, t) => /* @__PURE__ */ J(yo, {
+							side: "ask",
+							level: e,
+							cum: p.slice(t).reduce((e, t) => e + t.size, 0),
+							maxSize: m,
+							onPrice: s
+						}, `ask-${t}`))
+					}),
+					/* @__PURE__ */ Y("div", {
+						className: "border-y border-zinc-700 bg-zinc-900/60 px-2 py-1.5 flex items-center justify-between shrink-0",
+						children: [/* @__PURE__ */ J("span", {
+							className: "text-zinc-200 tabular-nums",
+							children: So(u)
+						}), /* @__PURE__ */ Y("span", {
+							className: "text-zinc-500 text-[10px]",
+							children: ["spread ", So(d)]
+						})]
+					}),
+					/* @__PURE__ */ J("div", {
+						className: "flex-1 overflow-auto",
+						children: f.map((e, t) => /* @__PURE__ */ J(yo, {
+							side: "bid",
+							level: e,
+							cum: f.slice(0, t + 1).reduce((e, t) => e + t.size, 0),
+							maxSize: m,
+							onPrice: s
+						}, `bid-${t}`))
+					})
+				]
+			}),
+			r.venue && /* @__PURE__ */ J("div", {
+				className: "text-[10px] text-zinc-500 px-2 py-1 border-t border-zinc-800 shrink-0",
+				children: r.venue
+			})
+		]
+	});
+}
+function yo({ side: e, level: t, cum: n, maxSize: r, onPrice: i }) {
+	let a = t.size / r * 100, o = e === "bid" ? "bg-emerald-500/10" : "bg-red-500/10", s = e === "bid" ? "text-emerald-400" : "text-red-400";
+	return /* @__PURE__ */ Y("div", {
+		onClick: i ? () => i(t.price, e) : void 0,
+		className: `relative grid grid-cols-3 gap-2 px-2 py-0.5 ${i ? "cursor-pointer hover:bg-zinc-800/40" : ""}`,
+		children: [
+			/* @__PURE__ */ J("div", {
+				className: `absolute inset-y-0 right-0 ${o}`,
+				style: { width: `${a}%` }
+			}),
+			/* @__PURE__ */ J("span", {
+				className: `relative ${s} tabular-nums`,
+				children: So(t.price)
+			}),
+			/* @__PURE__ */ J("span", {
+				className: "relative text-right text-zinc-200 tabular-nums",
+				children: Co(t.size)
+			}),
+			/* @__PURE__ */ J("span", {
+				className: "relative text-right text-zinc-500 tabular-nums",
+				children: Co(n)
+			})
+		]
+	});
+}
+function bo(e) {
+	if (!e || typeof e != "object" || Array.isArray(e)) return null;
+	let t = e, n = xo(t.bids), r = xo(t.asks);
+	return n.length === 0 && r.length === 0 ? null : {
+		bids: n,
+		asks: r,
+		mid: typeof t.mid == "number" ? t.mid : void 0,
+		spread: typeof t.spread == "number" ? t.spread : void 0,
+		venue: typeof t.venue == "string" ? t.venue : void 0
+	};
+}
+function xo(e) {
+	return Array.isArray(e) ? e.map((e) => {
+		let t = e;
+		return {
+			price: Number(t.price ?? 0),
+			size: Number(t.size ?? 0)
+		};
+	}).filter((e) => Number.isFinite(e.price) && Number.isFinite(e.size) && e.size > 0) : [];
+}
+function So(e) {
+	return Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 2 }) : e.toFixed(2);
+}
+function Co(e) {
+	return Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(2) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(2) + "K" : Math.abs(e) >= 1 ? e.toFixed(2) : e.toFixed(4);
+}
+//#endregion
+//#region src/widgets/PairedGrid.tsx
+var wo = /* @__PURE__ */ X({ PairedGrid: () => Eo }), To = 6;
+function Eo({ data: e, options: t }) {
+	let { setCtx: n } = a(), r = G(() => Do(e), [e]), o = G(() => r ? [...r.rows].sort((e, t) => e.key - t.key) : [], [r]);
+	if (!r) return /* @__PURE__ */ J(i, { children: "No data" });
+	let s = r.subject_value, c = o.length >= 2 ? o[1].key - o[0].key : 0, l = r.measures, u = t?.row_context;
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col text-xs",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "px-3 py-2 border-b border-zinc-800 flex items-baseline gap-3 flex-wrap shrink-0",
+			children: [
+				/* @__PURE__ */ J("span", {
+					className: "text-zinc-100 font-medium",
+					children: r.subject
+				}),
+				r.dimension && /* @__PURE__ */ J("span", {
+					className: "text-zinc-500",
+					children: r.dimension
+				}),
+				s != null && /* @__PURE__ */ J("span", {
+					className: "text-zinc-300 tabular-nums",
+					children: s.toLocaleString()
+				}),
+				r.venue && /* @__PURE__ */ J("span", {
+					className: "ml-auto text-zinc-500 text-[10px] uppercase tracking-wider",
+					children: r.venue
+				})
+			]
+		}), /* @__PURE__ */ J("div", {
+			className: "flex-1 overflow-auto min-h-0",
+			children: /* @__PURE__ */ Y("table", {
+				className: "w-full font-mono tabular-nums",
+				children: [/* @__PURE__ */ Y("thead", {
+					className: "sticky top-0 bg-zinc-900 z-10",
+					children: [/* @__PURE__ */ Y("tr", {
+						className: "text-[10px] text-zinc-600 border-b border-zinc-800/60",
+						children: [
+							/* @__PURE__ */ J("th", {
+								colSpan: l.length,
+								className: "text-center py-1 text-emerald-400 uppercase tracking-wider",
+								children: r.left_label
+							}),
+							/* @__PURE__ */ J("th", { className: "bg-zinc-950" }),
+							/* @__PURE__ */ J("th", {
+								colSpan: l.length,
+								className: "text-center py-1 text-red-400 uppercase tracking-wider",
+								children: r.right_label
+							})
+						]
+					}), /* @__PURE__ */ Y("tr", {
+						className: "text-[10px] uppercase tracking-wider text-zinc-500 border-b border-zinc-800",
+						children: [
+							l.map((e) => /* @__PURE__ */ J("th", {
+								className: "text-right px-2 py-1.5",
+								children: e.label
+							}, `l-${e.key}`)),
+							/* @__PURE__ */ J("th", {
+								className: "text-center px-2 py-1.5 bg-zinc-950",
+								children: r.key_label
+							}),
+							l.map((e) => /* @__PURE__ */ J("th", {
+								className: "text-right px-2 py-1.5",
+								children: e.label
+							}, `r-${e.key}`))
+						]
+					})]
+				}), /* @__PURE__ */ J("tbody", { children: o.map((e, t) => {
+					let r = s != null && c > 0 && Math.abs(e.key - s) < c, i = !!u;
+					return /* @__PURE__ */ Y("tr", {
+						onClick: i ? () => n(u.key, String(e.key)) : void 0,
+						className: `border-b border-zinc-800/40 ${`${r ? "bg-zinc-800/40" : "hover:bg-zinc-800/20"} ${i ? "cursor-pointer" : ""}`}`,
+						children: [
+							l.map((t) => /* @__PURE__ */ J("td", {
+								className: "text-right px-2 py-1 text-zinc-300",
+								children: jo(e.left?.values?.[t.key], t.format)
+							}, `l-${t.key}`)),
+							/* @__PURE__ */ J("td", {
+								className: `text-center px-2 py-1 font-medium ${r ? "text-zinc-100 bg-zinc-950/60" : "text-zinc-300 bg-zinc-950/40"}`,
+								children: e.key.toLocaleString()
+							}),
+							l.map((t) => /* @__PURE__ */ J("td", {
+								className: "text-right px-2 py-1 text-zinc-300",
+								children: jo(e.right?.values?.[t.key], t.format)
+							}, `r-${t.key}`))
+						]
+					}, t);
+				}) })]
+			})
+		})]
+	});
+}
+function Do(e) {
+	if (!e || typeof e != "object" || Array.isArray(e)) return null;
+	let t = e;
+	if (!Array.isArray(t.rows) || t.rows.length === 0) return null;
+	let n = t.rows.map((e) => {
+		let t = e;
+		return {
+			key: Number(t.key ?? t.strike ?? 0),
+			left: Ao(t.left ?? t.call),
+			right: Ao(t.right ?? t.put)
+		};
+	}), r = Oo(t.measures), i = r.length > 0 ? r : ko(n);
+	return {
+		subject: String(t.subject ?? t.underlying ?? ""),
+		dimension: typeof t.dimension == "string" ? t.dimension : typeof t.expiry == "string" ? t.expiry : void 0,
+		subject_value: typeof t.subject_value == "number" ? t.subject_value : typeof t.underlying_price == "number" ? t.underlying_price : void 0,
+		venue: typeof t.venue == "string" ? t.venue : void 0,
+		rows: n,
+		left_label: String(t.left_label ?? "Left"),
+		right_label: String(t.right_label ?? "Right"),
+		key_label: String(t.key_label ?? "Key"),
+		measures: i
+	};
+}
+function Oo(e) {
+	if (!Array.isArray(e)) return [];
+	let t = [];
+	for (let n of e) {
+		if (!n || typeof n != "object") continue;
+		let e = n;
+		typeof e.key == "string" && t.push({
+			key: e.key,
+			label: typeof e.label == "string" && e.label ? e.label : e.key,
+			format: typeof e.format == "string" ? e.format : void 0
+		});
+	}
+	return t;
+}
+function ko(e) {
+	let t = /* @__PURE__ */ new Set();
+	for (let n of e) for (let e of [n.left, n.right]) if (e?.values) for (let n of Object.keys(e.values)) t.add(n);
+	return Array.from(t).slice(0, To).map((e) => ({
+		key: e,
+		label: e
+	}));
+}
+function Ao(e) {
+	if (!e || typeof e != "object") return;
+	let t = e;
+	if (t.values && typeof t.values == "object" && !Array.isArray(t.values)) {
+		let e = {};
+		for (let [n, r] of Object.entries(t.values)) typeof r == "number" && (e[n] = r);
+		return Object.keys(e).length === 0 ? void 0 : { values: e };
+	}
+	let n = {};
+	for (let [e, r] of Object.entries(t)) typeof r == "number" && (n[e] = r);
+	return Object.keys(n).length === 0 ? void 0 : { values: n };
+}
+function jo(e, t) {
+	if (e == null) return "·";
+	if (t === "percent") return `${(e * 100).toFixed(0)}%`;
+	if (t === "compact") return Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 0 }) : e.toFixed(2);
+	if (t === "delta") return `${e > 0 ? "+" : ""}${e.toFixed(2)}`;
+	if (t?.startsWith("currency")) {
+		let n = t.split(":")[1] ?? "USD";
+		return e.toLocaleString(void 0, {
+			style: "currency",
+			currency: n,
+			maximumFractionDigits: 0
+		});
+	}
+	return e.toFixed(2);
+}
+//#endregion
+//#region src/widgets/Trade.tsx
+var Mo = /* @__PURE__ */ X({ Trade: () => No });
+function No({ options: e, widgetId: t }) {
+	let n = e ?? {}, { ctx: r, toast: o, backendUrl: s, emit: l } = a(), { submit: u, submitting: d, result: f } = ve(t), p = n.symbol ?? r.symbol ?? "", m = n.url, h = n.action_id ?? "place_order", g = s === void 0 ? m ? "url" : null : "connect", [_, v] = q("buy"), [y, b] = q(""), [x, S] = q(""), C = K(r.price);
+	W(() => {
+		r.price !== C.current && (C.current = r.price, r.price != null && S(r.price));
+	}, [r.price]);
+	let w = K(r.side);
+	W(() => {
+		r.side !== w.current && (w.current = r.side, (r.side === "buy" || r.side === "sell") && v(r.side));
+	}, [r.side]);
+	let [T, E] = q(!1), D = K(!1), [O, k] = q(null), [A, j] = q(null), [M, N] = q(!1), P = g === "connect" ? d : T;
+	W(() => {
+		M && N(!1);
+	}, [
+		y,
+		x,
+		_
+	]);
+	let F = U(async () => {
+		if (!g || P || g === "url" && D.current) return;
+		let e = Number(y);
+		if (!Number.isFinite(e) || e <= 0) {
+			j("Amount must be a positive number");
+			return;
+		}
+		let t = x ? Number(x) : void 0;
+		if (x && (!Number.isFinite(t) || t <= 0)) {
+			j("Price must be positive");
+			return;
+		}
+		if (n.confirm && !M) {
+			N(!0), j(null), k(null);
+			return;
+		}
+		N(!1);
+		let r = {
+			symbol: p,
+			side: _,
+			amount: e,
+			type: t == null ? "market" : "limit",
+			...t != null && { price: t }
+		};
+		if (j(null), k(null), g === "connect") {
+			await u({
+				actionId: h,
+				params: r,
+				successMessage: "Order completed",
+				refresh: !1,
+				onComplete: (e) => {
+					H(e.status) || (b(""), S(""), N(!1));
+				}
+			});
+			return;
+		}
+		D.current = !0, E(!0);
+		let i = c();
+		try {
+			let e = await fetch(m, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Idempotency-Key": i
+				},
+				body: JSON.stringify(r)
+			});
+			if (!e.ok) throw Error(`HTTP ${e.status}`);
+			let t = await e.json().catch(() => ({})), n = typeof t.message == "string" ? t.message : "Order submitted", a = typeof t.status == "string" && t.status ? t.status : "ACTION_STATUS_OK";
+			l({
+				type: "action",
+				actionId: h,
+				clientRequestId: i,
+				status: a,
+				message: n,
+				terminal: t.status == null || _e(a)
+			}), H(t.status) ? (j(n), o(n, "error")) : (k(n), o(n, "ok"), b(""), S(""), N(!1));
+		} catch (e) {
+			let t = e instanceof Error ? e.message : "Submit failed";
+			j(t), o(t, "error"), l({
+				type: "action",
+				actionId: h,
+				clientRequestId: i,
+				status: "ACTION_STATUS_FAILED",
+				message: t,
+				terminal: !0
+			});
+		} finally {
+			D.current = !1, E(!1);
+		}
+	}, [
+		g,
+		m,
+		h,
+		P,
+		y,
+		x,
+		p,
+		_,
+		n.confirm,
+		M,
+		o,
+		l,
+		u
+	]);
+	if (W(() => {
+		if (!M) return;
+		let e = (e) => {
+			e.key === "Escape" && N(!1);
+		};
+		return document.addEventListener("keydown", e), () => document.removeEventListener("keydown", e);
+	}, [M]), !g) return /* @__PURE__ */ J(i, { children: "Trade requires backendUrl or options.url" });
+	let I = (e) => `flex-1 py-1.5 text-xs font-semibold uppercase tracking-wider rounded transition-colors ${_ === e ? e === "buy" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400" : "text-zinc-500 hover:text-zinc-300"}`, L = _ === "buy" ? "bg-emerald-500/80 hover:bg-emerald-500 text-zinc-900" : "bg-red-500/80 hover:bg-red-500 text-zinc-900";
+	if (M) {
+		let e = x ? Number(x) : null, t = `${_.toUpperCase()} ${y}${n.quote_unit ? ` ${n.quote_unit}` : ""} ${e ? `@ ${e.toLocaleString()}` : "at market"}`;
+		return /* @__PURE__ */ Y("div", {
+			className: "flex flex-col gap-2 h-full justify-center",
+			children: [
+				/* @__PURE__ */ J("div", {
+					className: "text-[10px] uppercase tracking-wider text-zinc-500",
+					children: "Confirm"
+				}),
+				/* @__PURE__ */ J("div", {
+					className: `text-sm font-medium ${_ === "buy" ? "text-emerald-300" : "text-red-300"}`,
+					children: t
+				}),
+				p && /* @__PURE__ */ J("div", {
+					className: "text-xs text-zinc-500",
+					children: p
+				}),
+				/* @__PURE__ */ Y("div", {
+					className: "flex gap-2 mt-1",
+					children: [/* @__PURE__ */ J("button", {
+						onClick: () => N(!1),
+						className: "flex-1 py-2 rounded text-xs font-semibold uppercase tracking-wider bg-zinc-800 hover:bg-zinc-700 text-zinc-200",
+						children: "Cancel"
+					}), /* @__PURE__ */ J("button", {
+						onClick: F,
+						disabled: P,
+						className: `flex-1 py-2 rounded text-xs font-semibold uppercase tracking-wider disabled:opacity-30 ${L}`,
+						children: P ? "..." : "Confirm"
+					})]
+				}),
+				A && /* @__PURE__ */ J("div", {
+					className: "text-xs text-red-400",
+					children: A
+				})
+			]
+		});
+	}
+	return /* @__PURE__ */ Y("div", {
+		className: "flex flex-col gap-2 h-full",
+		children: [
+			/* @__PURE__ */ Y("div", {
+				className: "flex gap-1 bg-zinc-950 rounded p-1",
+				children: [/* @__PURE__ */ J("button", {
+					onClick: () => v("buy"),
+					className: I("buy"),
+					children: "Buy"
+				}), /* @__PURE__ */ J("button", {
+					onClick: () => v("sell"),
+					className: I("sell"),
+					children: "Sell"
+				})]
+			}),
+			p && /* @__PURE__ */ Y("div", {
+				className: "text-[10px] uppercase tracking-wider text-zinc-500",
+				children: [p, n.available != null && /* @__PURE__ */ Y("span", {
+					className: "ml-2 text-zinc-400 normal-case",
+					children: [
+						"avail ",
+						/* @__PURE__ */ J("span", {
+							className: "tabular-nums text-zinc-200",
+							children: n.available.toLocaleString()
+						}),
+						n.quote_unit && /* @__PURE__ */ J("span", {
+							className: "ml-1",
+							children: n.quote_unit
+						})
+					]
+				})]
+			}),
+			/* @__PURE__ */ J(Po, {
+				label: "Amount",
+				unit: n.quote_unit,
+				value: y,
+				onChange: b,
+				disabled: P
+			}),
+			n.quick_amounts && n.quick_amounts.length > 0 && n.available != null && /* @__PURE__ */ J("div", {
+				className: "flex gap-1",
+				children: n.quick_amounts.map((e, t) => {
+					let r = (n.available * e).toFixed(6).replace(/\.?0+$/, "");
+					return /* @__PURE__ */ Y("button", {
+						onClick: () => b(r),
+						disabled: P,
+						className: "flex-1 text-[10px] uppercase tracking-wider text-zinc-400 hover:text-zinc-100 bg-zinc-800/60 hover:bg-zinc-800 rounded py-1 disabled:opacity-30",
+						title: `${(e * 100).toFixed(0)}% of available`,
+						children: [(e * 100).toFixed(0), "%"]
+					}, t);
+				})
+			}),
+			/* @__PURE__ */ J(Po, {
+				label: "Price",
+				placeholder: "market",
+				value: x,
+				onChange: S,
+				disabled: P
+			}),
+			/* @__PURE__ */ J("button", {
+				onClick: F,
+				disabled: P || !y,
+				className: `mt-1 py-2 rounded text-sm font-semibold uppercase tracking-wider disabled:opacity-30 ${L}`,
+				children: P ? "..." : _ === "buy" ? `Buy ${n.quote_unit ?? ""}`.trim() : `Sell ${n.quote_unit ?? ""}`.trim()
+			}),
+			(g === "connect" ? f && !H(f.status) ? f.message ?? f.status : null : O) && /* @__PURE__ */ J("div", {
+				className: "text-xs text-emerald-400",
+				children: g === "connect" ? f?.message ?? f?.status : O
+			}),
+			(g === "connect" && f && H(f.status) ? f.message ?? `${h} failed` : A) && /* @__PURE__ */ J("div", {
+				className: "text-xs text-red-400",
+				children: g === "connect" && f && H(f.status) ? f.message ?? `${h} failed` : A
+			})
+		]
+	});
+}
+function Po({ label: e, unit: t, placeholder: n, value: r, onChange: i, disabled: a }) {
+	return /* @__PURE__ */ Y("div", {
+		className: "flex items-center gap-2 bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 focus-within:border-zinc-500",
+		children: [
+			/* @__PURE__ */ J("span", {
+				className: "text-[10px] uppercase tracking-wider text-zinc-500 w-12 shrink-0",
+				children: e
+			}),
+			/* @__PURE__ */ J("input", {
+				type: "number",
+				inputMode: "decimal",
+				placeholder: n ?? "0.00",
+				value: r,
+				onChange: (e) => i(e.target.value),
+				disabled: a,
+				className: "flex-1 bg-transparent outline-none text-right text-sm text-zinc-100 tabular-nums disabled:opacity-50"
+			}),
+			t && /* @__PURE__ */ J("span", {
+				className: "text-xs text-zinc-500 shrink-0",
+				children: t
+			})
+		]
+	});
+}
+//#endregion
+//#region src/widgets/Ticker.tsx
+var Fo = /* @__PURE__ */ X({ Ticker: () => Ro }), Io = {
+	EVENT_STATUS_OK: "border-emerald-500/40 text-emerald-300",
+	EVENT_STATUS_WARN: "border-amber-500/40   text-amber-300",
+	EVENT_STATUS_ERROR: "border-red-500/40     text-red-300",
+	EVENT_STATUS_INFO: "border-sky-500/40     text-sky-300",
+	EVENT_STATUS_PENDING: "border-zinc-500/40    text-zinc-300",
+	ok: "border-emerald-500/40 text-emerald-300",
+	warn: "border-amber-500/40   text-amber-300",
+	error: "border-red-500/40     text-red-300",
+	info: "border-sky-500/40     text-sky-300",
+	pending: "border-zinc-500/40    text-zinc-300"
+}, Lo = "border-zinc-700 text-zinc-300";
+function Ro({ data: e, options: t }) {
+	let n = G(() => Bo(e), [e]);
+	return !n || n.length === 0 ? /* @__PURE__ */ J(i, { children: "No items" }) : /* @__PURE__ */ J("div", {
+		className: "h-full overflow-hidden flex items-center group",
+		children: /* @__PURE__ */ Y("div", {
+			className: "flex items-center gap-2 shrink-0 motion-safe:animate-[marquee_30s_linear_infinite] motion-safe:group-hover:[animation-play-state:paused]",
+			style: { animationDuration: `${Math.max(5, (t ?? {}).speed_seconds ?? 30)}s` },
+			children: [n.map((e, t) => /* @__PURE__ */ J(zo, { item: e }, `a-${t}`)), n.map((e, t) => /* @__PURE__ */ J(zo, {
+				item: e,
+				"aria-hidden": !0
+			}, `b-${t}`))]
+		})
+	});
+}
+function zo({ item: e, ...t }) {
+	let n = Io[e.status ?? ""] ?? Lo;
+	return /* @__PURE__ */ Y("div", {
+		...t,
+		className: `shrink-0 px-2.5 py-1 rounded border bg-zinc-900/40 text-xs flex items-center gap-2 font-mono ${n}`,
+		children: [/* @__PURE__ */ J("span", {
+			className: "text-[10px] text-zinc-500 tabular-nums",
+			children: e.timestamp
+		}), /* @__PURE__ */ J("span", { children: e.label })]
+	});
+}
+function Bo(e) {
+	let t = null;
+	if (Array.isArray(e)) t = e;
+	else if (e && typeof e == "object") {
+		let n = e;
+		Array.isArray(n.events) ? t = n.events : Array.isArray(n.items) && (t = n.items);
+	}
+	return t ? t.map((e) => {
+		let t = e;
+		return {
+			timestamp: String(t.timestamp ?? ""),
+			label: String(t.label ?? ""),
+			status: t.status == null ? void 0 : String(t.status)
+		};
+	}) : null;
+}
+//#endregion
+//#region src/widgets/VolumeProfile.tsx
+var Vo = /* @__PURE__ */ X({ VolumeProfile: () => Ho });
+function Ho({ data: e }) {
+	let t = G(() => Uo(e), [e]);
+	if (!t || t.length === 0) return /* @__PURE__ */ J(i, { children: "No data" });
+	let n = Math.max(...t.map((e) => e.volume), 1);
+	return /* @__PURE__ */ J("div", {
+		className: "h-full overflow-auto",
+		children: /* @__PURE__ */ J("div", {
+			className: "flex flex-col gap-px font-mono text-[10px]",
+			children: t.map((e, t) => {
+				let r = e.volume / n * 100;
+				return /* @__PURE__ */ Y("div", {
+					className: "relative flex items-center px-2 py-0.5",
+					title: `${e.price} — ${e.volume.toLocaleString()}`,
+					children: [
+						/* @__PURE__ */ J("div", {
+							className: "absolute inset-y-0.5 left-16 bg-sky-500/20 rounded-sm",
+							style: {
+								width: `${r}%`,
+								maxWidth: "calc(100% - 4.5rem)"
+							}
+						}),
+						/* @__PURE__ */ J("span", {
+							className: "relative w-14 shrink-0 text-zinc-300 tabular-nums",
+							children: Wo(e.price)
+						}),
+						/* @__PURE__ */ J("span", {
+							className: "relative ml-auto text-zinc-400 tabular-nums",
+							children: Go(e.volume)
+						})
+					]
+				}, t);
+			})
+		})
+	});
+}
+function Uo(e) {
+	let t = null;
+	if (Array.isArray(e)) t = e;
+	else if (e && typeof e == "object") {
+		let n = e;
+		Array.isArray(n.rows) ? t = n.rows : Array.isArray(n.levels) && (t = n.levels);
+	}
+	if (!t) return null;
+	let n = t.map((e) => {
+		let t = e;
+		return {
+			price: Number(t.price ?? 0),
+			volume: Number(t.volume ?? t.size ?? 0)
+		};
+	}).filter((e) => Number.isFinite(e.price) && Number.isFinite(e.volume) && e.volume > 0);
+	return n.length === 0 ? null : (n.sort((e, t) => t.price - e.price), n);
+}
+function Wo(e) {
+	return Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 0 }) : e.toFixed(2);
+}
+function Go(e) {
+	return Math.abs(e) >= 1e9 ? (e / 1e9).toFixed(2) + "B" : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(2) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(1) + "K" : e.toFixed(0);
+}
+//#endregion
+//#region src/widgets/StatStrip.tsx
+var Ko = /* @__PURE__ */ X({ StatStrip: () => qo });
+function qo({ data: e }) {
+	let t = G(() => Xo(e), [e]);
+	return !t || t.length === 0 ? /* @__PURE__ */ J(i, { children: "No data" }) : /* @__PURE__ */ J("div", {
+		className: "h-full overflow-x-auto overflow-y-hidden",
+		children: /* @__PURE__ */ J("div", {
+			className: "flex items-stretch gap-3 h-full",
+			children: t.map((e, t) => /* @__PURE__ */ J(Jo, { stat: e }, t))
+		})
+	});
+}
+function Jo({ stat: e }) {
+	let t = me(e.value), n = e.delta == null ? "" : e.delta >= 0 ? "text-emerald-400" : "text-red-400";
+	return /* @__PURE__ */ Y("div", {
+		className: "shrink-0 min-w-[120px] max-w-[180px] flex flex-col justify-center px-3 py-1 border-l border-zinc-800 first:border-l-0",
+		children: [
+			/* @__PURE__ */ J("div", {
+				className: "text-[10px] uppercase tracking-wider text-zinc-500 truncate",
+				children: e.label
+			}),
+			/* @__PURE__ */ Y("div", {
+				className: "flex items-baseline gap-1",
+				children: [/* @__PURE__ */ J("span", {
+					className: "text-base font-semibold text-zinc-100 tabular-nums truncate",
+					children: se(t)
+				}), e.unit && /* @__PURE__ */ J("span", {
+					className: "text-[10px] text-zinc-500 shrink-0",
+					children: e.unit
+				})]
+			}),
+			/* @__PURE__ */ Y("div", {
+				className: "flex items-center gap-2",
+				children: [e.delta != null && /* @__PURE__ */ Y("span", {
+					className: `text-[10px] font-medium tabular-nums ${n}`,
+					children: [
+						e.delta >= 0 ? "▲" : "▼",
+						" ",
+						Zo(e.delta)
+					]
+				}), e.trend && e.trend.length >= 2 && /* @__PURE__ */ J(Yo, { values: e.trend })]
+			})
+		]
+	});
+}
+function Yo({ values: e }) {
+	let t = Math.min(...e), n = Math.max(...e) - t || 1, r = e[e.length - 1] >= e[0], i = e.map((r, i) => {
+		let a = i / (e.length - 1) * 100, o = 18 - (r - t) / n * 16 - 1;
+		return `${a.toFixed(1)},${o.toFixed(1)}`;
+	}).join(" ");
+	return /* @__PURE__ */ J("svg", {
+		viewBox: "0 0 100 18",
+		className: "w-12 h-3.5",
+		preserveAspectRatio: "none",
+		children: /* @__PURE__ */ J("polyline", {
+			fill: "none",
+			stroke: r ? "var(--mtc-ok)" : "var(--mtc-danger)",
+			strokeWidth: "1.5",
+			points: i,
+			vectorEffect: "non-scaling-stroke"
+		})
+	});
+}
+function Xo(e) {
+	let t = null;
+	if (Array.isArray(e)) t = e;
+	else if (e && typeof e == "object") {
+		let n = e;
+		Array.isArray(n.stats) ? t = n.stats : Array.isArray(n.metrics) && (t = n.metrics);
+	}
+	if (!t) return null;
+	let n = t.map((e) => {
+		let t = e;
+		return {
+			label: String(t.label ?? ""),
+			value: Number(t.value ?? 0),
+			delta: typeof t.delta == "number" ? t.delta : void 0,
+			unit: t.unit == null ? void 0 : String(t.unit),
+			trend: Array.isArray(t.trend) && t.trend.every((e) => typeof e == "number") ? t.trend : void 0
+		};
+	}).filter((e) => Number.isFinite(e.value));
+	return n.length > 0 ? n : null;
+}
+function Zo(e) {
+	let t = Math.abs(e) <= 1 ? e * 100 : e;
+	return `${Math.abs(t).toFixed(2)}%`;
+}
+//#endregion
+//#region src/widgets/barNormalize.ts
+function Qo(e) {
+	let t = null;
+	if (Array.isArray(e)) t = e;
+	else if (e && typeof e == "object") {
+		let n = e;
+		Array.isArray(n.bars) ? t = n.bars : Array.isArray(n.rows) && (t = n.rows);
+	}
+	if (!t) return null;
+	let n = t.filter((e) => typeof e == "object" && !!e);
+	if (n.length === 0) return null;
+	if (n.every((e) => "value" in e)) {
+		let e = n.map((e) => ({
+			label: String(e.label ?? e.name ?? ""),
+			value: Number(e.value ?? 0),
+			color: e.color == null ? void 0 : String(e.color)
+		})).filter((e) => Number.isFinite(e.value));
+		return e.length > 0 ? {
+			kind: "single",
+			bars: e
+		} : null;
+	}
+	let r = [];
+	for (let e of n) for (let [t, n] of Object.entries(e)) t === "label" || t === "name" || t === "color" || typeof n == "number" && Number.isFinite(n) && !r.includes(t) && r.push(t);
+	return r.length === 0 ? null : {
+		kind: "grouped",
+		rows: n.map((e) => ({
+			...e,
+			label: String(e.label ?? e.name ?? "")
+		})),
+		series: r
+	};
+}
+//#endregion
+//#region src/widgets/BarChart.tsx
+var $o = /* @__PURE__ */ X({ BarChart: () => is }), es = "var(--mtc-grid)", ts = "var(--mtc-border)", ns = "var(--mtc-muted)", rs = "color-mix(in oklab, var(--mtc-muted) 20%, transparent)";
+function is({ data: e }) {
+	let t = G(() => Qo(e), [e]);
+	if (!t) return /* @__PURE__ */ J(i, { children: "No data" });
+	if (t.kind === "grouped") {
+		let e = de(t.series, B);
+		return /* @__PURE__ */ J(lt, {
+			width: "100%",
+			height: "100%",
+			children: /* @__PURE__ */ Y(Ke, {
+				data: t.rows,
+				margin: {
+					top: 8,
+					right: 8,
+					bottom: 4,
+					left: 0
+				},
+				children: [
+					/* @__PURE__ */ J(Je, {
+						strokeDasharray: "3 3",
+						stroke: es
+					}),
+					/* @__PURE__ */ J(mt, {
+						dataKey: "label",
+						stroke: ts,
+						tick: {
+							fontSize: 11,
+							fill: ns
+						},
+						interval: 0
+					}),
+					/* @__PURE__ */ J(ht, {
+						stroke: ts,
+						tick: {
+							fontSize: 11,
+							fill: ns
+						},
+						tickFormatter: os,
+						width: 50
+					}),
+					/* @__PURE__ */ J(ft, {
+						contentStyle: z,
+						cursor: { fill: rs }
+					}),
+					/* @__PURE__ */ J(Xe, { wrapperStyle: { fontSize: 11 } }),
+					t.series.map((t, n) => /* @__PURE__ */ J(Ge, {
+						dataKey: t,
+						fill: e[n],
+						radius: [
+							2,
+							2,
+							0,
+							0
+						]
+					}, t))
+				]
+			})
+		});
+	}
+	let n = t.bars;
+	return /* @__PURE__ */ J(lt, {
+		width: "100%",
+		height: "100%",
+		children: /* @__PURE__ */ Y(Ke, {
+			data: n,
+			margin: {
+				top: 8,
+				right: 8,
+				bottom: 4,
+				left: 0
+			},
+			children: [
+				/* @__PURE__ */ J(Je, {
+					strokeDasharray: "3 3",
+					stroke: es
+				}),
+				/* @__PURE__ */ J(mt, {
+					dataKey: "label",
+					stroke: ts,
+					tick: {
+						fontSize: 11,
+						fill: ns
+					},
+					interval: 0
+				}),
+				/* @__PURE__ */ J(ht, {
+					stroke: ts,
+					tick: {
+						fontSize: 11,
+						fill: ns
+					},
+					tickFormatter: os,
+					width: 50
+				}),
+				/* @__PURE__ */ J(ft, {
+					contentStyle: z,
+					cursor: { fill: rs }
+				}),
+				/* @__PURE__ */ J(Ge, {
+					dataKey: "value",
+					radius: [
+						2,
+						2,
+						0,
+						0
+					],
+					children: n.map((e, t) => /* @__PURE__ */ J(Ye, { fill: as(e) }, t))
+				})
+			]
+		})
+	});
+}
+function as(e) {
+	return e.color && R[e.color] ? R[e.color] : e.color && e.color.startsWith("#") ? e.color : e.value < 0 ? "var(--mtc-danger)" : "var(--mtc-accent)";
+}
+function os(e) {
+	return typeof e == "number" ? Math.abs(e) >= 1e9 ? (e / 1e9).toFixed(1) + "B" : Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(1) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(1) + "K" : e.toFixed(+!Number.isInteger(e)) : String(e);
+}
+//#endregion
+//#region src/widgets/Scatter.tsx
+var ss = /* @__PURE__ */ X({ Scatter: () => fs }), cs = "var(--mtc-grid)", ls = "var(--mtc-border)", us = "var(--mtc-muted)", ds = "var(--mtc-muted-subtle)";
+function fs({ data: e }) {
+	let t = G(() => ps(e), [e]);
+	if (!t || t.length === 0) return /* @__PURE__ */ J(i, { children: "No data" });
+	let n = t.some((e) => e.size != null);
+	return /* @__PURE__ */ J(lt, {
+		width: "100%",
+		height: "100%",
+		children: /* @__PURE__ */ Y(dt, {
+			margin: {
+				top: 8,
+				right: 8,
+				bottom: 4,
+				left: 0
+			},
+			children: [
+				/* @__PURE__ */ J(Je, {
+					strokeDasharray: "3 3",
+					stroke: cs
+				}),
+				/* @__PURE__ */ J(mt, {
+					type: "number",
+					dataKey: "x",
+					stroke: ls,
+					tick: {
+						fontSize: 11,
+						fill: us
+					}
+				}),
+				/* @__PURE__ */ J(ht, {
+					type: "number",
+					dataKey: "y",
+					stroke: ls,
+					tick: {
+						fontSize: 11,
+						fill: us
+					},
+					width: 50
+				}),
+				n && /* @__PURE__ */ J(gt, {
+					type: "number",
+					dataKey: "size",
+					range: [40, 280]
+				}),
+				/* @__PURE__ */ J(ft, {
+					cursor: {
+						strokeDasharray: "3 3",
+						stroke: ds
+					},
+					contentStyle: z
+				}),
+				/* @__PURE__ */ J(ut, {
+					data: t,
+					fill: "var(--mtc-accent)",
+					shape: (e) => {
+						let { cx: t, cy: n, payload: r } = e;
+						if (t == null || n == null || !r) return /* @__PURE__ */ J("circle", {
+							cx: 0,
+							cy: 0,
+							r: 0
+						});
+						let i = ms(r);
+						return /* @__PURE__ */ J("g", { children: /* @__PURE__ */ J("circle", {
+							cx: t,
+							cy: n,
+							r: r.size == null ? 5 : Math.min(20, Math.max(3, Math.sqrt(r.size) * 2)),
+							fill: i,
+							fillOpacity: .7,
+							stroke: i,
+							strokeWidth: 1,
+							children: r.label && /* @__PURE__ */ J("title", { children: r.label })
+						}) });
+					}
+				})
+			]
+		})
+	});
+}
+function ps(e) {
+	let t = null;
+	if (Array.isArray(e)) t = e;
+	else if (e && typeof e == "object") {
+		let n = e;
+		Array.isArray(n.points) && (t = n.points);
+	}
+	if (!t) return null;
+	let n = t.map((e) => {
+		let t = e;
+		return {
+			x: Number(t.x ?? 0),
+			y: Number(t.y ?? 0),
+			label: t.label == null ? void 0 : String(t.label),
+			size: typeof t.size == "number" ? t.size : void 0,
+			color: t.color == null ? void 0 : String(t.color)
+		};
+	}).filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y));
+	return n.length > 0 ? n : null;
+}
+function ms(e) {
+	return e.color && R[e.color] ? R[e.color] : e.color && e.color.startsWith("#") ? e.color : "var(--mtc-accent)";
+}
+//#endregion
+//#region src/widgets/Clock.tsx
+var hs = /* @__PURE__ */ X({ Clock: () => _s }), gs = [
+	"America/New_York",
+	"Europe/London",
+	"Asia/Singapore"
+];
+function _s({ options: e }) {
+	let t = e ?? {}, n = t.zones?.length ? t.zones : gs, r = t.format === "12h", [i, a] = q(() => /* @__PURE__ */ new Date());
+	return W(() => {
+		let e = setInterval(() => a(/* @__PURE__ */ new Date()), 1e3);
+		return () => clearInterval(e);
+	}, []), /* @__PURE__ */ J("div", {
+		className: "h-full flex items-center justify-around gap-3",
+		children: n.map((e) => {
+			let t = bs(i, e, r), n = xs(i, e), a = ys(e), o = Ss(e, i);
+			return /* @__PURE__ */ Y("div", {
+				className: "flex flex-col items-center",
+				children: [
+					/* @__PURE__ */ Y("div", {
+						className: "text-[10px] uppercase tracking-wider text-zinc-500 flex items-center gap-1.5",
+						children: [/* @__PURE__ */ J("span", { children: a }), /* @__PURE__ */ J("span", { className: `w-1.5 h-1.5 rounded-full ${o}` })]
+					}),
+					/* @__PURE__ */ J("div", {
+						className: "text-base font-semibold text-zinc-100 tabular-nums",
+						children: t
+					}),
+					/* @__PURE__ */ J("div", {
+						className: "text-[10px] text-zinc-600 tabular-nums",
+						children: n
+					})
+				]
+			}, e);
+		})
+	});
+}
+var vs = {
+	"America/New_York": "NY",
+	"America/Los_Angeles": "LA",
+	"America/Chicago": "CHI",
+	"Europe/London": "LDN",
+	"Europe/Frankfurt": "FRA",
+	"Asia/Tokyo": "TYO",
+	"Asia/Singapore": "SGP",
+	"Asia/Hong_Kong": "HKG",
+	"Asia/Shanghai": "SHA",
+	"Australia/Sydney": "SYD",
+	UTC: "UTC"
+};
+function ys(e) {
+	return vs[e] ?? e.split("/").pop() ?? e;
+}
+function bs(e, t, n) {
+	try {
+		return new Intl.DateTimeFormat("en-US", {
+			timeZone: t,
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			hour12: n
+		}).format(e);
+	} catch {
+		return "—";
+	}
+}
+function xs(e, t) {
+	try {
+		return new Intl.DateTimeFormat("en-US", {
+			timeZone: t,
+			timeZoneName: "shortOffset"
+		}).formatToParts(e).find((e) => e.type === "timeZoneName")?.value ?? "";
+	} catch {
+		return "";
+	}
+}
+function Ss(e, t) {
+	try {
+		let n = new Intl.DateTimeFormat("en-US", {
+			timeZone: e,
+			hour: "2-digit",
+			hour12: !1
+		}).format(t), r = Number(n);
+		return Number.isFinite(r) ? r >= 9 && r < 17 ? "bg-emerald-500" : r === 8 || r === 17 ? "bg-amber-500" : "bg-zinc-700" : "bg-zinc-700";
+	} catch {
+		return "bg-zinc-700";
+	}
+}
+//#endregion
+//#region src/widgets/Treemap.tsx
+var Cs = /* @__PURE__ */ X({ Treemap: () => ws });
+function ws({ data: e }) {
+	let t = G(() => Ds(e), [e]);
+	return !t || t.length === 0 ? /* @__PURE__ */ J(i, { children: "No data" }) : /* @__PURE__ */ J(lt, {
+		width: "100%",
+		height: "100%",
+		children: /* @__PURE__ */ J(pt, {
+			data: t,
+			dataKey: "value",
+			nameKey: "name",
+			stroke: "var(--mtc-surface)",
+			isAnimationActive: !1,
+			content: /* @__PURE__ */ J(Ts, {}),
+			children: /* @__PURE__ */ J(ft, {
+				contentStyle: z,
+				formatter: (e) => [String(e), ""]
+			})
+		})
+	});
+}
+function Ts(e) {
+	let { x: t = 0, y: n = 0, width: r = 0, height: i = 0, index: a = 0, name: o, payload: s } = e;
+	return /* @__PURE__ */ Y("g", { children: [/* @__PURE__ */ J("rect", {
+		x: t,
+		y: n,
+		width: r,
+		height: i,
+		fill: Es(s, a),
+		fillOpacity: .85,
+		stroke: "var(--mtc-surface)",
+		strokeWidth: 2
+	}), r > 60 && i > 24 && o && /* @__PURE__ */ J("text", {
+		x: t + 6,
+		y: n + 16,
+		fill: "var(--mtc-fg)",
+		fontSize: 11,
+		style: { pointerEvents: "none" },
+		children: o
+	})] });
+}
+function Es(e, t) {
+	return e ? e.color && R[e.color] ? R[e.color] : e.color && e.color.startsWith("#") ? e.color : B[t % B.length] : B[t % B.length];
+}
+function Ds(e) {
+	let t = null;
+	if (Array.isArray(e)) t = e;
+	else if (e && typeof e == "object") {
+		let n = e;
+		Array.isArray(n.slices) ? t = n.slices : Array.isArray(n.nodes) && (t = n.nodes);
+	}
+	if (!t) return null;
+	let n = (e) => {
+		if (!e || typeof e != "object") return null;
+		let t = e, r = String(t.label ?? t.name ?? ""), i = typeof t.value == "number" ? t.value : void 0, a = t.color == null ? void 0 : String(t.color), o = Array.isArray(t.children) ? t.children : Array.isArray(t.slices) ? t.slices : null, s = o ? o.map(n).filter((e) => e != null) : void 0;
+		return !s && (!Number.isFinite(i) || (i ?? 0) <= 0) ? null : {
+			name: r,
+			value: i,
+			color: a,
+			children: s
+		};
+	}, r = t.map(n).filter((e) => e != null);
+	return r.length > 0 ? r : null;
+}
+//#endregion
+//#region src/widgets/Image.tsx
+var Os = /* @__PURE__ */ X({ Image: () => ks });
+function ks({ data: e }) {
+	let { url: t, alt: n } = As(e);
+	return t ? /* @__PURE__ */ J("div", {
+		className: "h-full w-full flex items-center justify-center",
+		children: /* @__PURE__ */ J("img", {
+			src: t,
+			alt: n,
+			loading: "lazy",
+			className: "max-w-full max-h-full object-contain"
+		})
+	}) : /* @__PURE__ */ J(i, { children: "No image" });
+}
+function As(e) {
+	if (typeof e == "string") return {
+		url: e,
+		alt: ""
+	};
+	if (e && typeof e == "object") {
+		let t = e, n = typeof t.label == "string" ? t.label : typeof t.alt == "string" ? t.alt : "";
+		return {
+			url: typeof t.url == "string" ? t.url : void 0,
+			alt: n
+		};
+	}
+	return {
+		url: void 0,
+		alt: ""
+	};
+}
+//#endregion
+//#region src/widgets/Iframe.tsx
+var js = /* @__PURE__ */ X({ Iframe: () => Ms });
+function Ms({ data: e, options: t }) {
+	let { url: n, title: r, sandbox: a } = Ns(e, t);
+	return n ? /* @__PURE__ */ J("iframe", {
+		src: n,
+		title: r,
+		sandbox: a,
+		loading: "lazy",
+		className: "w-full h-full border-0 rounded"
+	}) : /* @__PURE__ */ J(i, { children: "No URL" });
+}
+function Ns(e, t) {
+	let n, r = "embed", i = "";
+	if (typeof e == "string") n = e;
+	else if (e && typeof e == "object") {
+		let t = e;
+		typeof t.url == "string" && (n = t.url), typeof t.label == "string" ? r = t.label : typeof t.title == "string" && (r = t.title), typeof t.sandbox == "string" && (i = t.sandbox);
+	}
+	return t && (typeof t.url == "string" && !n && (n = t.url), typeof t.title == "string" && r === "embed" && (r = t.title), typeof t.sandbox == "string" && (i = t.sandbox)), {
+		url: n,
+		title: r,
+		sandbox: i
+	};
+}
+//#endregion
+//#region src/widgets/Histogram.tsx
+var Ps = /* @__PURE__ */ X({ Histogram: () => Bs }), Fs = 20, Is = "var(--mtc-grid)", Ls = "var(--mtc-border)", Rs = "var(--mtc-muted)", zs = "color-mix(in oklab, var(--mtc-muted) 20%, transparent)";
+function Bs({ data: e, options: t }) {
+	let n = G(() => Vs(e, t), [e, t]);
+	return !n || n.length === 0 ? /* @__PURE__ */ J(i, { children: "No data" }) : /* @__PURE__ */ J(lt, {
+		width: "100%",
+		height: "100%",
+		children: /* @__PURE__ */ Y(Ke, {
+			data: n,
+			margin: {
+				top: 8,
+				right: 8,
+				bottom: 4,
+				left: 0
+			},
+			children: [
+				/* @__PURE__ */ J(Je, {
+					strokeDasharray: "3 3",
+					stroke: Is
+				}),
+				/* @__PURE__ */ J(mt, {
+					dataKey: "bin",
+					stroke: Ls,
+					tick: {
+						fontSize: 10,
+						fill: Rs
+					},
+					interval: "preserveStartEnd"
+				}),
+				/* @__PURE__ */ J(ht, {
+					stroke: Ls,
+					tick: {
+						fontSize: 11,
+						fill: Rs
+					},
+					allowDecimals: !1,
+					width: 40
+				}),
+				/* @__PURE__ */ J(ft, {
+					contentStyle: z,
+					cursor: { fill: zs }
+				}),
+				/* @__PURE__ */ J(Ge, {
+					dataKey: "count",
+					fill: "var(--mtc-accent)",
+					radius: [
+						2,
+						2,
+						0,
+						0
+					]
+				})
+			]
+		})
+	});
+}
+function Vs(e, t) {
+	if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object" && e[0] !== null && "count" in e[0]) return e.map((e) => {
+		let t = e, n = typeof t.rangeStart == "number" ? t.rangeStart : 0, r = typeof t.rangeEnd == "number" ? t.rangeEnd : 0;
+		return {
+			bin: String(t.bin ?? ""),
+			count: Number(t.count ?? 0),
+			rangeStart: n,
+			rangeEnd: r
+		};
+	}).filter((e) => Number.isFinite(e.count));
+	let n = null, r = Fs;
+	if (Array.isArray(e) && e.every((e) => typeof e == "number")) n = e;
+	else if (e && typeof e == "object") {
+		let t = e;
+		Array.isArray(t.values) && t.values.every((e) => typeof e == "number") && (n = t.values), typeof t.bins == "number" && (r = t.bins);
+	}
+	return typeof t?.bins == "number" && (r = t.bins), !n || (n = n.filter((e) => Number.isFinite(e)), n.length === 0) ? null : Hs(n, r);
+}
+function Hs(e, t) {
+	let n = Math.min(...e), r = Math.max(...e);
+	if (n === r) return [{
+		bin: oe(n),
+		count: e.length,
+		rangeStart: n,
+		rangeEnd: r
+	}];
+	let i = (r - n) / t, a = Array.from({ length: t }, (e, a) => {
+		let o = n + a * i, s = a === t - 1 ? r : o + i;
+		return {
+			bin: oe((o + s) / 2),
+			count: 0,
+			rangeStart: o,
+			rangeEnd: s
+		};
+	});
+	for (let r of e) {
+		let e = Math.floor((r - n) / i);
+		e >= t && (e = t - 1), a[e].count += 1;
+	}
+	return a;
+}
+//#endregion
+//#region src/widgets/Section.tsx
+var Us = /* @__PURE__ */ X({ Section: () => Ws });
+function Ws({ options: e }) {
+	let t = typeof e?.label == "string" ? e.label : "";
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full flex items-center gap-3 px-1",
+		children: [t && /* @__PURE__ */ J("span", {
+			className: "text-[10px] uppercase tracking-[0.15em] text-zinc-500 shrink-0",
+			children: t
+		}), /* @__PURE__ */ J("div", { className: "flex-1 h-px bg-zinc-800" })]
+	});
+}
+//#endregion
+//#region src/widgets/AreaChart.tsx
+var Gs = /* @__PURE__ */ X({ AreaChart: () => Zs }), Ks = "var(--mtc-grid)", qs = "var(--mtc-border)", Js = "var(--mtc-muted)", Ys = "var(--mtc-surface)", Xs = [
+	"timestamp",
+	"date",
+	"time",
+	"datetime",
+	"ts",
+	"x",
+	"t"
+];
+function Zs({ data: e, options: t }) {
+	let n = G(() => $s(e), [e]), r = t?.brush === !0;
+	if (!n) return /* @__PURE__ */ J(i, { children: "No data" });
+	let a = n.keys.length > 1;
+	return /* @__PURE__ */ J(lt, {
+		width: "100%",
+		height: "100%",
+		children: /* @__PURE__ */ Y(We, {
+			data: n.points,
+			children: [
+				/* @__PURE__ */ J(Je, {
+					strokeDasharray: "3 3",
+					stroke: Ks
+				}),
+				/* @__PURE__ */ J(mt, {
+					dataKey: "_ts",
+					stroke: qs,
+					tick: {
+						fontSize: 11,
+						fill: Js
+					},
+					tickFormatter: ee
+				}),
+				/* @__PURE__ */ J(ht, {
+					stroke: qs,
+					tick: {
+						fontSize: 11,
+						fill: Js
+					},
+					tickFormatter: ce,
+					width: 50
+				}),
+				/* @__PURE__ */ J(ft, {
+					contentStyle: z,
+					labelStyle: { color: Js },
+					labelFormatter: ee
+				}),
+				n.keys.map((e, t) => /* @__PURE__ */ J(Ue, {
+					type: "monotone",
+					dataKey: e,
+					stroke: B[t % B.length],
+					fill: B[t % B.length],
+					fillOpacity: .35,
+					strokeWidth: 1.5,
+					stackId: a ? "stack" : void 0
+				}, e)),
+				r && n.points.length > 4 && /* @__PURE__ */ J(qe, {
+					dataKey: "_ts",
+					height: 20,
+					stroke: qs,
+					fill: Ys,
+					travellerWidth: 6,
+					tickFormatter: ee
+				})
+			]
+		})
+	});
+}
+function Qs(e) {
+	for (let t of Xs) if (t in e) return t;
+	return null;
+}
+function $s(e) {
+	if (!e) return null;
+	if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object" && e[0] !== null) {
+		let t = e[0], n = Qs(t);
+		if (!n) return null;
+		let r = Object.keys(t).filter((e) => e !== n && typeof t[e] == "number");
+		return r.length === 0 ? null : {
+			points: e.map((e) => {
+				let t = e, i = { _ts: t[n] };
+				for (let e of r) i[e] = t[e];
+				return i;
+			}),
+			keys: r
+		};
+	}
+	if (typeof e == "object" && e && "series" in e) {
+		let t = e.series;
+		if (!Array.isArray(t)) return null;
+		let n = /* @__PURE__ */ new Map(), r = [];
+		for (let e of t) {
+			let t = e, i = String(t.name || t.label || `s${r.length}`);
+			r.push(i);
+			let a = t.data ?? t.points;
+			if (Array.isArray(a)) for (let e of a) {
+				let t = String(e.timestamp ?? e.date ?? e.time ?? e.x ?? "");
+				n.has(t) || n.set(t, { _ts: t }), n.get(t)[i] = e.value ?? e.y ?? e.v;
+			}
+		}
+		return {
+			points: Array.from(n.values()),
+			keys: r
+		};
+	}
+	return null;
+}
+//#endregion
+//#region src/widgets/Slider.tsx
+var ec = /* @__PURE__ */ X({ Slider: () => nc }), tc = 100;
+function nc({ options: e }) {
+	let t = e ?? {}, { ctx: n, setCtx: r } = a(), o = t.min ?? 0, s = t.max ?? 100, c = t.step ?? 1, l = t.label ?? t.key ?? "value", [u, d] = q((() => {
+		if (t.key && n[t.key] != null) {
+			let e = Number(n[t.key]);
+			if (Number.isFinite(e)) return e;
+		}
+		return t.default == null ? o : t.default;
+	})()), f = K(null);
+	if (W(() => {
+		if (!t.key) return;
+		let e = n[t.key];
+		if (e == null) return;
+		let r = Number(e);
+		Number.isFinite(r) && r !== u && d(r);
+	}, [t.key, n[t.key ?? ""]]), !t.key) return /* @__PURE__ */ J(i, { children: "Slider requires options.key" });
+	let p = (e) => {
+		d(e), f.current && clearTimeout(f.current), f.current = setTimeout(() => {
+			r(t.key, String(e));
+		}, tc);
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "flex flex-col h-full justify-center gap-2 px-2",
+		children: [
+			/* @__PURE__ */ Y("div", {
+				className: "flex items-baseline justify-between",
+				children: [/* @__PURE__ */ J("span", {
+					className: "text-[10px] uppercase tracking-wider text-zinc-500",
+					children: l
+				}), /* @__PURE__ */ Y("span", {
+					className: "text-sm font-semibold text-zinc-100 tabular-nums",
+					children: [rc(u, c), t.unit && /* @__PURE__ */ J("span", {
+						className: "text-zinc-500 ml-1",
+						children: t.unit
+					})]
+				})]
+			}),
+			/* @__PURE__ */ J("input", {
+				type: "range",
+				min: o,
+				max: s,
+				step: c,
+				value: u,
+				onChange: (e) => p(Number(e.target.value)),
+				className: "w-full accent-sky-500"
+			}),
+			/* @__PURE__ */ Y("div", {
+				className: "flex justify-between text-[10px] text-zinc-600 tabular-nums",
+				children: [/* @__PURE__ */ J("span", { children: rc(o, c) }), /* @__PURE__ */ J("span", { children: rc(s, c) })]
+			})
+		]
+	});
+}
+function rc(e, t) {
+	let n = t >= 1 ? 0 : Math.min(4, -Math.floor(Math.log10(t)));
+	return e.toFixed(n);
+}
+//#endregion
+//#region src/widgets/selectHelpers.ts
+function ic(e, t, n) {
+	if (e !== void 0 && e !== "") return {
+		current: e,
+		shouldSync: !1
+	};
+	let r = t || n[0]?.value || "";
+	return {
+		current: r,
+		shouldSync: r !== ""
+	};
+}
+//#endregion
+//#region src/widgets/Select.tsx
+var ac = /* @__PURE__ */ X({ Select: () => oc });
+function oc({ data: e, options: t }) {
+	let n = t ?? {}, { ctx: r, setCtx: o } = a(), s = n.key, c = sc(e, n), { current: l, shouldSync: u } = ic(s ? r[s] : void 0, n.default, c);
+	return W(() => {
+		s && u && o(s, l);
+	}, [
+		s,
+		u,
+		l,
+		o
+	]), s ? c.length === 0 ? /* @__PURE__ */ J(i, { children: "Select has no choices" }) : /* @__PURE__ */ Y("div", {
+		className: "flex flex-col h-full justify-center gap-1.5 px-2",
+		children: [/* @__PURE__ */ J("label", {
+			className: "text-[10px] uppercase tracking-wider text-zinc-500",
+			children: n.label ?? n.key
+		}), /* @__PURE__ */ J("select", {
+			value: l,
+			onChange: (e) => o(n.key, e.target.value),
+			className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 outline-none focus:border-zinc-500",
+			children: c.map((e) => /* @__PURE__ */ J("option", {
+				value: e.value,
+				children: e.label
+			}, e.value))
+		})]
+	}) : /* @__PURE__ */ J(i, { children: "Select requires options.key" });
 }
 function sc(e, t) {
-  const n = [...t].sort((p, g) => p - g), r = (p) => {
-    const g = (n.length - 1) * p, b = Math.floor(g), w = Math.ceil(g);
-    return b === w ? n[b] : n[b] + (n[w] - n[b]) * (g - b);
-  }, s = r(0.25), i = r(0.5), l = r(0.75), a = l - s, u = s - 1.5 * a, c = l + 1.5 * a, d = [];
-  let f = 1 / 0, h = -1 / 0;
-  for (const p of n)
-    p < u || p > c ? d.push(p) : (p < f && (f = p), p > h && (h = p));
-  return Number.isFinite(f) || (f = n[0]), Number.isFinite(h) || (h = n[n.length - 1]), { label: e, min: f, q1: s, median: i, q3: l, max: h, outliers: d };
-}
-const oc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Boxplot: tc
-}, Symbol.toStringTag, { value: "Module" })), ic = "var(--mtc-grid)", En = "var(--mtc-border)", On = "var(--mtc-muted)", lc = "var(--mtc-muted-subtle)";
-function ac({ data: e }) {
-  const t = L(() => cc(e), [e]);
-  return t ? /* @__PURE__ */ o(Ae, { width: "100%", height: "100%", children: /* @__PURE__ */ m(Kr, { data: t.rows, outerRadius: "75%", children: [
-    /* @__PURE__ */ o(Hr, { stroke: ic }),
-    /* @__PURE__ */ o(Wr, { dataKey: "metric", stroke: En, tick: { fontSize: 11, fill: On } }),
-    /* @__PURE__ */ o(qr, { stroke: En, tick: { fontSize: 9, fill: lc } }),
-    /* @__PURE__ */ o(_e, { contentStyle: Te }),
-    t.series.length > 1 && /* @__PURE__ */ o(Bn, { wrapperStyle: { fontSize: 11, color: On } }),
-    t.series.map((n, r) => /* @__PURE__ */ o(
-      Gr,
-      {
-        name: n,
-        dataKey: n,
-        stroke: de[r % de.length],
-        fill: de[r % de.length],
-        fillOpacity: 0.25,
-        strokeWidth: 1.5
-      },
-      n
-    ))
-  ] }) }) : /* @__PURE__ */ o(D, { children: "No data" });
+	let n = cc(e);
+	if (n.length > 0) {
+		let e = t.value_field ?? "value", r = t.label_field ?? "label";
+		return n.map((t) => {
+			if (typeof t == "string") return {
+				value: t,
+				label: t
+			};
+			if (t && typeof t == "object") {
+				let n = t, i = n[e];
+				if (typeof i == "string") {
+					let e = n[r];
+					return {
+						value: i,
+						label: typeof e == "string" ? e : i
+					};
+				}
+			}
+			return null;
+		}).filter((e) => e !== null);
+	}
+	return (t.choices ?? []).map((e) => typeof e == "string" ? {
+		value: e,
+		label: e
+	} : {
+		value: e.value,
+		label: e.label ?? e.value
+	});
 }
 function cc(e) {
-  if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object" && e[0] !== null) {
-    const t = e[0];
-    if (typeof t.metric == "string") {
-      const n = Object.keys(t).filter((r) => r !== "metric" && typeof t[r] == "number");
-      return n.length === 0 ? null : { rows: e, series: n };
-    }
-  }
-  if (e && typeof e == "object") {
-    const t = e, n = Array.isArray(t.metrics) ? t.metrics.map(String) : null, r = Array.isArray(t.series) ? t.series : null;
-    if (!n || !r) return null;
-    const s = r.map((l) => String(l.name ?? "")).filter(Boolean);
-    return { rows: n.map((l, a) => {
-      const u = { metric: l };
-      for (const c of r) {
-        const d = c, f = String(d.name ?? ""), h = d.values;
-        Array.isArray(h) && typeof h[a] == "number" && (u[f] = h[a]);
-      }
-      return u;
-    }), series: s };
-  }
-  return null;
+	if (Array.isArray(e)) return e;
+	if (e && typeof e == "object") {
+		let t = e;
+		if (Array.isArray(t.rows)) return t.rows;
+		if (Array.isArray(t.entries)) return t.entries;
+	}
+	return [];
 }
-const uc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Radar: ac
-}, Symbol.toStringTag, { value: "Module" })), dc = {
-  ok: "#10b981",
-  EVENT_STATUS_OK: "#10b981",
-  warn: "#f59e0b",
-  EVENT_STATUS_WARN: "#f59e0b",
-  error: "#ef4444",
-  EVENT_STATUS_ERROR: "#ef4444",
-  info: "#0ea5e9",
-  EVENT_STATUS_INFO: "#0ea5e9",
-  pending: "#71717a",
-  EVENT_STATUS_PENDING: "#71717a",
-  running: "#0ea5e9"
-}, Mn = "#52525b", Re = 130, Xe = 44, Rn = 80, Et = 18, Ot = 16;
-function fc({ data: e }) {
-  const t = L(() => hc(pc(e)), [e]);
-  return t ? /* @__PURE__ */ o("div", { className: "h-full w-full overflow-auto", children: /* @__PURE__ */ m(
-    "svg",
-    {
-      viewBox: `0 0 ${t.width} ${t.height}`,
-      width: t.width,
-      height: t.height,
-      style: { display: "block" },
-      children: [
-        /* @__PURE__ */ o("defs", { children: /* @__PURE__ */ o("marker", { id: "dag-arrow", markerWidth: "8", markerHeight: "8", refX: "7", refY: "4", orient: "auto", markerUnits: "strokeWidth", children: /* @__PURE__ */ o("path", { d: "M0,0 L0,8 L8,4 z", fill: "#52525b" }) }) }),
-        t.edges.map((n, r) => /* @__PURE__ */ o(
-          "line",
-          {
-            x1: n.x1,
-            y1: n.y1,
-            x2: n.x2,
-            y2: n.y2,
-            stroke: "#3f3f46",
-            strokeWidth: 1.5,
-            markerEnd: "url(#dag-arrow)"
-          },
-          r
-        )),
-        t.nodes.map((n) => {
-          const r = n.status ? dc[n.status] ?? Mn : Mn;
-          return /* @__PURE__ */ m("g", { children: [
-            /* @__PURE__ */ o(
-              "rect",
-              {
-                x: n.x,
-                y: n.y,
-                width: Re,
-                height: Xe,
-                rx: 6,
-                ry: 6,
-                fill: "#18181b",
-                stroke: r,
-                strokeWidth: 2
-              }
-            ),
-            /* @__PURE__ */ o(
-              "text",
-              {
-                x: n.x + Re / 2,
-                y: n.y + Xe / 2 + 4,
-                textAnchor: "middle",
-                fontSize: 11,
-                fill: "#fafafa",
-                fontFamily: "ui-sans-serif",
-                children: mc(n.label, 18)
-              }
-            ),
-            /* @__PURE__ */ o("circle", { cx: n.x + 8, cy: n.y + 8, r: 3, fill: r })
-          ] }, n.id);
-        })
-      ]
-    }
-  ) }) : /* @__PURE__ */ o(D, { children: "No data" });
+//#endregion
+//#region src/widgets/Boxplot.tsx
+var lc = /* @__PURE__ */ X({ Boxplot: () => dc }), uc = {
+	top: 12,
+	right: 12,
+	bottom: 28,
+	left: 44
+};
+function dc({ data: e }) {
+	let t = G(() => pc(e), [e]);
+	if (!t || t.length === 0) return /* @__PURE__ */ J(i, { children: "No data" });
+	let n = t.flatMap((e) => [
+		e.min,
+		e.max,
+		...e.outliers
+	]), r = Math.min(...n), a = Math.max(...n), o = (a - r) * .05 || 1, s = r - o, c = a + o;
+	return /* @__PURE__ */ J("svg", {
+		viewBox: "0 0 600 320",
+		className: "w-full h-full",
+		preserveAspectRatio: "none",
+		children: /* @__PURE__ */ J(fc, {
+			boxes: t,
+			yMin: s,
+			yMax: c,
+			ticks: Array.from({ length: 5 }, (e, t) => s + (c - s) * t / 4),
+			width: 600,
+			height: 320
+		})
+	});
 }
-function mc(e, t) {
-  return e.length > t ? `${e.slice(0, t - 1)}…` : e;
+function fc({ boxes: e, yMin: t, yMax: n, ticks: r, width: i, height: a }) {
+	let o = i - uc.left - uc.right, s = a - uc.top - uc.bottom, c = o / e.length, l = Math.min(c * .5, 60), u = (e) => uc.top + (1 - (e - t) / (n - t)) * s;
+	return /* @__PURE__ */ Y("g", { children: [r.map((e, t) => {
+		let n = u(e);
+		return /* @__PURE__ */ Y("g", { children: [/* @__PURE__ */ J("line", {
+			x1: uc.left,
+			x2: uc.left + o,
+			y1: n,
+			y2: n,
+			stroke: "var(--mtc-grid)",
+			strokeDasharray: "3 3"
+		}), /* @__PURE__ */ J("text", {
+			x: uc.left - 6,
+			y: n + 3,
+			textAnchor: "end",
+			fontSize: 10,
+			fill: "var(--mtc-muted)",
+			fontFamily: "var(--mtc-font-sans)",
+			children: oe(e)
+		})] }, `g-${t}`);
+	}), e.map((e, t) => {
+		let n = uc.left + c * t + c / 2, r = n - l / 2, i = B[t % B.length], o = u(e.min), s = u(e.max), d = u(e.q1), f = u(e.q3), p = u(e.median);
+		return /* @__PURE__ */ Y("g", { children: [
+			/* @__PURE__ */ J("line", {
+				x1: n,
+				x2: n,
+				y1: o,
+				y2: s,
+				stroke: i,
+				strokeOpacity: .6
+			}),
+			/* @__PURE__ */ J("line", {
+				x1: n - l / 4,
+				x2: n + l / 4,
+				y1: o,
+				y2: o,
+				stroke: i,
+				strokeOpacity: .8
+			}),
+			/* @__PURE__ */ J("line", {
+				x1: n - l / 4,
+				x2: n + l / 4,
+				y1: s,
+				y2: s,
+				stroke: i,
+				strokeOpacity: .8
+			}),
+			/* @__PURE__ */ J("rect", {
+				x: r,
+				y: f,
+				width: l,
+				height: Math.max(1, d - f),
+				fill: i,
+				fillOpacity: .25,
+				stroke: i,
+				strokeWidth: 1.5
+			}),
+			/* @__PURE__ */ J("line", {
+				x1: r,
+				x2: r + l,
+				y1: p,
+				y2: p,
+				stroke: i,
+				strokeWidth: 2
+			}),
+			e.outliers.map((e, t) => /* @__PURE__ */ J("circle", {
+				cx: n,
+				cy: u(e),
+				r: 2.5,
+				fill: i,
+				fillOpacity: .7
+			}, t)),
+			/* @__PURE__ */ J("text", {
+				x: n,
+				y: a - 8,
+				textAnchor: "middle",
+				fontSize: 11,
+				fill: "var(--mtc-muted)",
+				fontFamily: "var(--mtc-font-sans)",
+				children: e.label
+			})
+		] }, t);
+	})] });
 }
 function pc(e) {
-  if (!e || typeof e != "object" || Array.isArray(e)) return null;
-  const t = e, n = Array.isArray(t.nodes) ? t.nodes : null, r = Array.isArray(t.edges) ? t.edges : [];
-  if (!n) return null;
-  const s = n.map((l) => {
-    const a = l;
-    return {
-      id: String(a.id ?? ""),
-      label: String(a.label ?? a.id ?? ""),
-      status: a.status != null ? String(a.status) : void 0
-    };
-  }).filter((l) => l.id), i = r.map((l) => {
-    const a = l;
-    return { from: String(a.from ?? ""), to: String(a.to ?? "") };
-  }).filter((l) => l.from && l.to);
-  return { nodes: s, edges: i };
+	if (!Array.isArray(e) || e.length === 0) return null;
+	let t = e.map((e) => {
+		if (!e || typeof e != "object") return null;
+		let t = e, n = String(t.label ?? "");
+		if (typeof t.median == "number") return {
+			label: n,
+			min: Number(t.min ?? t.median),
+			q1: Number(t.q1 ?? t.median),
+			median: Number(t.median),
+			q3: Number(t.q3 ?? t.median),
+			max: Number(t.max ?? t.median),
+			outliers: Array.isArray(t.outliers) ? t.outliers.filter((e) => typeof e == "number") : []
+		};
+		if (Array.isArray(t.values)) {
+			let e = t.values.filter((e) => typeof e == "number" && Number.isFinite(e));
+			return e.length === 0 ? null : mc(n, e);
+		}
+		return null;
+	}).filter((e) => e != null);
+	return t.length > 0 ? t : null;
 }
-function hc(e) {
-  if (!e || e.nodes.length === 0) return null;
-  const { nodes: t, edges: n } = e, r = /* @__PURE__ */ new Map();
-  for (const b of t) r.set(b.id, []);
-  for (const b of n) r.get(b.to)?.push(b.from);
-  const s = /* @__PURE__ */ new Map();
-  for (const b of t) s.set(b.id, 0);
-  let i = !0, l = 0;
-  for (; i && l++ < t.length + 1; ) {
-    i = !1;
-    for (const b of n) {
-      const w = (s.get(b.from) ?? 0) + 1;
-      (s.get(b.to) ?? 0) < w && (s.set(b.to, w), i = !0);
-    }
-  }
-  const a = /* @__PURE__ */ new Map();
-  for (const b of t) {
-    const w = s.get(b.id) ?? 0;
-    a.has(w) || a.set(w, []), a.get(w).push(b.id);
-  }
-  const u = Math.max(0, ...s.values()), c = Math.max(...Array.from(a.values(), (b) => b.length)), d = Ot * 2 + c * Re + (c - 1) * Et, f = Ot * 2 + (u + 1) * Xe + u * (Rn - Xe), h = /* @__PURE__ */ new Map();
-  for (const [b, w] of a) {
-    const A = w.length * Re + (w.length - 1) * Et, $ = (d - A) / 2;
-    w.forEach((j, E) => {
-      h.set(j, {
-        x: $ + E * (Re + Et),
-        y: Ot + b * Rn
-      });
-    });
-  }
-  const p = t.map((b) => ({ ...b, ...h.get(b.id) })), g = n.map((b) => {
-    const w = h.get(b.from), A = h.get(b.to);
-    return !w || !A ? null : {
-      x1: w.x + Re / 2,
-      y1: w.y + Xe,
-      x2: A.x + Re / 2,
-      y2: A.y
-    };
-  }).filter((b) => b != null);
-  return { nodes: p, edges: g, width: d, height: f };
+function mc(e, t) {
+	let n = [...t].sort((e, t) => e - t), r = (e) => {
+		let t = (n.length - 1) * e, r = Math.floor(t), i = Math.ceil(t);
+		return r === i ? n[r] : n[r] + (n[i] - n[r]) * (t - r);
+	}, i = r(.25), a = r(.5), o = r(.75), s = o - i, c = i - 1.5 * s, l = o + 1.5 * s, u = [], d = Infinity, f = -Infinity;
+	for (let e of n) e < c || e > l ? u.push(e) : (e < d && (d = e), e > f && (f = e));
+	return Number.isFinite(d) || (d = n[0]), Number.isFinite(f) || (f = n[n.length - 1]), {
+		label: e,
+		min: d,
+		q1: i,
+		median: a,
+		q3: o,
+		max: f,
+		outliers: u
+	};
 }
-const bc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Dag: fc
-}, Symbol.toStringTag, { value: "Module" }));
-function gc({ options: e }) {
-  const t = e ?? {}, { ctx: n, setCtx: r } = ae();
-  if (!t.key)
-    return /* @__PURE__ */ o(D, { children: "MultiSelect requires options.key" });
-  const s = t.choices ?? [];
-  if (s.length === 0)
-    return /* @__PURE__ */ o(D, { children: "MultiSelect requires options.choices" });
-  const i = s.map(
-    (c) => typeof c == "string" ? { value: c, label: c } : { value: c.value, label: c.label ?? c.value }
-  ), l = n[t.key] != null ? n[t.key].split(",").map((c) => c.trim()).filter(Boolean) : t.default ?? [], a = new Set(l), u = (c) => {
-    a.has(c) ? a.delete(c) : a.add(c), r(t.key, Array.from(a).join(","));
-  };
-  return /* @__PURE__ */ m("div", { className: "flex flex-col h-full justify-center gap-2 px-2", children: [
-    /* @__PURE__ */ m("div", { className: "flex items-baseline justify-between", children: [
-      /* @__PURE__ */ o("span", { className: "text-[10px] uppercase tracking-wider text-zinc-500", children: t.label ?? t.key }),
-      /* @__PURE__ */ m("span", { className: "text-[10px] text-zinc-600", children: [
-        a.size,
-        " / ",
-        i.length
-      ] })
-    ] }),
-    /* @__PURE__ */ o("div", { className: "flex flex-wrap gap-1", children: i.map((c) => {
-      const d = a.has(c.value);
-      return /* @__PURE__ */ o(
-        "button",
-        {
-          onClick: () => u(c.value),
-          className: `px-2 py-0.5 text-xs rounded border ${d ? "bg-sky-500/20 border-sky-500/40 text-sky-200" : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200"}`,
-          children: c.label
-        },
-        c.value
-      );
-    }) })
-  ] });
+//#endregion
+//#region src/widgets/Radar.tsx
+var hc = /* @__PURE__ */ X({ Radar: () => bc }), gc = "var(--mtc-grid)", _c = "var(--mtc-border)", vc = "var(--mtc-muted)", yc = "var(--mtc-muted-subtle)";
+function bc({ data: e }) {
+	let t = G(() => xc(e), [e]);
+	return t ? /* @__PURE__ */ J(lt, {
+		width: "100%",
+		height: "100%",
+		children: /* @__PURE__ */ Y(at, {
+			data: t.rows,
+			outerRadius: "75%",
+			children: [
+				/* @__PURE__ */ J(nt, { stroke: gc }),
+				/* @__PURE__ */ J(tt, {
+					dataKey: "metric",
+					stroke: _c,
+					tick: {
+						fontSize: 11,
+						fill: vc
+					}
+				}),
+				/* @__PURE__ */ J(rt, {
+					stroke: _c,
+					tick: {
+						fontSize: 9,
+						fill: yc
+					}
+				}),
+				/* @__PURE__ */ J(ft, { contentStyle: z }),
+				t.series.length > 1 && /* @__PURE__ */ J(Xe, { wrapperStyle: {
+					fontSize: 11,
+					color: vc
+				} }),
+				t.series.map((e, t) => /* @__PURE__ */ J(it, {
+					name: e,
+					dataKey: e,
+					stroke: B[t % B.length],
+					fill: B[t % B.length],
+					fillOpacity: .25,
+					strokeWidth: 1.5
+				}, e))
+			]
+		})
+	}) : /* @__PURE__ */ J(i, { children: "No data" });
 }
-const xc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  MultiSelect: gc
-}, Symbol.toStringTag, { value: "Module" }));
-function yc({ data: e }) {
-  const t = L(() => {
-    if (e == null) return "";
-    try {
-      return JSON.stringify(e, null, 2);
-    } catch {
-      return String(e);
-    }
-  }, [e]);
-  return t ? /* @__PURE__ */ o("pre", { className: "text-[11px] font-mono text-zinc-300 overflow-auto h-full whitespace-pre leading-relaxed", children: vc(t) }) : /* @__PURE__ */ o(D, { children: "No data" });
+function xc(e) {
+	if (Array.isArray(e) && e.length > 0 && typeof e[0] == "object" && e[0] !== null) {
+		let t = e[0];
+		if (typeof t.metric == "string") {
+			let n = Object.keys(t).filter((e) => e !== "metric" && typeof t[e] == "number");
+			return n.length === 0 ? null : {
+				rows: e,
+				series: n
+			};
+		}
+	}
+	if (e && typeof e == "object") {
+		let t = e, n = Array.isArray(t.metrics) ? t.metrics.map(String) : null, r = Array.isArray(t.series) ? t.series : null;
+		if (!n || !r) return null;
+		let i = r.map((e) => String(e.name ?? "")).filter(Boolean);
+		return {
+			rows: n.map((e, t) => {
+				let n = { metric: e };
+				for (let e of r) {
+					let r = e, i = String(r.name ?? ""), a = r.values;
+					Array.isArray(a) && typeof a[t] == "number" && (n[i] = a[t]);
+				}
+				return n;
+			}),
+			series: i
+		};
+	}
+	return null;
 }
-function vc(e) {
-  const t = [], n = /("(?:[^"\\]|\\.)*")(\s*:)?|\b(true|false|null)\b|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g;
-  let r = 0, s;
-  for (; (s = n.exec(e)) != null; )
-    s.index > r && t.push({ text: e.slice(r, s.index) }), s[1] ? (t.push({ text: s[1], color: s[2] ? "#a1a1aa" : "#34d399" }), s[2] && t.push({ text: s[2] })) : s[3] ? t.push({ text: s[3], color: "#fbbf24" }) : s[4] && t.push({ text: s[4], color: "#0ea5e9" }), r = n.lastIndex;
-  return r < e.length && t.push({ text: e.slice(r) }), t.map(
-    (i, l) => i.color ? /* @__PURE__ */ o("span", { style: { color: i.color }, children: i.text }, l) : i.text
-  );
+//#endregion
+//#region src/widgets/Dag.tsx
+var Sc = /* @__PURE__ */ X({ Dag: () => Ac }), Cc = {
+	ok: "var(--mtc-ok)",
+	EVENT_STATUS_OK: "var(--mtc-ok)",
+	warn: "var(--mtc-warning)",
+	EVENT_STATUS_WARN: "var(--mtc-warning)",
+	error: "var(--mtc-danger)",
+	EVENT_STATUS_ERROR: "var(--mtc-danger)",
+	info: "var(--mtc-accent)",
+	EVENT_STATUS_INFO: "var(--mtc-accent)",
+	pending: "var(--mtc-muted)",
+	EVENT_STATUS_PENDING: "var(--mtc-muted)",
+	running: "var(--mtc-accent)"
+}, wc = "var(--mtc-muted-subtle)", Tc = 130, Ec = 48, Dc = 80, Oc = 18, kc = 16;
+function Ac({ data: e, options: t }) {
+	let n = G(() => b(e), [e]), r = G(() => Mc(n), [n]), o = `dag-arrow-${Ve().replace(/[^a-zA-Z0-9_-]/g, "")}`, { ctx: s, setCtx: c } = a(), l = t ?? {}, u = l.node_context?.key ?? "asset_id";
+	if (!r) return /* @__PURE__ */ J(i, { children: "No data" });
+	let d = (e) => {
+		if (Object.keys(e.context).length > 0) for (let [t, n] of Object.entries(e.context)) c(t, n);
+		if (l.node_context) {
+			let t = l.node_context.kind_key;
+			u in e.context || c(u, e.id), t && e.kind && !(t in e.context) && c(t, e.kind);
+		}
+	};
+	return /* @__PURE__ */ J("div", {
+		className: "h-full w-full overflow-auto",
+		children: /* @__PURE__ */ Y("svg", {
+			viewBox: `0 0 ${r.width} ${r.height}`,
+			width: r.width,
+			height: r.height,
+			style: { display: "block" },
+			children: [
+				/* @__PURE__ */ J("defs", { children: /* @__PURE__ */ J("marker", {
+					id: o,
+					markerWidth: "8",
+					markerHeight: "8",
+					refX: "7",
+					refY: "4",
+					orient: "auto",
+					markerUnits: "strokeWidth",
+					children: /* @__PURE__ */ J("path", {
+						d: "M0,0 L0,8 L8,4 z",
+						fill: "var(--mtc-muted-subtle)"
+					})
+				}) }),
+				r.edges.map((e, t) => /* @__PURE__ */ Y("g", { children: [/* @__PURE__ */ J("line", {
+					x1: e.x1,
+					y1: e.y1,
+					x2: e.x2,
+					y2: e.y2,
+					stroke: "var(--mtc-border-strong)",
+					strokeWidth: 1.5,
+					markerEnd: `url(#${o})`
+				}), e.label && /* @__PURE__ */ J("text", {
+					x: (e.x1 + e.x2) / 2,
+					y: (e.y1 + e.y2) / 2 - 4,
+					textAnchor: "middle",
+					fontSize: 9,
+					fill: "var(--mtc-muted)",
+					fontFamily: "var(--mtc-font-sans)",
+					children: jc(e.label, 18)
+				})] }, `${e.from}:${e.to}:${t}`)),
+				r.nodes.map((e) => {
+					let t = e.status ? Cc[e.status] ?? wc : wc, n = !!l.node_context || Object.keys(e.context).length > 0, r = n && s[u] === e.id;
+					return /* @__PURE__ */ Y("g", {
+						onClick: n ? () => d(e) : void 0,
+						onKeyDown: n ? (t) => {
+							(t.key === "Enter" || t.key === " ") && (t.preventDefault(), d(e));
+						} : void 0,
+						role: n ? "button" : void 0,
+						"aria-label": n ? `Select ${e.label}` : void 0,
+						tabIndex: n ? 0 : void 0,
+						style: { cursor: n ? "pointer" : "default" },
+						children: [
+							/* @__PURE__ */ J("rect", {
+								x: e.x,
+								y: e.y,
+								width: Tc,
+								height: Ec,
+								rx: 4,
+								ry: 4,
+								fill: r ? "color-mix(in oklab, var(--mtc-accent) 12%, var(--mtc-surface-raised))" : "var(--mtc-surface-raised)",
+								stroke: r ? "var(--mtc-accent)" : t,
+								strokeWidth: r ? 2.5 : 1.5
+							}),
+							/* @__PURE__ */ J("text", {
+								x: e.x + Tc / 2,
+								y: e.y + (e.subtitle ? 21 : 28),
+								textAnchor: "middle",
+								fontSize: 11,
+								fill: "var(--mtc-fg)",
+								fontFamily: "var(--mtc-font-sans)",
+								children: jc(e.label, 18)
+							}),
+							e.subtitle && /* @__PURE__ */ J("text", {
+								x: e.x + Tc / 2,
+								y: e.y + 36,
+								textAnchor: "middle",
+								fontSize: 9,
+								fill: "var(--mtc-muted)",
+								fontFamily: "var(--mtc-font-sans)",
+								children: jc(e.subtitle, 22)
+							}),
+							/* @__PURE__ */ J("circle", {
+								cx: e.x + 8,
+								cy: e.y + 8,
+								r: 3,
+								fill: t
+							})
+						]
+					}, e.id);
+				})
+			]
+		})
+	});
 }
-const wc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Json: yc
-}, Symbol.toStringTag, { value: "Module" }));
-function kc({ data: e, options: t }) {
-  const n = t ?? {}, r = L(() => Nc(e), [e]);
-  if (!r || r.length < 2)
-    return /* @__PURE__ */ o(D, { children: "No data" });
-  const s = Math.min(...r), l = Math.max(...r) - s || 1, a = r[r.length - 1] >= r[0], u = n.color ?? (a ? "#10b981" : "#ef4444"), c = r.map((d, f) => {
-    const h = f / (r.length - 1) * 100, p = 22 - (d - s) / l * 20 - 1;
-    return `${h.toFixed(1)},${p.toFixed(1)}`;
-  }).join(" ");
-  return /* @__PURE__ */ o("div", { className: "h-full w-full flex items-center justify-center", children: /* @__PURE__ */ o("svg", { viewBox: "0 0 100 24", className: "w-full h-full", preserveAspectRatio: "none", children: /* @__PURE__ */ o(
-    "polyline",
-    {
-      fill: "none",
-      stroke: u,
-      strokeWidth: "1.5",
-      points: c,
-      vectorEffect: "non-scaling-stroke"
-    }
-  ) }) });
+function jc(e, t) {
+	return e.length > t ? `${e.slice(0, t - 1)}…` : e;
 }
-function Nc(e) {
-  if (Array.isArray(e)) {
-    if (e.every((t) => typeof t == "number")) return e;
-    if (e.length > 0 && typeof e[0] == "object" && e[0] !== null)
-      return e.map((t) => {
-        const n = t;
-        return typeof n.value == "number" ? n.value : Number(n.y ?? n.v ?? NaN);
-      }).filter((t) => Number.isFinite(t));
-  }
-  if (e && typeof e == "object") {
-    const t = e;
-    if (Array.isArray(t.values) && t.values.every((n) => typeof n == "number"))
-      return t.values;
-  }
-  return null;
+function Mc(e) {
+	if (!e || e.nodes.length === 0) return null;
+	let { nodes: t, edges: n } = e, r = new Set(t.map((e) => e.id)), i = n.filter((e) => r.has(e.from) && r.has(e.to)), a = /* @__PURE__ */ new Map(), o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map();
+	for (let e of t) a.set(e.id, 0), o.set(e.id, []), s.set(e.id, 0);
+	for (let e of i) a.set(e.to, (a.get(e.to) ?? 0) + 1), o.get(e.from)?.push(e.to);
+	let c = t.filter((e) => (a.get(e.id) ?? 0) === 0).map((e) => e.id), l = /* @__PURE__ */ new Set();
+	for (let e = 0; e < c.length; e++) {
+		let t = c[e];
+		l.add(t);
+		for (let e of o.get(t) ?? []) {
+			s.set(e, Math.max(s.get(e) ?? 0, (s.get(t) ?? 0) + 1));
+			let n = (a.get(e) ?? 0) - 1;
+			a.set(e, n), n === 0 && c.push(e);
+		}
+	}
+	if (l.size < t.length) {
+		let e = Math.max(0, ...[...l].map((e) => s.get(e) ?? 0)) + 1;
+		for (let n of t) l.has(n.id) || s.set(n.id, e);
+	}
+	let u = /* @__PURE__ */ new Map();
+	for (let e of t) {
+		let t = s.get(e.id) ?? 0;
+		u.has(t) || u.set(t, []), u.get(t).push(e.id);
+	}
+	let d = Math.max(0, ...s.values()), f = Math.max(...Array.from(u.values(), (e) => e.length)), p = kc * 2 + f * Tc + (f - 1) * Oc, m = kc * 2 + (d + 1) * Ec + d * (Dc - Ec), h = /* @__PURE__ */ new Map();
+	for (let [e, t] of u) {
+		let n = (p - (t.length * Tc + (t.length - 1) * Oc)) / 2;
+		t.forEach((t, r) => {
+			h.set(t, {
+				x: n + r * 148,
+				y: kc + e * Dc
+			});
+		});
+	}
+	return {
+		nodes: t.map((e) => ({
+			...e,
+			...h.get(e.id)
+		})),
+		edges: i.map((e) => {
+			let t = h.get(e.from), n = h.get(e.to);
+			return !t || !n ? null : {
+				from: e.from,
+				to: e.to,
+				label: e.label,
+				x1: t.x + Tc / 2,
+				y1: t.y + Ec,
+				x2: n.x + Tc / 2,
+				y2: n.y
+			};
+		}).filter((e) => e != null),
+		width: p,
+		height: m
+	};
 }
-const Sc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Sparkline: kc
-}, Symbol.toStringTag, { value: "Module" })), zc = {
-  ACTION_STATUS_OK: { dot: "bg-emerald-400", text: "text-emerald-300" },
-  ACTION_STATUS_ACCEPTED: { dot: "bg-amber-400", text: "text-amber-300" },
-  ACTION_STATUS_PENDING: { dot: "bg-amber-400", text: "text-amber-300" },
-  ACTION_STATUS_REJECTED: { dot: "bg-red-400", text: "text-red-300" },
-  ACTION_STATUS_FAILED: { dot: "bg-red-400", text: "text-red-300" },
-  ACTION_STATUS_CANCELLED: { dot: "bg-zinc-400", text: "text-zinc-300" }
-}, Ac = { dot: "bg-zinc-500", text: "text-zinc-400" };
-function _c(e) {
-  return e.replace(/^ACTION_STATUS_/, "").toLowerCase();
+//#endregion
+//#region src/widgets/MultiSelect.tsx
+var Nc = /* @__PURE__ */ X({ MultiSelect: () => Pc });
+function Pc({ options: e }) {
+	let t = e ?? {}, { ctx: n, setCtx: r } = a();
+	if (!t.key) return /* @__PURE__ */ J(i, { children: "MultiSelect requires options.key" });
+	let o = t.choices ?? [];
+	if (o.length === 0) return /* @__PURE__ */ J(i, { children: "MultiSelect requires options.choices" });
+	let s = o.map((e) => typeof e == "string" ? {
+		value: e,
+		label: e
+	} : {
+		value: e.value,
+		label: e.label ?? e.value
+	}), c = n[t.key] == null ? t.default ?? [] : n[t.key].split(",").map((e) => e.trim()).filter(Boolean), l = new Set(c), u = (e) => {
+		l.has(e) ? l.delete(e) : l.add(e), r(t.key, Array.from(l).join(","));
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "flex flex-col h-full justify-center gap-2 px-2",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex items-baseline justify-between",
+			children: [/* @__PURE__ */ J("span", {
+				className: "text-[10px] uppercase tracking-wider text-zinc-500",
+				children: t.label ?? t.key
+			}), /* @__PURE__ */ Y("span", {
+				className: "text-[10px] text-zinc-600",
+				children: [
+					l.size,
+					" / ",
+					s.length
+				]
+			})]
+		}), /* @__PURE__ */ J("div", {
+			className: "flex flex-wrap gap-1",
+			children: s.map((e) => /* @__PURE__ */ J("button", {
+				onClick: () => u(e.value),
+				className: `px-2 py-0.5 text-xs rounded border ${l.has(e.value) ? "bg-sky-500/20 border-sky-500/40 text-sky-200" : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200"}`,
+				children: e.label
+			}, e.value))
+		})]
+	});
 }
-function Tc(e) {
-  return e ? e.length <= 8 ? e : e.slice(0, 6) + "…" : "";
+//#endregion
+//#region src/widgets/Json.tsx
+var Fc = /* @__PURE__ */ X({ Json: () => Ic });
+function Ic({ data: e }) {
+	let t = G(() => {
+		if (e == null) return "";
+		try {
+			return JSON.stringify(e, null, 2);
+		} catch {
+			return String(e);
+		}
+	}, [e]);
+	return t ? /* @__PURE__ */ J("pre", {
+		className: "text-[11px] font-mono text-zinc-300 overflow-auto h-full whitespace-pre leading-relaxed",
+		children: Lc(t)
+	}) : /* @__PURE__ */ J(i, { children: "No data" });
 }
-function $c(e, t) {
-  const n = Math.floor((e - t) / 1e3);
-  if (n < 5) return "now";
-  if (n < 60) return `${n}s`;
-  const r = Math.floor(n / 60);
-  return r < 60 ? `${r}m` : `${Math.floor(r / 60)}h`;
-}
-function Cc({ options: e }) {
-  const { recentActions: t, clearRecentActions: n } = ae(), r = e?.limit || 25, s = gt(t.length > 0), i = t.slice(0, r);
-  return i.length === 0 ? /* @__PURE__ */ o(D, { children: "No actions yet" }) : /* @__PURE__ */ m("div", { className: "h-full flex flex-col text-xs font-mono", children: [
-    /* @__PURE__ */ m("div", { className: "flex items-center justify-between px-2 py-1 border-b border-zinc-800 shrink-0", children: [
-      /* @__PURE__ */ m("span", { className: "text-[10px] uppercase tracking-wider text-zinc-500", children: [
-        t.length,
-        " action",
-        t.length === 1 ? "" : "s"
-      ] }),
-      /* @__PURE__ */ o(
-        "button",
-        {
-          onClick: n,
-          className: "text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-1.5 py-0.5 rounded",
-          title: "Clear log",
-          children: "Clear"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ o("div", { className: "flex-1 overflow-auto min-h-0", children: i.map((l, a) => {
-      const u = zc[l.status] ?? Ac;
-      return /* @__PURE__ */ m(
-        "div",
-        {
-          className: "flex items-baseline gap-2 px-2 py-1 border-b border-zinc-800/60 hover:bg-zinc-800/30",
-          title: l.message ?? "",
-          children: [
-            /* @__PURE__ */ o("span", { className: "text-zinc-500 shrink-0 w-8 tabular-nums", children: $c(s, l.receivedAt) }),
-            /* @__PURE__ */ o("span", { className: `w-1.5 h-1.5 rounded-full shrink-0 ${u.dot}` }),
-            /* @__PURE__ */ o("span", { className: "text-zinc-200 shrink-0", children: l.actionId }),
-            /* @__PURE__ */ o("span", { className: `uppercase tracking-wider text-[10px] shrink-0 ${u.text}`, children: _c(l.status) }),
-            l.message && /* @__PURE__ */ o("span", { className: "text-zinc-400 truncate flex-1 min-w-0", children: l.message }),
-            /* @__PURE__ */ o("span", { className: "text-zinc-600 text-[10px] shrink-0", children: Tc(l.clientRequestId) })
-          ]
-        },
-        `${l.clientRequestId}-${l.receivedAt}-${a}`
-      );
-    }) })
-  ] });
-}
-const Ec = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  ActionLog: Cc
-}, Symbol.toStringTag, { value: "Module" })), jn = {
-  error: { dot: "bg-red-400", text: "text-red-300" },
-  warn: { dot: "bg-amber-400", text: "text-amber-300" },
-  ok: { dot: "bg-emerald-400", text: "text-emerald-300" },
-  info: { dot: "bg-sky-400", text: "text-sky-300" }
-};
-function Oc(e, t) {
-  const n = Math.floor((e - t) / 1e3);
-  if (n < 5) return "now";
-  if (n < 60) return `${n}s`;
-  const r = Math.floor(n / 60);
-  return r < 60 ? `${r}m` : `${Math.floor(r / 60)}h`;
-}
-function Mc({ options: e }) {
-  const { recentAlerts: t, clearRecentAlerts: n } = ae(), r = e?.limit || 50, s = gt(t.length > 0), i = t.slice(0, r);
-  return i.length === 0 ? /* @__PURE__ */ o(D, { children: "No alerts" }) : /* @__PURE__ */ m("div", { className: "h-full flex flex-col text-xs font-mono", children: [
-    /* @__PURE__ */ m("div", { className: "flex items-center justify-between px-2 py-1 border-b border-zinc-800 shrink-0", children: [
-      /* @__PURE__ */ m("span", { className: "text-[10px] uppercase tracking-wider text-zinc-500", children: [
-        t.length,
-        " alert",
-        t.length === 1 ? "" : "s"
-      ] }),
-      /* @__PURE__ */ o(
-        "button",
-        {
-          onClick: n,
-          className: "text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-1.5 py-0.5 rounded",
-          title: "Clear log",
-          children: "Clear"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ o("div", { className: "flex-1 overflow-auto min-h-0", children: i.map((l, a) => {
-      const u = jn[l.severity] ?? jn.warn;
-      return /* @__PURE__ */ m(
-        "div",
-        {
-          className: "flex items-baseline gap-2 px-2 py-1 border-b border-zinc-800/60 hover:bg-zinc-800/30",
-          title: l.predicate,
-          children: [
-            /* @__PURE__ */ o("span", { className: "text-zinc-500 shrink-0 w-8 tabular-nums", children: Oc(s, l.receivedAt) }),
-            /* @__PURE__ */ o("span", { className: `w-1.5 h-1.5 rounded-full shrink-0 ${u.dot}` }),
-            /* @__PURE__ */ o("span", { className: `uppercase tracking-wider text-[10px] shrink-0 ${u.text}`, children: l.severity }),
-            /* @__PURE__ */ o("span", { className: "text-zinc-200 truncate flex-1 min-w-0", children: l.message }),
-            l.widgetId && /* @__PURE__ */ o("span", { className: "text-zinc-600 text-[10px] shrink-0", children: l.widgetId })
-          ]
-        },
-        `${l.receivedAt}-${a}`
-      );
-    }) })
-  ] });
-}
-const Rc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  AlertLog: Mc
-}, Symbol.toStringTag, { value: "Module" })), jc = 500, Ic = 800;
 function Lc(e) {
-  return e.id ? `id:${e.id}` : `t:${e.timestamp ?? ""}|p:${e.price ?? ""}|s:${e.size ?? ""}|x:${e.label ?? ""}`;
+	let t = [], n = /("(?:[^"\\]|\\.)*")(\s*:)?|\b(true|false|null)\b|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g, r = 0, i;
+	for (; (i = n.exec(e)) != null;) i.index > r && t.push({ text: e.slice(r, i.index) }), i[1] ? (t.push({
+		text: i[1],
+		color: i[2] ? "var(--mtc-code-key)" : "var(--mtc-code-string)"
+	}), i[2] && t.push({ text: i[2] })) : i[3] ? t.push({
+		text: i[3],
+		color: "var(--mtc-code-literal)"
+	}) : i[4] && t.push({
+		text: i[4],
+		color: "var(--mtc-code-number)"
+	}), r = n.lastIndex;
+	return r < e.length && t.push({ text: e.slice(r) }), t.map((e, t) => e.color ? /* @__PURE__ */ J("span", {
+		style: { color: e.color },
+		children: e.text
+	}, t) : e.text);
 }
-function Pc(e) {
-  const t = (e ?? "").toLowerCase();
-  return t === "buy" || t === "bid" ? { row: "bg-emerald-500/5", text: "text-emerald-400" } : t === "sell" || t === "ask" ? { row: "bg-red-500/5", text: "text-red-400" } : { row: "", text: "text-zinc-300" };
-}
-function Dc(e) {
-  if (e == null) return [];
-  if (Array.isArray(e)) return e.map(at);
-  if (typeof e == "object") {
-    const t = e;
-    return Array.isArray(t.events) ? t.events.map(at) : Array.isArray(t.items) ? t.items.map(at) : [at(t)];
-  }
-  return [];
-}
-function at(e) {
-  if (e == null || typeof e != "object") return {};
-  const t = e;
-  return {
-    id: t.id != null ? String(t.id) : void 0,
-    timestamp: t.timestamp != null ? t.timestamp : t.time != null ? t.time : t.ts != null ? t.ts : void 0,
-    price: typeof t.price == "number" ? t.price : void 0,
-    size: typeof t.size == "number" ? t.size : typeof t.qty == "number" ? t.qty : typeof t.amount == "number" ? t.amount : void 0,
-    side: t.side != null ? String(t.side).toLowerCase() : void 0,
-    label: t.label != null ? String(t.label) : t.text != null ? String(t.text) : t.title != null ? String(t.title) : void 0
-  };
-}
-function Fc({ data: e, options: t }) {
-  const n = t?.cap || jc, r = Dc(e), [s, i] = v([]), l = U(/* @__PURE__ */ new Set()), a = U(!1);
-  if (R(() => {
-    if (r.length === 0) return;
-    const c = [];
-    for (const d of r) {
-      const f = Lc(d);
-      l.current.has(f) || (l.current.add(f), c.push({ ...d, _key: f, _receivedAt: Date.now() }));
-    }
-    c.length !== 0 && (i((d) => {
-      const f = [...c.reverse(), ...d];
-      if (f.length <= n) return f;
-      for (const h of f.slice(n)) l.current.delete(h._key);
-      return f.slice(0, n);
-    }), a.current || (a.current = !0));
-  }, [e, n]), s.length === 0)
-    return /* @__PURE__ */ o(D, { children: "No prints yet" });
-  const u = Date.now() - Ic;
-  return /* @__PURE__ */ o("div", { className: "h-full overflow-auto text-xs font-mono", children: s.map((c) => {
-    const d = Pc(c.side), h = c._receivedAt > u && a.current ? "bg-sky-500/10" : d.row;
-    return /* @__PURE__ */ m(
-      "div",
-      {
-        className: `grid grid-cols-[64px_1fr_auto_auto] gap-2 px-2 py-0.5 border-b border-zinc-800/40 transition-colors duration-500 ${h}`,
-        children: [
-          /* @__PURE__ */ o("span", { className: "text-zinc-500 tabular-nums truncate", children: c.timestamp != null ? Uc(c.timestamp) : "" }),
-          /* @__PURE__ */ o("span", { className: `truncate ${d.text}`, children: c.label ?? c.side?.toUpperCase() ?? "·" }),
-          /* @__PURE__ */ o("span", { className: `text-right tabular-nums ${d.text}`, children: c.price != null ? Bc(c.price) : "" }),
-          /* @__PURE__ */ o("span", { className: "text-right tabular-nums text-zinc-400", children: c.size != null ? Kc(c.size) : "" })
-        ]
-      },
-      c._key
-    );
-  }) });
-}
-function Uc(e) {
-  try {
-    const t = new Date(e);
-    if (isNaN(t.getTime())) return String(e);
-    const n = String(t.getHours()).padStart(2, "0"), r = String(t.getMinutes()).padStart(2, "0"), s = String(t.getSeconds()).padStart(2, "0");
-    return `${n}:${r}:${s}`;
-  } catch {
-    return Ie(e);
-  }
+//#endregion
+//#region src/widgets/Sparkline.tsx
+var Rc = /* @__PURE__ */ X({ Sparkline: () => zc });
+function zc({ data: e, options: t }) {
+	let n = t ?? {}, r = G(() => Bc(e), [e]);
+	if (!r || r.length < 2) return /* @__PURE__ */ J(i, { children: "No data" });
+	let a = Math.min(...r), o = Math.max(...r) - a || 1, s = r[r.length - 1] >= r[0];
+	return /* @__PURE__ */ J("div", {
+		className: "h-full w-full flex items-center justify-center",
+		children: /* @__PURE__ */ J("svg", {
+			viewBox: "0 0 100 24",
+			className: "w-full h-full",
+			preserveAspectRatio: "none",
+			children: /* @__PURE__ */ J("polyline", {
+				fill: "none",
+				stroke: n.color ?? (s ? "var(--mtc-ok)" : "var(--mtc-danger)"),
+				strokeWidth: "1.5",
+				points: r.map((e, t) => {
+					let n = t / (r.length - 1) * 100, i = 22 - (e - a) / o * 20 - 1;
+					return `${n.toFixed(1)},${i.toFixed(1)}`;
+				}).join(" "),
+				vectorEffect: "non-scaling-stroke"
+			})
+		})
+	});
 }
 function Bc(e) {
-  return Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 2 }) : e.toFixed(Math.abs(e) < 1 ? 4 : 2);
+	if (Array.isArray(e)) {
+		if (e.every((e) => typeof e == "number")) return e;
+		if (e.length > 0 && typeof e[0] == "object" && e[0] !== null) return e.map((e) => {
+			let t = e;
+			return typeof t.value == "number" ? t.value : Number(t.y ?? t.v ?? NaN);
+		}).filter((e) => Number.isFinite(e));
+	}
+	if (e && typeof e == "object") {
+		let t = e;
+		if (Array.isArray(t.values) && t.values.every((e) => typeof e == "number")) return t.values;
+	}
+	return null;
 }
-function Kc(e) {
-  return Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(2) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(2) + "K" : Math.abs(e) >= 1 ? e.toFixed(2) : e.toFixed(4);
-}
-const Hc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Tape: Fc
-}, Symbol.toStringTag, { value: "Module" }));
-function je(e) {
-  if (e instanceof Error) return e.message;
-  if (typeof e == "string") return e;
-  try {
-    return JSON.stringify(e);
-  } catch {
-    return String(e);
-  }
-}
-function Ke(e) {
-  const t = (e.kind ?? "").toString().toUpperCase();
-  return t === "FOLDER" || t === "KIND_FOLDER";
-}
+//#endregion
+//#region src/widgets/ActionLog.tsx
+var Vc = /* @__PURE__ */ X({ ActionLog: () => qc }), Hc = {
+	ACTION_STATUS_OK: {
+		dot: "bg-emerald-400",
+		text: "text-emerald-300"
+	},
+	ACTION_STATUS_ACCEPTED: {
+		dot: "bg-amber-400",
+		text: "text-amber-300"
+	},
+	ACTION_STATUS_PENDING: {
+		dot: "bg-amber-400",
+		text: "text-amber-300"
+	},
+	ACTION_STATUS_REJECTED: {
+		dot: "bg-red-400",
+		text: "text-red-300"
+	},
+	ACTION_STATUS_FAILED: {
+		dot: "bg-red-400",
+		text: "text-red-300"
+	},
+	ACTION_STATUS_CANCELLED: {
+		dot: "bg-zinc-400",
+		text: "text-zinc-300"
+	}
+}, Uc = {
+	dot: "bg-zinc-500",
+	text: "text-zinc-400"
+};
 function Wc(e) {
-  const t = qc(e);
-  return t || [];
-}
-function qc(e) {
-  if (!e) return null;
-  if (Array.isArray(e)) return e;
-  if (typeof e == "object") {
-    const t = e;
-    if (Array.isArray(t.entries)) return t.entries;
-    if (Array.isArray(t.rows)) return t.rows;
-  }
-  return null;
+	return e.replace(/^ACTION_STATUS_/, "").toLowerCase();
 }
 function Gc(e) {
-  const t = e.filter(Ke).sort(In), n = e.filter((r) => !Ke(r)).sort(In);
-  return [...t, ...n];
+	return e ? e.length <= 8 ? e : e.slice(0, 6) + "…" : "";
 }
-function In(e, t) {
-  return (e.name ?? "").localeCompare(t.name ?? "");
+function Kc(e, t) {
+	let n = Math.floor((e - t) / 1e3);
+	if (n < 5) return "now";
+	if (n < 60) return `${n}s`;
+	let r = Math.floor(n / 60);
+	return r < 60 ? `${r}m` : `${Math.floor(r / 60)}h`;
 }
-function Vc(e) {
-  return e ? e.split("/").filter(Boolean) : [];
+function qc({ options: e }) {
+	let { recentActions: t, clearRecentActions: n } = a(), r = e?.limit || 25, o = _(t.length > 0), s = t.slice(0, r);
+	return s.length === 0 ? /* @__PURE__ */ J(i, { children: "No actions yet" }) : /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col text-xs font-mono",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex items-center justify-between px-2 py-1 border-b border-zinc-800 shrink-0",
+			children: [/* @__PURE__ */ Y("span", {
+				className: "text-[10px] uppercase tracking-wider text-zinc-500",
+				children: [
+					t.length,
+					" action",
+					t.length === 1 ? "" : "s"
+				]
+			}), /* @__PURE__ */ J("button", {
+				onClick: n,
+				className: "text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-1.5 py-0.5 rounded",
+				title: "Clear log",
+				children: "Clear"
+			})]
+		}), /* @__PURE__ */ J("div", {
+			className: "flex-1 overflow-auto min-h-0",
+			children: s.map((e, t) => {
+				let n = Hc[e.status] ?? Uc;
+				return /* @__PURE__ */ Y("div", {
+					className: "flex items-baseline gap-2 px-2 py-1 border-b border-zinc-800/60 hover:bg-zinc-800/30",
+					title: e.message ?? "",
+					children: [
+						/* @__PURE__ */ J("span", {
+							className: "text-zinc-500 shrink-0 w-8 tabular-nums",
+							children: Kc(o, e.receivedAt)
+						}),
+						/* @__PURE__ */ J("span", { className: `w-1.5 h-1.5 rounded-full shrink-0 ${n.dot}` }),
+						/* @__PURE__ */ J("span", {
+							className: "text-zinc-200 shrink-0",
+							children: e.actionId
+						}),
+						/* @__PURE__ */ J("span", {
+							className: `uppercase tracking-wider text-[10px] shrink-0 ${n.text}`,
+							children: Wc(e.status)
+						}),
+						e.message && /* @__PURE__ */ J("span", {
+							className: "text-zinc-400 truncate flex-1 min-w-0",
+							children: e.message
+						}),
+						/* @__PURE__ */ J("span", {
+							className: "text-zinc-600 text-[10px] shrink-0",
+							children: Gc(e.clientRequestId)
+						})
+					]
+				}, `${e.clientRequestId}-${e.receivedAt}-${t}`);
+			})
+		})]
+	});
 }
-function Jc(e, t) {
-  const n = (e ?? "").replace(/^\/+|\/+$/g, ""), r = (t ?? "").replace(/^\/+|\/+$/g, "");
-  return n ? r ? n + "/" + r : n : r;
-}
-function Sr(e) {
-  const t = ["B", "KB", "MB", "GB", "TB"];
-  let n = 0, r = e;
-  for (; r >= 1024 && n < t.length - 1; )
-    r /= 1024, n++;
-  return `${n === 0 ? r.toFixed(0) : r.toFixed(1)} ${t[n]}`;
-}
-const Xc = /* @__PURE__ */ new Set(["audio", "video", "mkv"]), Yc = /* @__PURE__ */ new Set(["audio", "video", "mkv", "image", "heic"]);
-function Zc(e) {
-  return e.filter((t) => {
-    const n = Ze(t.content_type, t.name);
-    return n !== null && Xc.has(n);
-  });
-}
-function Qc(e) {
-  return e.filter((t) => {
-    const n = Ze(t.content_type, t.name);
-    return n !== null && Yc.has(n);
-  });
-}
-function Ln(e, t, n, r, s = Math.random) {
-  if (e.length === 0) return null;
-  if (e.length === 1) return r ? e[0] : null;
-  const i = e.findIndex((l) => l.name === t);
-  if (n) {
-    for (let l = 0; l < 5; l++) {
-      const a = e[Math.floor(s() * e.length)];
-      if (a.name !== t) return a;
-    }
-    return e[(i + 1) % e.length];
-  }
-  return i < 0 ? e[0] : i + 1 < e.length ? e[i + 1] : r ? e[0] : null;
-}
-function eu(e, t, n) {
-  if (e.length === 0) return null;
-  const r = e.findIndex((s) => s.name === t);
-  return r > 0 ? e[r - 1] : n ? e[e.length - 1] : null;
-}
-function Ze(e, t) {
-  const n = (t ?? "").toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] ?? "", r = (e ?? "").toLowerCase().split(";")[0].trim();
-  return r === "image/heic" || r === "image/heif" || n === "heic" || n === "heif" ? "heic" : r === "video/x-matroska" || r === "application/x-matroska" || n === "mkv" ? "mkv" : r.startsWith("video/") ? "video" : r.startsWith("audio/") ? "audio" : r.startsWith("image/") ? "image" : r === "application/pdf" || n === "pdf" ? "pdf" : r === "application/json" || r === "text/json" || n === "json" ? "json" : r === "application/yaml" || r === "text/yaml" || r === "application/x-yaml" || n === "yaml" || n === "yml" ? "yaml" : r === "text/markdown" || r === "text/x-markdown" || n === "md" || n === "markdown" ? "markdown" : r === "text/csv" || r === "application/csv" || n === "csv" ? "csv" : r.startsWith("text/") || n === "txt" || n === "log" || n === "ini" || n === "conf" ? "text" : null;
-}
-function Pn(e, t, n) {
-  const r = encodeURIComponent(t);
-  return e.replace("{bucket}", r).replace("{namespace}", r).replace("{path}", encodeURIComponent(n));
-}
-function tu(e) {
-  let t = "";
-  const n = new Uint8Array(e);
-  for (let r = 0; r < n.byteLength; r++) t += String.fromCharCode(n[r]);
-  return btoa(t);
-}
-async function ct(e) {
-  try {
-    return (await e.json()).message ?? `HTTP ${e.status}`;
-  } catch {
-    return `HTTP ${e.status}`;
-  }
-}
-async function nu(e, t) {
-  if (!e.body)
-    throw new Error("parseConnectStream: response has no body");
-  const n = e.body.getReader(), r = [];
-  for (; ; ) {
-    const { value: c, done: d } = await n.read();
-    if (d) break;
-    c && r.push(c);
-  }
-  let s = 0;
-  for (const c of r) s += c.length;
-  const i = new Uint8Array(s);
-  let l = 0;
-  for (const c of r)
-    i.set(c, l), l += c.length;
-  const a = [];
-  let u = 0;
-  for (; u + 5 <= i.length; ) {
-    const c = i[u], d = i[u + 1] << 24 | i[u + 2] << 16 | i[u + 3] << 8 | i[u + 4];
-    if (u += 5, u + d > i.length) break;
-    const f = i.subarray(u, u + d);
-    if (u += d, (c & 2) !== 0) break;
-    try {
-      const h = JSON.parse(new TextDecoder().decode(f));
-      if (h.data) {
-        const p = atob(h.data), g = new Uint8Array(p.length);
-        for (let b = 0; b < p.length; b++) g[b] = p.charCodeAt(b);
-        a.push(g.buffer);
-      }
-    } catch {
-    }
-  }
-  return new Blob(a, { type: t ?? "application/octet-stream" });
-}
-async function ru(e) {
-  const t = await fetch(e);
-  if (!t.ok) throw new Error(`fetch failed: ${t.status}`);
-  return t.text();
-}
-function su(e) {
-  try {
-    return JSON.stringify(JSON.parse(e), null, 2);
-  } catch {
-    return e;
-  }
-}
-function ou(e) {
-  const t = [];
-  let n = [], r = "", s = !1;
-  for (let i = 0; i < e.length; i++) {
-    const l = e[i];
-    if (s) {
-      if (l === '"' && e[i + 1] === '"') {
-        r += '"', i++;
-        continue;
-      }
-      if (l === '"') {
-        s = !1;
-        continue;
-      }
-      r += l;
-      continue;
-    }
-    if (l === '"') {
-      s = !0;
-      continue;
-    }
-    if (l === ",") {
-      n.push(r), r = "";
-      continue;
-    }
-    if (l === `
-` || l === "\r") {
-      l === "\r" && e[i + 1] === `
-` && i++, n.push(r), r = "", t.push(n), n = [];
-      continue;
-    }
-    r += l;
-  }
-  return (r !== "" || n.length > 0) && (n.push(r), t.push(n)), t;
-}
-async function iu(e) {
-  const [{ marked: t }, { default: n }] = await Promise.all([
-    import("./marked.esm-CgtsUw0D.js"),
-    import("./purify.es-ZDSJOUnA.js")
-  ]);
-  try {
-    const r = await t.parse(e, { async: !0 });
-    return n.sanitize(r);
-  } catch {
-    return `<pre>${lu(e)}</pre>`;
-  }
-}
-function lu(e) {
-  return e.replace(/[&<>"']/g, (t) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[t]);
-}
-let Mt = null;
-function zr(e) {
-  return import(
-    /* @vite-ignore */
-    /* webpackIgnore: true */
-    e
-  );
-}
-async function au(e) {
-  const { default: t } = await zr("heic2any"), n = await t({ blob: e, toType: "image/jpeg", quality: 0.92 });
-  return Array.isArray(n) ? n[0] : n;
-}
-async function cu(e, t) {
-  t?.("Loading ffmpeg…");
-  const n = await uu();
-  t?.("Fetching file…");
-  const r = await fetch(e);
-  if (!r.ok) throw new Error(`fetch failed: ${r.status}`);
-  const s = new Uint8Array(await r.arrayBuffer());
-  t?.("Remuxing…"), await n.writeFile("input.mkv", s);
-  const i = await n.exec(["-i", "input.mkv", "-c", "copy", "-movflags", "+faststart", "output.mp4"]);
-  if (i !== 0)
-    throw new Error("ffmpeg remux failed (code " + i + ") — codec inside MKV may not be browser-compatible");
-  const l = await n.readFile("output.mp4");
-  if (typeof l == "string")
-    throw new Error("ffmpeg readFile returned string");
-  return new Blob([new Uint8Array(l)], { type: "video/mp4" });
-}
-async function uu() {
-  if (Mt) return Mt;
-  const { FFmpeg: e } = await zr("@ffmpeg/ffmpeg"), t = new e();
-  return await t.load(), Mt = t, t;
-}
-function du({ data: e, options: t, widgetId: n }) {
-  const r = t ?? {}, { ctx: s, setCtx: i, backendUrl: l, toast: a, requestRefresh: u } = ae(), c = r.path_ctx ?? "path", d = r.bucket_ctx ?? "org", f = r.bucket_param ?? "org", h = r.page_ctx ?? "page", p = r.page_size_ctx ?? "page_size", g = r.view_mode_ctx ?? "view_mode", b = r.upload_action_id ?? "upload", w = r.upload_url, A = r.ingest_url, $ = s[d] ?? "default", j = s[c] ?? "", E = parseInt(s[h] ?? "1", 10) || 1, x = parseInt(s[p] ?? "50", 10) || 50, T = s[g] === "gallery" ? "gallery" : "icons", [O, I] = v(!1), [G, Z] = v(!1), [X, Y] = v(null), [P, K] = v(!1), [q, z] = v("url"), [H, ee] = v(""), [Q, oe] = v(""), [y, k] = v(""), [_, M] = v(!1), W = r.search_url, [V, ne] = v(""), [te, se] = v(null), [me, $e] = v(!1), Ee = L(() => Wc(e), [e]), Le = te ?? Ee, pe = L(
-    () => te || Gc(Ee),
-    [te, Ee]
-  ), be = L(() => Vc(j), [j]), he = !te && E > 1, ye = !te && Ee.length >= x, Pe = r.media_url_template ?? "/media?namespace={namespace}&path={path}";
-  R(() => {
-    E !== 1 && i(h, "1");
-  }, [$, j]);
-  const ve = (N) => i(c, N), Qe = (N) => i(h, String(Math.max(1, N))), Oe = () => i(g, T === "gallery" ? "icons" : "gallery"), Ve = async () => {
-    if (!W) return;
-    const N = V.trim();
-    if (N === "") {
-      se(null);
-      return;
-    }
-    $e(!0);
-    try {
-      const F = await fetch((l ?? "") + W, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Connect-Protocol-Version": "1" },
-        body: JSON.stringify({ [f]: $, query: N })
-      });
-      if (!F.ok) {
-        a(`Search failed: ${await ct(F)}`, "error");
-        return;
-      }
-      const re = await F.json();
-      se((re.hits ?? []).map((ie) => ({ ...ie, kind: "file" })));
-    } catch (F) {
-      a(`Search failed: ${je(F)}`, "error");
-    } finally {
-      $e(!1);
-    }
-  }, De = () => {
-    ne(""), se(null);
-  }, yt = (N) => {
-    De(), ve(N);
-  }, vt = () => {
-    ee(j), oe(""), k(""), z(A ? "url" : "file"), K(!0);
-  }, et = async () => {
-    if (!A) return;
-    const N = H.trim(), F = Q.trim(), re = y.trim();
-    if (!N || !F || !re) {
-      a("Need a folder (repo), a filename, and a URL", "error");
-      return;
-    }
-    M(!0);
-    try {
-      const ie = await fetch((l ?? "") + A, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Connect-Protocol-Version": "1" },
-        body: JSON.stringify({ [f]: $, repo: N, path: F, url: re })
-      });
-      if (!ie.ok)
-        throw new Error(await ct(ie));
-      a(`Fetching ${F} in the background — it'll appear when done.`, "ok"), K(!1);
-    } catch (ie) {
-      a(`Ingest failed: ${je(ie)}`, "error");
-    } finally {
-      M(!1);
-    }
-  }, S = async (N) => {
-    const F = H.trim(), re = Q.trim() || N.name;
-    if (!F) {
-      a("Need a destination folder (repo)", "error");
-      return;
-    }
-    M(!0);
-    try {
-      await ge(N, F, re), a(`Uploaded ${re}`, "ok"), K(!1), u(n ?? "*");
-    } catch (ie) {
-      a(`Upload failed: ${je(ie)}`, "error");
-    } finally {
-      M(!1);
-    }
-  }, C = (N) => N.path && N.path !== "" ? N.path : Jc(j, N.name ?? ""), J = (N) => {
-    if (Ke(N)) {
-      te ? yt(C(N)) : ve(C(N));
-      return;
-    }
-    if (Pe && Ze(N.content_type, N.name)) {
-      Y(N);
-      return;
-    }
-    ue(N);
-  };
-  R(() => {
-    if (!X) return;
-    const N = (F) => {
-      F.key === "Escape" && Y(null);
-    };
-    return window.addEventListener("keydown", N), () => window.removeEventListener("keydown", N);
-  }, [X]);
-  const ue = async (N) => {
-    const F = r.download_url;
-    if (!F) {
-      a("Download not configured (set options.download_url)", "error");
-      return;
-    }
-    if (!N.name) {
-      a("File has no name", "error");
-      return;
-    }
-    const re = C(N), ie = (l ?? "") + F;
-    try {
-      const we = await fetch(ie, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Connect-Protocol-Version": "1"
-        },
-        body: JSON.stringify({ [f]: $, path: re })
-      });
-      if (!we.ok) {
-        const tt = await ct(we);
-        a(`Download failed: ${tt}`, "error");
-        return;
-      }
-      const wt = await nu(we, N.content_type), Fe = document.createElement("a");
-      Fe.href = URL.createObjectURL(wt), Fe.download = N.name, Fe.click(), setTimeout(() => URL.revokeObjectURL(Fe.href), 5e3);
-    } catch (we) {
-      a(`Download failed: ${je(we)}`, "error");
-    }
-  }, ge = async (N, F, re) => {
-    const ie = N.type || "application/octet-stream";
-    if (w) {
-      const Ar = new URLSearchParams({ [f]: $, repo: F, path: re, content_type: ie }), kt = await fetch(`${l ?? ""}${w}?${Ar.toString()}`, { method: "POST", body: N });
-      if (!kt.ok) throw new Error(await kt.text() || `HTTP ${kt.status}`);
-      return;
-    }
-    const we = await N.arrayBuffer(), wt = Gn(l ?? ""), Fe = Vn({
-      actionId: b,
-      params: { [f]: $, repo: F, path: re, content_type: ie, data_b64: tu(we) },
-      clientRequestId: Jn()
-    }), tt = await fetch(wt, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Connect-Protocol-Version": "1" },
-      body: JSON.stringify(Fe)
-    });
-    if (!tt.ok) throw new Error(await ct(tt));
-  }, xe = async (N) => {
-    if (j === "") {
-      a("Open a folder first, or use the Upload button to choose a folder.", "error");
-      return;
-    }
-    const F = j;
-    Z(!0);
-    let re = 0;
-    for (const ie of Array.from(N))
-      try {
-        await ge(ie, F, ie.name), re++;
-      } catch (we) {
-        a(`Upload failed: ${ie.name} — ${je(we)}`, "error");
-      }
-    Z(!1), re > 0 && (a(`Uploaded ${re} file${re === 1 ? "" : "s"}`, "ok"), u(n ?? "*"));
-  };
-  return /* @__PURE__ */ m(
-    "div",
-    {
-      className: "h-full flex flex-col relative",
-      onDragOver: (N) => {
-        N.preventDefault(), I(!0);
-      },
-      onDragLeave: () => I(!1),
-      onDrop: (N) => {
-        N.preventDefault(), I(!1), N.dataTransfer.files.length > 0 && xe(N.dataTransfer.files);
-      },
-      children: [
-        /* @__PURE__ */ m("div", { className: "flex items-center gap-1 px-3 py-1.5 text-xs border-b border-zinc-800 shrink-0", children: [
-          /* @__PURE__ */ o("button", { onClick: () => ve(""), className: "text-sky-400 hover:underline", children: "/" }),
-          be.map((N, F) => {
-            const re = be.slice(0, F + 1).join("/");
-            return /* @__PURE__ */ m("span", { className: "flex items-center gap-1", children: [
-              /* @__PURE__ */ o("span", { className: "text-zinc-600", children: "/" }),
-              /* @__PURE__ */ o(
-                "button",
-                {
-                  onClick: () => ve(re),
-                  className: "text-sky-400 hover:underline",
-                  children: N
-                }
-              )
-            ] }, F);
-          }),
-          /* @__PURE__ */ m("div", { className: "ml-auto flex items-center gap-3 text-zinc-500", children: [
-            W && /* @__PURE__ */ m("div", { className: "flex items-center gap-1", children: [
-              /* @__PURE__ */ o(
-                "input",
-                {
-                  type: "search",
-                  value: V,
-                  onChange: (N) => ne(N.target.value),
-                  onKeyDown: (N) => {
-                    N.key === "Enter" && Ve(), N.key === "Escape" && De();
-                  },
-                  placeholder: "Search files…",
-                  className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-0.5 text-xs text-zinc-100 outline-none focus:border-zinc-500 w-40"
-                }
-              ),
-              /* @__PURE__ */ o(
-                "button",
-                {
-                  onClick: () => {
-                    Ve();
-                  },
-                  disabled: me,
-                  className: "text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 px-1",
-                  "aria-label": "Search",
-                  title: "Search this namespace",
-                  children: me ? "…" : "🔍"
-                }
-              ),
-              te && /* @__PURE__ */ o(
-                "button",
-                {
-                  onClick: De,
-                  className: "text-zinc-400 hover:text-zinc-100 px-1",
-                  title: "Clear search, back to browsing",
-                  children: "✕"
-                }
-              )
-            ] }),
-            (w || b || A) && /* @__PURE__ */ o(
-              "button",
-              {
-                onClick: vt,
-                className: "text-zinc-200 hover:text-white border border-zinc-700 rounded px-2 py-0.5",
-                title: "Upload a file or fetch a media URL",
-                children: "⬆ Upload"
-              }
-            ),
-            /* @__PURE__ */ o(
-              "button",
-              {
-                onClick: Oe,
-                className: "text-zinc-400 hover:text-zinc-100 border border-zinc-700 rounded px-2 py-0.5",
-                title: T === "gallery" ? "Switch to icons (no thumbnails)" : "Switch to gallery (loads image thumbnails)",
-                children: T === "gallery" ? "◫ Gallery" : "☰ Icons"
-              }
-            ),
-            /* @__PURE__ */ o("span", { className: "tabular-nums", children: te ? `${te.length} result${te.length === 1 ? "" : "s"}` : `${Le.length} on page` }),
-            (he || ye) && /* @__PURE__ */ m("div", { className: "flex items-center gap-1", children: [
-              /* @__PURE__ */ o(
-                "button",
-                {
-                  onClick: () => Qe(E - 1),
-                  disabled: !he,
-                  className: "text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 disabled:cursor-not-allowed px-1",
-                  "aria-label": "Previous page",
-                  children: "‹"
-                }
-              ),
-              /* @__PURE__ */ m("span", { className: "tabular-nums text-zinc-400", children: [
-                "Page ",
-                E
-              ] }),
-              /* @__PURE__ */ o(
-                "button",
-                {
-                  onClick: () => Qe(E + 1),
-                  disabled: !ye,
-                  className: "text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 disabled:cursor-not-allowed px-1",
-                  "aria-label": "Next page",
-                  children: "›"
-                }
-              )
-            ] })
-          ] })
-        ] }),
-        /* @__PURE__ */ m("div", { className: "flex-1 overflow-auto relative min-h-0", children: [
-          O && /* @__PURE__ */ o("div", { className: "absolute inset-0 z-10 flex items-center justify-center border-2 border-dashed border-sky-500 bg-zinc-900/80 pointer-events-none", children: /* @__PURE__ */ o("div", { className: "text-sky-300 text-sm", children: "Drop files to upload" }) }),
-          pe.length === 0 ? /* @__PURE__ */ o(D, { children: te ? "No files match your search." : "This folder is empty. Drop files to upload." }) : T === "gallery" ? /* @__PURE__ */ o(
-            fu,
-            {
-              entries: pe,
-              onClick: J,
-              mediaUrlFor: (N) => N.name ? (l ?? "") + Pn(Pe, $, C(N)) : ""
-            }
-          ) : /* @__PURE__ */ m("table", { className: "w-full text-xs", children: [
-            /* @__PURE__ */ o("thead", { className: "sticky top-0 bg-zinc-900 z-[1]", children: /* @__PURE__ */ m("tr", { className: "text-zinc-400 border-b border-zinc-800", children: [
-              /* @__PURE__ */ o("th", { className: "text-left px-3 py-2 w-8" }),
-              /* @__PURE__ */ o("th", { className: "text-left px-3 py-2", children: "Name" }),
-              /* @__PURE__ */ o("th", { className: "text-right px-3 py-2 w-24", children: "Size" }),
-              /* @__PURE__ */ o("th", { className: "text-left px-3 py-2 w-40", children: "Type" }),
-              /* @__PURE__ */ o("th", { className: "text-left px-3 py-2 w-36", children: "Modified" })
-            ] }) }),
-            /* @__PURE__ */ o("tbody", { children: pe.map((N, F) => /* @__PURE__ */ m(
-              "tr",
-              {
-                onDoubleClick: () => J(N),
-                className: "border-b border-zinc-800/40 hover:bg-zinc-800/40 cursor-pointer select-none",
-                children: [
-                  /* @__PURE__ */ o("td", { className: "px-3 py-1.5 select-none", children: Ke(N) ? "📁" : "📄" }),
-                  /* @__PURE__ */ o("td", { className: "px-3 py-1.5 text-zinc-100 truncate", children: N.name }),
-                  /* @__PURE__ */ o("td", { className: "px-3 py-1.5 text-right text-zinc-400", children: Ke(N) ? "—" : Sr(N.size_bytes ?? 0) }),
-                  /* @__PURE__ */ o("td", { className: "px-3 py-1.5 text-zinc-500 truncate", children: N.content_type ?? "" }),
-                  /* @__PURE__ */ o("td", { className: "px-3 py-1.5 text-zinc-500 truncate", children: N.modified_at ?? "" })
-                ]
-              },
-              `${N.kind ?? ""}:${N.name ?? F}`
-            )) })
-          ] }),
-          G && /* @__PURE__ */ o("div", { className: "absolute bottom-2 right-2 bg-zinc-800 border border-zinc-700 text-zinc-200 px-3 py-1.5 rounded text-xs shadow-lg", children: "Uploading…" })
-        ] }),
-        X && /* @__PURE__ */ o(
-          mu,
-          {
-            entry: X,
-            mediaUrl: (l ?? "") + Pn(Pe, $, C(X)),
-            autoAdvanceQueue: Zc(pe),
-            navigableQueue: Qc(pe),
-            onSelect: (N) => Y(N),
-            onClose: () => Y(null),
-            onDownload: () => {
-              ue(X);
-            }
-          }
-        ),
-        P && /* @__PURE__ */ o(
-          "div",
-          {
-            className: "absolute inset-0 z-20 flex items-center justify-center bg-black/60",
-            onClick: () => {
-              _ || K(!1);
-            },
-            children: /* @__PURE__ */ m(
-              "div",
-              {
-                className: "flex flex-col gap-3 bg-zinc-900 border border-zinc-700 rounded-lg p-5 shadow-2xl w-full max-w-md",
-                onClick: (N) => N.stopPropagation(),
-                children: [
-                  /* @__PURE__ */ m("div", { className: "flex items-center justify-between", children: [
-                    /* @__PURE__ */ m("h2", { className: "text-sm font-medium text-zinc-100", children: [
-                      "Upload to ",
-                      $
-                    ] }),
-                    /* @__PURE__ */ o(
-                      "button",
-                      {
-                        onClick: () => {
-                          _ || K(!1);
-                        },
-                        className: "text-zinc-500 hover:text-zinc-200",
-                        "aria-label": "Close",
-                        children: "✕"
-                      }
-                    )
-                  ] }),
-                  A && /* @__PURE__ */ m("div", { className: "flex gap-1 text-xs", children: [
-                    /* @__PURE__ */ o(
-                      "button",
-                      {
-                        onClick: () => z("url"),
-                        className: `px-3 py-1 rounded border ${q === "url" ? "border-sky-500 text-sky-300 bg-sky-500/10" : "border-zinc-700 text-zinc-400 hover:text-zinc-200"}`,
-                        children: "From URL"
-                      }
-                    ),
-                    /* @__PURE__ */ o(
-                      "button",
-                      {
-                        onClick: () => z("file"),
-                        className: `px-3 py-1 rounded border ${q === "file" ? "border-sky-500 text-sky-300 bg-sky-500/10" : "border-zinc-700 text-zinc-400 hover:text-zinc-200"}`,
-                        children: "Local file"
-                      }
-                    )
-                  ] }),
-                  /* @__PURE__ */ m("label", { className: "flex flex-col gap-1 text-xs text-zinc-400", children: [
-                    "Folder (repo)",
-                    /* @__PURE__ */ o(
-                      "input",
-                      {
-                        type: "text",
-                        value: H,
-                        onChange: (N) => ee(N.target.value),
-                        placeholder: "e.g. year=2026/name=avatar",
-                        className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
-                      }
-                    ),
-                    /* @__PURE__ */ o("span", { className: "text-zinc-600", children: "The repository partition. Becomes a source key." })
-                  ] }),
-                  /* @__PURE__ */ m("label", { className: "flex flex-col gap-1 text-xs text-zinc-400", children: [
-                    "Filename ",
-                    q === "file" && "(optional — defaults to the file’s name)",
-                    /* @__PURE__ */ o(
-                      "input",
-                      {
-                        type: "text",
-                        value: Q,
-                        onChange: (N) => oe(N.target.value),
-                        placeholder: "e.g. avatar.mp4",
-                        className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
-                      }
-                    ),
-                    /* @__PURE__ */ o("span", { className: "text-zinc-600", children: "Location inside the repo (may include subfolders)." })
-                  ] }),
-                  q === "url" ? /* @__PURE__ */ m(ft, { children: [
-                    /* @__PURE__ */ m("label", { className: "flex flex-col gap-1 text-xs text-zinc-400", children: [
-                      "Media URL",
-                      /* @__PURE__ */ o(
-                        "input",
-                        {
-                          type: "url",
-                          value: y,
-                          onChange: (N) => k(N.target.value),
-                          placeholder: "https://example.com/media.mp4 or https://example.com/playlist.m3u8",
-                          className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
-                        }
-                      ),
-                      /* @__PURE__ */ o("span", { className: "text-zinc-600", children: "HTTP(S) media URL or raw HLS playlist. Fetched server-side." })
-                    ] }),
-                    /* @__PURE__ */ o(
-                      "button",
-                      {
-                        onClick: () => {
-                          et();
-                        },
-                        disabled: _,
-                        className: "self-end px-3 py-1.5 rounded bg-sky-600 hover:bg-sky-500 disabled:bg-zinc-700 text-white text-sm",
-                        children: _ ? "Starting…" : "Fetch & store"
-                      }
-                    )
-                  ] }) : /* @__PURE__ */ m(ft, { children: [
-                    /* @__PURE__ */ o(
-                      "input",
-                      {
-                        type: "file",
-                        onChange: (N) => {
-                          const F = N.target.files?.[0];
-                          F && S(F);
-                        },
-                        disabled: _,
-                        className: "text-xs text-zinc-300 file:mr-3 file:rounded file:border-0 file:bg-sky-600 file:px-3 file:py-1.5 file:text-white hover:file:bg-sky-500"
-                      }
-                    ),
-                    _ && /* @__PURE__ */ o("span", { className: "self-end text-xs text-zinc-400", children: "Uploading…" })
-                  ] })
-                ]
-              }
-            )
-          }
-        )
-      ]
-    }
-  );
-}
-function fu({
-  entries: e,
-  onClick: t,
-  mediaUrlFor: n
-}) {
-  return /* @__PURE__ */ o("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 p-3", children: e.map((r, s) => {
-    const i = Ze(r.content_type, r.name), l = i === "image" || i === "heic", a = Ke(r);
-    return /* @__PURE__ */ m(
-      "button",
-      {
-        onDoubleClick: () => t(r),
-        className: "flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left select-none",
-        children: [
-          /* @__PURE__ */ o("div", { className: "w-full aspect-square bg-zinc-950 rounded flex items-center justify-center overflow-hidden", children: a ? /* @__PURE__ */ o("span", { className: "text-4xl select-none", children: "📁" }) : l && r.name ? /* @__PURE__ */ o(
-            "img",
-            {
-              src: n(r),
-              alt: r.name ?? "",
-              loading: "lazy",
-              decoding: "async",
-              className: "w-full h-full object-cover"
-            }
-          ) : /* @__PURE__ */ o("span", { className: "text-4xl select-none", children: "📄" }) }),
-          /* @__PURE__ */ o("span", { className: "w-full text-xs text-zinc-200 truncate", title: r.name, children: r.name })
-        ]
-      },
-      `${r.kind ?? ""}:${r.name ?? s}`
-    );
-  }) });
-}
-function mu({
-  entry: e,
-  mediaUrl: t,
-  autoAdvanceQueue: n,
-  navigableQueue: r,
-  onSelect: s,
-  onClose: i,
-  onDownload: l
-}) {
-  const a = Ze(e.content_type, e.name), u = a === "text" || a === "json" || a === "yaml" || a === "csv" || a === "markdown", [c, d] = v(
-    a === "image" || a === "video" || a === "pdf" || a === "heic" || a === "mkv" || u
-  ), [f, h] = v(!1), [p, g] = v(null), [b, w] = v(null), [A, $] = v("Loading…"), [j, E] = v(null), [x, T] = v(null), [O, I] = v(null), G = r.length > 1, Z = r.findIndex((y) => y.name === e.name), [X, Y] = v(!1), [P, K] = v(!0), q = () => {
-    const y = Ln(r, e.name, X, P);
-    y && s(y);
-  }, z = () => {
-    const y = eu(r, e.name, P);
-    y && s(y);
-  }, H = () => {
-    const y = Ln(n, e.name, X, P);
-    y && s(y);
-  };
-  R(() => {
-    const y = (k) => {
-      const _ = k.target;
-      if (!(_ && (_.tagName === "INPUT" || _.tagName === "TEXTAREA" || _.isContentEditable))) {
-        if (k.key === "ArrowRight")
-          k.preventDefault(), q();
-        else if (k.key === "ArrowLeft")
-          k.preventDefault(), z();
-        else if (k.key === " ") {
-          const M = document.querySelector("video, audio");
-          M && (k.preventDefault(), M.paused ? M.play() : M.pause());
-        }
-      }
-    };
-    return window.addEventListener("keydown", y), () => window.removeEventListener("keydown", y);
-  }, [e.name, r.length, X, P]);
-  const ee = () => d(!1), Q = () => {
-    d(!1), h(!0), g(null);
-  }, oe = (y) => {
-    y.target === y.currentTarget && i();
-  };
-  return R(() => {
-    if (a !== "heic" && a !== "mkv") return;
-    let y = !1, k = null;
-    return (async () => {
-      try {
-        let _;
-        if (a === "heic") {
-          $("Decoding HEIC…");
-          const M = await fetch(t);
-          if (!M.ok) throw new Error(`fetch failed: ${M.status}`);
-          _ = await au(await M.blob());
-        } else
-          _ = await cu(t, (M) => {
-            y || $(M);
-          });
-        if (y) return;
-        k = URL.createObjectURL(_), w(k), d(!1);
-      } catch (_) {
-        if (y) return;
-        g(je(_)), h(!0), d(!1);
-      }
-    })(), () => {
-      y = !0, k && URL.revokeObjectURL(k);
-    };
-  }, [a, t]), R(() => {
-    if (!u) return;
-    let y = !1;
-    return (async () => {
-      try {
-        const k = await ru(t);
-        if (y) return;
-        a === "csv" ? T(ou(k)) : a === "json" ? E(su(k)) : a === "markdown" ? I(await iu(k)) : E(k), d(!1);
-      } catch (k) {
-        if (y) return;
-        g(je(k)), h(!0), d(!1);
-      }
-    })(), () => {
-      y = !0;
-    };
-  }, [a, u, t]), /* @__PURE__ */ m(
-    "div",
-    {
-      className: "fixed inset-0 z-50 flex flex-col bg-zinc-950/95",
-      onClick: oe,
-      children: [
-        /* @__PURE__ */ m("div", { className: "flex items-center gap-3 px-4 py-2 text-zinc-200 border-b border-zinc-800 bg-zinc-900", children: [
-          /* @__PURE__ */ o("span", { className: "text-sm font-medium truncate flex-1", children: e.name }),
-          /* @__PURE__ */ o("span", { className: "text-xs text-zinc-500 truncate max-w-[200px]", children: e.content_type }),
-          typeof e.size_bytes == "number" && /* @__PURE__ */ o("span", { className: "text-xs text-zinc-600 tabular-nums", children: Sr(e.size_bytes) }),
-          G && /* @__PURE__ */ m("div", { className: "flex items-center gap-2 text-zinc-400 text-sm border-l border-zinc-700 pl-3 ml-2", children: [
-            /* @__PURE__ */ o(
-              "button",
-              {
-                onClick: z,
-                className: "hover:text-zinc-100 leading-none px-1",
-                "aria-label": "Previous (←)",
-                title: "Previous (←)",
-                children: "⏮"
-              }
-            ),
-            /* @__PURE__ */ o(
-              "button",
-              {
-                onClick: q,
-                className: "hover:text-zinc-100 leading-none px-1",
-                "aria-label": "Next (→)",
-                title: "Next (→)",
-                children: "⏭"
-              }
-            ),
-            /* @__PURE__ */ o(
-              "button",
-              {
-                onClick: () => Y((y) => !y),
-                className: `px-1 leading-none ${X ? "text-sky-400" : "hover:text-zinc-100"}`,
-                "aria-label": "Toggle shuffle",
-                title: X ? "Shuffle on" : "Shuffle off",
-                children: "🔀"
-              }
-            ),
-            /* @__PURE__ */ o(
-              "button",
-              {
-                onClick: () => K((y) => !y),
-                className: `px-1 leading-none ${P ? "text-sky-400" : "hover:text-zinc-100"}`,
-                "aria-label": "Toggle repeat",
-                title: P ? "Repeat on" : "Repeat off",
-                children: "🔁"
-              }
-            ),
-            /* @__PURE__ */ m("span", { className: "text-xs text-zinc-500 tabular-nums", children: [
-              Z >= 0 ? Z + 1 : "–",
-              " / ",
-              r.length
-            ] })
-          ] }),
-          /* @__PURE__ */ o(
-            "button",
-            {
-              onClick: l,
-              className: "text-xs text-sky-400 hover:underline",
-              children: "Download"
-            }
-          ),
-          /* @__PURE__ */ o(
-            "button",
-            {
-              onClick: i,
-              className: "text-zinc-400 hover:text-zinc-100 text-lg leading-none",
-              "aria-label": "Close preview",
-              children: "×"
-            }
-          )
-        ] }),
-        /* @__PURE__ */ m(
-          "div",
-          {
-            className: "flex-1 flex items-center justify-center overflow-auto px-4 pt-4 pb-24 relative",
-            onClick: oe,
-            children: [
-              c && !f && /* @__PURE__ */ o("div", { className: "absolute inset-0 flex items-center justify-center pointer-events-none", children: /* @__PURE__ */ o("div", { className: "text-zinc-500 text-xs uppercase tracking-wider", children: A }) }),
-              f && /* @__PURE__ */ m("div", { className: "flex flex-col items-center gap-3 text-zinc-300 text-sm max-w-md text-center", children: [
-                /* @__PURE__ */ o("span", { className: "text-zinc-500", children: "⚠ Preview couldn't load." }),
-                p && /* @__PURE__ */ o("span", { className: "text-zinc-600 text-xs font-mono break-words", children: p }),
-                /* @__PURE__ */ o("button", { onClick: l, className: "text-sky-400 hover:underline text-xs", children: "Download instead" })
-              ] }),
-              !f && a === "video" && /* @__PURE__ */ o(
-                "video",
-                {
-                  src: t,
-                  controls: !0,
-                  autoPlay: !0,
-                  playsInline: !0,
-                  preload: "metadata",
-                  onLoadedMetadata: ee,
-                  onEnded: H,
-                  onError: Q,
-                  className: "max-h-full max-w-full bg-black rounded shadow-2xl"
-                }
-              ),
-              !f && a === "audio" && /* @__PURE__ */ m("div", { className: "flex flex-col items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-lg p-6 shadow-2xl w-full max-w-md", children: [
-                /* @__PURE__ */ o("div", { className: "text-3xl select-none", "aria-hidden": "true", children: "♪" }),
-                /* @__PURE__ */ o("div", { className: "text-sm text-zinc-200 truncate max-w-full", title: e.name, children: e.name }),
-                /* @__PURE__ */ o(
-                  "audio",
-                  {
-                    src: t,
-                    controls: !0,
-                    autoPlay: !0,
-                    preload: "metadata",
-                    onEnded: H,
-                    onError: Q,
-                    className: "w-full"
-                  }
-                )
-              ] }),
-              !f && a === "image" && /* @__PURE__ */ o(
-                "img",
-                {
-                  src: t,
-                  alt: e.name ?? "",
-                  decoding: "async",
-                  onLoad: ee,
-                  onError: Q,
-                  className: "max-h-full max-w-full object-contain rounded shadow-2xl"
-                }
-              ),
-              !f && a === "pdf" && // iframe is more reliably rendered than <embed> across browsers
-              // (some refuse <embed> for security reasons; iframe with a
-              // direct PDF src gets the native viewer with toolbar/scrub).
-              /* @__PURE__ */ o(
-                "iframe",
-                {
-                  src: t,
-                  title: e.name ?? "PDF preview",
-                  onLoad: ee,
-                  className: "w-full h-full bg-white rounded shadow-2xl border-0"
-                }
-              ),
-              !f && a === "heic" && b && /* @__PURE__ */ o(
-                "img",
-                {
-                  src: b,
-                  alt: e.name ?? "",
-                  decoding: "async",
-                  onError: Q,
-                  className: "max-h-full max-w-full object-contain rounded shadow-2xl"
-                }
-              ),
-              !f && a === "mkv" && b && /* @__PURE__ */ o(
-                "video",
-                {
-                  src: b,
-                  controls: !0,
-                  autoPlay: !0,
-                  playsInline: !0,
-                  preload: "metadata",
-                  onLoadedMetadata: ee,
-                  onEnded: H,
-                  onError: Q,
-                  className: "max-h-full max-w-full bg-black rounded shadow-2xl"
-                }
-              ),
-              !f && (a === "text" || a === "json" || a === "yaml") && j !== null && /* @__PURE__ */ o("pre", { className: "w-full h-full overflow-auto bg-zinc-900 text-zinc-100 text-xs font-mono p-4 rounded shadow-2xl whitespace-pre-wrap break-words", children: j }),
-              !f && a === "markdown" && O !== null && /* @__PURE__ */ o(
-                "div",
-                {
-                  className: "w-full h-full overflow-auto bg-white text-zinc-900 text-sm p-6 rounded shadow-2xl prose prose-zinc max-w-none",
-                  dangerouslySetInnerHTML: { __html: O }
-                }
-              ),
-              !f && a === "csv" && x !== null && /* @__PURE__ */ o("div", { className: "w-full h-full overflow-auto bg-zinc-900 text-zinc-100 text-xs p-4 rounded shadow-2xl", children: /* @__PURE__ */ m("table", { className: "border-collapse", children: [
-                x.length > 0 && /* @__PURE__ */ o("thead", { children: /* @__PURE__ */ o("tr", { children: x[0].map((y, k) => /* @__PURE__ */ o("th", { className: "border border-zinc-700 px-2 py-1 text-left font-semibold sticky top-0 bg-zinc-800", children: y }, k)) }) }),
-                /* @__PURE__ */ o("tbody", { children: x.slice(1).map((y, k) => /* @__PURE__ */ o("tr", { children: y.map((_, M) => /* @__PURE__ */ o("td", { className: "border border-zinc-800 px-2 py-1 align-top", children: _ }, M)) }, k)) })
-              ] }) }),
-              a === null && !f && /* @__PURE__ */ m("div", { className: "flex flex-col items-center gap-3 text-zinc-300 text-sm", children: [
-                /* @__PURE__ */ m("span", { className: "text-zinc-500", children: [
-                  "No inline preview for ",
-                  e.content_type ?? "this file type",
-                  "."
-                ] }),
-                /* @__PURE__ */ o("button", { onClick: l, className: "text-sky-400 hover:underline text-xs", children: "Download instead" })
-              ] })
-            ]
-          }
-        )
-      ]
-    }
-  );
-}
-const pu = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  FileBrowser: du
-}, Symbol.toStringTag, { value: "Module" }));
-function _u({ view: e, filenameBase: t, onExport: n, variant: r = "button" }) {
-  const [s, i] = v(!1), [l, a] = v(null), u = U(null);
-  R(() => {
-    if (!s) return;
-    const p = (g) => {
-      u.current && !u.current.contains(g.target) && i(!1);
-    };
-    return document.addEventListener("mousedown", p), () => document.removeEventListener("mousedown", p);
-  }, [s]);
-  const c = lr(e), d = c === 0, f = async (p) => {
-    a(p);
-    let g = !1;
-    try {
-      g = await ar(e, p, t);
-    } catch {
-      g = !1;
-    } finally {
-      a(null), i(!1), n?.(p, g);
-    }
-  }, h = r === "row" ? /* @__PURE__ */ o(
-    "button",
-    {
-      onClick: () => i((p) => !p),
-      disabled: d,
-      className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 disabled:opacity-40",
-      children: "Export…"
-    }
-  ) : /* @__PURE__ */ o(
-    "button",
-    {
-      onClick: () => i((p) => !p),
-      disabled: d,
-      title: d ? "No data to export" : `Export ${c.toLocaleString()} rows`,
-      className: "text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800 shrink-0 disabled:opacity-40",
-      "aria-label": "Export data",
-      children: "↓ Export"
-    }
-  );
-  return /* @__PURE__ */ m("div", { className: "relative", ref: u, children: [
-    h,
-    s && !d && /* @__PURE__ */ m("div", { className: "absolute right-0 top-full mt-1 bg-zinc-900 border border-zinc-700 rounded shadow-lg py-1 z-30 min-w-[140px]", children: [
-      /* @__PURE__ */ m("div", { className: "px-3 py-1 text-[10px] uppercase tracking-wider text-zinc-600", children: [
-        c.toLocaleString(),
-        " rows"
-      ] }),
-      or.map((p) => /* @__PURE__ */ m(
-        "button",
-        {
-          onClick: () => f(p.key),
-          disabled: l != null,
-          className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 disabled:opacity-50 flex items-center justify-between",
-          children: [
-            /* @__PURE__ */ o("span", { children: p.label }),
-            l === p.key && /* @__PURE__ */ o("span", { className: "text-zinc-500", children: "…" })
-          ]
-        },
-        p.key
-      ))
-    ] })
-  ] });
-}
-function hu(e) {
-  if (!e.widget) return null;
-  const t = e.widget, n = {
-    id: "embed",
-    component: t.component,
-    span: 12,
-    title: e.title,
-    source: t.sourceId ? { source_id: t.sourceId, stream: t.stream, refreshIntervalMs: t.refreshIntervalMs } : t.url ? { url: t.url, stream: t.stream, refreshIntervalMs: t.refreshIntervalMs } : void 0
-  };
-  return {
-    title: e.title,
-    columns: 12,
-    context: Object.keys(e.ctx).length > 0 ? { values: e.ctx } : void 0,
-    widgets: [n]
-  };
-}
-function Tu({
-  config: e,
-  onEvent: t,
-  theme: n = "dark",
-  templateTrust: r,
-  templateTrustPolicy: s
-}) {
-  const [i, l] = v({});
-  R(() => {
-    if (!e.templateUrl) return;
-    let c = !1;
-    return l({}), fetch(e.templateUrl).then((d) => {
-      if (!d.ok) throw new Error(`Template fetch failed: ${d.status}`);
-      return d.json();
-    }).then((d) => {
-      if (c) return;
-      const f = Object.keys(e.ctx).length > 0 ? {
-        ...d,
-        context: {
-          values: { ...d.context?.values ?? {}, ...e.ctx }
-        }
-      } : d;
-      l({ template: f });
-    }).catch((d) => {
-      c || l({ error: d instanceof Error ? d.message : "Template load error" });
-    }), () => {
-      c = !0;
-    };
-  }, [e.templateUrl, e.ctx]);
-  const a = L(() => hu(e), [e]), u = e.templateUrl ? i.template : a;
-  return e.templateUrl && i.error ? /* @__PURE__ */ o(Rt, { title: "Embed error", body: i.error, theme: n }) : e.templateUrl && !u ? /* @__PURE__ */ o(Rt, { title: "Loading…", body: "Fetching dashboard template", theme: n }) : u ? /* @__PURE__ */ o("div", { className: `mtc-root mtc-theme-${n}`, "data-theme": n, children: /* @__PURE__ */ o("div", { className: "min-h-screen bg-zinc-950", children: /* @__PURE__ */ o(
-    pr,
-    {
-      template: u,
-      backendUrl: e.backendUrl,
-      chrome: e.chrome === "full" ? "full" : "minimal",
-      onEvent: t,
-      theme: n,
-      templateTrust: r,
-      templateTrustPolicy: s
-    }
-  ) }) }) : /* @__PURE__ */ o(
-    Rt,
-    {
-      title: "Nothing to embed",
-      body: "Pass a ?template= URL, or a ?src= source id (with &backend=), or a ?url= data URL.",
-      theme: n
-    }
-  );
-}
-function Rt({ title: e, body: t, theme: n }) {
-  return /* @__PURE__ */ o("div", { className: `mtc-root mtc-theme-${n}`, "data-theme": n, children: /* @__PURE__ */ o("div", { className: "min-h-screen bg-zinc-950 flex items-center justify-center p-6", children: /* @__PURE__ */ m("div", { className: "text-center max-w-md", children: [
-    /* @__PURE__ */ o("div", { className: "text-sm font-medium text-zinc-200 mb-1", children: e }),
-    /* @__PURE__ */ o("div", { className: "text-xs text-zinc-500", children: t })
-  ] }) }) });
-}
-function bu(e) {
-  return e === "1" || e === "true" || e === "yes";
-}
-function $u(e) {
-  const t = new URLSearchParams(e.startsWith("?") ? e.slice(1) : e), n = {};
-  for (const [c, d] of t.entries())
-    if (c.startsWith("ctx.")) {
-      const f = c.slice(4);
-      f && (n[f] = d);
-    }
-  const r = t.get("chrome") === "full" ? "full" : "none", s = t.get("title") ?? void 0, i = t.get("backend") ?? void 0, l = t.get("template") ?? void 0;
-  if (l)
-    return { templateUrl: l, title: s, backendUrl: i, ctx: n, chrome: r };
-  const a = t.get("src") ?? void 0, u = t.get("url") ?? void 0;
-  if (a || u) {
-    const c = t.get("refreshMs"), d = c != null ? Number(c) : NaN;
-    return {
-      widget: {
-        component: t.get("component") ?? "table",
-        sourceId: a,
-        url: u,
-        stream: bu(t.get("stream")),
-        refreshIntervalMs: Number.isFinite(d) && d > 0 ? d : void 0
-      },
-      title: s,
-      backendUrl: i,
-      ctx: n,
-      chrome: r
-    };
-  }
-  return { title: s, backendUrl: i, ctx: n, chrome: r };
-}
-function Cu(e, t) {
-  const n = new URLSearchParams();
-  t.templateUrl && n.set("template", t.templateUrl), t.widget && (t.widget.component && n.set("component", t.widget.component), t.widget.sourceId && n.set("src", t.widget.sourceId), t.widget.url && n.set("url", t.widget.url), t.widget.stream && n.set("stream", "1"), t.widget.refreshIntervalMs && n.set("refreshMs", String(t.widget.refreshIntervalMs))), t.title && n.set("title", t.title), t.backendUrl && n.set("backend", t.backendUrl), t.chrome === "full" && n.set("chrome", "full");
-  for (const [s, i] of Object.entries(t.ctx ?? {})) n.set(`ctx.${s}`, i);
-  const r = n.toString();
-  return r ? `${e}?${r}` : e;
-}
-const Dn = "medallion.terminal.v1.TerminalService";
-function gu(e) {
-  switch (e) {
-    case 2:
-    case "PARAM_TYPE_NUMBER":
-      return "number";
-    case 3:
-    case "PARAM_TYPE_BOOLEAN":
-      return "boolean";
-    case 4:
-    case "PARAM_TYPE_TIMESTAMP":
-      return "timestamp";
-    case 7:
-    case "PARAM_TYPE_INTEGER":
-      return "integer";
-    case 8:
-    case "PARAM_TYPE_DATE":
-      return "timestamp";
-    default:
-      return "string";
-  }
-}
-function xu(e) {
-  const t = (r, s = !1) => ({ name: r, type: "string", isTime: s }), n = (r) => ({ name: r, type: "number" });
-  switch (e) {
-    case 1:
-    case "SHAPE_TIMESERIES":
-      return [t("timestamp", !0), n("value")];
-    case 2:
-    case "SHAPE_CANDLES":
-      return [t("timestamp", !0), n("open"), n("high"), n("low"), n("close"), n("volume")];
-    case 4:
-    case "SHAPE_METRIC":
-      return [n("value"), n("delta"), t("unit"), t("label")];
-    case 5:
-    case "SHAPE_GAUGE":
-      return [n("value"), n("min"), n("max")];
-    case 6:
-    case "SHAPE_HEATMAP":
-      return [t("row"), t("col"), n("value"), t("label")];
-    case 7:
-    case "SHAPE_EVENTS":
-      return [t("timestamp", !0), t("label"), t("status")];
-    case 8:
-    case "SHAPE_DISTRIBUTION":
-      return [t("label"), n("value")];
-    case 9:
-    case "SHAPE_TEXT":
-      return [t("title"), t("body"), t("source"), t("date", !0)];
-    case 10:
-    case "SHAPE_ORDERBOOK":
-      return [t("side"), n("price"), n("size")];
-    // SHAPE_TABLE / SHAPE_PAIRED_GRID / unspecified: columns are
-    // data-defined; leave empty so the connector infers from a sample.
-    default:
-      return [];
-  }
-}
-function Eu(e, t) {
-  const n = t.protocol ?? "connect", r = t.endpoint.replace(/\/$/, ""), s = e.map((l) => ({
-    id: l.id,
-    name: l.name ?? l.id,
-    description: l.description,
-    shape: l.shape,
-    streamable: l.streamable,
-    columns: xu(l.shape),
-    params: (l.params ?? []).map((a) => ({
-      key: a.key,
-      required: a.required ?? !1,
-      type: gu(a.type),
-      defaultValue: a.default_value,
-      enumValues: a.enum_values,
-      description: a.description
-    })),
-    tags: l.tags
-  })), i = {
-    version: 1,
-    name: t.name,
-    protocol: n,
-    endpoint: r,
-    auth: t.auth ?? { kind: "none" },
-    tables: s
-  };
-  return n === "connect" && (i.service = Dn, i.getUrl = `${r}/${Dn}/Get`), i;
-}
-function Ou(e) {
-  return JSON.stringify(e, null, 2);
-}
-function Mu(e) {
-  const t = [
-    { label: "Protocol", value: e.protocol === "connect" ? "ConnectRPC (HTTP/JSON)" : "SQL gateway" },
-    { label: "Endpoint", value: e.endpoint }
-  ];
-  return e.protocol === "connect" && e.getUrl && (t.push({ label: "Get RPC URL", value: e.getUrl }), t.push({ label: "Method", value: "POST" }), t.push({ label: "Content-Type", value: "application/json" }), t.push({
-    label: "Request body",
-    value: '{ "source_id": "<table id>", "params": { ... } }'
-  })), e.auth && e.auth.kind !== "none" && t.push({
-    label: "Auth",
-    value: e.auth.kind === "bearer" ? "Authorization: Bearer <token>" : `${e.auth.headerName ?? "X-Api-Key"}: <token>`
-  }), t.push({ label: "Tables", value: String(e.tables.length) }), t;
-}
-export {
-  Cc as ActionLog,
-  Mc as AlertLog,
-  Ka as AreaChart,
-  sn as BUILTIN_COMPONENTS,
-  Nu as BUILTIN_KEYS,
-  ra as BarChart,
-  tc as Boxplot,
-  _i as Candlestick,
-  Nl as Catalog,
-  ma as Clock,
-  uo as CommandPalette,
-  fr as DEFAULT_IFRAME_SANDBOX,
-  wo as DEFAULT_IFRAME_SANDBOX_DISALLOWED_TOKENS,
-  vo as DEFAULT_SENSITIVE_TEMPLATE_HEADERS,
-  Me as DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
-  fc as Dag,
-  pr as Dashboard,
-  qn as DashboardContext,
-  Li as DataTable,
-  il as Distribution,
-  Fs as EXTENSION,
-  Tu as EmbedView,
-  D as Empty,
-  gs as ErrorBoundary,
-  Yt as ErrorState,
-  xl as Events,
-  _u as ExportMenu,
-  du as FileBrowser,
-  nl as Gauge,
-  fl as Heatmap,
-  Ra as Histogram,
-  ur as HoverContext,
-  Zs as HoverProvider,
-  Ta as Iframe,
-  za as Image,
-  yc as Json,
-  nn as MIME,
-  Wi as Metric,
-  zu as MultiDashboard,
-  gc as MultiSelect,
-  Xn as NowContext,
-  zs as NowProvider,
-  zl as OrderBook,
-  de as PALETTE,
-  $l as PairedGrid,
-  hs as Placeholder,
-  el as Prompt,
-  ac as Radar,
-  Ce as SEMANTIC,
-  aa as Scatter,
-  Pa as Section,
-  Ya as Select,
-  po as ShortcutsOverlay,
-  Xt as Skeleton,
-  Va as Slider,
-  kc as Sparkline,
-  Xl as StatStrip,
-  Fc as Tape,
-  Yi as Text,
-  Bl as Ticker,
-  yi as Timeseries,
-  Pl as Trade,
-  va as Treemap,
-  Wl as VolumeProfile,
-  cr as WidgetShell,
-  br as abbreviateAxis,
-  Qs as applyActions,
-  Vn as buildActionRequest,
-  ks as buildActionWatchRequest,
-  Eu as buildBiDescriptor,
-  Cu as buildEmbedUrl,
-  vs as buildGenerateRequest,
-  ys as buildGenerateUrl,
-  Lo as buildSnapshot,
-  Gn as buildSubmitActionUrl,
-  ws as buildWatchActionUrl,
-  Ts as canParsePredicate,
-  Mu as connectionFields,
-  rn as csvEscape,
-  oo as deleteView,
-  Ou as descriptorToJson,
-  ar as downloadView,
-  _s as evaluateAlert,
-  Vs as exportFilename,
-  Gs as exportView,
-  Ds as flatten,
-  mi as formatBps,
-  Ge as formatCompact,
-  fi as formatCurrency,
-  di as formatPercent,
-  gr as formatStat,
-  Ie as formatTimestamp,
-  Wn as getNested,
-  bs as getWidget,
-  Be as interpolate,
-  Io as isStaticTemplate,
-  dt as isTerminalStatus,
-  so as listViews,
-  ro as loadView,
-  Jn as newClientRequestId,
-  $u as parseEmbedConfig,
-  eo as readCtxFromUrl,
-  Su as registerWidget,
-  pi as resolveColor,
-  Ss as resolveSource,
-  no as saveView,
-  qs as serializeText,
-  Us as toCsv,
-  Bs as toJson,
-  Ks as toNdjson,
-  Ws as toParquet,
-  kr as useAnimatedNumber,
-  Qr as useBreakpoint,
-  ae as useDashboard,
-  os as useDataSource,
-  dr as useHover,
-  gt as useNow,
-  Au as useTabFromUrl,
-  Ll as useWatchAction,
-  yo as validateTemplate,
-  No as validateTemplateTrust,
-  lr as viewRowCount,
-  an as widgetSnapshotKey,
-  to as writeCtxToUrl
+//#endregion
+//#region src/widgets/AlertLog.tsx
+var Jc = /* @__PURE__ */ X({ AlertLog: () => Zc }), Yc = {
+	error: {
+		dot: "bg-red-400",
+		text: "text-red-300"
+	},
+	warn: {
+		dot: "bg-amber-400",
+		text: "text-amber-300"
+	},
+	ok: {
+		dot: "bg-emerald-400",
+		text: "text-emerald-300"
+	},
+	info: {
+		dot: "bg-sky-400",
+		text: "text-sky-300"
+	}
 };
+function Xc(e, t) {
+	let n = Math.floor((e - t) / 1e3);
+	if (n < 5) return "now";
+	if (n < 60) return `${n}s`;
+	let r = Math.floor(n / 60);
+	return r < 60 ? `${r}m` : `${Math.floor(r / 60)}h`;
+}
+function Zc({ options: e }) {
+	let { recentAlerts: t, clearRecentAlerts: n } = a(), r = e?.limit || 50, o = _(t.length > 0), s = t.slice(0, r);
+	return s.length === 0 ? /* @__PURE__ */ J(i, { children: "No alerts" }) : /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col text-xs font-mono",
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex items-center justify-between px-2 py-1 border-b border-zinc-800 shrink-0",
+			children: [/* @__PURE__ */ Y("span", {
+				className: "text-[10px] uppercase tracking-wider text-zinc-500",
+				children: [
+					t.length,
+					" alert",
+					t.length === 1 ? "" : "s"
+				]
+			}), /* @__PURE__ */ J("button", {
+				onClick: n,
+				className: "text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-1.5 py-0.5 rounded",
+				title: "Clear log",
+				children: "Clear"
+			})]
+		}), /* @__PURE__ */ J("div", {
+			className: "flex-1 overflow-auto min-h-0",
+			children: s.map((e, t) => {
+				let n = Yc[e.severity] ?? Yc.warn;
+				return /* @__PURE__ */ Y("div", {
+					className: "flex items-baseline gap-2 px-2 py-1 border-b border-zinc-800/60 hover:bg-zinc-800/30",
+					title: e.predicate,
+					children: [
+						/* @__PURE__ */ J("span", {
+							className: "text-zinc-500 shrink-0 w-8 tabular-nums",
+							children: Xc(o, e.receivedAt)
+						}),
+						/* @__PURE__ */ J("span", { className: `w-1.5 h-1.5 rounded-full shrink-0 ${n.dot}` }),
+						/* @__PURE__ */ J("span", {
+							className: `uppercase tracking-wider text-[10px] shrink-0 ${n.text}`,
+							children: e.severity
+						}),
+						/* @__PURE__ */ J("span", {
+							className: "text-zinc-200 truncate flex-1 min-w-0",
+							children: e.message
+						}),
+						e.widgetId && /* @__PURE__ */ J("span", {
+							className: "text-zinc-600 text-[10px] shrink-0",
+							children: e.widgetId
+						})
+					]
+				}, `${e.receivedAt}-${t}`);
+			})
+		})]
+	});
+}
+//#endregion
+//#region src/widgets/Tape.tsx
+var Qc = /* @__PURE__ */ X({ Tape: () => al }), $c = 500, el = 800;
+function tl(e) {
+	return e.id ? `id:${e.id}` : `t:${e.timestamp ?? ""}|p:${e.price ?? ""}|s:${e.size ?? ""}|x:${e.label ?? ""}`;
+}
+function nl(e) {
+	let t = (e ?? "").toLowerCase();
+	return t === "buy" || t === "bid" ? {
+		row: "bg-emerald-500/5",
+		text: "text-emerald-400"
+	} : t === "sell" || t === "ask" ? {
+		row: "bg-red-500/5",
+		text: "text-red-400"
+	} : {
+		row: "",
+		text: "text-zinc-300"
+	};
+}
+function rl(e) {
+	if (e == null) return [];
+	if (Array.isArray(e)) return e.map(il);
+	if (typeof e == "object") {
+		let t = e;
+		return Array.isArray(t.events) ? t.events.map(il) : Array.isArray(t.items) ? t.items.map(il) : [il(t)];
+	}
+	return [];
+}
+function il(e) {
+	if (typeof e != "object" || !e) return {};
+	let t = e;
+	return {
+		id: t.id == null ? void 0 : String(t.id),
+		timestamp: t.timestamp == null ? t.time == null ? t.ts == null ? void 0 : t.ts : t.time : t.timestamp,
+		price: typeof t.price == "number" ? t.price : void 0,
+		size: typeof t.size == "number" ? t.size : typeof t.qty == "number" ? t.qty : typeof t.amount == "number" ? t.amount : void 0,
+		side: t.side == null ? void 0 : String(t.side).toLowerCase(),
+		label: t.label == null ? t.text == null ? t.title == null ? void 0 : String(t.title) : String(t.text) : String(t.label)
+	};
+}
+function al({ data: e, options: t }) {
+	let n = t?.cap || $c, r = rl(e), [a, o] = q([]), s = K(/* @__PURE__ */ new Set()), c = K(!1);
+	if (W(() => {
+		if (r.length === 0) return;
+		let e = [];
+		for (let t of r) {
+			let n = tl(t);
+			s.current.has(n) || (s.current.add(n), e.push({
+				...t,
+				_key: n,
+				_receivedAt: Date.now()
+			}));
+		}
+		e.length !== 0 && (o((t) => {
+			let r = [...e.reverse(), ...t];
+			if (r.length <= n) return r;
+			for (let e of r.slice(n)) s.current.delete(e._key);
+			return r.slice(0, n);
+		}), c.current ||= !0);
+	}, [e, n]), a.length === 0) return /* @__PURE__ */ J(i, { children: "No prints yet" });
+	let l = Date.now() - el;
+	return /* @__PURE__ */ J("div", {
+		className: "h-full overflow-auto text-xs font-mono",
+		children: a.map((e) => {
+			let t = nl(e.side);
+			return /* @__PURE__ */ Y("div", {
+				className: `grid grid-cols-[64px_1fr_auto_auto] gap-2 px-2 py-0.5 border-b border-zinc-800/40 transition-colors duration-500 ${e._receivedAt > l && c.current ? "bg-sky-500/10" : t.row}`,
+				children: [
+					/* @__PURE__ */ J("span", {
+						className: "text-zinc-500 tabular-nums truncate",
+						children: e.timestamp == null ? "" : ol(e.timestamp)
+					}),
+					/* @__PURE__ */ J("span", {
+						className: `truncate ${t.text}`,
+						children: e.label ?? e.side?.toUpperCase() ?? "·"
+					}),
+					/* @__PURE__ */ J("span", {
+						className: `text-right tabular-nums ${t.text}`,
+						children: e.price == null ? "" : sl(e.price)
+					}),
+					/* @__PURE__ */ J("span", {
+						className: "text-right tabular-nums text-zinc-400",
+						children: e.size == null ? "" : cl(e.size)
+					})
+				]
+			}, e._key);
+		})
+	});
+}
+function ol(e) {
+	try {
+		let t = new Date(e);
+		return isNaN(t.getTime()) ? String(e) : `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}:${String(t.getSeconds()).padStart(2, "0")}`;
+	} catch {
+		return ee(e);
+	}
+}
+function sl(e) {
+	return Math.abs(e) >= 1e3 ? e.toLocaleString(void 0, { maximumFractionDigits: 2 }) : e.toFixed(Math.abs(e) < 1 ? 4 : 2);
+}
+function cl(e) {
+	return Math.abs(e) >= 1e6 ? (e / 1e6).toFixed(2) + "M" : Math.abs(e) >= 1e3 ? (e / 1e3).toFixed(2) + "K" : Math.abs(e) >= 1 ? e.toFixed(2) : e.toFixed(4);
+}
+//#endregion
+//#region src/widgets/fileBrowserDecoders.ts
+async function ll(e) {
+	let t = await fetch(e);
+	if (!t.ok) throw Error(`fetch failed: ${t.status}`);
+	return t.text();
+}
+function ul(e) {
+	try {
+		return JSON.stringify(JSON.parse(e), null, 2);
+	} catch {
+		return e;
+	}
+}
+function dl(e) {
+	let t = [], n = [], r = "", i = !1;
+	for (let a = 0; a < e.length; a++) {
+		let o = e[a];
+		if (i) {
+			if (o === "\"" && e[a + 1] === "\"") {
+				r += "\"", a++;
+				continue;
+			}
+			if (o === "\"") {
+				i = !1;
+				continue;
+			}
+			r += o;
+			continue;
+		}
+		if (o === "\"") {
+			i = !0;
+			continue;
+		}
+		if (o === ",") {
+			n.push(r), r = "";
+			continue;
+		}
+		if (o === "\n" || o === "\r") {
+			o === "\r" && e[a + 1] === "\n" && a++, n.push(r), r = "", t.push(n), n = [];
+			continue;
+		}
+		r += o;
+	}
+	return (r !== "" || n.length > 0) && (n.push(r), t.push(n)), t;
+}
+async function fl(e) {
+	let [{ marked: t }, { default: n }] = await Promise.all([import("./marked.esm-COpZ1Aso.js"), import("./purify.es-Dq7sb9Gk.js")]);
+	try {
+		let r = await t.parse(e, { async: !0 });
+		return n.sanitize(r);
+	} catch {
+		return `<pre>${pl(e)}</pre>`;
+	}
+}
+function pl(e) {
+	return e.replace(/[&<>"']/g, (e) => ({
+		"&": "&amp;",
+		"<": "&lt;",
+		">": "&gt;",
+		"\"": "&quot;",
+		"'": "&#39;"
+	})[e]);
+}
+var ml = null;
+function hl(e) {
+	return import(
+		/* @vite-ignore */
+		/* webpackIgnore: true */
+		e
+);
+}
+async function gl(e) {
+	let { default: t } = await hl("heic2any"), n = await t({
+		blob: e,
+		toType: "image/jpeg",
+		quality: .92
+	});
+	return Array.isArray(n) ? n[0] : n;
+}
+async function _l(e, t) {
+	t?.("Loading ffmpeg…");
+	let n = await vl();
+	t?.("Fetching file…");
+	let r = await fetch(e);
+	if (!r.ok) throw Error(`fetch failed: ${r.status}`);
+	let i = new Uint8Array(await r.arrayBuffer());
+	t?.("Remuxing…"), await n.writeFile("input.mkv", i);
+	let a = await n.exec([
+		"-i",
+		"input.mkv",
+		"-c",
+		"copy",
+		"-movflags",
+		"+faststart",
+		"output.mp4"
+	]);
+	if (a !== 0) throw Error("ffmpeg remux failed (code " + a + ") — codec inside MKV may not be browser-compatible");
+	let o = await n.readFile("output.mp4");
+	if (typeof o == "string") throw Error("ffmpeg readFile returned string");
+	return new Blob([new Uint8Array(o)], { type: "video/mp4" });
+}
+async function vl() {
+	if (ml) return ml;
+	let { FFmpeg: e } = await hl("@ffmpeg/ffmpeg"), t = new e();
+	return await t.load(), ml = t, t;
+}
+//#endregion
+//#region src/widgets/FileBrowser.tsx
+var yl = /* @__PURE__ */ X({ FileBrowser: () => bl });
+function bl({ data: e, options: t, widgetId: n }) {
+	let r = t ?? {}, { ctx: o, setCtx: l, backendUrl: u, toast: d, requestRefresh: f } = a(), p = r.path_ctx ?? "path", m = r.bucket_ctx ?? "org", g = r.bucket_param ?? "org", _ = r.page_ctx ?? "page", v = r.page_size_ctx ?? "page_size", y = r.view_mode_ctx ?? "view_mode", b = r.upload_action_id ?? "upload", x = r.upload_url, S = r.ingest_url, C = o[m] ?? "default", w = o[p] ?? "", T = parseInt(o[_] ?? "1", 10) || 1, E = parseInt(o[v] ?? "50", 10) || 50, D = o[y] === "gallery" ? "gallery" : "icons", [O, k] = q(!1), [A, j] = q(!1), M = K(!1), [N, P] = q(null), [F, I] = q(!1), [L, ee] = q("url"), [te, ne] = q(""), [re, ie] = q(""), [ae, oe] = q(""), [se, ce] = q(!1), le = r.search_url, [ue, de] = q(""), [R, z] = q(null), [B, fe] = q(!1), V = K(null);
+	W(() => () => V.current?.abort(), []);
+	let pe = G(() => De(e), [e]), me = R ?? pe, he = G(() => R || we(pe), [R, pe]), ge = G(() => ye(w), [w]), ve = !R && T > 1, xe = !R && pe.length >= E, Ce = r.media_url_template ?? "/media?namespace={namespace}&path={path}";
+	W(() => {
+		T !== 1 && l(_, "1");
+	}, [C, w]);
+	let Ie = (e) => l(p, e), Le = (e) => l(_, String(Math.max(1, e))), Re = () => l(y, D === "gallery" ? "icons" : "gallery"), ze = async () => {
+		if (!le) return;
+		let e = ue.trim();
+		if (e === "") {
+			Be();
+			return;
+		}
+		if (V.current) return;
+		let t = new AbortController();
+		V.current = t, fe(!0);
+		try {
+			let n = await fetch(Te(u, le), {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Connect-Protocol-Version": "1"
+				},
+				body: JSON.stringify({
+					[g]: C,
+					query: e
+				}),
+				signal: t.signal
+			});
+			if (!n.ok) {
+				d(`Search failed: ${await Oe(n)}`, "error");
+				return;
+			}
+			let r = await n.json();
+			if (V.current !== t) return;
+			z((r.hits ?? []).map((e) => ({
+				...e,
+				kind: "file"
+			})));
+		} catch (e) {
+			t.signal.aborted || d(`Search failed: ${Me(e)}`, "error");
+		} finally {
+			V.current === t && (V.current = null, fe(!1));
+		}
+	}, Be = () => {
+		V.current?.abort(), V.current = null, fe(!1), de(""), z(null);
+	}, U = (e) => {
+		Be(), Ie(e);
+	}, Ve = () => {
+		ne(w), ie(""), oe(""), ee(S ? "url" : "file"), I(!0);
+	}, Ue = async () => {
+		if (!S) return;
+		let e = te.trim(), t = re.trim(), n = ae.trim();
+		if (!e || !t || !n) {
+			d("Need a folder (repo), a filename, and a URL", "error");
+			return;
+		}
+		if (M.current) {
+			d("Another file operation is already in progress", "warn");
+			return;
+		}
+		M.current = !0, ce(!0);
+		try {
+			let r = await fetch(Te(u, S), {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Connect-Protocol-Version": "1"
+				},
+				body: JSON.stringify({
+					[g]: C,
+					repo: e,
+					path: t,
+					url: n
+				})
+			});
+			if (!r.ok) throw Error(await Oe(r));
+			d(`Fetching ${t} in the background — it'll appear when done.`, "ok"), I(!1);
+		} catch (e) {
+			d(`Ingest failed: ${Me(e)}`, "error");
+		} finally {
+			M.current = !1, ce(!1);
+		}
+	}, We = async (e) => {
+		let t = te.trim(), r = re.trim() || e.name;
+		if (!t) {
+			d("Need a destination folder (repo)", "error");
+			return;
+		}
+		if (M.current) {
+			d("Another file operation is already in progress", "warn");
+			return;
+		}
+		M.current = !0, ce(!0);
+		try {
+			await Je(e, t, r), d(`Uploaded ${r}`, "ok"), I(!1), f(n ?? "*");
+		} catch (e) {
+			d(`Upload failed: ${Me(e)}`, "error");
+		} finally {
+			M.current = !1, ce(!1);
+		}
+	}, Ge = (e) => e.path && e.path !== "" ? e.path : Ae(w, e.name ?? ""), Ke = (e) => {
+		if (be(e)) {
+			R ? U(Ge(e)) : Ie(Ge(e));
+			return;
+		}
+		if (Ce && je(e.content_type, e.name)) {
+			P(e);
+			return;
+		}
+		qe(e);
+	};
+	W(() => {
+		if (!N) return;
+		let e = (e) => {
+			e.key === "Escape" && P(null);
+		};
+		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
+	}, [N]);
+	let qe = async (e) => {
+		let t = r.download_url;
+		if (!t) {
+			d("Download not configured (set options.download_url)", "error");
+			return;
+		}
+		if (!e.name) {
+			d("File has no name", "error");
+			return;
+		}
+		let n = Ge(e), i = Te(u, t);
+		try {
+			let t = await fetch(i, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Connect-Protocol-Version": "1"
+				},
+				body: JSON.stringify({
+					[g]: C,
+					path: n
+				})
+			});
+			if (!t.ok) {
+				let e = await Oe(t);
+				d(`Download failed: ${e}`, "error");
+				return;
+			}
+			let r = await Fe(t, e.content_type), a = document.createElement("a");
+			a.href = URL.createObjectURL(r), a.download = e.name, a.click(), setTimeout(() => URL.revokeObjectURL(a.href), 5e3);
+		} catch (e) {
+			d(`Download failed: ${Me(e)}`, "error");
+		}
+	}, Je = async (e, t, n) => {
+		let r = e.type || "application/octet-stream";
+		if (x) {
+			let i = new URLSearchParams({
+				[g]: C,
+				repo: t,
+				path: n,
+				content_type: r
+			}), a = Te(u, x), o = a.includes("?") ? "&" : "?", s = await fetch(`${a}${o}${i.toString()}`, {
+				method: "POST",
+				body: e
+			});
+			if (!s.ok) throw Error(await s.text() || `HTTP ${s.status}`);
+			return;
+		}
+		let i = await e.arrayBuffer(), a = s(u ?? ""), o = h({
+			actionId: b,
+			params: {
+				[g]: C,
+				repo: t,
+				path: n,
+				content_type: r,
+				data_b64: Pe(i)
+			},
+			clientRequestId: c()
+		}), l = await fetch(a, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"Connect-Protocol-Version": "1"
+			},
+			body: JSON.stringify(o)
+		});
+		if (!l.ok) throw Error(await Oe(l));
+		let d = await l.json();
+		if (!_e(d.status)) throw Error(d.message ?? "Upload action did not return a terminal status");
+		if (H(d.status)) throw Error(d.message ?? "Upload action failed");
+	}, Ye = async (e) => {
+		if (w === "") {
+			d("Open a folder first, or use the Upload button to choose a folder.", "error");
+			return;
+		}
+		if (M.current) {
+			d("Another file operation is already in progress", "warn");
+			return;
+		}
+		M.current = !0;
+		let t = w;
+		j(!0);
+		let r = 0;
+		try {
+			for (let n of Array.from(e)) try {
+				await Je(n, t, n.name), r++;
+			} catch (e) {
+				d(`Upload failed: ${n.name} — ${Me(e)}`, "error");
+			}
+		} finally {
+			M.current = !1, j(!1);
+		}
+		r > 0 && (d(`Uploaded ${r} file${r === 1 ? "" : "s"}`, "ok"), f(n ?? "*"));
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "h-full flex flex-col relative",
+		onDragOver: (e) => {
+			e.preventDefault(), k(!0);
+		},
+		onDragLeave: () => k(!1),
+		onDrop: (e) => {
+			e.preventDefault(), k(!1), e.dataTransfer.files.length > 0 && Ye(e.dataTransfer.files);
+		},
+		children: [
+			/* @__PURE__ */ Y("div", {
+				className: "flex items-center gap-1 px-3 py-1.5 text-xs border-b border-zinc-800 shrink-0",
+				children: [
+					/* @__PURE__ */ J("button", {
+						onClick: () => Ie(""),
+						className: "text-sky-400 hover:underline",
+						children: "/"
+					}),
+					ge.map((e, t) => {
+						let n = ge.slice(0, t + 1).join("/");
+						return /* @__PURE__ */ Y("span", {
+							className: "flex items-center gap-1",
+							children: [/* @__PURE__ */ J("span", {
+								className: "text-zinc-600",
+								children: "/"
+							}), /* @__PURE__ */ J("button", {
+								onClick: () => Ie(n),
+								className: "text-sky-400 hover:underline",
+								children: e
+							})]
+						}, t);
+					}),
+					/* @__PURE__ */ Y("div", {
+						className: "ml-auto flex items-center gap-3 text-zinc-500",
+						children: [
+							le && /* @__PURE__ */ Y("div", {
+								className: "flex items-center gap-1",
+								children: [
+									/* @__PURE__ */ J("input", {
+										type: "search",
+										value: ue,
+										onChange: (e) => de(e.target.value),
+										onKeyDown: (e) => {
+											e.key === "Enter" && ze(), e.key === "Escape" && Be();
+										},
+										placeholder: "Search files…",
+										className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-0.5 text-xs text-zinc-100 outline-none focus:border-zinc-500 w-40"
+									}),
+									/* @__PURE__ */ J("button", {
+										onClick: () => void ze(),
+										disabled: B,
+										className: "text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 px-1",
+										"aria-label": "Search",
+										title: "Search this namespace",
+										children: B ? "…" : "🔍"
+									}),
+									R && /* @__PURE__ */ J("button", {
+										onClick: Be,
+										className: "text-zinc-400 hover:text-zinc-100 px-1",
+										title: "Clear search, back to browsing",
+										children: "✕"
+									})
+								]
+							}),
+							(x || b || S) && /* @__PURE__ */ J("button", {
+								onClick: Ve,
+								className: "text-zinc-200 hover:text-white border border-zinc-700 rounded px-2 py-0.5",
+								title: "Upload a file or fetch a media URL",
+								children: "⬆ Upload"
+							}),
+							/* @__PURE__ */ J("button", {
+								onClick: Re,
+								className: "text-zinc-400 hover:text-zinc-100 border border-zinc-700 rounded px-2 py-0.5",
+								title: D === "gallery" ? "Switch to icons (no thumbnails)" : "Switch to gallery (loads image thumbnails)",
+								children: D === "gallery" ? "◫ Gallery" : "☰ Icons"
+							}),
+							/* @__PURE__ */ J("span", {
+								className: "tabular-nums",
+								children: R ? `${R.length} result${R.length === 1 ? "" : "s"}` : `${me.length} on page`
+							}),
+							(ve || xe) && /* @__PURE__ */ Y("div", {
+								className: "flex items-center gap-1",
+								children: [
+									/* @__PURE__ */ J("button", {
+										onClick: () => Le(T - 1),
+										disabled: !ve,
+										className: "text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 disabled:cursor-not-allowed px-1",
+										"aria-label": "Previous page",
+										children: "‹"
+									}),
+									/* @__PURE__ */ Y("span", {
+										className: "tabular-nums text-zinc-400",
+										children: ["Page ", T]
+									}),
+									/* @__PURE__ */ J("button", {
+										onClick: () => Le(T + 1),
+										disabled: !xe,
+										className: "text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 disabled:cursor-not-allowed px-1",
+										"aria-label": "Next page",
+										children: "›"
+									})
+								]
+							})
+						]
+					})
+				]
+			}),
+			/* @__PURE__ */ Y("div", {
+				className: "flex-1 overflow-auto relative min-h-0",
+				children: [
+					O && /* @__PURE__ */ J("div", {
+						className: "absolute inset-0 z-10 flex items-center justify-center border-2 border-dashed border-sky-500 bg-zinc-900/80 pointer-events-none",
+						children: /* @__PURE__ */ J("div", {
+							className: "text-sky-300 text-sm",
+							children: "Drop files to upload"
+						})
+					}),
+					he.length === 0 ? /* @__PURE__ */ J(i, { children: R ? "No files match your search." : "This folder is empty. Drop files to upload." }) : D === "gallery" ? /* @__PURE__ */ J(xl, {
+						entries: he,
+						onClick: Ke,
+						mediaUrlFor: (e) => e.name ? Te(u, ke(Ce, C, Ge(e))) : ""
+					}) : /* @__PURE__ */ Y("table", {
+						className: "w-full text-xs",
+						children: [/* @__PURE__ */ J("thead", {
+							className: "sticky top-0 bg-zinc-900 z-[1]",
+							children: /* @__PURE__ */ Y("tr", {
+								className: "text-zinc-400 border-b border-zinc-800",
+								children: [
+									/* @__PURE__ */ J("th", { className: "text-left px-3 py-2 w-8" }),
+									/* @__PURE__ */ J("th", {
+										className: "text-left px-3 py-2",
+										children: "Name"
+									}),
+									/* @__PURE__ */ J("th", {
+										className: "text-right px-3 py-2 w-24",
+										children: "Size"
+									}),
+									/* @__PURE__ */ J("th", {
+										className: "text-left px-3 py-2 w-40",
+										children: "Type"
+									}),
+									/* @__PURE__ */ J("th", {
+										className: "text-left px-3 py-2 w-36",
+										children: "Modified"
+									})
+								]
+							})
+						}), /* @__PURE__ */ J("tbody", { children: he.map((e, t) => /* @__PURE__ */ Y("tr", {
+							onDoubleClick: () => Ke(e),
+							className: "border-b border-zinc-800/40 hover:bg-zinc-800/40 cursor-pointer select-none",
+							children: [
+								/* @__PURE__ */ J("td", {
+									className: "px-3 py-1.5 select-none",
+									children: be(e) ? "📁" : "📄"
+								}),
+								/* @__PURE__ */ J("td", {
+									className: "px-3 py-1.5 text-zinc-100 truncate",
+									children: e.name
+								}),
+								/* @__PURE__ */ J("td", {
+									className: "px-3 py-1.5 text-right text-zinc-400",
+									children: be(e) ? "—" : Ee(e.size_bytes ?? 0)
+								}),
+								/* @__PURE__ */ J("td", {
+									className: "px-3 py-1.5 text-zinc-500 truncate",
+									children: e.content_type ?? ""
+								}),
+								/* @__PURE__ */ J("td", {
+									className: "px-3 py-1.5 text-zinc-500 truncate",
+									children: e.modified_at ?? ""
+								})
+							]
+						}, `${e.kind ?? ""}:${e.name ?? t}`)) })]
+					}),
+					A && /* @__PURE__ */ J("div", {
+						className: "absolute bottom-2 right-2 bg-zinc-800 border border-zinc-700 text-zinc-200 px-3 py-1.5 rounded text-xs shadow-lg",
+						children: "Uploading…"
+					})
+				]
+			}),
+			N && /* @__PURE__ */ J(Sl, {
+				entry: N,
+				mediaUrl: Te(u, ke(Ce, C, Ge(N))),
+				autoAdvanceQueue: Se(he),
+				navigableQueue: Ne(he),
+				onSelect: (e) => P(e),
+				onClose: () => P(null),
+				onDownload: () => {
+					qe(N);
+				}
+			}),
+			F && /* @__PURE__ */ J("div", {
+				className: "absolute inset-0 z-20 flex items-center justify-center bg-black/60",
+				onClick: () => {
+					se || I(!1);
+				},
+				children: /* @__PURE__ */ Y("div", {
+					className: "flex flex-col gap-3 bg-zinc-900 border border-zinc-700 rounded-lg p-5 shadow-2xl w-full max-w-md",
+					onClick: (e) => e.stopPropagation(),
+					children: [
+						/* @__PURE__ */ Y("div", {
+							className: "flex items-center justify-between",
+							children: [/* @__PURE__ */ Y("h2", {
+								className: "text-sm font-medium text-zinc-100",
+								children: ["Upload to ", C]
+							}), /* @__PURE__ */ J("button", {
+								onClick: () => {
+									se || I(!1);
+								},
+								className: "text-zinc-500 hover:text-zinc-200",
+								"aria-label": "Close",
+								children: "✕"
+							})]
+						}),
+						S && /* @__PURE__ */ Y("div", {
+							className: "flex gap-1 text-xs",
+							children: [/* @__PURE__ */ J("button", {
+								onClick: () => ee("url"),
+								className: `px-3 py-1 rounded border ${L === "url" ? "border-sky-500 text-sky-300 bg-sky-500/10" : "border-zinc-700 text-zinc-400 hover:text-zinc-200"}`,
+								children: "From URL"
+							}), /* @__PURE__ */ J("button", {
+								onClick: () => ee("file"),
+								className: `px-3 py-1 rounded border ${L === "file" ? "border-sky-500 text-sky-300 bg-sky-500/10" : "border-zinc-700 text-zinc-400 hover:text-zinc-200"}`,
+								children: "Local file"
+							})]
+						}),
+						/* @__PURE__ */ Y("label", {
+							className: "flex flex-col gap-1 text-xs text-zinc-400",
+							children: [
+								"Folder (repo)",
+								/* @__PURE__ */ J("input", {
+									type: "text",
+									value: te,
+									onChange: (e) => ne(e.target.value),
+									placeholder: "e.g. year=2026/name=avatar",
+									className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
+								}),
+								/* @__PURE__ */ J("span", {
+									className: "text-zinc-600",
+									children: "The repository partition. Becomes a source key."
+								})
+							]
+						}),
+						/* @__PURE__ */ Y("label", {
+							className: "flex flex-col gap-1 text-xs text-zinc-400",
+							children: [
+								"Filename ",
+								L === "file" && "(optional — defaults to the file’s name)",
+								/* @__PURE__ */ J("input", {
+									type: "text",
+									value: re,
+									onChange: (e) => ie(e.target.value),
+									placeholder: "e.g. avatar.mp4",
+									className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
+								}),
+								/* @__PURE__ */ J("span", {
+									className: "text-zinc-600",
+									children: "Location inside the repo (may include subfolders)."
+								})
+							]
+						}),
+						L === "url" ? /* @__PURE__ */ Y(He, { children: [/* @__PURE__ */ Y("label", {
+							className: "flex flex-col gap-1 text-xs text-zinc-400",
+							children: [
+								"Media URL",
+								/* @__PURE__ */ J("input", {
+									type: "url",
+									value: ae,
+									onChange: (e) => oe(e.target.value),
+									placeholder: "https://example.com/media.mp4 or https://example.com/playlist.m3u8",
+									className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
+								}),
+								/* @__PURE__ */ J("span", {
+									className: "text-zinc-600",
+									children: "HTTP(S) media URL or raw HLS playlist. Fetched server-side."
+								})
+							]
+						}), /* @__PURE__ */ J("button", {
+							onClick: () => void Ue(),
+							disabled: se,
+							className: "self-end px-3 py-1.5 rounded bg-sky-600 hover:bg-sky-500 disabled:bg-zinc-700 text-white text-sm",
+							children: se ? "Starting…" : "Fetch & store"
+						})] }) : /* @__PURE__ */ Y(He, { children: [/* @__PURE__ */ J("input", {
+							type: "file",
+							onChange: (e) => {
+								let t = e.target.files?.[0];
+								t && We(t);
+							},
+							disabled: se,
+							className: "text-xs text-zinc-300 file:mr-3 file:rounded file:border-0 file:bg-sky-600 file:px-3 file:py-1.5 file:text-white hover:file:bg-sky-500"
+						}), se && /* @__PURE__ */ J("span", {
+							className: "self-end text-xs text-zinc-400",
+							children: "Uploading…"
+						})] })
+					]
+				})
+			})
+		]
+	});
+}
+function xl({ entries: e, onClick: t, mediaUrlFor: n }) {
+	return /* @__PURE__ */ J("div", {
+		className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 p-3",
+		children: e.map((e, r) => {
+			let i = je(e.content_type, e.name), a = i === "image" || i === "heic";
+			return /* @__PURE__ */ Y("button", {
+				onDoubleClick: () => t(e),
+				className: "flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left select-none",
+				children: [/* @__PURE__ */ J("div", {
+					className: "w-full aspect-square bg-zinc-950 rounded flex items-center justify-center overflow-hidden",
+					children: be(e) ? /* @__PURE__ */ J("span", {
+						className: "text-4xl select-none",
+						children: "📁"
+					}) : a && e.name ? /* @__PURE__ */ J("img", {
+						src: n(e),
+						alt: e.name ?? "",
+						loading: "lazy",
+						decoding: "async",
+						className: "w-full h-full object-cover"
+					}) : /* @__PURE__ */ J("span", {
+						className: "text-4xl select-none",
+						children: "📄"
+					})
+				}), /* @__PURE__ */ J("span", {
+					className: "w-full text-xs text-zinc-200 truncate",
+					title: e.name,
+					children: e.name
+				})]
+			}, `${e.kind ?? ""}:${e.name ?? r}`);
+		})
+	});
+}
+function Sl({ entry: e, mediaUrl: t, autoAdvanceQueue: n, navigableQueue: r, onSelect: i, onClose: a, onDownload: o }) {
+	let s = je(e.content_type, e.name), c = s === "text" || s === "json" || s === "yaml" || s === "csv" || s === "markdown", [l, u] = q(s === "image" || s === "video" || s === "pdf" || s === "heic" || s === "mkv" || c), [d, f] = q(!1), [p, m] = q(null), [h, g] = q(null), [_, v] = q("Loading…"), [y, b] = q(null), [x, S] = q(null), [C, w] = q(null), T = r.length > 1, E = r.findIndex((t) => t.name === e.name), [D, O] = q(!1), [k, A] = q(!0), j = () => {
+		let t = xe(r, e.name, D, k);
+		t && i(t);
+	}, M = () => {
+		let t = Ce(r, e.name, k);
+		t && i(t);
+	}, N = () => {
+		let t = xe(n, e.name, D, k);
+		t && i(t);
+	};
+	W(() => {
+		let e = (e) => {
+			let t = e.target;
+			if (!(t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable))) {
+				if (e.key === "ArrowRight") e.preventDefault(), j();
+				else if (e.key === "ArrowLeft") e.preventDefault(), M();
+				else if (e.key === " ") {
+					let t = document.querySelector("video, audio");
+					t && (e.preventDefault(), t.paused ? t.play() : t.pause());
+				}
+			}
+		};
+		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
+	}, [
+		e.name,
+		r.length,
+		D,
+		k
+	]);
+	let P = () => u(!1), F = () => {
+		u(!1), f(!0), m(null);
+	}, I = (e) => {
+		e.target === e.currentTarget && a();
+	};
+	return W(() => {
+		if (s !== "heic" && s !== "mkv") return;
+		let e = !1, n = null;
+		return (async () => {
+			try {
+				let r;
+				if (s === "heic") {
+					v("Decoding HEIC…");
+					let e = await fetch(t);
+					if (!e.ok) throw Error(`fetch failed: ${e.status}`);
+					r = await gl(await e.blob());
+				} else r = await _l(t, (t) => {
+					e || v(t);
+				});
+				if (e) return;
+				n = URL.createObjectURL(r), g(n), u(!1);
+			} catch (t) {
+				if (e) return;
+				m(Me(t)), f(!0), u(!1);
+			}
+		})(), () => {
+			e = !0, n && URL.revokeObjectURL(n);
+		};
+	}, [s, t]), W(() => {
+		if (!c) return;
+		let e = !1;
+		return (async () => {
+			try {
+				let n = await ll(t);
+				if (e) return;
+				s === "csv" ? S(dl(n)) : s === "json" ? b(ul(n)) : s === "markdown" ? w(await fl(n)) : b(n), u(!1);
+			} catch (t) {
+				if (e) return;
+				m(Me(t)), f(!0), u(!1);
+			}
+		})(), () => {
+			e = !0;
+		};
+	}, [
+		s,
+		c,
+		t
+	]), /* @__PURE__ */ Y("div", {
+		className: "fixed inset-0 z-50 flex flex-col bg-zinc-950/95",
+		onClick: I,
+		children: [/* @__PURE__ */ Y("div", {
+			className: "flex items-center gap-3 px-4 py-2 text-zinc-200 border-b border-zinc-800 bg-zinc-900",
+			children: [
+				/* @__PURE__ */ J("span", {
+					className: "text-sm font-medium truncate flex-1",
+					children: e.name
+				}),
+				/* @__PURE__ */ J("span", {
+					className: "text-xs text-zinc-500 truncate max-w-[200px]",
+					children: e.content_type
+				}),
+				typeof e.size_bytes == "number" && /* @__PURE__ */ J("span", {
+					className: "text-xs text-zinc-600 tabular-nums",
+					children: Ee(e.size_bytes)
+				}),
+				T && /* @__PURE__ */ Y("div", {
+					className: "flex items-center gap-2 text-zinc-400 text-sm border-l border-zinc-700 pl-3 ml-2",
+					children: [
+						/* @__PURE__ */ J("button", {
+							onClick: M,
+							className: "hover:text-zinc-100 leading-none px-1",
+							"aria-label": "Previous (←)",
+							title: "Previous (←)",
+							children: "⏮"
+						}),
+						/* @__PURE__ */ J("button", {
+							onClick: j,
+							className: "hover:text-zinc-100 leading-none px-1",
+							"aria-label": "Next (→)",
+							title: "Next (→)",
+							children: "⏭"
+						}),
+						/* @__PURE__ */ J("button", {
+							onClick: () => O((e) => !e),
+							className: `px-1 leading-none ${D ? "text-sky-400" : "hover:text-zinc-100"}`,
+							"aria-label": "Toggle shuffle",
+							title: D ? "Shuffle on" : "Shuffle off",
+							children: "🔀"
+						}),
+						/* @__PURE__ */ J("button", {
+							onClick: () => A((e) => !e),
+							className: `px-1 leading-none ${k ? "text-sky-400" : "hover:text-zinc-100"}`,
+							"aria-label": "Toggle repeat",
+							title: k ? "Repeat on" : "Repeat off",
+							children: "🔁"
+						}),
+						/* @__PURE__ */ Y("span", {
+							className: "text-xs text-zinc-500 tabular-nums",
+							children: [
+								E >= 0 ? E + 1 : "–",
+								" / ",
+								r.length
+							]
+						})
+					]
+				}),
+				/* @__PURE__ */ J("button", {
+					onClick: o,
+					className: "text-xs text-sky-400 hover:underline",
+					children: "Download"
+				}),
+				/* @__PURE__ */ J("button", {
+					onClick: a,
+					className: "text-zinc-400 hover:text-zinc-100 text-lg leading-none",
+					"aria-label": "Close preview",
+					children: "×"
+				})
+			]
+		}), /* @__PURE__ */ Y("div", {
+			className: "flex-1 flex items-center justify-center overflow-auto px-4 pt-4 pb-24 relative",
+			onClick: I,
+			children: [
+				l && !d && /* @__PURE__ */ J("div", {
+					className: "absolute inset-0 flex items-center justify-center pointer-events-none",
+					children: /* @__PURE__ */ J("div", {
+						className: "text-zinc-500 text-xs uppercase tracking-wider",
+						children: _
+					})
+				}),
+				d && /* @__PURE__ */ Y("div", {
+					className: "flex flex-col items-center gap-3 text-zinc-300 text-sm max-w-md text-center",
+					children: [
+						/* @__PURE__ */ J("span", {
+							className: "text-zinc-500",
+							children: "⚠ Preview couldn't load."
+						}),
+						p && /* @__PURE__ */ J("span", {
+							className: "text-zinc-600 text-xs font-mono break-words",
+							children: p
+						}),
+						/* @__PURE__ */ J("button", {
+							onClick: o,
+							className: "text-sky-400 hover:underline text-xs",
+							children: "Download instead"
+						})
+					]
+				}),
+				!d && s === "video" && /* @__PURE__ */ J("video", {
+					src: t,
+					controls: !0,
+					autoPlay: !0,
+					playsInline: !0,
+					preload: "metadata",
+					onLoadedMetadata: P,
+					onEnded: N,
+					onError: F,
+					className: "max-h-full max-w-full bg-black rounded shadow-2xl"
+				}),
+				!d && s === "audio" && /* @__PURE__ */ Y("div", {
+					className: "flex flex-col items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-lg p-6 shadow-2xl w-full max-w-md",
+					children: [
+						/* @__PURE__ */ J("div", {
+							className: "text-3xl select-none",
+							"aria-hidden": "true",
+							children: "♪"
+						}),
+						/* @__PURE__ */ J("div", {
+							className: "text-sm text-zinc-200 truncate max-w-full",
+							title: e.name,
+							children: e.name
+						}),
+						/* @__PURE__ */ J("audio", {
+							src: t,
+							controls: !0,
+							autoPlay: !0,
+							preload: "metadata",
+							onEnded: N,
+							onError: F,
+							className: "w-full"
+						})
+					]
+				}),
+				!d && s === "image" && /* @__PURE__ */ J("img", {
+					src: t,
+					alt: e.name ?? "",
+					decoding: "async",
+					onLoad: P,
+					onError: F,
+					className: "max-h-full max-w-full object-contain rounded shadow-2xl"
+				}),
+				!d && s === "pdf" && /* @__PURE__ */ J("iframe", {
+					src: t,
+					title: e.name ?? "PDF preview",
+					onLoad: P,
+					className: "w-full h-full bg-white rounded shadow-2xl border-0"
+				}),
+				!d && s === "heic" && h && /* @__PURE__ */ J("img", {
+					src: h,
+					alt: e.name ?? "",
+					decoding: "async",
+					onError: F,
+					className: "max-h-full max-w-full object-contain rounded shadow-2xl"
+				}),
+				!d && s === "mkv" && h && /* @__PURE__ */ J("video", {
+					src: h,
+					controls: !0,
+					autoPlay: !0,
+					playsInline: !0,
+					preload: "metadata",
+					onLoadedMetadata: P,
+					onEnded: N,
+					onError: F,
+					className: "max-h-full max-w-full bg-black rounded shadow-2xl"
+				}),
+				!d && (s === "text" || s === "json" || s === "yaml") && y !== null && /* @__PURE__ */ J("pre", {
+					className: "w-full h-full overflow-auto bg-zinc-900 text-zinc-100 text-xs font-mono p-4 rounded shadow-2xl whitespace-pre-wrap break-words",
+					children: y
+				}),
+				!d && s === "markdown" && C !== null && /* @__PURE__ */ J("div", {
+					className: "w-full h-full overflow-auto bg-white text-zinc-900 text-sm p-6 rounded shadow-2xl prose prose-zinc max-w-none",
+					dangerouslySetInnerHTML: { __html: C }
+				}),
+				!d && s === "csv" && x !== null && /* @__PURE__ */ J("div", {
+					className: "w-full h-full overflow-auto bg-zinc-900 text-zinc-100 text-xs p-4 rounded shadow-2xl",
+					children: /* @__PURE__ */ Y("table", {
+						className: "border-collapse",
+						children: [x.length > 0 && /* @__PURE__ */ J("thead", { children: /* @__PURE__ */ J("tr", { children: x[0].map((e, t) => /* @__PURE__ */ J("th", {
+							className: "border border-zinc-700 px-2 py-1 text-left font-semibold sticky top-0 bg-zinc-800",
+							children: e
+						}, t)) }) }), /* @__PURE__ */ J("tbody", { children: x.slice(1).map((e, t) => /* @__PURE__ */ J("tr", { children: e.map((e, t) => /* @__PURE__ */ J("td", {
+							className: "border border-zinc-800 px-2 py-1 align-top",
+							children: e
+						}, t)) }, t)) })]
+					})
+				}),
+				s === null && !d && /* @__PURE__ */ Y("div", {
+					className: "flex flex-col items-center gap-3 text-zinc-300 text-sm",
+					children: [/* @__PURE__ */ Y("span", {
+						className: "text-zinc-500",
+						children: [
+							"No inline preview for ",
+							e.content_type ?? "this file type",
+							"."
+						]
+					}), /* @__PURE__ */ J("button", {
+						onClick: o,
+						className: "text-sky-400 hover:underline text-xs",
+						children: "Download instead"
+					})]
+				})
+			]
+		})]
+	});
+}
+//#endregion
+//#region src/export/ExportMenu.tsx
+function Cl({ view: e, filenameBase: t, onExport: n, variant: r = "button" }) {
+	let [i, a] = q(!1), [o, s] = q(null), c = K(null);
+	W(() => {
+		if (!i) return;
+		let e = (e) => {
+			c.current && !c.current.contains(e.target) && a(!1);
+		};
+		return document.addEventListener("mousedown", e), () => document.removeEventListener("mousedown", e);
+	}, [i]);
+	let l = Ln(e), u = l === 0, d = async (r) => {
+		s(r);
+		let i = !1;
+		try {
+			i = await zn(e, r, t);
+		} catch {
+			i = !1;
+		} finally {
+			s(null), a(!1), n?.(r, i);
+		}
+	};
+	return /* @__PURE__ */ Y("div", {
+		className: "relative",
+		ref: c,
+		children: [r === "row" ? /* @__PURE__ */ J("button", {
+			onClick: () => a((e) => !e),
+			disabled: u,
+			className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 disabled:opacity-40",
+			children: "Export…"
+		}) : /* @__PURE__ */ J("button", {
+			onClick: () => a((e) => !e),
+			disabled: u,
+			title: u ? "No data to export" : `Export ${l.toLocaleString()} rows`,
+			className: "mtc-control text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 shrink-0 disabled:opacity-40",
+			"aria-label": "Export data",
+			children: "↓ Export"
+		}), i && !u && /* @__PURE__ */ Y("div", {
+			className: "mtc-popover absolute right-0 top-full mt-1 py-1 z-30 min-w-[140px]",
+			children: [/* @__PURE__ */ Y("div", {
+				className: "px-3 py-1 text-[10px] uppercase tracking-wider text-zinc-600",
+				children: [l.toLocaleString(), " rows"]
+			}), Dn.map((e) => /* @__PURE__ */ Y("button", {
+				onClick: () => d(e.key),
+				disabled: o != null,
+				className: "block w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 disabled:opacity-50 flex items-center justify-between",
+				children: [/* @__PURE__ */ J("span", { children: e.label }), o === e.key && /* @__PURE__ */ J("span", {
+					className: "text-zinc-500",
+					children: "…"
+				})]
+			}, e.key))]
+		})]
+	});
+}
+//#endregion
+//#region src/embed/EmbedView.tsx
+function wl(e) {
+	if (!e.widget) return null;
+	let t = e.widget, n = {
+		id: "embed",
+		component: t.component,
+		span: 12,
+		title: e.title,
+		source: t.sourceId ? {
+			source_id: t.sourceId,
+			stream: t.stream,
+			refreshIntervalMs: t.refreshIntervalMs
+		} : t.url ? {
+			url: t.url,
+			stream: t.stream,
+			refreshIntervalMs: t.refreshIntervalMs
+		} : void 0
+	};
+	return {
+		title: e.title,
+		columns: 12,
+		context: Object.keys(e.ctx).length > 0 ? { values: e.ctx } : void 0,
+		widgets: [n]
+	};
+}
+function Tl({ config: e, onEvent: t, theme: n, templateTrust: r, templateTrustPolicy: i }) {
+	let [a, o] = q({}), s = n ?? e.theme ?? "dark";
+	W(() => {
+		if (!e.templateUrl) return;
+		let t = !1;
+		return o({}), fetch(e.templateUrl).then((e) => {
+			if (!e.ok) throw Error(`Template fetch failed: ${e.status}`);
+			return e.json();
+		}).then((n) => {
+			if (t) return;
+			let r = Object.keys(e.ctx).length > 0 ? {
+				...n,
+				context: { values: {
+					...n.context?.values ?? {},
+					...e.ctx
+				} }
+			} : n;
+			o({ template: r });
+		}).catch((e) => {
+			t || o({ error: e instanceof Error ? e.message : "Template load error" });
+		}), () => {
+			t = !0;
+		};
+	}, [e.templateUrl, e.ctx]);
+	let c = G(() => wl(e), [e]), l = e.templateUrl ? a.template : c;
+	return e.templateUrl && a.error ? /* @__PURE__ */ J(El, {
+		title: "Embed error",
+		body: a.error,
+		theme: s
+	}) : e.templateUrl && !l ? /* @__PURE__ */ J(El, {
+		title: "Loading…",
+		body: "Fetching dashboard template",
+		theme: s
+	}) : l ? /* @__PURE__ */ J("div", {
+		className: `mtc-root mtc-theme-${s}`,
+		"data-theme": s,
+		children: /* @__PURE__ */ J("div", {
+			className: "mtc-workspace min-h-screen",
+			children: /* @__PURE__ */ J(ri, {
+				template: l,
+				backendUrl: e.backendUrl,
+				chrome: e.chrome === "full" ? "full" : "minimal",
+				onEvent: t,
+				theme: s,
+				templateTrust: r,
+				templateTrustPolicy: i
+			})
+		})
+	}) : /* @__PURE__ */ J(El, {
+		title: "Nothing to embed",
+		body: "Pass a ?template= URL, or a ?src= source id (with &backend=), or a ?url= data URL.",
+		theme: s
+	});
+}
+function El({ title: e, body: t, theme: n }) {
+	return /* @__PURE__ */ J("div", {
+		className: `mtc-root mtc-theme-${n}`,
+		"data-theme": n,
+		children: /* @__PURE__ */ J("div", {
+			className: "mtc-workspace min-h-screen flex items-center justify-center p-6",
+			children: /* @__PURE__ */ Y("div", {
+				className: "text-center max-w-md",
+				children: [/* @__PURE__ */ J("div", {
+					className: "text-sm font-medium text-zinc-200 mb-1",
+					children: e
+				}), /* @__PURE__ */ J("div", {
+					className: "text-xs text-zinc-500",
+					children: t
+				})]
+			})
+		})
+	});
+}
+//#endregion
+//#region src/embed/embedConfig.ts
+function Dl(e) {
+	return e === "1" || e === "true" || e === "yes";
+}
+function Ol(e) {
+	let t = new URLSearchParams(e.startsWith("?") ? e.slice(1) : e), n = {};
+	for (let [e, r] of t.entries()) if (e.startsWith("ctx.")) {
+		let t = e.slice(4);
+		t && (n[t] = r);
+	}
+	let r = t.get("chrome") === "full" ? "full" : "none", i = t.get("theme"), a = i === "operator" || i === "light" ? i : "dark", o = t.get("title") ?? void 0, s = t.get("backend") ?? void 0, c = t.get("template") ?? void 0;
+	if (c) return {
+		templateUrl: c,
+		title: o,
+		backendUrl: s,
+		ctx: n,
+		chrome: r,
+		theme: a
+	};
+	let l = t.get("src") ?? void 0, u = t.get("url") ?? void 0;
+	if (l || u) {
+		let e = t.get("refreshMs"), i = e == null ? NaN : Number(e);
+		return {
+			widget: {
+				component: t.get("component") ?? "table",
+				sourceId: l,
+				url: u,
+				stream: Dl(t.get("stream")),
+				refreshIntervalMs: Number.isFinite(i) && i > 0 ? i : void 0
+			},
+			title: o,
+			backendUrl: s,
+			ctx: n,
+			chrome: r,
+			theme: a
+		};
+	}
+	return {
+		title: o,
+		backendUrl: s,
+		ctx: n,
+		chrome: r,
+		theme: a
+	};
+}
+function kl(e, t) {
+	let n = new URLSearchParams();
+	t.templateUrl && n.set("template", t.templateUrl), t.widget && (t.widget.component && n.set("component", t.widget.component), t.widget.sourceId && n.set("src", t.widget.sourceId), t.widget.url && n.set("url", t.widget.url), t.widget.stream && n.set("stream", "1"), t.widget.refreshIntervalMs && n.set("refreshMs", String(t.widget.refreshIntervalMs))), t.title && n.set("title", t.title), t.backendUrl && n.set("backend", t.backendUrl), t.chrome === "full" && n.set("chrome", "full"), t.theme && t.theme !== "dark" && n.set("theme", t.theme);
+	for (let [e, r] of Object.entries(t.ctx ?? {})) n.set(`ctx.${e}`, r);
+	let r = n.toString();
+	return r ? `${e}?${r}` : e;
+}
+//#endregion
+//#region src/bi/connector.ts
+var Al = [
+	"SHAPE_UNSPECIFIED",
+	"SHAPE_TIMESERIES",
+	"SHAPE_CANDLES",
+	"SHAPE_TABLE",
+	"SHAPE_METRIC",
+	"SHAPE_GAUGE",
+	"SHAPE_HEATMAP",
+	"SHAPE_EVENTS",
+	"SHAPE_DISTRIBUTION",
+	"SHAPE_TEXT",
+	"SHAPE_ORDERBOOK",
+	"SHAPE_PAIRED_GRID",
+	"SHAPE_EMBED",
+	"SHAPE_ASSET_CATALOG",
+	"SHAPE_OBJECT",
+	"SHAPE_GRAPH",
+	"SHAPE_REPOSITORY",
+	"SHAPE_RECORD_SET"
+];
+function jl(e) {
+	if (typeof e == "number" && Number.isInteger(e)) return Al[e];
+	if (typeof e == "string") {
+		if (/^\d+$/.test(e)) return Al[Number(e)];
+		if (Al.includes(e)) return e;
+	}
+}
+var Ml = "medallion.terminal.v1.TerminalService";
+function Nl(e) {
+	switch (e) {
+		case 2:
+		case "PARAM_TYPE_NUMBER": return "number";
+		case 3:
+		case "PARAM_TYPE_BOOLEAN": return "boolean";
+		case 4:
+		case "PARAM_TYPE_TIMESTAMP": return "timestamp";
+		case 7:
+		case "PARAM_TYPE_INTEGER": return "integer";
+		case 8:
+		case "PARAM_TYPE_DATE": return "timestamp";
+		default: return "string";
+	}
+}
+function Pl(e) {
+	let t = (e, t = !1) => ({
+		name: e,
+		type: "string",
+		isTime: t
+	}), n = (e) => ({
+		name: e,
+		type: "number"
+	});
+	switch (e) {
+		case 1:
+		case "SHAPE_TIMESERIES": return [t("timestamp", !0), n("value")];
+		case 2:
+		case "SHAPE_CANDLES": return [
+			t("timestamp", !0),
+			n("open"),
+			n("high"),
+			n("low"),
+			n("close"),
+			n("volume")
+		];
+		case 4:
+		case "SHAPE_METRIC": return [
+			n("value"),
+			n("delta"),
+			t("unit"),
+			t("label")
+		];
+		case 5:
+		case "SHAPE_GAUGE": return [
+			n("value"),
+			n("min"),
+			n("max")
+		];
+		case 6:
+		case "SHAPE_HEATMAP": return [
+			t("row"),
+			t("col"),
+			n("value"),
+			t("label")
+		];
+		case 7:
+		case "SHAPE_EVENTS": return [
+			t("timestamp", !0),
+			t("label"),
+			t("status")
+		];
+		case 8:
+		case "SHAPE_DISTRIBUTION": return [t("label"), n("value")];
+		case 9:
+		case "SHAPE_TEXT": return [
+			t("title"),
+			t("body"),
+			t("source"),
+			t("date", !0)
+		];
+		case 10:
+		case "SHAPE_ORDERBOOK": return [
+			t("side"),
+			n("price"),
+			n("size")
+		];
+		case 13:
+		case "SHAPE_ASSET_CATALOG": return [
+			t("id"),
+			t("name"),
+			t("kind"),
+			t("description"),
+			t("owner"),
+			t("status"),
+			t("updated_at", !0),
+			{
+				name: "tags",
+				type: "json"
+			},
+			t("url"),
+			{
+				name: "metadata",
+				type: "json"
+			},
+			{
+				name: "context",
+				type: "json"
+			}
+		];
+		case 14:
+		case "SHAPE_OBJECT": return [
+			t("object_type"),
+			t("object_id"),
+			t("title"),
+			t("description"),
+			t("status"),
+			t("updated_at", !0),
+			{
+				name: "tags",
+				type: "json"
+			}
+		];
+		case 15:
+		case "SHAPE_GRAPH": return [
+			t("record_type"),
+			t("id"),
+			t("from"),
+			t("to"),
+			t("label"),
+			t("kind"),
+			t("status")
+		];
+		case 16:
+		case "SHAPE_REPOSITORY": return [
+			t("repository"),
+			t("ref"),
+			t("path"),
+			t("name"),
+			t("kind"),
+			t("language"),
+			{
+				name: "size_bytes",
+				type: "integer"
+			},
+			t("updated_at", !0)
+		];
+		default: return [];
+	}
+}
+function Fl(e, t) {
+	let n = t.protocol ?? "connect", r = t.endpoint.replace(/\/$/, ""), i = e.map((e) => {
+		let t = jl(e.shape);
+		return {
+			id: e.id,
+			name: e.name ?? e.id,
+			description: e.description,
+			shape: t,
+			streamable: e.streamable,
+			columns: Pl(t),
+			params: (e.params ?? []).map((e) => ({
+				key: e.key,
+				required: e.required ?? !1,
+				type: Nl(e.type),
+				defaultValue: e.defaultValue ?? e.default_value,
+				enumValues: e.enumValues ?? e.enum_values,
+				description: e.description
+			})),
+			tags: e.tags
+		};
+	}), a = {
+		version: 1,
+		name: t.name,
+		protocol: n,
+		endpoint: r,
+		auth: t.auth ?? { kind: "none" },
+		tables: i
+	};
+	return n === "connect" && (a.service = Ml, a.getUrl = `${r}/${Ml}/Get`), a;
+}
+function Il(e) {
+	return JSON.stringify(e, null, 2);
+}
+function Ll(e) {
+	let t = [{
+		label: "Protocol",
+		value: e.protocol === "connect" ? "ConnectRPC (HTTP/JSON)" : "SQL gateway"
+	}, {
+		label: "Endpoint",
+		value: e.endpoint
+	}];
+	return e.protocol === "connect" && e.getUrl && (t.push({
+		label: "Get RPC URL",
+		value: e.getUrl
+	}), t.push({
+		label: "Method",
+		value: "POST"
+	}), t.push({
+		label: "Content-Type",
+		value: "application/json"
+	}), t.push({
+		label: "Request body",
+		value: "{ \"source_id\": \"<table id>\", \"params\": { ... } }"
+	})), e.auth && e.auth.kind !== "none" && t.push({
+		label: "Auth",
+		value: e.auth.kind === "bearer" ? "Authorization: Bearer <token>" : `${e.auth.headerName ?? "X-Api-Key"}: <token>`
+	}), t.push({
+		label: "Tables",
+		value: String(e.tables.length)
+	}), t;
+}
+//#endregion
+export { qc as ActionLog, Zc as AlertLog, Zs as AreaChart, Ia as AssetCatalog, dr as BUILTIN_COMPONENTS, Rt as BUILTIN_KEYS, is as BarChart, dc as Boxplot, ji as Candlestick, Na as Catalog, _s as Clock, Ja as CodeBrowser, rr as CommandPalette, pr as DEFAULT_IFRAME_SANDBOX, hr as DEFAULT_IFRAME_SANDBOX_DISALLOWED_TOKENS, mr as DEFAULT_SENSITIVE_TEMPLATE_HEADERS, gr as DEFAULT_UNTRUSTED_TEMPLATE_POLICY, Ac as Dag, ri as Dashboard, o as DashboardContext, Hi as DataTable, ha as Distribution, En as EXTENSION, Tl as EmbedView, i as Empty, Vt as ErrorBoundary, n as ErrorState, Oa as Events, Cl as ExportMenu, bl as FileBrowser, da as Gauge, xa as Heatmap, Bs as Histogram, I as HoverContext, P as HoverProvider, Ms as Iframe, ks as Image, Ic as Json, Tn as MIME, Zi as Metric, di as MultiDashboard, Pc as MultiSelect, v as NowContext, g as NowProvider, Ba as ObjectView, vo as OrderBook, B as PALETTE, Eo as PairedGrid, It as Placeholder, sa as Prompt, bc as Radar, io as RecordBoard, fo as RecordCalendar, ho as RecordForm, $a as RecordGrid, R as SEMANTIC, fs as Scatter, Ws as Section, oc as Select, or as ShortcutsOverlay, r as Skeleton, nc as Slider, zc as Sparkline, qo as StatStrip, al as Tape, ra as Text, Ro as Ticker, xi as Timeseries, No as Trade, ws as Treemap, Ho as VolumeProfile, Un as WidgetShell, ce as abbreviateAxis, Wn as applyActions, M as applyRecordView, h as buildActionRequest, d as buildActionWatchRequest, Fl as buildBiDescriptor, kl as buildEmbedUrl, p as buildGenerateRequest, l as buildGenerateUrl, Lr as buildSnapshot, s as buildSubmitActionUrl, f as buildWatchActionUrl, Wt as canParsePredicate, O as changedRecordValues, Ll as connectionFields, On as csvEscape, Qn as deleteView, Il as descriptorToJson, zn as downloadView, Ut as evaluateAlert, Rn as exportFilename, In as exportView, A as findRecordView, wn as flatten, ie as formatBps, oe as formatCompact, ne as formatCurrency, ae as formatPercent, se as formatStat, ee as formatTimestamp, Tt as getNested, zt as getWidget, E as initialRecordValues, m as interpolate, ge as isNonTerminalStatus, C as isRecordFieldEditable, Ir as isStaticTemplate, _e as isTerminalStatus, Zn as listViews, Xn as loadView, c as newClientRequestId, S as normalizeAssetCatalog, b as normalizeGraph, x as normalizeObject, k as normalizeRecordSet, y as normalizeRepository, Ol as parseEmbedConfig, Kn as readCtxFromUrl, j as recordChoiceColor, w as recordDateKey, D as recordMatchesFilter, N as recordTitle, T as recordValueLabel, Bt as registerWidget, ue as resolveColor, u as resolveSource, Yn as saveView, Pn as serializeText, kn as toCsv, An as toJson, jn as toNdjson, Nn as toParquet, me as useAnimatedNumber, wt as useBreakpoint, a as useDashboard, Ft as useDataSource, F as useHover, _ as useNow, ve as useSubmitAction, pi as useTabFromUrl, he as useWatchAction, fr as validateTemplate, vr as validateTemplateTrust, Ln as viewRowCount, Fr as widgetSnapshotKey, qn as writeCtxToUrl };

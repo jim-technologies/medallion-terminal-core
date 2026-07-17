@@ -21,8 +21,8 @@ export interface TemplateTrustPolicy {
     iframeSandbox?: IframeSandboxPolicy;
 }
 export declare const DEFAULT_IFRAME_SANDBOX = "";
-export declare const DEFAULT_SENSITIVE_TEMPLATE_HEADERS: readonly ["authorization", "cookie", "proxy-authorization", "set-cookie", "x-api-key", "x-auth-token", "x-csrf-token", "x-xsrf-token"];
-export declare const DEFAULT_IFRAME_SANDBOX_DISALLOWED_TOKENS: readonly ["allow-downloads", "allow-popups-to-escape-sandbox", "allow-top-navigation", "allow-top-navigation-by-user-activation"];
+export declare const DEFAULT_SENSITIVE_TEMPLATE_HEADERS: readonly ['authorization', 'cookie', 'proxy-authorization', 'set-cookie', 'x-api-key', 'x-auth-token', 'x-csrf-token', 'x-xsrf-token'];
+export declare const DEFAULT_IFRAME_SANDBOX_DISALLOWED_TOKENS: readonly ['allow-downloads', 'allow-popups-to-escape-sandbox', 'allow-top-navigation', 'allow-top-navigation-by-user-activation'];
 export declare const DEFAULT_UNTRUSTED_TEMPLATE_POLICY: {
     readonly allowRelativeUrls: true;
     readonly allowedUrlOrigins: readonly [];

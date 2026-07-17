@@ -49,11 +49,11 @@ export function ShortcutsOverlay({ templateShortcuts }: { templateShortcuts?: Te
 
   return (
     <div
-      className="fixed inset-0 z-40 bg-black/60 flex items-center justify-center px-4"
+      className="mtc-overlay fixed inset-0 z-40 flex items-center justify-center px-4"
       onClick={() => setOpen(false)}
     >
       <div
-        className="w-full max-w-md bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl overflow-hidden motion-safe:animate-[fadeIn_180ms_ease-out]"
+        className="mtc-popover w-full max-w-md overflow-hidden motion-safe:animate-[fadeIn_180ms_ease-out]"
         onClick={e => e.stopPropagation()}
       >
         <div className="px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between">

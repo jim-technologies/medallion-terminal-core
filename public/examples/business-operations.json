@@ -1,0 +1,181 @@
+{
+  "title": "Northstar Operations · ${ctx.period}",
+  "columns": 12,
+  "context": {
+    "values": {
+      "period": "Q3 2026",
+      "region": "All"
+    }
+  },
+  "shortcuts": [
+    { "key": "1", "label": "Current quarter", "ctx": { "period": "Q3 2026" } },
+    { "key": "2", "label": "Prior quarter", "ctx": { "period": "Q2 2026" } }
+  ],
+  "widgets": [
+    {
+      "id": "pulse",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 92,
+      "title": "Business pulse",
+      "source": {
+        "inline": {
+          "stats": [
+            { "label": "Revenue", "value": 1840000, "delta": 0.084, "unit": "USD", "trend": [141, 148, 152, 161, 169, 176, 184] },
+            { "label": "Gross margin", "value": 41.8, "delta": 0.021, "unit": "%", "trend": [39.2, 39.8, 40.1, 40.6, 41.0, 41.3, 41.8] },
+            { "label": "Cash available", "value": 1260000, "delta": 0.036, "unit": "USD", "trend": [108, 111, 114, 118, 121, 123, 126] },
+            { "label": "Open pipeline", "value": 3270000, "delta": 0.126, "unit": "USD", "trend": [258, 271, 280, 296, 304, 316, 327] },
+            { "label": "On-time delivery", "value": 94.6, "delta": 0.012, "unit": "%", "trend": [91.2, 92.0, 92.8, 93.1, 94.0, 94.2, 94.6] },
+            { "label": "Customer health", "value": 87, "delta": -0.008, "unit": "/100", "trend": [85, 86, 88, 89, 89, 88, 87] }
+          ]
+        }
+      }
+    },
+    {
+      "id": "revenue-plan",
+      "component": "timeseries",
+      "span": 8,
+      "height": 300,
+      "title": "Revenue against plan",
+      "source": {
+        "inline": [
+          { "timestamp": "2026-01-01", "Actual": 472000, "Plan": 450000 },
+          { "timestamp": "2026-02-01", "Actual": 498000, "Plan": 470000 },
+          { "timestamp": "2026-03-01", "Actual": 521000, "Plan": 500000 },
+          { "timestamp": "2026-04-01", "Actual": 548000, "Plan": 525000 },
+          { "timestamp": "2026-05-01", "Actual": 581000, "Plan": 555000 },
+          { "timestamp": "2026-06-01", "Actual": 612000, "Plan": 590000 },
+          { "timestamp": "2026-07-01", "Actual": 646000, "Plan": 625000 }
+        ]
+      }
+    },
+    {
+      "id": "runway",
+      "component": "gauge",
+      "span": 4,
+      "height": 300,
+      "title": "Cash runway · months",
+      "source": {
+        "inline": {
+          "value": 13.8,
+          "min": 0,
+          "max": 24,
+          "bands": [
+            { "from": 0, "to": 6, "color": "danger" },
+            { "from": 6, "to": 12, "color": "warn" },
+            { "from": 12, "to": 24, "color": "ok" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "pipeline",
+      "component": "table",
+      "span": 8,
+      "height": 340,
+      "title": "Priority pipeline",
+      "options": {
+        "row_context": { "key": "account", "field": "Account" }
+      },
+      "source": {
+        "inline": [
+          { "Account": "Atlas Foods", "Stage": "Proposal", "Value": 280000, "Confidence": "72%", "Owner": "Maya", "Next step": "Pricing review · Jul 18" },
+          { "Account": "Fieldstone Labs", "Stage": "Pilot", "Value": 215000, "Confidence": "81%", "Owner": "Theo", "Next step": "Security sign-off · Jul 19" },
+          { "Account": "Harbor Supply", "Stage": "Discovery", "Value": 170000, "Confidence": "44%", "Owner": "Nina", "Next step": "Operations workshop · Jul 22" },
+          { "Account": "Juniper Works", "Stage": "Negotiation", "Value": 148000, "Confidence": "88%", "Owner": "Maya", "Next step": "Final terms · Jul 17" },
+          { "Account": "Copper & Co.", "Stage": "Proposal", "Value": 96000, "Confidence": "63%", "Owner": "Theo", "Next step": "Reference call · Jul 21" }
+        ]
+      }
+    },
+    {
+      "id": "briefing",
+      "component": "text",
+      "span": 4,
+      "height": 340,
+      "title": "Owner briefing",
+      "source": {
+        "inline": {
+          "items": [
+            {
+              "title": "Decision needed · hiring plan",
+              "body": "Delivery demand supports two additional implementation hires. Approving this week preserves the September onboarding window.",
+              "source": "Finance + Delivery",
+              "date": "Today",
+              "tags": ["decision", "people"]
+            },
+            {
+              "title": "Margin is improving",
+              "body": "Gross margin is 2.1 points ahead of last quarter as supplier terms and project utilization improve.",
+              "source": "Finance",
+              "date": "Today",
+              "tags": ["margin"]
+            },
+            {
+              "title": "Watch customer health",
+              "body": "Three mid-market accounts moved from green to amber after slower support response times.",
+              "source": "Customer success",
+              "date": "Yesterday",
+              "tags": ["risk", "customers"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "capacity",
+      "component": "heatmap",
+      "span": 7,
+      "height": 280,
+      "title": "Team capacity · next five days",
+      "source": {
+        "inline": {
+          "rows": ["Sales", "Delivery", "Support", "Finance"],
+          "columns": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+          "cells": [
+            { "row": 0, "col": 0, "value": 72, "label": "72%" },
+            { "row": 0, "col": 1, "value": 78, "label": "78%" },
+            { "row": 0, "col": 2, "value": 86, "label": "86%" },
+            { "row": 0, "col": 3, "value": 81, "label": "81%" },
+            { "row": 0, "col": 4, "value": 68, "label": "68%" },
+            { "row": 1, "col": 0, "value": 91, "label": "91%" },
+            { "row": 1, "col": 1, "value": 94, "label": "94%" },
+            { "row": 1, "col": 2, "value": 97, "label": "97%" },
+            { "row": 1, "col": 3, "value": 95, "label": "95%" },
+            { "row": 1, "col": 4, "value": 88, "label": "88%" },
+            { "row": 2, "col": 0, "value": 83, "label": "83%" },
+            { "row": 2, "col": 1, "value": 89, "label": "89%" },
+            { "row": 2, "col": 2, "value": 92, "label": "92%" },
+            { "row": 2, "col": 3, "value": 87, "label": "87%" },
+            { "row": 2, "col": 4, "value": 75, "label": "75%" },
+            { "row": 3, "col": 0, "value": 64, "label": "64%" },
+            { "row": 3, "col": 1, "value": 71, "label": "71%" },
+            { "row": 3, "col": 2, "value": 69, "label": "69%" },
+            { "row": 3, "col": 3, "value": 76, "label": "76%" },
+            { "row": 3, "col": 4, "value": 58, "label": "58%" }
+          ],
+          "min": 50,
+          "max": 100,
+          "scale": "sequential"
+        }
+      }
+    },
+    {
+      "id": "decisions",
+      "component": "events",
+      "span": 5,
+      "height": 280,
+      "title": "Decisions and commitments",
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "2026-07-16T16:00:00Z", "label": "Approve implementation hiring plan", "status": "EVENT_STATUS_WARN" },
+            { "timestamp": "2026-07-17T18:00:00Z", "label": "Sign Juniper Works final terms", "status": "EVENT_STATUS_INFO" },
+            { "timestamp": "2026-07-19T17:00:00Z", "label": "Fieldstone security review", "status": "EVENT_STATUS_INFO" },
+            { "timestamp": "2026-07-22T16:30:00Z", "label": "Monthly cash and collections review", "status": "EVENT_STATUS_OK" },
+            { "timestamp": "2026-07-24T19:00:00Z", "label": "Customer health recovery check", "status": "EVENT_STATUS_WARN" }
+          ]
+        }
+      }
+    }
+  ]
+}

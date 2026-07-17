@@ -13,6 +13,14 @@
 // becomes a single key/value row set. Nothing throws — export is a
 // user-facing convenience, not a contract boundary.
 
+import {
+  normalizeAssetCatalog,
+  normalizeGraph,
+  normalizeObject,
+  normalizeRepository,
+} from '../widgets/platformShapes'
+import { normalizeRecordSet } from '../widgets/recordShapes'
+
 // A cell is any JSON scalar. Nested values are JSON-stringified so a
 // flat table never contains objects (which CSV/Parquet can't represent).
 export type Cell = string | number | boolean | null
@@ -226,6 +234,110 @@ function flattenGauge(data: unknown): FlatTable | null {
   return null
 }
 
+function flattenAssetCatalog(data: unknown): FlatTable | null {
+  const catalog = normalizeAssetCatalog(data)
+  if (catalog.items.length === 0) return null
+  return fromRowObjects(catalog.items.map((item) => ({
+    id: item.id,
+    name: item.name,
+    kind: item.kind,
+    description: item.description,
+    owner: item.owner,
+    status: item.status,
+    updated_at: item.updatedAt,
+    tags: item.tags,
+    url: item.url,
+    metadata: item.metadata,
+    context: item.context,
+  })))
+}
+
+function flattenObject(data: unknown): FlatTable | null {
+  const object = normalizeObject(data)
+  if (!object) return null
+  const row: Record<string, unknown> = {
+    object_type: object.objectType,
+    object_id: object.objectId,
+    title: object.title,
+    description: object.description,
+    status: object.status,
+    updated_at: object.updatedAt,
+    tags: object.tags,
+  }
+  for (const property of object.properties) row[property.key] = property.value
+  if (object.links.length > 0) row.links = object.links
+  if (object.actions.length > 0) row.actions = object.actions
+  return fromRowObjects([row])
+}
+
+function flattenGraph(data: unknown): FlatTable | null {
+  const graph = normalizeGraph(data)
+  if (!graph) return null
+  return fromRowObjects([
+    ...graph.nodes.map((node) => ({
+      record_type: 'node',
+      id: node.id,
+      label: node.label,
+      kind: node.kind,
+      status: node.status,
+      subtitle: node.subtitle,
+      tags: node.tags,
+      metadata: node.metadata,
+      context: node.context,
+    })),
+    ...graph.edges.map((edge) => ({
+      record_type: 'edge',
+      from: edge.from,
+      to: edge.to,
+      label: edge.label,
+      kind: edge.kind,
+      status: edge.status,
+    })),
+  ])
+}
+
+function flattenRepository(data: unknown): FlatTable | null {
+  const repository = normalizeRepository(data)
+  if (!repository) return null
+  if (repository.entries.length > 0) {
+    return fromRowObjects(repository.entries.map((entry) => ({
+      repository: repository.repository,
+      ref: repository.ref,
+      path: entry.path,
+      name: entry.name,
+      kind: entry.kind,
+      language: entry.language,
+      size_bytes: entry.sizeBytes,
+      updated_at: entry.updatedAt,
+    })))
+  }
+  if (repository.file) {
+    return fromRowObjects([{
+      repository: repository.repository,
+      ref: repository.ref,
+      path: repository.file.path,
+      language: repository.file.language,
+      size_bytes: repository.file.sizeBytes,
+      truncated: repository.file.truncated,
+      content: repository.file.content,
+      url: repository.file.url,
+    }])
+  }
+  return null
+}
+
+function flattenRecordSet(data: unknown): FlatTable | null {
+  const set = normalizeRecordSet(data)
+  if (!set) return null
+  return fromRowObjects(set.records.map((record) => ({
+    id: record.id,
+    ...record.values,
+    created_at: record.createdAt,
+    updated_at: record.updatedAt,
+    revision: record.revision,
+  })))
+}
+
 // A registry of shape name → projector, so callers that know the shape
 // (e.g. a widget that knows its component maps to a Shape) can pick the
 // right one directly and skip the sniff. The map mirrors the canonical
@@ -247,6 +359,29 @@ const PROJECTORS: Record<string, (d: unknown) => FlatTable | null> = {
   orderbook: flattenOrderbook,
   metric: flattenMetric,
   gauge: flattenGauge,
+  asset_catalog: flattenAssetCatalog,
+  object_view: flattenObject,
+  dag: flattenGraph,
+  code_browser: flattenRepository,
+  record_grid: flattenRecordSet,
+  record_board: flattenRecordSet,
+  record_calendar: flattenRecordSet,
+  record_form: flattenRecordSet,
+  SHAPE_TIMESERIES: flattenTimeseries,
+  SHAPE_CANDLES: flattenCandles,
+  SHAPE_TABLE: flattenTable,
+  SHAPE_METRIC: flattenMetric,
+  SHAPE_GAUGE: flattenGauge,
+  SHAPE_HEATMAP: flattenHeatmap,
+  SHAPE_EVENTS: flattenEvents,
+  SHAPE_DISTRIBUTION: flattenDistribution,
+  SHAPE_TEXT: flattenText,
+  SHAPE_ORDERBOOK: flattenOrderbook,
+  SHAPE_ASSET_CATALOG: flattenAssetCatalog,
+  SHAPE_OBJECT: flattenObject,
+  SHAPE_GRAPH: flattenGraph,
+  SHAPE_REPOSITORY: flattenRepository,
+  SHAPE_RECORD_SET: flattenRecordSet,
 }
 
 // Best-effort fallback when the shape is unknown: arrays of objects
@@ -299,6 +434,11 @@ export function flatten(data: unknown, componentOrShape?: string): FlatTable {
     flattenEvents,
     flattenText,
     flattenOrderbook,
+    flattenAssetCatalog,
+    flattenObject,
+    flattenGraph,
+    flattenRepository,
+    flattenRecordSet,
     flattenGauge,
     flattenMetric,
     flattenTable,

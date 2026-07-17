@@ -39,12 +39,12 @@ function colorize(s: string) {
   while ((m = re.exec(s)) != null) {
     if (m.index > last) parts.push({ text: s.slice(last, m.index) })
     if (m[1]) {
-      parts.push({ text: m[1], color: m[2] ? '#a1a1aa' : '#34d399' })
+      parts.push({ text: m[1], color: m[2] ? 'var(--mtc-code-key)' : 'var(--mtc-code-string)' })
       if (m[2]) parts.push({ text: m[2] })
     } else if (m[3]) {
-      parts.push({ text: m[3], color: '#fbbf24' })
+      parts.push({ text: m[3], color: 'var(--mtc-code-literal)' })
     } else if (m[4]) {
-      parts.push({ text: m[4], color: '#0ea5e9' })
+      parts.push({ text: m[4], color: 'var(--mtc-code-number)' })
     }
     last = re.lastIndex
   }

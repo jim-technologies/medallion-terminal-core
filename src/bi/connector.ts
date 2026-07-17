@@ -32,6 +32,41 @@ export type BiShape =
   | 'SHAPE_ORDERBOOK'
   | 'SHAPE_PAIRED_GRID'
   | 'SHAPE_EMBED'
+  | 'SHAPE_ASSET_CATALOG'
+  | 'SHAPE_OBJECT'
+  | 'SHAPE_GRAPH'
+  | 'SHAPE_REPOSITORY'
+  | 'SHAPE_RECORD_SET'
+
+const BI_SHAPES: readonly BiShape[] = [
+  'SHAPE_UNSPECIFIED',
+  'SHAPE_TIMESERIES',
+  'SHAPE_CANDLES',
+  'SHAPE_TABLE',
+  'SHAPE_METRIC',
+  'SHAPE_GAUGE',
+  'SHAPE_HEATMAP',
+  'SHAPE_EVENTS',
+  'SHAPE_DISTRIBUTION',
+  'SHAPE_TEXT',
+  'SHAPE_ORDERBOOK',
+  'SHAPE_PAIRED_GRID',
+  'SHAPE_EMBED',
+  'SHAPE_ASSET_CATALOG',
+  'SHAPE_OBJECT',
+  'SHAPE_GRAPH',
+  'SHAPE_REPOSITORY',
+  'SHAPE_RECORD_SET',
+]
+
+function normalizeBiShape(shape: unknown): BiShape | undefined {
+  if (typeof shape === 'number' && Number.isInteger(shape)) return BI_SHAPES[shape]
+  if (typeof shape === 'string') {
+    if (/^\d+$/.test(shape)) return BI_SHAPES[Number(shape)]
+    if ((BI_SHAPES as readonly string[]).includes(shape)) return shape as BiShape
+  }
+  return undefined
+}
 
 // The transport a BI tool uses to reach the data. Two are documented:
 //   - "connect": the ConnectRPC TerminalService (Get returns a payload
@@ -181,6 +216,55 @@ function shapeColumns(shape: unknown): BiColumn[] {
     case 10:
     case 'SHAPE_ORDERBOOK':
       return [t('side'), num('price'), num('size')]
+    case 13:
+    case 'SHAPE_ASSET_CATALOG':
+      return [
+        t('id'),
+        t('name'),
+        t('kind'),
+        t('description'),
+        t('owner'),
+        t('status'),
+        t('updated_at', true),
+        { name: 'tags', type: 'json' },
+        t('url'),
+        { name: 'metadata', type: 'json' },
+        { name: 'context', type: 'json' },
+      ]
+    case 14:
+    case 'SHAPE_OBJECT':
+      return [
+        t('object_type'),
+        t('object_id'),
+        t('title'),
+        t('description'),
+        t('status'),
+        t('updated_at', true),
+        { name: 'tags', type: 'json' },
+      ]
+    case 15:
+    case 'SHAPE_GRAPH':
+      return [
+        t('record_type'),
+        t('id'),
+        t('from'),
+        t('to'),
+        t('label'),
+        t('kind'),
+        t('status'),
+      ]
+    case 16:
+    case 'SHAPE_REPOSITORY':
+      return [
+        t('repository'),
+        t('ref'),
+        t('path'),
+        t('name'),
+        t('kind'),
+        t('language'),
+        { name: 'size_bytes', type: 'integer' },
+        t('updated_at', true),
+      ]
     // SHAPE_TABLE / SHAPE_PAIRED_GRID / unspecified: columns are
     // data-defined; leave empty so the connector infers from a sample.
     default:
@@ -190,7 +274,8 @@ function shapeColumns(shape: unknown): BiColumn[] {
 
 // A trimmed view of a ListSources Source — enough to build a descriptor
 // table without importing the full generated proto message type. Accepts
-// the proto-JSON shape (snake_case) returned over the Connect wire.
+// generated runtime enums or ProtoJSON enum names, plus both canonical
+// lowerCamelCase and legacy/proto-name parameter aliases.
 export interface SourceLike {
   id: string
   name?: string
@@ -202,7 +287,9 @@ export interface SourceLike {
     key: string
     description?: string
     required?: boolean
+    defaultValue?: string
     default_value?: string
+    enumValues?: string[]
     enum_values?: string[]
     type?: unknown
   }[]
@@ -226,23 +313,26 @@ export function buildBiDescriptor(
   const protocol = options.protocol ?? 'connect'
   const base = options.endpoint.replace(/\/$/, '')
 
-  const tables: BiTable[] = sources.map((s) => ({
-    id: s.id,
-    name: s.name ?? s.id,
-    description: s.description,
-    shape: s.shape as BiShape | undefined,
-    streamable: s.streamable,
-    columns: shapeColumns(s.shape),
-    params: (s.params ?? []).map((p) => ({
-      key: p.key,
-      required: p.required ?? false,
-      type: paramTypeToBi(p.type),
-      defaultValue: p.default_value,
-      enumValues: p.enum_values,
-      description: p.description,
-    })),
-    tags: s.tags,
-  }))
+  const tables: BiTable[] = sources.map((s) => {
+    const shape = normalizeBiShape(s.shape)
+    return {
+      id: s.id,
+      name: s.name ?? s.id,
+      description: s.description,
+      shape,
+      streamable: s.streamable,
+      columns: shapeColumns(shape),
+      params: (s.params ?? []).map((p) => ({
+        key: p.key,
+        required: p.required ?? false,
+        type: paramTypeToBi(p.type),
+        defaultValue: p.defaultValue ?? p.default_value,
+        enumValues: p.enumValues ?? p.enum_values,
+        description: p.description,
+      })),
+      tags: s.tags,
+    }
+  })
 
   const descriptor: BiConnectorDescriptor = {
     version: 1,

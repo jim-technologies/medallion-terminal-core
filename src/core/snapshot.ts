@@ -27,7 +27,7 @@ export function widgetSnapshotKey(widget: WidgetConfig, index: number): string {
 
 // Does this template render fully offline? True when every widget either
 // has no source or carries inline data (no live source_id/url). Viewers
-// use it to show a "snapshot" badge and hide live-only chrome.
+// use it to show a static-view badge and hide live-only chrome.
 export function isStaticTemplate(template: Template): boolean {
   const widgets = template?.widgets
   if (!Array.isArray(widgets) || widgets.length === 0) return false

@@ -9,4 +9,4 @@ export interface EmbedViewProps {
     templateTrust?: DashboardTemplateTrust;
     templateTrustPolicy?: TemplateTrustPolicy;
 }
-export declare function EmbedView({ config, onEvent, theme, templateTrust, templateTrustPolicy, }: EmbedViewProps): import("react/jsx-runtime").JSX.Element;
+export declare function EmbedView({ config, onEvent, theme: themeOverride, templateTrust, templateTrustPolicy, }: EmbedViewProps): import("react").JSX.Element;

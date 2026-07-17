@@ -1,59 +1,111 @@
-# PRD — Iteration 36: Radar Chart
-
-PRD wiped between iterations.
+# PRD — Platform and Record Foundation
 
 ## Goal
 
-Multi-metric comparison radar (a.k.a. spider chart). The natural
-shape for "compare these N things across M metrics at a glance":
+Provide the frontend contracts and composable built-in surfaces required to
+build a governed data-platform and business-work application: asset discovery,
+ontology/object detail, lineage, data/file repositories, code repositories,
+typed records, saved views, forms, actions, and BI handoff.
 
-- Strategies on Sharpe / DD / Vol / IC / Hit-rate
-- Assets on factor exposures (size / value / momentum / quality)
-- Models on accuracy / precision / recall / F1 / latency
-- Bots on PnL / win-rate / drawdown / latency / fills
+Package those capabilities in an original, professional operating-intelligence
+experience suitable for SME owners and operators, with technical platform
+surfaces available as progressive detail rather than the default entry point.
 
-Common quant viz; Recharts has it built-in.
+The framework remains domain-neutral and frontend-only. Host applications own
+identity, authorization, metadata storage, query execution, object storage,
+Git, orchestration, and generation.
 
 ## Scope
 
 In:
-- `src/widgets/Radar.tsx` accepting either:
-  - `[{metric, A: 0.8, B: 0.6}]` — wide form, multi-series
-  - `{ metrics: [...], series: [{name, values: [...]}] }` — long form
-- Single series renders one filled polygon; multi-series overlays
-  each.
-- Register, default height, story.
+
+- Canonical `AssetCatalogPayload`, `ObjectPayload`, `GraphPayload`, and
+  `RepositoryPayload` proto messages.
+- Built-in `asset_catalog`, `object_view`, and `code_browser` widgets.
+- Canonical `RecordSetPayload` with typed fields, stable record identity,
+  links, saved view metadata, revisions, and mutation capabilities.
+- Built-in `record_grid`, `record_board`, `record_calendar`, and `record_form`
+  projections over the same record payload.
+- `dag` support for the canonical graph contract and context-driven node
+  selection.
+- Context handoff between catalog, object, lineage, and repository surfaces.
+- Object actions through `SubmitAction` / `WatchAction`, explicitly enabled by
+  widget options.
+- Export/BI projections for all new payloads.
+- A reference backend and `platform-foundation.json` dashboard that exercise
+  the complete flow.
+- A reference revision-safe, idempotent record mutation lifecycle and
+  `work-management.json` workspace.
+- Path-based file-store alignment across widget, example, backend, media
+  preview, download, and tests.
+- Flox-locked Node/pnpm/Buf upgrades plus current compatible frontend tooling.
+- Scoped `dark`, `operator`, and `light` themes driven by semantic tokens.
+- An owner-facing business-operations example and durable visual/product
+  rules in `DESIGN.md`.
 
 Out:
-- Auto-normalisation of metrics with different scales. Authors
-  pre-normalise their data; making this widget re-scale would be
-  domain-specific opinion (do you normalize by max? by 95th%? by
-  z-score?).
-- Per-axis grid labels. Polar axes are notoriously hard to label
-  cleanly; Recharts' default is good enough.
+
+- Implementing a production metadata graph or ontology database.
+- Authentication, authorization policy engines, audit storage, data masking,
+  or secrets management.
+- SQL execution, object storage, Git hosting, compute/orchestration, or
+  collaborative editing.
+- Product-specific naming or assumptions in core widget code.
+- A production record database, formula engine, automation runtime, comments,
+  notifications, or real-time collaborative editing.
 
 ## Decisions
 
-### Wide form for one row of values, long form for explicit series
+### TerminalService is the frontend adapter
 
-Wide form is the table-like "one row per metric, one column per
-entity" — easy to author, easy for backends. Long form is for
-cases where you have computed series objects already.
+Production hosts may compose many internal services. The browser still talks
+to one stable ConnectRPC contract, keeping templates and widgets independent
+of backend topology.
 
-### Same color palette as Timeseries
+### Canonical payloads stay generic
 
-Six-color rotation, matches the rest of the framework.
+Assets use free-form `kind`; semantic objects use properties, links, and
+actions; graphs use nodes and edges; repositories use refs, entries, and
+optional text file content. Backends can represent different industries and
+platform architectures without changing React components.
 
-## Open Questions
+Record applications use only fields, records, links, views, revisions, and
+capabilities. CRM, project, inventory, approval, and case semantics live in
+backend schemas and templates. Grid, board, calendar, form, and future custom
+projections share one canonical payload.
 
-(answered)
+### Authorization remains server-side
 
-1. **Domain max for the radial axis?** → Resolved: auto-detect
-   from data. Authors can pre-clip if they want fixed scales.
-2. **Show numeric values on points?** → Resolved: no; tooltip
-   shows them on hover. The chart should read at a glance.
+The frontend can hide or disable controls for UX, but the backend must filter
+every catalog result, property, link, graph node, repository entry, download,
+and action. Templates are not an authorization boundary.
+
+### Latest means reproducible and supported
+
+Flox locks the newest cross-platform Node, pnpm, and Buf versions available to
+the environment. JavaScript dependencies are upgraded to the newest versions
+accepted by pnpm's supply-chain policy and verified by type-check, tests, app
+build, library build, and Storybook build.
+
+### Inspired, not copied
+
+The visual system may use broad industrial-software principles—neutral
+surfaces, dense information, sparse signal color, and traceable actions—but
+must not reproduce competitor logos, product names, proprietary assets, or
+exact trade dress. Business language and owner decisions lead; ontology and
+data mechanics support them.
 
 ## Done When
 
-- `pnpm lint && pnpm test && pnpm build` clean.
-- Storybook story shows a 4-strategy × 5-metric radar.
+- The platform dashboard runs against the reference backend.
+- The record workspace runs against the reference backend and demonstrates
+  linked selection, saved views, create/update/delete, idempotency, and stale
+  revision rejection.
+- Proto generation is stable and generated JSON types are publicly exported.
+- `pnpm check` is green.
+- `pnpm build:storybook` is green.
+- File upload/list/Range/download integration is covered.
+- Documentation clearly separates frontend readiness from backend services
+  still required for production.
+- Dark, operator, and light themes remain readable and production widgets use
+  semantic tokens rather than fixed dark-only colors.

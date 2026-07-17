@@ -49,11 +49,12 @@ function singleWidgetTemplate(config: EmbedConfig): Template | null {
 export function EmbedView({
   config,
   onEvent,
-  theme = 'dark',
+  theme: themeOverride,
   templateTrust,
   templateTrustPolicy,
 }: EmbedViewProps) {
   const [fetched, setFetched] = useState<{ template?: Template; error?: string }>({})
+  const theme = themeOverride ?? config.theme ?? 'dark'
 
   // Full-dashboard mode: fetch the template JSON from templateUrl.
   useEffect(() => {
@@ -110,17 +111,17 @@ export function EmbedView({
 
   return (
     <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
-    <div className="min-h-screen bg-zinc-950">
-      <Dashboard
-        template={template}
-        backendUrl={config.backendUrl}
-        chrome={config.chrome === 'full' ? 'full' : 'minimal'}
-        onEvent={onEvent}
-        theme={theme}
-        templateTrust={templateTrust}
-        templateTrustPolicy={templateTrustPolicy}
-      />
-    </div>
+      <div className="mtc-workspace min-h-screen">
+        <Dashboard
+          template={template}
+          backendUrl={config.backendUrl}
+          chrome={config.chrome === 'full' ? 'full' : 'minimal'}
+          onEvent={onEvent}
+          theme={theme}
+          templateTrust={templateTrust}
+          templateTrustPolicy={templateTrustPolicy}
+        />
+      </div>
     </div>
   )
 }
@@ -128,12 +129,12 @@ export function EmbedView({
 function EmbedMessage({ title, body, theme }: { title: string; body: string; theme: DashboardTheme }) {
   return (
     <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
-      <div className="text-center max-w-md">
-        <div className="text-sm font-medium text-zinc-200 mb-1">{title}</div>
-        <div className="text-xs text-zinc-500">{body}</div>
+      <div className="mtc-workspace min-h-screen flex items-center justify-center p-6">
+        <div className="text-center max-w-md">
+          <div className="text-sm font-medium text-zinc-200 mb-1">{title}</div>
+          <div className="text-xs text-zinc-500">{body}</div>
+        </div>
       </div>
-    </div>
     </div>
   )
 }

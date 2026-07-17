@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import {
   buildSubmitActionUrl,
@@ -23,8 +23,10 @@ import {
   nextInQueue,
   prevInQueue,
   errorMessage,
+  resolveEndpointUrl,
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
+import { isErrorStatus, isTerminalStatus } from '../hooks/useWatchAction'
 import {
   decodeHeic,
   remuxMkvToMp4,
@@ -52,9 +54,10 @@ import type { WidgetProps } from '../types/template'
 //   - Listing: returned via the dashboard source mechanism. Pagination
 //     is driven through the ctx keys named in `page_ctx` / `page_size_ctx`.
 //   - Upload: SubmitAction with options.upload_action_id (default
-//     "upload") and payload { namespace, path, content_type, data_b64 }.
+//     "upload") and payload
+//     { [bucket_param], repo, path, content_type, data_b64 }.
 //   - Download: POST to options.download_url with body
-//     { namespace, path }; response is parsed as a Connect
+//     { [bucket_param], path }; response is parsed as a Connect
 //     server-streaming envelope. Override for non-Connect backends.
 //   - Inline preview: GET against the URL produced by `media_url_template`
 //     with {namespace} and {path} substituted. Must serve HTTP Range.
@@ -122,6 +125,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
 
   const [dragging, setDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const uploadInFlight = useRef(false)
   const [preview, setPreview] = useState<FileBrowserEntry | null>(null)
 
   // Upload dialog state. Opened by the toolbar "Upload" button; offers a
@@ -140,6 +144,9 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const [searchText, setSearchText] = useState('')
   const [searchHits, setSearchHits] = useState<FileBrowserEntry[] | null>(null)
   const [searching, setSearching] = useState(false)
+  const searchController = useRef<AbortController | null>(null)
+
+  useEffect(() => () => searchController.current?.abort(), [])
 
   const listing = useMemo(() => normalizeEntries(data), [data])
   // The active entry set: search results (flat, already files) when a
@@ -182,31 +189,45 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     if (!searchUrl) return
     const q = searchText.trim()
     if (q === '') {
-      setSearchHits(null)
+      clearSearch()
       return
     }
+    // State-backed `disabled` props do not close the same-turn double-submit
+    // window. Keep a synchronous transport guard, and let clearSearch abort
+    // the request so a stale response cannot restore results after Escape.
+    if (searchController.current) return
+    const controller = new AbortController()
+    searchController.current = controller
     setSearching(true)
     try {
-      const res = await fetch((backendUrl ?? '') + searchUrl, {
+      const res = await fetch(resolveEndpointUrl(backendUrl, searchUrl), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
         body: JSON.stringify({ [bucketParam]: bucket, query: q }),
+        signal: controller.signal,
       })
       if (!res.ok) {
         toast(`Search failed: ${await readConnectErrorMessage(res)}`, 'error')
         return
       }
       const body = (await res.json()) as { hits?: FileBrowserEntry[] }
+      if (searchController.current !== controller) return
       // Hits arrive as files with a `path`; tag kind so isFolder/preview work.
       setSearchHits((body.hits ?? []).map((h) => ({ ...h, kind: 'file' })))
     } catch (err) {
-      toast(`Search failed: ${errorMessage(err)}`, 'error')
+      if (!controller.signal.aborted) toast(`Search failed: ${errorMessage(err)}`, 'error')
     } finally {
-      setSearching(false)
+      if (searchController.current === controller) {
+        searchController.current = null
+        setSearching(false)
+      }
     }
   }
 
   const clearSearch = () => {
+    searchController.current?.abort()
+    searchController.current = null
+    setSearching(false)
     setSearchText('')
     setSearchHits(null)
   }
@@ -239,9 +260,14 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       toast('Need a folder (repo), a filename, and a URL', 'error')
       return
     }
+    if (uploadInFlight.current) {
+      toast('Another file operation is already in progress', 'warn')
+      return
+    }
+    uploadInFlight.current = true
     setDlgBusy(true)
     try {
-      const res = await fetch((backendUrl ?? '') + ingestUrl, {
+      const res = await fetch(resolveEndpointUrl(backendUrl, ingestUrl), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
         body: JSON.stringify({ [bucketParam]: bucket, repo, path: name, url: src }),
@@ -254,6 +280,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     } catch (err) {
       toast(`Ingest failed: ${errorMessage(err)}`, 'error')
     } finally {
+      uploadInFlight.current = false
       setDlgBusy(false)
     }
   }
@@ -268,6 +295,11 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       toast('Need a destination folder (repo)', 'error')
       return
     }
+    if (uploadInFlight.current) {
+      toast('Another file operation is already in progress', 'warn')
+      return
+    }
+    uploadInFlight.current = true
     setDlgBusy(true)
     try {
       await uploadOne(file, repo, name)
@@ -277,6 +309,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     } catch (err) {
       toast(`Upload failed: ${errorMessage(err)}`, 'error')
     } finally {
+      uploadInFlight.current = false
       setDlgBusy(false)
     }
   }
@@ -329,7 +362,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       return
     }
     const fullPath = entryFullPath(e)
-    const url = (backendUrl ?? '') + downloadURL
+    const url = resolveEndpointUrl(backendUrl, downloadURL)
     try {
       const res = await fetch(url, {
         method: 'POST',
@@ -362,7 +395,9 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     const contentType = file.type || 'application/octet-stream'
     if (uploadUrl) {
       const qs = new URLSearchParams({ [bucketParam]: bucket, repo, path, content_type: contentType })
-      const res = await fetch(`${backendUrl ?? ''}${uploadUrl}?${qs.toString()}`, { method: 'POST', body: file })
+      const endpoint = resolveEndpointUrl(backendUrl, uploadUrl)
+      const separator = endpoint.includes('?') ? '&' : '?'
+      const res = await fetch(`${endpoint}${separator}${qs.toString()}`, { method: 'POST', body: file })
       if (!res.ok) throw new Error((await res.text()) || `HTTP ${res.status}`)
       return
     }
@@ -379,6 +414,13 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       body: JSON.stringify(req),
     })
     if (!res.ok) throw new Error(await readConnectErrorMessage(res))
+    const reply = await res.json() as { status?: string; message?: string }
+    if (!isTerminalStatus(reply.status)) {
+      throw new Error(reply.message ?? 'Upload action did not return a terminal status')
+    }
+    if (isErrorStatus(reply.status)) {
+      throw new Error(reply.message ?? 'Upload action failed')
+    }
   }
 
   // handleFiles is the drag-drop path: repo = the folder you're viewing,
@@ -389,18 +431,27 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       toast('Open a folder first, or use the Upload button to choose a folder.', 'error')
       return
     }
+    if (uploadInFlight.current) {
+      toast('Another file operation is already in progress', 'warn')
+      return
+    }
+    uploadInFlight.current = true
     const repo = currentPath
     setUploading(true)
     let okCount = 0
-    for (const f of Array.from(files)) {
-      try {
-        await uploadOne(f, repo, f.name)
-        okCount++
-      } catch (err) {
-        toast(`Upload failed: ${f.name} — ${errorMessage(err)}`, 'error')
+    try {
+      for (const f of Array.from(files)) {
+        try {
+          await uploadOne(f, repo, f.name)
+          okCount++
+        } catch (err) {
+          toast(`Upload failed: ${f.name} — ${errorMessage(err)}`, 'error')
+        }
       }
+    } finally {
+      uploadInFlight.current = false
+      setUploading(false)
     }
-    setUploading(false)
     if (okCount > 0) {
       toast(`Uploaded ${okCount} file${okCount === 1 ? '' : 's'}`, 'ok')
       requestRefresh(widgetId ?? '*')
@@ -531,7 +582,11 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           <GalleryGrid
             entries={sorted}
             onClick={onRowClick}
-            mediaUrlFor={(e) => (e.name ? (backendUrl ?? '') + buildMediaUrl(mediaTemplate, bucket, entryFullPath(e)) : '')}
+            mediaUrlFor={(e) => (
+              e.name
+                ? resolveEndpointUrl(backendUrl, buildMediaUrl(mediaTemplate, bucket, entryFullPath(e)))
+                : ''
+            )}
           />
         ) : (
           <table className="w-full text-xs">
@@ -574,7 +629,10 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       {preview && (
         <PreviewOverlay
           entry={preview}
-          mediaUrl={(backendUrl ?? '') + buildMediaUrl(mediaTemplate, bucket, entryFullPath(preview))}
+          mediaUrl={resolveEndpointUrl(
+            backendUrl,
+            buildMediaUrl(mediaTemplate, bucket, entryFullPath(preview)),
+          )}
           autoAdvanceQueue={playableQueue(sorted)}
           navigableQueue={navigableQueue(sorted)}
           onSelect={(e) => setPreview(e)}

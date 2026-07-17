@@ -8,10 +8,12 @@ import {
   humanSize,
   previewKind,
   buildMediaUrl,
+  parseConnectStream,
   playableQueue,
   navigableQueue,
   nextInQueue,
   prevInQueue,
+  resolveEndpointUrl,
 } from '../widgets/fileBrowserHelpers'
 import { prettyJSON, parseCSV } from '../widgets/fileBrowserDecoders'
 
@@ -150,6 +152,16 @@ describe('FileBrowser helpers', () => {
     })
   })
 
+  describe('resolveEndpointUrl', () => {
+    it('joins relative endpoints and preserves absolute federated URLs', () => {
+      expect(resolveEndpointUrl('https://api.example.com/', '/media?id=1'))
+        .toBe('https://api.example.com/media?id=1')
+      expect(resolveEndpointUrl('', '/media?id=1')).toBe('/media?id=1')
+      expect(resolveEndpointUrl('https://api.example.com', 'https://cdn.example.com/file'))
+        .toBe('https://cdn.example.com/file')
+    })
+  })
+
   describe('joinPath', () => {
     it.each([
       ['', 'foo.txt', 'foo.txt'],
@@ -274,6 +286,48 @@ describe('FileBrowser helpers', () => {
       [5_000_000_000, '4.7 GB'],
     ])('%i → %q', (input, want) => {
       expect(humanSize(input)).toBe(want)
+    })
+  })
+
+  describe('parseConnectStream', () => {
+    function frame(payload: unknown, trailer = false): Uint8Array {
+      const body = new TextEncoder().encode(JSON.stringify(payload))
+      const out = new Uint8Array(5 + body.length)
+      out[0] = trailer ? 0x02 : 0
+      new DataView(out.buffer).setUint32(1, body.length)
+      out.set(body, 5)
+      return out
+    }
+
+    function response(...chunks: Uint8Array[]): Response {
+      return new Response(new ReadableStream<Uint8Array>({
+        start(controller) {
+          for (const chunk of chunks) controller.enqueue(chunk)
+          controller.close()
+        },
+      }))
+    }
+
+    it('assembles message chunks and requires a clean trailer', async () => {
+      const blob = await parseConnectStream(response(
+        frame({ data: btoa('hello ') }),
+        frame({ data: btoa('world') }),
+        frame({}, true),
+      ), 'text/plain')
+      expect(blob.type).toBe('text/plain')
+      expect(await blob.text()).toBe('hello world')
+    })
+
+    it('surfaces Connect error trailers', async () => {
+      await expect(parseConnectStream(response(
+        frame({ error: { code: 'not_found', message: 'missing file' } }, true),
+      ))).rejects.toThrow('not_found: missing file')
+    })
+
+    it('rejects a truncated stream instead of downloading partial bytes', async () => {
+      await expect(parseConnectStream(response(
+        frame({ data: btoa('partial') }),
+      ))).rejects.toThrow('ended before its Connect trailer')
     })
   })
 })

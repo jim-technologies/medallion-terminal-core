@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { formatCompact } from './format'
+import { PALETTE } from './colors'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 
@@ -14,8 +15,6 @@ interface Box {
 }
 
 const PADDING = { top: 12, right: 12, bottom: 28, left: 44 }
-const BOX_PALETTE = ['#0ea5e9', '#10b981', '#a78bfa', '#f59e0b', '#f472b6', '#fbbf24']
-
 // Boxplot widget: shows median + IQR + whiskers + outliers per category.
 // Quants use this to compare distributions (returns by strategy, slippage
 // by venue, PnL by hour-of-day, etc.) — same shape, different group labels.
@@ -71,8 +70,8 @@ function BoxplotChart({
         const y = yPos(t)
         return (
           <g key={`g-${i}`}>
-            <line x1={PADDING.left} x2={PADDING.left + innerW} y1={y} y2={y} stroke="#27272a" strokeDasharray="3 3" />
-            <text x={PADDING.left - 6} y={y + 3} textAnchor="end" fontSize={10} fill="#a1a1aa" fontFamily="ui-sans-serif">
+            <line x1={PADDING.left} x2={PADDING.left + innerW} y1={y} y2={y} stroke="var(--mtc-grid)" strokeDasharray="3 3" />
+            <text x={PADDING.left - 6} y={y + 3} textAnchor="end" fontSize={10} fill="var(--mtc-muted)" fontFamily="var(--mtc-font-sans)">
               {formatCompact(t)}
             </text>
           </g>
@@ -83,7 +82,7 @@ function BoxplotChart({
       {boxes.map((b, i) => {
         const cx = PADDING.left + slot * i + slot / 2
         const xLeft = cx - boxW / 2
-        const color = BOX_PALETTE[i % BOX_PALETTE.length]
+        const color = PALETTE[i % PALETTE.length]
         const yMinV = yPos(b.min)
         const yMaxV = yPos(b.max)
         const yQ1 = yPos(b.q1)
@@ -105,7 +104,7 @@ function BoxplotChart({
               <circle key={j} cx={cx} cy={yPos(v)} r={2.5} fill={color} fillOpacity={0.7} />
             ))}
             {/* Label */}
-            <text x={cx} y={height - 8} textAnchor="middle" fontSize={11} fill="#a1a1aa" fontFamily="ui-sans-serif">
+            <text x={cx} y={height - 8} textAnchor="middle" fontSize={11} fill="var(--mtc-muted)" fontFamily="var(--mtc-font-sans)">
               {b.label}
             </text>
           </g>
@@ -172,4 +171,3 @@ function computeStats(label: string, values: number[]): Box {
   if (!Number.isFinite(max)) max = sorted[sorted.length - 1]
   return { label, min, q1, median, q3, max, outliers }
 }
-

@@ -26,6 +26,6 @@ type Cmd = {
 declare function parseCommand(input: string, dominantKey: string): Cmd | null;
 export declare function CommandPalette({ suggest }?: {
     suggest?: PaletteSuggest;
-}): import("react/jsx-runtime").JSX.Element | null;
+}): import("react").JSX.Element | null;
 export declare const _parseCommand: typeof parseCommand;
 export {};

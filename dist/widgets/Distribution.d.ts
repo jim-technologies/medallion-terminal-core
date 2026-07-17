@@ -1,2 +1,2 @@
 import type { WidgetProps } from '../types/template';
-export declare function Distribution({ data }: WidgetProps): import("react/jsx-runtime").JSX.Element;
+export declare function Distribution({ data }: WidgetProps): import("react").JSX.Element;

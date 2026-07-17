@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Dashboard } from './core/Dashboard'
+import { Dashboard, type DashboardTheme } from './core/Dashboard'
 import { MultiDashboard, useTabFromUrl } from './core/MultiDashboard'
 import { ExamplesIndex } from './ExamplesIndex'
 import type { Template } from './types/template'
@@ -45,7 +45,7 @@ export default function App() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-zinc-500">
-        Loading terminal...
+        Loading workspace…
       </div>
     )
   }
@@ -54,12 +54,16 @@ export default function App() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-950 text-zinc-400 gap-2">
         <div className="text-red-400">{error || 'No template loaded'}</div>
-        <a className="text-sm text-sky-400 hover:text-sky-300" href="/">← back to examples</a>
+        <a className="text-sm text-sky-400 hover:text-sky-300" href="/">← back to workspaces</a>
       </div>
     )
   }
 
   const backendUrl = initialParams.get('backend') ?? undefined
-  if (tabs.length === 1) return <Dashboard template={tabs[0].template} backendUrl={backendUrl} />
-  return <MultiDashboard tabs={tabs} activeIndex={activeIndex} onSelect={setActiveIndex} backendUrl={backendUrl} />
+  const requestedTheme = initialParams.get('theme')
+  const theme: DashboardTheme = requestedTheme === 'operator' || requestedTheme === 'light'
+    ? requestedTheme
+    : 'dark'
+  if (tabs.length === 1) return <Dashboard template={tabs[0].template} backendUrl={backendUrl} theme={theme} />
+  return <MultiDashboard tabs={tabs} activeIndex={activeIndex} onSelect={setActiveIndex} backendUrl={backendUrl} theme={theme} />
 }

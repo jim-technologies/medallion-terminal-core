@@ -56,6 +56,13 @@ export { Distribution } from './widgets/Distribution'
 export { Heatmap } from './widgets/Heatmap'
 export { Events } from './widgets/Events'
 export { Catalog } from './widgets/Catalog'
+export { AssetCatalog } from './widgets/AssetCatalog'
+export { ObjectView } from './widgets/ObjectView'
+export { CodeBrowser } from './widgets/CodeBrowser'
+export { RecordGrid } from './widgets/RecordGrid'
+export { RecordBoard } from './widgets/RecordBoard'
+export { RecordCalendar } from './widgets/RecordCalendar'
+export { RecordForm } from './widgets/RecordForm'
 export { OrderBook } from './widgets/OrderBook'
 export { PairedGrid } from './widgets/PairedGrid'
 export { Trade } from './widgets/Trade'
@@ -83,6 +90,52 @@ export { ActionLog } from './widgets/ActionLog'
 export { AlertLog } from './widgets/AlertLog'
 export { Tape } from './widgets/Tape'
 export { FileBrowser } from './widgets/FileBrowser'
+export {
+  normalizeAssetCatalog,
+  normalizeObject,
+  normalizeGraph,
+  normalizeRepository,
+} from './widgets/platformShapes'
+export {
+  normalizeRecordSet,
+  applyRecordView,
+  findRecordView,
+  initialRecordValues,
+  changedRecordValues,
+  isRecordFieldEditable,
+  recordChoiceColor,
+  recordMatchesFilter,
+  recordDateKey,
+  recordTitle,
+  recordValueLabel,
+} from './widgets/recordShapes'
+export type {
+  RecordSetData,
+  RecordFieldData,
+  RecordFieldType,
+  RecordChoiceData,
+  WorkRecordData,
+  RecordViewData,
+  RecordViewType,
+  RecordSortData,
+  RecordFilterData,
+  RecordCapabilitiesData,
+} from './widgets/recordShapes'
+export type {
+  AssetCatalogData,
+  AssetCatalogItem,
+  ObjectData,
+  ObjectProperty,
+  ObjectLink,
+  ObjectAction,
+  GraphData,
+  GraphNodeData,
+  GraphEdgeData,
+  RepositoryData,
+  RepositoryEntryData,
+  RepositoryEntryKind,
+  RepositoryFileData,
+} from './widgets/platformShapes'
 export { WidgetShell } from './widgets/WidgetShell'
 export { Placeholder } from './widgets/Placeholder'
 export { Skeleton, ErrorState, Empty } from './widgets/states'
@@ -115,7 +168,7 @@ export type { ExportMenuProps } from './export/ExportMenu'
 export { EmbedView } from './embed/EmbedView'
 export type { EmbedViewProps } from './embed/EmbedView'
 export { parseEmbedConfig, buildEmbedUrl } from './embed/embedConfig'
-export type { EmbedConfig } from './embed/embedConfig'
+export type { EmbedConfig, EmbedTheme } from './embed/embedConfig'
 export {
   buildBiDescriptor,
   descriptorToJson,
@@ -137,7 +190,14 @@ export type {
 export { useDataSource } from './hooks/useDataSource'
 export { useBreakpoint } from './hooks/useBreakpoint'
 export { useAnimatedNumber } from './hooks/useAnimatedNumber'
-export { useWatchAction, isTerminalStatus, type ActionUpdate } from './hooks/useWatchAction'
+export {
+  useWatchAction,
+  isTerminalStatus,
+  isNonTerminalStatus,
+  type ActionUpdate,
+} from './hooks/useWatchAction'
+export { useSubmitAction } from './hooks/useSubmitAction'
+export type { SubmitActionInput, SubmitActionReply } from './hooks/useSubmitAction'
 
 // Types
 export type { Template, Context, WidgetConfig, WidgetAlert, TemplateShortcut, DataSource, WidgetProps } from './types/template'

@@ -128,13 +128,13 @@ function ActionMenu({
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="text-zinc-600 hover:text-zinc-300 px-1.5 text-base leading-none rounded"
+        className="text-zinc-600 hover:text-zinc-300 px-1.5 py-0.5 text-base leading-none rounded"
         aria-label="Widget actions"
       >
         ⋮
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1 bg-zinc-900 border border-zinc-700 rounded shadow-lg py-1 z-20 min-w-[140px]">
+        <div className="mtc-popover absolute right-0 top-full mt-1 py-1 z-20 min-w-[140px]">
           {canRefresh && (
             <button
               onClick={() => { onRefresh(); setOpen(false) }}
@@ -259,7 +259,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey }: { config: Wi
   // our id when the user presses `r`. We watch the counter and trigger
   // a fresh fetch when it changes. Compares against a ref so a remount
   // doesn't accidentally refetch. `id === '*'` means refresh every
-  // widget (toolbar "Reload" button).
+  // widget (toolbar "Refresh" button).
   //
   // refresh_policy gates the pulse. "manual" widgets skip even targeted
   // pulses — refetch only happens via the action-menu Refresh item which
@@ -337,20 +337,15 @@ export function WidgetShell({ config, contentHeight, snapshotKey }: { config: Wi
   // Mouse click to focus mirrors keyboard nav. Cheap visual affordance
   // for users who don't know about j/k yet.
   const onShellClick = config.id ? () => setFocusedId(config.id!) : undefined
-  // Focused state: replace the double-border ring with a soft single
-  // border + outer glow. Looks more like a focused highlight, less
-  // like a bright outline.
-  const focusClass = isFocused
-    ? 'border-sky-400/60 shadow-[0_0_12px_-2px_rgba(56,189,248,0.4)]'
-    : 'border-zinc-800'
   return (
     <div
       onClick={onShellClick}
-      className={`bg-zinc-900 border ${focusClass} ${compact ? 'rounded' : 'rounded-lg'} overflow-hidden transition-shadow`}
+      className="mtc-widget overflow-hidden"
+      data-focused={isFocused ? 'true' : 'false'}
     >
       {title && (
-        <div className={`${compact ? 'px-2.5 py-1.5' : 'px-4 py-2.5'} border-b border-zinc-800 flex items-center justify-between`}>
-          <h3 className={`${compact ? 'text-xs' : 'text-sm'} font-medium text-zinc-100 truncate`}>{title}</h3>
+        <div className={`mtc-widget-header ${compact ? 'px-2.5 py-1.5' : 'px-4 py-2.5'} flex items-center justify-between`}>
+          <h3 className={`${compact ? 'text-[11px]' : 'text-xs'} font-semibold tracking-[0.01em] text-zinc-100 truncate`}>{title}</h3>
           <div className="flex items-center gap-2 shrink-0 ml-2">
             {isLive && lastUpdated && (
               <span className={`text-[10px] ${isStale ? 'text-amber-400/80' : 'text-zinc-600'}`}>

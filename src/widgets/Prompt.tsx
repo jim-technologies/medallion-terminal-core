@@ -1,4 +1,4 @@
-import { useState, useCallback, type KeyboardEvent } from 'react'
+import { useState, useCallback, useRef, type KeyboardEvent } from 'react'
 import { useDashboard, type WidgetAction } from '../core/DashboardContext'
 import { buildGenerateUrl, buildGenerateRequest } from '../core/resolveSource'
 import { Empty } from './states'
@@ -26,18 +26,20 @@ export function Prompt({ options }: WidgetProps) {
   const [loading, setLoading] = useState(false)
   const [reply, setReply] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const inFlight = useRef(false)
 
   // Prefer Connect Generate when the dashboard is configured against a
   // backend; otherwise speak the legacy ad-hoc shape against
   // `options.url` so demo backends keep working.
   const fallbackUrl = options?.url as string | undefined
-  const hasBackend = !!backendUrl
+  const hasBackend = backendUrl !== undefined
 
   const submit = useCallback(async () => {
     const text = query.trim()
-    if (!text || loading) return
+    if (!text || loading || inFlight.current) return
     if (!hasBackend && !fallbackUrl) return
 
+    inFlight.current = true
     setLoading(true)
     setError(null)
     setReply(null)
@@ -74,6 +76,7 @@ export function Prompt({ options }: WidgetProps) {
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Request failed')
     } finally {
+      inFlight.current = false
       setLoading(false)
     }
   }, [query, loading, hasBackend, backendUrl, fallbackUrl, ctx, widgets, dispatch, setCtx])

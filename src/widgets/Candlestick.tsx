@@ -59,14 +59,14 @@ interface ThemeColors {
 }
 
 const FALLBACK_THEME_COLORS: ThemeColors = {
-  accent: '#38bdf8',
-  danger: '#f87171',
-  ok: '#34d399',
-  warning: '#fbbf24',
-  muted: '#8a95a3',
-  mutedSubtle: '#5f6b7a',
-  border: '#2b323c',
-  grid: '#242b34',
+  accent: '#5a8dee',
+  danger: '#df6972',
+  ok: '#4fb184',
+  warning: '#d6a354',
+  muted: '#87929e',
+  mutedSubtle: '#596571',
+  border: '#28313a',
+  grid: '#20272e',
 }
 
 export function Candlestick({ data }: WidgetProps) {

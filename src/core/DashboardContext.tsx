@@ -115,7 +115,7 @@ export interface DashboardContextValue {
   // fetch. Keeps the refresh API one-way and doesn't require widgets
   // to register imperative handles.
   refreshPulse: { id: string; n: number } | null
-  // Pass '*' to refresh every widget at once (toolbar "Reload" button).
+  // Pass '*' to refresh every widget at once (toolbar "Refresh" button).
   requestRefresh: (id: string) => void
   // Telemetry fan-out. Safe no-op when consumer didn't pass `onEvent`.
   // Widgets emit via this rather than calling props directly so the

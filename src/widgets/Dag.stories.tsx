@@ -57,3 +57,20 @@ export const WithFailure: Story = {
     },
   },
 }
+
+export const InteractiveLineage: Story = {
+  args: {
+    options: { node_context: { key: 'asset_id', kind_key: 'asset_kind' } },
+    data: {
+      nodes: [
+        { id: 'raw.orders', label: 'raw.orders', kind: 'dataset', status: 'ok', subtitle: 'bronze' },
+        { id: 'clean.orders', label: 'clean.orders', kind: 'dataset', status: 'ok', subtitle: 'silver' },
+        { id: 'customer_360', label: 'customer_360', kind: 'dataset', status: 'warn', subtitle: 'gold' },
+      ],
+      edges: [
+        { from: 'raw.orders', to: 'clean.orders', label: 'normalize' },
+        { from: 'clean.orders', to: 'customer_360', label: 'join' },
+      ],
+    },
+  },
+}

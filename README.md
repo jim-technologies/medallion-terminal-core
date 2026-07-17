@@ -1,10 +1,14 @@
 # Medallion Terminal Core
 
-Proto-driven dashboard and widget SDK. Implement one ConnectRPC service, get a terminal-style analytical dashboard that can be embedded in any host app.
+Proto-driven operating-intelligence and business-workspace SDK. Implement one
+ConnectRPC service and get composable analytics, typed record workflows,
+ontology/catalog navigation, governed actions, and data/code exploration that
+can be embedded in any host app.
 
 ## Quick Start
 
 ```bash
+flox activate
 pnpm install
 pnpm backend &        # reference TerminalService on :3001
 pnpm dev              # vite on :5173
@@ -13,6 +17,15 @@ pnpm dev              # vite on :5173
 Open `http://localhost:5173/?template=/examples/reference-backend.json&backend=http://localhost:3001`.
 
 You'll see live BTC spot, candles, an order book, an options chain (paired-grid), an order ticket that streams lifecycle updates via WatchAction, and news.
+
+For the owner-focused business workspace, open
+`http://localhost:5173/?template=/examples/business-operations.json`.
+
+For the data-platform foundation demo, open
+`http://localhost:5173/?template=/examples/platform-foundation.json&backend=http://localhost:3001`.
+
+For the typed record workspace, open
+`http://localhost:5173/?template=/examples/work-management.json&backend=http://localhost:3001`.
 
 ## How It Works
 
@@ -25,6 +38,32 @@ You'll see live BTC spot, candles, an order book, an options chain (paired-grid)
 3. The framework renders.
 
 `examples/backend/server.mjs` is a single-file Node reference implementation — fork it.
+
+## Platform foundation
+
+The framework includes domain-neutral primitives for building
+ontology/catalog/data/code surfaces:
+
+| Capability | Widget | Canonical payload |
+|---|---|---|
+| Governed asset discovery | `asset_catalog` | `AssetCatalogPayload` |
+| Semantic object detail, links, and actions | `object_view` | `ObjectPayload` |
+| Lineage and dependencies | `dag` | `GraphPayload` |
+| Branch/ref-aware source browsing | `code_browser` | `RepositoryPayload` |
+| Typed business records and saved views | `record_grid`, `record_board`, `record_calendar`, `record_form` | `RecordSetPayload` |
+| Object-store and dataset browsing | `file_browser`, `table`, charts | `TablePayload` and existing analytical shapes |
+
+Selections flow through `ctx`, so one asset click can retarget object detail,
+lineage, repository, record, and analytical widgets together. The reference
+backend implements the canonical platform and record payloads; the bundled
+examples wire them into complete workspaces.
+
+See [PLATFORM.md](PLATFORM.md) for the production service boundaries,
+authorization invariants, and the remaining backend responsibilities for a
+complete ontology-driven stack. See [RECORDS.md](RECORDS.md) for the generic
+record model, saved views, linked values, revision-safe mutations, and
+extension rules. See [DESIGN.md](DESIGN.md) for the SME product hierarchy,
+visual language, theme tokens, and UI definition of done.
 
 ## Wiring data
 
@@ -133,6 +172,14 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `text` | `{ items: [{ title, body, ... }] }` | News, summaries |
 | `orderbook` | `{ bids, asks, mid?, spread? }` | Depth ladder |
 | `paired_grid` | `{ subject, dimension?, measures, rows: [{ key, left, right }] }` | Options chains, sportsbook ladders, A/B percentile grids |
+| `asset_catalog` | `{ items: [{ id, name, kind, owner?, status?, metadata?, context? }], total? }` | Governed asset search and cross-widget selection |
+| `object_view` | `{ object_type, object_id, title, properties, links?, actions? }` | Ontology/object detail with optional policy-gated actions |
+| `dag` | `{ nodes: [{ id, label, kind?, status?, context? }], edges: [{ from, to, label? }] }` | Lineage, dependencies, and workflow graphs |
+| `code_browser` | `{ repository, ref, path, refs?, entries, file? }` | Repository/ref tree and source viewer |
+| `record_grid` | `RecordSetPayload` | Typed rows, search, saved grid/list views, sorting, paging, selection, inline edits |
+| `record_board` | `RecordSetPayload` | Saved grouped views, cards, selection, accessible lane moves and drag/drop |
+| `record_calendar` | `RecordSetPayload` | Saved date views over any date/datetime field |
+| `record_form` | `RecordSetPayload` | Context-driven create/edit/detail form with required-field and capability checks |
 | `embed` | `{ url, label?, sandbox? }` | Image / iframe |
 | `trade` | (form) | Calls `SubmitAction`, watches via `WatchAction` |
 | `prompt` | (form) | Calls `Generate` |
@@ -147,7 +194,7 @@ Backends supply entries with just `{kind, name, size_bytes?, content_type?, modi
 
 #### Pagination
 
-For large folders, FileBrowser pages the listing through ctx — no client-side virtualisation, no all-at-once fetch. Wire `page` and `page_size` as source params (driven from ctx) and have the backend fold pagination totals into row 0 of the TablePayload:
+For large folders, FileBrowser pages the listing through ctx — no client-side virtualisation, no all-at-once fetch. Wire `page` and `page_size` as source params (driven from ctx), and return only that page as ordinary `TablePayload.rows`:
 
 ```jsonc
 {
@@ -156,7 +203,8 @@ For large folders, FileBrowser pages the listing through ctx — no client-side 
               "params": { "namespace": "${ctx.namespace}", "path": "${ctx.path}",
                           "page": "${ctx.page}", "page_size": "${ctx.page_size}" } },
   "options": {
-    "namespace_ctx": "namespace",  // ctx key the breadcrumb writes to
+    "bucket_ctx": "namespace",     // ctx key holding the top-level bucket
+    "bucket_param": "namespace",   // backend parameter name
     "path_ctx": "path",
     "page_ctx": "page",            // default "page"; ctx value is decimal
     "page_size_ctx": "page_size",  // default "page_size"
@@ -214,9 +262,17 @@ With no `onShare`, Share downloads the snapshot JSON. A frozen template carries 
 
 ## Actions
 
-`SubmitAction` is the generic write surface. `WatchAction` streams lifecycle updates back. Both carry a `client_request_id` for idempotency — the Trade widget generates one per click; backends MUST treat repeats as the same action.
+`SubmitAction` is the generic write surface. `WatchAction` streams lifecycle
+updates back. Both carry a `client_request_id` for idempotency—the trade and
+record widgets generate one per submission; backends MUST treat repeats as
+the same action.
 
 Statuses: `OK`, `REJECTED`, `FAILED`, `CANCELLED` (terminal); `ACCEPTED`, `PENDING` (non-terminal — watch for the eventual outcome).
+
+Record create/update/delete uses the same transport, with a revision token on
+updates and deletes for optimistic concurrency. Formula, lookup, rollup, and
+timestamp fields stay backend-computed. See [RECORDS.md](RECORDS.md) for the
+exact parameters and production invariants.
 
 ## Alerts
 
@@ -232,7 +288,8 @@ Any widget can declare a client-side alert that fires a toast when a predicate o
 
 Predicate format: `<term> [&& <term> | || <term> ...]` where each term is `<path> <op> <literal>` (`op` ∈ `> >= < <= == !=`). `&&` binds tighter than `||`; no parens. `path` walks the widget's `data`. Edge-triggered: fires once on transition, clears when the predicate returns false. No backend rule engine required.
 
-A toolbar 🔊/🔇 toggle plays a short WebAudio beep on `warn`/`error` severities. Off by default; pref persists in localStorage.
+A toolbar **Sound** toggle plays a short WebAudio beep on `warn`/`error`
+severities. It is off by default and persists in localStorage.
 
 ## Cross-widget selection
 
@@ -256,6 +313,11 @@ Clicking a row / cell / price level on certain widgets sets a `ctx` key, which r
 // Heatmap cells map to one or both axes.
 { "component": "heatmap",
   "options": { "row_context": { "key": "asset" }, "col_context": { "key": "hour" } } }
+
+// Every record projection writes ctx.record_id. A sibling record_form follows.
+{ "component": "record_grid",
+  "source": { "source_id": "business_records" },
+  "options": { "record_id_key": "record_id" } }
 ```
 
 ## Keyboard
@@ -287,20 +349,20 @@ Templates can declare per-dashboard hotkeys for instant ctx switches:
 
 Pressing the key (outside an input, no modifier) merges its `ctx` into the active context. They appear in the `?` cheat sheet.
 
-The toolbar `Reload` button refreshes every widget at once; per-widget refresh is still available via the widget action menu or `r` on the focused widget.
+The toolbar **Refresh** button refreshes every widget at once; per-widget refresh is still available via the widget action menu or `r` on the focused widget.
 
 A widget can opt out of pulse-driven refresh via `refresh_policy`:
 
 ```jsonc
 { "component": "file_browser",
-  "refresh_policy": "manual",  // ignore global Reload + sibling-triggered pulses
+  "refresh_policy": "manual",  // ignore global Refresh + sibling-triggered pulses
   "source": { "source_id": "files" } }
 ```
 
 | `refresh_policy` | Pulse behavior |
 |------------------|----------------|
 | `"global"` (default) | Refresh on `*` pulses and own-id pulses |
-| `"self"` | Refresh only on own-id pulses; ignore `*` Reload |
+| `"self"` | Refresh only on own-id pulses; ignore `*` Refresh |
 | `"manual"` | Ignore all pulses. Only the action-menu Refresh item triggers refetch |
 
 Streaming sources and `refreshIntervalMs` polling are unaffected — the policy gates *pulse-driven* refresh only. Use `"manual"` for widgets whose local state should survive everything short of an explicit click (video preview, in-flight forms, multi-step wizards).
@@ -379,7 +441,7 @@ chrome (no toolbar / status bar).
 
 ```
 embed.html?src=btc_candles&component=candlestick&backend=https://api.example.com&ctx.symbol=BTC&stream=1
-embed.html?template=/examples/crypto-watch.json&ctx.symbol=ETH&chrome=full
+embed.html?template=/examples/business-operations.json&chrome=full&theme=operator
 ```
 
 | Param | Meaning |
@@ -392,6 +454,7 @@ embed.html?template=/examples/crypto-watch.json&ctx.symbol=ETH&chrome=full
 | `ctx.<k>=v` | seed context values |
 | `stream` / `refreshMs` | live source options |
 | `chrome` | `none` (default) or `full` |
+| `theme` | `dark` (default), `operator`, or `light` |
 
 `<Dashboard chrome="minimal">` and the exported `<EmbedView>` /
 `parseEmbedConfig` / `buildEmbedUrl` give the same surface in-app.
@@ -423,7 +486,7 @@ Dashboard ships a `ctx` bag (e.g. `symbol`, `range`). Widgets reference values v
 
 ```ts
 import type { Template, DataSource, WidgetProps } from 'medallion-terminal-core'        // friendly framework types
-import type { DataResponseJson, ActionUpdateJson } from 'medallion-terminal-core'        // exact wire shapes (proto-derived)
+import type { DataResponseJson, ActionUpdateJson } from 'medallion-terminal-core/proto'  // exact wire shapes (proto-derived)
 ```
 
 Generate fresh proto types after editing protos: `pnpm gen:proto`. CI enforces they're up to date.
@@ -442,6 +505,12 @@ For wiring this into a real product, in order:
    automatically.
 
 2. **Implement `TerminalService`.** `buf generate` from `proto/medallion/terminal/v1/`. Required RPCs: `Get`, `Stream`, `ListSources`, `SubmitAction`, `WatchAction`. `Generate` is optional. Wire shapes from `shapes.proto`; backends do not invent shapes. Reference: `examples/backend/server.mjs` (one file, every RPC, fork-friendly).
+
+   For a data-platform host, map catalog/search, ontology, lineage, repository,
+   storage, query, and action services behind this adapter. See
+   [PLATFORM.md](PLATFORM.md). For CRM, project, inventory, case, or other
+   record-driven hosts, implement `RecordSetPayload` plus the governed action
+   conventions in [RECORDS.md](RECORDS.md).
 
 3. **Connect HTTP/JSON framing.** Streaming RPCs use envelopes: `[flags(1)][length(4 BE)][payload N]`. `flags & 0x02` = trailer (end-of-stream). Trailer body is JSON `{ metadata?, error? }`; non-null `error` surfaces to the client widget.
 
@@ -468,14 +537,19 @@ For wiring this into a real product, in order:
     `pnpm check:dist` or `make check-dist` from a clean checkout to fail
     when committed dist files are stale.
 
-## Styling And Themes
+## Styling and themes
 
-`Dashboard` defaults to a dark technical surface and accepts
-`theme="dark"` or `theme="light"`:
+`Dashboard` defaults to a professional graphite-and-cobalt workspace and
+accepts `theme="dark"`, `theme="operator"`, or `theme="light"`:
 
 ```tsx
+<Dashboard template={template} backendUrl={api} theme="dark" />
+<Dashboard template={template} backendUrl={api} theme="operator" />
 <Dashboard template={template} backendUrl={api} theme="light" />
 ```
+
+The bundled demo app accepts the same preset through
+`?theme=dark|operator|light`.
 
 Host apps can override the public variables after importing the styles:
 
@@ -486,10 +560,12 @@ Host apps can override the public variables after importing the styles:
 }
 ```
 
-Public variables include `--mtc-bg`, `--mtc-surface`, `--mtc-panel`,
-`--mtc-border`, `--mtc-fg`, `--mtc-muted`, `--mtc-accent`,
-`--mtc-danger`, `--mtc-ok`, `--mtc-warning`, `--mtc-font-sans`, and
-`--mtc-font-mono`.
+Public variables include `--mtc-bg`, `--mtc-surface`,
+`--mtc-surface-raised`, `--mtc-panel`, `--mtc-border`, `--mtc-fg`,
+`--mtc-muted`, `--mtc-accent`, `--mtc-signal`, `--mtc-danger`, `--mtc-ok`,
+`--mtc-warning`, `--mtc-chart-1` through `--mtc-chart-8`,
+`--mtc-font-sans`, and `--mtc-font-mono`. The complete usage rules and
+accessibility checklist live in [DESIGN.md](DESIGN.md).
 
 ## Demo
 

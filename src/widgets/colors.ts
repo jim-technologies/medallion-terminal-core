@@ -13,17 +13,20 @@ export const SEMANTIC: Record<string, string> = {
 }
 
 export const PALETTE: readonly string[] = [
-  '#38bdf8', '#34d399', '#fbbf24', '#f87171',
-  '#a78bfa', '#f472b6', '#22d3ee', '#94a3b8',
+  'var(--mtc-chart-1)', 'var(--mtc-chart-2)',
+  'var(--mtc-chart-3)', 'var(--mtc-chart-4)',
+  'var(--mtc-chart-5)', 'var(--mtc-chart-6)',
+  'var(--mtc-chart-7)', 'var(--mtc-chart-8)',
 ]
 
 // Shared Recharts tooltip styling. Every chart widget renders the same
 // dark popover, so the inline `contentStyle` lived duplicated across each
 // one — centralized here to keep them visually identical.
 export const TOOLTIP_STYLE = {
-  backgroundColor: 'var(--mtc-surface)',
-  border: '1px solid var(--mtc-border)',
-  borderRadius: 6,
+  backgroundColor: 'var(--mtc-surface-raised)',
+  border: '1px solid var(--mtc-border-strong)',
+  borderRadius: 4,
+  boxShadow: 'var(--mtc-shadow-raised)',
   fontSize: 12,
   color: 'var(--mtc-fg)',
 } as const

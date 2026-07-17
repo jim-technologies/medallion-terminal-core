@@ -7,4 +7,4 @@ export interface Toast {
 export declare function Toaster({ toasts, dismiss }: {
     toasts: Toast[];
     dismiss: (id: number) => void;
-}): import("react/jsx-runtime").JSX.Element | null;
+}): import("react").JSX.Element | null;

@@ -73,7 +73,7 @@ function Spark({ values }: { values: number[] }) {
     <svg viewBox="0 0 100 18" className="w-12 h-3.5" preserveAspectRatio="none">
       <polyline
         fill="none"
-        stroke={up ? '#10b981' : '#ef4444'}
+        stroke={up ? 'var(--mtc-ok)' : 'var(--mtc-danger)'}
         strokeWidth="1.5"
         points={points}
         vectorEffect="non-scaling-stroke"

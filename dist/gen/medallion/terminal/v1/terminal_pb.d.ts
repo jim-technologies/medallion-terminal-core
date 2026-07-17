@@ -1,6 +1,6 @@
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import type { StructJson } from "@bufbuild/protobuf/wkt";
-import type { CandlePayload, CandlePayloadJson, DistributionPayload, DistributionPayloadJson, EmbedPayload, EmbedPayloadJson, EventPayload, EventPayloadJson, GaugePayload, GaugePayloadJson, HeatmapPayload, HeatmapPayloadJson, MetricPayload, MetricPayloadJson, OrderBookPayload, OrderBookPayloadJson, PairedGridPayload, PairedGridPayloadJson, TablePayload, TablePayloadJson, TextPayload, TextPayloadJson, TimeseriesPayload, TimeseriesPayloadJson } from "./shapes_pb.js";
+import type { AssetCatalogPayload, AssetCatalogPayloadJson, CandlePayload, CandlePayloadJson, DistributionPayload, DistributionPayloadJson, EmbedPayload, EmbedPayloadJson, EventPayload, EventPayloadJson, GaugePayload, GaugePayloadJson, GraphPayload, GraphPayloadJson, HeatmapPayload, HeatmapPayloadJson, MetricPayload, MetricPayloadJson, ObjectPayload, ObjectPayloadJson, OrderBookPayload, OrderBookPayloadJson, PairedGridPayload, PairedGridPayloadJson, RecordSetPayload, RecordSetPayloadJson, RepositoryPayload, RepositoryPayloadJson, TablePayload, TablePayloadJson, TextPayload, TextPayloadJson, TimeseriesPayload, TimeseriesPayloadJson } from "./shapes_pb.js";
 import type { Context, ContextJson, Widget, WidgetAction, WidgetActionJson, WidgetJson } from "./template_pb.js";
 import type { JsonObject, Message } from "@bufbuild/protobuf";
 /**
@@ -137,6 +137,36 @@ export type DataResponse = Message<"medallion.terminal.v1.DataResponse"> & {
         value: EmbedPayload;
         case: "embed";
     } | {
+        /**
+         * @generated from field: medallion.terminal.v1.AssetCatalogPayload assets = 13;
+         */
+        value: AssetCatalogPayload;
+        case: "assets";
+    } | {
+        /**
+         * @generated from field: medallion.terminal.v1.ObjectPayload object = 14;
+         */
+        value: ObjectPayload;
+        case: "object";
+    } | {
+        /**
+         * @generated from field: medallion.terminal.v1.GraphPayload graph = 15;
+         */
+        value: GraphPayload;
+        case: "graph";
+    } | {
+        /**
+         * @generated from field: medallion.terminal.v1.RepositoryPayload repository = 16;
+         */
+        value: RepositoryPayload;
+        case: "repository";
+    } | {
+        /**
+         * @generated from field: medallion.terminal.v1.RecordSetPayload records = 17;
+         */
+        value: RecordSetPayload;
+        case: "records";
+    } | {
         case: undefined;
         value?: undefined;
     };
@@ -196,6 +226,26 @@ export type DataResponseJson = {
      * @generated from field: medallion.terminal.v1.EmbedPayload embed = 12;
      */
     embed?: EmbedPayloadJson;
+    /**
+     * @generated from field: medallion.terminal.v1.AssetCatalogPayload assets = 13;
+     */
+    assets?: AssetCatalogPayloadJson;
+    /**
+     * @generated from field: medallion.terminal.v1.ObjectPayload object = 14;
+     */
+    object?: ObjectPayloadJson;
+    /**
+     * @generated from field: medallion.terminal.v1.GraphPayload graph = 15;
+     */
+    graph?: GraphPayloadJson;
+    /**
+     * @generated from field: medallion.terminal.v1.RepositoryPayload repository = 16;
+     */
+    repository?: RepositoryPayloadJson;
+    /**
+     * @generated from field: medallion.terminal.v1.RecordSetPayload records = 17;
+     */
+    records?: RecordSetPayloadJson;
 };
 /**
  * Describes the message medallion.terminal.v1.DataResponse.
@@ -1143,7 +1193,27 @@ export declare enum Shape {
     /**
      * @generated from enum value: SHAPE_EMBED = 12;
      */
-    EMBED = 12
+    EMBED = 12,
+    /**
+     * @generated from enum value: SHAPE_ASSET_CATALOG = 13;
+     */
+    ASSET_CATALOG = 13,
+    /**
+     * @generated from enum value: SHAPE_OBJECT = 14;
+     */
+    OBJECT = 14,
+    /**
+     * @generated from enum value: SHAPE_GRAPH = 15;
+     */
+    GRAPH = 15,
+    /**
+     * @generated from enum value: SHAPE_REPOSITORY = 16;
+     */
+    REPOSITORY = 16,
+    /**
+     * @generated from enum value: SHAPE_RECORD_SET = 17;
+     */
+    RECORD_SET = 17
 }
 /**
  * Shape names the payload variant a Source returns. The values
@@ -1152,7 +1222,7 @@ export declare enum Shape {
  *
  * @generated from enum medallion.terminal.v1.Shape
  */
-export type ShapeJson = "SHAPE_UNSPECIFIED" | "SHAPE_TIMESERIES" | "SHAPE_CANDLES" | "SHAPE_TABLE" | "SHAPE_METRIC" | "SHAPE_GAUGE" | "SHAPE_HEATMAP" | "SHAPE_EVENTS" | "SHAPE_DISTRIBUTION" | "SHAPE_TEXT" | "SHAPE_ORDERBOOK" | "SHAPE_PAIRED_GRID" | "SHAPE_EMBED";
+export type ShapeJson = "SHAPE_UNSPECIFIED" | "SHAPE_TIMESERIES" | "SHAPE_CANDLES" | "SHAPE_TABLE" | "SHAPE_METRIC" | "SHAPE_GAUGE" | "SHAPE_HEATMAP" | "SHAPE_EVENTS" | "SHAPE_DISTRIBUTION" | "SHAPE_TEXT" | "SHAPE_ORDERBOOK" | "SHAPE_PAIRED_GRID" | "SHAPE_EMBED" | "SHAPE_ASSET_CATALOG" | "SHAPE_OBJECT" | "SHAPE_GRAPH" | "SHAPE_REPOSITORY" | "SHAPE_RECORD_SET";
 /**
  * Describes the enum medallion.terminal.v1.Shape.
  */

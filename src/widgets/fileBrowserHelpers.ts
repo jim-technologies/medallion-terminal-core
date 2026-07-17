@@ -8,6 +8,8 @@
 // the "stable identifier" for an entry within a listing is its name
 // (which the backend guarantees unique per directory).
 
+import { parseConnectEnvelopes } from '../core/connectFraming'
+
 // errorMessage narrows an unknown thrown value to a printable string.
 // Catch blocks in TypeScript receive `unknown`; this avoids the
 // `(err as Error).message` cast that hides non-Error throws.
@@ -222,6 +224,16 @@ export function buildMediaUrl(template: string, bucket: string, path: string): s
     .replace('{path}', encodeURIComponent(path))
 }
 
+// Resolve a configured FileBrowser endpoint against Dashboard.backendUrl.
+// Absolute HTTP(S) endpoints remain untouched (CDN/federated storage);
+// relative endpoints join cleanly to the backend, including same-origin "".
+export function resolveEndpointUrl(backendUrl: string | undefined, endpoint: string): string {
+  if (/^https?:\/\//i.test(endpoint)) return endpoint
+  const base = backendUrl ?? ''
+  if (!base) return endpoint
+  return `${base.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`
+}
+
 export function arrayBufferToBase64(buf: ArrayBuffer): string {
   let s = ''
   const bytes = new Uint8Array(buf)
@@ -251,41 +263,47 @@ export async function parseConnectStream(res: Response, mime?: string): Promise<
     throw new Error('parseConnectStream: response has no body')
   }
   const reader = res.body.getReader()
-  const chunks: Uint8Array[] = []
-  while (true) {
-    const { value, done } = await reader.read()
-    if (done) break
-    if (value) chunks.push(value)
-  }
-  let total = 0
-  for (const c of chunks) total += c.length
-  const buf = new Uint8Array(total)
-  let off = 0
-  for (const c of chunks) {
-    buf.set(c, off)
-    off += c.length
-  }
-  const pieces: ArrayBuffer[] = []
-  let i = 0
-  while (i + 5 <= buf.length) {
-    const flag = buf[i]
-    const len = (buf[i + 1] << 24) | (buf[i + 2] << 16) | (buf[i + 3] << 8) | buf[i + 4]
-    i += 5
-    if (i + len > buf.length) break
-    const payload = buf.subarray(i, i + len)
-    i += len
-    if ((flag & 0x02) !== 0) break
+  const pieces: Uint8Array[] = []
+  let trailerSeen = false
+  let streamError: string | null = null
+  try {
+    await parseConnectEnvelopes(reader, {
+      onMessage: raw => {
+        if (!raw || typeof raw !== 'object' || typeof (raw as { data?: unknown }).data !== 'string') {
+          streamError ??= 'Download stream contained a message without base64 data'
+          return
+        }
+        const data = (raw as { data: string }).data
+        try {
+          const bin = atob(data)
+          const out = new Uint8Array(bin.length)
+          for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i)
+          pieces.push(out)
+        } catch {
+          streamError ??= 'Download stream contained invalid base64 data'
+        }
+      },
+      onTrailer: trailer => {
+        trailerSeen = true
+        if (trailer.error) {
+          const code = trailer.error.code ?? 'unknown'
+          const message = trailer.error.message ?? 'download failed'
+          streamError = `${code}: ${message}`
+        }
+      },
+      isDisposed: () => false,
+    })
+  } finally {
     try {
-      const obj = JSON.parse(new TextDecoder().decode(payload)) as { data?: string }
-      if (obj.data) {
-        const bin = atob(obj.data)
-        const out = new Uint8Array(bin.length)
-        for (let k = 0; k < bin.length; k++) out[k] = bin.charCodeAt(k)
-        pieces.push(out.buffer as ArrayBuffer)
-      }
+      reader.releaseLock()
     } catch {
-      // skip non-JSON or end-stream envelope
+      // A cancelled/errored stream may already have released its lock.
     }
   }
-  return new Blob(pieces, { type: mime ?? 'application/octet-stream' })
+  if (streamError) throw new Error(streamError)
+  if (!trailerSeen) throw new Error('Download stream ended before its Connect trailer')
+  return new Blob(
+    pieces.map(piece => piece.slice().buffer),
+    { type: mime ?? 'application/octet-stream' },
+  )
 }

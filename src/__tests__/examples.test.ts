@@ -16,6 +16,9 @@ import clinicalIcu from '../../public/examples/clinical-icu.json'
 import energyGrid from '../../public/examples/energy-grid.json'
 import medallionTerminal from '../../public/examples/medallion-terminal.json'
 import fileBrowser from '../../public/examples/file-browser.json'
+import platformFoundation from '../../public/examples/platform-foundation.json'
+import businessOperations from '../../public/examples/business-operations.json'
+import workManagement from '../../public/examples/work-management.json'
 
 // =============================================================
 // Contract validation — loads every public/examples/*.json and
@@ -47,6 +50,9 @@ const EXAMPLES: Record<string, Json> = {
   'energy-grid':            energyGrid,
   'medallion-terminal':     medallionTerminal,
   'file-browser':           fileBrowser,
+  'platform-foundation':    platformFoundation,
+  'business-operations':    businessOperations,
+  'work-management':        workManagement,
 }
 
 // ----- Type guards -----
@@ -249,6 +255,102 @@ const VALIDATORS: Record<string, (p: Json) => string[]> = {
   area_chart:    validateTimeseries,
   boxplot:       validateBoxplot,
   radar:         validateRadar,
+  asset_catalog: validateAssetCatalog,
+  object_view:   validateObject,
+  dag:           validateGraph,
+  code_browser:  validateRepository,
+  record_grid:   validateRecordSet,
+  record_board:  validateRecordSet,
+  record_calendar: validateRecordSet,
+  record_form:   validateRecordSet,
+}
+
+function validateAssetCatalog(p: Json): string[] {
+  const items = isArr(p) ? p : isObj(p) && isArr(p.items) ? p.items : null
+  if (!items) return ['expected array or {items: []}']
+  for (const item of items) {
+    if (!isObj(item)) return ['asset must be object']
+    if (!isStr(item.id) || !isStr(item.name) || !isStr(item.kind)) {
+      return ['asset needs {id:string, name:string, kind:string}']
+    }
+  }
+  return []
+}
+
+function validateObject(p: Json): string[] {
+  if (!isObj(p)) return ['expected object']
+  if (!isStr(p.object_id ?? p.objectId)) return ['object_id must be string']
+  if (!isStr(p.object_type ?? p.objectType)) return ['object_type must be string']
+  if (!isStr(p.title ?? p.name)) return ['title must be string']
+  for (const key of ['properties', 'links', 'actions']) {
+    if (p[key] !== undefined && !isArr(p[key])) return [`${key} must be array when set`]
+  }
+  return []
+}
+
+function validateGraph(p: Json): string[] {
+  if (!isObj(p) || !isArr(p.nodes)) return ['expected {nodes: [], edges?: []}']
+  for (const node of p.nodes) {
+    if (!isObj(node) || !isStr(node.id) || !isStr(node.label)) {
+      return ['node needs {id:string, label:string}']
+    }
+  }
+  if (p.edges !== undefined) {
+    if (!isArr(p.edges)) return ['edges must be array when set']
+    for (const edge of p.edges) {
+      if (!isObj(edge) || !isStr(edge.from) || !isStr(edge.to)) {
+        return ['edge needs {from:string, to:string}']
+      }
+    }
+  }
+  return []
+}
+
+function validateRepository(p: Json): string[] {
+  if (!isObj(p)) return ['expected object']
+  if (!isStr(p.repository)) return ['repository must be string']
+  if (p.entries !== undefined) {
+    if (!isArr(p.entries)) return ['entries must be array when set']
+    for (const entry of p.entries) {
+      if (!isObj(entry) || !isStr(entry.path) || !isStr(entry.name) || !isStr(entry.kind)) {
+        return ['entry needs {path:string, name:string, kind:string}']
+      }
+    }
+  }
+  if (p.file !== undefined) {
+    if (!isObj(p.file) || !isStr(p.file.path) || !isStr(p.file.content)) {
+      return ['file needs {path:string, content:string}']
+    }
+  }
+  return []
+}
+
+function validateRecordSet(p: Json): string[] {
+  if (!isObj(p)) return ['expected object']
+  if (!isStr(p.table_id ?? p.tableId)) return ['table_id must be string']
+  if (p.fields !== undefined) {
+    if (!isArr(p.fields)) return ['fields must be array when set']
+    for (const field of p.fields) {
+      if (!isObj(field) || !isStr(field.key) || !isStr(field.type)) {
+        return ['field needs {key:string, type:string}']
+      }
+    }
+  }
+  if (!isArr(p.records)) return ['records must be array']
+  for (const record of p.records) {
+    if (!isObj(record) || !isStr(record.id) || !isObj(record.values)) {
+      return ['record needs {id:string, values:object}']
+    }
+  }
+  if (p.views !== undefined) {
+    if (!isArr(p.views)) return ['views must be array when set']
+    for (const view of p.views) {
+      if (!isObj(view) || !isStr(view.id) || !isStr(view.type)) {
+        return ['view needs {id:string, type:string}']
+      }
+    }
+  }
+  return []
 }
 
 function validateRadar(p: Json): string[] {

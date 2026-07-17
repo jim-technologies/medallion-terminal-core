@@ -10,8 +10,10 @@ export interface ActionUpdate {
     sequence: number;
 }
 export declare const TERMINAL_ACTION_STATUSES: Set<string>;
+export declare const NON_TERMINAL_ACTION_STATUSES: Set<string>;
 export declare function isTerminalStatus(s: string | undefined): boolean;
 export declare function isErrorStatus(s: string | undefined): boolean;
+export declare function isNonTerminalStatus(s: string | undefined): boolean;
 interface UseWatchActionState {
     updates: ActionUpdate[];
     latest: ActionUpdate | null;

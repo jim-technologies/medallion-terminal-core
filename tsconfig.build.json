@@ -12,6 +12,7 @@
   "include": ["src"],
   "exclude": [
     "src/**/*.stories.tsx",
+    "src/widgets/recordStories.fixture.ts",
     "src/__tests__/**",
     "src/main.tsx",
     "src/embed/main.tsx",

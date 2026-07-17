@@ -1,4 +1,4 @@
-export type BiShape = 'SHAPE_UNSPECIFIED' | 'SHAPE_TIMESERIES' | 'SHAPE_CANDLES' | 'SHAPE_TABLE' | 'SHAPE_METRIC' | 'SHAPE_GAUGE' | 'SHAPE_HEATMAP' | 'SHAPE_EVENTS' | 'SHAPE_DISTRIBUTION' | 'SHAPE_TEXT' | 'SHAPE_ORDERBOOK' | 'SHAPE_PAIRED_GRID' | 'SHAPE_EMBED';
+export type BiShape = 'SHAPE_UNSPECIFIED' | 'SHAPE_TIMESERIES' | 'SHAPE_CANDLES' | 'SHAPE_TABLE' | 'SHAPE_METRIC' | 'SHAPE_GAUGE' | 'SHAPE_HEATMAP' | 'SHAPE_EVENTS' | 'SHAPE_DISTRIBUTION' | 'SHAPE_TEXT' | 'SHAPE_ORDERBOOK' | 'SHAPE_PAIRED_GRID' | 'SHAPE_EMBED' | 'SHAPE_ASSET_CATALOG' | 'SHAPE_OBJECT' | 'SHAPE_GRAPH' | 'SHAPE_REPOSITORY' | 'SHAPE_RECORD_SET';
 export type BiProtocol = 'connect' | 'sql';
 export type BiColumnType = 'string' | 'number' | 'integer' | 'boolean' | 'timestamp' | 'json';
 export interface BiColumn {
@@ -50,7 +50,9 @@ export interface SourceLike {
         key: string;
         description?: string;
         required?: boolean;
+        defaultValue?: string;
         default_value?: string;
+        enumValues?: string[];
         enum_values?: string[];
         type?: unknown;
     }[];

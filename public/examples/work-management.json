@@ -1,0 +1,110 @@
+{
+  "title": "Work management · ${ctx.table_id}",
+  "columns": 12,
+  "context": {
+    "values": {
+      "table_id": "work_items",
+      "record_id": "work-101"
+    }
+  },
+  "shortcuts": [
+    {
+      "key": "n",
+      "label": "New record",
+      "ctx": {
+        "record_id": "new"
+      }
+    },
+    {
+      "key": "1",
+      "label": "Northstar onboarding",
+      "ctx": {
+        "record_id": "work-101"
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "id": "records-grid",
+      "component": "record_grid",
+      "span": 12,
+      "height": 430,
+      "title": "Work items",
+      "options": {
+        "view_id": "all_work",
+        "page_size": 12,
+        "search": true,
+        "inline_edit": true
+      },
+      "source": {
+        "source_id": "business_records",
+        "params": {
+          "table_id": "${ctx.table_id}"
+        }
+      }
+    },
+    {
+      "id": "records-board",
+      "component": "record_board",
+      "span": 8,
+      "height": 540,
+      "title": "Delivery board",
+      "options": {
+        "view_id": "active_board",
+        "card_fields": [
+          "customer",
+          "owner",
+          "value",
+          "due_date",
+          "priority"
+        ],
+        "search": true,
+        "allow_move": true
+      },
+      "source": {
+        "source_id": "business_records",
+        "params": {
+          "table_id": "${ctx.table_id}"
+        }
+      }
+    },
+    {
+      "id": "record-form",
+      "component": "record_form",
+      "span": 4,
+      "height": 540,
+      "title": "Record detail",
+      "options": {
+        "mode": "auto",
+        "view_id": "intake",
+        "columns": 1,
+        "show_read_only": true
+      },
+      "source": {
+        "source_id": "business_records",
+        "params": {
+          "table_id": "${ctx.table_id}"
+        }
+      }
+    },
+    {
+      "id": "records-calendar",
+      "component": "record_calendar",
+      "span": 12,
+      "height": 620,
+      "title": "Delivery calendar",
+      "options": {
+        "view_id": "delivery_calendar",
+        "color_field": "stage",
+        "week_starts_on": 1,
+        "initial_month": "2026-07"
+      },
+      "source": {
+        "source_id": "business_records",
+        "params": {
+          "table_id": "${ctx.table_id}"
+        }
+      }
+    }
+  ]
+}

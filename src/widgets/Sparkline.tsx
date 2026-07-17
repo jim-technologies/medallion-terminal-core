@@ -28,7 +28,7 @@ export function Sparkline({ data, options }: WidgetProps) {
   const max = Math.max(...values)
   const range = max - min || 1
   const up = values[values.length - 1] >= values[0]
-  const color = opts.color ?? (up ? '#10b981' : '#ef4444')
+  const color = opts.color ?? (up ? 'var(--mtc-ok)' : 'var(--mtc-danger)')
 
   // Path: 100×24 viewBox, scaled by `preserveAspectRatio="none"` so
   // it fills any widget shape. vector-effect keeps the stroke crisp.

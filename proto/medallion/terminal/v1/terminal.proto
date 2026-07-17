@@ -83,6 +83,11 @@ message DataResponse {
     OrderBookPayload orderbook = 10;
     PairedGridPayload paired_grid = 11;
     EmbedPayload embed = 12;
+    AssetCatalogPayload assets = 13;
+    ObjectPayload object = 14;
+    GraphPayload graph = 15;
+    RepositoryPayload repository = 16;
+    RecordSetPayload records = 17;
   }
 }
 
@@ -197,6 +202,11 @@ enum Shape {
   SHAPE_ORDERBOOK = 10;
   SHAPE_PAIRED_GRID = 11;
   SHAPE_EMBED = 12;
+  SHAPE_ASSET_CATALOG = 13;
+  SHAPE_OBJECT = 14;
+  SHAPE_GRAPH = 15;
+  SHAPE_REPOSITORY = 16;
+  SHAPE_RECORD_SET = 17;
 }
 
 // ----- Generate (AI) -----

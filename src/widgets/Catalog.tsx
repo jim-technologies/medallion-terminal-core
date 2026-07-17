@@ -39,6 +39,11 @@ const SHAPE_LABEL: Record<string, string> = {
   SHAPE_ORDERBOOK:    'orderbook',
   SHAPE_PAIRED_GRID:  'paired_grid',
   SHAPE_EMBED:        'embed',
+  SHAPE_ASSET_CATALOG:'asset_catalog',
+  SHAPE_OBJECT:       'object',
+  SHAPE_GRAPH:        'graph',
+  SHAPE_REPOSITORY:   'repository',
+  SHAPE_RECORD_SET:   'record_set',
 }
 
 export function Catalog() {
@@ -48,11 +53,12 @@ export function Catalog() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!backendUrl) {
+    if (backendUrl === undefined) {
       setLoading(false)
       setSources(null)
       return
     }
+    let disposed = false
     setLoading(true)
     setError(null)
     const ctrl = new AbortController()
@@ -63,15 +69,22 @@ export function Catalog() {
       signal: ctrl.signal,
     })
       .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((res: { sources?: Source[] }) => setSources(res.sources ?? []))
-      .catch(err => {
-        if (err.name !== 'AbortError') setError(err.message)
+      .then((res: { sources?: Source[] }) => {
+        if (!disposed) setSources(res.sources ?? [])
       })
-      .finally(() => setLoading(false))
-    return () => ctrl.abort()
+      .catch(err => {
+        if (!disposed && err.name !== 'AbortError') setError(err.message)
+      })
+      .finally(() => {
+        if (!disposed) setLoading(false)
+      })
+    return () => {
+      disposed = true
+      ctrl.abort()
+    }
   }, [backendUrl])
 
-  if (!backendUrl) return <Empty padded>No backendUrl configured on Dashboard</Empty>
+  if (backendUrl === undefined) return <Empty padded>No backendUrl configured on Dashboard</Empty>
   if (loading) return <Empty padded>Loading catalog…</Empty>
   if (error) return <Empty padded>Failed to load: {error}</Empty>
   if (!sources || sources.length === 0) return <Empty padded>No sources registered</Empty>
@@ -124,4 +137,3 @@ export function Catalog() {
     </div>
   )
 }
-

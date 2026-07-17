@@ -1,3 +1,4 @@
+export type EmbedTheme = 'dark' | 'operator' | 'light';
 export interface EmbedConfig {
     templateUrl?: string;
     widget?: {
@@ -11,6 +12,7 @@ export interface EmbedConfig {
     backendUrl?: string;
     ctx: Record<string, string>;
     chrome: 'none' | 'full';
+    theme?: EmbedTheme;
 }
 export declare function parseEmbedConfig(search: string): EmbedConfig;
 export declare function buildEmbedUrl(base: string, config: Partial<EmbedConfig>): string;

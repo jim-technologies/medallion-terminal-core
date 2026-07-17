@@ -1,5 +1,5 @@
 import type { GenEnum, GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
-import type { StructJson } from "@bufbuild/protobuf/wkt";
+import type { StructJson, Value, ValueJson } from "@bufbuild/protobuf/wkt";
 import type { JsonObject, Message } from "@bufbuild/protobuf";
 /**
  * Describes the file medallion/terminal/v1/shapes.proto.
@@ -2016,6 +2016,1720 @@ export declare const TextItemSchema: GenMessage<TextItem, {
     jsonType: TextItemJson;
 }>;
 /**
+ * --- Asset Catalog ---
+ * Use for: governed discovery surfaces that list datasets, object
+ * types, pipelines, models, repositories, dashboards, documents, and
+ * other platform resources.
+ *
+ * JSON example:
+ *   { "items": [
+ *       { "id": "dataset.orders",
+ *         "name": "Orders",
+ *         "kind": "dataset",
+ *         "owner": "commerce-data",
+ *         "status": "healthy",
+ *         "tags": ["gold", "pii"],
+ *         "context": {
+ *           "asset_id": "dataset.orders",
+ *           "asset_kind": "dataset"
+ *         } }
+ *     ],
+ *     "total": "1" }
+ *
+ * @generated from message medallion.terminal.v1.AssetCatalogPayload
+ */
+export type AssetCatalogPayload = Message<"medallion.terminal.v1.AssetCatalogPayload"> & {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.AssetCatalogItem items = 1;
+     */
+    items: AssetCatalogItem[];
+    /**
+     * Total matches before pagination/filtering, when known.
+     *
+     * @generated from field: optional int64 total = 2;
+     */
+    total?: bigint | undefined;
+    /**
+     * Opaque cursor for a subsequent page. Empty/absent means no cursor
+     * was supplied. Pagination remains backend-defined via source params.
+     *
+     * @generated from field: optional string next_page_token = 3;
+     */
+    nextPageToken?: string | undefined;
+};
+/**
+ * --- Asset Catalog ---
+ * Use for: governed discovery surfaces that list datasets, object
+ * types, pipelines, models, repositories, dashboards, documents, and
+ * other platform resources.
+ *
+ * JSON example:
+ *   { "items": [
+ *       { "id": "dataset.orders",
+ *         "name": "Orders",
+ *         "kind": "dataset",
+ *         "owner": "commerce-data",
+ *         "status": "healthy",
+ *         "tags": ["gold", "pii"],
+ *         "context": {
+ *           "asset_id": "dataset.orders",
+ *           "asset_kind": "dataset"
+ *         } }
+ *     ],
+ *     "total": "1" }
+ *
+ * @generated from message medallion.terminal.v1.AssetCatalogPayload
+ */
+export type AssetCatalogPayloadJson = {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.AssetCatalogItem items = 1;
+     */
+    items?: AssetCatalogItemJson[];
+    /**
+     * Total matches before pagination/filtering, when known.
+     *
+     * @generated from field: optional int64 total = 2;
+     */
+    total?: string;
+    /**
+     * Opaque cursor for a subsequent page. Empty/absent means no cursor
+     * was supplied. Pagination remains backend-defined via source params.
+     *
+     * @generated from field: optional string next_page_token = 3;
+     */
+    nextPageToken?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.AssetCatalogPayload.
+ * Use `create(AssetCatalogPayloadSchema)` to create a new message.
+ */
+export declare const AssetCatalogPayloadSchema: GenMessage<AssetCatalogPayload, {
+    jsonType: AssetCatalogPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.AssetCatalogItem
+ */
+export type AssetCatalogItem = Message<"medallion.terminal.v1.AssetCatalogItem"> & {
+    /**
+     * Stable identifier used by detail/lineage sources.
+     *
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name: string;
+    /**
+     * Free-form platform kind: "dataset", "object_type", "pipeline",
+     * "model", "repository", "dashboard", "document", etc.
+     *
+     * @generated from field: string kind = 3;
+     */
+    kind: string;
+    /**
+     * @generated from field: optional string description = 4;
+     */
+    description?: string | undefined;
+    /**
+     * @generated from field: optional string owner = 5;
+     */
+    owner?: string | undefined;
+    /**
+     * Free-form health/lifecycle state. Common values: "healthy",
+     * "warning", "error", "draft", "deprecated", "archived".
+     *
+     * @generated from field: optional string status = 6;
+     */
+    status?: string | undefined;
+    /**
+     * ISO 8601 when available; widgets render other display strings too.
+     *
+     * @generated from field: optional string updated_at = 7;
+     */
+    updatedAt?: string | undefined;
+    /**
+     * @generated from field: repeated string tags = 8;
+     */
+    tags: string[];
+    /**
+     * Optional deep link to a host-owned detail page.
+     *
+     * @generated from field: optional string url = 9;
+     */
+    url?: string | undefined;
+    /**
+     * Additional structured metadata (row count, classification,
+     * retention policy, branch, language, quality score, etc.).
+     *
+     * @generated from field: optional google.protobuf.Struct metadata = 10;
+     */
+    metadata?: JsonObject | undefined;
+    /**
+     * Context values applied when the item is selected. This is the
+     * generic cross-widget bridge: selecting a repository can set
+     * {repository, ref}, while selecting a dataset can set
+     * {asset_id, asset_kind}.
+     *
+     * @generated from field: map<string, string> context = 11;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * @generated from message medallion.terminal.v1.AssetCatalogItem
+ */
+export type AssetCatalogItemJson = {
+    /**
+     * Stable identifier used by detail/lineage sources.
+     *
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name?: string;
+    /**
+     * Free-form platform kind: "dataset", "object_type", "pipeline",
+     * "model", "repository", "dashboard", "document", etc.
+     *
+     * @generated from field: string kind = 3;
+     */
+    kind?: string;
+    /**
+     * @generated from field: optional string description = 4;
+     */
+    description?: string;
+    /**
+     * @generated from field: optional string owner = 5;
+     */
+    owner?: string;
+    /**
+     * Free-form health/lifecycle state. Common values: "healthy",
+     * "warning", "error", "draft", "deprecated", "archived".
+     *
+     * @generated from field: optional string status = 6;
+     */
+    status?: string;
+    /**
+     * ISO 8601 when available; widgets render other display strings too.
+     *
+     * @generated from field: optional string updated_at = 7;
+     */
+    updatedAt?: string;
+    /**
+     * @generated from field: repeated string tags = 8;
+     */
+    tags?: string[];
+    /**
+     * Optional deep link to a host-owned detail page.
+     *
+     * @generated from field: optional string url = 9;
+     */
+    url?: string;
+    /**
+     * Additional structured metadata (row count, classification,
+     * retention policy, branch, language, quality score, etc.).
+     *
+     * @generated from field: optional google.protobuf.Struct metadata = 10;
+     */
+    metadata?: StructJson;
+    /**
+     * Context values applied when the item is selected. This is the
+     * generic cross-widget bridge: selecting a repository can set
+     * {repository, ref}, while selecting a dataset can set
+     * {asset_id, asset_kind}.
+     *
+     * @generated from field: map<string, string> context = 11;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.AssetCatalogItem.
+ * Use `create(AssetCatalogItemSchema)` to create a new message.
+ */
+export declare const AssetCatalogItemSchema: GenMessage<AssetCatalogItem, {
+    jsonType: AssetCatalogItemJson;
+}>;
+/**
+ * --- Record Set / Work Management ---
+ * Use for: mutable business records with a declared field schema and
+ * multiple saved views over the same underlying table. This is the
+ * domain-neutral foundation for CRM lists, project trackers, inventory,
+ * approvals, content calendars, hiring pipelines, and similar workflows.
+ *
+ * Get/Stream returns the records and schema. All writes still flow through
+ * TerminalService.SubmitAction; capabilities declare the backend action ids.
+ * Formula, lookup, and rollup values are computed by the backend and exposed
+ * as read-only fields. The frontend never evaluates formulas.
+ *
+ * Linked values convention:
+ *   single link: { "id": "customer-42", "label": "Acme" }
+ *   multi link:  [{ "id": "customer-42", "label": "Acme" }]
+ *
+ * JSON example:
+ *   {
+ *     "workspace_id": "operations",
+ *     "table_id": "projects",
+ *     "table_name": "Projects",
+ *     "primary_field": "name",
+ *     "fields": [
+ *       { "key": "name", "label": "Project",
+ *         "type": "RECORD_FIELD_TYPE_TEXT", "required": true },
+ *       { "key": "stage", "label": "Stage",
+ *         "type": "RECORD_FIELD_TYPE_SINGLE_SELECT",
+ *         "choices": [
+ *           { "value": "planned", "label": "Planned" },
+ *           { "value": "active", "label": "Active", "color": "info" }
+ *         ] }
+ *     ],
+ *     "records": [
+ *       { "id": "project-1", "values": {
+ *           "name": "Warehouse launch", "stage": "active"
+ *         }, "revision": "7" }
+ *     ],
+ *     "capabilities": {
+ *       "create": true, "update": true, "delete": true,
+ *       "create_action_id": "record_create",
+ *       "update_action_id": "record_update",
+ *       "delete_action_id": "record_delete"
+ *     }
+ *   }
+ *
+ * @generated from message medallion.terminal.v1.RecordSetPayload
+ */
+export type RecordSetPayload = Message<"medallion.terminal.v1.RecordSetPayload"> & {
+    /**
+     * @generated from field: string workspace_id = 1;
+     */
+    workspaceId: string;
+    /**
+     * @generated from field: string table_id = 2;
+     */
+    tableId: string;
+    /**
+     * @generated from field: string table_name = 3;
+     */
+    tableName: string;
+    /**
+     * Field used as the human-readable record title.
+     *
+     * @generated from field: string primary_field = 4;
+     */
+    primaryField: string;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordField fields = 5;
+     */
+    fields: RecordField[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.WorkRecord records = 6;
+     */
+    records: WorkRecord[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordView views = 7;
+     */
+    views: RecordView[];
+    /**
+     * View selected by the backend, when applicable.
+     *
+     * @generated from field: optional string active_view_id = 8;
+     */
+    activeViewId?: string | undefined;
+    /**
+     * Total records before pagination, when known.
+     *
+     * @generated from field: optional int64 total = 9;
+     */
+    total?: bigint | undefined;
+    /**
+     * @generated from field: optional string next_page_token = 10;
+     */
+    nextPageToken?: string | undefined;
+    /**
+     * @generated from field: medallion.terminal.v1.RecordCapabilities capabilities = 11;
+     */
+    capabilities?: RecordCapabilities | undefined;
+};
+/**
+ * --- Record Set / Work Management ---
+ * Use for: mutable business records with a declared field schema and
+ * multiple saved views over the same underlying table. This is the
+ * domain-neutral foundation for CRM lists, project trackers, inventory,
+ * approvals, content calendars, hiring pipelines, and similar workflows.
+ *
+ * Get/Stream returns the records and schema. All writes still flow through
+ * TerminalService.SubmitAction; capabilities declare the backend action ids.
+ * Formula, lookup, and rollup values are computed by the backend and exposed
+ * as read-only fields. The frontend never evaluates formulas.
+ *
+ * Linked values convention:
+ *   single link: { "id": "customer-42", "label": "Acme" }
+ *   multi link:  [{ "id": "customer-42", "label": "Acme" }]
+ *
+ * JSON example:
+ *   {
+ *     "workspace_id": "operations",
+ *     "table_id": "projects",
+ *     "table_name": "Projects",
+ *     "primary_field": "name",
+ *     "fields": [
+ *       { "key": "name", "label": "Project",
+ *         "type": "RECORD_FIELD_TYPE_TEXT", "required": true },
+ *       { "key": "stage", "label": "Stage",
+ *         "type": "RECORD_FIELD_TYPE_SINGLE_SELECT",
+ *         "choices": [
+ *           { "value": "planned", "label": "Planned" },
+ *           { "value": "active", "label": "Active", "color": "info" }
+ *         ] }
+ *     ],
+ *     "records": [
+ *       { "id": "project-1", "values": {
+ *           "name": "Warehouse launch", "stage": "active"
+ *         }, "revision": "7" }
+ *     ],
+ *     "capabilities": {
+ *       "create": true, "update": true, "delete": true,
+ *       "create_action_id": "record_create",
+ *       "update_action_id": "record_update",
+ *       "delete_action_id": "record_delete"
+ *     }
+ *   }
+ *
+ * @generated from message medallion.terminal.v1.RecordSetPayload
+ */
+export type RecordSetPayloadJson = {
+    /**
+     * @generated from field: string workspace_id = 1;
+     */
+    workspaceId?: string;
+    /**
+     * @generated from field: string table_id = 2;
+     */
+    tableId?: string;
+    /**
+     * @generated from field: string table_name = 3;
+     */
+    tableName?: string;
+    /**
+     * Field used as the human-readable record title.
+     *
+     * @generated from field: string primary_field = 4;
+     */
+    primaryField?: string;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordField fields = 5;
+     */
+    fields?: RecordFieldJson[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.WorkRecord records = 6;
+     */
+    records?: WorkRecordJson[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordView views = 7;
+     */
+    views?: RecordViewJson[];
+    /**
+     * View selected by the backend, when applicable.
+     *
+     * @generated from field: optional string active_view_id = 8;
+     */
+    activeViewId?: string;
+    /**
+     * Total records before pagination, when known.
+     *
+     * @generated from field: optional int64 total = 9;
+     */
+    total?: string;
+    /**
+     * @generated from field: optional string next_page_token = 10;
+     */
+    nextPageToken?: string;
+    /**
+     * @generated from field: medallion.terminal.v1.RecordCapabilities capabilities = 11;
+     */
+    capabilities?: RecordCapabilitiesJson;
+};
+/**
+ * Describes the message medallion.terminal.v1.RecordSetPayload.
+ * Use `create(RecordSetPayloadSchema)` to create a new message.
+ */
+export declare const RecordSetPayloadSchema: GenMessage<RecordSetPayload, {
+    jsonType: RecordSetPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.WorkRecord
+ */
+export type WorkRecord = Message<"medallion.terminal.v1.WorkRecord"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: google.protobuf.Struct values = 2;
+     */
+    values?: JsonObject | undefined;
+    /**
+     * @generated from field: optional string created_at = 3;
+     */
+    createdAt?: string | undefined;
+    /**
+     * @generated from field: optional string updated_at = 4;
+     */
+    updatedAt?: string | undefined;
+    /**
+     * Opaque optimistic-concurrency token. Mutation handlers SHOULD reject
+     * a stale revision rather than silently overwriting a newer record.
+     *
+     * @generated from field: optional string revision = 5;
+     */
+    revision?: string | undefined;
+    /**
+     * Context applied when the record is selected. The widget also emits
+     * table_id and record_id defaults when no explicit context is supplied.
+     *
+     * @generated from field: map<string, string> context = 6;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * @generated from message medallion.terminal.v1.WorkRecord
+ */
+export type WorkRecordJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: google.protobuf.Struct values = 2;
+     */
+    values?: StructJson;
+    /**
+     * @generated from field: optional string created_at = 3;
+     */
+    createdAt?: string;
+    /**
+     * @generated from field: optional string updated_at = 4;
+     */
+    updatedAt?: string;
+    /**
+     * Opaque optimistic-concurrency token. Mutation handlers SHOULD reject
+     * a stale revision rather than silently overwriting a newer record.
+     *
+     * @generated from field: optional string revision = 5;
+     */
+    revision?: string;
+    /**
+     * Context applied when the record is selected. The widget also emits
+     * table_id and record_id defaults when no explicit context is supplied.
+     *
+     * @generated from field: map<string, string> context = 6;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.WorkRecord.
+ * Use `create(WorkRecordSchema)` to create a new message.
+ */
+export declare const WorkRecordSchema: GenMessage<WorkRecord, {
+    jsonType: WorkRecordJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.RecordField
+ */
+export type RecordField = Message<"medallion.terminal.v1.RecordField"> & {
+    /**
+     * @generated from field: string key = 1;
+     */
+    key: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label: string;
+    /**
+     * @generated from field: medallion.terminal.v1.RecordFieldType type = 3;
+     */
+    type: RecordFieldType;
+    /**
+     * @generated from field: optional string description = 4;
+     */
+    description?: string | undefined;
+    /**
+     * @generated from field: bool required = 5;
+     */
+    required: boolean;
+    /**
+     * @generated from field: bool read_only = 6;
+     */
+    readOnly: boolean;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordChoice choices = 7;
+     */
+    choices: RecordChoice[];
+    /**
+     * Set for linked-record fields. Hosts resolve the linked table and enforce
+     * visibility; record payloads should include only labels the caller may see.
+     *
+     * @generated from field: optional string linked_table_id = 8;
+     */
+    linkedTableId?: string | undefined;
+    /**
+     * @generated from field: bool allow_multiple = 9;
+     */
+    allowMultiple: boolean;
+    /**
+     * Display directive compatible with TableColumn.format where possible.
+     *
+     * @generated from field: optional string format = 10;
+     */
+    format?: string | undefined;
+    /**
+     * @generated from field: optional google.protobuf.Value default_value = 11;
+     */
+    defaultValue?: Value | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.RecordField
+ */
+export type RecordFieldJson = {
+    /**
+     * @generated from field: string key = 1;
+     */
+    key?: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label?: string;
+    /**
+     * @generated from field: medallion.terminal.v1.RecordFieldType type = 3;
+     */
+    type?: RecordFieldTypeJson;
+    /**
+     * @generated from field: optional string description = 4;
+     */
+    description?: string;
+    /**
+     * @generated from field: bool required = 5;
+     */
+    required?: boolean;
+    /**
+     * @generated from field: bool read_only = 6;
+     */
+    readOnly?: boolean;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordChoice choices = 7;
+     */
+    choices?: RecordChoiceJson[];
+    /**
+     * Set for linked-record fields. Hosts resolve the linked table and enforce
+     * visibility; record payloads should include only labels the caller may see.
+     *
+     * @generated from field: optional string linked_table_id = 8;
+     */
+    linkedTableId?: string;
+    /**
+     * @generated from field: bool allow_multiple = 9;
+     */
+    allowMultiple?: boolean;
+    /**
+     * Display directive compatible with TableColumn.format where possible.
+     *
+     * @generated from field: optional string format = 10;
+     */
+    format?: string;
+    /**
+     * @generated from field: optional google.protobuf.Value default_value = 11;
+     */
+    defaultValue?: ValueJson;
+};
+/**
+ * Describes the message medallion.terminal.v1.RecordField.
+ * Use `create(RecordFieldSchema)` to create a new message.
+ */
+export declare const RecordFieldSchema: GenMessage<RecordField, {
+    jsonType: RecordFieldJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.RecordChoice
+ */
+export type RecordChoice = Message<"medallion.terminal.v1.RecordChoice"> & {
+    /**
+     * @generated from field: string value = 1;
+     */
+    value: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label: string;
+    /**
+     * Semantic tone only: "info", "ok", "warn", "danger", or "neutral".
+     *
+     * @generated from field: optional string color = 3;
+     */
+    color?: string | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.RecordChoice
+ */
+export type RecordChoiceJson = {
+    /**
+     * @generated from field: string value = 1;
+     */
+    value?: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label?: string;
+    /**
+     * Semantic tone only: "info", "ok", "warn", "danger", or "neutral".
+     *
+     * @generated from field: optional string color = 3;
+     */
+    color?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.RecordChoice.
+ * Use `create(RecordChoiceSchema)` to create a new message.
+ */
+export declare const RecordChoiceSchema: GenMessage<RecordChoice, {
+    jsonType: RecordChoiceJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.RecordView
+ */
+export type RecordView = Message<"medallion.terminal.v1.RecordView"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name: string;
+    /**
+     * @generated from field: medallion.terminal.v1.RecordViewType type = 3;
+     */
+    type: RecordViewType;
+    /**
+     * @generated from field: repeated string visible_fields = 4;
+     */
+    visibleFields: string[];
+    /**
+     * BOARD: lane field. CALENDAR/TIMELINE: temporal field.
+     *
+     * @generated from field: optional string group_by = 5;
+     */
+    groupBy?: string | undefined;
+    /**
+     * @generated from field: optional string date_field = 6;
+     */
+    dateField?: string | undefined;
+    /**
+     * @generated from field: optional string title_field = 7;
+     */
+    titleField?: string | undefined;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordSort sorts = 8;
+     */
+    sorts: RecordSort[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordFilter filters = 9;
+     */
+    filters: RecordFilter[];
+};
+/**
+ * @generated from message medallion.terminal.v1.RecordView
+ */
+export type RecordViewJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name?: string;
+    /**
+     * @generated from field: medallion.terminal.v1.RecordViewType type = 3;
+     */
+    type?: RecordViewTypeJson;
+    /**
+     * @generated from field: repeated string visible_fields = 4;
+     */
+    visibleFields?: string[];
+    /**
+     * BOARD: lane field. CALENDAR/TIMELINE: temporal field.
+     *
+     * @generated from field: optional string group_by = 5;
+     */
+    groupBy?: string;
+    /**
+     * @generated from field: optional string date_field = 6;
+     */
+    dateField?: string;
+    /**
+     * @generated from field: optional string title_field = 7;
+     */
+    titleField?: string;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordSort sorts = 8;
+     */
+    sorts?: RecordSortJson[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RecordFilter filters = 9;
+     */
+    filters?: RecordFilterJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.RecordView.
+ * Use `create(RecordViewSchema)` to create a new message.
+ */
+export declare const RecordViewSchema: GenMessage<RecordView, {
+    jsonType: RecordViewJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.RecordSort
+ */
+export type RecordSort = Message<"medallion.terminal.v1.RecordSort"> & {
+    /**
+     * @generated from field: string field = 1;
+     */
+    field: string;
+    /**
+     * @generated from field: bool descending = 2;
+     */
+    descending: boolean;
+};
+/**
+ * @generated from message medallion.terminal.v1.RecordSort
+ */
+export type RecordSortJson = {
+    /**
+     * @generated from field: string field = 1;
+     */
+    field?: string;
+    /**
+     * @generated from field: bool descending = 2;
+     */
+    descending?: boolean;
+};
+/**
+ * Describes the message medallion.terminal.v1.RecordSort.
+ * Use `create(RecordSortSchema)` to create a new message.
+ */
+export declare const RecordSortSchema: GenMessage<RecordSort, {
+    jsonType: RecordSortJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.RecordFilter
+ */
+export type RecordFilter = Message<"medallion.terminal.v1.RecordFilter"> & {
+    /**
+     * @generated from field: string field = 1;
+     */
+    field: string;
+    /**
+     * Backend-defined operator. Recommended portable values:
+     * eq, neq, contains, in, gt, gte, lt, lte, empty, not_empty.
+     *
+     * @generated from field: string operator = 2;
+     */
+    operator: string;
+    /**
+     * @generated from field: google.protobuf.Value value = 3;
+     */
+    value?: Value | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.RecordFilter
+ */
+export type RecordFilterJson = {
+    /**
+     * @generated from field: string field = 1;
+     */
+    field?: string;
+    /**
+     * Backend-defined operator. Recommended portable values:
+     * eq, neq, contains, in, gt, gte, lt, lte, empty, not_empty.
+     *
+     * @generated from field: string operator = 2;
+     */
+    operator?: string;
+    /**
+     * @generated from field: google.protobuf.Value value = 3;
+     */
+    value?: ValueJson;
+};
+/**
+ * Describes the message medallion.terminal.v1.RecordFilter.
+ * Use `create(RecordFilterSchema)` to create a new message.
+ */
+export declare const RecordFilterSchema: GenMessage<RecordFilter, {
+    jsonType: RecordFilterJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.RecordCapabilities
+ */
+export type RecordCapabilities = Message<"medallion.terminal.v1.RecordCapabilities"> & {
+    /**
+     * @generated from field: bool create = 1;
+     */
+    create: boolean;
+    /**
+     * @generated from field: bool update = 2;
+     */
+    update: boolean;
+    /**
+     * @generated from field: bool delete = 3;
+     */
+    delete: boolean;
+    /**
+     * @generated from field: string create_action_id = 4;
+     */
+    createActionId: string;
+    /**
+     * @generated from field: string update_action_id = 5;
+     */
+    updateActionId: string;
+    /**
+     * @generated from field: string delete_action_id = 6;
+     */
+    deleteActionId: string;
+};
+/**
+ * @generated from message medallion.terminal.v1.RecordCapabilities
+ */
+export type RecordCapabilitiesJson = {
+    /**
+     * @generated from field: bool create = 1;
+     */
+    create?: boolean;
+    /**
+     * @generated from field: bool update = 2;
+     */
+    update?: boolean;
+    /**
+     * @generated from field: bool delete = 3;
+     */
+    delete?: boolean;
+    /**
+     * @generated from field: string create_action_id = 4;
+     */
+    createActionId?: string;
+    /**
+     * @generated from field: string update_action_id = 5;
+     */
+    updateActionId?: string;
+    /**
+     * @generated from field: string delete_action_id = 6;
+     */
+    deleteActionId?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.RecordCapabilities.
+ * Use `create(RecordCapabilitiesSchema)` to create a new message.
+ */
+export declare const RecordCapabilitiesSchema: GenMessage<RecordCapabilities, {
+    jsonType: RecordCapabilitiesJson;
+}>;
+/**
+ * --- Semantic Object ---
+ * Use for: ontology-backed object instances or type definitions. The
+ * payload exposes typed identity, human-readable properties, links to
+ * related objects, and optional no-input actions.
+ *
+ * JSON example:
+ *   { "object_type": "Customer",
+ *     "object_id": "cust-1042",
+ *     "title": "Acme Corp",
+ *     "properties": [
+ *       { "key": "tier", "label": "Tier", "value": "Enterprise" },
+ *       { "key": "arr", "label": "ARR", "value": 1250000,
+ *         "format": "currency:USD", "group": "Commercial" }
+ *     ],
+ *     "links": [
+ *       { "relation": "owns", "target_type": "Account",
+ *         "target_id": "acct-9", "label": "Primary account" }
+ *     ] }
+ *
+ * @generated from message medallion.terminal.v1.ObjectPayload
+ */
+export type ObjectPayload = Message<"medallion.terminal.v1.ObjectPayload"> & {
+    /**
+     * @generated from field: string object_type = 1;
+     */
+    objectType: string;
+    /**
+     * @generated from field: string object_id = 2;
+     */
+    objectId: string;
+    /**
+     * @generated from field: string title = 3;
+     */
+    title: string;
+    /**
+     * @generated from field: optional string description = 4;
+     */
+    description?: string | undefined;
+    /**
+     * @generated from field: optional string status = 5;
+     */
+    status?: string | undefined;
+    /**
+     * @generated from field: optional string updated_at = 6;
+     */
+    updatedAt?: string | undefined;
+    /**
+     * @generated from field: repeated string tags = 7;
+     */
+    tags: string[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ObjectProperty properties = 8;
+     */
+    properties: ObjectProperty[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ObjectLink links = 9;
+     */
+    links: ObjectLink[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ObjectAction actions = 10;
+     */
+    actions: ObjectAction[];
+};
+/**
+ * --- Semantic Object ---
+ * Use for: ontology-backed object instances or type definitions. The
+ * payload exposes typed identity, human-readable properties, links to
+ * related objects, and optional no-input actions.
+ *
+ * JSON example:
+ *   { "object_type": "Customer",
+ *     "object_id": "cust-1042",
+ *     "title": "Acme Corp",
+ *     "properties": [
+ *       { "key": "tier", "label": "Tier", "value": "Enterprise" },
+ *       { "key": "arr", "label": "ARR", "value": 1250000,
+ *         "format": "currency:USD", "group": "Commercial" }
+ *     ],
+ *     "links": [
+ *       { "relation": "owns", "target_type": "Account",
+ *         "target_id": "acct-9", "label": "Primary account" }
+ *     ] }
+ *
+ * @generated from message medallion.terminal.v1.ObjectPayload
+ */
+export type ObjectPayloadJson = {
+    /**
+     * @generated from field: string object_type = 1;
+     */
+    objectType?: string;
+    /**
+     * @generated from field: string object_id = 2;
+     */
+    objectId?: string;
+    /**
+     * @generated from field: string title = 3;
+     */
+    title?: string;
+    /**
+     * @generated from field: optional string description = 4;
+     */
+    description?: string;
+    /**
+     * @generated from field: optional string status = 5;
+     */
+    status?: string;
+    /**
+     * @generated from field: optional string updated_at = 6;
+     */
+    updatedAt?: string;
+    /**
+     * @generated from field: repeated string tags = 7;
+     */
+    tags?: string[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ObjectProperty properties = 8;
+     */
+    properties?: ObjectPropertyJson[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ObjectLink links = 9;
+     */
+    links?: ObjectLinkJson[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ObjectAction actions = 10;
+     */
+    actions?: ObjectActionJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.ObjectPayload.
+ * Use `create(ObjectPayloadSchema)` to create a new message.
+ */
+export declare const ObjectPayloadSchema: GenMessage<ObjectPayload, {
+    jsonType: ObjectPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.ObjectProperty
+ */
+export type ObjectProperty = Message<"medallion.terminal.v1.ObjectProperty"> & {
+    /**
+     * @generated from field: string key = 1;
+     */
+    key: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label: string;
+    /**
+     * Arbitrary JSON-compatible scalar/array/object.
+     *
+     * @generated from field: google.protobuf.Value value = 3;
+     */
+    value?: Value | undefined;
+    /**
+     * Same display vocabulary as table columns where applicable:
+     * currency:USD, percent, datetime, date, compact, link, json.
+     *
+     * @generated from field: optional string format = 4;
+     */
+    format?: string | undefined;
+    /**
+     * @generated from field: optional string description = 5;
+     */
+    description?: string | undefined;
+    /**
+     * Properties with the same group render together. Empty = General.
+     *
+     * @generated from field: optional string group = 6;
+     */
+    group?: string | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.ObjectProperty
+ */
+export type ObjectPropertyJson = {
+    /**
+     * @generated from field: string key = 1;
+     */
+    key?: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label?: string;
+    /**
+     * Arbitrary JSON-compatible scalar/array/object.
+     *
+     * @generated from field: google.protobuf.Value value = 3;
+     */
+    value?: ValueJson;
+    /**
+     * Same display vocabulary as table columns where applicable:
+     * currency:USD, percent, datetime, date, compact, link, json.
+     *
+     * @generated from field: optional string format = 4;
+     */
+    format?: string;
+    /**
+     * @generated from field: optional string description = 5;
+     */
+    description?: string;
+    /**
+     * Properties with the same group render together. Empty = General.
+     *
+     * @generated from field: optional string group = 6;
+     */
+    group?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.ObjectProperty.
+ * Use `create(ObjectPropertySchema)` to create a new message.
+ */
+export declare const ObjectPropertySchema: GenMessage<ObjectProperty, {
+    jsonType: ObjectPropertyJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.ObjectLink
+ */
+export type ObjectLink = Message<"medallion.terminal.v1.ObjectLink"> & {
+    /**
+     * @generated from field: string relation = 1;
+     */
+    relation: string;
+    /**
+     * @generated from field: string target_type = 2;
+     */
+    targetType: string;
+    /**
+     * @generated from field: string target_id = 3;
+     */
+    targetId: string;
+    /**
+     * @generated from field: string label = 4;
+     */
+    label: string;
+    /**
+     * @generated from field: optional string status = 5;
+     */
+    status?: string | undefined;
+    /**
+     * Context applied when the related object is selected. If omitted,
+     * the widget falls back to object_type/object_id.
+     *
+     * @generated from field: map<string, string> context = 6;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * @generated from message medallion.terminal.v1.ObjectLink
+ */
+export type ObjectLinkJson = {
+    /**
+     * @generated from field: string relation = 1;
+     */
+    relation?: string;
+    /**
+     * @generated from field: string target_type = 2;
+     */
+    targetType?: string;
+    /**
+     * @generated from field: string target_id = 3;
+     */
+    targetId?: string;
+    /**
+     * @generated from field: string label = 4;
+     */
+    label?: string;
+    /**
+     * @generated from field: optional string status = 5;
+     */
+    status?: string;
+    /**
+     * Context applied when the related object is selected. If omitted,
+     * the widget falls back to object_type/object_id.
+     *
+     * @generated from field: map<string, string> context = 6;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.ObjectLink.
+ * Use `create(ObjectLinkSchema)` to create a new message.
+ */
+export declare const ObjectLinkSchema: GenMessage<ObjectLink, {
+    jsonType: ObjectLinkJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.ObjectAction
+ */
+export type ObjectAction = Message<"medallion.terminal.v1.ObjectAction"> & {
+    /**
+     * Sent as ActionRequest.action_id through TerminalService.SubmitAction.
+     *
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label: string;
+    /**
+     * @generated from field: optional string description = 3;
+     */
+    description?: string | undefined;
+    /**
+     * Visual semantic: "primary", "danger", or "neutral".
+     *
+     * @generated from field: optional string style = 4;
+     */
+    style?: string | undefined;
+    /**
+     * Require a second click before dispatch.
+     *
+     * @generated from field: bool confirm = 5;
+     */
+    confirm: boolean;
+    /**
+     * Static action params. The widget also includes object_type/object_id.
+     *
+     * @generated from field: optional google.protobuf.Struct params = 6;
+     */
+    params?: JsonObject | undefined;
+    /**
+     * @generated from field: bool disabled = 7;
+     */
+    disabled: boolean;
+};
+/**
+ * @generated from message medallion.terminal.v1.ObjectAction
+ */
+export type ObjectActionJson = {
+    /**
+     * Sent as ActionRequest.action_id through TerminalService.SubmitAction.
+     *
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label?: string;
+    /**
+     * @generated from field: optional string description = 3;
+     */
+    description?: string;
+    /**
+     * Visual semantic: "primary", "danger", or "neutral".
+     *
+     * @generated from field: optional string style = 4;
+     */
+    style?: string;
+    /**
+     * Require a second click before dispatch.
+     *
+     * @generated from field: bool confirm = 5;
+     */
+    confirm?: boolean;
+    /**
+     * Static action params. The widget also includes object_type/object_id.
+     *
+     * @generated from field: optional google.protobuf.Struct params = 6;
+     */
+    params?: StructJson;
+    /**
+     * @generated from field: bool disabled = 7;
+     */
+    disabled?: boolean;
+};
+/**
+ * Describes the message medallion.terminal.v1.ObjectAction.
+ * Use `create(ObjectActionSchema)` to create a new message.
+ */
+export declare const ObjectActionSchema: GenMessage<ObjectAction, {
+    jsonType: ObjectActionJson;
+}>;
+/**
+ * --- Directed Graph ---
+ * Use for: dataset lineage, pipeline dependencies, build graphs, and
+ * ontology type relationships that can be represented as a directed
+ * graph. The built-in `dag` renderer expects an acyclic graph for the
+ * cleanest layering, but tolerates cycles by placing cyclic nodes in a
+ * final layer.
+ *
+ * @generated from message medallion.terminal.v1.GraphPayload
+ */
+export type GraphPayload = Message<"medallion.terminal.v1.GraphPayload"> & {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.GraphNode nodes = 1;
+     */
+    nodes: GraphNode[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.GraphEdge edges = 2;
+     */
+    edges: GraphEdge[];
+};
+/**
+ * --- Directed Graph ---
+ * Use for: dataset lineage, pipeline dependencies, build graphs, and
+ * ontology type relationships that can be represented as a directed
+ * graph. The built-in `dag` renderer expects an acyclic graph for the
+ * cleanest layering, but tolerates cycles by placing cyclic nodes in a
+ * final layer.
+ *
+ * @generated from message medallion.terminal.v1.GraphPayload
+ */
+export type GraphPayloadJson = {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.GraphNode nodes = 1;
+     */
+    nodes?: GraphNodeJson[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.GraphEdge edges = 2;
+     */
+    edges?: GraphEdgeJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.GraphPayload.
+ * Use `create(GraphPayloadSchema)` to create a new message.
+ */
+export declare const GraphPayloadSchema: GenMessage<GraphPayload, {
+    jsonType: GraphPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.GraphNode
+ */
+export type GraphNode = Message<"medallion.terminal.v1.GraphNode"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label: string;
+    /**
+     * @generated from field: optional string kind = 3;
+     */
+    kind?: string | undefined;
+    /**
+     * @generated from field: optional string status = 4;
+     */
+    status?: string | undefined;
+    /**
+     * @generated from field: optional string subtitle = 5;
+     */
+    subtitle?: string | undefined;
+    /**
+     * @generated from field: repeated string tags = 6;
+     */
+    tags: string[];
+    /**
+     * @generated from field: optional google.protobuf.Struct metadata = 7;
+     */
+    metadata?: JsonObject | undefined;
+    /**
+     * @generated from field: map<string, string> context = 8;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * @generated from message medallion.terminal.v1.GraphNode
+ */
+export type GraphNodeJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label?: string;
+    /**
+     * @generated from field: optional string kind = 3;
+     */
+    kind?: string;
+    /**
+     * @generated from field: optional string status = 4;
+     */
+    status?: string;
+    /**
+     * @generated from field: optional string subtitle = 5;
+     */
+    subtitle?: string;
+    /**
+     * @generated from field: repeated string tags = 6;
+     */
+    tags?: string[];
+    /**
+     * @generated from field: optional google.protobuf.Struct metadata = 7;
+     */
+    metadata?: StructJson;
+    /**
+     * @generated from field: map<string, string> context = 8;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.GraphNode.
+ * Use `create(GraphNodeSchema)` to create a new message.
+ */
+export declare const GraphNodeSchema: GenMessage<GraphNode, {
+    jsonType: GraphNodeJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.GraphEdge
+ */
+export type GraphEdge = Message<"medallion.terminal.v1.GraphEdge"> & {
+    /**
+     * @generated from field: string from = 1;
+     */
+    from: string;
+    /**
+     * @generated from field: string to = 2;
+     */
+    to: string;
+    /**
+     * @generated from field: optional string label = 3;
+     */
+    label?: string | undefined;
+    /**
+     * @generated from field: optional string kind = 4;
+     */
+    kind?: string | undefined;
+    /**
+     * @generated from field: optional string status = 5;
+     */
+    status?: string | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.GraphEdge
+ */
+export type GraphEdgeJson = {
+    /**
+     * @generated from field: string from = 1;
+     */
+    from?: string;
+    /**
+     * @generated from field: string to = 2;
+     */
+    to?: string;
+    /**
+     * @generated from field: optional string label = 3;
+     */
+    label?: string;
+    /**
+     * @generated from field: optional string kind = 4;
+     */
+    kind?: string;
+    /**
+     * @generated from field: optional string status = 5;
+     */
+    status?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.GraphEdge.
+ * Use `create(GraphEdgeSchema)` to create a new message.
+ */
+export declare const GraphEdgeSchema: GenMessage<GraphEdge, {
+    jsonType: GraphEdgeJson;
+}>;
+/**
+ * --- Code Repository ---
+ * Use for: branch/ref-aware source browsing. A response contains the
+ * entries at `path` and, when `path` points at a file, its text content.
+ * Backends should omit `file.content` for binary files and may mark
+ * large text files as truncated.
+ *
+ * @generated from message medallion.terminal.v1.RepositoryPayload
+ */
+export type RepositoryPayload = Message<"medallion.terminal.v1.RepositoryPayload"> & {
+    /**
+     * @generated from field: string repository = 1;
+     */
+    repository: string;
+    /**
+     * @generated from field: string ref = 2;
+     */
+    ref: string;
+    /**
+     * @generated from field: string path = 3;
+     */
+    path: string;
+    /**
+     * @generated from field: repeated string refs = 4;
+     */
+    refs: string[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RepositoryEntry entries = 5;
+     */
+    entries: RepositoryEntry[];
+    /**
+     * @generated from field: optional medallion.terminal.v1.RepositoryFile file = 6;
+     */
+    file?: RepositoryFile | undefined;
+    /**
+     * Optional host-owned repository URL.
+     *
+     * @generated from field: optional string url = 7;
+     */
+    url?: string | undefined;
+};
+/**
+ * --- Code Repository ---
+ * Use for: branch/ref-aware source browsing. A response contains the
+ * entries at `path` and, when `path` points at a file, its text content.
+ * Backends should omit `file.content` for binary files and may mark
+ * large text files as truncated.
+ *
+ * @generated from message medallion.terminal.v1.RepositoryPayload
+ */
+export type RepositoryPayloadJson = {
+    /**
+     * @generated from field: string repository = 1;
+     */
+    repository?: string;
+    /**
+     * @generated from field: string ref = 2;
+     */
+    ref?: string;
+    /**
+     * @generated from field: string path = 3;
+     */
+    path?: string;
+    /**
+     * @generated from field: repeated string refs = 4;
+     */
+    refs?: string[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.RepositoryEntry entries = 5;
+     */
+    entries?: RepositoryEntryJson[];
+    /**
+     * @generated from field: optional medallion.terminal.v1.RepositoryFile file = 6;
+     */
+    file?: RepositoryFileJson;
+    /**
+     * Optional host-owned repository URL.
+     *
+     * @generated from field: optional string url = 7;
+     */
+    url?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.RepositoryPayload.
+ * Use `create(RepositoryPayloadSchema)` to create a new message.
+ */
+export declare const RepositoryPayloadSchema: GenMessage<RepositoryPayload, {
+    jsonType: RepositoryPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.RepositoryEntry
+ */
+export type RepositoryEntry = Message<"medallion.terminal.v1.RepositoryEntry"> & {
+    /**
+     * @generated from field: string path = 1;
+     */
+    path: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name: string;
+    /**
+     * @generated from field: medallion.terminal.v1.RepositoryEntryKind kind = 3;
+     */
+    kind: RepositoryEntryKind;
+    /**
+     * @generated from field: optional string language = 4;
+     */
+    language?: string | undefined;
+    /**
+     * @generated from field: optional int64 size_bytes = 5;
+     */
+    sizeBytes?: bigint | undefined;
+    /**
+     * @generated from field: optional string updated_at = 6;
+     */
+    updatedAt?: string | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.RepositoryEntry
+ */
+export type RepositoryEntryJson = {
+    /**
+     * @generated from field: string path = 1;
+     */
+    path?: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name?: string;
+    /**
+     * @generated from field: medallion.terminal.v1.RepositoryEntryKind kind = 3;
+     */
+    kind?: RepositoryEntryKindJson;
+    /**
+     * @generated from field: optional string language = 4;
+     */
+    language?: string;
+    /**
+     * @generated from field: optional int64 size_bytes = 5;
+     */
+    sizeBytes?: string;
+    /**
+     * @generated from field: optional string updated_at = 6;
+     */
+    updatedAt?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.RepositoryEntry.
+ * Use `create(RepositoryEntrySchema)` to create a new message.
+ */
+export declare const RepositoryEntrySchema: GenMessage<RepositoryEntry, {
+    jsonType: RepositoryEntryJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.RepositoryFile
+ */
+export type RepositoryFile = Message<"medallion.terminal.v1.RepositoryFile"> & {
+    /**
+     * @generated from field: string path = 1;
+     */
+    path: string;
+    /**
+     * @generated from field: string content = 2;
+     */
+    content: string;
+    /**
+     * @generated from field: optional string language = 3;
+     */
+    language?: string | undefined;
+    /**
+     * @generated from field: optional int64 size_bytes = 4;
+     */
+    sizeBytes?: bigint | undefined;
+    /**
+     * @generated from field: bool truncated = 5;
+     */
+    truncated: boolean;
+    /**
+     * Optional raw/download URL owned by the host.
+     *
+     * @generated from field: optional string url = 6;
+     */
+    url?: string | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.RepositoryFile
+ */
+export type RepositoryFileJson = {
+    /**
+     * @generated from field: string path = 1;
+     */
+    path?: string;
+    /**
+     * @generated from field: string content = 2;
+     */
+    content?: string;
+    /**
+     * @generated from field: optional string language = 3;
+     */
+    language?: string;
+    /**
+     * @generated from field: optional int64 size_bytes = 4;
+     */
+    sizeBytes?: string;
+    /**
+     * @generated from field: bool truncated = 5;
+     */
+    truncated?: boolean;
+    /**
+     * Optional raw/download URL owned by the host.
+     *
+     * @generated from field: optional string url = 6;
+     */
+    url?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.RepositoryFile.
+ * Use `create(RepositoryFileSchema)` to create a new message.
+ */
+export declare const RepositoryFileSchema: GenMessage<RepositoryFile, {
+    jsonType: RepositoryFileJson;
+}>;
+/**
  * @generated from enum medallion.terminal.v1.ColumnType
  */
 export declare enum ColumnType {
@@ -2085,3 +3799,178 @@ export type EventStatusJson = "EVENT_STATUS_UNSPECIFIED" | "EVENT_STATUS_OK" | "
  * Describes the enum medallion.terminal.v1.EventStatus.
  */
 export declare const EventStatusSchema: GenEnum<EventStatus, EventStatusJson>;
+/**
+ * @generated from enum medallion.terminal.v1.RecordFieldType
+ */
+export declare enum RecordFieldType {
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_TEXT = 1;
+     */
+    TEXT = 1,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_LONG_TEXT = 2;
+     */
+    LONG_TEXT = 2,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_NUMBER = 3;
+     */
+    NUMBER = 3,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_CURRENCY = 4;
+     */
+    CURRENCY = 4,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_PERCENT = 5;
+     */
+    PERCENT = 5,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_BOOLEAN = 6;
+     */
+    BOOLEAN = 6,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_DATE = 7;
+     */
+    DATE = 7,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_DATETIME = 8;
+     */
+    DATETIME = 8,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_SINGLE_SELECT = 9;
+     */
+    SINGLE_SELECT = 9,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_MULTI_SELECT = 10;
+     */
+    MULTI_SELECT = 10,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_USER = 11;
+     */
+    USER = 11,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_LINK = 12;
+     */
+    LINK = 12,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_ATTACHMENT = 13;
+     */
+    ATTACHMENT = 13,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_URL = 14;
+     */
+    URL = 14,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_EMAIL = 15;
+     */
+    EMAIL = 15,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_PHONE = 16;
+     */
+    PHONE = 16,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_FORMULA = 17;
+     */
+    FORMULA = 17,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_LOOKUP = 18;
+     */
+    LOOKUP = 18,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_ROLLUP = 19;
+     */
+    ROLLUP = 19,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_CREATED_AT = 20;
+     */
+    CREATED_AT = 20,
+    /**
+     * @generated from enum value: RECORD_FIELD_TYPE_UPDATED_AT = 21;
+     */
+    UPDATED_AT = 21
+}
+/**
+ * @generated from enum medallion.terminal.v1.RecordFieldType
+ */
+export type RecordFieldTypeJson = "RECORD_FIELD_TYPE_UNSPECIFIED" | "RECORD_FIELD_TYPE_TEXT" | "RECORD_FIELD_TYPE_LONG_TEXT" | "RECORD_FIELD_TYPE_NUMBER" | "RECORD_FIELD_TYPE_CURRENCY" | "RECORD_FIELD_TYPE_PERCENT" | "RECORD_FIELD_TYPE_BOOLEAN" | "RECORD_FIELD_TYPE_DATE" | "RECORD_FIELD_TYPE_DATETIME" | "RECORD_FIELD_TYPE_SINGLE_SELECT" | "RECORD_FIELD_TYPE_MULTI_SELECT" | "RECORD_FIELD_TYPE_USER" | "RECORD_FIELD_TYPE_LINK" | "RECORD_FIELD_TYPE_ATTACHMENT" | "RECORD_FIELD_TYPE_URL" | "RECORD_FIELD_TYPE_EMAIL" | "RECORD_FIELD_TYPE_PHONE" | "RECORD_FIELD_TYPE_FORMULA" | "RECORD_FIELD_TYPE_LOOKUP" | "RECORD_FIELD_TYPE_ROLLUP" | "RECORD_FIELD_TYPE_CREATED_AT" | "RECORD_FIELD_TYPE_UPDATED_AT";
+/**
+ * Describes the enum medallion.terminal.v1.RecordFieldType.
+ */
+export declare const RecordFieldTypeSchema: GenEnum<RecordFieldType, RecordFieldTypeJson>;
+/**
+ * @generated from enum medallion.terminal.v1.RecordViewType
+ */
+export declare enum RecordViewType {
+    /**
+     * @generated from enum value: RECORD_VIEW_TYPE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from enum value: RECORD_VIEW_TYPE_GRID = 1;
+     */
+    GRID = 1,
+    /**
+     * @generated from enum value: RECORD_VIEW_TYPE_BOARD = 2;
+     */
+    BOARD = 2,
+    /**
+     * @generated from enum value: RECORD_VIEW_TYPE_CALENDAR = 3;
+     */
+    CALENDAR = 3,
+    /**
+     * @generated from enum value: RECORD_VIEW_TYPE_GALLERY = 4;
+     */
+    GALLERY = 4,
+    /**
+     * @generated from enum value: RECORD_VIEW_TYPE_LIST = 5;
+     */
+    LIST = 5,
+    /**
+     * @generated from enum value: RECORD_VIEW_TYPE_TIMELINE = 6;
+     */
+    TIMELINE = 6,
+    /**
+     * @generated from enum value: RECORD_VIEW_TYPE_FORM = 7;
+     */
+    FORM = 7
+}
+/**
+ * @generated from enum medallion.terminal.v1.RecordViewType
+ */
+export type RecordViewTypeJson = "RECORD_VIEW_TYPE_UNSPECIFIED" | "RECORD_VIEW_TYPE_GRID" | "RECORD_VIEW_TYPE_BOARD" | "RECORD_VIEW_TYPE_CALENDAR" | "RECORD_VIEW_TYPE_GALLERY" | "RECORD_VIEW_TYPE_LIST" | "RECORD_VIEW_TYPE_TIMELINE" | "RECORD_VIEW_TYPE_FORM";
+/**
+ * Describes the enum medallion.terminal.v1.RecordViewType.
+ */
+export declare const RecordViewTypeSchema: GenEnum<RecordViewType, RecordViewTypeJson>;
+/**
+ * @generated from enum medallion.terminal.v1.RepositoryEntryKind
+ */
+export declare enum RepositoryEntryKind {
+    /**
+     * @generated from enum value: REPOSITORY_ENTRY_KIND_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from enum value: REPOSITORY_ENTRY_KIND_FILE = 1;
+     */
+    FILE = 1,
+    /**
+     * @generated from enum value: REPOSITORY_ENTRY_KIND_DIRECTORY = 2;
+     */
+    DIRECTORY = 2,
+    /**
+     * @generated from enum value: REPOSITORY_ENTRY_KIND_SYMLINK = 3;
+     */
+    SYMLINK = 3
+}
+/**
+ * @generated from enum medallion.terminal.v1.RepositoryEntryKind
+ */
+export type RepositoryEntryKindJson = "REPOSITORY_ENTRY_KIND_UNSPECIFIED" | "REPOSITORY_ENTRY_KIND_FILE" | "REPOSITORY_ENTRY_KIND_DIRECTORY" | "REPOSITORY_ENTRY_KIND_SYMLINK";
+/**
+ * Describes the enum medallion.terminal.v1.RepositoryEntryKind.
+ */
+export declare const RepositoryEntryKindSchema: GenEnum<RepositoryEntryKind, RepositoryEntryKindJson>;

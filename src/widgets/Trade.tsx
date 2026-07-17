@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useDashboard } from '../core/DashboardContext'
-import { buildSubmitActionUrl, buildActionRequest, newClientRequestId } from '../core/resolveSource'
-import { useWatchAction, isTerminalStatus, isErrorStatus } from '../hooks/useWatchAction'
+import { newClientRequestId } from '../core/resolveSource'
+import { useSubmitAction } from '../hooks/useSubmitAction'
+import { isErrorStatus, isTerminalStatus } from '../hooks/useWatchAction'
 import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
 
@@ -33,15 +34,20 @@ interface OrderBody {
   type: 'market' | 'limit'
 }
 
-export function Trade({ options }: WidgetProps) {
+export function Trade({ options, widgetId }: WidgetProps) {
   const opts = (options ?? {}) as TradeOptions
   const { ctx, toast, backendUrl, emit } = useDashboard()
+  const {
+    submit: submitAction,
+    submitting: actionSubmitting,
+    result: actionResult,
+  } = useSubmitAction(widgetId)
   const symbol = opts.symbol ?? ctx.symbol ?? ''
   const fallbackUrl = opts.url
   const actionId = opts.action_id ?? 'place_order'
   // Prefer Connect (proto-driven) when the dashboard has a backend.
   // Fall back to the legacy `options.url` POST for non-Connect backends.
-  const target = backendUrl ? 'connect' as const : fallbackUrl ? 'url' as const : null
+  const target = backendUrl !== undefined ? 'connect' as const : fallbackUrl ? 'url' as const : null
 
   const [side, setSide] = useState<Side>('buy')
   const [amount, setAmount] = useState('')
@@ -67,38 +73,12 @@ export function Trade({ options }: WidgetProps) {
       if (ctx.side === 'buy' || ctx.side === 'sell') setSide(ctx.side)
     }
   }, [ctx.side])
-  const [submitting, setSubmitting] = useState(false)
+  const [legacySubmitting, setLegacySubmitting] = useState(false)
+  const legacyInFlight = useRef(false)
   const [reply, setReply] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [confirming, setConfirming] = useState(false)
-  // Arms WatchAction only after a non-terminal SubmitAction response.
-  // Storing the client_request_id (not the backend id) lets us start
-  // watching even before the response lands, but we wait for the
-  // ActionResponse so we don't watch a rejected/synchronous-OK order.
-  const [watchTarget, setWatchTarget] = useState<{ clientRequestId: string } | null>(null)
-  const watch = useWatchAction(target === 'connect' ? backendUrl : undefined, watchTarget)
-
-  // Show progress in the widget body (replaces previous `reply`), but
-  // only toast on terminal status — intermediate PENDING/partial-fill
-  // updates would otherwise spam 3-4 toasts per order.
-  useEffect(() => {
-    if (!watch.latest) return
-    const u = watch.latest
-    if (u.message) setReply(u.message)
-    const terminal = isTerminalStatus(u.status)
-    emit({
-      type: 'action',
-      actionId: u.action_id ?? actionId,
-      clientRequestId: u.client_request_id ?? '',
-      status: String(u.status ?? ''),
-      message: u.message,
-      terminal,
-    })
-    if (terminal) {
-      if (u.message) toast(u.message, isErrorStatus(u.status) ? 'error' : 'ok')
-      setWatchTarget(null)
-    }
-  }, [watch.latest, toast, emit, actionId])
+  const submitting = target === 'connect' ? actionSubmitting : legacySubmitting
 
   // Editing any field after entering confirm state must drop back to
   // the form — otherwise the confirm summary shows stale numbers.
@@ -108,7 +88,7 @@ export function Trade({ options }: WidgetProps) {
   }, [amount, price, side])
 
   const submit = useCallback(async () => {
-    if (!target || submitting) return
+    if (!target || submitting || (target === 'url' && legacyInFlight.current)) return
     const amt = Number(amount)
     if (!Number.isFinite(amt) || amt <= 0) {
       setError('Amount must be a positive number')
@@ -127,6 +107,7 @@ export function Trade({ options }: WidgetProps) {
       setReply(null)
       return
     }
+    setConfirming(false)
 
     const orderParams: OrderBody = {
       symbol,
@@ -136,36 +117,53 @@ export function Trade({ options }: WidgetProps) {
       ...(px != null && { price: px }),
     }
 
-    setSubmitting(true)
     setError(null)
     setReply(null)
-    // One idempotency key per submit attempt — survives transient
-    // network errors so a retry doesn't double-fill the order.
+
+    if (target === 'connect') {
+      await submitAction({
+        actionId,
+        params: orderParams as unknown as Record<string, unknown>,
+        successMessage: 'Order completed',
+        refresh: false,
+        onComplete: final => {
+          if (isErrorStatus(final.status)) return
+          setAmount('')
+          setPrice('')
+          setConfirming(false)
+        },
+      })
+      return
+    }
+
+    // The URL escape hatch does not expose WatchAction. Keep its transport
+    // local, but use the same synchronous ref lock and idempotency header.
+    legacyInFlight.current = true
+    setLegacySubmitting(true)
     const clientRequestId = newClientRequestId()
     try {
-      const res = target === 'connect'
-        ? await fetch(buildSubmitActionUrl(backendUrl!), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(buildActionRequest({ actionId, params: orderParams as unknown as Record<string, unknown>, clientRequestId })),
-          })
-        : await fetch(fallbackUrl!, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Idempotency-Key': clientRequestId },
-            body: JSON.stringify(orderParams),
-          })
+      const res = await fetch(fallbackUrl!, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Idempotency-Key': clientRequestId },
+        body: JSON.stringify(orderParams),
+      })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json().catch(() => ({}))
       // ActionResponse uses `message`; legacy backends may too.
       const msg = typeof data.message === 'string' ? data.message : 'Order submitted'
-      const status = typeof data.status === 'string' ? data.status : ''
+      const status = typeof data.status === 'string' && data.status
+        ? data.status
+        : 'ACTION_STATUS_OK'
       emit({
         type: 'action',
         actionId,
         clientRequestId,
         status,
         message: msg,
-        terminal: isTerminalStatus(status),
+        // URL-mode has no WatchAction channel. A legacy response without a
+        // status is synchronous by convention; an explicit lifecycle status
+        // is classified normally.
+        terminal: data.status == null || isTerminalStatus(status),
       })
       // A backend that synchronously rejects/fails the order is still
       // an HTTP 200 — the failure is in the status enum, not the
@@ -180,12 +178,6 @@ export function Trade({ options }: WidgetProps) {
         setPrice('')
         setConfirming(false)
       }
-      // If the backend reported a non-terminal status, start watching
-      // for the eventual outcome. Connect-only — url-mode backends
-      // don't speak WatchAction.
-      if (target === 'connect' && !isTerminalStatus(data.status)) {
-        setWatchTarget({ clientRequestId })
-      }
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Submit failed'
       setError(msg)
@@ -199,9 +191,10 @@ export function Trade({ options }: WidgetProps) {
         terminal: true,
       })
     } finally {
-      setSubmitting(false)
+      legacyInFlight.current = false
+      setLegacySubmitting(false)
     }
-  }, [target, backendUrl, fallbackUrl, actionId, submitting, amount, price, symbol, side, opts.confirm, confirming, toast, emit])
+  }, [target, fallbackUrl, actionId, submitting, amount, price, symbol, side, opts.confirm, confirming, toast, emit, submitAction])
 
   useEffect(() => {
     if (!confirming) return
@@ -318,8 +311,26 @@ export function Trade({ options }: WidgetProps) {
         {submitting ? '...' : side === 'buy' ? `Buy ${opts.quote_unit ?? ''}`.trim() : `Sell ${opts.quote_unit ?? ''}`.trim()}
       </button>
 
-      {reply && <div className="text-xs text-emerald-400">{reply}</div>}
-      {error && <div className="text-xs text-red-400">{error}</div>}
+      {(target === 'connect'
+        ? actionResult && !isErrorStatus(actionResult.status)
+          ? actionResult.message ?? actionResult.status
+          : null
+        : reply) && (
+        <div className="text-xs text-emerald-400">
+          {target === 'connect'
+            ? actionResult?.message ?? actionResult?.status
+            : reply}
+        </div>
+      )}
+      {(target === 'connect' && actionResult && isErrorStatus(actionResult.status)
+        ? actionResult.message ?? `${actionId} failed`
+        : error) && (
+        <div className="text-xs text-red-400">
+          {target === 'connect' && actionResult && isErrorStatus(actionResult.status)
+            ? actionResult.message ?? `${actionId} failed`
+            : error}
+        </div>
+      )}
     </div>
   )
 }
