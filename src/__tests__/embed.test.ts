@@ -170,6 +170,22 @@ describe('buildBiDescriptor', () => {
     expect(positions.columns).toEqual([])
   })
 
+  it('declares the stable geospatial export columns', () => {
+    const descriptor = buildBiDescriptor([{
+      id: 'sites',
+      shape: 'SHAPE_GEO',
+    }], { name: 'M', endpoint: 'https://api.example.com' })
+    expect(descriptor.tables[0].columns.map(column => column.name)).toEqual([
+      'id',
+      'label',
+      'geometry_type',
+      'geometry',
+      'status',
+      'value',
+      'context',
+    ])
+  })
+
   it('omits connect fields for a sql-protocol descriptor', () => {
     const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://sql.example.com', protocol: 'sql' })
     expect(d.protocol).toBe('sql')

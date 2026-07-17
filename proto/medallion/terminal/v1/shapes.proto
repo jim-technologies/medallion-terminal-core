@@ -513,6 +513,39 @@ message PairedMeasure {
   optional string format = 3;
 }
 
+// --- Geospatial ---
+// Use for: operational sites, vehicles, routes, service territories,
+// facilities, incidents, and any other point/line/polygon projection.
+//
+// `geometry` follows the GeoJSON Geometry object contract:
+//   { "type": "Point", "coordinates": [-122.4, 37.8] }
+//   { "type": "LineString", "coordinates": [[...], [...]] }
+//   { "type": "Polygon", "coordinates": [[[...], ...]] }
+//
+// Keeping geometry as Struct preserves the standard GeoJSON vocabulary
+// without rebuilding every geometry union in protobuf. The frontend also
+// accepts a raw GeoJSON FeatureCollection as an inline/url convenience.
+message GeoPayload {
+  repeated GeoFeature features = 1;
+}
+
+message GeoFeature {
+  string id = 1;
+  optional string label = 2;
+  google.protobuf.Struct geometry = 3;
+
+  // Optional scalar used to scale point markers.
+  optional double value = 4;
+
+  // Free-form lifecycle/health value mapped to semantic theme colors.
+  optional string status = 5;
+
+  optional google.protobuf.Struct metadata = 6;
+
+  // Applied when the feature is selected.
+  map<string, string> context = 7;
+}
+
 // --- Embed ---
 // Use for: pointing the `image` or `iframe` widget at a URL that
 // changes with context. Lets a Connect backend swap an AI-generated

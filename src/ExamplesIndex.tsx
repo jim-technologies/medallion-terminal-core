@@ -20,8 +20,8 @@ const EXAMPLES: Example[] = [
   {
     path: '/examples/platform-foundation.json',
     title: 'Data & Ontology Platform',
-    blurb: 'Governed asset discovery, semantic business objects, relationship and lineage navigation, and a ref-aware source repository browser.',
-    tags: ['catalog', 'ontology', 'lineage', 'code'],
+    blurb: 'Governed discovery, semantic objects, lineage, operational geography, schema-driven actions, and ref-aware source browsing.',
+    tags: ['catalog', 'ontology', 'lineage', 'map', 'code'],
     featured: true,
   },
   {
@@ -58,7 +58,7 @@ const EXAMPLES: Example[] = [
   {
     path: '/examples/spot-market.json',
     title: 'Spot Market',
-    blurb: 'Full read + act spot trading UI: stat strip, annotated candles, order book, order ticket (with confirm), watchlist with heat cells.',
+    blurb: 'Full read + act spot trading UI: stats, annotated candles, ladder and cumulative depth, order ticket, open orders, and watchlist.',
     tags: ['finance', 'spot', 'trade'],
   },
   {
@@ -76,7 +76,7 @@ const EXAMPLES: Example[] = [
   {
     path: '/examples/prediction-market.json',
     title: 'Prediction Market',
-    blurb: 'Binary event market: probability gauge, order book share donut, implied probability over time, top of book, trades.',
+    blurb: 'Binary event market: probability, liquidity share, price history, cumulative depth, top of book, live trades, and order entry.',
     tags: ['finance', 'prediction'],
   },
   {
@@ -118,8 +118,8 @@ const EXAMPLES: Example[] = [
   {
     path: '/examples/logistics-ops.json',
     title: 'Logistics',
-    blurb: 'Supply-chain control room: KPIs, origin × destination heatmap, category treemap, hub throughput, exceptions, active shipments table.',
-    tags: ['logistics', 'ops'],
+    blurb: 'Supply-chain control room: network map, KPIs, lane heatmap, category treemap, throughput, exceptions, and active shipments.',
+    tags: ['logistics', 'ops', 'map'],
   },
   {
     path: '/examples/clinical-icu.json',

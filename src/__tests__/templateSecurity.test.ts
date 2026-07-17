@@ -119,6 +119,30 @@ describe('validateTemplateTrust', () => {
     expect(validateTemplateTrust(tpl, policy)).toEqual([])
   })
 
+  it('applies the URL allow-list to geospatial style endpoints', () => {
+    const allowed: Template = {
+      widgets: [{
+        component: 'geo_map',
+        options: { style_url: 'https://api.example.com/maps/style.json' },
+        source: { inline: { features: [] } },
+      }],
+    }
+    expect(validateTemplateTrust(allowed, policy)).toEqual([])
+
+    const blocked: Template = {
+      widgets: [{
+        component: 'geo_map',
+        options: { style_url: 'https://tiles.example.net/style.json' },
+        source: { inline: { features: [] } },
+      }],
+    }
+    expect(validateTemplateTrust(blocked, policy)).toContainEqual({
+      path: 'widgets[0].options.style_url',
+      severity: 'error',
+      message: 'URL origin https://tiles.example.net is not allowed',
+    })
+  })
+
   it('rejects URL origin template substitution', () => {
     const tpl: Template = {
       widgets: [{ component: 'metric', source: { url: 'https://${ctx.host}/metric' } }],

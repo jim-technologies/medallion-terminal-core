@@ -53,6 +53,7 @@ const DATA_RESPONSE_CASES = new Set([
   'graph',
   'repository',
   'records',
+  'geo',
 ])
 
 function unwrapDataResponse(raw: unknown): unknown {

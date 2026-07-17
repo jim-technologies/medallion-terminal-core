@@ -25,11 +25,13 @@ http://localhost:5173/?template=/examples/platform-foundation.json&backend=http:
 | Asset discovery / catalog | `asset_catalog` | `AssetCatalogPayload` | Search, filtering, ranking, ownership, classifications, authorization |
 | Ontology / object explorer | `object_view` | `ObjectPayload` | Object schemas, properties, links, permissions, action definitions |
 | Lineage / dependency graph | `dag` | `GraphPayload` | Graph traversal, lineage extraction, impact analysis, access filtering |
+| Operational geography | `geo_map` | `GeoPayload` / GeoJSON | Geospatial query, authorized features, host-controlled MapLibre style and tiles |
 | Code repositories | `code_browser` | `RepositoryPayload` | Git/ref resolution, tree listing, content retrieval, truncation, raw URLs |
 | Record workspaces / business apps | `record_grid`, `record_board`, `record_calendar`, `record_form` | `RecordSetPayload` | Schemas, records, links, views, policy, formulas, revisions, automations |
 | Files and data repositories | `file_browser`, `table`, charts | `TablePayload` and existing analytical shapes | Object storage, tabular query, previews, signed downloads, HTTP Range |
 | Source catalog / Compass-style connection inventory | `catalog` | `ListSources` | Source registration, parameter schemas, health, authorization |
 | Object and workflow actions | `object_view`, `trade`, custom forms | `SubmitAction` / `WatchAction` | Policy checks, idempotency, execution, lifecycle, audit |
+| Schema-driven actions | `action_form` | Template field schema + `SubmitAction` / `WatchAction` | Field policy, server validation, authorization, execution, audit |
 | AI-assisted views | `prompt` | `Generate` | Model orchestration, retrieval, policy, template validation |
 | Reporting and BI | Export menu, embed mode, BI descriptor | `flatten()` / `BiConnectorDescriptor` | Optional SQL, ODBC, Arrow Flight, or query gateway |
 
@@ -45,11 +47,14 @@ growing a second widget family for each adjacent product:
 
 | Product surface | Compose these built-ins | What is ready |
 |---|---|---|
-| Compass / governed knowledge hub | `asset_catalog` + `object_view` + `dag` + `code_browser` | Curated discovery, tags and ownership, semantic detail, links, actions, lineage, and source browsing |
-| Drive-style file workspace | `file_browser` + `asset_catalog` + optional `object_view` | Hierarchical paths, breadcrumbs, search, paging, upload, download, gallery mode, and inline media/document/data preview |
+| Palantir-like governed operating platform | `asset_catalog` + `object_view` + `dag` + `geo_map` + `action_form` + `code_browser` + record/analytical widgets | Discovery, ontology detail, links, lineage, operational geography, governed actions, source browsing, workflows, and analysis |
+| Google Drive-like file workspace | `file_browser` + `asset_catalog` + `object_view` + `events` / `action_log` + optional `action_form` | Paths, breadcrumbs, search, paging, upload/download, list/gallery, previews, details/activity, and policy-gated file operations |
 | Airtable-style operational app | `record_grid` + `record_board` + `record_calendar` + `record_form` | Typed fields, links, saved views, filters/sorts, inline edits, governed CRUD, revision checks, and multiple projections over one record set |
 | Grafana / Superset-style analytics | `metric`, `stat_strip`, `timeseries`, `area_chart`, `bar_chart`, `table`, `heatmap`, `histogram`, `boxplot`, `scatter`, `treemap`, `gauge`, `events`, `alert_log` | Context-driven filters, streaming/polling, freshness and retry state, annotations, alerts, drill-down, snapshots, export, and embedding |
-| Market / financial terminal | Analytical set above + `candlestick`, `orderbook`, `volume_profile`, `tape`, `ticker`, `paired_grid`, `trade` | Live market views, cross-widget selection, write actions, lifecycle tracking, and compact operator density |
+| Binance-like exchange | `stat_strip` + `candlestick` + `orderbook` + `depth_chart` + `tape` + `trade` + orders/holdings tables | Market statistics, candles, ladder and cumulative liquidity, prints, order entry, lifecycle, history, and watchlists |
+| CoinGecko-like market intelligence | `table` + `metric` / `stat_strip` + `timeseries` / `candlestick` + `distribution` + `text` | Ranked markets, coin detail, price/volume/cap history, metadata, categories, portfolio/watchlists, and news |
+| Polymarket-like prediction market | `asset_catalog` / `table` + `gauge` + `timeseries` + `distribution` + `orderbook` / `depth_chart` + `trade` + `events` | Market discovery, implied probability, history, outcomes, liquidity, execution, positions, and activity |
+| IBKR-like brokerage workstation | `MultiDashboard` + analytical set + `candlestick` + `orderbook` + `depth_chart` + `paired_grid` + `trade` / `action_form` + `action_log` + `text` | Linked watchlists/scanners, portfolio and account views, charts, Level II, options, compact and advanced tickets, order monitoring, and news |
 
 These are capability-level analogues, not copies of another product's layout
 or trade dress. A host can put them in tabs with `MultiDashboard`, retarget
@@ -58,8 +63,8 @@ new projection is required.
 
 The current file surface intentionally stops short of pretending that storage
 policy is a UI concern. Rename, move, delete, share, retention, and folder
-creation should be exposed as permission-gated host actions once their audit
-and confirmation rules exist. Likewise, `record_grid` is a typed operational
+creation can be presented through `action_form`, but only after the host
+defines permission, audit, and confirmation rules. Likewise, `record_grid` is a typed operational
 grid, not an Excel engine: bulk paste/fill, collaborative cursors, arbitrary
 client formulas, and millions-row virtualization should only be added when a
 validated product requirement warrants the complexity.
@@ -78,6 +83,11 @@ Before adding a built-in, prefer—in order:
 This keeps the core small and avoids parallel table, tree, chart, or form
 systems that would drift in accessibility, theming, export, and streaming
 behavior.
+
+The regression suite codifies the six requested archetypes in
+`src/__tests__/productSurfaces.test.ts`. It verifies both that the reference
+compositions contain each required presentation primitive and that those
+primitives remain registered under vendor-neutral names.
 
 ## Recommended backend shape
 

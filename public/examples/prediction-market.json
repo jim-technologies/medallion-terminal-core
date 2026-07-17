@@ -121,6 +121,38 @@
     },
 
     {
+      "id": "depth",
+      "component": "depth_chart",
+      "span": 6,
+      "height": 280,
+      "title": "Yes Liquidity Depth",
+      "options": {
+        "price_context": { "key": "price", "side_key": "side" }
+      },
+      "source": {
+        "inline": {
+          "venue": "reference CLOB",
+          "bids": [
+            { "price": 0.418, "size": 4200 },
+            { "price": 0.416, "size": 6800 },
+            { "price": 0.412, "size": 12400 },
+            { "price": 0.408, "size": 18200 },
+            { "price": 0.402, "size": 24100 }
+          ],
+          "asks": [
+            { "price": 0.422, "size": 3100 },
+            { "price": 0.424, "size": 5900 },
+            { "price": 0.428, "size": 9100 },
+            { "price": 0.432, "size": 15800 },
+            { "price": 0.438, "size": 22600 }
+          ],
+          "mid": 0.420,
+          "spread": 0.004
+        }
+      }
+    },
+
+    {
       "id": "book",
       "component": "table",
       "span": 6,
@@ -157,6 +189,22 @@
             { "timestamp": "14:18:09", "label": "BUY  No  1,800 @ 0.578", "status": "EVENT_STATUS_OK", "tags": ["no"]  }
           ]
         }
+      }
+    },
+
+    {
+      "id": "ticket",
+      "component": "trade",
+      "span": 6,
+      "height": 280,
+      "title": "Yes Order Ticket",
+      "options": {
+        "url": "/api/prediction-orders",
+        "symbol": "ETH-4K-YES",
+        "quote_unit": "shares",
+        "available": 2500,
+        "quick_amounts": [0.25, 0.5, 1],
+        "confirm": true
       }
     }
   ]

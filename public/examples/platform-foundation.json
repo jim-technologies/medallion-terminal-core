@@ -58,6 +58,104 @@
       }
     },
     {
+      "id": "footprint",
+      "component": "geo_map",
+      "span": 8,
+      "height": 430,
+      "title": "Operational Footprint · ${ctx.asset_id}",
+      "options": {
+        "feature_context": { "key": "object_id", "label_key": "object_label" }
+      },
+      "source": {
+        "inline": {
+          "features": [
+            {
+              "id": "region-west",
+              "label": "West operating region",
+              "status": "active",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                  [-124.0, 32.0], [-114.0, 32.0], [-114.0, 42.0],
+                  [-124.0, 42.0], [-124.0, 32.0]
+                ]]
+              }
+            },
+            {
+              "id": "facility-sfo",
+              "label": "San Francisco",
+              "status": "healthy",
+              "value": 96,
+              "geometry": { "type": "Point", "coordinates": [-122.4194, 37.7749] },
+              "context": { "object_id": "facility-sfo", "asset_kind": "facility" }
+            },
+            {
+              "id": "facility-lax",
+              "label": "Los Angeles",
+              "status": "warning",
+              "value": 72,
+              "geometry": { "type": "Point", "coordinates": [-118.2437, 34.0522] },
+              "context": { "object_id": "facility-lax", "asset_kind": "facility" }
+            },
+            {
+              "id": "facility-sea",
+              "label": "Seattle",
+              "status": "healthy",
+              "value": 54,
+              "geometry": { "type": "Point", "coordinates": [-122.3321, 47.6062] },
+              "context": { "object_id": "facility-sea", "asset_kind": "facility" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "governed-action",
+      "component": "action_form",
+      "span": 4,
+      "height": 430,
+      "title": "Governed Action",
+      "options": {
+        "action_id": "request_asset_access",
+        "url": "/api/actions/request-access",
+        "submit_label": "Request access",
+        "success_message": "Access request submitted",
+        "description": "Schema-driven action surface for ontology actions, approvals, and administrative workflows.",
+        "confirm": true,
+        "fields": [
+          {
+            "key": "asset_id",
+            "label": "Asset",
+            "context_key": "asset_id",
+            "required": true,
+            "read_only": true
+          },
+          {
+            "key": "access_level",
+            "label": "Access",
+            "type": "select",
+            "required": true,
+            "default_value": "viewer",
+            "choices": [
+              { "value": "viewer", "label": "Viewer" },
+              { "value": "editor", "label": "Editor" }
+            ]
+          },
+          {
+            "key": "expires_on",
+            "label": "Expires",
+            "type": "date"
+          },
+          {
+            "key": "reason",
+            "type": "long_text",
+            "required": true,
+            "placeholder": "Business justification"
+          }
+        ]
+      }
+    },
+    {
       "id": "repository",
       "component": "code_browser",
       "span": 12,

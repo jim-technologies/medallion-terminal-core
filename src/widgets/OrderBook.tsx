@@ -2,19 +2,7 @@ import { useMemo } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import { Empty } from './states'
 import type { WidgetProps } from '../types/template'
-
-interface Level {
-  price: number
-  size: number
-}
-
-interface OrderBookData {
-  bids: Level[]
-  asks: Level[]
-  mid?: number
-  spread?: number
-  venue?: string
-}
+import { normalizeOrderBook, type OrderLevelData } from './orderBookShape'
 
 // Click a price level → set ctx[key] to that price. Lets a Trade widget
 // reading `${ctx.price}` pre-fill the limit price from the book. The
@@ -30,7 +18,7 @@ const TOP_N = 10
 
 export function OrderBook({ data, options }: WidgetProps) {
   const { setCtx } = useDashboard()
-  const book = useMemo(() => normalize(data), [data])
+  const book = useMemo(() => normalizeOrderBook(data), [data])
   const priceContext = options?.price_context as PriceContext | undefined
   const onPrice = priceContext
     ? (price: number, side: 'bid' | 'ask') => {
@@ -89,7 +77,7 @@ export function OrderBook({ data, options }: WidgetProps) {
 function Row({
   side, level, cum, maxSize, onPrice,
 }: {
-  side: 'bid' | 'ask'; level: Level; cum: number; maxSize: number; onPrice?: (price: number, side: 'bid' | 'ask') => void
+  side: 'bid' | 'ask'; level: OrderLevelData; cum: number; maxSize: number; onPrice?: (price: number, side: 'bid' | 'ask') => void
 }) {
   const pct = (level.size / maxSize) * 100
   const bar = side === 'bid' ? 'bg-emerald-500/10' : 'bg-red-500/10'
@@ -105,31 +93,6 @@ function Row({
       <span className="relative text-right text-zinc-500 tabular-nums">{formatSize(cum)}</span>
     </div>
   )
-}
-
-function normalize(data: unknown): OrderBookData | null {
-  if (!data || typeof data !== 'object' || Array.isArray(data)) return null
-  const d = data as Record<string, unknown>
-  const bids = parseLevels(d.bids)
-  const asks = parseLevels(d.asks)
-  if (bids.length === 0 && asks.length === 0) return null
-  return {
-    bids,
-    asks,
-    mid: typeof d.mid === 'number' ? d.mid : undefined,
-    spread: typeof d.spread === 'number' ? d.spread : undefined,
-    venue: typeof d.venue === 'string' ? d.venue : undefined,
-  }
-}
-
-function parseLevels(raw: unknown): Level[] {
-  if (!Array.isArray(raw)) return []
-  return raw
-    .map(l => {
-      const ll = l as Record<string, unknown>
-      return { price: Number(ll.price ?? 0), size: Number(ll.size ?? 0) }
-    })
-    .filter(l => Number.isFinite(l.price) && Number.isFinite(l.size) && l.size > 0)
 }
 
 function format(n: number): string {

@@ -19,6 +19,85 @@
     },
 
     {
+      "id": "network-map",
+      "component": "geo_map",
+      "span": 12,
+      "height": 420,
+      "title": "Network Position · ${ctx.region}",
+      "options": {
+        "feature_context": { "key": "facility_id", "label_key": "facility_name" }
+      },
+      "source": {
+        "inline": {
+          "features": [
+            {
+              "id": "territory-na-west",
+              "label": "NA West service territory",
+              "status": "active",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                  [-125.0, 31.0], [-102.0, 31.0], [-102.0, 49.0],
+                  [-125.0, 49.0], [-125.0, 31.0]
+                ]]
+              }
+            },
+            {
+              "id": "route-lax-den",
+              "label": "LAX → DEN",
+              "status": "running",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [[-118.4085, 33.9416], [-111.0937, 34.0489], [-104.6737, 39.8561]]
+              }
+            },
+            {
+              "id": "route-sfo-sea",
+              "label": "SFO → SEA",
+              "status": "delayed",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [[-122.3790, 37.6213], [-122.6765, 45.5231], [-122.3088, 47.4502]]
+              }
+            },
+            {
+              "id": "LAX",
+              "label": "Los Angeles hub",
+              "status": "healthy",
+              "geometry": { "type": "Point", "coordinates": [-118.4085, 33.9416] },
+              "value": 4820,
+              "context": { "facility_id": "LAX", "region": "NA-W" }
+            },
+            {
+              "id": "SFO",
+              "label": "San Francisco hub",
+              "status": "healthy",
+              "geometry": { "type": "Point", "coordinates": [-122.3790, 37.6213] },
+              "value": 3120,
+              "context": { "facility_id": "SFO", "region": "NA-W" }
+            },
+            {
+              "id": "SEA",
+              "label": "Seattle hub",
+              "status": "warning",
+              "geometry": { "type": "Point", "coordinates": [-122.3088, 47.4502] },
+              "value": 1840,
+              "context": { "facility_id": "SEA", "region": "NA-W" }
+            },
+            {
+              "id": "DEN",
+              "label": "Denver hub",
+              "status": "healthy",
+              "geometry": { "type": "Point", "coordinates": [-104.6737, 39.8561] },
+              "value": 2480,
+              "context": { "facility_id": "DEN", "region": "NA-W" }
+            }
+          ]
+        }
+      }
+    },
+
+    {
       "id": "lanes",
       "component": "heatmap",
       "span": 8,

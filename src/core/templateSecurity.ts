@@ -79,6 +79,7 @@ const URL_OPTION_KEYS = [
   'ingest_url',
   'download_url',
   'media_url_template',
+  'style_url',
 ] as const
 
 interface EffectiveTrustPolicy {

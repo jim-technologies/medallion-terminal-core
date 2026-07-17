@@ -244,6 +244,7 @@ const VALIDATORS: Record<string, (p: Json) => string[]> = {
   distribution:  validateDistribution,
   text:          validateText,
   orderbook:     validateOrderBook,
+  depth_chart:   validateOrderBook,
   paired_grid:   validatePairedGrid,
   ticker:        validateEvents,
   volume_profile: validateVolumeProfile,
@@ -258,6 +259,7 @@ const VALIDATORS: Record<string, (p: Json) => string[]> = {
   asset_catalog: validateAssetCatalog,
   object_view:   validateObject,
   dag:           validateGraph,
+  geo_map:       validateGeo,
   code_browser:  validateRepository,
   record_grid:   validateRecordSet,
   record_board:  validateRecordSet,
@@ -301,6 +303,26 @@ function validateGraph(p: Json): string[] {
       if (!isObj(edge) || !isStr(edge.from) || !isStr(edge.to)) {
         return ['edge needs {from:string, to:string}']
       }
+    }
+  }
+  return []
+}
+
+function validateGeo(p: Json): string[] {
+  const features = isObj(p) && isArr(p.features) ? p.features : null
+  if (!features) return ['expected {features: []}']
+  for (const feature of features) {
+    if (!isObj(feature) || !isStr(feature.id)) return ['feature needs id:string']
+    if (isObj(feature.geometry)) {
+      if (!isStr(feature.geometry.type) || !isArr(feature.geometry.coordinates)) {
+        return ['feature.geometry needs {type:string, coordinates:array}']
+      }
+      continue
+    }
+    const latitude = feature.latitude ?? feature.lat
+    const longitude = feature.longitude ?? feature.lng ?? feature.lon
+    if (!isNum(latitude) || !isNum(longitude)) {
+      return ['feature needs geometry or numeric latitude/longitude']
     }
   }
   return []
@@ -478,7 +500,7 @@ function validateVolumeProfile(p: Json): string[] {
 // Trade is a form; Clock reads system time; Image/Iframe accept any URL string;
 // Section is a pure layout primitive; Slider/Select read ctx + options.
 const PAYLOAD_LESS = new Set([
-  'prompt', 'catalog', 'trade', 'clock', 'image', 'iframe',
+  'prompt', 'catalog', 'trade', 'action_form', 'clock', 'image', 'iframe',
   'section', 'slider', 'select', 'multi_select', 'json', 'sparkline',
 ])
 

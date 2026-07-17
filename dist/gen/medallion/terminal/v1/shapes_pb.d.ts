@@ -1791,6 +1791,146 @@ export declare const PairedMeasureSchema: GenMessage<PairedMeasure, {
     jsonType: PairedMeasureJson;
 }>;
 /**
+ * --- Geospatial ---
+ * Use for: operational sites, vehicles, routes, service territories,
+ * facilities, incidents, and any other point/line/polygon projection.
+ *
+ * `geometry` follows the GeoJSON Geometry object contract:
+ *   { "type": "Point", "coordinates": [-122.4, 37.8] }
+ *   { "type": "LineString", "coordinates": [[...], [...]] }
+ *   { "type": "Polygon", "coordinates": [[[...], ...]] }
+ *
+ * Keeping geometry as Struct preserves the standard GeoJSON vocabulary
+ * without rebuilding every geometry union in protobuf. The frontend also
+ * accepts a raw GeoJSON FeatureCollection as an inline/url convenience.
+ *
+ * @generated from message medallion.terminal.v1.GeoPayload
+ */
+export type GeoPayload = Message<"medallion.terminal.v1.GeoPayload"> & {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.GeoFeature features = 1;
+     */
+    features: GeoFeature[];
+};
+/**
+ * --- Geospatial ---
+ * Use for: operational sites, vehicles, routes, service territories,
+ * facilities, incidents, and any other point/line/polygon projection.
+ *
+ * `geometry` follows the GeoJSON Geometry object contract:
+ *   { "type": "Point", "coordinates": [-122.4, 37.8] }
+ *   { "type": "LineString", "coordinates": [[...], [...]] }
+ *   { "type": "Polygon", "coordinates": [[[...], ...]] }
+ *
+ * Keeping geometry as Struct preserves the standard GeoJSON vocabulary
+ * without rebuilding every geometry union in protobuf. The frontend also
+ * accepts a raw GeoJSON FeatureCollection as an inline/url convenience.
+ *
+ * @generated from message medallion.terminal.v1.GeoPayload
+ */
+export type GeoPayloadJson = {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.GeoFeature features = 1;
+     */
+    features?: GeoFeatureJson[];
+};
+/**
+ * Describes the message medallion.terminal.v1.GeoPayload.
+ * Use `create(GeoPayloadSchema)` to create a new message.
+ */
+export declare const GeoPayloadSchema: GenMessage<GeoPayload, {
+    jsonType: GeoPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.GeoFeature
+ */
+export type GeoFeature = Message<"medallion.terminal.v1.GeoFeature"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: optional string label = 2;
+     */
+    label?: string | undefined;
+    /**
+     * @generated from field: google.protobuf.Struct geometry = 3;
+     */
+    geometry?: JsonObject | undefined;
+    /**
+     * Optional scalar used to scale point markers.
+     *
+     * @generated from field: optional double value = 4;
+     */
+    value?: number | undefined;
+    /**
+     * Free-form lifecycle/health value mapped to semantic theme colors.
+     *
+     * @generated from field: optional string status = 5;
+     */
+    status?: string | undefined;
+    /**
+     * @generated from field: optional google.protobuf.Struct metadata = 6;
+     */
+    metadata?: JsonObject | undefined;
+    /**
+     * Applied when the feature is selected.
+     *
+     * @generated from field: map<string, string> context = 7;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * @generated from message medallion.terminal.v1.GeoFeature
+ */
+export type GeoFeatureJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: optional string label = 2;
+     */
+    label?: string;
+    /**
+     * @generated from field: google.protobuf.Struct geometry = 3;
+     */
+    geometry?: StructJson;
+    /**
+     * Optional scalar used to scale point markers.
+     *
+     * @generated from field: optional double value = 4;
+     */
+    value?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * Free-form lifecycle/health value mapped to semantic theme colors.
+     *
+     * @generated from field: optional string status = 5;
+     */
+    status?: string;
+    /**
+     * @generated from field: optional google.protobuf.Struct metadata = 6;
+     */
+    metadata?: StructJson;
+    /**
+     * Applied when the feature is selected.
+     *
+     * @generated from field: map<string, string> context = 7;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.GeoFeature.
+ * Use `create(GeoFeatureSchema)` to create a new message.
+ */
+export declare const GeoFeatureSchema: GenMessage<GeoFeature, {
+    jsonType: GeoFeatureJson;
+}>;
+/**
  * --- Embed ---
  * Use for: pointing the `image` or `iframe` widget at a URL that
  * changes with context. Lets a Connect backend swap an AI-generated

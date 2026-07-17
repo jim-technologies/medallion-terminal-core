@@ -20,6 +20,12 @@ import {
   normalizeRepository,
 } from '../widgets/platformShapes'
 import { normalizeRecordSet } from '../widgets/recordShapes'
+import {
+  geoFeatureContext,
+  geoFeatureLabel,
+  normalizeGeoData,
+} from '../widgets/geoShape'
+import { normalizeOrderBook } from '../widgets/orderBookShape'
 
 // A cell is any JSON scalar. Nested values are JSON-stringified so a
 // flat table never contains objects (which CSV/Parquet can't represent).
@@ -202,16 +208,12 @@ function flattenText(data: unknown): FlatTable | null {
 
 // orderbook: {bids:[{price,size}], asks:[...]} → tagged side column.
 function flattenOrderbook(data: unknown): FlatTable | null {
-  if (isObject(data) && (Array.isArray(data.bids) || Array.isArray(data.asks))) {
-    const bids = (data.bids as Record<string, unknown>[] | undefined) ?? []
-    const asks = (data.asks as Record<string, unknown>[] | undefined) ?? []
-    const rows = [
-      ...bids.map((b) => ({ side: 'bid', ...b })),
-      ...asks.map((a) => ({ side: 'ask', ...a })),
-    ]
-    return fromRowObjects(rows)
-  }
-  return null
+  const book = normalizeOrderBook(data)
+  if (!book) return null
+  return fromRowObjects([
+    ...book.bids.map(level => ({ side: 'bid', ...level })),
+    ...book.asks.map(level => ({ side: 'ask', ...level })),
+  ])
 }
 
 // metric: {value,delta?,unit?,label?} | number → single-row table.
@@ -338,6 +340,26 @@ function flattenRecordSet(data: unknown): FlatTable | null {
   })))
 }
 
+function flattenGeo(data: unknown): FlatTable | null {
+  const collection = normalizeGeoData(data)
+  if (!collection) return null
+  return fromRowObjects(collection.features.map((feature) => {
+    const publicProperties = Object.fromEntries(
+      Object.entries(feature.properties).filter(([key]) => !key.startsWith('_mtc_')),
+    )
+    return {
+      ...publicProperties,
+      id: feature.id,
+      label: geoFeatureLabel(feature),
+      geometry_type: feature.geometry.type,
+      geometry: feature.geometry,
+      status: feature.properties._mtc_status,
+      value: feature.properties._mtc_value,
+      context: geoFeatureContext(feature),
+    }
+  }))
+}
+
 // A registry of shape name → projector, so callers that know the shape
 // (e.g. a widget that knows its component maps to a Shape) can pick the
 // right one directly and skip the sniff. The map mirrors the canonical
@@ -357,6 +379,7 @@ const PROJECTORS: Record<string, (d: unknown) => FlatTable | null> = {
   text: flattenText,
   ticker: flattenText,
   orderbook: flattenOrderbook,
+  depth_chart: flattenOrderbook,
   metric: flattenMetric,
   gauge: flattenGauge,
   asset_catalog: flattenAssetCatalog,
@@ -367,6 +390,7 @@ const PROJECTORS: Record<string, (d: unknown) => FlatTable | null> = {
   record_board: flattenRecordSet,
   record_calendar: flattenRecordSet,
   record_form: flattenRecordSet,
+  geo_map: flattenGeo,
   SHAPE_TIMESERIES: flattenTimeseries,
   SHAPE_CANDLES: flattenCandles,
   SHAPE_TABLE: flattenTable,
@@ -382,6 +406,7 @@ const PROJECTORS: Record<string, (d: unknown) => FlatTable | null> = {
   SHAPE_GRAPH: flattenGraph,
   SHAPE_REPOSITORY: flattenRepository,
   SHAPE_RECORD_SET: flattenRecordSet,
+  SHAPE_GEO: flattenGeo,
 }
 
 // Best-effort fallback when the shape is unknown: arrays of objects

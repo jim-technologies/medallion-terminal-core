@@ -14,7 +14,7 @@ export default defineConfig({
       cssFileName: 'styles',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', 'recharts', 'lightweight-charts'],
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'recharts', 'lightweight-charts', 'maplibre-gl'],
     },
   },
 })

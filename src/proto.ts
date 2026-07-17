@@ -79,4 +79,6 @@ export type {
   RecordSortJson,
   RecordFilterJson,
   RecordCapabilitiesJson,
+  GeoPayloadJson,
+  GeoFeatureJson,
 } from './gen/medallion/terminal/v1/shapes_pb.js'

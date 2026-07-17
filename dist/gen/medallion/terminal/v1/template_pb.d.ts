@@ -166,8 +166,9 @@ export type Widget = Message<"medallion.terminal.v1.Widget"> & {
     id: string;
     /**
      * Registered component name (e.g. "timeseries", "candlestick",
-     * "table", "metric", "gauge", "heatmap", "events", "text",
-     * "prompt"). Maps to a renderer in the frontend widget registry.
+     * "table", "metric", "gauge", "heatmap", "geo_map", "events",
+     * "text", "action_form", "prompt"). Maps to a renderer in the
+     * frontend widget registry.
      *
      * @generated from field: string component = 2;
      */
@@ -219,8 +220,9 @@ export type WidgetJson = {
     id?: string;
     /**
      * Registered component name (e.g. "timeseries", "candlestick",
-     * "table", "metric", "gauge", "heatmap", "events", "text",
-     * "prompt"). Maps to a renderer in the frontend widget registry.
+     * "table", "metric", "gauge", "heatmap", "geo_map", "events",
+     * "text", "action_form", "prompt"). Maps to a renderer in the
+     * frontend widget registry.
      *
      * @generated from field: string component = 2;
      */

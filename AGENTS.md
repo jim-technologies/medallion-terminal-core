@@ -69,13 +69,14 @@ Key fields:
 
 ## Built-in widgets
 
-Charts: `timeseries`, `candlestick`, `area_chart`, `bar_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `sparkline`, `volume_profile`, `treemap`, `heatmap`.
+Charts: `timeseries`, `candlestick`, `area_chart`, `bar_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `sparkline`, `volume_profile`, `treemap`, `heatmap`, `depth_chart`, `geo_map`.
 
 Tabular / metric: `table`, `metric`, `gauge`, `distribution`, `stat_strip`, `paired_grid`, `orderbook`.
 
 Platform: `asset_catalog` (governed asset discovery), `object_view` (semantic
 object properties, links, and actions), `code_browser` (repository/ref tree and
-source viewer), plus `dag` with the canonical `GraphPayload` for lineage.
+source viewer), `geo_map` (MapLibre point/line/polygon operations map), plus
+`dag` with the canonical `GraphPayload` for lineage.
 
 Records: `record_grid` (typed rows, saved grid/list views, inline edits),
 `record_board` (grouped workflow lanes), `record_calendar` (date projection),
@@ -84,7 +85,12 @@ domain-neutral `RecordSetPayload`.
 
 Live feeds: `events`, `text` (news/articles, supports image_url + flash-on-new-item), `ticker` (auto-scrolling marquee), `tape` (time-and-sales / append-only event stream with ring buffer), `action_log` (order blotter), `alert_log` (alert feed).
 
-Write surfaces: `trade` (order ticket — calls SubmitAction, watches via WatchAction), `prompt` (AI prompt — calls Generate), `file_browser` (object-store file pane — breadcrumb nav, drag-drop upload via SubmitAction, click-to-download or inline preview).
+Write surfaces: `trade` (compact order ticket), `action_form` (schema-driven
+generic actions, approvals, administration, and advanced order attributes),
+`prompt` (AI prompt — calls Generate), `file_browser` (object-store file pane
+— breadcrumb nav, drag-drop upload via SubmitAction, click-to-download or
+inline preview). Both `trade` and `action_form` call SubmitAction and watch via
+WatchAction.
 
 The file_browser previews video/audio inline via native
 `<video src=options.media_url_template>` (default
@@ -117,11 +123,16 @@ Proto-defined in `proto/medallion/terminal/v1/shapes.proto`. Widgets accept both
 - `distribution`: `{slices: [{label, value}]}`.
 - `text`: `{items: [{title?, body?, source?, date?, tags?, image_url?, id?}]}`.
 - `orderbook`: `{bids: [{price, size}], asks: [{price, size}], mid?, spread?, venue?}`.
+- `depth_chart`: the same `OrderBookPayload`, projected as cumulative liquidity.
 - `paired_grid`: `{subject, dimension?, rows: [{key, left, right}], measures, key_label, left_label, right_label}` — options chains, sportsbook ladders.
 - `asset_catalog`: `{items: [{id, name, kind, owner?, status?, metadata?, context?}], total?, next_page_token?}`.
 - `object_view`: `{object_type, object_id, title, properties, links?, actions?}`.
 - `dag`: `{nodes: [{id, label, kind?, status?, context?}], edges: [{from, to, label?}]}`.
 - `code_browser`: `{repository, ref, path, refs?, entries, file?}`.
+- `geo_map`: canonical `{features: [{id, label?, geometry, value?, status?,
+  metadata?, context?}]}`, raw GeoJSON `FeatureCollection`, or point rows with
+  `lat`/`lon`. `geometry` follows GeoJSON Point/MultiPoint/LineString/
+  MultiLineString/Polygon/MultiPolygon.
 - Record widgets: `{workspace_id, table_id, primary_field, fields, records,
   views?, capabilities?}`. Formula/lookup/rollup/timestamp fields are
   backend-computed and read-only; updates/deletes carry `revision`.
@@ -134,7 +145,13 @@ Widgets retarget each other via `ctx`:
 - `heatmap`: `options.row_context`, `options.col_context` — clicking a cell sets one or both axis ctx keys.
 - `paired_grid`: `options.row_context: { key }` — clicking a row sets `ctx[key]` to the row's `key` value.
 - `orderbook`: `options.price_context: { key, side_key? }` — clicking a price level sets `ctx[key]` to the price; `side_key` also sets buy/sell (bid → buy, ask → sell). Pairs with `trade` for one-click book-to-ticket.
+- `depth_chart`: supports the same `options.price_context` contract as
+  `orderbook`.
 - `trade`: reads `ctx.price`, `ctx.side`, `ctx.symbol` and syncs them into the order form.
+- `geo_map`: applies each feature's `context`; `options.feature_context`
+  supplies fallback ID/label keys.
+- `action_form`: fields may use `context_key` for safe context prefill; every
+  submitted value is still validated and authorized by the backend.
 - `asset_catalog`: selecting an item applies its `context` map, then defaults
   `ctx.asset_id` and `ctx.asset_kind`.
 - `dag`: graph nodes can carry a `context` map; `options.node_context` supplies
@@ -244,6 +261,9 @@ src/
     colors.ts             — Semantic palette + chart color rotation
     platformShapes.ts     — tolerant normalizers for platform payloads
     recordShapes.ts       — record schema normalization + saved-view helpers
+    geoShape.ts           — GeoPayload / GeoJSON normalization and bounds
+    orderBookShape.ts     — shared ladder/depth normalization
+    actionFormShape.ts    — generic action schema normalization + validation
     WidgetShell.tsx       — Title bar, action menu, focus ring, alert effect,
                             stale/retry badges, telemetry emit
 public/examples/         — Bundled example templates
@@ -289,7 +309,8 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
 ## Tech stack
 
 React 19.2 + TypeScript 7.0. Vite 8, Tailwind 4.3, Recharts 3.9,
-lightweight-charts 5.2 (for `candlestick`), Vitest 4.1, Storybook 10.5,
+lightweight-charts 5.2 (for `candlestick`), MapLibre GL JS 5.24 (for
+`geo_map`), Vitest 4.1, Storybook 10.5,
 Protobuf + Buf 1.71, Node 24 LTS, pnpm 11, Flox.
 
 ## Design principles

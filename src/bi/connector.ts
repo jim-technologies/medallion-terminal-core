@@ -37,6 +37,7 @@ export type BiShape =
   | 'SHAPE_GRAPH'
   | 'SHAPE_REPOSITORY'
   | 'SHAPE_RECORD_SET'
+  | 'SHAPE_GEO'
 
 const BI_SHAPES: readonly BiShape[] = [
   'SHAPE_UNSPECIFIED',
@@ -57,6 +58,7 @@ const BI_SHAPES: readonly BiShape[] = [
   'SHAPE_GRAPH',
   'SHAPE_REPOSITORY',
   'SHAPE_RECORD_SET',
+  'SHAPE_GEO',
 ]
 
 function normalizeBiShape(shape: unknown): BiShape | undefined {
@@ -264,6 +266,17 @@ function shapeColumns(shape: unknown): BiColumn[] {
         t('language'),
         { name: 'size_bytes', type: 'integer' },
         t('updated_at', true),
+      ]
+    case 18:
+    case 'SHAPE_GEO':
+      return [
+        t('id'),
+        t('label'),
+        t('geometry_type'),
+        { name: 'geometry', type: 'json' },
+        t('status'),
+        num('value'),
+        { name: 'context', type: 'json' },
       ]
     // SHAPE_TABLE / SHAPE_PAIRED_GRID / unspecified: columns are
     // data-defined; leave empty so the connector infers from a sample.

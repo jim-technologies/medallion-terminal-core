@@ -76,6 +76,13 @@ describe('flatten', () => {
     expect(t.rows[1]).toEqual({ side: 'ask', price: 101, size: 2 })
   })
 
+  it('exports depth charts through their underlying order-book levels', () => {
+    const t = flatten({
+      bids: [[100, 1], { price: 100, size: 2 }],
+    }, 'depth_chart')
+    expect(t.rows[0]).toEqual({ side: 'bid', price: 100, size: 3 })
+  })
+
   it('flattens distribution slices', () => {
     const t = flatten({ slices: [{ label: 'x', value: 3 }] }, 'distribution')
     expect(t.rows[0]).toEqual({ label: 'x', value: 3 })
@@ -188,6 +195,26 @@ describe('flatten', () => {
       customer: '{"id":"customer-7","label":"Northstar"}',
       revision: '7',
     })
+  })
+
+  it('flattens geospatial features without leaking renderer properties', () => {
+    const t = flatten({
+      features: [{
+        id: 'site-1',
+        label: 'Site 1',
+        status: 'healthy',
+        geometry: { type: 'Point', coordinates: [-122, 37] },
+        context: { site_id: 'site-1' },
+      }],
+    }, 'geo_map')
+    expect(t.rows[0]).toMatchObject({
+      id: 'site-1',
+      label: 'Site 1',
+      geometry_type: 'Point',
+      status: 'healthy',
+      context: '{"site_id":"site-1"}',
+    })
+    expect(t.columns.some(column => column.startsWith('_mtc_'))).toBe(false)
   })
 
   it('auto-detects shape without a hint', () => {

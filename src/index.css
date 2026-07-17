@@ -316,6 +316,107 @@
   scrollbar-width: thin;
 }
 
+/* Minimal MapLibre structural chrome. The full upstream stylesheet is not
+   bundled: GeoMap uses first-party controls and only needs canvas placement
+   plus legally-required attribution positioning. This keeps the optional map
+   surface from inflating every consumer's CSS. */
+.mtc-geo-map {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: var(--mtc-font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mtc-geo-map .maplibregl-canvas-container,
+.mtc-geo-map .maplibregl-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.mtc-geo-map .maplibregl-canvas {
+  outline: none;
+}
+
+.mtc-geo-map .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: grab;
+  user-select: none;
+}
+
+.mtc-geo-map .maplibregl-canvas-container.maplibregl-interactive:active {
+  cursor: grabbing;
+}
+
+.mtc-geo-map .maplibregl-control-container {
+  pointer-events: none;
+}
+
+.mtc-geo-map .maplibregl-ctrl-bottom-right {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.mtc-geo-map .maplibregl-ctrl-attrib {
+  pointer-events: auto;
+  max-width: 70%;
+  padding: 1px 4px;
+  border-radius: 3px 0 0;
+  background: color-mix(in oklab, var(--mtc-bg) 82%, transparent);
+  color: var(--mtc-muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.mtc-geo-map .maplibregl-ctrl-attrib a {
+  color: var(--mtc-muted-strong);
+}
+
+.mtc-geo-map .maplibregl-ctrl-attrib-button {
+  display: none;
+}
+
+.mtc-geo-map .maplibregl-attrib-empty {
+  display: none;
+}
+
+.mtc-geo-map .maplibregl-cooperative-gesture-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: var(--mtc-overlay);
+  color: var(--mtc-fg);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease 1s;
+}
+
+.mtc-geo-map .maplibregl-cooperative-gesture-screen.maplibregl-show {
+  opacity: 1;
+  transition: opacity 50ms;
+}
+
+.mtc-geo-map .maplibregl-cooperative-gesture-screen .maplibregl-mobile-message {
+  display: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .mtc-geo-map .maplibregl-cooperative-gesture-screen .maplibregl-desktop-message {
+    display: none;
+  }
+
+  .mtc-geo-map .maplibregl-cooperative-gesture-screen .maplibregl-mobile-message {
+    display: block;
+  }
+}
+
 /* Shared chrome. These classes carry the product's visual grammar while the
    utility colors continue to make every existing widget theme-aware. */
 .mtc-workspace {

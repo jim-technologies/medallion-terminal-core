@@ -9,11 +9,11 @@ export const BUILTIN_COMPONENTS: ReadonlySet<string> = new Set([
   'timeseries', 'candlestick', 'table', 'metric', 'text', 'prompt',
   'gauge', 'distribution', 'heatmap', 'events', 'catalog', 'asset_catalog',
   'object_view', 'code_browser', 'record_grid', 'record_board',
-  'record_calendar', 'record_form', 'orderbook',
-  'paired_grid', 'trade', 'ticker', 'volume_profile', 'stat_strip',
+  'record_calendar', 'record_form', 'action_form', 'orderbook',
+  'depth_chart', 'paired_grid', 'trade', 'ticker', 'volume_profile', 'stat_strip',
   'bar_chart', 'scatter', 'clock', 'treemap', 'image', 'iframe',
   'histogram', 'section', 'area_chart', 'slider', 'select', 'boxplot',
-  'radar', 'dag', 'multi_select', 'json', 'sparkline', 'action_log', 'alert_log', 'tape',
+  'radar', 'dag', 'geo_map', 'multi_select', 'json', 'sparkline', 'action_log', 'alert_log', 'tape',
   'file_browser',
 ])
 

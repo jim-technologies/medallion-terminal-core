@@ -63,7 +63,9 @@ export { RecordGrid } from './widgets/RecordGrid'
 export { RecordBoard } from './widgets/RecordBoard'
 export { RecordCalendar } from './widgets/RecordCalendar'
 export { RecordForm } from './widgets/RecordForm'
+export { ActionForm } from './widgets/ActionForm'
 export { OrderBook } from './widgets/OrderBook'
+export { DepthChart } from './widgets/DepthChart'
 export { PairedGrid } from './widgets/PairedGrid'
 export { Trade } from './widgets/Trade'
 export { Ticker } from './widgets/Ticker'
@@ -83,6 +85,7 @@ export { Select } from './widgets/Select'
 export { Boxplot } from './widgets/Boxplot'
 export { Radar } from './widgets/Radar'
 export { Dag } from './widgets/Dag'
+export { GeoMap } from './widgets/GeoMap'
 export { MultiSelect } from './widgets/MultiSelect'
 export { Json } from './widgets/Json'
 export { Sparkline } from './widgets/Sparkline'
@@ -121,6 +124,40 @@ export type {
   RecordFilterData,
   RecordCapabilitiesData,
 } from './widgets/recordShapes'
+export {
+  normalizeActionForm,
+  initialActionValues,
+  validateActionValues,
+  actionParams,
+} from './widgets/actionFormShape'
+export type {
+  ActionFormData,
+  ActionField,
+  ActionFieldType,
+  ActionChoice,
+} from './widgets/actionFormShape'
+export {
+  normalizeOrderBook,
+  cumulativeDepth,
+} from './widgets/orderBookShape'
+export type {
+  OrderBookData,
+  OrderLevelData,
+  DepthPoint,
+} from './widgets/orderBookShape'
+export {
+  normalizeGeoData,
+  geoBounds,
+  geoFeatureContext,
+  geoFeatureLabel,
+} from './widgets/geoShape'
+export type {
+  GeoPosition,
+  GeoGeometry,
+  GeoFeatureData,
+  GeoFeatureCollection,
+  GeoBounds,
+} from './widgets/geoShape'
 export type {
   AssetCatalogData,
   AssetCatalogItem,

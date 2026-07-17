@@ -76,6 +76,42 @@
     },
 
     {
+      "id": "depth",
+      "component": "depth_chart",
+      "span": 8,
+      "height": 320,
+      "title": "Cumulative Depth — ${ctx.symbol}",
+      "options": {
+        "cumulative": "notional",
+        "quote_unit": "USDT",
+        "price_context": { "key": "price", "side_key": "side" }
+      },
+      "source": {
+        "inline": {
+          "venue": "reference",
+          "asks": [
+            { "price": 67846.10, "size": 0.32 },
+            { "price": 67848.30, "size": 0.41 },
+            { "price": 67852.50, "size": 0.92 },
+            { "price": 67857.80, "size": 2.46 },
+            { "price": 67860.10, "size": 0.84 },
+            { "price": 67862.40, "size": 1.42 }
+          ],
+          "bids": [
+            { "price": 67840.00, "size": 0.46 },
+            { "price": 67838.20, "size": 0.83 },
+            { "price": 67836.50, "size": 1.18 },
+            { "price": 67834.10, "size": 1.91 },
+            { "price": 67830.40, "size": 2.74 },
+            { "price": 67826.80, "size": 3.42 }
+          ],
+          "mid": 67843.20,
+          "spread": 6.10
+        }
+      }
+    },
+
+    {
       "id": "ticket",
       "component": "trade",
       "span": 4,
@@ -111,7 +147,7 @@
     {
       "id": "open-orders",
       "component": "table",
-      "span": 4,
+      "span": 8,
       "height": 320,
       "title": "Open Orders",
       "source": {

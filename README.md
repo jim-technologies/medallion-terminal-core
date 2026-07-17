@@ -49,8 +49,10 @@ ontology/catalog/data/code surfaces:
 | Governed asset discovery | `asset_catalog` | `AssetCatalogPayload` |
 | Semantic object detail, links, and actions | `object_view` | `ObjectPayload` |
 | Lineage and dependencies | `dag` | `GraphPayload` |
+| Operational geography and territories | `geo_map` | `GeoPayload` / GeoJSON |
 | Branch/ref-aware source browsing | `code_browser` | `RepositoryPayload` |
 | Typed business records and saved views | `record_grid`, `record_board`, `record_calendar`, `record_form` | `RecordSetPayload` |
+| Schema-driven governed writes | `action_form` | `SubmitAction` / `WatchAction` |
 | Object-store and dataset browsing | `file_browser`, `table`, charts | `TablePayload` and existing analytical shapes |
 
 Selections flow through `ctx`, so one asset click can retarget object detail,
@@ -171,6 +173,7 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `distribution` | `{ slices: [{ label, value }] }` | Pie/donut |
 | `text` | `{ items: [{ title, body, ... }] }` | News, summaries |
 | `orderbook` | `{ bids, asks, mid?, spread? }` | Depth ladder |
+| `depth_chart` | `{ bids, asks, mid?, spread? }` | Cumulative bid/ask liquidity; shares `OrderBookPayload` with the ladder |
 | `paired_grid` | `{ subject, dimension?, measures, rows: [{ key, left, right }] }` | Options chains, sportsbook ladders, A/B percentile grids |
 | `asset_catalog` | `{ items: [{ id, name, kind, owner?, status?, metadata?, context? }], total? }` | Governed asset search and cross-widget selection |
 | `object_view` | `{ object_type, object_id, title, properties, links?, actions? }` | Ontology/object detail with optional policy-gated actions |
@@ -180,8 +183,10 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `record_board` | `RecordSetPayload` | Saved grouped views, cards, selection, accessible lane moves and drag/drop |
 | `record_calendar` | `RecordSetPayload` | Saved date views over any date/datetime field |
 | `record_form` | `RecordSetPayload` | Context-driven create/edit/detail form with required-field and capability checks |
+| `geo_map` | `GeoPayload`, GeoJSON, or rows with `lat`/`lon` | MapLibre point/line/polygon overlays, auto-fit, semantic status, and selection |
 | `embed` | `{ url, label?, sandbox? }` | Image / iframe |
 | `trade` | (form) | Calls `SubmitAction`, watches via `WatchAction` |
+| `action_form` | `options.fields` or `{ fields }` | Generic typed form for approvals, admin operations, and advanced order attributes |
 | `prompt` | (form) | Calls `Generate` |
 | `action_log` | (none) | Live order blotter — listens to `emit({type:'action'})` |
 | `alert_log` | (none) | Live alert feed — listens to `emit({type:'alert'})` |
@@ -230,7 +235,22 @@ A toolbar toggle switches between **Icons** (default — filename + emoji icon, 
 
 Toolbar prev/next + the keyboard arrows walk the same navigable queue. Audio/video also auto-advance on `ended` — separate queue (excludes images) so a music playlist ends gracefully instead of jumping to a photo.
 
-Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus chart variants (`bar_chart`, `area_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `treemap`, `sparkline`, `dag`, `volume_profile`).
+Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus chart variants (`bar_chart`, `area_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `treemap`, `sparkline`, `dag`, `geo_map`, `depth_chart`, `volume_profile`).
+
+`geo_map` uses MapLibre GL JS 5.24. With no `options.style_url` it renders a
+network-free analytical coordinate grid, which is suitable for private
+overlays. Set `style_url` to a host-controlled MapLibre style for a full
+basemap; untrusted templates must pass that origin through
+`TemplateTrustPolicy.allowedUrlOrigins`. The canonical `GeoPayload` carries
+GeoJSON geometry in each feature, while inline and URL sources may provide a
+raw GeoJSON `FeatureCollection`.
+
+`action_form` keeps product-specific writes out of the core. Templates declare
+typed fields (`text`, `long_text`, `number`, `boolean`, `select`,
+`multi_select`, `date`, `datetime`, `email`, `url`, and related display
+types), optional context prefill, static params, confirmation, and semantic
+tone. Submission still uses the same idempotent `SubmitAction`/`WatchAction`
+lifecycle as `trade`; `options.url` is the non-Connect escape hatch.
 
 ## Live data
 
@@ -310,6 +330,11 @@ Clicking a row / cell / price level on certain widgets sets a `ctx` key, which r
 { "component": "orderbook",
   "options": { "price_context": { "key": "price", "side_key": "side" } } }
 
+// The cumulative projection accepts the same OrderBookPayload and context.
+{ "component": "depth_chart",
+  "options": { "price_context": { "key": "price", "side_key": "side" },
+               "cumulative": "notional", "quote_unit": "USD" } }
+
 // Heatmap cells map to one or both axes.
 { "component": "heatmap",
   "options": { "row_context": { "key": "asset" }, "col_context": { "key": "hour" } } }
@@ -318,6 +343,11 @@ Clicking a row / cell / price level on certain widgets sets a `ctx` key, which r
 { "component": "record_grid",
   "source": { "source_id": "business_records" },
   "options": { "record_id_key": "record_id" } }
+
+// Map feature context retargets object/detail widgets.
+{ "component": "geo_map",
+  "source": { "source_id": "operational_sites" },
+  "options": { "feature_context": { "key": "object_id" } } }
 ```
 
 ## Keyboard

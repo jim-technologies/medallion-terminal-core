@@ -54,6 +54,9 @@ const requiredExports = [
   'RecordBoard',
   'RecordCalendar',
   'RecordForm',
+  'ActionForm',
+  'DepthChart',
+  'GeoMap',
   'buildBiDescriptor',
   'exportView',
   'validateTemplateTrust',
@@ -71,6 +74,9 @@ const requiredWidgets = [
   'record_calendar',
   'record_form',
   'file_browser',
+  'action_form',
+  'depth_chart',
+  'geo_map',
 ]
 for (const name of requiredWidgets) {
   if (!(library.BUILTIN_KEYS instanceof Set) || !library.BUILTIN_KEYS.has(name)) {
@@ -79,7 +85,10 @@ for (const name of requiredWidgets) {
 }
 
 const budgets = [
-  { label: 'library entry', path: entryPath, maxGzipBytes: 80 * 1024 },
+  // The entry intentionally exposes every built-in for direct composition.
+  // Heavy renderers remain peer dependencies and GeoMap loads MapLibre only
+  // when mounted. Keep a firm ceiling with room for harmless toolchain churn.
+  { label: 'library entry', path: entryPath, maxGzipBytes: 84 * 1024 },
   {
     label: 'library styles',
     path: path.resolve(root, packageJson.exports['./styles']),
