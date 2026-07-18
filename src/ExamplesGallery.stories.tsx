@@ -23,20 +23,30 @@ import platformFoundation from '../public/examples/platform-foundation.json'
 import businessOperations from '../public/examples/business-operations.json'
 import workManagement from '../public/examples/work-management.json'
 import mediaLibrary from '../public/examples/media-library.json'
+import fileBrowser from '../public/examples/file-browser.json'
 import { RECORD_SET_STORY_DATA } from './widgets/recordStories.fixture'
 
 import '../examples/widgets/registry'
 
 const meta: Meta<typeof Dashboard> = {
-  title: 'Examples',
+  title: 'Examples/Complete Dashboards',
   component: Dashboard,
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    layout: 'fullscreen',
+    controls: { disable: true },
+    docs: {
+      description: {
+        component: 'Standalone, full-dashboard examples built from the JSON templates in public/examples.',
+      },
+    },
+  },
 }
 export default meta
 type Story = StoryObj<typeof Dashboard>
 
-const story = (template: unknown, backendUrl?: string): Story => ({
+const story = (exampleId: string, template: unknown, backendUrl?: string): Story => ({
   args: { template: template as Template, backendUrl },
+  parameters: { exampleId },
 })
 
 // For dashboards that drive widgets via `source_id`, the deployed
@@ -51,7 +61,7 @@ function inlineFallback(template: Template, samples: Record<string, unknown>): T
     widgets: template.widgets.map((w: WidgetConfig) => {
       const sid = w.source?.source_id
       if (!sid || !(sid in samples)) return w
-      return { ...w, source: { ...w.source, source_id: undefined, inline: samples[sid] } }
+      return { ...w, source: { inline: samples[sid] } }
     }),
   }
 }
@@ -96,18 +106,18 @@ const referenceBackendSamples: Record<string, unknown> = {
     bars: Array.from({ length: 30 }, (_, i) => {
       const base = 67_500 + Math.sin(i / 4) * 200
       return {
-        timestamp: new Date(Date.now() - (30 - i) * 60_000).toISOString(),
+        timestamp: new Date(Date.parse('2026-07-17T15:00:00Z') - (29 - i) * 60_000).toISOString(),
         open: Math.round(base),
         high: Math.round(base + 60),
         low: Math.round(base - 50),
         close: Math.round(base + 20),
-        volume: 2 + Math.random() * 3,
+        volume: 2 + (i % 6) * 0.45,
       }
     }),
   },
   btc_orderbook: {
-    bids: Array.from({ length: 8 }, (_, i) => ({ price: 67_840 - i * 2, size: Math.random() * 2 + 0.5 })),
-    asks: Array.from({ length: 8 }, (_, i) => ({ price: 67_844 + i * 2, size: Math.random() * 2 + 0.5 })),
+    bids: Array.from({ length: 8 }, (_, i) => ({ price: 67_840 - i * 2, size: 0.65 + i * 0.18 })),
+    asks: Array.from({ length: 8 }, (_, i) => ({ price: 67_844 + i * 2, size: 0.72 + i * 0.16 })),
     mid: 67_842, spread: 4, venue: 'reference',
   },
   btc_options: sportsBettingSamples.nba_spread, // shape-compatible filler
@@ -115,6 +125,37 @@ const referenceBackendSamples: Record<string, unknown> = {
     items: [
       { title: 'BTC pulls back from intraday high', body: 'Order flow data shows aggressive selling at the round number.', source: 'WireSim', date: 'just now' },
       { title: 'ETF inflows continue', body: 'Net inflows of $48M reported across the major spot ETFs.', source: 'WireSim', date: '5m ago' },
+    ],
+  },
+}
+
+const fileBrowserSamples: Record<string, unknown> = {
+  files: {
+    entries: [
+      { kind: 'folder', name: 'finance' },
+      { kind: 'folder', name: 'photos' },
+      { kind: 'folder', name: 'projects' },
+      {
+        kind: 'file',
+        name: 'company-handbook.pdf',
+        size_bytes: 2_480_128,
+        content_type: 'application/pdf',
+        modified_at: '2026-07-16T18:32:00Z',
+      },
+      {
+        kind: 'file',
+        name: 'customer-export.csv',
+        size_bytes: 864_320,
+        content_type: 'text/csv',
+        modified_at: '2026-07-16T16:08:00Z',
+      },
+      {
+        kind: 'file',
+        name: 'launch-notes.md',
+        size_bytes: 12_904,
+        content_type: 'text/markdown',
+        modified_at: '2026-07-15T21:14:00Z',
+      },
     ],
   },
 }
@@ -226,10 +267,11 @@ const workManagementStatic = inlineFallback(workManagement as Template, {
   business_records: RECORD_SET_STORY_DATA,
 })
 
-export const MedallionTerminal    = story(medallionTerminal)
-export const BusinessOperations   = story(businessOperations)
-export const WorkManagement       = story(workManagementStatic)
-export const MediaLibrary         = story(mediaLibrary)
+export const MedallionTerminal    = story('medallion-terminal', medallionTerminal)
+export const BusinessOperations   = story('business-operations', businessOperations)
+export const WorkManagement       = story('work-management', workManagementStatic)
+export const MediaLibrary         = story('media-library', mediaLibrary)
+export const FileBrowser          = story('file-browser', inlineFallback(fileBrowser as Template, fileBrowserSamples))
 export const WorkManagementOperator: Story = {
   args: { template: workManagementStatic, theme: 'operator' },
 }
@@ -239,20 +281,29 @@ export const WorkManagementLight: Story = {
 export const OperatorTheme: Story = {
   args: { template: businessOperations as Template, theme: 'operator' },
 }
-export const CryptoWatch          = story(cryptoWatch)
-export const TradingFloor         = story(tradingFloor)
-export const PredictionMarket     = story(predictionMarket)
-export const BotOperator          = story(botOperator)
-export const OptionsDesk          = story(optionsDesk)
-export const SpotMarket           = story(spotMarket)
-export const LiquidityPool        = story(liquidityPool)
-export const ServiceOps           = story(serviceOps)
-export const AuditTrail           = story(auditTrail)
-export const WorkflowOrchestrator = story(workflowOrchestrator)
-export const MLMonitoring         = story(mlMonitoring)
-export const Logistics            = story(logisticsOps)
-export const ClinicalICU          = story(clinicalIcu)
-export const EnergyGrid           = story(energyGrid)
-export const SportsBetting        = story(inlineFallback(sportsBetting as Template, sportsBettingSamples))
-export const ReferenceBackend     = story(inlineFallback(referenceBackend as Template, referenceBackendSamples))
-export const PlatformFoundation   = story(inlineFallback(platformFoundation as Template, platformSamples))
+export const CryptoWatch          = story('crypto-watch', cryptoWatch)
+export const TradingFloor         = story('trading-floor', tradingFloor)
+export const PredictionMarket     = story('prediction-market', predictionMarket)
+export const BotOperator          = story('bot-operator', botOperator)
+export const OptionsDesk          = story('options-desk', optionsDesk)
+export const SpotMarket           = story('spot-market', spotMarket)
+export const LiquidityPool        = story('liquidity-pool', liquidityPool)
+export const ServiceOps           = story('service-ops', serviceOps)
+export const AuditTrail           = story('audit-trail', auditTrail)
+export const WorkflowOrchestrator = story('workflow-orchestrator', workflowOrchestrator)
+export const MLMonitoring         = story('ml-monitoring', mlMonitoring)
+export const LogisticsOps         = story('logistics-ops', logisticsOps)
+export const ClinicalICU          = story('clinical-icu', clinicalIcu)
+export const EnergyGrid           = story('energy-grid', energyGrid)
+export const SportsBetting        = story(
+  'sports-betting',
+  inlineFallback(sportsBetting as Template, sportsBettingSamples),
+)
+export const ReferenceBackend     = story(
+  'reference-backend',
+  inlineFallback(referenceBackend as Template, referenceBackendSamples),
+)
+export const PlatformFoundation   = story(
+  'platform-foundation',
+  inlineFallback(platformFoundation as Template, platformSamples),
+)

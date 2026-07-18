@@ -36,7 +36,8 @@
     "check": "pnpm lint && pnpm test && pnpm build && pnpm build:lib && pnpm check:package",
     "backend": "node examples/backend/server.mjs",
     "storybook": "storybook dev -p 6006",
-    "build:storybook": "storybook build",
+    "check:storybook": "node scripts/check-storybook.mjs",
+    "build:storybook": "storybook build && pnpm check:storybook",
     "ci": "pnpm install --frozen-lockfile && pnpm lint && pnpm test && pnpm build && pnpm check:dist && pnpm check:package && pnpm build:storybook"
   },
   "peerDependencies": {
