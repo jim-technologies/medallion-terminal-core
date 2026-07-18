@@ -7,9 +7,11 @@
    prose and presentation tokens out of Tailwind's published-library scan. */
 @source not "../examples/clones/google-photos";
 @source not "../examples/clones/google-workspace";
+@source not "../examples/clones/readiness-suite";
 @source not "../examples/clones/sme-suite";
 @source not "./__tests__/googlePhotosShowcase.test.tsx";
 @source not "./__tests__/googleWorkspaceShowcase.test.tsx";
+@source not "./__tests__/readinessCloneShowcases.test.tsx";
 @source not "./__tests__/smeCloneShowcases.test.tsx";
 
 /* `inline` is important here. The public --mtc-* variables live on the
