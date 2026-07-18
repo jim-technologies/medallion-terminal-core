@@ -1,4 +1,5 @@
 import { readFileSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
 
 const indexPath = 'storybook-static/index.json'
 const storybookIndex = JSON.parse(readFileSync(indexPath, 'utf8'))
@@ -41,7 +42,26 @@ if (missingWidgetStories.length > 0) {
   throw new Error(`Storybook is missing built-in widget stories: ${missingWidgetStories.join(', ')}`)
 }
 
+function storyFilesUnder(directory) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+    const path = join(directory, entry.name)
+    if (entry.isDirectory()) return storyFilesUnder(path)
+    return entry.name.endsWith('.stories.tsx') ? [path] : []
+  })
+}
+
+const cloneStories = storyFilesUnder('examples/clones')
+const missingCloneStories = cloneStories.filter(storyPath => {
+  const importPath = `./${storyPath}`
+  return !indexedImportPaths.has(importPath)
+})
+
+if (missingCloneStories.length > 0) {
+  throw new Error(`Storybook is missing clone showcases: ${missingCloneStories.join(', ')}`)
+}
+
 console.log(
   `Storybook coverage OK: ${publicExampleIds.length} complete dashboards, `
-  + `${widgetStoryModules.size} built-in widgets, ${entries.length} total stories.`,
+  + `${widgetStoryModules.size} built-in widgets, ${cloneStories.length} clone showcase, `
+  + `${entries.length} total stories.`,
 )

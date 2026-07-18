@@ -31,6 +31,14 @@ function widgetStoryModule(widget: string): string {
     .join('')
 }
 
+function storyFilesUnder(directory: URL): URL[] {
+  return readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+    const url = new URL(entry.name + (entry.isDirectory() ? '/' : ''), directory)
+    if (entry.isDirectory()) return storyFilesUnder(url)
+    return entry.name.endsWith('.stories.tsx') ? [url] : []
+  })
+}
+
 describe('Storybook coverage', () => {
   it('displays every public example as one standalone dashboard story', () => {
     const publicExamples = readdirSync(new URL('../../public/examples/', import.meta.url))
@@ -68,6 +76,19 @@ describe('Storybook coverage', () => {
       )
       expect(source, `${moduleName} must live under Widgets/ in the sidebar`).toMatch(titlePattern)
       expect(source, `${moduleName} must export at least one story`).toMatch(/^export const /m)
+    }
+  })
+
+  it('keeps product-faithful clone stories outside the core and under a clone namespace', () => {
+    const cloneStories = storyFilesUnder(new URL('../../examples/clones/', import.meta.url))
+
+    expect(cloneStories.length).toBeGreaterThan(0)
+    for (const storyUrl of cloneStories) {
+      const source = readFileSync(storyUrl, 'utf8')
+      expect(source, `${storyUrl.pathname} must use the Clones/ namespace`).toMatch(
+        /title:\s*['"]Clones\/[^'"]+['"]/,
+      )
+      expect(source, `${storyUrl.pathname} must export at least one story`).toMatch(/^export const /m)
     }
   })
 })
