@@ -38,6 +38,7 @@ export type BiShape =
   | 'SHAPE_REPOSITORY'
   | 'SHAPE_RECORD_SET'
   | 'SHAPE_GEO'
+  | 'SHAPE_MEDIA'
 
 const BI_SHAPES: readonly BiShape[] = [
   'SHAPE_UNSPECIFIED',
@@ -59,6 +60,7 @@ const BI_SHAPES: readonly BiShape[] = [
   'SHAPE_REPOSITORY',
   'SHAPE_RECORD_SET',
   'SHAPE_GEO',
+  'SHAPE_MEDIA',
 ]
 
 function normalizeBiShape(shape: unknown): BiShape | undefined {
@@ -276,6 +278,26 @@ function shapeColumns(shape: unknown): BiColumn[] {
         { name: 'geometry', type: 'json' },
         t('status'),
         num('value'),
+        { name: 'context', type: 'json' },
+      ]
+    case 19:
+    case 'SHAPE_MEDIA':
+      return [
+        t('id'),
+        t('title'),
+        t('kind'),
+        t('url'),
+        t('thumbnail_url'),
+        t('captured_at', true),
+        t('created_at', true),
+        t('content_type'),
+        { name: 'width', type: 'integer' },
+        { name: 'height', type: 'integer' },
+        num('duration_seconds'),
+        { name: 'favorite', type: 'boolean' },
+        { name: 'tags', type: 'json' },
+        { name: 'collection_ids', type: 'json' },
+        { name: 'metadata', type: 'json' },
         { name: 'context', type: 'json' },
       ]
     // SHAPE_TABLE / SHAPE_PAIRED_GRID / unspecified: columns are

@@ -20,6 +20,7 @@ import {
   normalizeRepository,
 } from '../widgets/platformShapes'
 import { normalizeRecordSet } from '../widgets/recordShapes'
+import { normalizeMediaLibrary } from '../widgets/mediaShape'
 import {
   geoFeatureContext,
   geoFeatureLabel,
@@ -360,6 +361,30 @@ function flattenGeo(data: unknown): FlatTable | null {
   }))
 }
 
+function flattenMedia(data: unknown): FlatTable | null {
+  const library = normalizeMediaLibrary(data)
+  if (library.items.length === 0) return null
+  return fromRowObjects(library.items.map(item => ({
+    id: item.id,
+    title: item.title,
+    kind: item.kind,
+    url: item.url,
+    thumbnail_url: item.thumbnailUrl,
+    description: item.description,
+    captured_at: item.capturedAt,
+    created_at: item.createdAt,
+    content_type: item.contentType,
+    width: item.width,
+    height: item.height,
+    duration_seconds: item.durationSeconds,
+    favorite: item.favorite,
+    tags: item.tags,
+    collection_ids: item.collectionIds,
+    metadata: item.metadata,
+    context: item.context,
+  })))
+}
+
 // A registry of shape name → projector, so callers that know the shape
 // (e.g. a widget that knows its component maps to a Shape) can pick the
 // right one directly and skip the sniff. The map mirrors the canonical
@@ -391,6 +416,7 @@ const PROJECTORS: Record<string, (d: unknown) => FlatTable | null> = {
   record_calendar: flattenRecordSet,
   record_form: flattenRecordSet,
   geo_map: flattenGeo,
+  media_gallery: flattenMedia,
   SHAPE_TIMESERIES: flattenTimeseries,
   SHAPE_CANDLES: flattenCandles,
   SHAPE_TABLE: flattenTable,
@@ -407,6 +433,7 @@ const PROJECTORS: Record<string, (d: unknown) => FlatTable | null> = {
   SHAPE_REPOSITORY: flattenRepository,
   SHAPE_RECORD_SET: flattenRecordSet,
   SHAPE_GEO: flattenGeo,
+  SHAPE_MEDIA: flattenMedia,
 }
 
 // Best-effort fallback when the shape is unknown: arrays of objects
@@ -459,6 +486,7 @@ export function flatten(data: unknown, componentOrShape?: string): FlatTable {
     flattenEvents,
     flattenText,
     flattenOrderbook,
+    flattenMedia,
     flattenAssetCatalog,
     flattenObject,
     flattenGraph,

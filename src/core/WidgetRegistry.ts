@@ -56,6 +56,7 @@ const registry = new Map<string, AnyWidget>([
   ['radar',          lazyWidget(() => import('../widgets/Radar'), 'Radar')],
   ['dag',            lazyWidget(() => import('../widgets/Dag'), 'Dag')],
   ['geo_map',        lazyWidget(() => import('../widgets/GeoMap'), 'GeoMap')],
+  ['media_gallery',  lazyWidget(() => import('../widgets/MediaGalleryImpl'), 'MediaGalleryImpl')],
   ['multi_select',   lazyWidget(() => import('../widgets/MultiSelect'), 'MultiSelect')],
   ['json',           lazyWidget(() => import('../widgets/Json'), 'Json')],
   ['sparkline',      lazyWidget(() => import('../widgets/Sparkline'), 'Sparkline')],

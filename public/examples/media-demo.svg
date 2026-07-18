@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <title>Abstract media-library sample scenes</title>
+  <defs>
+    <linearGradient id="sky-a" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#233b52"/>
+      <stop offset="1" stop-color="#7893a2"/>
+    </linearGradient>
+    <linearGradient id="sky-b" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#333a4d"/>
+      <stop offset="1" stop-color="#b67f68"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#487580"/>
+      <stop offset="1" stop-color="#152d39"/>
+    </linearGradient>
+    <linearGradient id="city-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#171d2a"/>
+      <stop offset="1" stop-color="#35475b"/>
+    </linearGradient>
+    <radialGradient id="sun">
+      <stop offset="0" stop-color="#f4d59a"/>
+      <stop offset="1" stop-color="#d79d62"/>
+    </radialGradient>
+  </defs>
+  <style>
+    .scene { display: none }
+    .scene:target { display: inline }
+  </style>
+
+  <g id="coast" class="scene">
+    <rect width="800" height="500" fill="url(#sky-a)"/>
+    <circle cx="625" cy="105" r="44" fill="url(#sun)" opacity=".9"/>
+    <path d="M0 285L155 214 302 282 435 190 598 270 800 205V500H0Z" fill="#344d52"/>
+    <path d="M0 330C190 280 340 345 510 305S710 280 800 300V500H0Z" fill="url(#water)"/>
+    <path d="M0 392C180 352 330 408 505 374S705 350 800 365" fill="none" stroke="#b9d2d4" stroke-width="6" opacity=".55"/>
+    <path d="M110 500L235 336 351 500Z" fill="#bd9b72"/>
+  </g>
+
+  <g id="ridge" class="scene">
+    <rect width="800" height="500" fill="url(#sky-b)"/>
+    <circle cx="195" cy="125" r="52" fill="url(#sun)"/>
+    <path d="M0 390L135 260 235 326 390 160 550 330 680 225 800 352V500H0Z" fill="#303a3e"/>
+    <path d="M263 300L390 160 458 257 414 238 389 267 359 226Z" fill="#d7d8d0" opacity=".72"/>
+    <path d="M0 420L170 337 286 389 430 322 585 398 800 330V500H0Z" fill="#59664f"/>
+    <path d="M360 500C385 438 437 410 492 361" fill="none" stroke="#c1a47b" stroke-width="16" opacity=".7"/>
+  </g>
+
+  <g id="city" class="scene">
+    <rect width="800" height="500" fill="url(#city-sky)"/>
+    <circle cx="665" cy="92" r="34" fill="#dce4dc" opacity=".75"/>
+    <g fill="#1e2733">
+      <rect x="35" y="210" width="105" height="290"/>
+      <rect x="156" y="145" width="132" height="355"/>
+      <rect x="305" y="245" width="96" height="255"/>
+      <rect x="420" y="105" width="150" height="395"/>
+      <rect x="590" y="190" width="172" height="310"/>
+    </g>
+    <g fill="#c6d795" opacity=".8">
+      <path d="M65 245h18v12H65zm40 0h18v12h-18zM65 282h18v12H65zm40 0h18v12h-18z"/>
+      <path d="M190 184h20v13h-20zm43 0h20v13h-20zm-43 42h20v13h-20zm43 0h20v13h-20z"/>
+      <path d="M458 148h22v13h-22zm50 0h22v13h-22zm-50 47h22v13h-22zm50 0h22v13h-22z"/>
+      <path d="M625 230h20v13h-20zm48 0h20v13h-20zm-48 44h20v13h-20zm48 0h20v13h-20z"/>
+    </g>
+    <path d="M0 430H800V500H0Z" fill="#141a22"/>
+    <path d="M0 454H800" stroke="#7d8d8c" stroke-width="3" stroke-dasharray="30 24" opacity=".5"/>
+  </g>
+
+  <g id="forest" class="scene">
+    <rect width="800" height="500" fill="#1f352f"/>
+    <circle cx="640" cy="95" r="56" fill="#c4d8b6" opacity=".45"/>
+    <path d="M0 310L150 248 280 304 432 216 600 283 800 205V500H0Z" fill="#2c4c41"/>
+    <g fill="#172a25">
+      <path d="M65 450L140 155 215 450Z"/>
+      <path d="M175 450L268 105 350 450Z"/>
+      <path d="M340 450L430 172 508 450Z"/>
+      <path d="M480 450L590 88 688 450Z"/>
+      <path d="M640 450L722 190 790 450Z"/>
+    </g>
+    <path d="M292 500C320 424 375 387 453 325" fill="none" stroke="#947d5b" stroke-width="20" opacity=".65"/>
+    <path d="M0 455H800V500H0Z" fill="#14241f"/>
+  </g>
+
+  <g id="studio" class="scene">
+    <rect width="800" height="500" fill="#c3b7a3"/>
+    <rect x="70" y="72" width="660" height="358" rx="8" fill="#273039"/>
+    <rect x="100" y="102" width="600" height="298" fill="#e2ddd2"/>
+    <circle cx="260" cy="220" r="78" fill="#788d8a"/>
+    <rect x="385" y="152" width="226" height="28" fill="#b07c68"/>
+    <rect x="385" y="205" width="182" height="18" fill="#8c938d"/>
+    <rect x="385" y="243" width="205" height="18" fill="#8c938d"/>
+    <rect x="385" y="281" width="145" height="18" fill="#8c938d"/>
+    <path d="M122 374L237 284 323 348 383 310 472 374Z" fill="#677b72"/>
+    <circle cx="610" cy="338" r="28" fill="#d5a65f"/>
+  </g>
+
+  <g id="harbor" class="scene">
+    <rect width="800" height="500" fill="#65818e"/>
+    <rect y="280" width="800" height="220" fill="url(#water)"/>
+    <circle cx="615" cy="105" r="46" fill="url(#sun)"/>
+    <path d="M0 305L160 240 282 288 415 220 560 286 800 202V324H0Z" fill="#425b5e"/>
+    <path d="M90 372H366L320 421H132Z" fill="#29363c"/>
+    <path d="M207 225V372" stroke="#d4d6cf" stroke-width="8"/>
+    <path d="M216 239L321 330H216Z" fill="#d9cdb8"/>
+    <path d="M430 400H665L630 438H464Z" fill="#38444a"/>
+    <path d="M544 278V400" stroke="#d4d6cf" stroke-width="7"/>
+    <path d="M552 289L625 354H552Z" fill="#b9c9c5"/>
+    <path d="M0 466C192 432 365 486 535 448S718 430 800 448" fill="none" stroke="#9eb8bd" stroke-width="5" opacity=".45"/>
+  </g>
+</svg>

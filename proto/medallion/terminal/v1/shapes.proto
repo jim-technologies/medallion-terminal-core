@@ -546,6 +546,89 @@ message GeoFeature {
   map<string, string> context = 7;
 }
 
+// --- Media Library ---
+// Use for: authorized photo/video timelines, albums, campaign assets,
+// inspection footage, creative libraries, and other visual archives.
+//
+// The payload carries presentation metadata and durable URLs only. Binary
+// storage, upload, transcoding, search/indexing, sharing, retention, and
+// authorization remain backend responsibilities. Video URLs should support
+// HTTP Range requests so native players can seek efficiently.
+//
+// JSON example:
+//   {
+//     "items": [
+//       {
+//         "id": "media-104",
+//         "title": "Warehouse walkthrough",
+//         "kind": "MEDIA_KIND_VIDEO",
+//         "url": "/media/warehouse-walkthrough.mp4",
+//         "thumbnail_url": "/media/warehouse-walkthrough.jpg",
+//         "captured_at": "2026-07-12T18:42:00Z",
+//         "duration_seconds": 82,
+//         "collection_ids": ["operations"],
+//         "context": { "media_id": "media-104" }
+//       }
+//     ],
+//     "collections": [
+//       { "id": "operations", "name": "Operations" }
+//     ]
+//   }
+message MediaPayload {
+  repeated MediaItem items = 1;
+  repeated MediaCollection collections = 2;
+
+  // Total matches before pagination/filtering, when known.
+  optional int64 total = 3;
+
+  // Opaque cursor for a subsequent page.
+  optional string next_page_token = 4;
+}
+
+message MediaItem {
+  string id = 1;
+  string title = 2;
+  MediaKind kind = 3;
+
+  // Authorized original/playback URL.
+  string url = 4;
+
+  // Small preview/poster URL. Recommended for videos and large originals.
+  optional string thumbnail_url = 5;
+  optional string description = 6;
+
+  // ISO 8601 capture and ingest timestamps.
+  optional string captured_at = 7;
+  optional string created_at = 8;
+  optional string content_type = 9;
+
+  optional uint32 width = 10;
+  optional uint32 height = 11;
+  optional double duration_seconds = 12;
+  bool favorite = 13;
+
+  repeated string tags = 14;
+  repeated string collection_ids = 15;
+  optional google.protobuf.Struct metadata = 16;
+
+  // Applied when the item is selected.
+  map<string, string> context = 17;
+}
+
+message MediaCollection {
+  string id = 1;
+  string name = 2;
+  optional string cover_url = 3;
+  optional int64 item_count = 4;
+  map<string, string> context = 5;
+}
+
+enum MediaKind {
+  MEDIA_KIND_UNSPECIFIED = 0;
+  MEDIA_KIND_IMAGE = 1;
+  MEDIA_KIND_VIDEO = 2;
+}
+
 // --- Embed ---
 // Use for: pointing the `image` or `iframe` widget at a URL that
 // changes with context. Lets a Connect backend swap an AI-generated

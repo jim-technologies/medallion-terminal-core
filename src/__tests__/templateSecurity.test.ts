@@ -143,6 +143,47 @@ describe('validateTemplateTrust', () => {
     })
   })
 
+  it('applies the media origin policy to inline originals and thumbnails', () => {
+    const allowed: Template = {
+      widgets: [{
+        component: 'media_gallery',
+        source: {
+          inline: {
+            items: [{
+              id: 'photo-1',
+              title: 'Photo',
+              kind: 'image',
+              url: '/media/photo.jpg',
+              thumbnail_url: 'https://dashboards.example.com/photo-thumb.jpg',
+            }],
+          },
+        },
+      }],
+    }
+    expect(validateTemplateTrust(allowed, policy)).toEqual([])
+
+    const blocked: Template = {
+      widgets: [{
+        component: 'media_gallery',
+        source: {
+          inline: {
+            items: [{
+              id: 'video-1',
+              title: 'Video',
+              kind: 'video',
+              url: 'https://tracker.example.net/video.mp4',
+            }],
+          },
+        },
+      }],
+    }
+    expect(validateTemplateTrust(blocked, policy)).toContainEqual({
+      path: 'widgets[0].media.items[0].url',
+      severity: 'error',
+      message: 'URL origin https://tracker.example.net is not allowed',
+    })
+  })
+
   it('rejects URL origin template substitution', () => {
     const tpl: Template = {
       widgets: [{ component: 'metric', source: { url: 'https://${ctx.host}/metric' } }],

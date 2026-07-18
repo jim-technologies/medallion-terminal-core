@@ -81,4 +81,8 @@ export type {
   RecordCapabilitiesJson,
   GeoPayloadJson,
   GeoFeatureJson,
+  MediaPayloadJson,
+  MediaItemJson,
+  MediaCollectionJson,
+  MediaKindJson,
 } from './gen/medallion/terminal/v1/shapes_pb.js'

@@ -57,6 +57,7 @@ const requiredExports = [
   'ActionForm',
   'DepthChart',
   'GeoMap',
+  'MediaGallery',
   'buildBiDescriptor',
   'exportView',
   'validateTemplateTrust',
@@ -77,6 +78,7 @@ const requiredWidgets = [
   'action_form',
   'depth_chart',
   'geo_map',
+  'media_gallery',
 ]
 for (const name of requiredWidgets) {
   if (!(library.BUILTIN_KEYS instanceof Set) || !library.BUILTIN_KEYS.has(name)) {
@@ -86,8 +88,9 @@ for (const name of requiredWidgets) {
 
 const budgets = [
   // The entry intentionally exposes every built-in for direct composition.
-  // Heavy renderers remain peer dependencies and GeoMap loads MapLibre only
-  // when mounted. Keep a firm ceiling with room for harmless toolchain churn.
+  // Heavy renderers remain peer dependencies; GeoMap loads MapLibre and the
+  // media viewer loads its implementation only when mounted. Keep a firm
+  // ceiling with room for harmless toolchain churn.
   { label: 'library entry', path: entryPath, maxGzipBytes: 84 * 1024 },
   {
     label: 'library styles',

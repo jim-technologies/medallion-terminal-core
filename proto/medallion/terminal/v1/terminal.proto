@@ -89,6 +89,7 @@ message DataResponse {
     RepositoryPayload repository = 16;
     RecordSetPayload records = 17;
     GeoPayload geo = 18;
+    MediaPayload media = 19;
   }
 }
 
@@ -209,6 +210,7 @@ enum Shape {
   SHAPE_REPOSITORY = 16;
   SHAPE_RECORD_SET = 17;
   SHAPE_GEO = 18;
+  SHAPE_MEDIA = 19;
 }
 
 // ----- Generate (AI) -----

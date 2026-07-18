@@ -217,6 +217,33 @@ describe('flatten', () => {
     expect(t.columns.some(column => column.startsWith('_mtc_'))).toBe(false)
   })
 
+  it('flattens photo and video metadata for export', () => {
+    const t = flatten({
+      items: [{
+        id: 'clip-1',
+        title: 'Walkthrough',
+        kind: 'MEDIA_KIND_VIDEO',
+        url: '/media/clip.mp4',
+        thumbnail_url: '/media/clip.jpg',
+        captured_at: '2026-07-16T18:00:00Z',
+        duration_seconds: 65,
+        favorite: true,
+        collection_ids: ['operations'],
+        context: { media_id: 'clip-1' },
+      }],
+    }, 'media_gallery')
+    expect(t.rows[0]).toMatchObject({
+      id: 'clip-1',
+      title: 'Walkthrough',
+      kind: 'video',
+      thumbnail_url: '/media/clip.jpg',
+      duration_seconds: 65,
+      favorite: true,
+      collection_ids: '["operations"]',
+      context: '{"media_id":"clip-1"}',
+    })
+  })
+
   it('auto-detects shape without a hint', () => {
     const t = flatten({ bars: [{ timestamp: 't', open: 1, high: 2, low: 1, close: 2 }] })
     expect(t.columns).toContain('open')

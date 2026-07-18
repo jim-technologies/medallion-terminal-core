@@ -45,6 +45,7 @@ const SHAPE_LABEL: Record<string, string> = {
   SHAPE_REPOSITORY:   'repository',
   SHAPE_RECORD_SET:   'record_set',
   SHAPE_GEO:          'geo',
+  SHAPE_MEDIA:        'media',
 }
 
 export function Catalog() {

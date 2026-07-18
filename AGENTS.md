@@ -76,7 +76,9 @@ Tabular / metric: `table`, `metric`, `gauge`, `distribution`, `stat_strip`, `pai
 Platform: `asset_catalog` (governed asset discovery), `object_view` (semantic
 object properties, links, and actions), `code_browser` (repository/ref tree and
 source viewer), `geo_map` (MapLibre point/line/polygon operations map), plus
-`dag` with the canonical `GraphPayload` for lineage.
+`dag` with the canonical `GraphPayload` for lineage. `media_gallery` provides
+capture timelines, collections, filtering, metadata, and native photo/video
+viewing over `MediaPayload`.
 
 Records: `record_grid` (typed rows, saved grid/list views, inline edits),
 `record_board` (grouped workflow lanes), `record_calendar` (date projection),
@@ -133,6 +135,10 @@ Proto-defined in `proto/medallion/terminal/v1/shapes.proto`. Widgets accept both
   metadata?, context?}]}`, raw GeoJSON `FeatureCollection`, or point rows with
   `lat`/`lon`. `geometry` follows GeoJSON Point/MultiPoint/LineString/
   MultiLineString/Polygon/MultiPolygon.
+- `media_gallery`: `{items: [{id, title, kind, url, thumbnail_url?,
+  captured_at?, created_at?, width?, height?, duration_seconds?, favorite?,
+  tags?, collection_ids?, metadata?, context?}], collections?, total?,
+  next_page_token?}`.
 - Record widgets: `{workspace_id, table_id, primary_field, fields, records,
   views?, capabilities?}`. Formula/lookup/rollup/timestamp fields are
   backend-computed and read-only; updates/deletes carry `revision`.
@@ -150,6 +156,9 @@ Widgets retarget each other via `ctx`:
 - `trade`: reads `ctx.price`, `ctx.side`, `ctx.symbol` and syncs them into the order form.
 - `geo_map`: applies each feature's `context`; `options.feature_context`
   supplies fallback ID/label keys.
+- `media_gallery`: applies each item's `context`, then defaults
+  `ctx.media_id` and `ctx.media_kind`; `options.media_context` can rename
+  those fallback keys.
 - `action_form`: fields may use `context_key` for safe context prefill; every
   submitted value is still validated and authorized by the backend.
 - `asset_catalog`: selecting an item applies its `context` map, then defaults
@@ -262,6 +271,7 @@ src/
     platformShapes.ts     — tolerant normalizers for platform payloads
     recordShapes.ts       — record schema normalization + saved-view helpers
     geoShape.ts           — GeoPayload / GeoJSON normalization and bounds
+    mediaShape.ts         — photo/video, collection, filter, and timeline normalization
     orderBookShape.ts     — shared ladder/depth normalization
     actionFormShape.ts    — generic action schema normalization + validation
     WidgetShell.tsx       — Title bar, action menu, focus ring, alert effect,
@@ -270,6 +280,7 @@ public/examples/         — Bundled example templates
   business-operations.json — owner-facing finance/sales/operations workspace
   platform-foundation.json — catalog + object + lineage + repository demo
   work-management.json     — grid + board + calendar + governed record form
+  media-library.json       — photo/video timeline + collections + viewer
 examples/
   backend/server.mjs       — Reference Node TerminalService
   widgets/                 — Sample custom widget (Kelly sizing)

@@ -50,6 +50,7 @@ ontology/catalog/data/code surfaces:
 | Semantic object detail, links, and actions | `object_view` | `ObjectPayload` |
 | Lineage and dependencies | `dag` | `GraphPayload` |
 | Operational geography and territories | `geo_map` | `GeoPayload` / GeoJSON |
+| Photo and video timelines / collections | `media_gallery` | `MediaPayload` |
 | Branch/ref-aware source browsing | `code_browser` | `RepositoryPayload` |
 | Typed business records and saved views | `record_grid`, `record_board`, `record_calendar`, `record_form` | `RecordSetPayload` |
 | Schema-driven governed writes | `action_form` | `SubmitAction` / `WatchAction` |
@@ -184,6 +185,7 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `record_calendar` | `RecordSetPayload` | Saved date views over any date/datetime field |
 | `record_form` | `RecordSetPayload` | Context-driven create/edit/detail form with required-field and capability checks |
 | `geo_map` | `GeoPayload`, GeoJSON, or rows with `lat`/`lon` | MapLibre point/line/polygon overlays, auto-fit, semantic status, and selection |
+| `media_gallery` | `{ items: [{ id, title, kind, url, thumbnail_url?, captured_at?, duration_seconds?, collection_ids?, context? }], collections?, total? }` | Photo/video timeline, search, type/favorite/collection filters, metadata, context selection, and native keyboard-driven viewer |
 | `embed` | `{ url, label?, sandbox? }` | Image / iframe |
 | `trade` | (form) | Calls `SubmitAction`, watches via `WatchAction` |
 | `action_form` | `options.fields` or `{ fields }` | Generic typed form for approvals, admin operations, and advanced order attributes |
@@ -192,6 +194,18 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `alert_log` | (none) | Live alert feed — listens to `emit({type:'alert'})` |
 | `tape` | `{events: [{timestamp, price?, size?, side?, label?}]}` or one event | Time-and-sales / high-frequency append-only stream |
 | `file_browser` | `{entries: [{kind, name, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download, inline preview for video/audio/image/PDF, paginated listings, icons/gallery toggle, keyboard-navigable preview. Identifies entries by `name` within the current directory — backends MUST guarantee unique names per directory (any filesystem-shaped store does). |
+
+`media_gallery` is the presentation projection for photo/video products;
+`file_browser` remains the storage projection. The gallery groups authorized
+items by capture day or month, understands albums/collections and favorites,
+lazy-loads thumbnails, opens images or native `<video>` playback, and writes
+the selected `media_id` / `media_kind` (plus each item's `context`) into
+dashboard context. Use `file_browser` for folder navigation and uploads, and
+`action_form` for host-authorized sharing, editing, movement, deletion, and
+retention workflows. Video endpoints should support HTTP `Range` and MP4
+`faststart`; large originals should provide `thumbnail_url` so gallery scroll
+does not download full media. Inline media URLs in untrusted templates are
+checked against the template trust policy.
 
 The file_browser previews video and audio through a native `<video>` / `<audio>` element pointed at `options.media_url_template` (default `/media?namespace={namespace}&path={path}` — both placeholders URL-encoded). For scrub to work on long files the backend **must** support HTTP `Range:` and reply `206 Partial Content`. MP4s should be encoded with `-movflags +faststart` so the player can read metadata before downloading the whole file.
 
@@ -348,6 +362,12 @@ Clicking a row / cell / price level on certain widgets sets a `ctx` key, which r
 { "component": "geo_map",
   "source": { "source_id": "operational_sites" },
   "options": { "feature_context": { "key": "object_id" } } }
+
+// Photo/video selection retargets details, actions, or analysis.
+{ "component": "media_gallery",
+  "source": { "source_id": "authorized_media" },
+  "options": { "group_by": "day",
+               "media_context": { "key": "media_id", "kind_key": "media_kind" } } }
 ```
 
 ## Keyboard

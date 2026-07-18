@@ -86,6 +86,7 @@ export { Boxplot } from './widgets/Boxplot'
 export { Radar } from './widgets/Radar'
 export { Dag } from './widgets/Dag'
 export { GeoMap } from './widgets/GeoMap'
+export { MediaGallery } from './widgets/MediaGallery'
 export { MultiSelect } from './widgets/MultiSelect'
 export { Json } from './widgets/Json'
 export { Sparkline } from './widgets/Sparkline'
@@ -158,6 +159,24 @@ export type {
   GeoFeatureCollection,
   GeoBounds,
 } from './widgets/geoShape'
+export {
+  normalizeMediaLibrary,
+  sortMediaItems,
+  filterMediaItems,
+  groupMediaItems,
+  safeMediaUrl,
+  formatMediaDuration,
+  formatMediaDate,
+} from './widgets/mediaShape'
+export type {
+  MediaKind,
+  MediaGroupMode,
+  MediaItemData,
+  MediaCollectionData,
+  MediaLibraryData,
+  MediaFilter,
+  MediaGroup,
+} from './widgets/mediaShape'
 export type {
   AssetCatalogData,
   AssetCatalogItem,

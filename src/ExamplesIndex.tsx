@@ -32,6 +32,13 @@ const EXAMPLES: Example[] = [
     featured: true,
   },
   {
+    path: '/examples/media-library.json',
+    title: 'Media Library',
+    blurb: 'Photo and video timelines with collections, search, favorites, metadata, context selection, and a keyboard-driven native media viewer.',
+    tags: ['photos', 'video', 'media', 'library'],
+    featured: true,
+  },
+  {
     path: '/examples/medallion-terminal.json',
     title: 'Medallion Terminal',
     blurb: 'Showcase: tick-flash watchlist, OrderBook → Trade via ctx.price/side, per-dashboard 1/2/3 shortcuts, live action log, compound alert predicate.',

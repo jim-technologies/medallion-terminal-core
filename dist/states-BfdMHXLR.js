@@ -42,6 +42,7 @@ var n = {
 	radar: "chart",
 	dag: "grid",
 	geo_map: "grid",
+	media_gallery: "grid",
 	multi_select: "block",
 	json: "list",
 	sparkline: "chart",

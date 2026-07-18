@@ -1931,6 +1931,355 @@ export declare const GeoFeatureSchema: GenMessage<GeoFeature, {
     jsonType: GeoFeatureJson;
 }>;
 /**
+ * --- Media Library ---
+ * Use for: authorized photo/video timelines, albums, campaign assets,
+ * inspection footage, creative libraries, and other visual archives.
+ *
+ * The payload carries presentation metadata and durable URLs only. Binary
+ * storage, upload, transcoding, search/indexing, sharing, retention, and
+ * authorization remain backend responsibilities. Video URLs should support
+ * HTTP Range requests so native players can seek efficiently.
+ *
+ * JSON example:
+ *   {
+ *     "items": [
+ *       {
+ *         "id": "media-104",
+ *         "title": "Warehouse walkthrough",
+ *         "kind": "MEDIA_KIND_VIDEO",
+ *         "url": "/media/warehouse-walkthrough.mp4",
+ *         "thumbnail_url": "/media/warehouse-walkthrough.jpg",
+ *         "captured_at": "2026-07-12T18:42:00Z",
+ *         "duration_seconds": 82,
+ *         "collection_ids": ["operations"],
+ *         "context": { "media_id": "media-104" }
+ *       }
+ *     ],
+ *     "collections": [
+ *       { "id": "operations", "name": "Operations" }
+ *     ]
+ *   }
+ *
+ * @generated from message medallion.terminal.v1.MediaPayload
+ */
+export type MediaPayload = Message<"medallion.terminal.v1.MediaPayload"> & {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.MediaItem items = 1;
+     */
+    items: MediaItem[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.MediaCollection collections = 2;
+     */
+    collections: MediaCollection[];
+    /**
+     * Total matches before pagination/filtering, when known.
+     *
+     * @generated from field: optional int64 total = 3;
+     */
+    total?: bigint | undefined;
+    /**
+     * Opaque cursor for a subsequent page.
+     *
+     * @generated from field: optional string next_page_token = 4;
+     */
+    nextPageToken?: string | undefined;
+};
+/**
+ * --- Media Library ---
+ * Use for: authorized photo/video timelines, albums, campaign assets,
+ * inspection footage, creative libraries, and other visual archives.
+ *
+ * The payload carries presentation metadata and durable URLs only. Binary
+ * storage, upload, transcoding, search/indexing, sharing, retention, and
+ * authorization remain backend responsibilities. Video URLs should support
+ * HTTP Range requests so native players can seek efficiently.
+ *
+ * JSON example:
+ *   {
+ *     "items": [
+ *       {
+ *         "id": "media-104",
+ *         "title": "Warehouse walkthrough",
+ *         "kind": "MEDIA_KIND_VIDEO",
+ *         "url": "/media/warehouse-walkthrough.mp4",
+ *         "thumbnail_url": "/media/warehouse-walkthrough.jpg",
+ *         "captured_at": "2026-07-12T18:42:00Z",
+ *         "duration_seconds": 82,
+ *         "collection_ids": ["operations"],
+ *         "context": { "media_id": "media-104" }
+ *       }
+ *     ],
+ *     "collections": [
+ *       { "id": "operations", "name": "Operations" }
+ *     ]
+ *   }
+ *
+ * @generated from message medallion.terminal.v1.MediaPayload
+ */
+export type MediaPayloadJson = {
+    /**
+     * @generated from field: repeated medallion.terminal.v1.MediaItem items = 1;
+     */
+    items?: MediaItemJson[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.MediaCollection collections = 2;
+     */
+    collections?: MediaCollectionJson[];
+    /**
+     * Total matches before pagination/filtering, when known.
+     *
+     * @generated from field: optional int64 total = 3;
+     */
+    total?: string;
+    /**
+     * Opaque cursor for a subsequent page.
+     *
+     * @generated from field: optional string next_page_token = 4;
+     */
+    nextPageToken?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.MediaPayload.
+ * Use `create(MediaPayloadSchema)` to create a new message.
+ */
+export declare const MediaPayloadSchema: GenMessage<MediaPayload, {
+    jsonType: MediaPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.MediaItem
+ */
+export type MediaItem = Message<"medallion.terminal.v1.MediaItem"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: string title = 2;
+     */
+    title: string;
+    /**
+     * @generated from field: medallion.terminal.v1.MediaKind kind = 3;
+     */
+    kind: MediaKind;
+    /**
+     * Authorized original/playback URL.
+     *
+     * @generated from field: string url = 4;
+     */
+    url: string;
+    /**
+     * Small preview/poster URL. Recommended for videos and large originals.
+     *
+     * @generated from field: optional string thumbnail_url = 5;
+     */
+    thumbnailUrl?: string | undefined;
+    /**
+     * @generated from field: optional string description = 6;
+     */
+    description?: string | undefined;
+    /**
+     * ISO 8601 capture and ingest timestamps.
+     *
+     * @generated from field: optional string captured_at = 7;
+     */
+    capturedAt?: string | undefined;
+    /**
+     * @generated from field: optional string created_at = 8;
+     */
+    createdAt?: string | undefined;
+    /**
+     * @generated from field: optional string content_type = 9;
+     */
+    contentType?: string | undefined;
+    /**
+     * @generated from field: optional uint32 width = 10;
+     */
+    width?: number | undefined;
+    /**
+     * @generated from field: optional uint32 height = 11;
+     */
+    height?: number | undefined;
+    /**
+     * @generated from field: optional double duration_seconds = 12;
+     */
+    durationSeconds?: number | undefined;
+    /**
+     * @generated from field: bool favorite = 13;
+     */
+    favorite: boolean;
+    /**
+     * @generated from field: repeated string tags = 14;
+     */
+    tags: string[];
+    /**
+     * @generated from field: repeated string collection_ids = 15;
+     */
+    collectionIds: string[];
+    /**
+     * @generated from field: optional google.protobuf.Struct metadata = 16;
+     */
+    metadata?: JsonObject | undefined;
+    /**
+     * Applied when the item is selected.
+     *
+     * @generated from field: map<string, string> context = 17;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * @generated from message medallion.terminal.v1.MediaItem
+ */
+export type MediaItemJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: string title = 2;
+     */
+    title?: string;
+    /**
+     * @generated from field: medallion.terminal.v1.MediaKind kind = 3;
+     */
+    kind?: MediaKindJson;
+    /**
+     * Authorized original/playback URL.
+     *
+     * @generated from field: string url = 4;
+     */
+    url?: string;
+    /**
+     * Small preview/poster URL. Recommended for videos and large originals.
+     *
+     * @generated from field: optional string thumbnail_url = 5;
+     */
+    thumbnailUrl?: string;
+    /**
+     * @generated from field: optional string description = 6;
+     */
+    description?: string;
+    /**
+     * ISO 8601 capture and ingest timestamps.
+     *
+     * @generated from field: optional string captured_at = 7;
+     */
+    capturedAt?: string;
+    /**
+     * @generated from field: optional string created_at = 8;
+     */
+    createdAt?: string;
+    /**
+     * @generated from field: optional string content_type = 9;
+     */
+    contentType?: string;
+    /**
+     * @generated from field: optional uint32 width = 10;
+     */
+    width?: number;
+    /**
+     * @generated from field: optional uint32 height = 11;
+     */
+    height?: number;
+    /**
+     * @generated from field: optional double duration_seconds = 12;
+     */
+    durationSeconds?: number | "NaN" | "Infinity" | "-Infinity";
+    /**
+     * @generated from field: bool favorite = 13;
+     */
+    favorite?: boolean;
+    /**
+     * @generated from field: repeated string tags = 14;
+     */
+    tags?: string[];
+    /**
+     * @generated from field: repeated string collection_ids = 15;
+     */
+    collectionIds?: string[];
+    /**
+     * @generated from field: optional google.protobuf.Struct metadata = 16;
+     */
+    metadata?: StructJson;
+    /**
+     * Applied when the item is selected.
+     *
+     * @generated from field: map<string, string> context = 17;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.MediaItem.
+ * Use `create(MediaItemSchema)` to create a new message.
+ */
+export declare const MediaItemSchema: GenMessage<MediaItem, {
+    jsonType: MediaItemJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.MediaCollection
+ */
+export type MediaCollection = Message<"medallion.terminal.v1.MediaCollection"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name: string;
+    /**
+     * @generated from field: optional string cover_url = 3;
+     */
+    coverUrl?: string | undefined;
+    /**
+     * @generated from field: optional int64 item_count = 4;
+     */
+    itemCount?: bigint | undefined;
+    /**
+     * @generated from field: map<string, string> context = 5;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * @generated from message medallion.terminal.v1.MediaCollection
+ */
+export type MediaCollectionJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name?: string;
+    /**
+     * @generated from field: optional string cover_url = 3;
+     */
+    coverUrl?: string;
+    /**
+     * @generated from field: optional int64 item_count = 4;
+     */
+    itemCount?: string;
+    /**
+     * @generated from field: map<string, string> context = 5;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.MediaCollection.
+ * Use `create(MediaCollectionSchema)` to create a new message.
+ */
+export declare const MediaCollectionSchema: GenMessage<MediaCollection, {
+    jsonType: MediaCollectionJson;
+}>;
+/**
  * --- Embed ---
  * Use for: pointing the `image` or `iframe` widget at a URL that
  * changes with context. Lets a Connect backend swap an AI-generated
@@ -3939,6 +4288,31 @@ export type EventStatusJson = "EVENT_STATUS_UNSPECIFIED" | "EVENT_STATUS_OK" | "
  * Describes the enum medallion.terminal.v1.EventStatus.
  */
 export declare const EventStatusSchema: GenEnum<EventStatus, EventStatusJson>;
+/**
+ * @generated from enum medallion.terminal.v1.MediaKind
+ */
+export declare enum MediaKind {
+    /**
+     * @generated from enum value: MEDIA_KIND_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from enum value: MEDIA_KIND_IMAGE = 1;
+     */
+    IMAGE = 1,
+    /**
+     * @generated from enum value: MEDIA_KIND_VIDEO = 2;
+     */
+    VIDEO = 2
+}
+/**
+ * @generated from enum medallion.terminal.v1.MediaKind
+ */
+export type MediaKindJson = "MEDIA_KIND_UNSPECIFIED" | "MEDIA_KIND_IMAGE" | "MEDIA_KIND_VIDEO";
+/**
+ * Describes the enum medallion.terminal.v1.MediaKind.
+ */
+export declare const MediaKindSchema: GenEnum<MediaKind, MediaKindJson>;
 /**
  * @generated from enum medallion.terminal.v1.RecordFieldType
  */

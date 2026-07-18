@@ -114,6 +114,7 @@ export function validateTemplateTrust(
     validateWidgetOptions(widget, path, effective, issues)
     if (widget.component === 'iframe') validateIframe(widget, path, effective, issues)
     if (widget.component === 'image') validateImage(widget, path, effective, issues)
+    if (widget.component === 'media_gallery') validateMedia(widget, path, effective, issues)
   })
 
   return issues
@@ -217,6 +218,64 @@ function validateImage(
       ? (data as Record<string, string>).url
       : undefined
   if (url) validateUrl(url, `${path}.image.url`, policy.allowedIframeOrigins, policy.allowRelativeUrls, issues)
+}
+
+function validateMedia(
+  widget: WidgetConfig,
+  path: string,
+  policy: EffectiveTrustPolicy,
+  issues: TemplateSecurityIssue[],
+) {
+  const data = inlineData(widget.source)
+  if (!data || typeof data !== 'object') return
+  const root: Record<string, unknown> = Array.isArray(data)
+    ? { items: data }
+    : data as Record<string, unknown>
+  const items = Array.isArray(root.items)
+    ? root.items
+    : Array.isArray(root.media)
+      ? root.media
+      : Array.isArray(root.assets)
+        ? root.assets
+        : []
+  items.forEach((item, index) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return
+    const entry = item as Record<string, unknown>
+    for (const key of ['url', 'mediaUrl', 'media_url', 'src', 'thumbnailUrl', 'thumbnail_url', 'thumbnail', 'posterUrl', 'poster_url', 'poster']) {
+      const value = entry[key]
+      if (typeof value === 'string' && value) {
+        validateUrl(
+          value,
+          `${path}.media.items[${index}].${key}`,
+          policy.allowedIframeOrigins,
+          policy.allowRelativeUrls,
+          issues,
+        )
+      }
+    }
+  })
+
+  const collections = Array.isArray(root.collections)
+    ? root.collections
+    : Array.isArray(root.albums)
+      ? root.albums
+      : []
+  collections.forEach((collection, index) => {
+    if (!collection || typeof collection !== 'object' || Array.isArray(collection)) return
+    const entry = collection as Record<string, unknown>
+    for (const key of ['coverUrl', 'cover_url', 'thumbnailUrl', 'thumbnail_url']) {
+      const value = entry[key]
+      if (typeof value === 'string' && value) {
+        validateUrl(
+          value,
+          `${path}.media.collections[${index}].${key}`,
+          policy.allowedIframeOrigins,
+          policy.allowRelativeUrls,
+          issues,
+        )
+      }
+    }
+  })
 }
 
 function iframeConfig(widget: WidgetConfig): { url: string | undefined; sandbox: string } {

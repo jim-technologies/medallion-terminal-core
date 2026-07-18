@@ -63,6 +63,7 @@ const DEFAULT_HEIGHTS: Record<string, number> = {
   radar: 380,
   dag: 420,
   geo_map: 460,
+  media_gallery: 560,
   multi_select: 100,
   json: 360,
   sparkline: 60,

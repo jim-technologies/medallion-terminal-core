@@ -1,0 +1,181 @@
+{
+  "title": "Media library",
+  "context": {
+    "values": {
+      "media_id": "coast-01",
+      "media_kind": "image"
+    }
+  },
+  "widgets": [
+    {
+      "id": "media-summary",
+      "component": "stat_strip",
+      "span": 8,
+      "height": 100,
+      "title": "Library",
+      "source": {
+        "inline": [
+          { "label": "Items", "value": 8, "format": "number" },
+          { "label": "Photos", "value": 6, "format": "number" },
+          { "label": "Videos", "value": 2, "format": "number" },
+          { "label": "Collections", "value": 2, "format": "number" }
+        ]
+      }
+    },
+    {
+      "id": "media-mix",
+      "component": "distribution",
+      "span": 4,
+      "height": 190,
+      "title": "Media mix",
+      "source": {
+        "inline": {
+          "slices": [
+            { "label": "Photos", "value": 6 },
+            { "label": "Videos", "value": 2 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "media-note",
+      "component": "text",
+      "span": 8,
+      "height": 90,
+      "title": "Presentation contract",
+      "source": {
+        "inline": {
+          "items": [
+            {
+              "body": "The gallery handles timelines, collections, search, favorites, selection, metadata, and native photo/video viewing. Compose file_browser or action_form for authorized upload, sharing, movement, and deletion."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "media-gallery",
+      "component": "media_gallery",
+      "span": 12,
+      "height": 620,
+      "title": "Photos & videos",
+      "refresh_policy": "manual",
+      "options": {
+        "group_by": "day",
+        "search": true,
+        "kind_filter": true,
+        "collection_filter": true,
+        "media_context": {
+          "key": "media_id",
+          "kind_key": "media_kind"
+        }
+      },
+      "source": {
+        "inline": {
+          "total": 8,
+          "collections": [
+            { "id": "travel", "name": "Travel", "item_count": 5 },
+            { "id": "work", "name": "Work", "item_count": 3 }
+          ],
+          "items": [
+            {
+              "id": "coast-01",
+              "title": "Northern coast",
+              "kind": "MEDIA_KIND_IMAGE",
+              "url": "/examples/media-demo.svg#coast",
+              "captured_at": "2026-07-16T18:42:00Z",
+              "width": 4032,
+              "height": 3024,
+              "favorite": true,
+              "tags": ["coast", "summer"],
+              "collection_ids": ["travel"],
+              "metadata": { "camera": "Mirrorless", "lens": "35mm" }
+            },
+            {
+              "id": "ridge-01",
+              "title": "Evening ridge",
+              "kind": "MEDIA_KIND_IMAGE",
+              "url": "/examples/media-demo.svg#ridge",
+              "captured_at": "2026-07-16T17:18:00Z",
+              "width": 4032,
+              "height": 3024,
+              "tags": ["mountains", "sunset"],
+              "collection_ids": ["travel"]
+            },
+            {
+              "id": "coast-clip",
+              "title": "Coastal approach",
+              "kind": "MEDIA_KIND_VIDEO",
+              "url": "/media?namespace=personal&path=clips%2Fcoast.mp4",
+              "thumbnail_url": "/examples/media-demo.svg#harbor",
+              "captured_at": "2026-07-16T16:55:00Z",
+              "duration_seconds": 15,
+              "content_type": "video/mp4",
+              "collection_ids": ["travel"]
+            },
+            {
+              "id": "city-01",
+              "title": "After hours",
+              "kind": "MEDIA_KIND_IMAGE",
+              "url": "/examples/media-demo.svg#city",
+              "captured_at": "2026-07-12T04:22:00Z",
+              "width": 3840,
+              "height": 2560,
+              "favorite": true,
+              "tags": ["city", "night"],
+              "collection_ids": ["travel"]
+            },
+            {
+              "id": "forest-01",
+              "title": "Trail study",
+              "kind": "image",
+              "url": "/examples/media-demo.svg#forest",
+              "captured_at": "2026-07-12T00:14:00Z",
+              "width": 3024,
+              "height": 4032,
+              "collection_ids": ["travel"]
+            },
+            {
+              "id": "studio-01",
+              "title": "Campaign selects",
+              "kind": "image",
+              "url": "/examples/media-demo.svg#studio",
+              "captured_at": "2026-06-28T19:05:00Z",
+              "width": 4096,
+              "height": 2731,
+              "tags": ["campaign", "approved"],
+              "collection_ids": ["work"],
+              "metadata": { "status": "approved", "owner": "Creative" }
+            },
+            {
+              "id": "harbor-01",
+              "title": "Harbor inspection",
+              "kind": "image",
+              "url": "/examples/media-demo.svg#harbor",
+              "captured_at": "2026-06-28T18:16:00Z",
+              "width": 4096,
+              "height": 2731,
+              "collection_ids": ["work"],
+              "metadata": { "site": "Pier 4", "inspection": "complete" }
+            },
+            {
+              "id": "walkthrough-clip",
+              "title": "Studio walkthrough",
+              "kind": "video",
+              "url": "/media?namespace=personal&path=clips%2Fstudio.mp4",
+              "thumbnail_url": "/examples/media-demo.svg#studio",
+              "captured_at": "2026-06-28T17:44:00Z",
+              "duration_seconds": 15,
+              "content_type": "video/mp4",
+              "collection_ids": ["work"],
+              "context": {
+                "media_id": "walkthrough-clip",
+                "project_id": "campaign-26"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

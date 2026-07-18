@@ -26,6 +26,7 @@ http://localhost:5173/?template=/examples/platform-foundation.json&backend=http:
 | Ontology / object explorer | `object_view` | `ObjectPayload` | Object schemas, properties, links, permissions, action definitions |
 | Lineage / dependency graph | `dag` | `GraphPayload` | Graph traversal, lineage extraction, impact analysis, access filtering |
 | Operational geography | `geo_map` | `GeoPayload` / GeoJSON | Geospatial query, authorized features, host-controlled MapLibre style and tiles |
+| Photo/video libraries | `media_gallery` | `MediaPayload` | Authorized media query, thumbnails/transcodes, albums, indexing, signed originals, HTTP Range |
 | Code repositories | `code_browser` | `RepositoryPayload` | Git/ref resolution, tree listing, content retrieval, truncation, raw URLs |
 | Record workspaces / business apps | `record_grid`, `record_board`, `record_calendar`, `record_form` | `RecordSetPayload` | Schemas, records, links, views, policy, formulas, revisions, automations |
 | Files and data repositories | `file_browser`, `table`, charts | `TablePayload` and existing analytical shapes | Object storage, tabular query, previews, signed downloads, HTTP Range |
@@ -49,6 +50,7 @@ growing a second widget family for each adjacent product:
 |---|---|---|
 | Palantir-like governed operating platform | `asset_catalog` + `object_view` + `dag` + `geo_map` + `action_form` + `code_browser` + record/analytical widgets | Discovery, ontology detail, links, lineage, operational geography, governed actions, source browsing, workflows, and analysis |
 | Google Drive-like file workspace | `file_browser` + `asset_catalog` + `object_view` + `events` / `action_log` + optional `action_form` | Paths, breadcrumbs, search, paging, upload/download, list/gallery, previews, details/activity, and policy-gated file operations |
+| Google Photos-like media workspace | `media_gallery` + `file_browser` + optional `object_view`, `events`, and `action_form` | Capture timelines, albums, photo/video filtering, favorites, metadata, native playback, selection, storage upload, and policy-gated media operations |
 | Airtable-style operational app | `record_grid` + `record_board` + `record_calendar` + `record_form` | Typed fields, links, saved views, filters/sorts, inline edits, governed CRUD, revision checks, and multiple projections over one record set |
 | Grafana / Superset-style analytics | `metric`, `stat_strip`, `timeseries`, `area_chart`, `bar_chart`, `table`, `heatmap`, `histogram`, `boxplot`, `scatter`, `treemap`, `gauge`, `events`, `alert_log` | Context-driven filters, streaming/polling, freshness and retry state, annotations, alerts, drill-down, snapshots, export, and embedding |
 | Binance-like exchange | `stat_strip` + `candlestick` + `orderbook` + `depth_chart` + `tape` + `trade` + orders/holdings tables | Market statistics, candles, ladder and cumulative liquidity, prints, order entry, lifecycle, history, and watchlists |
@@ -84,7 +86,7 @@ This keeps the core small and avoids parallel table, tree, chart, or form
 systems that would drift in accessibility, theming, export, and streaming
 behavior.
 
-The regression suite codifies the six requested archetypes in
+The regression suite codifies the requested product archetypes in
 `src/__tests__/productSurfaces.test.ts`. It verifies both that the reference
 compositions contain each required presentation primitive and that those
 primitives remain registered under vendor-neutral names.

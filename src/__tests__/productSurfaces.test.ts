@@ -9,6 +9,7 @@ import predictionMarket from '../../public/examples/prediction-market.json'
 import spotMarket from '../../public/examples/spot-market.json'
 import tradingFloor from '../../public/examples/trading-floor.json'
 import workManagement from '../../public/examples/work-management.json'
+import mediaLibrary from '../../public/examples/media-library.json'
 import { BUILTIN_KEYS } from '../core/WidgetRegistry'
 
 interface ExampleTemplate {
@@ -21,7 +22,7 @@ function components(...templates: ExampleTemplate[]): Set<string> {
   )
 }
 
-// Regression contract for the six requested product archetypes. These are
+// Regression contract for the requested product archetypes. These are
 // capability-level compositions, not vendor layouts or trade dress. A missing
 // component here means an example no longer proves the presentation layer it
 // is supposed to cover.
@@ -50,6 +51,11 @@ const SURFACES: Array<{
     name: 'cloud file workspace',
     components: components(fileBrowser),
     required: ['file_browser', 'metric', 'text', 'action_log'],
+  },
+  {
+    name: 'personal and business media library',
+    components: components(mediaLibrary, fileBrowser),
+    required: ['media_gallery', 'file_browser', 'stat_strip', 'distribution', 'text'],
   },
   {
     name: 'spot exchange',

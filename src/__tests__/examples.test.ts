@@ -19,6 +19,7 @@ import fileBrowser from '../../public/examples/file-browser.json'
 import platformFoundation from '../../public/examples/platform-foundation.json'
 import businessOperations from '../../public/examples/business-operations.json'
 import workManagement from '../../public/examples/work-management.json'
+import mediaLibrary from '../../public/examples/media-library.json'
 
 // =============================================================
 // Contract validation — loads every public/examples/*.json and
@@ -53,6 +54,7 @@ const EXAMPLES: Record<string, Json> = {
   'platform-foundation':    platformFoundation,
   'business-operations':    businessOperations,
   'work-management':        workManagement,
+  'media-library':          mediaLibrary,
 }
 
 // ----- Type guards -----
@@ -233,6 +235,24 @@ function validatePairedGrid(p: Json): string[] {
   return []
 }
 
+function validateMedia(p: Json): string[] {
+  const items = isArr(p) ? p : isObj(p) && isArr(p.items) ? p.items : null
+  if (!items) return ['expected array or {items: []}']
+  for (const item of items) {
+    if (!isObj(item)) return ['media item must be object']
+    if (!isStr(item.id) || !isStr(item.title ?? item.name) || !isStr(item.kind ?? item.type)) {
+      return ['media item needs {id:string, title:string, kind:string}']
+    }
+    if (!isStr(item.url ?? item.media_url ?? item.src)) {
+      return ['media item needs a URL']
+    }
+  }
+  if (isObj(p) && p.collections !== undefined && !isArr(p.collections)) {
+    return ['collections must be array when set']
+  }
+  return []
+}
+
 const VALIDATORS: Record<string, (p: Json) => string[]> = {
   timeseries:    validateTimeseries,
   candlestick:   validateCandles,
@@ -260,6 +280,7 @@ const VALIDATORS: Record<string, (p: Json) => string[]> = {
   object_view:   validateObject,
   dag:           validateGraph,
   geo_map:       validateGeo,
+  media_gallery: validateMedia,
   code_browser:  validateRepository,
   record_grid:   validateRecordSet,
   record_board:  validateRecordSet,

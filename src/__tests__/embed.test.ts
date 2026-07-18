@@ -186,6 +186,31 @@ describe('buildBiDescriptor', () => {
     ])
   })
 
+  it('declares the stable media-library export columns', () => {
+    const descriptor = buildBiDescriptor([{
+      id: 'media',
+      shape: 'SHAPE_MEDIA',
+    }], { name: 'M', endpoint: 'https://api.example.com' })
+    expect(descriptor.tables[0].columns.map(column => column.name)).toEqual([
+      'id',
+      'title',
+      'kind',
+      'url',
+      'thumbnail_url',
+      'captured_at',
+      'created_at',
+      'content_type',
+      'width',
+      'height',
+      'duration_seconds',
+      'favorite',
+      'tags',
+      'collection_ids',
+      'metadata',
+      'context',
+    ])
+  })
+
   it('omits connect fields for a sql-protocol descriptor', () => {
     const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://sql.example.com', protocol: 'sql' })
     expect(d.protocol).toBe('sql')

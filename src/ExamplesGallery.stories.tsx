@@ -22,6 +22,7 @@ import referenceBackend from '../public/examples/reference-backend.json'
 import platformFoundation from '../public/examples/platform-foundation.json'
 import businessOperations from '../public/examples/business-operations.json'
 import workManagement from '../public/examples/work-management.json'
+import mediaLibrary from '../public/examples/media-library.json'
 import { RECORD_SET_STORY_DATA } from './widgets/recordStories.fixture'
 
 import '../examples/widgets/registry'
@@ -228,6 +229,7 @@ const workManagementStatic = inlineFallback(workManagement as Template, {
 export const MedallionTerminal    = story(medallionTerminal)
 export const BusinessOperations   = story(businessOperations)
 export const WorkManagement       = story(workManagementStatic)
+export const MediaLibrary         = story(mediaLibrary)
 export const WorkManagementOperator: Story = {
   args: { template: workManagementStatic, theme: 'operator' },
 }

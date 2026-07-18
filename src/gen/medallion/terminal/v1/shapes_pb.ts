@@ -12,7 +12,7 @@ import type { JsonObject, Message } from "@bufbuild/protobuf";
  * Describes the file medallion/terminal/v1/shapes.proto.
  */
 export const file_medallion_terminal_v1_shapes: GenFile = /*@__PURE__*/
-  fileDesc("CiJtZWRhbGxpb24vdGVybWluYWwvdjEvc2hhcGVzLnByb3RvEhVtZWRhbGxpb24udGVybWluYWwudjEivAEKEVRpbWVzZXJpZXNQYXlsb2FkEjYKBnBvaW50cxgBIAMoCzImLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5UaW1lc2VyaWVzUG9pbnQSNwoGc2VyaWVzGAIgAygLMicubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlRpbWVzZXJpZXNTZXJpZXMSNgoLYW5ub3RhdGlvbnMYAyADKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuQW5ub3RhdGlvbiIzCg9UaW1lc2VyaWVzUG9pbnQSEQoJdGltZXN0YW1wGAEgASgJEg0KBXZhbHVlGAIgASgBIlgKEFRpbWVzZXJpZXNTZXJpZXMSDAoEbmFtZRgBIAEoCRI2CgZwb2ludHMYAiADKAsyJi5tZWRhbGxpb24udGVybWluYWwudjEuVGltZXNlcmllc1BvaW50InQKDUNhbmRsZVBheWxvYWQSKwoEYmFycxgBIAMoCzIdLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5DYW5kbGUSNgoLYW5ub3RhdGlvbnMYAiADKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuQW5ub3RhdGlvbiJzCgZDYW5kbGUSEQoJdGltZXN0YW1wGAEgASgJEgwKBG9wZW4YAiABKAESDAoEaGlnaBgDIAEoARILCgNsb3cYBCABKAESDQoFY2xvc2UYBSABKAESEwoGdm9sdW1lGAYgASgBSACIAQFCCQoHX3ZvbHVtZSKmAQoKQW5ub3RhdGlvbhIRCgl0aW1lc3RhbXAYASABKAkSEgoFdmFsdWUYAiABKAFIAIgBARINCgVsYWJlbBgDIAEoCRIMCgRraW5kGAQgASgJEhIKBWNvbG9yGAUgASgJSAGIAQESGgoNZW5kX3RpbWVzdGFtcBgGIAEoCUgCiAEBQggKBl92YWx1ZUIICgZfY29sb3JCEAoOX2VuZF90aW1lc3RhbXAiagoMVGFibGVQYXlsb2FkEjMKB2NvbHVtbnMYASADKAsyIi5tZWRhbGxpb24udGVybWluYWwudjEuVGFibGVDb2x1bW4SJQoEcm93cxgCIAMoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3QiegoLVGFibGVDb2x1bW4SCwoDa2V5GAEgASgJEg0KBWxhYmVsGAIgASgJEi8KBHR5cGUYAyABKA4yIS5tZWRhbGxpb24udGVybWluYWwudjEuQ29sdW1uVHlwZRITCgZmb3JtYXQYBCABKAlIAIgBAUIJCgdfZm9ybWF0IoUBCg1NZXRyaWNQYXlsb2FkEg0KBXZhbHVlGAEgASgBEhIKBWRlbHRhGAIgASgBSACIAQESEQoEdW5pdBgDIAEoCUgBiAEBEhIKBWxhYmVsGAQgASgJSAKIAQESDQoFdHJlbmQYBSADKAFCCAoGX2RlbHRhQgcKBV91bml0QggKBl9sYWJlbCKgAQoMR2F1Z2VQYXlsb2FkEg0KBXZhbHVlGAEgASgBEhAKA21pbhgCIAEoAUgAiAEBEhAKA21heBgDIAEoAUgBiAEBEhIKBWxhYmVsGAQgASgJSAKIAQESLwoFYmFuZHMYBSADKAsyIC5tZWRhbGxpb24udGVybWluYWwudjEuR2F1Z2VCYW5kQgYKBF9taW5CBgoEX21heEIICgZfbGFiZWwiUgoJR2F1Z2VCYW5kEgwKBGZyb20YASABKAESCgoCdG8YAiABKAESDQoFY29sb3IYAyABKAkSEgoFbGFiZWwYBCABKAlIAIgBAUIICgZfbGFiZWwitAEKDkhlYXRtYXBQYXlsb2FkEgwKBHJvd3MYASADKAkSDwoHY29sdW1ucxgCIAMoCRIxCgVjZWxscxgDIAMoCzIiLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5IZWF0bWFwQ2VsbBIQCgNtaW4YBCABKAFIAIgBARIQCgNtYXgYBSABKAFIAYgBARISCgVzY2FsZRgGIAEoCUgCiAEBQgYKBF9taW5CBgoEX21heEIICgZfc2NhbGUiVAoLSGVhdG1hcENlbGwSCwoDcm93GAEgASgFEgsKA2NvbBgCIAEoBRINCgV2YWx1ZRgDIAEoARISCgVsYWJlbBgEIAEoCUgAiAEBQggKBl9sYWJlbCI8CgxFdmVudFBheWxvYWQSLAoGZXZlbnRzGAEgAygLMhwubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkV2ZW50IqcBCgVFdmVudBIRCgl0aW1lc3RhbXAYASABKAkSDQoFbGFiZWwYAiABKAkSMgoGc3RhdHVzGAMgASgOMiIubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkV2ZW50U3RhdHVzEhEKBGJvZHkYBCABKAlIAIgBARITCgZzb3VyY2UYBSABKAlIAYgBARIMCgR0YWdzGAYgAygJQgcKBV9ib2R5QgkKB19zb3VyY2UibQoTRGlzdHJpYnV0aW9uUGF5bG9hZBI4CgZzbGljZXMYASADKAsyKC5tZWRhbGxpb24udGVybWluYWwudjEuRGlzdHJpYnV0aW9uU2xpY2USEgoFdG90YWwYAiABKAFIAIgBAUIICgZfdG90YWwiTwoRRGlzdHJpYnV0aW9uU2xpY2USDQoFbGFiZWwYASABKAkSDQoFdmFsdWUYAiABKAESEgoFY29sb3IYAyABKAlIAIgBAUIICgZfY29sb3IizAEKEE9yZGVyQm9va1BheWxvYWQSLwoEYmlkcxgBIAMoCzIhLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5PcmRlckxldmVsEi8KBGFza3MYAiADKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuT3JkZXJMZXZlbBIQCgNtaWQYAyABKAFIAIgBARITCgZzcHJlYWQYBCABKAFIAYgBARISCgV2ZW51ZRgFIAEoCUgCiAEBQgYKBF9taWRCCQoHX3NwcmVhZEIICgZfdmVudWUiSQoKT3JkZXJMZXZlbBINCgVwcmljZRgBIAEoARIMCgRzaXplGAIgASgBEhMKBm9yZGVycxgDIAEoBUgAiAEBQgkKB19vcmRlcnMi4wIKEVBhaXJlZEdyaWRQYXlsb2FkEg8KB3N1YmplY3QYASABKAkSEQoJZGltZW5zaW9uGAIgASgJEhoKDXN1YmplY3RfdmFsdWUYAyABKAFIAIgBARISCgV2ZW51ZRgEIAEoCUgBiAEBEi4KBHJvd3MYBSADKAsyIC5tZWRhbGxpb24udGVybWluYWwudjEuUGFpcmVkUm93EhcKCmxlZnRfbGFiZWwYBiABKAlIAogBARIYCgtyaWdodF9sYWJlbBgHIAEoCUgDiAEBEhYKCWtleV9sYWJlbBgIIAEoCUgEiAEBEjYKCG1lYXN1cmVzGAkgAygLMiQubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlBhaXJlZE1lYXN1cmVCEAoOX3N1YmplY3RfdmFsdWVCCAoGX3ZlbnVlQg0KC19sZWZ0X2xhYmVsQg4KDF9yaWdodF9sYWJlbEIMCgpfa2V5X2xhYmVsIpgBCglQYWlyZWRSb3cSCwoDa2V5GAEgASgBEjQKBGxlZnQYAiABKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuUGFpcmVkU2lkZUgAiAEBEjUKBXJpZ2h0GAMgASgLMiEubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlBhaXJlZFNpZGVIAYgBAUIHCgVfbGVmdEIICgZfcmlnaHQiegoKUGFpcmVkU2lkZRI9CgZ2YWx1ZXMYASADKAsyLS5tZWRhbGxpb24udGVybWluYWwudjEuUGFpcmVkU2lkZS5WYWx1ZXNFbnRyeRotCgtWYWx1ZXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAE6AjgBIksKDVBhaXJlZE1lYXN1cmUSCwoDa2V5GAEgASgJEg0KBWxhYmVsGAIgASgJEhMKBmZvcm1hdBgDIAEoCUgAiAEBQgkKB19mb3JtYXQiQQoKR2VvUGF5bG9hZBIzCghmZWF0dXJlcxgBIAMoCzIhLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5HZW9GZWF0dXJlIs0CCgpHZW9GZWF0dXJlEgoKAmlkGAEgASgJEhIKBWxhYmVsGAIgASgJSACIAQESKQoIZ2VvbWV0cnkYAyABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0EhIKBXZhbHVlGAQgASgBSAGIAQESEwoGc3RhdHVzGAUgASgJSAKIAQESLgoIbWV0YWRhdGEYBiABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAOIAQESPwoHY29udGV4dBgHIAMoCzIuLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5HZW9GZWF0dXJlLkNvbnRleHRFbnRyeRouCgxDb250ZXh0RW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4AUIICgZfbGFiZWxCCAoGX3ZhbHVlQgkKB19zdGF0dXNCCwoJX21ldGFkYXRhIlsKDEVtYmVkUGF5bG9hZBILCgN1cmwYASABKAkSEgoFbGFiZWwYAiABKAlIAIgBARIUCgdzYW5kYm94GAMgASgJSAGIAQFCCAoGX2xhYmVsQgoKCF9zYW5kYm94Ij0KC1RleHRQYXlsb2FkEi4KBWl0ZW1zGAEgAygLMh8ubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlRleHRJdGVtIu4BCghUZXh0SXRlbRISCgV0aXRsZRgBIAEoCUgAiAEBEhEKBGJvZHkYAiABKAlIAYgBARITCgZzb3VyY2UYAyABKAlIAogBARIRCgRkYXRlGAQgASgJSAOIAQESEwoGYXV0aG9yGAUgASgJSASIAQESDAoEdGFncxgGIAMoCRIQCgN1cmwYByABKAlIBYgBARIWCglzZW50aW1lbnQYCCABKAFIBogBAUIICgZfdGl0bGVCBwoFX2JvZHlCCQoHX3NvdXJjZUIHCgVfZGF0ZUIJCgdfYXV0aG9yQgYKBF91cmxCDAoKX3NlbnRpbWVudCKdAQoTQXNzZXRDYXRhbG9nUGF5bG9hZBI2CgVpdGVtcxgBIAMoCzInLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5Bc3NldENhdGFsb2dJdGVtEhIKBXRvdGFsGAIgASgDSACIAQESHAoPbmV4dF9wYWdlX3Rva2VuGAMgASgJSAGIAQFCCAoGX3RvdGFsQhIKEF9uZXh0X3BhZ2VfdG9rZW4ipgMKEEFzc2V0Q2F0YWxvZ0l0ZW0SCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIMCgRraW5kGAMgASgJEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESEgoFb3duZXIYBSABKAlIAYgBARITCgZzdGF0dXMYBiABKAlIAogBARIXCgp1cGRhdGVkX2F0GAcgASgJSAOIAQESDAoEdGFncxgIIAMoCRIQCgN1cmwYCSABKAlIBIgBARIuCghtZXRhZGF0YRgKIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3RIBYgBARJFCgdjb250ZXh0GAsgAygLMjQubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkFzc2V0Q2F0YWxvZ0l0ZW0uQ29udGV4dEVudHJ5Gi4KDENvbnRleHRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBQg4KDF9kZXNjcmlwdGlvbkIICgZfb3duZXJCCQoHX3N0YXR1c0INCgtfdXBkYXRlZF9hdEIGCgRfdXJsQgsKCV9tZXRhZGF0YSLAAwoQUmVjb3JkU2V0UGF5bG9hZBIUCgx3b3Jrc3BhY2VfaWQYASABKAkSEAoIdGFibGVfaWQYAiABKAkSEgoKdGFibGVfbmFtZRgDIAEoCRIVCg1wcmltYXJ5X2ZpZWxkGAQgASgJEjIKBmZpZWxkcxgFIAMoCzIiLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5SZWNvcmRGaWVsZBIyCgdyZWNvcmRzGAYgAygLMiEubWVkYWxsaW9uLnRlcm1pbmFsLnYxLldvcmtSZWNvcmQSMAoFdmlld3MYByADKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuUmVjb3JkVmlldxIbCg5hY3RpdmVfdmlld19pZBgIIAEoCUgAiAEBEhIKBXRvdGFsGAkgASgDSAGIAQESHAoPbmV4dF9wYWdlX3Rva2VuGAogASgJSAKIAQESPwoMY2FwYWJpbGl0aWVzGAsgASgLMikubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlJlY29yZENhcGFiaWxpdGllc0IRCg9fYWN0aXZlX3ZpZXdfaWRCCAoGX3RvdGFsQhIKEF9uZXh0X3BhZ2VfdG9rZW4ipgIKCldvcmtSZWNvcmQSCgoCaWQYASABKAkSJwoGdmFsdWVzGAIgASgLMhcuZ29vZ2xlLnByb3RvYnVmLlN0cnVjdBIXCgpjcmVhdGVkX2F0GAMgASgJSACIAQESFwoKdXBkYXRlZF9hdBgEIAEoCUgBiAEBEhUKCHJldmlzaW9uGAUgASgJSAKIAQESPwoHY29udGV4dBgGIAMoCzIuLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5Xb3JrUmVjb3JkLkNvbnRleHRFbnRyeRouCgxDb250ZXh0RW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4AUINCgtfY3JlYXRlZF9hdEINCgtfdXBkYXRlZF9hdEILCglfcmV2aXNpb24ilAMKC1JlY29yZEZpZWxkEgsKA2tleRgBIAEoCRINCgVsYWJlbBgCIAEoCRI0CgR0eXBlGAMgASgOMiYubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlJlY29yZEZpZWxkVHlwZRIYCgtkZXNjcmlwdGlvbhgEIAEoCUgAiAEBEhAKCHJlcXVpcmVkGAUgASgIEhEKCXJlYWRfb25seRgGIAEoCBI0CgdjaG9pY2VzGAcgAygLMiMubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlJlY29yZENob2ljZRIcCg9saW5rZWRfdGFibGVfaWQYCCABKAlIAYgBARIWCg5hbGxvd19tdWx0aXBsZRgJIAEoCBITCgZmb3JtYXQYCiABKAlIAogBARIyCg1kZWZhdWx0X3ZhbHVlGAsgASgLMhYuZ29vZ2xlLnByb3RvYnVmLlZhbHVlSAOIAQFCDgoMX2Rlc2NyaXB0aW9uQhIKEF9saW5rZWRfdGFibGVfaWRCCQoHX2Zvcm1hdEIQCg5fZGVmYXVsdF92YWx1ZSJKCgxSZWNvcmRDaG9pY2USDQoFdmFsdWUYASABKAkSDQoFbGFiZWwYAiABKAkSEgoFY29sb3IYAyABKAlIAIgBAUIICgZfY29sb3Ii0QIKClJlY29yZFZpZXcSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEoCRIzCgR0eXBlGAMgASgOMiUubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlJlY29yZFZpZXdUeXBlEhYKDnZpc2libGVfZmllbGRzGAQgAygJEhUKCGdyb3VwX2J5GAUgASgJSACIAQESFwoKZGF0ZV9maWVsZBgGIAEoCUgBiAEBEhgKC3RpdGxlX2ZpZWxkGAcgASgJSAKIAQESMAoFc29ydHMYCCADKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuUmVjb3JkU29ydBI0CgdmaWx0ZXJzGAkgAygLMiMubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlJlY29yZEZpbHRlckILCglfZ3JvdXBfYnlCDQoLX2RhdGVfZmllbGRCDgoMX3RpdGxlX2ZpZWxkIi8KClJlY29yZFNvcnQSDQoFZmllbGQYASABKAkSEgoKZGVzY2VuZGluZxgCIAEoCCJWCgxSZWNvcmRGaWx0ZXISDQoFZmllbGQYASABKAkSEAoIb3BlcmF0b3IYAiABKAkSJQoFdmFsdWUYAyABKAsyFi5nb29nbGUucHJvdG9idWYuVmFsdWUikgEKElJlY29yZENhcGFiaWxpdGllcxIOCgZjcmVhdGUYASABKAgSDgoGdXBkYXRlGAIgASgIEg4KBmRlbGV0ZRgDIAEoCBIYChBjcmVhdGVfYWN0aW9uX2lkGAQgASgJEhgKEHVwZGF0ZV9hY3Rpb25faWQYBSABKAkSGAoQZGVsZXRlX2FjdGlvbl9pZBgGIAEoCSLpAgoNT2JqZWN0UGF5bG9hZBITCgtvYmplY3RfdHlwZRgBIAEoCRIRCglvYmplY3RfaWQYAiABKAkSDQoFdGl0bGUYAyABKAkSGAoLZGVzY3JpcHRpb24YBCABKAlIAIgBARITCgZzdGF0dXMYBSABKAlIAYgBARIXCgp1cGRhdGVkX2F0GAYgASgJSAKIAQESDAoEdGFncxgHIAMoCRI5Cgpwcm9wZXJ0aWVzGAggAygLMiUubWVkYWxsaW9uLnRlcm1pbmFsLnYxLk9iamVjdFByb3BlcnR5EjAKBWxpbmtzGAkgAygLMiEubWVkYWxsaW9uLnRlcm1pbmFsLnYxLk9iamVjdExpbmsSNAoHYWN0aW9ucxgKIAMoCzIjLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5PYmplY3RBY3Rpb25CDgoMX2Rlc2NyaXB0aW9uQgkKB19zdGF0dXNCDQoLX3VwZGF0ZWRfYXQiuwEKDk9iamVjdFByb3BlcnR5EgsKA2tleRgBIAEoCRINCgVsYWJlbBgCIAEoCRIlCgV2YWx1ZRgDIAEoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZRITCgZmb3JtYXQYBCABKAlIAIgBARIYCgtkZXNjcmlwdGlvbhgFIAEoCUgBiAEBEhIKBWdyb3VwGAYgASgJSAKIAQFCCQoHX2Zvcm1hdEIOCgxfZGVzY3JpcHRpb25CCAoGX2dyb3VwIuYBCgpPYmplY3RMaW5rEhAKCHJlbGF0aW9uGAEgASgJEhMKC3RhcmdldF90eXBlGAIgASgJEhEKCXRhcmdldF9pZBgDIAEoCRINCgVsYWJlbBgEIAEoCRITCgZzdGF0dXMYBSABKAlIAIgBARI/Cgdjb250ZXh0GAYgAygLMi4ubWVkYWxsaW9uLnRlcm1pbmFsLnYxLk9iamVjdExpbmsuQ29udGV4dEVudHJ5Gi4KDENvbnRleHRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBQgkKB19zdGF0dXMizQEKDE9iamVjdEFjdGlvbhIKCgJpZBgBIAEoCRINCgVsYWJlbBgCIAEoCRIYCgtkZXNjcmlwdGlvbhgDIAEoCUgAiAEBEhIKBXN0eWxlGAQgASgJSAGIAQESDwoHY29uZmlybRgFIAEoCBIsCgZwYXJhbXMYBiABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAKIAQESEAoIZGlzYWJsZWQYByABKAhCDgoMX2Rlc2NyaXB0aW9uQggKBl9zdHlsZUIJCgdfcGFyYW1zInAKDEdyYXBoUGF5bG9hZBIvCgVub2RlcxgBIAMoCzIgLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5HcmFwaE5vZGUSLwoFZWRnZXMYAiADKAsyIC5tZWRhbGxpb24udGVybWluYWwudjEuR3JhcGhFZGdlIsECCglHcmFwaE5vZGUSCgoCaWQYASABKAkSDQoFbGFiZWwYAiABKAkSEQoEa2luZBgDIAEoCUgAiAEBEhMKBnN0YXR1cxgEIAEoCUgBiAEBEhUKCHN1YnRpdGxlGAUgASgJSAKIAQESDAoEdGFncxgGIAMoCRIuCghtZXRhZGF0YRgHIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3RIA4gBARI+Cgdjb250ZXh0GAggAygLMi0ubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkdyYXBoTm9kZS5Db250ZXh0RW50cnkaLgoMQ29udGV4dEVudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAFCBwoFX2tpbmRCCQoHX3N0YXR1c0ILCglfc3VidGl0bGVCCwoJX21ldGFkYXRhIn8KCUdyYXBoRWRnZRIMCgRmcm9tGAEgASgJEgoKAnRvGAIgASgJEhIKBWxhYmVsGAMgASgJSACIAQESEQoEa2luZBgEIAEoCUgBiAEBEhMKBnN0YXR1cxgFIAEoCUgCiAEBQggKBl9sYWJlbEIHCgVfa2luZEIJCgdfc3RhdHVzIuYBChFSZXBvc2l0b3J5UGF5bG9hZBISCgpyZXBvc2l0b3J5GAEgASgJEgsKA3JlZhgCIAEoCRIMCgRwYXRoGAMgASgJEgwKBHJlZnMYBCADKAkSNwoHZW50cmllcxgFIAMoCzImLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5SZXBvc2l0b3J5RW50cnkSOAoEZmlsZRgGIAEoCzIlLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5SZXBvc2l0b3J5RmlsZUgAiAEBEhAKA3VybBgHIAEoCUgBiAEBQgcKBV9maWxlQgYKBF91cmwi2wEKD1JlcG9zaXRvcnlFbnRyeRIMCgRwYXRoGAEgASgJEgwKBG5hbWUYAiABKAkSOAoEa2luZBgDIAEoDjIqLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5SZXBvc2l0b3J5RW50cnlLaW5kEhUKCGxhbmd1YWdlGAQgASgJSACIAQESFwoKc2l6ZV9ieXRlcxgFIAEoA0gBiAEBEhcKCnVwZGF0ZWRfYXQYBiABKAlIAogBAUILCglfbGFuZ3VhZ2VCDQoLX3NpemVfYnl0ZXNCDQoLX3VwZGF0ZWRfYXQiqAEKDlJlcG9zaXRvcnlGaWxlEgwKBHBhdGgYASABKAkSDwoHY29udGVudBgCIAEoCRIVCghsYW5ndWFnZRgDIAEoCUgAiAEBEhcKCnNpemVfYnl0ZXMYBCABKANIAYgBARIRCgl0cnVuY2F0ZWQYBSABKAgSEAoDdXJsGAYgASgJSAKIAQFCCwoJX2xhbmd1YWdlQg0KC19zaXplX2J5dGVzQgYKBF91cmwqjQEKCkNvbHVtblR5cGUSGwoXQ09MVU1OX1RZUEVfVU5TUEVDSUZJRUQQABIWChJDT0xVTU5fVFlQRV9TVFJJTkcQARIWChJDT0xVTU5fVFlQRV9OVU1CRVIQAhIXChNDT0xVTU5fVFlQRV9CT09MRUFOEAMSGQoVQ09MVU1OX1RZUEVfVElNRVNUQU1QEAQqoAEKC0V2ZW50U3RhdHVzEhwKGEVWRU5UX1NUQVRVU19VTlNQRUNJRklFRBAAEhMKD0VWRU5UX1NUQVRVU19PSxABEhUKEUVWRU5UX1NUQVRVU19XQVJOEAISFgoSRVZFTlRfU1RBVFVTX0VSUk9SEAMSFQoRRVZFTlRfU1RBVFVTX0lORk8QBBIYChRFVkVOVF9TVEFUVVNfUEVORElORxAFKsAFCg9SZWNvcmRGaWVsZFR5cGUSIQodUkVDT1JEX0ZJRUxEX1RZUEVfVU5TUEVDSUZJRUQQABIaChZSRUNPUkRfRklFTERfVFlQRV9URVhUEAESHwobUkVDT1JEX0ZJRUxEX1RZUEVfTE9OR19URVhUEAISHAoYUkVDT1JEX0ZJRUxEX1RZUEVfTlVNQkVSEAMSHgoaUkVDT1JEX0ZJRUxEX1RZUEVfQ1VSUkVOQ1kQBBIdChlSRUNPUkRfRklFTERfVFlQRV9QRVJDRU5UEAUSHQoZUkVDT1JEX0ZJRUxEX1RZUEVfQk9PTEVBThAGEhoKFlJFQ09SRF9GSUVMRF9UWVBFX0RBVEUQBxIeChpSRUNPUkRfRklFTERfVFlQRV9EQVRFVElNRRAIEiMKH1JFQ09SRF9GSUVMRF9UWVBFX1NJTkdMRV9TRUxFQ1QQCRIiCh5SRUNPUkRfRklFTERfVFlQRV9NVUxUSV9TRUxFQ1QQChIaChZSRUNPUkRfRklFTERfVFlQRV9VU0VSEAsSGgoWUkVDT1JEX0ZJRUxEX1RZUEVfTElOSxAMEiAKHFJFQ09SRF9GSUVMRF9UWVBFX0FUVEFDSE1FTlQQDRIZChVSRUNPUkRfRklFTERfVFlQRV9VUkwQDhIbChdSRUNPUkRfRklFTERfVFlQRV9FTUFJTBAPEhsKF1JFQ09SRF9GSUVMRF9UWVBFX1BIT05FEBASHQoZUkVDT1JEX0ZJRUxEX1RZUEVfRk9STVVMQRAREhwKGFJFQ09SRF9GSUVMRF9UWVBFX0xPT0tVUBASEhwKGFJFQ09SRF9GSUVMRF9UWVBFX1JPTExVUBATEiAKHFJFQ09SRF9GSUVMRF9UWVBFX0NSRUFURURfQVQQFBIgChxSRUNPUkRfRklFTERfVFlQRV9VUERBVEVEX0FUEBUq+wEKDlJlY29yZFZpZXdUeXBlEiAKHFJFQ09SRF9WSUVXX1RZUEVfVU5TUEVDSUZJRUQQABIZChVSRUNPUkRfVklFV19UWVBFX0dSSUQQARIaChZSRUNPUkRfVklFV19UWVBFX0JPQVJEEAISHQoZUkVDT1JEX1ZJRVdfVFlQRV9DQUxFTkRBUhADEhwKGFJFQ09SRF9WSUVXX1RZUEVfR0FMTEVSWRAEEhkKFVJFQ09SRF9WSUVXX1RZUEVfTElTVBAFEh0KGVJFQ09SRF9WSUVXX1RZUEVfVElNRUxJTkUQBhIZChVSRUNPUkRfVklFV19UWVBFX0ZPUk0QByqkAQoTUmVwb3NpdG9yeUVudHJ5S2luZBIlCiFSRVBPU0lUT1JZX0VOVFJZX0tJTkRfVU5TUEVDSUZJRUQQABIeChpSRVBPU0lUT1JZX0VOVFJZX0tJTkRfRklMRRABEiMKH1JFUE9TSVRPUllfRU5UUllfS0lORF9ESVJFQ1RPUlkQAhIhCh1SRVBPU0lUT1JZX0VOVFJZX0tJTkRfU1lNTElOSxADYgZwcm90bzM", [file_google_protobuf_struct]);
+  fileDesc("CiJtZWRhbGxpb24vdGVybWluYWwvdjEvc2hhcGVzLnByb3RvEhVtZWRhbGxpb24udGVybWluYWwudjEivAEKEVRpbWVzZXJpZXNQYXlsb2FkEjYKBnBvaW50cxgBIAMoCzImLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5UaW1lc2VyaWVzUG9pbnQSNwoGc2VyaWVzGAIgAygLMicubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlRpbWVzZXJpZXNTZXJpZXMSNgoLYW5ub3RhdGlvbnMYAyADKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuQW5ub3RhdGlvbiIzCg9UaW1lc2VyaWVzUG9pbnQSEQoJdGltZXN0YW1wGAEgASgJEg0KBXZhbHVlGAIgASgBIlgKEFRpbWVzZXJpZXNTZXJpZXMSDAoEbmFtZRgBIAEoCRI2CgZwb2ludHMYAiADKAsyJi5tZWRhbGxpb24udGVybWluYWwudjEuVGltZXNlcmllc1BvaW50InQKDUNhbmRsZVBheWxvYWQSKwoEYmFycxgBIAMoCzIdLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5DYW5kbGUSNgoLYW5ub3RhdGlvbnMYAiADKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuQW5ub3RhdGlvbiJzCgZDYW5kbGUSEQoJdGltZXN0YW1wGAEgASgJEgwKBG9wZW4YAiABKAESDAoEaGlnaBgDIAEoARILCgNsb3cYBCABKAESDQoFY2xvc2UYBSABKAESEwoGdm9sdW1lGAYgASgBSACIAQFCCQoHX3ZvbHVtZSKmAQoKQW5ub3RhdGlvbhIRCgl0aW1lc3RhbXAYASABKAkSEgoFdmFsdWUYAiABKAFIAIgBARINCgVsYWJlbBgDIAEoCRIMCgRraW5kGAQgASgJEhIKBWNvbG9yGAUgASgJSAGIAQESGgoNZW5kX3RpbWVzdGFtcBgGIAEoCUgCiAEBQggKBl92YWx1ZUIICgZfY29sb3JCEAoOX2VuZF90aW1lc3RhbXAiagoMVGFibGVQYXlsb2FkEjMKB2NvbHVtbnMYASADKAsyIi5tZWRhbGxpb24udGVybWluYWwudjEuVGFibGVDb2x1bW4SJQoEcm93cxgCIAMoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3QiegoLVGFibGVDb2x1bW4SCwoDa2V5GAEgASgJEg0KBWxhYmVsGAIgASgJEi8KBHR5cGUYAyABKA4yIS5tZWRhbGxpb24udGVybWluYWwudjEuQ29sdW1uVHlwZRITCgZmb3JtYXQYBCABKAlIAIgBAUIJCgdfZm9ybWF0IoUBCg1NZXRyaWNQYXlsb2FkEg0KBXZhbHVlGAEgASgBEhIKBWRlbHRhGAIgASgBSACIAQESEQoEdW5pdBgDIAEoCUgBiAEBEhIKBWxhYmVsGAQgASgJSAKIAQESDQoFdHJlbmQYBSADKAFCCAoGX2RlbHRhQgcKBV91bml0QggKBl9sYWJlbCKgAQoMR2F1Z2VQYXlsb2FkEg0KBXZhbHVlGAEgASgBEhAKA21pbhgCIAEoAUgAiAEBEhAKA21heBgDIAEoAUgBiAEBEhIKBWxhYmVsGAQgASgJSAKIAQESLwoFYmFuZHMYBSADKAsyIC5tZWRhbGxpb24udGVybWluYWwudjEuR2F1Z2VCYW5kQgYKBF9taW5CBgoEX21heEIICgZfbGFiZWwiUgoJR2F1Z2VCYW5kEgwKBGZyb20YASABKAESCgoCdG8YAiABKAESDQoFY29sb3IYAyABKAkSEgoFbGFiZWwYBCABKAlIAIgBAUIICgZfbGFiZWwitAEKDkhlYXRtYXBQYXlsb2FkEgwKBHJvd3MYASADKAkSDwoHY29sdW1ucxgCIAMoCRIxCgVjZWxscxgDIAMoCzIiLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5IZWF0bWFwQ2VsbBIQCgNtaW4YBCABKAFIAIgBARIQCgNtYXgYBSABKAFIAYgBARISCgVzY2FsZRgGIAEoCUgCiAEBQgYKBF9taW5CBgoEX21heEIICgZfc2NhbGUiVAoLSGVhdG1hcENlbGwSCwoDcm93GAEgASgFEgsKA2NvbBgCIAEoBRINCgV2YWx1ZRgDIAEoARISCgVsYWJlbBgEIAEoCUgAiAEBQggKBl9sYWJlbCI8CgxFdmVudFBheWxvYWQSLAoGZXZlbnRzGAEgAygLMhwubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkV2ZW50IqcBCgVFdmVudBIRCgl0aW1lc3RhbXAYASABKAkSDQoFbGFiZWwYAiABKAkSMgoGc3RhdHVzGAMgASgOMiIubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkV2ZW50U3RhdHVzEhEKBGJvZHkYBCABKAlIAIgBARITCgZzb3VyY2UYBSABKAlIAYgBARIMCgR0YWdzGAYgAygJQgcKBV9ib2R5QgkKB19zb3VyY2UibQoTRGlzdHJpYnV0aW9uUGF5bG9hZBI4CgZzbGljZXMYASADKAsyKC5tZWRhbGxpb24udGVybWluYWwudjEuRGlzdHJpYnV0aW9uU2xpY2USEgoFdG90YWwYAiABKAFIAIgBAUIICgZfdG90YWwiTwoRRGlzdHJpYnV0aW9uU2xpY2USDQoFbGFiZWwYASABKAkSDQoFdmFsdWUYAiABKAESEgoFY29sb3IYAyABKAlIAIgBAUIICgZfY29sb3IizAEKEE9yZGVyQm9va1BheWxvYWQSLwoEYmlkcxgBIAMoCzIhLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5PcmRlckxldmVsEi8KBGFza3MYAiADKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuT3JkZXJMZXZlbBIQCgNtaWQYAyABKAFIAIgBARITCgZzcHJlYWQYBCABKAFIAYgBARISCgV2ZW51ZRgFIAEoCUgCiAEBQgYKBF9taWRCCQoHX3NwcmVhZEIICgZfdmVudWUiSQoKT3JkZXJMZXZlbBINCgVwcmljZRgBIAEoARIMCgRzaXplGAIgASgBEhMKBm9yZGVycxgDIAEoBUgAiAEBQgkKB19vcmRlcnMi4wIKEVBhaXJlZEdyaWRQYXlsb2FkEg8KB3N1YmplY3QYASABKAkSEQoJZGltZW5zaW9uGAIgASgJEhoKDXN1YmplY3RfdmFsdWUYAyABKAFIAIgBARISCgV2ZW51ZRgEIAEoCUgBiAEBEi4KBHJvd3MYBSADKAsyIC5tZWRhbGxpb24udGVybWluYWwudjEuUGFpcmVkUm93EhcKCmxlZnRfbGFiZWwYBiABKAlIAogBARIYCgtyaWdodF9sYWJlbBgHIAEoCUgDiAEBEhYKCWtleV9sYWJlbBgIIAEoCUgEiAEBEjYKCG1lYXN1cmVzGAkgAygLMiQubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlBhaXJlZE1lYXN1cmVCEAoOX3N1YmplY3RfdmFsdWVCCAoGX3ZlbnVlQg0KC19sZWZ0X2xhYmVsQg4KDF9yaWdodF9sYWJlbEIMCgpfa2V5X2xhYmVsIpgBCglQYWlyZWRSb3cSCwoDa2V5GAEgASgBEjQKBGxlZnQYAiABKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuUGFpcmVkU2lkZUgAiAEBEjUKBXJpZ2h0GAMgASgLMiEubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlBhaXJlZFNpZGVIAYgBAUIHCgVfbGVmdEIICgZfcmlnaHQiegoKUGFpcmVkU2lkZRI9CgZ2YWx1ZXMYASADKAsyLS5tZWRhbGxpb24udGVybWluYWwudjEuUGFpcmVkU2lkZS5WYWx1ZXNFbnRyeRotCgtWYWx1ZXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAE6AjgBIksKDVBhaXJlZE1lYXN1cmUSCwoDa2V5GAEgASgJEg0KBWxhYmVsGAIgASgJEhMKBmZvcm1hdBgDIAEoCUgAiAEBQgkKB19mb3JtYXQiQQoKR2VvUGF5bG9hZBIzCghmZWF0dXJlcxgBIAMoCzIhLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5HZW9GZWF0dXJlIs0CCgpHZW9GZWF0dXJlEgoKAmlkGAEgASgJEhIKBWxhYmVsGAIgASgJSACIAQESKQoIZ2VvbWV0cnkYAyABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0EhIKBXZhbHVlGAQgASgBSAGIAQESEwoGc3RhdHVzGAUgASgJSAKIAQESLgoIbWV0YWRhdGEYBiABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAOIAQESPwoHY29udGV4dBgHIAMoCzIuLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5HZW9GZWF0dXJlLkNvbnRleHRFbnRyeRouCgxDb250ZXh0RW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4AUIICgZfbGFiZWxCCAoGX3ZhbHVlQgkKB19zdGF0dXNCCwoJX21ldGFkYXRhIswBCgxNZWRpYVBheWxvYWQSLwoFaXRlbXMYASADKAsyIC5tZWRhbGxpb24udGVybWluYWwudjEuTWVkaWFJdGVtEjsKC2NvbGxlY3Rpb25zGAIgAygLMiYubWVkYWxsaW9uLnRlcm1pbmFsLnYxLk1lZGlhQ29sbGVjdGlvbhISCgV0b3RhbBgDIAEoA0gAiAEBEhwKD25leHRfcGFnZV90b2tlbhgEIAEoCUgBiAEBQggKBl90b3RhbEISChBfbmV4dF9wYWdlX3Rva2VuIpAFCglNZWRpYUl0ZW0SCgoCaWQYASABKAkSDQoFdGl0bGUYAiABKAkSLgoEa2luZBgDIAEoDjIgLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5NZWRpYUtpbmQSCwoDdXJsGAQgASgJEhoKDXRodW1ibmFpbF91cmwYBSABKAlIAIgBARIYCgtkZXNjcmlwdGlvbhgGIAEoCUgBiAEBEhgKC2NhcHR1cmVkX2F0GAcgASgJSAKIAQESFwoKY3JlYXRlZF9hdBgIIAEoCUgDiAEBEhkKDGNvbnRlbnRfdHlwZRgJIAEoCUgEiAEBEhIKBXdpZHRoGAogASgNSAWIAQESEwoGaGVpZ2h0GAsgASgNSAaIAQESHQoQZHVyYXRpb25fc2Vjb25kcxgMIAEoAUgHiAEBEhAKCGZhdm9yaXRlGA0gASgIEgwKBHRhZ3MYDiADKAkSFgoOY29sbGVjdGlvbl9pZHMYDyADKAkSLgoIbWV0YWRhdGEYECABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAiIAQESPgoHY29udGV4dBgRIAMoCzItLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5NZWRpYUl0ZW0uQ29udGV4dEVudHJ5Gi4KDENvbnRleHRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBQhAKDl90aHVtYm5haWxfdXJsQg4KDF9kZXNjcmlwdGlvbkIOCgxfY2FwdHVyZWRfYXRCDQoLX2NyZWF0ZWRfYXRCDwoNX2NvbnRlbnRfdHlwZUIICgZfd2lkdGhCCQoHX2hlaWdodEITChFfZHVyYXRpb25fc2Vjb25kc0ILCglfbWV0YWRhdGEi7wEKD01lZGlhQ29sbGVjdGlvbhIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhYKCWNvdmVyX3VybBgDIAEoCUgAiAEBEhcKCml0ZW1fY291bnQYBCABKANIAYgBARJECgdjb250ZXh0GAUgAygLMjMubWVkYWxsaW9uLnRlcm1pbmFsLnYxLk1lZGlhQ29sbGVjdGlvbi5Db250ZXh0RW50cnkaLgoMQ29udGV4dEVudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAFCDAoKX2NvdmVyX3VybEINCgtfaXRlbV9jb3VudCJbCgxFbWJlZFBheWxvYWQSCwoDdXJsGAEgASgJEhIKBWxhYmVsGAIgASgJSACIAQESFAoHc2FuZGJveBgDIAEoCUgBiAEBQggKBl9sYWJlbEIKCghfc2FuZGJveCI9CgtUZXh0UGF5bG9hZBIuCgVpdGVtcxgBIAMoCzIfLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5UZXh0SXRlbSLuAQoIVGV4dEl0ZW0SEgoFdGl0bGUYASABKAlIAIgBARIRCgRib2R5GAIgASgJSAGIAQESEwoGc291cmNlGAMgASgJSAKIAQESEQoEZGF0ZRgEIAEoCUgDiAEBEhMKBmF1dGhvchgFIAEoCUgEiAEBEgwKBHRhZ3MYBiADKAkSEAoDdXJsGAcgASgJSAWIAQESFgoJc2VudGltZW50GAggASgBSAaIAQFCCAoGX3RpdGxlQgcKBV9ib2R5QgkKB19zb3VyY2VCBwoFX2RhdGVCCQoHX2F1dGhvckIGCgRfdXJsQgwKCl9zZW50aW1lbnQinQEKE0Fzc2V0Q2F0YWxvZ1BheWxvYWQSNgoFaXRlbXMYASADKAsyJy5tZWRhbGxpb24udGVybWluYWwudjEuQXNzZXRDYXRhbG9nSXRlbRISCgV0b3RhbBgCIAEoA0gAiAEBEhwKD25leHRfcGFnZV90b2tlbhgDIAEoCUgBiAEBQggKBl90b3RhbEISChBfbmV4dF9wYWdlX3Rva2VuIqYDChBBc3NldENhdGFsb2dJdGVtEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSDAoEa2luZBgDIAEoCRIYCgtkZXNjcmlwdGlvbhgEIAEoCUgAiAEBEhIKBW93bmVyGAUgASgJSAGIAQESEwoGc3RhdHVzGAYgASgJSAKIAQESFwoKdXBkYXRlZF9hdBgHIAEoCUgDiAEBEgwKBHRhZ3MYCCADKAkSEAoDdXJsGAkgASgJSASIAQESLgoIbWV0YWRhdGEYCiABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAWIAQESRQoHY29udGV4dBgLIAMoCzI0Lm1lZGFsbGlvbi50ZXJtaW5hbC52MS5Bc3NldENhdGFsb2dJdGVtLkNvbnRleHRFbnRyeRouCgxDb250ZXh0RW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4AUIOCgxfZGVzY3JpcHRpb25CCAoGX293bmVyQgkKB19zdGF0dXNCDQoLX3VwZGF0ZWRfYXRCBgoEX3VybEILCglfbWV0YWRhdGEiwAMKEFJlY29yZFNldFBheWxvYWQSFAoMd29ya3NwYWNlX2lkGAEgASgJEhAKCHRhYmxlX2lkGAIgASgJEhIKCnRhYmxlX25hbWUYAyABKAkSFQoNcHJpbWFyeV9maWVsZBgEIAEoCRIyCgZmaWVsZHMYBSADKAsyIi5tZWRhbGxpb24udGVybWluYWwudjEuUmVjb3JkRmllbGQSMgoHcmVjb3JkcxgGIAMoCzIhLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5Xb3JrUmVjb3JkEjAKBXZpZXdzGAcgAygLMiEubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlJlY29yZFZpZXcSGwoOYWN0aXZlX3ZpZXdfaWQYCCABKAlIAIgBARISCgV0b3RhbBgJIAEoA0gBiAEBEhwKD25leHRfcGFnZV90b2tlbhgKIAEoCUgCiAEBEj8KDGNhcGFiaWxpdGllcxgLIAEoCzIpLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5SZWNvcmRDYXBhYmlsaXRpZXNCEQoPX2FjdGl2ZV92aWV3X2lkQggKBl90b3RhbEISChBfbmV4dF9wYWdlX3Rva2VuIqYCCgpXb3JrUmVjb3JkEgoKAmlkGAEgASgJEicKBnZhbHVlcxgCIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3QSFwoKY3JlYXRlZF9hdBgDIAEoCUgAiAEBEhcKCnVwZGF0ZWRfYXQYBCABKAlIAYgBARIVCghyZXZpc2lvbhgFIAEoCUgCiAEBEj8KB2NvbnRleHQYBiADKAsyLi5tZWRhbGxpb24udGVybWluYWwudjEuV29ya1JlY29yZC5Db250ZXh0RW50cnkaLgoMQ29udGV4dEVudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAFCDQoLX2NyZWF0ZWRfYXRCDQoLX3VwZGF0ZWRfYXRCCwoJX3JldmlzaW9uIpQDCgtSZWNvcmRGaWVsZBILCgNrZXkYASABKAkSDQoFbGFiZWwYAiABKAkSNAoEdHlwZRgDIAEoDjImLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5SZWNvcmRGaWVsZFR5cGUSGAoLZGVzY3JpcHRpb24YBCABKAlIAIgBARIQCghyZXF1aXJlZBgFIAEoCBIRCglyZWFkX29ubHkYBiABKAgSNAoHY2hvaWNlcxgHIAMoCzIjLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5SZWNvcmRDaG9pY2USHAoPbGlua2VkX3RhYmxlX2lkGAggASgJSAGIAQESFgoOYWxsb3dfbXVsdGlwbGUYCSABKAgSEwoGZm9ybWF0GAogASgJSAKIAQESMgoNZGVmYXVsdF92YWx1ZRgLIAEoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZUgDiAEBQg4KDF9kZXNjcmlwdGlvbkISChBfbGlua2VkX3RhYmxlX2lkQgkKB19mb3JtYXRCEAoOX2RlZmF1bHRfdmFsdWUiSgoMUmVjb3JkQ2hvaWNlEg0KBXZhbHVlGAEgASgJEg0KBWxhYmVsGAIgASgJEhIKBWNvbG9yGAMgASgJSACIAQFCCAoGX2NvbG9yItECCgpSZWNvcmRWaWV3EgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSMwoEdHlwZRgDIAEoDjIlLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5SZWNvcmRWaWV3VHlwZRIWCg52aXNpYmxlX2ZpZWxkcxgEIAMoCRIVCghncm91cF9ieRgFIAEoCUgAiAEBEhcKCmRhdGVfZmllbGQYBiABKAlIAYgBARIYCgt0aXRsZV9maWVsZBgHIAEoCUgCiAEBEjAKBXNvcnRzGAggAygLMiEubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlJlY29yZFNvcnQSNAoHZmlsdGVycxgJIAMoCzIjLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5SZWNvcmRGaWx0ZXJCCwoJX2dyb3VwX2J5Qg0KC19kYXRlX2ZpZWxkQg4KDF90aXRsZV9maWVsZCIvCgpSZWNvcmRTb3J0Eg0KBWZpZWxkGAEgASgJEhIKCmRlc2NlbmRpbmcYAiABKAgiVgoMUmVjb3JkRmlsdGVyEg0KBWZpZWxkGAEgASgJEhAKCG9wZXJhdG9yGAIgASgJEiUKBXZhbHVlGAMgASgLMhYuZ29vZ2xlLnByb3RvYnVmLlZhbHVlIpIBChJSZWNvcmRDYXBhYmlsaXRpZXMSDgoGY3JlYXRlGAEgASgIEg4KBnVwZGF0ZRgCIAEoCBIOCgZkZWxldGUYAyABKAgSGAoQY3JlYXRlX2FjdGlvbl9pZBgEIAEoCRIYChB1cGRhdGVfYWN0aW9uX2lkGAUgASgJEhgKEGRlbGV0ZV9hY3Rpb25faWQYBiABKAki6QIKDU9iamVjdFBheWxvYWQSEwoLb2JqZWN0X3R5cGUYASABKAkSEQoJb2JqZWN0X2lkGAIgASgJEg0KBXRpdGxlGAMgASgJEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESEwoGc3RhdHVzGAUgASgJSAGIAQESFwoKdXBkYXRlZF9hdBgGIAEoCUgCiAEBEgwKBHRhZ3MYByADKAkSOQoKcHJvcGVydGllcxgIIAMoCzIlLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5PYmplY3RQcm9wZXJ0eRIwCgVsaW5rcxgJIAMoCzIhLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5PYmplY3RMaW5rEjQKB2FjdGlvbnMYCiADKAsyIy5tZWRhbGxpb24udGVybWluYWwudjEuT2JqZWN0QWN0aW9uQg4KDF9kZXNjcmlwdGlvbkIJCgdfc3RhdHVzQg0KC191cGRhdGVkX2F0IrsBCg5PYmplY3RQcm9wZXJ0eRILCgNrZXkYASABKAkSDQoFbGFiZWwYAiABKAkSJQoFdmFsdWUYAyABKAsyFi5nb29nbGUucHJvdG9idWYuVmFsdWUSEwoGZm9ybWF0GAQgASgJSACIAQESGAoLZGVzY3JpcHRpb24YBSABKAlIAYgBARISCgVncm91cBgGIAEoCUgCiAEBQgkKB19mb3JtYXRCDgoMX2Rlc2NyaXB0aW9uQggKBl9ncm91cCLmAQoKT2JqZWN0TGluaxIQCghyZWxhdGlvbhgBIAEoCRITCgt0YXJnZXRfdHlwZRgCIAEoCRIRCgl0YXJnZXRfaWQYAyABKAkSDQoFbGFiZWwYBCABKAkSEwoGc3RhdHVzGAUgASgJSACIAQESPwoHY29udGV4dBgGIAMoCzIuLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5PYmplY3RMaW5rLkNvbnRleHRFbnRyeRouCgxDb250ZXh0RW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4AUIJCgdfc3RhdHVzIs0BCgxPYmplY3RBY3Rpb24SCgoCaWQYASABKAkSDQoFbGFiZWwYAiABKAkSGAoLZGVzY3JpcHRpb24YAyABKAlIAIgBARISCgVzdHlsZRgEIAEoCUgBiAEBEg8KB2NvbmZpcm0YBSABKAgSLAoGcGFyYW1zGAYgASgLMhcuZ29vZ2xlLnByb3RvYnVmLlN0cnVjdEgCiAEBEhAKCGRpc2FibGVkGAcgASgIQg4KDF9kZXNjcmlwdGlvbkIICgZfc3R5bGVCCQoHX3BhcmFtcyJwCgxHcmFwaFBheWxvYWQSLwoFbm9kZXMYASADKAsyIC5tZWRhbGxpb24udGVybWluYWwudjEuR3JhcGhOb2RlEi8KBWVkZ2VzGAIgAygLMiAubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkdyYXBoRWRnZSLBAgoJR3JhcGhOb2RlEgoKAmlkGAEgASgJEg0KBWxhYmVsGAIgASgJEhEKBGtpbmQYAyABKAlIAIgBARITCgZzdGF0dXMYBCABKAlIAYgBARIVCghzdWJ0aXRsZRgFIAEoCUgCiAEBEgwKBHRhZ3MYBiADKAkSLgoIbWV0YWRhdGEYByABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAOIAQESPgoHY29udGV4dBgIIAMoCzItLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5HcmFwaE5vZGUuQ29udGV4dEVudHJ5Gi4KDENvbnRleHRFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBQgcKBV9raW5kQgkKB19zdGF0dXNCCwoJX3N1YnRpdGxlQgsKCV9tZXRhZGF0YSJ/CglHcmFwaEVkZ2USDAoEZnJvbRgBIAEoCRIKCgJ0bxgCIAEoCRISCgVsYWJlbBgDIAEoCUgAiAEBEhEKBGtpbmQYBCABKAlIAYgBARITCgZzdGF0dXMYBSABKAlIAogBAUIICgZfbGFiZWxCBwoFX2tpbmRCCQoHX3N0YXR1cyLmAQoRUmVwb3NpdG9yeVBheWxvYWQSEgoKcmVwb3NpdG9yeRgBIAEoCRILCgNyZWYYAiABKAkSDAoEcGF0aBgDIAEoCRIMCgRyZWZzGAQgAygJEjcKB2VudHJpZXMYBSADKAsyJi5tZWRhbGxpb24udGVybWluYWwudjEuUmVwb3NpdG9yeUVudHJ5EjgKBGZpbGUYBiABKAsyJS5tZWRhbGxpb24udGVybWluYWwudjEuUmVwb3NpdG9yeUZpbGVIAIgBARIQCgN1cmwYByABKAlIAYgBAUIHCgVfZmlsZUIGCgRfdXJsItsBCg9SZXBvc2l0b3J5RW50cnkSDAoEcGF0aBgBIAEoCRIMCgRuYW1lGAIgASgJEjgKBGtpbmQYAyABKA4yKi5tZWRhbGxpb24udGVybWluYWwudjEuUmVwb3NpdG9yeUVudHJ5S2luZBIVCghsYW5ndWFnZRgEIAEoCUgAiAEBEhcKCnNpemVfYnl0ZXMYBSABKANIAYgBARIXCgp1cGRhdGVkX2F0GAYgASgJSAKIAQFCCwoJX2xhbmd1YWdlQg0KC19zaXplX2J5dGVzQg0KC191cGRhdGVkX2F0IqgBCg5SZXBvc2l0b3J5RmlsZRIMCgRwYXRoGAEgASgJEg8KB2NvbnRlbnQYAiABKAkSFQoIbGFuZ3VhZ2UYAyABKAlIAIgBARIXCgpzaXplX2J5dGVzGAQgASgDSAGIAQESEQoJdHJ1bmNhdGVkGAUgASgIEhAKA3VybBgGIAEoCUgCiAEBQgsKCV9sYW5ndWFnZUINCgtfc2l6ZV9ieXRlc0IGCgRfdXJsKo0BCgpDb2x1bW5UeXBlEhsKF0NPTFVNTl9UWVBFX1VOU1BFQ0lGSUVEEAASFgoSQ09MVU1OX1RZUEVfU1RSSU5HEAESFgoSQ09MVU1OX1RZUEVfTlVNQkVSEAISFwoTQ09MVU1OX1RZUEVfQk9PTEVBThADEhkKFUNPTFVNTl9UWVBFX1RJTUVTVEFNUBAEKqABCgtFdmVudFN0YXR1cxIcChhFVkVOVF9TVEFUVVNfVU5TUEVDSUZJRUQQABITCg9FVkVOVF9TVEFUVVNfT0sQARIVChFFVkVOVF9TVEFUVVNfV0FSThACEhYKEkVWRU5UX1NUQVRVU19FUlJPUhADEhUKEUVWRU5UX1NUQVRVU19JTkZPEAQSGAoURVZFTlRfU1RBVFVTX1BFTkRJTkcQBSpTCglNZWRpYUtpbmQSGgoWTUVESUFfS0lORF9VTlNQRUNJRklFRBAAEhQKEE1FRElBX0tJTkRfSU1BR0UQARIUChBNRURJQV9LSU5EX1ZJREVPEAIqwAUKD1JlY29yZEZpZWxkVHlwZRIhCh1SRUNPUkRfRklFTERfVFlQRV9VTlNQRUNJRklFRBAAEhoKFlJFQ09SRF9GSUVMRF9UWVBFX1RFWFQQARIfChtSRUNPUkRfRklFTERfVFlQRV9MT05HX1RFWFQQAhIcChhSRUNPUkRfRklFTERfVFlQRV9OVU1CRVIQAxIeChpSRUNPUkRfRklFTERfVFlQRV9DVVJSRU5DWRAEEh0KGVJFQ09SRF9GSUVMRF9UWVBFX1BFUkNFTlQQBRIdChlSRUNPUkRfRklFTERfVFlQRV9CT09MRUFOEAYSGgoWUkVDT1JEX0ZJRUxEX1RZUEVfREFURRAHEh4KGlJFQ09SRF9GSUVMRF9UWVBFX0RBVEVUSU1FEAgSIwofUkVDT1JEX0ZJRUxEX1RZUEVfU0lOR0xFX1NFTEVDVBAJEiIKHlJFQ09SRF9GSUVMRF9UWVBFX01VTFRJX1NFTEVDVBAKEhoKFlJFQ09SRF9GSUVMRF9UWVBFX1VTRVIQCxIaChZSRUNPUkRfRklFTERfVFlQRV9MSU5LEAwSIAocUkVDT1JEX0ZJRUxEX1RZUEVfQVRUQUNITUVOVBANEhkKFVJFQ09SRF9GSUVMRF9UWVBFX1VSTBAOEhsKF1JFQ09SRF9GSUVMRF9UWVBFX0VNQUlMEA8SGwoXUkVDT1JEX0ZJRUxEX1RZUEVfUEhPTkUQEBIdChlSRUNPUkRfRklFTERfVFlQRV9GT1JNVUxBEBESHAoYUkVDT1JEX0ZJRUxEX1RZUEVfTE9PS1VQEBISHAoYUkVDT1JEX0ZJRUxEX1RZUEVfUk9MTFVQEBMSIAocUkVDT1JEX0ZJRUxEX1RZUEVfQ1JFQVRFRF9BVBAUEiAKHFJFQ09SRF9GSUVMRF9UWVBFX1VQREFURURfQVQQFSr7AQoOUmVjb3JkVmlld1R5cGUSIAocUkVDT1JEX1ZJRVdfVFlQRV9VTlNQRUNJRklFRBAAEhkKFVJFQ09SRF9WSUVXX1RZUEVfR1JJRBABEhoKFlJFQ09SRF9WSUVXX1RZUEVfQk9BUkQQAhIdChlSRUNPUkRfVklFV19UWVBFX0NBTEVOREFSEAMSHAoYUkVDT1JEX1ZJRVdfVFlQRV9HQUxMRVJZEAQSGQoVUkVDT1JEX1ZJRVdfVFlQRV9MSVNUEAUSHQoZUkVDT1JEX1ZJRVdfVFlQRV9USU1FTElORRAGEhkKFVJFQ09SRF9WSUVXX1RZUEVfRk9STRAHKqQBChNSZXBvc2l0b3J5RW50cnlLaW5kEiUKIVJFUE9TSVRPUllfRU5UUllfS0lORF9VTlNQRUNJRklFRBAAEh4KGlJFUE9TSVRPUllfRU5UUllfS0lORF9GSUxFEAESIwofUkVQT1NJVE9SWV9FTlRSWV9LSU5EX0RJUkVDVE9SWRACEiEKHVJFUE9TSVRPUllfRU5UUllfS0lORF9TWU1MSU5LEANiBnByb3RvMw", [file_google_protobuf_struct]);
 
 /**
  * --- Timeseries ---
@@ -2122,6 +2122,399 @@ export const GeoFeatureSchema: GenMessage<GeoFeature, {jsonType: GeoFeatureJson}
   messageDesc(file_medallion_terminal_v1_shapes, 24);
 
 /**
+ * --- Media Library ---
+ * Use for: authorized photo/video timelines, albums, campaign assets,
+ * inspection footage, creative libraries, and other visual archives.
+ *
+ * The payload carries presentation metadata and durable URLs only. Binary
+ * storage, upload, transcoding, search/indexing, sharing, retention, and
+ * authorization remain backend responsibilities. Video URLs should support
+ * HTTP Range requests so native players can seek efficiently.
+ *
+ * JSON example:
+ *   {
+ *     "items": [
+ *       {
+ *         "id": "media-104",
+ *         "title": "Warehouse walkthrough",
+ *         "kind": "MEDIA_KIND_VIDEO",
+ *         "url": "/media/warehouse-walkthrough.mp4",
+ *         "thumbnail_url": "/media/warehouse-walkthrough.jpg",
+ *         "captured_at": "2026-07-12T18:42:00Z",
+ *         "duration_seconds": 82,
+ *         "collection_ids": ["operations"],
+ *         "context": { "media_id": "media-104" }
+ *       }
+ *     ],
+ *     "collections": [
+ *       { "id": "operations", "name": "Operations" }
+ *     ]
+ *   }
+ *
+ * @generated from message medallion.terminal.v1.MediaPayload
+ */
+export type MediaPayload = Message<"medallion.terminal.v1.MediaPayload"> & {
+  /**
+   * @generated from field: repeated medallion.terminal.v1.MediaItem items = 1;
+   */
+  items: MediaItem[];
+
+  /**
+   * @generated from field: repeated medallion.terminal.v1.MediaCollection collections = 2;
+   */
+  collections: MediaCollection[];
+
+  /**
+   * Total matches before pagination/filtering, when known.
+   *
+   * @generated from field: optional int64 total = 3;
+   */
+  total?: bigint | undefined;
+
+  /**
+   * Opaque cursor for a subsequent page.
+   *
+   * @generated from field: optional string next_page_token = 4;
+   */
+  nextPageToken?: string | undefined;
+};
+
+/**
+ * --- Media Library ---
+ * Use for: authorized photo/video timelines, albums, campaign assets,
+ * inspection footage, creative libraries, and other visual archives.
+ *
+ * The payload carries presentation metadata and durable URLs only. Binary
+ * storage, upload, transcoding, search/indexing, sharing, retention, and
+ * authorization remain backend responsibilities. Video URLs should support
+ * HTTP Range requests so native players can seek efficiently.
+ *
+ * JSON example:
+ *   {
+ *     "items": [
+ *       {
+ *         "id": "media-104",
+ *         "title": "Warehouse walkthrough",
+ *         "kind": "MEDIA_KIND_VIDEO",
+ *         "url": "/media/warehouse-walkthrough.mp4",
+ *         "thumbnail_url": "/media/warehouse-walkthrough.jpg",
+ *         "captured_at": "2026-07-12T18:42:00Z",
+ *         "duration_seconds": 82,
+ *         "collection_ids": ["operations"],
+ *         "context": { "media_id": "media-104" }
+ *       }
+ *     ],
+ *     "collections": [
+ *       { "id": "operations", "name": "Operations" }
+ *     ]
+ *   }
+ *
+ * @generated from message medallion.terminal.v1.MediaPayload
+ */
+export type MediaPayloadJson = {
+  /**
+   * @generated from field: repeated medallion.terminal.v1.MediaItem items = 1;
+   */
+  items?: MediaItemJson[];
+
+  /**
+   * @generated from field: repeated medallion.terminal.v1.MediaCollection collections = 2;
+   */
+  collections?: MediaCollectionJson[];
+
+  /**
+   * Total matches before pagination/filtering, when known.
+   *
+   * @generated from field: optional int64 total = 3;
+   */
+  total?: string;
+
+  /**
+   * Opaque cursor for a subsequent page.
+   *
+   * @generated from field: optional string next_page_token = 4;
+   */
+  nextPageToken?: string;
+};
+
+/**
+ * Describes the message medallion.terminal.v1.MediaPayload.
+ * Use `create(MediaPayloadSchema)` to create a new message.
+ */
+export const MediaPayloadSchema: GenMessage<MediaPayload, {jsonType: MediaPayloadJson}> = /*@__PURE__*/
+  messageDesc(file_medallion_terminal_v1_shapes, 25);
+
+/**
+ * @generated from message medallion.terminal.v1.MediaItem
+ */
+export type MediaItem = Message<"medallion.terminal.v1.MediaItem"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string title = 2;
+   */
+  title: string;
+
+  /**
+   * @generated from field: medallion.terminal.v1.MediaKind kind = 3;
+   */
+  kind: MediaKind;
+
+  /**
+   * Authorized original/playback URL.
+   *
+   * @generated from field: string url = 4;
+   */
+  url: string;
+
+  /**
+   * Small preview/poster URL. Recommended for videos and large originals.
+   *
+   * @generated from field: optional string thumbnail_url = 5;
+   */
+  thumbnailUrl?: string | undefined;
+
+  /**
+   * @generated from field: optional string description = 6;
+   */
+  description?: string | undefined;
+
+  /**
+   * ISO 8601 capture and ingest timestamps.
+   *
+   * @generated from field: optional string captured_at = 7;
+   */
+  capturedAt?: string | undefined;
+
+  /**
+   * @generated from field: optional string created_at = 8;
+   */
+  createdAt?: string | undefined;
+
+  /**
+   * @generated from field: optional string content_type = 9;
+   */
+  contentType?: string | undefined;
+
+  /**
+   * @generated from field: optional uint32 width = 10;
+   */
+  width?: number | undefined;
+
+  /**
+   * @generated from field: optional uint32 height = 11;
+   */
+  height?: number | undefined;
+
+  /**
+   * @generated from field: optional double duration_seconds = 12;
+   */
+  durationSeconds?: number | undefined;
+
+  /**
+   * @generated from field: bool favorite = 13;
+   */
+  favorite: boolean;
+
+  /**
+   * @generated from field: repeated string tags = 14;
+   */
+  tags: string[];
+
+  /**
+   * @generated from field: repeated string collection_ids = 15;
+   */
+  collectionIds: string[];
+
+  /**
+   * @generated from field: optional google.protobuf.Struct metadata = 16;
+   */
+  metadata?: JsonObject | undefined;
+
+  /**
+   * Applied when the item is selected.
+   *
+   * @generated from field: map<string, string> context = 17;
+   */
+  context: { [key: string]: string };
+};
+
+/**
+ * @generated from message medallion.terminal.v1.MediaItem
+ */
+export type MediaItemJson = {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id?: string;
+
+  /**
+   * @generated from field: string title = 2;
+   */
+  title?: string;
+
+  /**
+   * @generated from field: medallion.terminal.v1.MediaKind kind = 3;
+   */
+  kind?: MediaKindJson;
+
+  /**
+   * Authorized original/playback URL.
+   *
+   * @generated from field: string url = 4;
+   */
+  url?: string;
+
+  /**
+   * Small preview/poster URL. Recommended for videos and large originals.
+   *
+   * @generated from field: optional string thumbnail_url = 5;
+   */
+  thumbnailUrl?: string;
+
+  /**
+   * @generated from field: optional string description = 6;
+   */
+  description?: string;
+
+  /**
+   * ISO 8601 capture and ingest timestamps.
+   *
+   * @generated from field: optional string captured_at = 7;
+   */
+  capturedAt?: string;
+
+  /**
+   * @generated from field: optional string created_at = 8;
+   */
+  createdAt?: string;
+
+  /**
+   * @generated from field: optional string content_type = 9;
+   */
+  contentType?: string;
+
+  /**
+   * @generated from field: optional uint32 width = 10;
+   */
+  width?: number;
+
+  /**
+   * @generated from field: optional uint32 height = 11;
+   */
+  height?: number;
+
+  /**
+   * @generated from field: optional double duration_seconds = 12;
+   */
+  durationSeconds?: number | "NaN" | "Infinity" | "-Infinity";
+
+  /**
+   * @generated from field: bool favorite = 13;
+   */
+  favorite?: boolean;
+
+  /**
+   * @generated from field: repeated string tags = 14;
+   */
+  tags?: string[];
+
+  /**
+   * @generated from field: repeated string collection_ids = 15;
+   */
+  collectionIds?: string[];
+
+  /**
+   * @generated from field: optional google.protobuf.Struct metadata = 16;
+   */
+  metadata?: StructJson;
+
+  /**
+   * Applied when the item is selected.
+   *
+   * @generated from field: map<string, string> context = 17;
+   */
+  context?: { [key: string]: string };
+};
+
+/**
+ * Describes the message medallion.terminal.v1.MediaItem.
+ * Use `create(MediaItemSchema)` to create a new message.
+ */
+export const MediaItemSchema: GenMessage<MediaItem, {jsonType: MediaItemJson}> = /*@__PURE__*/
+  messageDesc(file_medallion_terminal_v1_shapes, 26);
+
+/**
+ * @generated from message medallion.terminal.v1.MediaCollection
+ */
+export type MediaCollection = Message<"medallion.terminal.v1.MediaCollection"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * @generated from field: optional string cover_url = 3;
+   */
+  coverUrl?: string | undefined;
+
+  /**
+   * @generated from field: optional int64 item_count = 4;
+   */
+  itemCount?: bigint | undefined;
+
+  /**
+   * @generated from field: map<string, string> context = 5;
+   */
+  context: { [key: string]: string };
+};
+
+/**
+ * @generated from message medallion.terminal.v1.MediaCollection
+ */
+export type MediaCollectionJson = {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id?: string;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name?: string;
+
+  /**
+   * @generated from field: optional string cover_url = 3;
+   */
+  coverUrl?: string;
+
+  /**
+   * @generated from field: optional int64 item_count = 4;
+   */
+  itemCount?: string;
+
+  /**
+   * @generated from field: map<string, string> context = 5;
+   */
+  context?: { [key: string]: string };
+};
+
+/**
+ * Describes the message medallion.terminal.v1.MediaCollection.
+ * Use `create(MediaCollectionSchema)` to create a new message.
+ */
+export const MediaCollectionSchema: GenMessage<MediaCollection, {jsonType: MediaCollectionJson}> = /*@__PURE__*/
+  messageDesc(file_medallion_terminal_v1_shapes, 27);
+
+/**
  * --- Embed ---
  * Use for: pointing the `image` or `iframe` widget at a URL that
  * changes with context. Lets a Connect backend swap an AI-generated
@@ -2206,7 +2599,7 @@ export type EmbedPayloadJson = {
  * Use `create(EmbedPayloadSchema)` to create a new message.
  */
 export const EmbedPayloadSchema: GenMessage<EmbedPayload, {jsonType: EmbedPayloadJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 25);
+  messageDesc(file_medallion_terminal_v1_shapes, 28);
 
 /**
  * --- Text ---
@@ -2255,7 +2648,7 @@ export type TextPayloadJson = {
  * Use `create(TextPayloadSchema)` to create a new message.
  */
 export const TextPayloadSchema: GenMessage<TextPayload, {jsonType: TextPayloadJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 26);
+  messageDesc(file_medallion_terminal_v1_shapes, 29);
 
 /**
  * @generated from message medallion.terminal.v1.TextItem
@@ -2368,7 +2761,7 @@ export type TextItemJson = {
  * Use `create(TextItemSchema)` to create a new message.
  */
 export const TextItemSchema: GenMessage<TextItem, {jsonType: TextItemJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 27);
+  messageDesc(file_medallion_terminal_v1_shapes, 30);
 
 /**
  * --- Asset Catalog ---
@@ -2465,7 +2858,7 @@ export type AssetCatalogPayloadJson = {
  * Use `create(AssetCatalogPayloadSchema)` to create a new message.
  */
 export const AssetCatalogPayloadSchema: GenMessage<AssetCatalogPayload, {jsonType: AssetCatalogPayloadJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 28);
+  messageDesc(file_medallion_terminal_v1_shapes, 31);
 
 /**
  * @generated from message medallion.terminal.v1.AssetCatalogItem
@@ -2632,7 +3025,7 @@ export type AssetCatalogItemJson = {
  * Use `create(AssetCatalogItemSchema)` to create a new message.
  */
 export const AssetCatalogItemSchema: GenMessage<AssetCatalogItem, {jsonType: AssetCatalogItemJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 29);
+  messageDesc(file_medallion_terminal_v1_shapes, 32);
 
 /**
  * --- Record Set / Work Management ---
@@ -2859,7 +3252,7 @@ export type RecordSetPayloadJson = {
  * Use `create(RecordSetPayloadSchema)` to create a new message.
  */
 export const RecordSetPayloadSchema: GenMessage<RecordSetPayload, {jsonType: RecordSetPayloadJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 30);
+  messageDesc(file_medallion_terminal_v1_shapes, 33);
 
 /**
  * @generated from message medallion.terminal.v1.WorkRecord
@@ -2948,7 +3341,7 @@ export type WorkRecordJson = {
  * Use `create(WorkRecordSchema)` to create a new message.
  */
 export const WorkRecordSchema: GenMessage<WorkRecord, {jsonType: WorkRecordJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 31);
+  messageDesc(file_medallion_terminal_v1_shapes, 34);
 
 /**
  * @generated from message medallion.terminal.v1.RecordField
@@ -3085,7 +3478,7 @@ export type RecordFieldJson = {
  * Use `create(RecordFieldSchema)` to create a new message.
  */
 export const RecordFieldSchema: GenMessage<RecordField, {jsonType: RecordFieldJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 32);
+  messageDesc(file_medallion_terminal_v1_shapes, 35);
 
 /**
  * @generated from message medallion.terminal.v1.RecordChoice
@@ -3136,7 +3529,7 @@ export type RecordChoiceJson = {
  * Use `create(RecordChoiceSchema)` to create a new message.
  */
 export const RecordChoiceSchema: GenMessage<RecordChoice, {jsonType: RecordChoiceJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 33);
+  messageDesc(file_medallion_terminal_v1_shapes, 36);
 
 /**
  * @generated from message medallion.terminal.v1.RecordView
@@ -3247,7 +3640,7 @@ export type RecordViewJson = {
  * Use `create(RecordViewSchema)` to create a new message.
  */
 export const RecordViewSchema: GenMessage<RecordView, {jsonType: RecordViewJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 34);
+  messageDesc(file_medallion_terminal_v1_shapes, 37);
 
 /**
  * @generated from message medallion.terminal.v1.RecordSort
@@ -3284,7 +3677,7 @@ export type RecordSortJson = {
  * Use `create(RecordSortSchema)` to create a new message.
  */
 export const RecordSortSchema: GenMessage<RecordSort, {jsonType: RecordSortJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 35);
+  messageDesc(file_medallion_terminal_v1_shapes, 38);
 
 /**
  * @generated from message medallion.terminal.v1.RecordFilter
@@ -3337,7 +3730,7 @@ export type RecordFilterJson = {
  * Use `create(RecordFilterSchema)` to create a new message.
  */
 export const RecordFilterSchema: GenMessage<RecordFilter, {jsonType: RecordFilterJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 36);
+  messageDesc(file_medallion_terminal_v1_shapes, 39);
 
 /**
  * @generated from message medallion.terminal.v1.RecordCapabilities
@@ -3414,7 +3807,7 @@ export type RecordCapabilitiesJson = {
  * Use `create(RecordCapabilitiesSchema)` to create a new message.
  */
 export const RecordCapabilitiesSchema: GenMessage<RecordCapabilities, {jsonType: RecordCapabilitiesJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 37);
+  messageDesc(file_medallion_terminal_v1_shapes, 40);
 
 /**
  * --- Semantic Object ---
@@ -3569,7 +3962,7 @@ export type ObjectPayloadJson = {
  * Use `create(ObjectPayloadSchema)` to create a new message.
  */
 export const ObjectPayloadSchema: GenMessage<ObjectPayload, {jsonType: ObjectPayloadJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 38);
+  messageDesc(file_medallion_terminal_v1_shapes, 41);
 
 /**
  * @generated from message medallion.terminal.v1.ObjectProperty
@@ -3660,7 +4053,7 @@ export type ObjectPropertyJson = {
  * Use `create(ObjectPropertySchema)` to create a new message.
  */
 export const ObjectPropertySchema: GenMessage<ObjectProperty, {jsonType: ObjectPropertyJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 39);
+  messageDesc(file_medallion_terminal_v1_shapes, 42);
 
 /**
  * @generated from message medallion.terminal.v1.ObjectLink
@@ -3743,7 +4136,7 @@ export type ObjectLinkJson = {
  * Use `create(ObjectLinkSchema)` to create a new message.
  */
 export const ObjectLinkSchema: GenMessage<ObjectLink, {jsonType: ObjectLinkJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 40);
+  messageDesc(file_medallion_terminal_v1_shapes, 43);
 
 /**
  * @generated from message medallion.terminal.v1.ObjectAction
@@ -3846,7 +4239,7 @@ export type ObjectActionJson = {
  * Use `create(ObjectActionSchema)` to create a new message.
  */
 export const ObjectActionSchema: GenMessage<ObjectAction, {jsonType: ObjectActionJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 41);
+  messageDesc(file_medallion_terminal_v1_shapes, 44);
 
 /**
  * --- Directed Graph ---
@@ -3897,7 +4290,7 @@ export type GraphPayloadJson = {
  * Use `create(GraphPayloadSchema)` to create a new message.
  */
 export const GraphPayloadSchema: GenMessage<GraphPayload, {jsonType: GraphPayloadJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 42);
+  messageDesc(file_medallion_terminal_v1_shapes, 45);
 
 /**
  * @generated from message medallion.terminal.v1.GraphNode
@@ -3994,7 +4387,7 @@ export type GraphNodeJson = {
  * Use `create(GraphNodeSchema)` to create a new message.
  */
 export const GraphNodeSchema: GenMessage<GraphNode, {jsonType: GraphNodeJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 43);
+  messageDesc(file_medallion_terminal_v1_shapes, 46);
 
 /**
  * @generated from message medallion.terminal.v1.GraphEdge
@@ -4061,7 +4454,7 @@ export type GraphEdgeJson = {
  * Use `create(GraphEdgeSchema)` to create a new message.
  */
 export const GraphEdgeSchema: GenMessage<GraphEdge, {jsonType: GraphEdgeJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 44);
+  messageDesc(file_medallion_terminal_v1_shapes, 47);
 
 /**
  * --- Code Repository ---
@@ -4164,7 +4557,7 @@ export type RepositoryPayloadJson = {
  * Use `create(RepositoryPayloadSchema)` to create a new message.
  */
 export const RepositoryPayloadSchema: GenMessage<RepositoryPayload, {jsonType: RepositoryPayloadJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 45);
+  messageDesc(file_medallion_terminal_v1_shapes, 48);
 
 /**
  * @generated from message medallion.terminal.v1.RepositoryEntry
@@ -4241,7 +4634,7 @@ export type RepositoryEntryJson = {
  * Use `create(RepositoryEntrySchema)` to create a new message.
  */
 export const RepositoryEntrySchema: GenMessage<RepositoryEntry, {jsonType: RepositoryEntryJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 46);
+  messageDesc(file_medallion_terminal_v1_shapes, 49);
 
 /**
  * @generated from message medallion.terminal.v1.RepositoryFile
@@ -4322,7 +4715,7 @@ export type RepositoryFileJson = {
  * Use `create(RepositoryFileSchema)` to create a new message.
  */
 export const RepositoryFileSchema: GenMessage<RepositoryFile, {jsonType: RepositoryFileJson}> = /*@__PURE__*/
-  messageDesc(file_medallion_terminal_v1_shapes, 47);
+  messageDesc(file_medallion_terminal_v1_shapes, 50);
 
 /**
  * @generated from enum medallion.terminal.v1.ColumnType
@@ -4410,6 +4803,37 @@ export type EventStatusJson = "EVENT_STATUS_UNSPECIFIED" | "EVENT_STATUS_OK" | "
  */
 export const EventStatusSchema: GenEnum<EventStatus, EventStatusJson> = /*@__PURE__*/
   enumDesc(file_medallion_terminal_v1_shapes, 1);
+
+/**
+ * @generated from enum medallion.terminal.v1.MediaKind
+ */
+export enum MediaKind {
+  /**
+   * @generated from enum value: MEDIA_KIND_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: MEDIA_KIND_IMAGE = 1;
+   */
+  IMAGE = 1,
+
+  /**
+   * @generated from enum value: MEDIA_KIND_VIDEO = 2;
+   */
+  VIDEO = 2,
+}
+
+/**
+ * @generated from enum medallion.terminal.v1.MediaKind
+ */
+export type MediaKindJson = "MEDIA_KIND_UNSPECIFIED" | "MEDIA_KIND_IMAGE" | "MEDIA_KIND_VIDEO";
+
+/**
+ * Describes the enum medallion.terminal.v1.MediaKind.
+ */
+export const MediaKindSchema: GenEnum<MediaKind, MediaKindJson> = /*@__PURE__*/
+  enumDesc(file_medallion_terminal_v1_shapes, 2);
 
 /**
  * @generated from enum medallion.terminal.v1.RecordFieldType
@@ -4535,7 +4959,7 @@ export type RecordFieldTypeJson = "RECORD_FIELD_TYPE_UNSPECIFIED" | "RECORD_FIEL
  * Describes the enum medallion.terminal.v1.RecordFieldType.
  */
 export const RecordFieldTypeSchema: GenEnum<RecordFieldType, RecordFieldTypeJson> = /*@__PURE__*/
-  enumDesc(file_medallion_terminal_v1_shapes, 2);
+  enumDesc(file_medallion_terminal_v1_shapes, 3);
 
 /**
  * @generated from enum medallion.terminal.v1.RecordViewType
@@ -4591,7 +5015,7 @@ export type RecordViewTypeJson = "RECORD_VIEW_TYPE_UNSPECIFIED" | "RECORD_VIEW_T
  * Describes the enum medallion.terminal.v1.RecordViewType.
  */
 export const RecordViewTypeSchema: GenEnum<RecordViewType, RecordViewTypeJson> = /*@__PURE__*/
-  enumDesc(file_medallion_terminal_v1_shapes, 3);
+  enumDesc(file_medallion_terminal_v1_shapes, 4);
 
 /**
  * @generated from enum medallion.terminal.v1.RepositoryEntryKind
@@ -4627,5 +5051,5 @@ export type RepositoryEntryKindJson = "REPOSITORY_ENTRY_KIND_UNSPECIFIED" | "REP
  * Describes the enum medallion.terminal.v1.RepositoryEntryKind.
  */
 export const RepositoryEntryKindSchema: GenEnum<RepositoryEntryKind, RepositoryEntryKindJson> = /*@__PURE__*/
-  enumDesc(file_medallion_terminal_v1_shapes, 4);
+  enumDesc(file_medallion_terminal_v1_shapes, 5);
 
