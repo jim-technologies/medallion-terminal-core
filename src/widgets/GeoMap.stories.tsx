@@ -93,3 +93,23 @@ export const TablePoints: Story = {
     ],
   },
 }
+
+export const OpenFreeMapDark: Story = {
+  args: {
+    ...FleetAndTerritory.args,
+    options: {
+      feature_context: { key: 'asset_id', label_key: 'asset_label' },
+      basemap: 'openfreemap-dark',
+    },
+  },
+}
+
+export const VersaTilesEclipse: Story = {
+  args: {
+    ...FleetAndTerritory.args,
+    options: {
+      feature_context: { key: 'asset_id', label_key: 'asset_label' },
+      basemap: 'versatiles-eclipse',
+    },
+  },
+}

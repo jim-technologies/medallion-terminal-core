@@ -103,6 +103,46 @@ describe('validateTemplate', () => {
     expect(issues[0]).toMatchObject({ severity: 'error', path: 'widgets[0].refresh_policy' })
   })
 
+  it('validates the normalized geo_map basemap contract', () => {
+    const valid: Template = {
+      widgets: [{
+        component: 'geo_map',
+        options: { basemap: 'openfreemap-dark' },
+        source: { inline: { features: [] } },
+      }],
+    }
+    expect(validateTemplate(valid)).toEqual([])
+
+    const unknown: Template = {
+      widgets: [{
+        component: 'geo_map',
+        options: { basemap: 'unknown-provider' },
+        source: { inline: { features: [] } },
+      }],
+    }
+    expect(validateTemplate(unknown)).toContainEqual({
+      path: 'widgets[0].options.basemap',
+      severity: 'error',
+      message: expect.stringContaining('unknown basemap preset'),
+    })
+
+    const ambiguous: Template = {
+      widgets: [{
+        component: 'geo_map',
+        options: {
+          basemap: 'openfreemap-dark',
+          style_url: 'https://maps.example.com/style.json',
+        },
+        source: { inline: { features: [] } },
+      }],
+    }
+    expect(validateTemplate(ambiguous)).toContainEqual({
+      path: 'widgets[0].options.basemap',
+      severity: 'error',
+      message: expect.stringContaining('mutually exclusive'),
+    })
+  })
+
   // Drift guard. If a widget is added to WidgetRegistry but forgotten in
   // BUILTIN_COMPONENTS (or vice versa), authors get a spurious "unknown
   // component" warning at runtime. Catch the divergence at test time.

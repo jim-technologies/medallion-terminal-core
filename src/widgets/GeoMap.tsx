@@ -3,9 +3,13 @@ import type {
   GeoJSONSource,
   Map as MapLibreMap,
   MapLayerMouseEvent,
-  StyleSpecification,
 } from 'maplibre-gl'
 import { useDashboard } from '../core/DashboardContext'
+import {
+  basemapStyle,
+  normalizeBasemap,
+  type BasemapConfig,
+} from '../maps/basemaps'
 import type { WidgetProps } from '../types/template'
 import {
   geoBounds,
@@ -17,9 +21,12 @@ import {
 } from './geoShape'
 import { Empty } from './states'
 
-interface GeoMapOptions {
-  // Host-owned MapLibre style endpoint. Omit for the no-network analytical
-  // grid, useful for private environments and inline operational overlays.
+export interface GeoMapOptions {
+  // Canonical swappable basemap contract. Omit for the network-free
+  // analytical grid.
+  basemap?: BasemapConfig
+  // Legacy shorthand for { kind: 'style', url }. Kept for compatibility;
+  // new templates should use basemap so every provider follows one contract.
   style_url?: string
   fit?: boolean
   fit_on_update?: boolean
@@ -57,6 +64,19 @@ const INTERACTIVE_LAYERS = [POINT_LAYER, LINE_LAYER, FILL_LAYER]
 export function GeoMap({ data, options }: WidgetProps) {
   const collection = useMemo(() => normalizeGeoData(data), [data])
   const opts = (options ?? {}) as GeoMapOptions
+  const basemapResolution = useMemo(() => {
+    try {
+      return {
+        value: normalizeBasemap(opts.basemap, opts.style_url),
+        error: null,
+      }
+    } catch (reason) {
+      return {
+        value: null,
+        error: reason instanceof Error ? reason.message : 'Invalid basemap configuration',
+      }
+    }
+  }, [opts.basemap, opts.style_url])
   const { setCtx } = useDashboard()
   const hasCollection = collection !== null
   const containerRef = useRef<HTMLDivElement>(null)
@@ -71,7 +91,8 @@ export function GeoMap({ data, options }: WidgetProps) {
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container || !collection) return
+    const resolvedBasemap = basemapResolution.value
+    if (!container || !collection || !resolvedBasemap) return
     let disposed = false
     let map: MapLibreMap | null = null
     setReady(false)
@@ -84,7 +105,7 @@ export function GeoMap({ data, options }: WidgetProps) {
         const colors = readThemeColors(container)
         map = new maplibre.Map({
           container,
-          style: opts.style_url ?? blankStyle(colors),
+          style: basemapStyle(resolvedBasemap, colors.bg),
           center: opts.center ?? [0, 20],
           zoom: opts.zoom ?? 1,
           // Keep attribution visible. Host-provided styles may add required
@@ -99,7 +120,7 @@ export function GeoMap({ data, options }: WidgetProps) {
 
         map.on('load', () => {
           if (disposed || !map) return
-          installGrid(map, colors)
+          if (resolvedBasemap.kind === 'analytical') installGrid(map, colors)
           const current = collectionRef.current
           if (current) {
             installFeatures(map, current, colors)
@@ -161,7 +182,7 @@ export function GeoMap({ data, options }: WidgetProps) {
     // map for every stream tick would discard camera state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    opts.style_url,
+    basemapResolution.value?.cache_key,
     opts.center?.[0],
     opts.center?.[1],
     opts.zoom,
@@ -183,6 +204,7 @@ export function GeoMap({ data, options }: WidgetProps) {
 
   if (!collection) return <Empty>No geospatial features</Empty>
 
+  const visibleError = basemapResolution.error ?? error
   const fit = () => {
     const map = mapRef.current
     if (map) fitCollection(map, collection, opts)
@@ -195,14 +217,14 @@ export function GeoMap({ data, options }: WidgetProps) {
       aria-label="Geospatial map"
     >
       <div ref={containerRef} className="mtc-geo-map absolute inset-0" />
-      {!ready && !error && (
+      {!ready && !visibleError && (
         <div className="absolute inset-0 grid place-items-center bg-zinc-950/60 text-xs text-zinc-500">
           Loading map…
         </div>
       )}
-      {error && (
+      {visibleError && (
         <div className="absolute inset-0 grid place-items-center bg-zinc-950/85 px-6 text-center text-xs text-red-400">
-          {error}
+          {visibleError}
         </div>
       )}
       <div className="absolute right-2 top-2 flex flex-col overflow-hidden rounded border border-zinc-700 bg-zinc-950/85 shadow">
@@ -364,18 +386,6 @@ function fitCollection(
     maxZoom: options.max_zoom ?? 12,
     duration: 300,
   })
-}
-
-function blankStyle(colors: ThemeColors): StyleSpecification {
-  return {
-    version: 8,
-    sources: {},
-    layers: [{
-      id: 'mtc-background',
-      type: 'background',
-      paint: { 'background-color': colors.bg },
-    }],
-  }
 }
 
 function graticule(): GeoFeatureCollection {

@@ -251,13 +251,70 @@ Toolbar prev/next + the keyboard arrows walk the same navigable queue. Audio/vid
 
 Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus chart variants (`bar_chart`, `area_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `treemap`, `sparkline`, `dag`, `geo_map`, `depth_chart`, `volume_profile`).
 
-`geo_map` uses MapLibre GL JS 5.24. With no `options.style_url` it renders a
-network-free analytical coordinate grid, which is suitable for private
-overlays. Set `style_url` to a host-controlled MapLibre style for a full
-basemap; untrusted templates must pass that origin through
-`TemplateTrustPolicy.allowedUrlOrigins`. The canonical `GeoPayload` carries
-GeoJSON geometry in each feature, while inline and URL sources may provide a
-raw GeoJSON `FeatureCollection`.
+`geo_map` uses MapLibre GL JS 5.24 and one provider-neutral `basemap`
+contract. With no basemap configuration it renders the network-free
+`analytical` coordinate grid, which is suitable for private overlays.
+Curated public presets are opt-in:
+
+| Preset | Provider | Character |
+|--------|----------|-----------|
+| `openfreemap-dark` | [OpenFreeMap](https://openfreemap.org/) | Professional dark |
+| `openfreemap-liberty` | OpenFreeMap | Balanced general-purpose |
+| `openfreemap-positron` | OpenFreeMap | Quiet light |
+| `versatiles-eclipse` | [VersaTiles](https://versatiles.org/) | Professional dark |
+| `versatiles-graybeard` | VersaTiles | Neutral grayscale |
+
+```jsonc
+// Swap a public preset with one template value.
+{ "options": { "basemap": "openfreemap-dark" } }
+
+// Any hosted or self-hosted MapLibre style.
+{ "options": {
+    "basemap": {
+      "kind": "style",
+      "url": "https://maps.example.com/styles/operator.json"
+    }
+} }
+
+// Any XYZ/TMS raster provider; normalized to a MapLibre style internally.
+{ "options": {
+    "basemap": {
+      "kind": "raster",
+      "tiles": ["https://maps.example.com/{z}/{x}/{y}.png"],
+      "attribution": "Map data © provider",
+      "tile_size": 256,
+      "max_zoom": 19
+    }
+} }
+```
+
+OpenFreeMap and VersaTiles currently provide free, no-key public services and
+self-hosting paths. Their public instances are external, best-effort
+dependencies rather than an SDK availability guarantee; production hosts can
+swap to their own style/tile endpoints without changing `geo_map`. The legacy
+`options.style_url` shorthand remains supported, but new templates should use
+`basemap`.
+
+Untrusted templates must explicitly opt into network presets:
+
+```ts
+const policy: TemplateTrustPolicy = {
+  ...DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
+  allowedBasemapPresets: ['openfreemap-dark', 'versatiles-eclipse'],
+  allowedUrlOrigins: ['https://maps.example.com'], // custom style/raster
+}
+```
+
+Allowing a custom style endpoint also trusts the tile, sprite, and glyph URLs
+declared by that style document; keep those styles host-controlled for
+customer-authored or AI-generated templates.
+
+Every form passes through the exported `normalizeBasemap()` function and
+becomes a MapLibre style input; provider-specific branches never enter the
+widget. `BASEMAP_PRESETS` exposes labels, providers, endpoints, and
+self-hosting documentation for host-side pickers. The canonical `GeoPayload`
+carries GeoJSON geometry in each feature, while inline and URL sources may
+provide a raw GeoJSON `FeatureCollection`.
 
 `action_form` keeps product-specific writes out of the core. Templates declare
 typed fields (`text`, `long_text`, `number`, `boolean`, `select`,

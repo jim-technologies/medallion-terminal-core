@@ -134,7 +134,9 @@ Proto-defined in `proto/medallion/terminal/v1/shapes.proto`. Widgets accept both
 - `geo_map`: canonical `{features: [{id, label?, geometry, value?, status?,
   metadata?, context?}]}`, raw GeoJSON `FeatureCollection`, or point rows with
   `lat`/`lon`. `geometry` follows GeoJSON Point/MultiPoint/LineString/
-  MultiLineString/Polygon/MultiPolygon.
+  MultiLineString/Polygon/MultiPolygon. `options.basemap` is the single map
+  provider contract: a curated preset, `{kind: "style", url}`, or generic
+  `{kind: "raster", tiles}`. Omit it for the network-free analytical grid.
 - `media_gallery`: `{items: [{id, title, kind, url, thumbnail_url?,
   captured_at?, created_at?, width?, height?, duration_seconds?, favorite?,
   tags?, collection_ids?, metadata?, context?}], collections?, total?,

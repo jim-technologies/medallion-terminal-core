@@ -86,6 +86,7 @@ export { Boxplot } from './widgets/Boxplot'
 export { Radar } from './widgets/Radar'
 export { Dag } from './widgets/Dag'
 export { GeoMap } from './widgets/GeoMap'
+export type { GeoMapOptions } from './widgets/GeoMap'
 export { MediaGallery } from './widgets/MediaGallery'
 export { MultiSelect } from './widgets/MultiSelect'
 export { Json } from './widgets/Json'
@@ -159,6 +160,27 @@ export type {
   GeoFeatureCollection,
   GeoBounds,
 } from './widgets/geoShape'
+export {
+  BASEMAP_PRESETS,
+  BASEMAP_PRESET_IDS,
+  isBasemapPresetId,
+  normalizeBasemap,
+  basemapNetworkUrls,
+  basemapStyle,
+} from './maps/basemaps'
+export type {
+  BasemapPresetDefinition,
+  BasemapPresetId,
+  PresetBasemapConfig,
+  StyleBasemapConfig,
+  RasterBasemapConfig,
+  BasemapConfig,
+  NormalizedAnalyticalBasemap,
+  NormalizedStyleBasemap,
+  NormalizedRasterBasemap,
+  NormalizedBasemap,
+  MapLibreBasemapStyle,
+} from './maps/basemaps'
 export {
   normalizeMediaLibrary,
   sortMediaItems,

@@ -1,4 +1,5 @@
 import type { Template } from '../types/template';
+import { type BasemapPresetId } from '../maps/basemaps';
 export type TemplateSecuritySeverity = 'error' | 'warn';
 export interface TemplateSecurityIssue {
     path: string;
@@ -14,6 +15,7 @@ export interface TemplateTrustPolicy {
     allowedUrlOrigins?: readonly string[];
     allowedIframeOrigins?: readonly string[];
     allowRelativeUrls?: boolean;
+    allowedBasemapPresets?: readonly BasemapPresetId[];
     allowedHeaders?: readonly string[];
     disallowedHeaders?: readonly string[];
     minRefreshIntervalMs?: number;
@@ -26,6 +28,7 @@ export declare const DEFAULT_IFRAME_SANDBOX_DISALLOWED_TOKENS: readonly ['allow-
 export declare const DEFAULT_UNTRUSTED_TEMPLATE_POLICY: {
     readonly allowRelativeUrls: true;
     readonly allowedUrlOrigins: readonly [];
+    readonly allowedBasemapPresets: readonly [];
     readonly disallowedHeaders: readonly ["authorization", "cookie", "proxy-authorization", "set-cookie", "x-api-key", "x-auth-token", "x-csrf-token", "x-xsrf-token"];
     readonly minRefreshIntervalMs: 1000;
     readonly iframeSandbox: {

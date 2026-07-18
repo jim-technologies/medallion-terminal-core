@@ -143,6 +143,86 @@ describe('validateTemplateTrust', () => {
     })
   })
 
+  it('requires explicit opt-in for curated network basemap presets', () => {
+    const template: Template = {
+      widgets: [{
+        component: 'geo_map',
+        options: { basemap: 'openfreemap-dark' },
+        source: { inline: { features: [] } },
+      }],
+    }
+
+    expect(validateTemplateTrust(template, policy)).toContainEqual({
+      path: 'widgets[0].options.basemap',
+      severity: 'error',
+      message: 'basemap preset "openfreemap-dark" is not allowed by host policy',
+    })
+    expect(validateTemplateTrust(template, {
+      ...policy,
+      allowedBasemapPresets: ['openfreemap-dark'],
+    })).toEqual([])
+  })
+
+  it('always permits the network-free basemap preset', () => {
+    const template: Template = {
+      widgets: [{
+        component: 'geo_map',
+        options: { basemap: 'analytical' },
+        source: { inline: { features: [] } },
+      }],
+    }
+    expect(validateTemplateTrust(template, policy)).toEqual([])
+  })
+
+  it('validates custom style and raster basemap URLs', () => {
+    const allowed: Template = {
+      widgets: [
+        {
+          component: 'geo_map',
+          options: {
+            basemap: {
+              kind: 'style',
+              url: 'https://api.example.com/maps/style.json',
+            },
+          },
+          source: { inline: { features: [] } },
+        },
+        {
+          component: 'geo_map',
+          options: {
+            basemap: {
+              kind: 'raster',
+              tiles: ['/maps/{z}/{x}/{y}.png'],
+            },
+          },
+          source: { inline: { features: [] } },
+        },
+      ],
+    }
+    expect(validateTemplateTrust(allowed, policy)).toEqual([])
+
+    const blocked: Template = {
+      widgets: [{
+        component: 'geo_map',
+        options: {
+          basemap: {
+            kind: 'raster',
+            tiles: [
+              'https://api.example.com/maps/{z}/{x}/{y}.png',
+              'https://tiles.example.net/{z}/{x}/{y}.png',
+            ],
+          },
+        },
+        source: { inline: { features: [] } },
+      }],
+    }
+    expect(validateTemplateTrust(blocked, policy)).toContainEqual({
+      path: 'widgets[0].options.basemap.tiles[1]',
+      severity: 'error',
+      message: 'URL origin https://tiles.example.net is not allowed',
+    })
+  })
+
   it('applies the media origin policy to inline originals and thumbnails', () => {
     const allowed: Template = {
       widgets: [{

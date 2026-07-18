@@ -38,6 +38,14 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Added
 
+- **Provider-neutral basemaps.** `geo_map` now accepts one normalized
+  `options.basemap` contract: a curated network-free/OpenFreeMap/VersaTiles
+  preset, any host-controlled MapLibre style URL, or generic XYZ/TMS raster
+  tiles. Public services remain opt-in and swappable, legacy `style_url`
+  remains compatible, untrusted templates require explicit preset/origin
+  permission, and the default analytical grid still makes no network
+  requests. The preset catalog and normalization helpers are public exports.
+
 - **SME operating-intelligence direction.** `DESIGN.md` defines owner-first
   product hierarchy, visual roles, typography/density rules, originality
   guardrails, and a UI definition of done. `business-operations.json` adds an

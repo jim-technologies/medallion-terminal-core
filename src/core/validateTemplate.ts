@@ -1,4 +1,5 @@
 import type { Template } from '../types/template'
+import { normalizeBasemap } from '../maps/basemaps'
 import { canParsePredicate } from './alerts'
 
 // Built-in components — kept in sync with WidgetRegistry. Custom widgets
@@ -96,6 +97,18 @@ export function validateTemplate(
           path: `${p}.source`,
           severity: 'warn',
           message: 'stream + refreshIntervalMs both set; refresh is ignored on streaming sources',
+        })
+      }
+    }
+    if (w.component === 'geo_map' && w.options) {
+      try {
+        normalizeBasemap(w.options.basemap, w.options.style_url)
+      } catch (reason) {
+        const key = w.options.basemap != null ? 'basemap' : 'style_url'
+        issues.push({
+          path: `${p}.options.${key}`,
+          severity: 'error',
+          message: reason instanceof Error ? reason.message : 'invalid basemap configuration',
         })
       }
     }

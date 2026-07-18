@@ -1,4 +1,9 @@
 import type { DataSource, Template, WidgetConfig } from '../types/template'
+import {
+  normalizeBasemap,
+  type BasemapPresetId,
+  type NormalizedBasemap,
+} from '../maps/basemaps'
 
 export type TemplateSecuritySeverity = 'error' | 'warn'
 
@@ -29,6 +34,10 @@ export interface TemplateTrustPolicy {
   // Relative URLs stay inside the host app. Disable when untrusted
   // templates must use source_id/inline only.
   allowRelativeUrls?: boolean
+  // Curated network basemaps that untrusted templates may select. The
+  // network-free "analytical" preset is always allowed. Custom style/raster
+  // URLs continue to use allowedUrlOrigins.
+  allowedBasemapPresets?: readonly BasemapPresetId[]
   // If set, request headers must be in this allow-list.
   allowedHeaders?: readonly string[]
   // Headers rejected even when allowedHeaders is not set.
@@ -64,6 +73,7 @@ export const DEFAULT_IFRAME_SANDBOX_DISALLOWED_TOKENS = [
 export const DEFAULT_UNTRUSTED_TEMPLATE_POLICY = {
   allowRelativeUrls: true,
   allowedUrlOrigins: [],
+  allowedBasemapPresets: [],
   disallowedHeaders: DEFAULT_SENSITIVE_TEMPLATE_HEADERS,
   minRefreshIntervalMs: 1000,
   iframeSandbox: {
@@ -86,6 +96,7 @@ interface EffectiveTrustPolicy {
   allowedUrlOrigins: Set<string>
   allowedIframeOrigins: Set<string>
   allowRelativeUrls: boolean
+  allowedBasemapPresets: Set<BasemapPresetId>
   allowedHeaders?: Set<string>
   disallowedHeaders: Set<string>
   minRefreshIntervalMs?: number
@@ -129,6 +140,9 @@ function normalizePolicy(policy: TemplateTrustPolicy): EffectiveTrustPolicy {
     allowedUrlOrigins,
     allowedIframeOrigins: normalizeOrigins(policy.allowedIframeOrigins ?? policy.allowedUrlOrigins ?? []),
     allowRelativeUrls: policy.allowRelativeUrls ?? DEFAULT_UNTRUSTED_TEMPLATE_POLICY.allowRelativeUrls,
+    allowedBasemapPresets: new Set(
+      policy.allowedBasemapPresets ?? DEFAULT_UNTRUSTED_TEMPLATE_POLICY.allowedBasemapPresets,
+    ),
     allowedHeaders: policy.allowedHeaders ? lowerSet(policy.allowedHeaders) : undefined,
     disallowedHeaders: lowerSet(policy.disallowedHeaders ?? DEFAULT_UNTRUSTED_TEMPLATE_POLICY.disallowedHeaders),
     minRefreshIntervalMs: policy.minRefreshIntervalMs ?? DEFAULT_UNTRUSTED_TEMPLATE_POLICY.minRefreshIntervalMs,
@@ -189,6 +203,62 @@ function validateWidgetOptions(
     const value = options[key]
     if (typeof value !== 'string' || value === '') continue
     validateUrl(value, `${path}.options.${key}`, policy.allowedUrlOrigins, policy.allowRelativeUrls, issues)
+  }
+  if (widget.component === 'geo_map' && options.basemap != null) {
+    validateBasemap(options.basemap, `${path}.options.basemap`, policy, issues)
+  }
+}
+
+function validateBasemap(
+  config: unknown,
+  path: string,
+  policy: EffectiveTrustPolicy,
+  issues: TemplateSecurityIssue[],
+) {
+  let basemap: NormalizedBasemap
+  try {
+    basemap = normalizeBasemap(config)
+  } catch {
+    // Shape errors belong to validateTemplate; this pass only evaluates
+    // whether a valid configuration is trusted to make network requests.
+    return
+  }
+
+  if (basemap.preset) {
+    if (
+      basemap.preset !== 'analytical' &&
+      !policy.allowedBasemapPresets.has(basemap.preset)
+    ) {
+      issues.push({
+        path,
+        severity: 'error',
+        message: `basemap preset ${JSON.stringify(basemap.preset)} is not allowed by host policy`,
+      })
+    }
+    return
+  }
+
+  if (basemap.kind === 'style') {
+    validateUrl(
+      basemap.style_url,
+      `${path}.url`,
+      policy.allowedUrlOrigins,
+      policy.allowRelativeUrls,
+      issues,
+    )
+    return
+  }
+
+  if (basemap.kind === 'raster') {
+    basemap.tiles.forEach((url, index) => {
+      validateUrl(
+        url,
+        `${path}.tiles[${index}]`,
+        policy.allowedUrlOrigins,
+        policy.allowRelativeUrls,
+        issues,
+      )
+    })
   }
 }
 

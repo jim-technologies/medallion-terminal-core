@@ -57,6 +57,8 @@ const requiredExports = [
   'ActionForm',
   'DepthChart',
   'GeoMap',
+  'BASEMAP_PRESETS',
+  'normalizeBasemap',
   'MediaGallery',
   'buildBiDescriptor',
   'exportView',

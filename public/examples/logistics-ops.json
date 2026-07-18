@@ -25,6 +25,7 @@
       "height": 420,
       "title": "Network Position · ${ctx.region}",
       "options": {
+        "basemap": "analytical",
         "feature_context": { "key": "facility_id", "label_key": "facility_name" }
       },
       "source": {
