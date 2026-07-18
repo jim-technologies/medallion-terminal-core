@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { FoundryShowcase } from './FoundryShowcase'
 
 const meta = {
-  title: 'Clones/Palantir Foundry',
+  title: 'Clones/Palantir/Foundry/Ontology & Operations',
   component: FoundryShowcase,
   parameters: {
     layout: 'fullscreen',

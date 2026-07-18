@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { GoogleDriveShowcase } from './GoogleDriveShowcase'
 
 const meta = {
-  title: 'Clones/Google Drive',
+  title: 'Clones/Google/Drive',
   component: GoogleDriveShowcase,
   parameters: {
     layout: 'fullscreen',

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { ShopifyShowcase } from './ShopifyShowcase'
 
 const meta = {
-  title: 'Clones/Shopify',
+  title: 'Clones/SME/Shopify',
   component: ShopifyShowcase,
   parameters: {
     layout: 'fullscreen',

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { QuickBooksShowcase } from './QuickBooksShowcase'
 
 const meta = {
-  title: 'Clones/QuickBooks',
+  title: 'Clones/SME/QuickBooks',
   component: QuickBooksShowcase,
   parameters: {
     layout: 'fullscreen',

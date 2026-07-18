@@ -8,6 +8,16 @@ import {
   type FoundryObjectTypeDefinition,
 } from '../../examples/clones/readiness-suite/FoundryShowcase'
 import {
+  PALANTIR_SAMPLE_CAPABILITIES,
+  PALANTIR_SAMPLE_RESOURCES,
+  PalantirFoundationShowcase,
+  palantirReadinessSummary,
+  selectPalantirCompassResources,
+  type PalantirCompassResource,
+  type PalantirDataConnection,
+  type PalantirRepositoryEntry,
+} from '../../examples/clones/readiness-suite/PalantirFoundationShowcase'
+import {
   SHOPIFY_SAMPLE_INVENTORY,
   SHOPIFY_SAMPLE_ORDERS,
   ShopifyShowcase,
@@ -48,6 +58,113 @@ describe('readiness clone primitives', () => {
     expect(formatReadinessCurrency(48_621, { cents: true })).toBe('$48,621.00')
     expect(formatReadinessCurrency(86_420, { compact: true })).toBe('$86.4K')
     expect(formatReadinessPercent(0.968)).toBe('96.8%')
+  })
+})
+
+describe('PalantirFoundationShowcase', () => {
+  it('searches Compass resources and reports explicit presentation readiness', () => {
+    expect(
+      selectPalantirCompassResources(PALANTIR_SAMPLE_RESOURCES, 'python')
+        .map(resource => resource.id),
+    ).toEqual(['analytics-repository'])
+    expect(
+      selectPalantirCompassResources(PALANTIR_SAMPLE_RESOURCES, '', 'Media set')
+        .map(resource => resource.id),
+    ).toEqual(['field-media'])
+    expect(palantirReadinessSummary(PALANTIR_SAMPLE_CAPABILITIES)).toEqual({
+      total: 16,
+      showcased: 7,
+      coreReady: 9,
+      missing: 0,
+    })
+  })
+
+  it('server-renders readiness, Compass, data integration, and repository anatomy', () => {
+    const coverage = renderToStaticMarkup(<PalantirFoundationShowcase />)
+    const compass = renderToStaticMarkup(
+      <PalantirFoundationShowcase initialSurface="compass" />,
+    )
+    const data = renderToStaticMarkup(
+      <PalantirFoundationShowcase initialSurface="data" />,
+    )
+    const code = renderToStaticMarkup(
+      <PalantirFoundationShowcase initialSurface="code" />,
+    )
+
+    expect(coverage).toContain('Palantir platform capability map')
+    expect(coverage).toContain('Workshop')
+    expect(coverage).toContain('Notepad &amp; Fusion')
+    expect(coverage).toContain('DevOps, Marketplace &amp; Apollo')
+    expect(coverage).toContain('No frontend gaps')
+    expect(compass).toContain('Projects and resources')
+    expect(compass).toContain('gold.customer_360')
+    expect(data).toContain('Data Connection')
+    expect(data).toContain('customer_360')
+    expect(code).toContain('Pull requests')
+    expect(code).toContain('customer_health.py')
+  })
+
+  it('accepts host-provided resources, connections, and repository files', () => {
+    const resource: PalantirCompassResource = {
+      id: 'host-resource',
+      name: 'Host planning model',
+      kind: 'Dataset',
+      project: 'Host project',
+      owner: 'Taylor Lane',
+      modifiedAt: 'Now',
+      status: 'Healthy',
+      description: 'A host-provided Compass resource.',
+      tags: ['host'],
+    }
+    const connection: PalantirDataConnection = {
+      id: 'host-connection',
+      name: 'Host ERP',
+      sourceType: 'REST API',
+      direction: 'Bidirectional',
+      status: 'Connected',
+      lastSync: 'Now',
+      assets: 4,
+      schedule: 'Every hour',
+      throughput: '12K rows / day',
+    }
+    const entry: PalantirRepositoryEntry = {
+      path: 'src/host.ts',
+      name: 'host.ts',
+      kind: 'file',
+      depth: 0,
+      language: 'TypeScript',
+      content: 'export const hostReady = true',
+      modifiedAt: 'Now',
+    }
+
+    const compass = renderToStaticMarkup(
+      <PalantirFoundationShowcase
+        resources={[resource]}
+        initialSurface="compass"
+        initialResourceId="host-resource"
+      />,
+    )
+    const data = renderToStaticMarkup(
+      <PalantirFoundationShowcase
+        connections={[connection]}
+        initialSurface="data"
+        initialConnectionId="host-connection"
+      />,
+    )
+    const code = renderToStaticMarkup(
+      <PalantirFoundationShowcase
+        repositoryEntries={[entry]}
+        initialSurface="code"
+        initialRepositoryPath="src/host.ts"
+      />,
+    )
+
+    expect(compass).toContain('Host planning model')
+    expect(compass).not.toContain('gold.customer_360')
+    expect(data).toContain('Host ERP')
+    expect(data).not.toContain('CRM Postgres')
+    expect(code).toContain('export const hostReady = true')
+    expect(code).not.toContain('customer_health.py')
   })
 })
 

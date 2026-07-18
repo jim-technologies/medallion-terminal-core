@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { StripeShowcase } from './StripeShowcase'
 
 const meta = {
-  title: 'Clones/Stripe',
+  title: 'Clones/SME/Stripe',
   component: StripeShowcase,
   parameters: {
     layout: 'fullscreen',

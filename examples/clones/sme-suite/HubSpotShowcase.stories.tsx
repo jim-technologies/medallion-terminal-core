@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { HubSpotShowcase } from './HubSpotShowcase'
 
 const meta = {
-  title: 'Clones/HubSpot',
+  title: 'Clones/SME/HubSpot',
   component: HubSpotShowcase,
   parameters: {
     layout: 'fullscreen',

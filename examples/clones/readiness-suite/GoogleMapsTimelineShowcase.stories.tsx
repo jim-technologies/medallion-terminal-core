@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { GoogleMapsTimelineShowcase } from './GoogleMapsTimelineShowcase'
 
 const meta = {
-  title: 'Clones/Google Maps Timeline',
+  title: 'Clones/Google/Maps/Timeline',
   component: GoogleMapsTimelineShowcase,
   parameters: {
     layout: 'fullscreen',

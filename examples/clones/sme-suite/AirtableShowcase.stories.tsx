@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { AirtableShowcase } from './AirtableShowcase'
 
 const meta = {
-  title: 'Clones/Airtable',
+  title: 'Clones/SME/Airtable',
   component: AirtableShowcase,
   parameters: {
     layout: 'fullscreen',

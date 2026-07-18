@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { GoogleWorkspaceEditor } from './GoogleWorkspaceEditor'
 
 const meta = {
-  title: 'Clones/Google Docs',
+  title: 'Clones/Google/Workspace/Docs',
   component: GoogleWorkspaceEditor,
   parameters: {
     layout: 'fullscreen',

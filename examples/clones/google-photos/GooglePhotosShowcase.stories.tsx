@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { GooglePhotosShowcase } from './GooglePhotosShowcase'
 
 const meta = {
-  title: 'Clones/Google Photos',
+  title: 'Clones/Google/Photos',
   component: GooglePhotosShowcase,
   parameters: {
     layout: 'fullscreen',

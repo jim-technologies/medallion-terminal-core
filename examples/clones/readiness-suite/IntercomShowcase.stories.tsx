@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { IntercomShowcase } from './IntercomShowcase'
 
 const meta = {
-  title: 'Clones/Intercom',
+  title: 'Clones/SME/Intercom',
   component: IntercomShowcase,
   parameters: {
     layout: 'fullscreen',
