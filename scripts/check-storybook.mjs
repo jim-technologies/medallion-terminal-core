@@ -62,6 +62,7 @@ if (missingCloneStories.length > 0) {
 
 console.log(
   `Storybook coverage OK: ${publicExampleIds.length} complete dashboards, `
-  + `${widgetStoryModules.size} built-in widgets, ${cloneStories.length} clone showcase, `
+  + `${widgetStoryModules.size} built-in widgets, ${cloneStories.length} clone showcase`
+  + `${cloneStories.length === 1 ? '' : 's'}, `
   + `${entries.length} total stories.`,
 )
