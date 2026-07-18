@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   SmeCloneAvatar,
   SmeCloneIcon,
@@ -597,7 +598,7 @@ export function QuickBooksShowcase({
   transactions = QUICKBOOKS_SAMPLE_TRANSACTIONS,
   initialSection = 'overview',
   initialTransactionStatus = 'For review',
-  companyName = 'Northstar Studio',
+  companyName = CLONE_DEMO_IDENTITY.company,
 }: QuickBooksShowcaseProps) {
   const [section, setSection] = useState<QuickBooksShowcaseSection>(initialSection)
 

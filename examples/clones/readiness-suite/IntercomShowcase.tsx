@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   ReadinessAvatar,
   ReadinessIcon,
@@ -63,7 +64,7 @@ export const INTERCOM_SAMPLE_CONVERSATIONS: readonly IntercomConversation[] = [
     channel: 'Messenger',
     state: 'Open',
     priority: 'Priority',
-    assignee: 'Jordan Lee',
+    assignee: CLONE_DEMO_IDENTITY.user,
     assigneeColor: '#6b5ec4',
     updatedAt: '2m',
     waitingMinutes: 22,
@@ -82,7 +83,7 @@ export const INTERCOM_SAMPLE_CONVERSATIONS: readonly IntercomConversation[] = [
       { id: 'm1', author: 'Maya Chen', authorRole: 'Customer', timestamp: '10:31 AM', body: 'Hi! I just placed order #1057, but noticed that the delivery address is our old office.' },
       { id: 'm2', author: 'Fin', authorRole: 'AI', timestamp: '10:31 AM', body: 'I found order #1057. Because it has not entered fulfillment, a teammate can still update the shipping address.' },
       { id: 'm3', author: 'Maya Chen', authorRole: 'Customer', timestamp: '10:33 AM', body: 'Great, thank you. The new address is 420 Market Street, San Francisco, CA 94105.' },
-      { id: 'm4', author: 'Jordan Lee', authorRole: 'Teammate', timestamp: '10:39 AM', body: 'I have the order open now. I’ll verify the change and send an updated confirmation in a moment.' },
+      { id: 'm4', author: CLONE_DEMO_IDENTITY.user, authorRole: 'Teammate', timestamp: '10:39 AM', body: 'I have the order open now. I’ll verify the change and send an updated confirmation in a moment.' },
       { id: 'm5', author: 'Order #1057 linked to this conversation', authorRole: 'Event', timestamp: '10:40 AM', body: 'Payment succeeded · fulfillment not started' },
     ],
   },
@@ -126,7 +127,7 @@ export const INTERCOM_SAMPLE_CONVERSATIONS: readonly IntercomConversation[] = [
     channel: 'Messenger',
     state: 'Waiting',
     priority: 'Priority',
-    assignee: 'Jordan Lee',
+    assignee: CLONE_DEMO_IDENTITY.user,
     assigneeColor: '#6b5ec4',
     updatedAt: '16m',
     waitingMinutes: 96,
@@ -143,7 +144,7 @@ export const INTERCOM_SAMPLE_CONVERSATIONS: readonly IntercomConversation[] = [
     },
     messages: [
       { id: 'n1', author: 'Nina Patel', authorRole: 'Customer', timestamp: '9:46 AM', body: 'The East warehouse stock in our dashboard has not changed since yesterday afternoon.' },
-      { id: 'n2', author: 'Jordan Lee', authorRole: 'Teammate', timestamp: '9:54 AM', body: 'I can see a delayed sync. I have asked the integration team to replay the failed batch.' },
+      { id: 'n2', author: CLONE_DEMO_IDENTITY.user, authorRole: 'Teammate', timestamp: '9:54 AM', body: 'I can see a delayed sync. I have asked the integration team to replay the failed batch.' },
       { id: 'n3', author: 'Escalated to Integrations', authorRole: 'Event', timestamp: '9:55 AM', body: 'Priority raised · SLA due in 24 minutes' },
     ],
   },
@@ -242,8 +243,8 @@ export function IntercomShowcase({
   initialSection = 'inbox',
   initialSelectedConversationId = 'conv-1042',
   initialQuery = '',
-  workspaceName = 'Northstar',
-  currentTeammate = 'Jordan Lee',
+  workspaceName = CLONE_DEMO_IDENTITY.company,
+  currentTeammate = CLONE_DEMO_IDENTITY.user,
   onSelectConversation,
   onSendMessage,
 }: IntercomShowcaseProps) {
@@ -431,7 +432,7 @@ export function IntercomShowcase({
           </div>
           <div className="intercom-reporting-grid">
             <section><div><h2>Conversation volume</h2><span>Created and closed</span></div><div className="intercom-bars">{[58, 74, 62, 88, 81, 96, 72].map((height, index) => <i key={index} style={{ height: `${height}%` }}><b style={{ height: `${Math.max(height - 18, 20)}%` }} /></i>)}</div><div className="intercom-bar-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></section>
-            <section><div><h2>Team workload</h2><span>Open conversations</span></div>{['Jordan Lee', 'Sarah Kim', 'Avery Brooks', 'Unassigned'].map((name, index) => <div className="intercom-workload" key={name}><ReadinessAvatar name={name} color={['#6558c5', '#2d8a70', '#b56a42', '#8b949d'][index]} size={28} /><span className="intercom-workload-copy"><strong>{name}</strong><i><b style={{ width: `${[82, 64, 48, 26][index]}%` }} /></i></span><em>{[8, 6, 4, 2][index]}</em></div>)}</section>
+            <section><div><h2>Team workload</h2><span>Open conversations</span></div>{[CLONE_DEMO_IDENTITY.user, 'Sarah Kim', 'Avery Brooks', 'Unassigned'].map((name, index) => <div className="intercom-workload" key={name}><ReadinessAvatar name={name} color={['#6558c5', '#2d8a70', '#b56a42', '#8b949d'][index]} size={28} /><span className="intercom-workload-copy"><strong>{name}</strong><i><b style={{ width: `${[82, 64, 48, 26][index]}%` }} /></i></span><em>{[8, 6, 4, 2][index]}</em></div>)}</section>
           </div>
         </main>
       )}

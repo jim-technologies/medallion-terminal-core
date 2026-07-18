@@ -1,4 +1,5 @@
 import { useMemo, useState, type CSSProperties } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   ReadinessAvatar,
   ReadinessIcon,
@@ -198,7 +199,7 @@ export const TIMELINE_SAMPLE_DAYS: readonly TimelineDay[] = [
     city: 'San Francisco',
     stops: [
       { id: 'home-fri', name: 'Home', address: 'Mission District, San Francisco', category: 'Home', arrival: '12:00 AM', departure: '8:18 AM', durationMinutes: 498, latitude: 37.7599, longitude: -122.4148, mapX: 31, mapY: 73, confidence: 'Confirmed', media: [] },
-      { id: 'studio', name: 'Northstar Studio', address: 'South of Market, San Francisco', category: 'Work', arrival: '8:36 AM', departure: '5:42 PM', durationMinutes: 546, latitude: 37.7785, longitude: -122.3967, mapX: 61, mapY: 58, confidence: 'Confirmed', media: [] },
+      { id: 'studio', name: CLONE_DEMO_IDENTITY.company, address: 'South of Market, San Francisco', category: 'Work', arrival: '8:36 AM', departure: '5:42 PM', durationMinutes: 546, latitude: 37.7785, longitude: -122.3967, mapX: 61, mapY: 58, confidence: 'Confirmed', media: [] },
       { id: 'home-fri-evening', name: 'Home', address: 'Mission District, San Francisco', category: 'Home', arrival: '6:03 PM', departure: '11:59 PM', durationMinutes: 356, latitude: 37.7599, longitude: -122.4148, mapX: 31, mapY: 73, confidence: 'Confirmed', media: [] },
     ],
     trips: [
@@ -288,7 +289,7 @@ export function GoogleMapsTimelineShowcase({
         <button className="timeline-menu"><ReadinessIcon name="menu" /></button>
         <div className="timeline-logo"><span className="timeline-pin-logo"><ReadinessIcon name="location" size={21} /></span><strong>Google Maps</strong></div>
         <label className="timeline-search"><input placeholder="Search Google Maps" /><ReadinessIcon name="search" size={18} /><button><ReadinessIcon name="send" size={18} /></button></label>
-        <div className="ready-top-actions"><button><ReadinessIcon name="help" /></button><button><ReadinessIcon name="settings" /></button><button><ReadinessIcon name="apps" /></button><ReadinessAvatar name="Jordan Lee" color="#4d76b3" size={30} /></div>
+        <div className="ready-top-actions"><button><ReadinessIcon name="help" /></button><button><ReadinessIcon name="settings" /></button><button><ReadinessIcon name="apps" /></button><ReadinessAvatar name={CLONE_DEMO_IDENTITY.user} color="#4d76b3" size={30} /></div>
       </header>
 
       <div className="timeline-body">

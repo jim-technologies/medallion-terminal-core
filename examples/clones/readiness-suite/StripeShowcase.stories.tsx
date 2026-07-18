@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import { StripeShowcase } from './StripeShowcase'
 
 const meta = {
@@ -18,7 +19,7 @@ const meta = {
   },
   args: {
     initialSection: 'overview',
-    accountName: 'Northstar Supply',
+    accountName: CLONE_DEMO_IDENTITY.company,
   },
   argTypes: {
     payments: { control: false },
@@ -46,7 +47,7 @@ export const PaymentOperations: Story = {
 export const PaymentDetail: Story = {
   args: {
     initialSection: 'payments',
-    initialSelectedPaymentId: 'pi_3Qnorthstar01',
+    initialSelectedPaymentId: 'pi_3Qjimtech01',
   },
 }
 

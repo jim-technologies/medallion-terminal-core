@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import { FoundryShowcase } from './FoundryShowcase'
 
 const meta = {
@@ -18,7 +19,7 @@ const meta = {
   },
   args: {
     initialSection: 'ontology',
-    workspaceName: 'Northstar Operations',
+    workspaceName: CLONE_DEMO_IDENTITY.company,
   },
   argTypes: {
     objectTypes: { control: false },

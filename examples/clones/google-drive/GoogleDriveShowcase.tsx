@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type KeyboardEvent, type MouseEvent } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import './GoogleDriveShowcase.css'
 
 export type GoogleDriveSection =
@@ -133,10 +134,10 @@ export const GOOGLE_DRIVE_SAMPLE_ITEMS: readonly GoogleDriveItem[] = [
     document_type: 'pdf',
     size_bytes: 1_724_416,
     modified_at: '2026-07-16T20:24:00Z',
-    owner: 'Jordan Lee',
+    owner: CLONE_DEMO_IDENTITY.user,
     shared: true,
-    suggested_reason: 'Jordan mentioned you',
-    members: ['JL', 'AK'],
+    suggested_reason: `${CLONE_DEMO_IDENTITY.user} mentioned you`,
+    members: ['J', 'AK'],
   },
   {
     id: 'board-notes',

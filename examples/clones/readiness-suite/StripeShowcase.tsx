@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   ReadinessAvatar,
   ReadinessIcon,
@@ -60,12 +61,12 @@ export interface StripeShowcaseProps {
 }
 
 export const STRIPE_SAMPLE_PAYMENTS: readonly StripePayment[] = [
-  { id: 'pi_3Qnorthstar01', createdAt: 'Jul 18, 10:42 AM', customer: 'Maya Chen', email: 'maya@example.test', amount: 428, fee: 12.71, status: 'Succeeded', method: '•••• 4242', description: 'Order #1057', country: 'US', risk: 'Normal' },
-  { id: 'pi_3Qnorthstar02', createdAt: 'Jul 18, 9:18 AM', customer: 'Noah Williams', email: 'noah@example.test', amount: 186, fee: 5.69, status: 'Succeeded', method: '•••• 1881', description: 'Order #1056', country: 'US', risk: 'Normal' },
-  { id: 'pi_3Qnorthstar03', createdAt: 'Jul 17, 6:31 PM', customer: 'Sarah Kim', email: 'sarah@example.test', amount: 612, fee: 18.05, status: 'Pending', method: 'ACH debit', description: 'Annual plan', country: 'US', risk: 'Normal' },
-  { id: 'pi_3Qnorthstar04', createdAt: 'Jul 17, 2:09 PM', customer: 'Theo Martin', email: 'theo@example.test', amount: 248, fee: 7.49, status: 'Refunded', method: '•••• 9010', description: 'Order #1054', country: 'US', risk: 'Normal' },
-  { id: 'pi_3Qnorthstar05', createdAt: 'Jul 17, 11:14 AM', customer: 'Nina Patel', email: 'nina@example.test', amount: 1290, fee: 37.71, status: 'Succeeded', method: '•••• 5556', description: 'Implementation deposit', country: 'CA', risk: 'Normal' },
-  { id: 'pi_3Qnorthstar06', createdAt: 'Jul 16, 4:28 PM', customer: 'Jordan Bell', email: 'jordan@example.test', amount: 94, fee: 3.03, status: 'Failed', method: '•••• 0341', description: 'Starter plan', country: 'GB', risk: 'Elevated' },
+  { id: 'pi_3Qjimtech01', createdAt: 'Jul 18, 10:42 AM', customer: 'Maya Chen', email: 'maya@example.test', amount: 428, fee: 12.71, status: 'Succeeded', method: '•••• 4242', description: 'Order #1057', country: 'US', risk: 'Normal' },
+  { id: 'pi_3Qjimtech02', createdAt: 'Jul 18, 9:18 AM', customer: 'Noah Williams', email: 'noah@example.test', amount: 186, fee: 5.69, status: 'Succeeded', method: '•••• 1881', description: 'Order #1056', country: 'US', risk: 'Normal' },
+  { id: 'pi_3Qjimtech03', createdAt: 'Jul 17, 6:31 PM', customer: 'Sarah Kim', email: 'sarah@example.test', amount: 612, fee: 18.05, status: 'Pending', method: 'ACH debit', description: 'Annual plan', country: 'US', risk: 'Normal' },
+  { id: 'pi_3Qjimtech04', createdAt: 'Jul 17, 2:09 PM', customer: 'Theo Martin', email: 'theo@example.test', amount: 248, fee: 7.49, status: 'Refunded', method: '•••• 9010', description: 'Order #1054', country: 'US', risk: 'Normal' },
+  { id: 'pi_3Qjimtech05', createdAt: 'Jul 17, 11:14 AM', customer: 'Nina Patel', email: 'nina@example.test', amount: 1290, fee: 37.71, status: 'Succeeded', method: '•••• 5556', description: 'Implementation deposit', country: 'CA', risk: 'Normal' },
+  { id: 'pi_3Qjimtech06', createdAt: 'Jul 16, 4:28 PM', customer: 'Jordan Bell', email: 'jordan@example.test', amount: 94, fee: 3.03, status: 'Failed', method: '•••• 0341', description: 'Starter plan', country: 'GB', risk: 'Elevated' },
 ]
 
 export const STRIPE_SAMPLE_SUBSCRIPTIONS: readonly StripeSubscription[] = [
@@ -77,10 +78,10 @@ export const STRIPE_SAMPLE_SUBSCRIPTIONS: readonly StripeSubscription[] = [
 ]
 
 export const STRIPE_SAMPLE_DISPUTES: readonly StripeDispute[] = [
-  { id: 'dp_01', paymentId: 'pi_3Qnorthstar07', customer: 'Avery Brooks', amount: 486, reason: 'Product not received', status: 'Needs response', respondBy: 'Jul 23', evidenceProgress: 0.66 },
-  { id: 'dp_02', paymentId: 'pi_3Qnorthstar08', customer: 'Morgan Reed', amount: 129, reason: 'Unrecognized', status: 'Under review', respondBy: 'Submitted Jul 16', evidenceProgress: 1 },
-  { id: 'dp_03', paymentId: 'pi_3Qnorthstar09', customer: 'Lee Carter', amount: 760, reason: 'Duplicate', status: 'Won', respondBy: 'Closed Jul 14', evidenceProgress: 1 },
-  { id: 'dp_04', paymentId: 'pi_3Qnorthstar10', customer: 'Riley Ross', amount: 218, reason: 'Credit not processed', status: 'Lost', respondBy: 'Closed Jul 10', evidenceProgress: 1 },
+  { id: 'dp_01', paymentId: 'pi_3Qjimtech07', customer: 'Avery Brooks', amount: 486, reason: 'Product not received', status: 'Needs response', respondBy: 'Jul 23', evidenceProgress: 0.66 },
+  { id: 'dp_02', paymentId: 'pi_3Qjimtech08', customer: 'Morgan Reed', amount: 129, reason: 'Unrecognized', status: 'Under review', respondBy: 'Submitted Jul 16', evidenceProgress: 1 },
+  { id: 'dp_03', paymentId: 'pi_3Qjimtech09', customer: 'Lee Carter', amount: 760, reason: 'Duplicate', status: 'Won', respondBy: 'Closed Jul 14', evidenceProgress: 1 },
+  { id: 'dp_04', paymentId: 'pi_3Qjimtech10', customer: 'Riley Ross', amount: 218, reason: 'Credit not processed', status: 'Lost', respondBy: 'Closed Jul 10', evidenceProgress: 1 },
 ]
 
 export function selectStripePayments(
@@ -125,7 +126,7 @@ export function StripeShowcase({
   disputes = STRIPE_SAMPLE_DISPUTES,
   initialSection = 'overview',
   initialSelectedPaymentId,
-  accountName = 'Northstar Supply',
+  accountName = CLONE_DEMO_IDENTITY.company,
   onSelectPayment,
 }: StripeShowcaseProps) {
   const [section, setSection] = useState<StripeShowcaseSection>(initialSection)
@@ -185,7 +186,7 @@ export function StripeShowcase({
             <button><ReadinessIcon name="help" /></button>
             <button className="ready-notification"><ReadinessIcon name="bell" /><i /></button>
             <button className="stripe-create-button"><ReadinessIcon name="plus" size={14} />Create</button>
-            <ReadinessAvatar name="Jordan Lee" color="#6052b8" size={27} />
+            <ReadinessAvatar name={CLONE_DEMO_IDENTITY.user} color="#6052b8" size={27} />
           </div>
         </header>
 

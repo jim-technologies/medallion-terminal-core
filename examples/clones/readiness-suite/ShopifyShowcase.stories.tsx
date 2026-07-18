@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import { ShopifyShowcase } from './ShopifyShowcase'
 
 const meta = {
@@ -18,7 +19,7 @@ const meta = {
   },
   args: {
     initialSection: 'home',
-    storeName: 'Northstar Supply',
+    storeName: CLONE_DEMO_IDENTITY.company,
   },
   argTypes: {
     orders: { control: false },

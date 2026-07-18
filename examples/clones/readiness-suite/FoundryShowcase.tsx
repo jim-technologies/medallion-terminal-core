@@ -1,4 +1,5 @@
 import { useMemo, useState, type CSSProperties } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   ReadinessAvatar,
   ReadinessIcon,
@@ -379,7 +380,7 @@ export function FoundryShowcase({
   initialSection = 'ontology',
   initialObjectTypeId = 'customer',
   initialObjectId = 'northwind-health',
-  workspaceName = 'Northstar Operations',
+  workspaceName = CLONE_DEMO_IDENTITY.company,
   onSelectObjectType,
 }: FoundryShowcaseProps) {
   const [section, setSection] = useState<FoundryShowcaseSection>(initialSection)
@@ -426,7 +427,7 @@ export function FoundryShowcase({
         <div className="ready-top-actions">
           <button aria-label="Help"><ReadinessIcon name="help" /></button>
           <button aria-label="Notifications" className="ready-notification"><ReadinessIcon name="bell" /><i /></button>
-          <ReadinessAvatar name="Jordan Lee" color="#496f9a" size={27} />
+          <ReadinessAvatar name={CLONE_DEMO_IDENTITY.user} color="#496f9a" size={27} />
         </div>
       </header>
 

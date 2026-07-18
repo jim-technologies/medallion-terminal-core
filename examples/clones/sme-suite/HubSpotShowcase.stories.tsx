@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import { HubSpotShowcase } from './HubSpotShowcase'
 
 const meta = {
@@ -18,7 +19,7 @@ const meta = {
   },
   args: {
     initialSection: 'contacts',
-    portalName: 'Northstar',
+    portalName: CLONE_DEMO_IDENTITY.company,
   },
   argTypes: {
     contacts: { control: false },

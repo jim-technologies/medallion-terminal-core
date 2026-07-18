@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import { AirtableShowcase } from './AirtableShowcase'
 
 const meta = {
@@ -18,7 +19,7 @@ const meta = {
   },
   args: {
     initialView: 'grid',
-    workspaceName: 'Northstar Studio',
+    workspaceName: CLONE_DEMO_IDENTITY.company,
     baseName: 'Product launch',
   },
   argTypes: {

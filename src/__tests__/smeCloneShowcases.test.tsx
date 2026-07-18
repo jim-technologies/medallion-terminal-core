@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { CLONE_DEMO_IDENTITY } from '../../examples/clones/demoIdentity'
 import {
   AIRTABLE_SAMPLE_PROJECTS,
   AirtableShowcase,
@@ -29,7 +30,7 @@ import {
 
 describe('SME clone showcase primitives', () => {
   it('formats presentation values without product-specific data helpers', () => {
-    expect(smeCloneInitials('Northstar Studio')).toBe('NS')
+    expect(smeCloneInitials(CLONE_DEMO_IDENTITY.company)).toBe('JT')
     expect(formatSmeCurrency(86_400)).toBe('$86,400')
     expect(formatSmeCurrency(174_620, { compact: true })).toBe('$174.6K')
     expect(formatSmePercent(0.725, 1)).toBe('72.5%')

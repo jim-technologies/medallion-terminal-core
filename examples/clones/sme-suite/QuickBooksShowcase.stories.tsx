@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import { QuickBooksShowcase } from './QuickBooksShowcase'
 
 const meta = {
@@ -19,7 +20,7 @@ const meta = {
   args: {
     initialSection: 'overview',
     initialTransactionStatus: 'For review',
-    companyName: 'Northstar Studio',
+    companyName: CLONE_DEMO_IDENTITY.company,
   },
   argTypes: {
     cashFlow: { control: false },

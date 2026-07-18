@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   ReadinessAvatar,
   ReadinessIcon,
@@ -182,7 +183,7 @@ export function ShopifyShowcase({
   inventory = SHOPIFY_SAMPLE_INVENTORY,
   initialSection = 'home',
   initialSelectedOrderId = 'order-1057',
-  storeName = 'Northstar Supply',
+  storeName = CLONE_DEMO_IDENTITY.company,
   onSelectOrder,
 }: ShopifyShowcaseProps) {
   const [section, setSection] = useState<ShopifyShowcaseSection>(initialSection)
@@ -368,7 +369,7 @@ export function ShopifyShowcase({
                   </section>
                   <section className="shopify-detail-card">
                     <div className="shopify-detail-card-heading"><div><ReadinessIcon name="timeline" size={17} /><h2>Timeline</h2></div></div>
-                    <label className="shopify-note-input"><ReadinessAvatar name="Jordan Lee" size={28} /><input placeholder="Leave a comment…" /><button><ReadinessIcon name="send" size={15} /></button></label>
+                    <label className="shopify-note-input"><ReadinessAvatar name={CLONE_DEMO_IDENTITY.user} size={28} /><input placeholder="Leave a comment…" /><button><ReadinessIcon name="send" size={15} /></button></label>
                     <div className="shopify-timeline-row"><i /><span><strong>Order confirmation sent to {selectedOrder.email}</strong><small>Today at 10:43 am</small></span></div>
                     <div className="shopify-timeline-row"><i /><span><strong>{formatReadinessCurrency(selectedOrder.total, { cents: true })} was authorized</strong><small>Today at 10:42 am</small></span></div>
                   </section>

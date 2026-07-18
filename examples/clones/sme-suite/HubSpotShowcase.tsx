@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   SmeCloneAvatar,
   SmeCloneIcon,
@@ -346,7 +347,7 @@ function HubSpotTopbar({
             <span />
           </button>
           <button className="hubspot-portal-switcher">
-            <SmeCloneAvatar name="Jordan Lee" color="#66798d" size={28} />
+            <SmeCloneAvatar name={CLONE_DEMO_IDENTITY.user} color="#66798d" size={28} />
             <span>{portalName}</span>
             <SmeCloneIcon name="chevron-down" size={13} />
           </button>
@@ -717,7 +718,7 @@ export function HubSpotShowcase({
   initialSection = 'contacts',
   initialSelectedContactId,
   initialQuery = '',
-  portalName = 'Northstar',
+  portalName = CLONE_DEMO_IDENTITY.company,
   onSelectContact,
 }: HubSpotShowcaseProps) {
   const [section, setSection] = useState<HubSpotShowcaseSection>(initialSection)

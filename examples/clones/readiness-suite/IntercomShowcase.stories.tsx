@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import { IntercomShowcase } from './IntercomShowcase'
 
 const meta = {
@@ -19,7 +20,7 @@ const meta = {
   args: {
     initialSection: 'inbox',
     initialSelectedConversationId: 'conv-1042',
-    workspaceName: 'Northstar',
+    workspaceName: CLONE_DEMO_IDENTITY.company,
   },
   argTypes: {
     conversations: { control: false },

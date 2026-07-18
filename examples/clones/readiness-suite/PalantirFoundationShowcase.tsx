@@ -1,4 +1,5 @@
 import { useMemo, useState, type CSSProperties } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   ReadinessAvatar,
   ReadinessIcon,
@@ -235,10 +236,10 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
 export const PALANTIR_SAMPLE_RESOURCES: readonly PalantirCompassResource[] = [
   {
     id: 'northstar-project',
-    name: 'Northstar Operations',
+    name: CLONE_DEMO_IDENTITY.company,
     kind: 'Project',
     project: 'Platform',
-    owner: 'Jordan Lee',
+    owner: CLONE_DEMO_IDENTITY.user,
     modifiedAt: '8 min ago',
     status: 'Healthy',
     description: 'Governed operational resources for customer, commerce, and support workflows.',
@@ -250,7 +251,7 @@ export const PALANTIR_SAMPLE_RESOURCES: readonly PalantirCompassResource[] = [
     id: 'customer-360',
     name: 'gold.customer_360',
     kind: 'Dataset',
-    project: 'Northstar Operations',
+    project: CLONE_DEMO_IDENTITY.company,
     owner: 'Data Platform',
     modifiedAt: '18 min ago',
     status: 'Healthy',
@@ -263,7 +264,7 @@ export const PALANTIR_SAMPLE_RESOURCES: readonly PalantirCompassResource[] = [
     id: 'commerce-pipeline',
     name: 'commerce_ingestion',
     kind: 'Pipeline',
-    project: 'Northstar Operations',
+    project: CLONE_DEMO_IDENTITY.company,
     owner: 'Maya Chen',
     modifiedAt: '31 min ago',
     status: 'Building',
@@ -275,7 +276,7 @@ export const PALANTIR_SAMPLE_RESOURCES: readonly PalantirCompassResource[] = [
     id: 'analytics-repository',
     name: 'analytics',
     kind: 'Code repository',
-    project: 'Northstar Operations',
+    project: CLONE_DEMO_IDENTITY.company,
     owner: 'Sarah Kim',
     modifiedAt: '42 min ago',
     status: 'Healthy',
@@ -475,7 +476,7 @@ export function PalantirFoundationShowcase({
   initialResourceId = 'customer-360',
   initialConnectionId = 'postgres-crm',
   initialRepositoryPath = 'src/customer_health.py',
-  workspaceName = 'Northstar Operations',
+  workspaceName = CLONE_DEMO_IDENTITY.company,
   onSelectResource,
   onSelectConnection,
   onSelectRepositoryEntry,
@@ -531,7 +532,7 @@ export function PalantirFoundationShowcase({
         <div className="ready-top-actions">
           <button aria-label="Help"><ReadinessIcon name="help" /></button>
           <button aria-label="Notifications" className="ready-notification"><ReadinessIcon name="bell" /><i /></button>
-          <ReadinessAvatar name="Jordan Lee" color="#496f9a" size={27} />
+          <ReadinessAvatar name={CLONE_DEMO_IDENTITY.user} color="#496f9a" size={27} />
         </div>
       </header>
 
@@ -700,7 +701,7 @@ function PalantirCompassSurface({
       </div>
 
       <div className="palantir-quick-filters">
-        <button><span><ReadinessIcon name="layers" size={17} /></span><div><strong>Northstar Operations</strong><small>7 active resources</small></div><ReadinessIcon name="chevron-right" size={14} /></button>
+        <button><span><ReadinessIcon name="layers" size={17} /></span><div><strong>{CLONE_DEMO_IDENTITY.company}</strong><small>7 active resources</small></div><ReadinessIcon name="chevron-right" size={14} /></button>
         <button><span><ReadinessIcon name="people" size={17} /></span><div><strong>Shared with you</strong><small>{resources.filter(resource => resource.shared).length} resources</small></div><ReadinessIcon name="chevron-right" size={14} /></button>
         <button><span><ReadinessIcon name="check" size={17} /></span><div><strong>Promoted items</strong><small>{resources.filter(resource => resource.pinned).length} pinned resources</small></div><ReadinessIcon name="chevron-right" size={14} /></button>
       </div>
@@ -745,7 +746,7 @@ function PalantirCompassSurface({
               <div><dt>Resource ID</dt><dd>ri.foundry.main.{selectedResource.kind.toLowerCase().replace(/\s+/g, '-')}.{selectedResource.id}</dd></div>
             </dl>
             <section><h3>Tags</h3><div>{selectedResource.tags.map(tag => <span key={tag}>{tag}</span>)}</div></section>
-            <section><h3>Access</h3><p><ReadinessIcon name="shield" size={13} />Northstar Operations · Editor</p><p><ReadinessIcon name="people" size={13} />{selectedResource.shared ? 'Shared with workspace' : 'Project members only'}</p></section>
+            <section><h3>Access</h3><p><ReadinessIcon name="shield" size={13} />{CLONE_DEMO_IDENTITY.company} · Editor</p><p><ReadinessIcon name="people" size={13} />{selectedResource.shared ? 'Shared with workspace' : 'Project members only'}</p></section>
           </aside>
         )}
       </div>

@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { CLONE_DEMO_IDENTITY } from '../../examples/clones/demoIdentity'
 import {
   FOUNDRY_SAMPLE_OBJECT_TYPES,
   FoundryShowcase,
@@ -53,8 +54,14 @@ import {
 } from '../../examples/clones/readiness-suite/ReadinessPrimitives'
 
 describe('readiness clone primitives', () => {
-  it('formats neutral presentation values', () => {
-    expect(readinessInitials('Northstar Operations')).toBe('NO')
+  it('formats neutral presentation values and keeps one canonical demo identity', () => {
+    expect(CLONE_DEMO_IDENTITY).toEqual({
+      company: 'Jim Technologies',
+      user: 'Jun',
+      website: 'jimtech.xyz',
+      email: 'jun@jimtech.xyz',
+    })
+    expect(readinessInitials(CLONE_DEMO_IDENTITY.company)).toBe('JT')
     expect(formatReadinessCurrency(48_621, { cents: true })).toBe('$48,621.00')
     expect(formatReadinessCurrency(86_420, { compact: true })).toBe('$86.4K')
     expect(formatReadinessPercent(0.968)).toBe('96.8%')
@@ -294,10 +301,10 @@ describe('StripeShowcase', () => {
   it('filters payment lifecycles and derives net successful volume', () => {
     expect(
       selectStripePayments(STRIPE_SAMPLE_PAYMENTS, '', 'Failed').map(payment => payment.id),
-    ).toEqual(['pi_3Qnorthstar06'])
+    ).toEqual(['pi_3Qjimtech06'])
     expect(
       selectStripePayments(STRIPE_SAMPLE_PAYMENTS, 'implementation').map(payment => payment.id),
-    ).toEqual(['pi_3Qnorthstar05'])
+    ).toEqual(['pi_3Qjimtech05'])
     expect(stripeNetVolume(STRIPE_SAMPLE_PAYMENTS)).toBeCloseTo(1847.89, 2)
   })
 
@@ -305,7 +312,7 @@ describe('StripeShowcase', () => {
     const overview = renderToStaticMarkup(<StripeShowcase />)
     const payments = renderToStaticMarkup(<StripeShowcase initialSection="payments" />)
     const detail = renderToStaticMarkup(
-      <StripeShowcase initialSection="payments" initialSelectedPaymentId="pi_3Qnorthstar01" />,
+      <StripeShowcase initialSection="payments" initialSelectedPaymentId="pi_3Qjimtech01" />,
     )
     const billing = renderToStaticMarkup(<StripeShowcase initialSection="billing" />)
     const disputes = renderToStaticMarkup(<StripeShowcase initialSection="disputes" />)

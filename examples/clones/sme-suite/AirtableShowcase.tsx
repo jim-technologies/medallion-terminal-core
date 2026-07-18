@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   SmeCloneAvatar,
   SmeCloneIcon,
@@ -243,7 +244,7 @@ function AirtableTopbar({
       <div className="airtable-top-actions">
         <button className="airtable-icon-button" aria-label="Help"><SmeCloneIcon name="help" /></button>
         <button className="airtable-icon-button" aria-label="Notifications"><SmeCloneIcon name="bell" /></button>
-        <SmeCloneAvatar name="Jordan Lee" color="#e8a62e" size={30} />
+        <SmeCloneAvatar name={CLONE_DEMO_IDENTITY.user} color="#e8a62e" size={30} />
       </div>
     </header>
   )
@@ -601,7 +602,7 @@ export function AirtableShowcase({
   initialView = 'grid',
   initialSelectedId,
   initialQuery = '',
-  workspaceName = 'Northstar Studio',
+  workspaceName = CLONE_DEMO_IDENTITY.company,
   baseName = 'Product launch',
   onSelectRecord,
 }: AirtableShowcaseProps) {
