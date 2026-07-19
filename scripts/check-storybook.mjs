@@ -54,6 +54,20 @@ function storyFilesUnder(directory) {
   })
 }
 
+function cloneSlug(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function cloneTitleBase(vendor, product) {
+  if (!vendor || !product) return undefined
+  if (product === vendor) return `Clones/${vendor}`
+  if (!product.startsWith(`${vendor} `)) return undefined
+  return `Clones/${vendor}/${product.slice(vendor.length + 1)}`
+}
+
 const cloneStories = storyFilesUnder('examples/clones')
 const missingCloneStories = cloneStories.filter(storyPath => {
   const importPath = `./${storyPath}`
@@ -69,19 +83,33 @@ const cloneContracts = cloneStories.map(storyPath => {
   return {
     storyPath,
     title: source.match(/title:\s*['"]([^'"]+)['"]/)?.[1],
+    vendor: source.match(/cloneVendor:\s*['"]([^'"]+)['"]/)?.[1],
     product: source.match(/cloneProduct:\s*['"]([^'"]+)['"]/)?.[1],
     namespace: source.match(/cloneNamespace:\s*['"]([^'"]+)['"]/)?.[1],
   }
 })
-const invalidCloneContracts = cloneContracts.filter(({ title, product, namespace }) =>
-  !(title === `Clones/${product}` || title?.startsWith(`Clones/${product}/`))
+const invalidCloneContracts = cloneContracts.filter(({
+  storyPath,
+  title,
+  vendor,
+  product,
+  namespace,
+}) => {
+  const titleBase = cloneTitleBase(vendor, product)
+  const normalizedPath = storyPath.replaceAll('\\', '/')
+  const vendorDirectory = `examples/clones/${cloneSlug(vendor ?? '')}/`
+
+  return !(title === titleBase || title?.startsWith(`${titleBase}/`))
+  || !normalizedPath.startsWith(vendorDirectory)
+  || !/^[A-Za-z0-9][A-Za-z0-9 .&+-]*$/.test(vendor ?? '')
   || !/^[A-Za-z0-9][A-Za-z0-9 .&+-]*$/.test(product ?? '')
-  || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(namespace ?? ''),
-)
+  || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(namespace ?? '')
+})
 if (invalidCloneContracts.length > 0) {
   throw new Error(
-    'Clone stories must declare cloneProduct, use a product-first Clones/<product> title, '
-    + `and declare a kebab-case cloneNamespace: ${
+    'Clone stories must declare cloneVendor and cloneProduct, live in their vendor directory, '
+    + 'use a Clones/<vendor>/<product> title, and declare a kebab-case cloneNamespace: '
+    + `${
       invalidCloneContracts.map(({ storyPath }) => storyPath).join(', ')
     }`,
   )

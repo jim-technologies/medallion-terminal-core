@@ -6,11 +6,11 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
-- **Product-first showcase catalog.** Storybook clone references are grouped
-  directly by product—Google Drive, Google Photos, Google Maps, Google Docs,
-  Google Sheets, Google Slides, Palantir Foundry, Airtable, HubSpot,
-  QuickBooks, Shopify, Stripe, Intercom, and Slack—with explicit product and
-  namespace metadata enforced by tests and the built Storybook check.
+- **Vendor-first showcase catalog.** Storybook and `examples/clones` group
+  multi-product suites under Google and Palantir, then retain exact product
+  names such as Drive, Photos, Maps, Docs, Sheets, Slides, and Foundry.
+  Standalone products remain direct entries. Explicit vendor, product, and
+  namespace metadata is enforced by tests and the built Storybook check.
 - **Current reproducible toolchain.** Flox now locks Node 24.16, pnpm 11.9,
   and Buf 1.71 across supported platforms. The application stack moves to
   React 19.2, TypeScript 7.0, Vite 8.1, Tailwind 4.3, Recharts 3.9,

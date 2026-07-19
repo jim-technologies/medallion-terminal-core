@@ -7,6 +7,7 @@ const meta = {
   component: IntercomShowcase,
   parameters: {
     layout: 'fullscreen',
+    cloneVendor: 'Intercom',
     cloneProduct: 'Intercom',
     cloneNamespace: 'intercom',
     controls: { expanded: true },

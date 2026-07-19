@@ -5,7 +5,7 @@ import {
   workspaceCellName,
   workspaceColumnName,
   type WorkspaceDocumentContent,
-} from '../../examples/clones/google-workspace/GoogleWorkspaceEditor'
+} from '../../examples/clones/google/workspace/GoogleWorkspaceEditor'
 
 describe('GoogleWorkspaceEditor', () => {
   it('generates spreadsheet coordinates beyond the first alphabet cycle', () => {

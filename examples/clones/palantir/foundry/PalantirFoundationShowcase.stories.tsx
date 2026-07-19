@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
+import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
 import { PalantirFoundationShowcase } from './PalantirFoundationShowcase'
 
 const meta = {
-  title: 'Clones/Palantir Foundry/Foundation',
+  title: 'Clones/Palantir/Foundry/Foundation',
   component: PalantirFoundationShowcase,
   parameters: {
     layout: 'fullscreen',
+    cloneVendor: 'Palantir',
     cloneProduct: 'Palantir Foundry',
     cloneNamespace: 'palantir-foundry-foundation',
     controls: { expanded: true },

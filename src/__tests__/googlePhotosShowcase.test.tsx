@@ -6,7 +6,7 @@ import {
   GooglePhotosShowcase,
   selectGooglePhotosItems,
   type GooglePhotosItem,
-} from '../../examples/clones/google-photos/GooglePhotosShowcase'
+} from '../../examples/clones/google/photos/GooglePhotosShowcase'
 
 describe('GooglePhotosShowcase', () => {
   it('projects the neutral media records into Photos destinations', () => {

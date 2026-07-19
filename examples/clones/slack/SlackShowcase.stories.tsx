@@ -7,6 +7,7 @@ const meta = {
   component: SlackShowcase,
   parameters: {
     layout: 'fullscreen',
+    cloneVendor: 'Slack',
     cloneProduct: 'Slack',
     cloneNamespace: 'slack',
     controls: { expanded: true },

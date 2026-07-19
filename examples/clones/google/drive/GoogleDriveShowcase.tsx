@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type KeyboardEvent, type MouseEvent } from 'react'
-import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
+import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
 import './GoogleDriveShowcase.css'
 
 export type GoogleDriveSection =

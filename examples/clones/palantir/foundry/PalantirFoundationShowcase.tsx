@@ -1,11 +1,11 @@
 import { useMemo, useState, type CSSProperties } from 'react'
-import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
+import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
 import {
   OperationalShowcaseAvatar,
   OperationalShowcaseIcon,
   type OperationalShowcaseIconName,
-} from '../shared/OperationalShowcasePrimitives'
-import '../shared/OperationalShowcases.css'
+} from '../../shared/OperationalShowcasePrimitives'
+import '../../shared/OperationalShowcases.css'
 import './PalantirFoundationShowcase.css'
 
 export type PalantirFoundationSurface = 'coverage' | 'compass' | 'data' | 'code'

@@ -5,7 +5,7 @@ import {
   GoogleDriveShowcase,
   formatGoogleDriveBytes,
   selectGoogleDriveItems,
-} from '../../examples/clones/google-drive/GoogleDriveShowcase'
+} from '../../examples/clones/google/drive/GoogleDriveShowcase'
 
 describe('GoogleDriveShowcase', () => {
   it('projects the generic file records into Drive sections and folders', () => {

@@ -7,6 +7,7 @@ const meta = {
   component: StripeShowcase,
   parameters: {
     layout: 'fullscreen',
+    cloneVendor: 'Stripe',
     cloneProduct: 'Stripe',
     cloneNamespace: 'stripe',
     controls: { expanded: true },

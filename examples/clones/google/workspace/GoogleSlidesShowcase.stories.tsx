@@ -2,23 +2,24 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { GoogleWorkspaceEditor } from './GoogleWorkspaceEditor'
 
 const meta = {
-  title: 'Clones/Google Sheets',
+  title: 'Clones/Google/Slides',
   component: GoogleWorkspaceEditor,
   parameters: {
     layout: 'fullscreen',
-    cloneProduct: 'Google Sheets',
-    cloneNamespace: 'google-sheets',
+    cloneVendor: 'Google',
+    cloneProduct: 'Google Slides',
+    cloneNamespace: 'google-slides',
     docs: {
       description: {
         component:
-          'A product-faithful Sheets surface with a selectable grid, formula bar, sheet tabs, '
-          + 'collaboration controls, and contextual Gemini analysis.',
+          'A product-faithful Slides surface with a filmstrip, responsive presentation canvas, '
+          + 'speaker notes, collaboration, and Gemini-assisted presentation workflows.',
       },
     },
   },
   args: {
-    product: 'sheets',
-    initialCell: 'B4',
+    product: 'slides',
+    initialSlide: 0,
     initialGeminiOpen: false,
   },
   argTypes: {
@@ -30,11 +31,11 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const RevenueModel: Story = {}
+export const BusinessReview: Story = {}
 
-export const GeminiDataAnalysis: Story = {
+export const GeminiPresentationDesign: Story = {
   args: {
-    initialCell: 'F7',
+    initialSlide: 2,
     initialGeminiOpen: true,
   },
 }

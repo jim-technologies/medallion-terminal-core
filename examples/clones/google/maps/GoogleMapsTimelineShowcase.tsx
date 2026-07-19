@@ -1,10 +1,10 @@
 import { useMemo, useState, type CSSProperties } from 'react'
-import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
+import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
 import {
   OperationalShowcaseAvatar,
   OperationalShowcaseIcon,
-} from '../shared/OperationalShowcasePrimitives'
-import '../shared/OperationalShowcases.css'
+} from '../../shared/OperationalShowcasePrimitives'
+import '../../shared/OperationalShowcases.css'
 
 export type TimelineShowcaseSection = 'day' | 'trips' | 'places'
 export type TimelineTravelMode = 'Walking' | 'Driving' | 'Cycling' | 'Transit' | 'Flight'

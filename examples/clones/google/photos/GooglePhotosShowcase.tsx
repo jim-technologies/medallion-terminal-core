@@ -11,8 +11,8 @@ import {
   sortMediaItems,
   type MediaCollectionData,
   type MediaItemData,
-} from '../../../src/widgets/mediaShape'
-import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
+} from '../../../../src/widgets/mediaShape'
+import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
 import './GooglePhotosShowcase.css'
 
 export type GooglePhotosSection =

@@ -7,6 +7,7 @@ const meta = {
   component: HubSpotShowcase,
   parameters: {
     layout: 'fullscreen',
+    cloneVendor: 'HubSpot',
     cloneProduct: 'HubSpot',
     cloneNamespace: 'hubspot',
     controls: { expanded: true },

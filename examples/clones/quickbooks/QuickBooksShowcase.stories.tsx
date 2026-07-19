@@ -7,6 +7,7 @@ const meta = {
   component: QuickBooksShowcase,
   parameters: {
     layout: 'fullscreen',
+    cloneVendor: 'QuickBooks',
     cloneProduct: 'QuickBooks',
     cloneNamespace: 'quickbooks',
     controls: { expanded: true },

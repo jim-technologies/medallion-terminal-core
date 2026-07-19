@@ -7,6 +7,7 @@ const meta = {
   component: AirtableShowcase,
   parameters: {
     layout: 'fullscreen',
+    cloneVendor: 'Airtable',
     cloneProduct: 'Airtable',
     cloneNamespace: 'airtable',
     controls: { expanded: true },

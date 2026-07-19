@@ -7,6 +7,7 @@ const meta = {
   component: ShopifyShowcase,
   parameters: {
     layout: 'fullscreen',
+    cloneVendor: 'Shopify',
     cloneProduct: 'Shopify',
     cloneNamespace: 'shopify',
     controls: { expanded: true },

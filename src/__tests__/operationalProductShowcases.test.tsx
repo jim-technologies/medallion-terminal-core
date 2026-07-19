@@ -7,7 +7,7 @@ import {
   foundryOntologyReadiness,
   selectFoundryObjectTypes,
   type FoundryObjectTypeDefinition,
-} from '../../examples/clones/palantir-foundry/FoundryShowcase'
+} from '../../examples/clones/palantir/foundry/FoundryShowcase'
 import {
   PALANTIR_SAMPLE_CAPABILITIES,
   PALANTIR_SAMPLE_RESOURCES,
@@ -17,7 +17,7 @@ import {
   type PalantirCompassResource,
   type PalantirDataConnection,
   type PalantirRepositoryEntry,
-} from '../../examples/clones/palantir-foundry/PalantirFoundationShowcase'
+} from '../../examples/clones/palantir/foundry/PalantirFoundationShowcase'
 import {
   SHOPIFY_SAMPLE_INVENTORY,
   SHOPIFY_SAMPLE_ORDERS,
@@ -46,7 +46,7 @@ import {
   selectTimelineDay,
   timelineDayTotals,
   type TimelineDay,
-} from '../../examples/clones/google-maps/GoogleMapsTimelineShowcase'
+} from '../../examples/clones/google/maps/GoogleMapsTimelineShowcase'
 import {
   formatOperationalCurrency,
   formatOperationalPercent,

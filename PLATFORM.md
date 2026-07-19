@@ -71,31 +71,32 @@ new projection is required.
 ## Product showcase catalog
 
 Storybook keeps product-faithful presentation references outside the published
-core. Every story declares `cloneProduct`, uses that product directly beneath
-`Clones/`, and owns a unique implementation namespace:
+core. Every story declares `cloneVendor`, `cloneProduct`, and a unique
+implementation namespace. The filesystem and Storybook both group suites by
+vendor before product:
 
-| Product | Storybook path | Generic framework foundation |
-|---|---|---|
-| Google Drive | `Clones/Google Drive` | Files, catalog, object detail, activity, actions |
-| Google Photos | `Clones/Google Photos` | Media timeline, collections, files, metadata, actions |
-| Google Maps | `Clones/Google Maps/Timeline` | Maps, routes, events, media, provider-neutral basemaps |
-| Google Docs | `Clones/Google Docs` | Files, text, embeds, context, consumer-registered editor |
-| Google Sheets | `Clones/Google Sheets` | Tables, records, analytics, context, consumer-registered editor |
-| Google Slides | `Clones/Google Slides` | Files, images, embeds, context, consumer-registered editor |
-| Palantir Foundry | `Clones/Palantir Foundry/Foundation` and `Ontology & Operations` | Catalog, ontology, lineage, maps, data connections, code, records, actions |
-| Airtable | `Clones/Airtable` | Record grid, board, calendar, form, views, actions |
-| HubSpot | `Clones/HubSpot` | Records, customer detail, pipeline, activity, actions |
-| QuickBooks | `Clones/QuickBooks` | Metrics, cash flow, invoices, transactions, review actions |
-| Shopify | `Clones/Shopify` | Commerce metrics, orders, inventory, fulfillment, actions |
-| Stripe | `Clones/Stripe` | Payments, subscriptions, payouts, disputes, analytics |
-| Intercom | `Clones/Intercom` | Inbox, conversation detail, tickets, customer context, reporting |
-| Slack | `Clones/Slack` | Workspace navigation, channels, presence, search, reactions, files, threads, app messages, composition |
+| Vendor | Product | Storybook path | Generic framework foundation |
+|---|---|---|---|
+| Google | Docs | `Clones/Google/Docs` | Files, text, embeds, context, consumer-registered editor |
+| Google | Drive | `Clones/Google/Drive` | Files, catalog, object detail, activity, actions |
+| Google | Maps | `Clones/Google/Maps/Timeline` | Maps, routes, events, media, provider-neutral basemaps |
+| Google | Photos | `Clones/Google/Photos` | Media timeline, collections, files, metadata, actions |
+| Google | Sheets | `Clones/Google/Sheets` | Tables, records, analytics, context, consumer-registered editor |
+| Google | Slides | `Clones/Google/Slides` | Files, images, embeds, context, consumer-registered editor |
+| Palantir | Foundry | `Clones/Palantir/Foundry/Foundation` and `Clones/Palantir/Foundry/Ontology & Operations` | Catalog, ontology, lineage, maps, data connections, code, records, actions |
+| Airtable | Airtable | `Clones/Airtable` | Record grid, board, calendar, form, views, actions |
+| HubSpot | HubSpot | `Clones/HubSpot` | Records, customer detail, pipeline, activity, actions |
+| Intercom | Intercom | `Clones/Intercom` | Inbox, conversation detail, tickets, customer context, reporting |
+| QuickBooks | QuickBooks | `Clones/QuickBooks` | Metrics, cash flow, invoices, transactions, review actions |
+| Shopify | Shopify | `Clones/Shopify` | Commerce metrics, orders, inventory, fulfillment, actions |
+| Slack | Slack | `Clones/Slack` | Workspace navigation, channels, presence, search, reactions, files, threads, app messages, composition |
+| Stripe | Stripe | `Clones/Stripe` | Payments, subscriptions, payouts, disputes, analytics |
 
 The showcases accept host-provided records/content and demonstrate application
 anatomy; they are not added to the npm barrel as vendor-specific framework
 APIs. `storybookCoverage.test.ts` and `check-storybook.mjs` enforce the
-product-first title contract, unique namespaces, discoverability, and coverage
-of every built-in and public dashboard example.
+vendor-first title and filesystem contract, unique namespaces,
+discoverability, and coverage of every built-in and public dashboard example.
 
 ### Composition-ready products without a dedicated shell
 

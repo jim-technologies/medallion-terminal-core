@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
-import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
+import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
 import './GoogleWorkspaceEditor.css'
 
 export type GoogleWorkspaceProduct = 'docs' | 'sheets' | 'slides'

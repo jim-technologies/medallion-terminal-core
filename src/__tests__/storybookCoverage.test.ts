@@ -43,6 +43,19 @@ function storyMetaValue(source: string, key: string): string | undefined {
   return source.match(new RegExp(`${key}:\\s*['"]([^'"]+)['"]`))?.[1]
 }
 
+function cloneSlug(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function cloneTitleBase(vendor: string, product: string): string | undefined {
+  if (product === vendor) return `Clones/${vendor}`
+  if (!product.startsWith(`${vendor} `)) return undefined
+  return `Clones/${vendor}/${product.slice(vendor.length + 1)}`
+}
+
 describe('Storybook coverage', () => {
   it('displays every public example as one standalone dashboard story', () => {
     const publicExamples = readdirSync(new URL('../../public/examples/', import.meta.url))
@@ -83,28 +96,39 @@ describe('Storybook coverage', () => {
     }
   })
 
-  it('keeps product-faithful clone stories outside the core with product-first namespaces', () => {
+  it('keeps product-faithful clone stories outside the core in vendor-first groups', () => {
     const cloneStories = storyFilesUnder(new URL('../../examples/clones/', import.meta.url))
     const titles: string[] = []
     const namespaces: string[] = []
+    const vendors: string[] = []
     const products: string[] = []
 
     expect(cloneStories.length).toBeGreaterThan(0)
     for (const storyUrl of cloneStories) {
       const source = readFileSync(storyUrl, 'utf8')
       const title = storyMetaValue(source, 'title')
+      const vendor = storyMetaValue(source, 'cloneVendor')
       const product = storyMetaValue(source, 'cloneProduct')
       const namespace = storyMetaValue(source, 'cloneNamespace')
 
       expect(title, `${storyUrl.pathname} must declare a story title`).toBeDefined()
       expect(
+        vendor,
+        `${storyUrl.pathname} must declare parameters.cloneVendor`,
+      ).toMatch(/^[A-Za-z0-9][A-Za-z0-9 .&+-]*$/)
+      expect(
         product,
         `${storyUrl.pathname} must declare parameters.cloneProduct`,
       ).toMatch(/^[A-Za-z0-9][A-Za-z0-9 .&+-]*$/)
+      const titleBase = cloneTitleBase(vendor!, product!)
       expect(
-        title === `Clones/${product}` || title?.startsWith(`Clones/${product}/`),
-        `${storyUrl.pathname} must be grouped directly under its product name`,
+        title === titleBase || title?.startsWith(`${titleBase}/`),
+        `${storyUrl.pathname} must be grouped under its vendor and product`,
       ).toBe(true)
+      expect(
+        storyUrl.pathname,
+        `${storyUrl.pathname} must live in the ${vendor} vendor directory`,
+      ).toContain(`/examples/clones/${cloneSlug(vendor!)}/`)
       expect(
         namespace,
         `${storyUrl.pathname} must declare parameters.cloneNamespace`,
@@ -113,6 +137,7 @@ describe('Storybook coverage', () => {
 
       titles.push(title!)
       namespaces.push(namespace!)
+      vendors.push(vendor!)
       products.push(product!)
     }
 
@@ -120,5 +145,7 @@ describe('Storybook coverage', () => {
     expect(new Set(namespaces).size, 'clone namespaces must be unique').toBe(namespaces.length)
     expect(new Set(products).size, 'the catalog must cover several distinct products')
       .toBeGreaterThan(5)
+    expect(vendors.filter(vendor => vendor === 'Google').length).toBe(6)
+    expect(vendors.filter(vendor => vendor === 'Palantir').length).toBe(2)
   })
 })
