@@ -25,6 +25,7 @@ describe('GoogleWorkspaceEditor', () => {
     expect(html).toContain('Document outline')
     expect(html).toContain('Saved to Drive')
     expect(html).toContain('Share')
+    expect(html).toContain('Account: Jun')
   })
 
   it('server-renders the Sheets grid, formula bar, and tabs', () => {
@@ -49,6 +50,7 @@ describe('GoogleWorkspaceEditor', () => {
     expect(html).toContain('Click to add speaker notes')
     expect(html).toContain('Slideshow')
     expect(html).toContain('Add slide')
+    expect(html).toContain('JIM TECHNOLOGIES')
   })
 
   it('accepts host-provided neutral document content', () => {

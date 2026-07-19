@@ -60,6 +60,43 @@ if (missingCloneStories.length > 0) {
   throw new Error(`Storybook is missing clone showcases: ${missingCloneStories.join(', ')}`)
 }
 
+const cloneGroups = ['Google', 'Palantir', 'SME']
+const cloneContracts = cloneStories.map(storyPath => {
+  const source = readFileSync(storyPath, 'utf8')
+  return {
+    storyPath,
+    title: source.match(/title:\s*['"]([^'"]+)['"]/)?.[1],
+    namespace: source.match(/cloneNamespace:\s*['"]([^'"]+)['"]/)?.[1],
+  }
+})
+const invalidCloneContracts = cloneContracts.filter(({ title, namespace }) =>
+  !cloneGroups.some(group => title?.startsWith(`Clones/${group}/`))
+  || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(namespace ?? ''),
+)
+if (invalidCloneContracts.length > 0) {
+  throw new Error(
+    'Clone stories must use a Clones/Google, Clones/Palantir, or Clones/SME title '
+    + `and a kebab-case cloneNamespace: ${
+      invalidCloneContracts.map(({ storyPath }) => storyPath).join(', ')
+    }`,
+  )
+}
+
+const cloneTitles = cloneContracts.map(({ title }) => title)
+const cloneNamespaces = cloneContracts.map(({ namespace }) => namespace)
+if (new Set(cloneTitles).size !== cloneTitles.length) {
+  throw new Error('Clone story titles must be unique')
+}
+if (new Set(cloneNamespaces).size !== cloneNamespaces.length) {
+  throw new Error('Clone story namespaces must be unique')
+}
+const missingCloneGroups = cloneGroups.filter(group =>
+  !cloneTitles.some(title => title?.startsWith(`Clones/${group}/`)),
+)
+if (missingCloneGroups.length > 0) {
+  throw new Error(`Storybook is missing clone groups: ${missingCloneGroups.join(', ')}`)
+}
+
 console.log(
   `Storybook coverage OK: ${publicExampleIds.length} complete dashboards, `
   + `${widgetStoryModules.size} built-in widgets, ${cloneStories.length} clone showcase`

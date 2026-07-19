@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import './GoogleWorkspaceEditor.css'
 
 export type GoogleWorkspaceProduct = 'docs' | 'sheets' | 'slides'
@@ -285,7 +286,13 @@ export function GoogleWorkspaceEditor({
             <span className="is-maya">MR</span>
             <span className="is-lina">LT</span>
           </div>
-          <button type="button" className="workspace-user-avatar" aria-label="Account: Alex Kim">AK</button>
+          <button
+            type="button"
+            className="workspace-user-avatar"
+            aria-label={`Account: ${CLONE_DEMO_IDENTITY.user}`}
+          >
+            {CLONE_DEMO_IDENTITY.user.charAt(0)}
+          </button>
         </div>
       </header>
 
@@ -464,7 +471,7 @@ function DocsCanvas({
           <h1>{content.heading}</h1>
           {content.subtitle && <p className="workspace-doc-subtitle">{content.subtitle}</p>}
           <div className="workspace-doc-meta">
-            <span><WorkspaceIcon name="person" /> Alex Kim</span>
+            <span><WorkspaceIcon name="person" /> {CLONE_DEMO_IDENTITY.user}</span>
             <span><WorkspaceIcon name="calendar" /> July 17, 2026</span>
             <span><WorkspaceIcon name="status" /> On track</span>
           </div>
@@ -677,7 +684,9 @@ function SlideContent({ slide, compact = false }: { slide: WorkspaceSlideData; c
           <span><i /><strong>September</strong><small>General availability</small></span>
         </div>
       )}
-      <span className="workspace-slide-page">MEDALLION · {slide.id.toUpperCase()}</span>
+      <span className="workspace-slide-page">
+        {CLONE_DEMO_IDENTITY.company.toUpperCase()} · {slide.id.toUpperCase()}
+      </span>
     </div>
   )
 }

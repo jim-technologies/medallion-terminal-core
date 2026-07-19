@@ -156,7 +156,7 @@ describe('QuickBooksShowcase', () => {
       <QuickBooksShowcase initialSection="transactions" />,
     )
 
-    expect(overview).toContain('Good morning, Jordan')
+    expect(overview).toContain('Good morning, Jun')
     expect(overview).toContain('Profit and loss')
     expect(overview).toContain('Open invoices')
     expect(cashFlow).toContain('Cash balance forecast')

@@ -3,6 +3,7 @@ import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import {
   ReadinessAvatar,
   ReadinessIcon,
+  readinessInitials,
 } from './ReadinessPrimitives'
 import './ReadinessShowcases.css'
 
@@ -294,7 +295,7 @@ export function IntercomShowcase({
       </aside>
 
       <aside className="intercom-nav">
-        <div className="intercom-workspace-switcher"><span className="intercom-workspace-avatar">N</span><strong>{workspaceName}</strong><ReadinessIcon name="chevron-down" size={13} /></div>
+        <div className="intercom-workspace-switcher"><span className="intercom-workspace-avatar">{readinessInitials(workspaceName).charAt(0)}</span><strong>{workspaceName}</strong><ReadinessIcon name="chevron-down" size={13} /></div>
         <button className="intercom-new-message"><ReadinessIcon name="plus" size={15} />New conversation</button>
         <div className="intercom-nav-group">
           <span>Inbox</span>

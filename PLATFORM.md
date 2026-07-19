@@ -51,7 +51,10 @@ growing a second widget family for each adjacent product:
 | Palantir-like governed operating platform | `asset_catalog` + `object_view` + `dag` + `geo_map` + `action_form` + `code_browser` + record/analytical widgets | Discovery, ontology detail, links, lineage, operational geography, governed actions, source browsing, workflows, and analysis |
 | Google Drive-like file workspace | `file_browser` + `asset_catalog` + `object_view` + `events` / `action_log` + optional `action_form` | Paths, breadcrumbs, search, paging, upload/download, list/gallery, previews, details/activity, and policy-gated file operations |
 | Google Photos-like media workspace | `media_gallery` + `file_browser` + optional `object_view`, `events`, and `action_form` | Capture timelines, albums, photo/video filtering, favorites, metadata, native playback, selection, storage upload, and policy-gated media operations |
+| Google Timeline-like location history | `geo_map` + `events` + `table` + optional `media_gallery` | Provider-neutral MapLibre paths and places, chronological activity, detail tables, related photos/video, and host-swappable basemaps |
+| Document, spreadsheet, and presentation workspace | `file_browser` + `table` + `text` + `image` / `iframe` + consumer-registered editors | File discovery, structured data, previews, context linking, and reference editor shells; persistence, realtime collaboration, formulas, and document formats remain host/editor services |
 | Airtable-style operational app | `record_grid` + `record_board` + `record_calendar` + `record_form` | Typed fields, links, saved views, filters/sorts, inline edits, governed CRUD, revision checks, and multiple projections over one record set |
+| SME business operating suite | `MultiDashboard` + record views + analytical widgets + `action_form` + `events` / `action_log` | Owner pulse, CRM/projects, commerce, support, finance, governed workflows, and drill-through into shared business objects |
 | Grafana / Superset-style analytics | `metric`, `stat_strip`, `timeseries`, `area_chart`, `bar_chart`, `table`, `heatmap`, `histogram`, `boxplot`, `scatter`, `treemap`, `gauge`, `events`, `alert_log` | Context-driven filters, streaming/polling, freshness and retry state, annotations, alerts, drill-down, snapshots, export, and embedding |
 | Binance-like exchange | `stat_strip` + `candlestick` + `orderbook` + `depth_chart` + `tape` + `trade` + orders/holdings tables | Market statistics, candles, ladder and cumulative liquidity, prints, order entry, lifecycle, history, and watchlists |
 | CoinGecko-like market intelligence | `table` + `metric` / `stat_strip` + `timeseries` / `candlestick` + `distribution` + `text` | Ranked markets, coin detail, price/volume/cap history, metadata, categories, portfolio/watchlists, and news |
@@ -62,6 +65,23 @@ These are capability-level analogues, not copies of another product's layout
 or trade dress. A host can put them in tabs with `MultiDashboard`, retarget
 all panels through shared `ctx`, and register a custom widget when a genuinely
 new projection is required.
+
+## Reference showcase catalog
+
+Storybook keeps product-faithful presentation references outside the published
+core, grouped under stable namespaces:
+
+| Storybook group | Namespaced showcases | Generic framework foundation |
+|---|---|---|
+| `Clones/Google` | Drive, Photos, Maps Timeline, Workspace Docs, Sheets, and Slides | Files, media, maps/events, tables/text/embeds, shared context |
+| `Clones/Palantir` | Foundry Foundation and Ontology & Operations | Catalog, ontology objects, lineage, maps, data connections, code, records, actions |
+| `Clones/SME` | Airtable, HubSpot, QuickBooks, Shopify, Stripe, and Intercom | Records/views, analytics, events, forms/actions, tables, shared context |
+
+The showcases accept host-provided records/content and demonstrate application
+anatomy; they are not added to the npm barrel as vendor-specific framework
+APIs. `storybookCoverage.test.ts` and `check-storybook.mjs` enforce grouping,
+unique namespaces, discoverability, and coverage of every built-in and public
+dashboard example.
 
 The current file surface intentionally stops short of pretending that storage
 policy is a UI concern. Rename, move, delete, share, retention, and folder

@@ -46,6 +46,7 @@ describe('GoogleDriveShowcase', () => {
     expect(html).toContain('Suggested')
     expect(html).toContain('Folders and files')
     expect(html).toContain('8.4 GB of 30 GB used')
+    expect(html).toContain('Account: Jun')
   })
 
   it('accepts host-provided records without changing the clone presentation layer', () => {

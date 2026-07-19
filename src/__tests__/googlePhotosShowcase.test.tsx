@@ -41,6 +41,7 @@ describe('GooglePhotosShowcase', () => {
     expect(html).toContain('Golden coast')
     expect(html).toContain('Collections')
     expect(html).toContain('8.4 GB of 15 GB used')
+    expect(html).toContain('Account: Jun')
   })
 
   it('renders collection and immersive viewer states', () => {

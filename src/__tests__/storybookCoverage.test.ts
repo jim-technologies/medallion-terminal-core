@@ -39,6 +39,10 @@ function storyFilesUnder(directory: URL): URL[] {
   })
 }
 
+function storyMetaValue(source: string, key: string): string | undefined {
+  return source.match(new RegExp(`${key}:\\s*['"]([^'"]+)['"]`))?.[1]
+}
+
 describe('Storybook coverage', () => {
   it('displays every public example as one standalone dashboard story', () => {
     const publicExamples = readdirSync(new URL('../../public/examples/', import.meta.url))
@@ -79,16 +83,40 @@ describe('Storybook coverage', () => {
     }
   })
 
-  it('keeps product-faithful clone stories outside the core and under a clone namespace', () => {
+  it('keeps product-faithful clone stories outside the core with unique grouped namespaces', () => {
     const cloneStories = storyFilesUnder(new URL('../../examples/clones/', import.meta.url))
+    const allowedGroups = ['Google', 'Palantir', 'SME']
+    const titles: string[] = []
+    const namespaces: string[] = []
 
     expect(cloneStories.length).toBeGreaterThan(0)
     for (const storyUrl of cloneStories) {
       const source = readFileSync(storyUrl, 'utf8')
-      expect(source, `${storyUrl.pathname} must use the Clones/ namespace`).toMatch(
-        /title:\s*['"]Clones\/[^'"]+['"]/,
-      )
+      const title = storyMetaValue(source, 'title')
+      const namespace = storyMetaValue(source, 'cloneNamespace')
+
+      expect(title, `${storyUrl.pathname} must declare a story title`).toBeDefined()
+      expect(
+        allowedGroups.some(group => title?.startsWith(`Clones/${group}/`)),
+        `${storyUrl.pathname} must be grouped under ${allowedGroups.join(', ')}`,
+      ).toBe(true)
+      expect(
+        namespace,
+        `${storyUrl.pathname} must declare parameters.cloneNamespace`,
+      ).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
       expect(source, `${storyUrl.pathname} must export at least one story`).toMatch(/^export const /m)
+
+      titles.push(title!)
+      namespaces.push(namespace!)
+    }
+
+    expect(new Set(titles).size, 'clone story titles must be unique').toBe(titles.length)
+    expect(new Set(namespaces).size, 'clone namespaces must be unique').toBe(namespaces.length)
+    for (const group of allowedGroups) {
+      expect(
+        titles.some(title => title.startsWith(`Clones/${group}/`)),
+        `${group} must remain represented in the clone catalog`,
+      ).toBe(true)
     }
   })
 })

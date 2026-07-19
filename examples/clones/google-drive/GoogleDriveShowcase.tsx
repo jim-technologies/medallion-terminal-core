@@ -422,8 +422,11 @@ export function GoogleDriveShowcase({
           <button className="gdrive-icon-button gdrive-apps-button" aria-label="Apps">
             <GoogleDriveIcon name="apps" />
           </button>
-          <button className="gdrive-avatar gdrive-avatar-large" aria-label="Account: Avery Kim">
-            AK
+          <button
+            className="gdrive-avatar gdrive-avatar-large"
+            aria-label={`Account: ${CLONE_DEMO_IDENTITY.user}`}
+          >
+            {CLONE_DEMO_IDENTITY.user.charAt(0)}
           </button>
         </div>
       </header>
@@ -834,7 +837,10 @@ function DetailsPanel({
           </div>
           <dl className="gdrive-details-list">
             <div><dt>Type</dt><dd>{item.kind === 'folder' ? 'Folder' : item.document_type ?? 'File'}</dd></div>
-            <div><dt>Owner</dt><dd>{item.owner === 'me' ? 'Avery Kim (me)' : item.owner}</dd></div>
+            <div>
+              <dt>Owner</dt>
+              <dd>{item.owner === 'me' ? `${CLONE_DEMO_IDENTITY.user} (me)` : item.owner}</dd>
+            </div>
             <div><dt>Location</dt><dd>{location ?? 'My Drive'}</dd></div>
             <div><dt>Modified</dt><dd>{formatModified(item.modified_at)}, 2026</dd></div>
             {item.kind === 'file' && <div><dt>Size</dt><dd>{formatGoogleDriveBytes(item.size_bytes)}</dd></div>}

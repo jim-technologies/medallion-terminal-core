@@ -333,7 +333,7 @@ function QuickBooksOverview({
     <div className="quickbooks-overview">
       <header className="quickbooks-page-heading">
         <div>
-          <h1>Good morning, Jordan</h1>
+          <h1>Good morning, {CLONE_DEMO_IDENTITY.user}</h1>
           <p>Here is what needs your attention today.</p>
         </div>
         <button><SmeCloneIcon name="grid" size={15} /> Customize layout</button>

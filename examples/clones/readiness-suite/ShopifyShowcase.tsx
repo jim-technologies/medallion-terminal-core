@@ -6,6 +6,7 @@ import {
   ReadinessSparkline,
   formatReadinessCurrency,
   formatReadinessPercent,
+  readinessInitials,
 } from './ReadinessPrimitives'
 import './ReadinessShowcases.css'
 
@@ -215,7 +216,7 @@ export function ShopifyShowcase({
         <div className="ready-top-actions">
           <button aria-label="Assistant"><ReadinessIcon name="sparkles" /></button>
           <button aria-label="Notifications" className="ready-notification"><ReadinessIcon name="bell" /><i /></button>
-          <button className="shopify-store-chip"><span>NS</span><strong>{storeName}</strong><ReadinessIcon name="chevron-down" size={13} /></button>
+          <button className="shopify-store-chip"><span>{readinessInitials(storeName)}</span><strong>{storeName}</strong><ReadinessIcon name="chevron-down" size={13} /></button>
         </div>
       </header>
 
@@ -250,7 +251,7 @@ export function ShopifyShowcase({
           {section === 'home' && (
             <div className="shopify-content-narrow">
               <div className="ready-page-heading shopify-page-heading">
-                <div><h1>Good morning, Jordan</h1><p>Here’s what’s happening with {storeName}.</p></div>
+                <div><h1>Good morning, {CLONE_DEMO_IDENTITY.user}</h1><p>Here’s what’s happening with {storeName}.</p></div>
               </div>
               <div className="shopify-alert-card">
                 <span className="shopify-alert-icon"><ReadinessIcon name="package" size={19} /></span>

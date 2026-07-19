@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import businessOperations from '../../public/examples/business-operations.json'
 import cryptoWatch from '../../public/examples/crypto-watch.json'
 import fileBrowser from '../../public/examples/file-browser.json'
+import logisticsOps from '../../public/examples/logistics-ops.json'
 import medallionTerminal from '../../public/examples/medallion-terminal.json'
 import optionsDesk from '../../public/examples/options-desk.json'
 import platformFoundation from '../../public/examples/platform-foundation.json'
@@ -56,6 +57,36 @@ const SURFACES: Array<{
     name: 'personal and business media library',
     components: components(mediaLibrary, fileBrowser),
     required: ['media_gallery', 'file_browser', 'stat_strip', 'distribution', 'text'],
+  },
+  {
+    name: 'SME business and productivity workspace',
+    components: components(
+      businessOperations,
+      workManagement,
+      fileBrowser,
+      mediaLibrary,
+    ),
+    required: [
+      'stat_strip',
+      'timeseries',
+      'gauge',
+      'table',
+      'heatmap',
+      'events',
+      'text',
+      'record_grid',
+      'record_board',
+      'record_calendar',
+      'record_form',
+      'file_browser',
+      'media_gallery',
+      'action_log',
+    ],
+  },
+  {
+    name: 'location-aware operations and timeline',
+    components: components(logisticsOps, mediaLibrary),
+    required: ['geo_map', 'stat_strip', 'heatmap', 'treemap', 'area_chart', 'events', 'table', 'media_gallery'],
   },
   {
     name: 'spot exchange',

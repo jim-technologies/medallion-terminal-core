@@ -5,6 +5,7 @@ import {
   SmeCloneIcon,
   formatSmeCurrency,
   formatSmePercent,
+  smeCloneInitials,
 } from './SmeClonePrimitives'
 import './SmeCloneShowcases.css'
 
@@ -226,7 +227,7 @@ function AirtableTopbar({
         <span className="airtable-brand-name">Airtable</span>
       </div>
       <button className="airtable-workspace-switcher">
-        <span className="airtable-workspace-badge">N</span>
+        <span className="airtable-workspace-badge">{smeCloneInitials(workspaceName)}</span>
         <span>{workspaceName}</span>
         <SmeCloneIcon name="chevron-down" size={14} />
       </button>

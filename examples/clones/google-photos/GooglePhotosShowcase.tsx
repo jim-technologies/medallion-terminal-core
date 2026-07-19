@@ -12,6 +12,7 @@ import {
   type MediaCollectionData,
   type MediaItemData,
 } from '../../../src/widgets/mediaShape'
+import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import './GooglePhotosShowcase.css'
 
 export type GooglePhotosSection =
@@ -125,7 +126,7 @@ export const GOOGLE_PHOTOS_SAMPLE_ITEMS: readonly GooglePhotosItem[] = [
     favorite: true,
     collectionIds: ['california-weekend'],
     tags: ['coast', 'ocean', 'summer'],
-    people: ['Alex', 'Maya'],
+    people: [CLONE_DEMO_IDENTITY.user, 'Maya'],
     location: 'Half Moon Bay, California',
     layout: 'hero',
     shared: true,
@@ -161,7 +162,7 @@ export const GOOGLE_PHOTOS_SAMPLE_ITEMS: readonly GooglePhotosItem[] = [
     favorite: true,
     collectionIds: ['california-weekend'],
     tags: ['ridge', 'sunset'],
-    people: ['Alex'],
+    people: [CLONE_DEMO_IDENTITY.user],
     location: 'Montara, California',
     layout: 'wide',
   }),
@@ -218,7 +219,7 @@ export const GOOGLE_PHOTOS_SAMPLE_ITEMS: readonly GooglePhotosItem[] = [
     capturedAt: '2026-07-12T19:12:00Z',
     collectionIds: ['team-retreat'],
     tags: ['team', 'harbor'],
-    people: ['Alex', 'Lina', 'Maya', 'Sam'],
+    people: [CLONE_DEMO_IDENTITY.user, 'Lina', 'Maya', 'Sam'],
     location: 'Oakland, California',
     layout: 'hero',
     shared: true,
@@ -231,7 +232,7 @@ export const GOOGLE_PHOTOS_SAMPLE_ITEMS: readonly GooglePhotosItem[] = [
     favorite: true,
     collectionIds: ['team-retreat'],
     tags: ['team', 'ridge'],
-    people: ['Alex', 'Sam'],
+    people: [CLONE_DEMO_IDENTITY.user, 'Sam'],
     location: 'Oakland, California',
     layout: 'wide',
   }),
@@ -286,7 +287,7 @@ export const GOOGLE_PHOTOS_SAMPLE_ITEMS: readonly GooglePhotosItem[] = [
     capturedAt: '2024-12-24T17:05:00Z',
     collectionIds: ['family'],
     tags: ['family', 'scan'],
-    people: ['Alex', 'Maya'],
+    people: [CLONE_DEMO_IDENTITY.user, 'Maya'],
     layout: 'square',
     archived: true,
   }),
@@ -501,7 +502,13 @@ export function GooglePhotosShowcase({
           <button type="button" className="gphotos-icon-button" aria-label="Google apps">
             <PhotosIcon name="apps" />
           </button>
-          <button type="button" className="gphotos-avatar" aria-label="Account: Alex Kim">AK</button>
+          <button
+            type="button"
+            className="gphotos-avatar"
+            aria-label={`Account: ${CLONE_DEMO_IDENTITY.user}`}
+          >
+            {CLONE_DEMO_IDENTITY.user.charAt(0)}
+          </button>
         </div>
       </header>
 
@@ -747,7 +754,7 @@ function MemoriesShelf() {
     { title: '2 years ago', subtitle: 'Jul 17, 2024', scene: 'coast' },
     { title: 'California coast', subtitle: 'Recent trip', scene: 'harbor' },
     { title: 'City evenings', subtitle: 'A look back', scene: 'city' },
-    { title: 'Together', subtitle: 'Maya and Alex', scene: 'ridge' },
+    { title: 'Together', subtitle: `Maya and ${CLONE_DEMO_IDENTITY.user}`, scene: 'ridge' },
   ] as const
 
   return (
