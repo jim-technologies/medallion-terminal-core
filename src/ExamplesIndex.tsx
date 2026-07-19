@@ -39,6 +39,13 @@ const EXAMPLES: Example[] = [
     featured: true,
   },
   {
+    path: '/examples/communications-hub.json',
+    title: 'Communications Hub',
+    blurb: 'One conversation contract rendered as a team channel, customer direct messaging, and an AI assistant with system and tool turns.',
+    tags: ['chat', 'channels', 'direct-messages', 'ai'],
+    featured: true,
+  },
+  {
     path: '/examples/medallion-terminal.json',
     title: 'Medallion Terminal',
     blurb: 'Showcase: tick-flash watchlist, OrderBook → Trade via ctx.price/side, per-dashboard 1/2/3 shortcuts, live action log, compound alert predicate.',

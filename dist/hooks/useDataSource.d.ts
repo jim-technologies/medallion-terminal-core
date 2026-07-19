@@ -1,4 +1,5 @@
 import type { DataSource } from '../types/template';
+export declare function unwrapDataResponse(raw: unknown): unknown;
 export interface DataSourceState {
     data: unknown;
     loading: boolean;

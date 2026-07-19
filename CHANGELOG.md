@@ -6,6 +6,11 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- **Product-first showcase catalog.** Storybook clone references are grouped
+  directly by product—Google Drive, Google Photos, Google Maps, Google Docs,
+  Google Sheets, Google Slides, Palantir Foundry, Airtable, HubSpot,
+  QuickBooks, Shopify, Stripe, Intercom, and Slack—with explicit product and
+  namespace metadata enforced by tests and the built Storybook check.
 - **Current reproducible toolchain.** Flox now locks Node 24.16, pnpm 11.9,
   and Buf 1.71 across supported platforms. The application stack moves to
   React 19.2, TypeScript 7.0, Vite 8.1, Tailwind 4.3, Recharts 3.9,
@@ -21,7 +26,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - **Published-package contract is release-gated.** `pnpm check:package`
   imports the built entry, verifies the declared files and critical public
   exports/widget registrations, rejects accidental source/example
-  publication, and enforces 80 KiB JavaScript / 12 KiB CSS gzip ceilings.
+  publication, and enforces 84 KiB JavaScript / 12 KiB CSS gzip ceilings.
 - **Professional scoped themes for SDK embedding.** Dashboard styles live
   under `.mtc-root`; `Dashboard` accepts `theme="dark" | "operator" |
   "light"`. Graphite/cobalt is the default, the optional operator preset
@@ -38,6 +43,18 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Added
 
+- **Generic conversation foundation.** `ConversationPayload` and the
+  `conversation` built-in cover channel history, direct messaging, support
+  threads, and human/AI transcripts through one vendor-neutral contract.
+  Channel, direct, and assistant modes render participants, replies,
+  attachments, reactions, delivery states, system events, and tool turns;
+  selection context, tidy export, BI descriptors, Storybook stories, and the
+  complete `communications-hub.json` example are covered end to end.
+- **Slack product showcase.** `Clones/Slack` provides a host-data-injectable
+  product reference with workspace navigation, channels, presence, search,
+  reactions, files, threaded replies, app messages, and composition. The
+  generic conversation stories are explicitly named for Slack, WhatsApp, and
+  ChatGPT so each supported presentation is easy to find.
 - **Provider-neutral basemaps.** `geo_map` now accepts one normalized
   `options.basemap` contract: a curated network-free/OpenFreeMap/VersaTiles
   preset, any host-controlled MapLibre style URL, or generic XYZ/TMS raster
@@ -46,7 +63,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   permission, and the default analytical grid still makes no network
   requests. The preset catalog and normalization helpers are public exports.
 
-- **SME operating-intelligence direction.** `DESIGN.md` defines owner-first
+- **Owner-facing operating-intelligence direction.** `DESIGN.md` defines owner-first
   product hierarchy, visual roles, typography/density rules, originality
   guardrails, and a UI definition of done. `business-operations.json` adds an
   owner-facing workspace for revenue, cash, pipeline, capacity, customer

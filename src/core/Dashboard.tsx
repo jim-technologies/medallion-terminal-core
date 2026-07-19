@@ -27,6 +27,7 @@ const DEFAULT_HEIGHTS: Record<string, number> = {
   candlestick: 400,
   table: 350,
   text: 350,
+  conversation: 460,
   prompt: 60,
   gauge: 220,
   distribution: 280,

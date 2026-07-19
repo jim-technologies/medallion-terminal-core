@@ -11,6 +11,7 @@ import spotMarket from '../../public/examples/spot-market.json'
 import tradingFloor from '../../public/examples/trading-floor.json'
 import workManagement from '../../public/examples/work-management.json'
 import mediaLibrary from '../../public/examples/media-library.json'
+import communicationsHub from '../../public/examples/communications-hub.json'
 import { BUILTIN_KEYS } from '../core/WidgetRegistry'
 
 interface ExampleTemplate {
@@ -59,7 +60,12 @@ const SURFACES: Array<{
     required: ['media_gallery', 'file_browser', 'stat_strip', 'distribution', 'text'],
   },
   {
-    name: 'SME business and productivity workspace',
+    name: 'team, direct, and AI conversation workspace',
+    components: components(communicationsHub),
+    required: ['conversation', 'stat_strip', 'table', 'events'],
+  },
+  {
+    name: 'business application and productivity workspace',
     components: components(
       businessOperations,
       workManagement,

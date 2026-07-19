@@ -98,7 +98,7 @@ label, icon, shape, or position cue; color alone is never the only signal.
 Do not create hierarchy by introducing unrelated colors. Use surface level,
 border strength, spacing, and type weight first.
 
-## SME product hierarchy
+## Product hierarchy
 
 The recommended default navigation and dashboard order is:
 

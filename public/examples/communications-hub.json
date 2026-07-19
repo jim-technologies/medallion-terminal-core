@@ -1,0 +1,263 @@
+{
+  "title": "Jim Technologies · Communications hub",
+  "columns": 12,
+  "context": {
+    "values": {
+      "conversation_id": "launch-room",
+      "message_id": ""
+    }
+  },
+  "widgets": [
+    {
+      "id": "communications-pulse",
+      "component": "stat_strip",
+      "span": 12,
+      "height": 92,
+      "title": "Communication pulse",
+      "source": {
+        "inline": {
+          "stats": [
+            { "label": "Unread", "value": 18, "delta": -0.18, "trend": [31, 28, 27, 24, 23, 20, 18] },
+            { "label": "Open threads", "value": 7, "delta": -0.22, "trend": [11, 10, 9, 10, 8, 9, 7] },
+            { "label": "Customer replies", "value": 42, "delta": 0.12, "trend": [31, 33, 35, 34, 38, 40, 42] },
+            { "label": "Median response", "value": 8.4, "delta": -0.16, "unit": "min", "trend": [14, 13, 12, 11, 10, 9, 8.4] },
+            { "label": "AI resolutions", "value": 64, "delta": 0.08, "unit": "%", "trend": [52, 54, 57, 59, 61, 63, 64] }
+          ]
+        }
+      }
+    },
+    {
+      "id": "team-channel",
+      "component": "conversation",
+      "span": 8,
+      "height": 520,
+      "title": "Team channel",
+      "options": {
+        "mode": "channel",
+        "search": true,
+        "show_participants": true,
+        "message_context": {
+          "conversation_key": "conversation_id",
+          "message_key": "message_id",
+          "sender_key": "participant_id"
+        }
+      },
+      "source": {
+        "inline": {
+          "id": "launch-room",
+          "title": "# launch-room",
+          "subtitle": "Launch coordination · 8 members",
+          "viewer_id": "jun",
+          "unread_count": 3,
+          "participants": [
+            { "id": "jun", "name": "Jun", "role": "owner", "status": "online" },
+            { "id": "maya", "name": "Maya Chen", "role": "operations", "status": "online" },
+            { "id": "lina", "name": "Lina Torres", "role": "customer success", "status": "away" },
+            { "id": "theo", "name": "Theo Martin", "role": "finance", "status": "online" }
+          ],
+          "messages": [
+            {
+              "id": "launch-1",
+              "timestamp": "2026-07-18T16:02:00Z",
+              "sender_id": "maya",
+              "body": "Final launch review starts at 10:00. I linked the operating brief and open decisions.",
+              "attachments": [
+                {
+                  "id": "launch-brief",
+                  "name": "Launch operating brief.pdf",
+                  "kind": "file",
+                  "url": "/files/launch-operating-brief.pdf",
+                  "content_type": "application/pdf",
+                  "size_bytes": 2480000
+                }
+              ],
+              "reactions": [
+                { "key": "eyes", "label": "👀", "count": 4, "viewer_reacted": true },
+                { "key": "check", "label": "✅", "count": 2 }
+              ],
+              "thread_reply_count": 5,
+              "context": { "workstream": "launch" }
+            },
+            {
+              "id": "launch-2",
+              "timestamp": "2026-07-18T16:08:00Z",
+              "sender_id": "jun",
+              "body": "I reviewed the rollout gates. Support staffing is the only item still marked at risk.",
+              "status": "read"
+            },
+            {
+              "id": "launch-3",
+              "timestamp": "2026-07-18T16:10:00Z",
+              "sender_id": "jun",
+              "body": "I’ll resolve the owner and update the decision log before the review.",
+              "reactions": [
+                { "key": "raised-hands", "label": "🙌", "count": 3 }
+              ]
+            },
+            {
+              "id": "launch-4",
+              "timestamp": "2026-07-18T16:14:00Z",
+              "sender_id": "lina",
+              "reply_to_id": "launch-2",
+              "body": "Perfect. The customer communication is approved and ready to schedule.",
+              "context": { "workstream": "customer-communications" }
+            }
+          ],
+          "next_page_token": "older-launch-messages",
+          "context": { "workspace_id": "jim-technologies" }
+        }
+      }
+    },
+    {
+      "id": "conversation-index",
+      "component": "table",
+      "span": 4,
+      "height": 520,
+      "title": "Conversations",
+      "options": {
+        "row_context": { "key": "conversation_id", "field": "Conversation ID" }
+      },
+      "source": {
+        "inline": [
+          { "Conversation": "# launch-room", "Conversation ID": "launch-room", "Type": "Channel", "Unread": 3, "Owner": "Jun", "Updated": "now" },
+          { "Conversation": "Northwind delivery", "Conversation ID": "northwind-delivery", "Type": "Direct", "Unread": 0, "Owner": "Jun", "Updated": "2m" },
+          { "Conversation": "Business review assistant", "Conversation ID": "business-review-assistant", "Type": "AI", "Unread": 0, "Owner": "Jun", "Updated": "4m" },
+          { "Conversation": "# customer-signals", "Conversation ID": "customer-signals", "Type": "Channel", "Unread": 8, "Owner": "Lina", "Updated": "8m" },
+          { "Conversation": "Atlas Foods", "Conversation ID": "atlas-foods", "Type": "Direct", "Unread": 2, "Owner": "Maya", "Updated": "11m" }
+        ]
+      }
+    },
+    {
+      "id": "customer-direct",
+      "component": "conversation",
+      "span": 6,
+      "height": 430,
+      "title": "Customer messaging",
+      "options": {
+        "mode": "direct",
+        "show_participants": true,
+        "show_delivery_status": true
+      },
+      "source": {
+        "inline": {
+          "id": "northwind-delivery",
+          "title": "Northwind delivery",
+          "subtitle": "Customer conversation · active now",
+          "viewer_id": "jun",
+          "participants": [
+            { "id": "jun", "name": "Jun", "role": "owner", "status": "online" },
+            { "id": "maya", "name": "Maya Chen", "role": "customer", "status": "online" }
+          ],
+          "messages": [
+            {
+              "id": "direct-1",
+              "timestamp": "2026-07-18T15:42:00Z",
+              "sender_id": "maya",
+              "body": "Could we move tomorrow’s delivery window to after 2 PM?",
+              "status": "delivered"
+            },
+            {
+              "id": "direct-2",
+              "timestamp": "2026-07-18T15:45:00Z",
+              "sender_id": "jun",
+              "body": "Yes — I’ve moved it to 2–4 PM and notified the field team.",
+              "status": "read"
+            },
+            {
+              "id": "direct-3",
+              "timestamp": "2026-07-18T15:46:00Z",
+              "sender_id": "maya",
+              "body": "Thank you! That works perfectly.",
+              "reactions": [
+                { "key": "heart", "label": "❤", "count": 1, "viewer_reacted": true }
+              ],
+              "status": "read"
+            }
+          ],
+          "context": { "account_id": "northwind" }
+        }
+      }
+    },
+    {
+      "id": "ai-assistant",
+      "component": "conversation",
+      "span": 6,
+      "height": 430,
+      "title": "AI conversation",
+      "options": {
+        "mode": "assistant",
+        "show_participants": false
+      },
+      "source": {
+        "inline": {
+          "id": "business-review-assistant",
+          "title": "Business review assistant",
+          "subtitle": "Grounded in approved operating data",
+          "viewer_id": "jun",
+          "participants": [
+            { "id": "jun", "name": "Jun", "role": "user" },
+            { "id": "assistant", "name": "Operations assistant", "role": "assistant", "status": "ready" }
+          ],
+          "messages": [
+            {
+              "id": "ai-system",
+              "kind": "system",
+              "timestamp": "2026-07-18T16:20:00Z",
+              "body": "Connected to revenue, cash, pipeline, fulfillment, and support sources."
+            },
+            {
+              "id": "ai-user",
+              "timestamp": "2026-07-18T16:21:00Z",
+              "sender_id": "jun",
+              "body": "What needs my attention before Monday?"
+            },
+            {
+              "id": "ai-tool",
+              "kind": "tool",
+              "timestamp": "2026-07-18T16:21:01Z",
+              "sender_name": "query_business_health",
+              "body": "{ \"range\": \"7d\", \"severity\": [\"warning\", \"critical\"] }",
+              "status": "complete"
+            },
+            {
+              "id": "ai-response",
+              "kind": "assistant",
+              "timestamp": "2026-07-18T16:21:04Z",
+              "sender_id": "assistant",
+              "body": "Three items need attention:\n\n1. Assign an owner for the support staffing gap.\n2. Review two invoices now more than 30 days overdue.\n3. Approve the replenishment order for the West warehouse.",
+              "attachments": [
+                {
+                  "id": "decision-register",
+                  "name": "Open decision register",
+                  "kind": "link",
+                  "url": "/decisions?status=open"
+                }
+              ],
+              "reactions": [
+                { "key": "useful", "label": "Useful", "count": 1, "viewer_reacted": true }
+              ]
+            }
+          ],
+          "context": { "assistant_id": "operations-review" }
+        }
+      }
+    },
+    {
+      "id": "communication-events",
+      "component": "events",
+      "span": 12,
+      "height": 230,
+      "title": "Communication lifecycle",
+      "source": {
+        "inline": {
+          "events": [
+            { "timestamp": "2026-07-18T16:21:04Z", "label": "Business review assistant completed a grounded answer", "status": "EVENT_STATUS_OK" },
+            { "timestamp": "2026-07-18T16:14:00Z", "label": "Customer communication approved in # launch-room", "status": "EVENT_STATUS_OK" },
+            { "timestamp": "2026-07-18T16:08:00Z", "label": "Support staffing flagged for owner assignment", "status": "EVENT_STATUS_WARN" },
+            { "timestamp": "2026-07-18T15:45:00Z", "label": "Northwind delivery window updated and read", "status": "EVENT_STATUS_INFO" }
+          ]
+        }
+      }
+    }
+  ]
+}

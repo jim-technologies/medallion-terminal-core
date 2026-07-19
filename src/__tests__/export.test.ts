@@ -244,6 +244,49 @@ describe('flatten', () => {
     })
   })
 
+  it('flattens conversation messages while preserving nested evidence', () => {
+    const t = flatten({
+      id: 'launch-room',
+      messages: [{
+        id: 'message-1',
+        timestamp: '2026-07-18T16:02:00Z',
+        sender_id: 'maya',
+        body: 'The launch brief is ready.',
+        attachments: [{ id: 'brief', name: 'Launch brief.pdf' }],
+        reactions: [{ key: 'check', label: '✅', count: 3 }],
+        context: { workstream: 'launch' },
+      }],
+    }, 'conversation')
+
+    expect(t.columns).toEqual([
+      'conversation_id',
+      'id',
+      'timestamp',
+      'sender_id',
+      'sender_name',
+      'kind',
+      'body',
+      'reply_to_id',
+      'edited',
+      'status',
+      'attachments',
+      'reactions',
+      'thread_reply_count',
+      'metadata',
+      'context',
+    ])
+    expect(t.rows[0]).toMatchObject({
+      conversation_id: 'launch-room',
+      id: 'message-1',
+      timestamp: '2026-07-18T16:02:00Z',
+      sender_id: 'maya',
+      body: 'The launch brief is ready.',
+      attachments: '[{"id":"brief","name":"Launch brief.pdf"}]',
+      reactions: '[{"key":"check","label":"✅","count":3}]',
+      context: '{"workstream":"launch"}',
+    })
+  })
+
   it('auto-detects shape without a hint', () => {
     const t = flatten({ bars: [{ timestamp: 't', open: 1, high: 2, low: 1, close: 2 }] })
     expect(t.columns).toContain('open')

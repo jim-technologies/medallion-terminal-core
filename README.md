@@ -51,6 +51,7 @@ ontology/catalog/data/code surfaces:
 | Lineage and dependencies | `dag` | `GraphPayload` |
 | Operational geography and territories | `geo_map` | `GeoPayload` / GeoJSON |
 | Photo and video timelines / collections | `media_gallery` | `MediaPayload` |
+| Channels, direct messages, and AI transcripts | `conversation` | `ConversationPayload` |
 | Branch/ref-aware source browsing | `code_browser` | `RepositoryPayload` |
 | Typed business records and saved views | `record_grid`, `record_board`, `record_calendar`, `record_form` | `RecordSetPayload` |
 | Schema-driven governed writes | `action_form` | `SubmitAction` / `WatchAction` |
@@ -65,7 +66,7 @@ See [PLATFORM.md](PLATFORM.md) for the production service boundaries,
 authorization invariants, and the remaining backend responsibilities for a
 complete ontology-driven stack. See [RECORDS.md](RECORDS.md) for the generic
 record model, saved views, linked values, revision-safe mutations, and
-extension rules. See [DESIGN.md](DESIGN.md) for the SME product hierarchy,
+extension rules. See [DESIGN.md](DESIGN.md) for the product hierarchy,
 visual language, theme tokens, and UI definition of done.
 
 ## Wiring data
@@ -173,6 +174,7 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `events` | `{ events: [{ timestamp, label, status }] }` | Streamable timeline |
 | `distribution` | `{ slices: [{ label, value }] }` | Pie/donut |
 | `text` | `{ items: [{ title, body, ... }] }` | News, summaries |
+| `conversation` | `{ id, participants?, messages: [{ id, timestamp?, sender_id?, kind?, body?, reply_to_id?, attachments?, reactions?, thread_reply_count?, status?, context? }] }` | Channel, direct-message, support, and human/AI transcripts with `channel`, `direct`, and `assistant` modes |
 | `orderbook` | `{ bids, asks, mid?, spread? }` | Depth ladder |
 | `depth_chart` | `{ bids, asks, mid?, spread? }` | Cumulative bid/ask liquidity; shares `OrderBookPayload` with the ladder |
 | `paired_grid` | `{ subject, dimension?, measures, rows: [{ key, left, right }] }` | Options chains, sportsbook ladders, A/B percentile grids |
@@ -206,6 +208,17 @@ retention workflows. Video endpoints should support HTTP `Range` and MP4
 `faststart`; large originals should provide `thumbnail_url` so gallery scroll
 does not download full media. Inline media URLs in untrusted templates are
 checked against the template trust policy.
+
+`conversation` is the shared transcript projection behind Slack-style
+channels, WhatsApp-style direct messaging, customer-support threads, and
+ChatGPT-style assistant sessions. The payload keeps product behavior generic:
+participants carry identity and presence; messages can reference a parent,
+attachments, reactions, delivery state, and safe context. `kind` is a
+free-form backend value with renderer hints for `message`, `assistant`,
+`system`, `tool`, and `event`. `options.mode` changes the presentation without
+forking the protocol, while `message_context` can rename the default
+`conversation_id`, `message_id`, and `sender_id` context keys. The complete
+`communications-hub.json` example displays all three modes together.
 
 The file_browser previews video and audio through a native `<video>` / `<audio>` element pointed at `options.media_url_template` (default `/media?namespace={namespace}&path={path}` — both placeholders URL-encoded). For scrub to work on long files the backend **must** support HTTP `Range:` and reply `206 Partial Content`. MP4s should be encoded with `-movflags +faststart` so the player can read metadata before downloading the whole file.
 
@@ -425,6 +438,16 @@ Clicking a row / cell / price level on certain widgets sets a `ctx` key, which r
   "source": { "source_id": "authorized_media" },
   "options": { "group_by": "day",
                "media_context": { "key": "media_id", "kind_key": "media_kind" } } }
+
+// Conversation and message selection can retarget details, actions, or search.
+{ "component": "conversation",
+  "source": { "source_id": "authorized_conversation" },
+  "options": { "mode": "channel",
+               "message_context": {
+                 "conversation_key": "conversation_id",
+                 "message_key": "message_id",
+                 "sender_key": "participant_id"
+               } } }
 ```
 
 ## Keyboard

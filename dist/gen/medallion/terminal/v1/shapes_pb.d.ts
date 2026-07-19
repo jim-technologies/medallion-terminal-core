@@ -2505,6 +2505,549 @@ export declare const TextItemSchema: GenMessage<TextItem, {
     jsonType: TextItemJson;
 }>;
 /**
+ * --- Conversation ---
+ * Use for: channel history, direct messaging, customer support threads,
+ * human/AI conversations, and other chronological message transcripts.
+ *
+ * Messages stay product-neutral. `kind` and `status` are intentionally
+ * free-form strings so a backend can represent ordinary messages, assistant
+ * responses, system notices, tool calls, delivery receipts, or domain-specific
+ * states without extending the wire contract.
+ *
+ * JSON example:
+ *   {
+ *     "id": "channel-operations",
+ *     "title": "operations",
+ *     "viewer_id": "user-jun",
+ *     "participants": [
+ *       { "id": "user-jun", "name": "Jun", "status": "online" },
+ *       { "id": "user-maya", "name": "Maya Chen", "status": "away" }
+ *     ],
+ *     "messages": [
+ *       {
+ *         "id": "message-104",
+ *         "timestamp": "2026-07-18T16:42:00Z",
+ *         "sender_id": "user-maya",
+ *         "body": "The launch checklist is ready for review.",
+ *         "reactions": [{ "key": "check", "label": "✓", "count": 3 }],
+ *         "context": { "message_id": "message-104" }
+ *       }
+ *     ]
+ *   }
+ *
+ * @generated from message medallion.terminal.v1.ConversationPayload
+ */
+export type ConversationPayload = Message<"medallion.terminal.v1.ConversationPayload"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: optional string title = 2;
+     */
+    title?: string | undefined;
+    /**
+     * @generated from field: optional string subtitle = 3;
+     */
+    subtitle?: string | undefined;
+    /**
+     * Participant representing the current viewer. Renderers can use this to
+     * align the viewer's messages without product-specific "me" conventions.
+     *
+     * @generated from field: optional string viewer_id = 4;
+     */
+    viewerId?: string | undefined;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ConversationParticipant participants = 5;
+     */
+    participants: ConversationParticipant[];
+    /**
+     * Ordered oldest to newest. Backends should return the visible window in
+     * presentation order and use next_page_token for older history.
+     *
+     * @generated from field: repeated medallion.terminal.v1.ConversationMessage messages = 6;
+     */
+    messages: ConversationMessage[];
+    /**
+     * @generated from field: optional uint32 unread_count = 7;
+     */
+    unreadCount?: number | undefined;
+    /**
+     * @generated from field: optional string next_page_token = 8;
+     */
+    nextPageToken?: string | undefined;
+    /**
+     * Applied when the conversation header is selected.
+     *
+     * @generated from field: map<string, string> context = 9;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * --- Conversation ---
+ * Use for: channel history, direct messaging, customer support threads,
+ * human/AI conversations, and other chronological message transcripts.
+ *
+ * Messages stay product-neutral. `kind` and `status` are intentionally
+ * free-form strings so a backend can represent ordinary messages, assistant
+ * responses, system notices, tool calls, delivery receipts, or domain-specific
+ * states without extending the wire contract.
+ *
+ * JSON example:
+ *   {
+ *     "id": "channel-operations",
+ *     "title": "operations",
+ *     "viewer_id": "user-jun",
+ *     "participants": [
+ *       { "id": "user-jun", "name": "Jun", "status": "online" },
+ *       { "id": "user-maya", "name": "Maya Chen", "status": "away" }
+ *     ],
+ *     "messages": [
+ *       {
+ *         "id": "message-104",
+ *         "timestamp": "2026-07-18T16:42:00Z",
+ *         "sender_id": "user-maya",
+ *         "body": "The launch checklist is ready for review.",
+ *         "reactions": [{ "key": "check", "label": "✓", "count": 3 }],
+ *         "context": { "message_id": "message-104" }
+ *       }
+ *     ]
+ *   }
+ *
+ * @generated from message medallion.terminal.v1.ConversationPayload
+ */
+export type ConversationPayloadJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: optional string title = 2;
+     */
+    title?: string;
+    /**
+     * @generated from field: optional string subtitle = 3;
+     */
+    subtitle?: string;
+    /**
+     * Participant representing the current viewer. Renderers can use this to
+     * align the viewer's messages without product-specific "me" conventions.
+     *
+     * @generated from field: optional string viewer_id = 4;
+     */
+    viewerId?: string;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ConversationParticipant participants = 5;
+     */
+    participants?: ConversationParticipantJson[];
+    /**
+     * Ordered oldest to newest. Backends should return the visible window in
+     * presentation order and use next_page_token for older history.
+     *
+     * @generated from field: repeated medallion.terminal.v1.ConversationMessage messages = 6;
+     */
+    messages?: ConversationMessageJson[];
+    /**
+     * @generated from field: optional uint32 unread_count = 7;
+     */
+    unreadCount?: number;
+    /**
+     * @generated from field: optional string next_page_token = 8;
+     */
+    nextPageToken?: string;
+    /**
+     * Applied when the conversation header is selected.
+     *
+     * @generated from field: map<string, string> context = 9;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.ConversationPayload.
+ * Use `create(ConversationPayloadSchema)` to create a new message.
+ */
+export declare const ConversationPayloadSchema: GenMessage<ConversationPayload, {
+    jsonType: ConversationPayloadJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.ConversationParticipant
+ */
+export type ConversationParticipant = Message<"medallion.terminal.v1.ConversationParticipant"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name: string;
+    /**
+     * @generated from field: optional string avatar_url = 3;
+     */
+    avatarUrl?: string | undefined;
+    /**
+     * Free-form membership or business role: "owner", "member", "customer",
+     * "agent", "assistant", etc.
+     *
+     * @generated from field: optional string role = 4;
+     */
+    role?: string | undefined;
+    /**
+     * Free-form presence/availability value.
+     *
+     * @generated from field: optional string status = 5;
+     */
+    status?: string | undefined;
+    /**
+     * @generated from field: map<string, string> context = 6;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * @generated from message medallion.terminal.v1.ConversationParticipant
+ */
+export type ConversationParticipantJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name?: string;
+    /**
+     * @generated from field: optional string avatar_url = 3;
+     */
+    avatarUrl?: string;
+    /**
+     * Free-form membership or business role: "owner", "member", "customer",
+     * "agent", "assistant", etc.
+     *
+     * @generated from field: optional string role = 4;
+     */
+    role?: string;
+    /**
+     * Free-form presence/availability value.
+     *
+     * @generated from field: optional string status = 5;
+     */
+    status?: string;
+    /**
+     * @generated from field: map<string, string> context = 6;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.ConversationParticipant.
+ * Use `create(ConversationParticipantSchema)` to create a new message.
+ */
+export declare const ConversationParticipantSchema: GenMessage<ConversationParticipant, {
+    jsonType: ConversationParticipantJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.ConversationMessage
+ */
+export type ConversationMessage = Message<"medallion.terminal.v1.ConversationMessage"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: optional string timestamp = 2;
+     */
+    timestamp?: string | undefined;
+    /**
+     * @generated from field: optional string sender_id = 3;
+     */
+    senderId?: string | undefined;
+    /**
+     * Denormalized fallbacks for transcripts where a participant catalog is
+     * unavailable or historical sender records were removed.
+     *
+     * @generated from field: optional string sender_name = 4;
+     */
+    senderName?: string | undefined;
+    /**
+     * @generated from field: optional string sender_avatar_url = 5;
+     */
+    senderAvatarUrl?: string | undefined;
+    /**
+     * Recognized renderer hints include "message", "assistant", "system",
+     * "tool", and "event"; unknown values render as ordinary messages.
+     *
+     * @generated from field: optional string kind = 6;
+     */
+    kind?: string | undefined;
+    /**
+     * @generated from field: optional string body = 7;
+     */
+    body?: string | undefined;
+    /**
+     * @generated from field: optional string reply_to_id = 8;
+     */
+    replyToId?: string | undefined;
+    /**
+     * @generated from field: bool edited = 9;
+     */
+    edited: boolean;
+    /**
+     * Free-form delivery/lifecycle state such as "sending", "sent",
+     * "delivered", "read", or "failed".
+     *
+     * @generated from field: optional string status = 10;
+     */
+    status?: string | undefined;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ConversationAttachment attachments = 11;
+     */
+    attachments: ConversationAttachment[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ConversationReaction reactions = 12;
+     */
+    reactions: ConversationReaction[];
+    /**
+     * @generated from field: optional uint32 thread_reply_count = 13;
+     */
+    threadReplyCount?: number | undefined;
+    /**
+     * @generated from field: optional google.protobuf.Struct metadata = 14;
+     */
+    metadata?: JsonObject | undefined;
+    /**
+     * Applied when the message is selected.
+     *
+     * @generated from field: map<string, string> context = 15;
+     */
+    context: {
+        [key: string]: string;
+    };
+};
+/**
+ * @generated from message medallion.terminal.v1.ConversationMessage
+ */
+export type ConversationMessageJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: optional string timestamp = 2;
+     */
+    timestamp?: string;
+    /**
+     * @generated from field: optional string sender_id = 3;
+     */
+    senderId?: string;
+    /**
+     * Denormalized fallbacks for transcripts where a participant catalog is
+     * unavailable or historical sender records were removed.
+     *
+     * @generated from field: optional string sender_name = 4;
+     */
+    senderName?: string;
+    /**
+     * @generated from field: optional string sender_avatar_url = 5;
+     */
+    senderAvatarUrl?: string;
+    /**
+     * Recognized renderer hints include "message", "assistant", "system",
+     * "tool", and "event"; unknown values render as ordinary messages.
+     *
+     * @generated from field: optional string kind = 6;
+     */
+    kind?: string;
+    /**
+     * @generated from field: optional string body = 7;
+     */
+    body?: string;
+    /**
+     * @generated from field: optional string reply_to_id = 8;
+     */
+    replyToId?: string;
+    /**
+     * @generated from field: bool edited = 9;
+     */
+    edited?: boolean;
+    /**
+     * Free-form delivery/lifecycle state such as "sending", "sent",
+     * "delivered", "read", or "failed".
+     *
+     * @generated from field: optional string status = 10;
+     */
+    status?: string;
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ConversationAttachment attachments = 11;
+     */
+    attachments?: ConversationAttachmentJson[];
+    /**
+     * @generated from field: repeated medallion.terminal.v1.ConversationReaction reactions = 12;
+     */
+    reactions?: ConversationReactionJson[];
+    /**
+     * @generated from field: optional uint32 thread_reply_count = 13;
+     */
+    threadReplyCount?: number;
+    /**
+     * @generated from field: optional google.protobuf.Struct metadata = 14;
+     */
+    metadata?: StructJson;
+    /**
+     * Applied when the message is selected.
+     *
+     * @generated from field: map<string, string> context = 15;
+     */
+    context?: {
+        [key: string]: string;
+    };
+};
+/**
+ * Describes the message medallion.terminal.v1.ConversationMessage.
+ * Use `create(ConversationMessageSchema)` to create a new message.
+ */
+export declare const ConversationMessageSchema: GenMessage<ConversationMessage, {
+    jsonType: ConversationMessageJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.ConversationAttachment
+ */
+export type ConversationAttachment = Message<"medallion.terminal.v1.ConversationAttachment"> & {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name: string;
+    /**
+     * Free-form renderer hint: "file", "image", "video", "audio", "link",
+     * "code", etc.
+     *
+     * @generated from field: optional string kind = 3;
+     */
+    kind?: string | undefined;
+    /**
+     * @generated from field: optional string url = 4;
+     */
+    url?: string | undefined;
+    /**
+     * @generated from field: optional string thumbnail_url = 5;
+     */
+    thumbnailUrl?: string | undefined;
+    /**
+     * @generated from field: optional string content_type = 6;
+     */
+    contentType?: string | undefined;
+    /**
+     * @generated from field: optional uint64 size_bytes = 7;
+     */
+    sizeBytes?: bigint | undefined;
+};
+/**
+ * @generated from message medallion.terminal.v1.ConversationAttachment
+ */
+export type ConversationAttachmentJson = {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id?: string;
+    /**
+     * @generated from field: string name = 2;
+     */
+    name?: string;
+    /**
+     * Free-form renderer hint: "file", "image", "video", "audio", "link",
+     * "code", etc.
+     *
+     * @generated from field: optional string kind = 3;
+     */
+    kind?: string;
+    /**
+     * @generated from field: optional string url = 4;
+     */
+    url?: string;
+    /**
+     * @generated from field: optional string thumbnail_url = 5;
+     */
+    thumbnailUrl?: string;
+    /**
+     * @generated from field: optional string content_type = 6;
+     */
+    contentType?: string;
+    /**
+     * @generated from field: optional uint64 size_bytes = 7;
+     */
+    sizeBytes?: string;
+};
+/**
+ * Describes the message medallion.terminal.v1.ConversationAttachment.
+ * Use `create(ConversationAttachmentSchema)` to create a new message.
+ */
+export declare const ConversationAttachmentSchema: GenMessage<ConversationAttachment, {
+    jsonType: ConversationAttachmentJson;
+}>;
+/**
+ * @generated from message medallion.terminal.v1.ConversationReaction
+ */
+export type ConversationReaction = Message<"medallion.terminal.v1.ConversationReaction"> & {
+    /**
+     * Stable backend key, independent of display glyph/localization.
+     *
+     * @generated from field: string key = 1;
+     */
+    key: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label: string;
+    /**
+     * @generated from field: uint32 count = 3;
+     */
+    count: number;
+    /**
+     * @generated from field: bool viewer_reacted = 4;
+     */
+    viewerReacted: boolean;
+};
+/**
+ * @generated from message medallion.terminal.v1.ConversationReaction
+ */
+export type ConversationReactionJson = {
+    /**
+     * Stable backend key, independent of display glyph/localization.
+     *
+     * @generated from field: string key = 1;
+     */
+    key?: string;
+    /**
+     * @generated from field: string label = 2;
+     */
+    label?: string;
+    /**
+     * @generated from field: uint32 count = 3;
+     */
+    count?: number;
+    /**
+     * @generated from field: bool viewer_reacted = 4;
+     */
+    viewerReacted?: boolean;
+};
+/**
+ * Describes the message medallion.terminal.v1.ConversationReaction.
+ * Use `create(ConversationReactionSchema)` to create a new message.
+ */
+export declare const ConversationReactionSchema: GenMessage<ConversationReaction, {
+    jsonType: ConversationReactionJson;
+}>;
+/**
  * --- Asset Catalog ---
  * Use for: governed discovery surfaces that list datasets, object
  * types, pipelines, models, repositories, dashboards, documents, and

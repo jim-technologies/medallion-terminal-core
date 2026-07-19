@@ -20,6 +20,7 @@ import platformFoundation from '../../public/examples/platform-foundation.json'
 import businessOperations from '../../public/examples/business-operations.json'
 import workManagement from '../../public/examples/work-management.json'
 import mediaLibrary from '../../public/examples/media-library.json'
+import communicationsHub from '../../public/examples/communications-hub.json'
 
 // =============================================================
 // Contract validation — loads every public/examples/*.json and
@@ -55,6 +56,7 @@ const EXAMPLES: Record<string, Json> = {
   'business-operations':    businessOperations,
   'work-management':        workManagement,
   'media-library':          mediaLibrary,
+  'communications-hub':    communicationsHub,
 }
 
 // ----- Type guards -----
@@ -210,6 +212,38 @@ function validateText(p: Json): string[] {
   return ['expected string, array, or {items: []}']
 }
 
+function validateConversation(p: Json): string[] {
+  if (!isObj(p)) return ['expected object']
+  if (p.id !== undefined && !isStr(p.id)) return ['id must be string when set']
+  if (!isArr(p.messages)) return ['messages must be array']
+  if (p.participants !== undefined) {
+    if (!isArr(p.participants)) return ['participants must be array when set']
+    for (const participant of p.participants) {
+      if (
+        !isObj(participant)
+        || !isStr(participant.id)
+        || !isStr(participant.name)
+      ) return ['participant needs {id:string, name:string}']
+    }
+  }
+  for (const message of p.messages) {
+    if (!isObj(message)) return ['message must be object']
+    if (!isStr(message.id)) return ['message.id must be string']
+    if (
+      message.body === undefined
+      && message.attachments === undefined
+      && message.kind === undefined
+    ) return ['message needs body, attachments, or kind']
+    if (message.attachments !== undefined && !isArr(message.attachments)) {
+      return ['message.attachments must be array when set']
+    }
+    if (message.reactions !== undefined && !isArr(message.reactions)) {
+      return ['message.reactions must be array when set']
+    }
+  }
+  return []
+}
+
 function validateOrderBook(p: Json): string[] {
   if (!isObj(p)) return ['expected object']
   for (const side of ['bids', 'asks'] as const) {
@@ -263,6 +297,7 @@ const VALIDATORS: Record<string, (p: Json) => string[]> = {
   events:        validateEvents,
   distribution:  validateDistribution,
   text:          validateText,
+  conversation:  validateConversation,
   orderbook:     validateOrderBook,
   depth_chart:   validateOrderBook,
   paired_grid:   validatePairedGrid,

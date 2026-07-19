@@ -20,6 +20,7 @@ const registry = new Map<string, AnyWidget>([
   ['table',          lazyWidget(() => import('../widgets/DataTable'), 'DataTable')],
   ['metric',         lazyWidget(() => import('../widgets/Metric'), 'Metric')],
   ['text',           lazyWidget(() => import('../widgets/Text'), 'Text')],
+  ['conversation',   lazyWidget(() => import('../widgets/ConversationImpl'), 'ConversationImpl')],
   ['prompt',         lazyWidget(() => import('../widgets/Prompt'), 'Prompt')],
   ['gauge',          lazyWidget(() => import('../widgets/Gauge'), 'Gauge')],
   ['distribution',   lazyWidget(() => import('../widgets/Distribution'), 'Distribution')],

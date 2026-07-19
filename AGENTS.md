@@ -85,7 +85,11 @@ Records: `record_grid` (typed rows, saved grid/list views, inline edits),
 and `record_form` (context-driven create/edit/detail). All consume the same
 domain-neutral `RecordSetPayload`.
 
-Live feeds: `events`, `text` (news/articles, supports image_url + flash-on-new-item), `ticker` (auto-scrolling marquee), `tape` (time-and-sales / append-only event stream with ring buffer), `action_log` (order blotter), `alert_log` (alert feed).
+Live feeds: `events`, `text` (news/articles, supports image_url +
+flash-on-new-item), `conversation` (channel, direct-message, support, and
+human/AI transcripts), `ticker` (auto-scrolling marquee), `tape`
+(time-and-sales / append-only event stream with ring buffer), `action_log`
+(order blotter), `alert_log` (alert feed).
 
 Write surfaces: `trade` (compact order ticket), `action_form` (schema-driven
 generic actions, approvals, administration, and advanced order attributes),
@@ -124,6 +128,12 @@ Proto-defined in `proto/medallion/terminal/v1/shapes.proto`. Widgets accept both
 - `events`: `{events: [{timestamp, label, status?}]}`.
 - `distribution`: `{slices: [{label, value}]}`.
 - `text`: `{items: [{title?, body?, source?, date?, tags?, image_url?, id?}]}`.
+- `conversation`: `{id, title?, viewer_id?, participants?, messages:
+  [{id, timestamp?, sender_id?, kind?, body?, reply_to_id?, attachments?,
+  reactions?, thread_reply_count?, status?, context?}], unread_count?,
+  next_page_token?, context?}`. `options.mode` is `channel`, `direct`, or
+  `assistant`; one contract covers Slack, WhatsApp, support, and ChatGPT-style
+  transcript presentation.
 - `orderbook`: `{bids: [{price, size}], asks: [{price, size}], mid?, spread?, venue?}`.
 - `depth_chart`: the same `OrderBookPayload`, projected as cumulative liquidity.
 - `paired_grid`: `{subject, dimension?, rows: [{key, left, right}], measures, key_label, left_label, right_label}` — options chains, sportsbook ladders.
@@ -161,6 +171,9 @@ Widgets retarget each other via `ctx`:
 - `media_gallery`: applies each item's `context`, then defaults
   `ctx.media_id` and `ctx.media_kind`; `options.media_context` can rename
   those fallback keys.
+- `conversation`: selecting a message applies conversation context followed
+  by message context, then defaults `ctx.conversation_id`, `ctx.message_id`,
+  and `ctx.sender_id`; `options.message_context` can rename those keys.
 - `action_form`: fields may use `context_key` for safe context prefill; every
   submitted value is still validated and authorized by the backend.
 - `asset_catalog`: selecting an item applies its `context` map, then defaults
@@ -274,6 +287,7 @@ src/
     recordShapes.ts       — record schema normalization + saved-view helpers
     geoShape.ts           — GeoPayload / GeoJSON normalization and bounds
     mediaShape.ts         — photo/video, collection, filter, and timeline normalization
+    conversationShape.ts  — participant/message/attachment normalization and selection context
     orderBookShape.ts     — shared ladder/depth normalization
     actionFormShape.ts    — generic action schema normalization + validation
     WidgetShell.tsx       — Title bar, action menu, focus ring, alert effect,
@@ -283,6 +297,7 @@ public/examples/         — Bundled example templates
   platform-foundation.json — catalog + object + lineage + repository demo
   work-management.json     — grid + board + calendar + governed record form
   media-library.json       — photo/video timeline + collections + viewer
+  communications-hub.json  — channel + direct-message + AI transcript modes
 examples/
   backend/server.mjs       — Reference Node TerminalService
   widgets/                 — Sample custom widget (Kelly sizing)
@@ -335,8 +350,8 @@ Protobuf + Buf 1.71, Node 24 LTS, pnpm 11, Flox.
    projects, inventory, and case names belong in host schemas and templates.
 4. **Owner-first product, operator-grade detail.** Business pulse, decisions,
    customers, operations, and finance lead. Ontology, lineage, data, and code
-   provide progressive detail rather than forcing technical concepts onto SME
-   owners.
+   provide progressive detail rather than forcing technical concepts onto
+   business owners.
 5. **Operational calm.** Neutral surfaces carry the interface. Use scoped
    `--mtc-*` semantic/chart tokens; reserve color for selection, status, risk,
    and action. Do not hard-code production widget palettes except documented
@@ -348,7 +363,7 @@ Protobuf + Buf 1.71, Node 24 LTS, pnpm 11, Flox.
    analytical, operational, and data-platform terminals.
 8. **Backend = one ConnectRPC service.** Get/Stream/ListSources/Submit/Watch/Generate. Generated types from `proto/`.
 
-See `DESIGN.md` for theme roles, typography/density rules, the SME product
+See `DESIGN.md` for theme roles, typography/density rules, the product
 hierarchy, and the UI definition of done.
 
 ## What this is NOT

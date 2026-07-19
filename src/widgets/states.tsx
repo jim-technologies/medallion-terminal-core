@@ -8,6 +8,7 @@ const ARCHETYPE: Record<string, string> = {
   candlestick: 'chart',
   table: 'table',
   text: 'list',
+  conversation: 'list',
   events: 'list',
   metric: 'single',
   gauge: 'single',

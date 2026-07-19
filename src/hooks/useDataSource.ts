@@ -55,9 +55,10 @@ const DATA_RESPONSE_CASES = new Set([
   'records',
   'geo',
   'media',
+  'conversation',
 ])
 
-function unwrapDataResponse(raw: unknown): unknown {
+export function unwrapDataResponse(raw: unknown): unknown {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return raw
   const keys = Object.keys(raw as Record<string, unknown>)
   if (keys.length === 1 && DATA_RESPONSE_CASES.has(keys[0])) {

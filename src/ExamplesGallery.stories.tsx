@@ -24,6 +24,7 @@ import businessOperations from '../public/examples/business-operations.json'
 import workManagement from '../public/examples/work-management.json'
 import mediaLibrary from '../public/examples/media-library.json'
 import fileBrowser from '../public/examples/file-browser.json'
+import communicationsHub from '../public/examples/communications-hub.json'
 import { RECORD_SET_STORY_DATA } from './widgets/recordStories.fixture'
 
 import '../examples/widgets/registry'
@@ -271,6 +272,7 @@ export const MedallionTerminal    = story('medallion-terminal', medallionTermina
 export const BusinessOperations   = story('business-operations', businessOperations)
 export const WorkManagement       = story('work-management', workManagementStatic)
 export const MediaLibrary         = story('media-library', mediaLibrary)
+export const CommunicationsHub    = story('communications-hub', communicationsHub)
 export const FileBrowser          = story('file-browser', inlineFallback(fileBrowser as Template, fileBrowserSamples))
 export const WorkManagementOperator: Story = {
   args: { template: workManagementStatic, theme: 'operator' },

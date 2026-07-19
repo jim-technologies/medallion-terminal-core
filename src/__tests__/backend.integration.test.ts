@@ -56,6 +56,7 @@ describe('reference backend ↔ client', () => {
       'platform_lineage',
       'platform_repository',
       'business_records',
+      'workspace_conversation',
     ]))
     // Proto canonical: shape values are SHAPE_*; param.type values are PARAM_TYPE_*.
     for (const s of out.sources) {
@@ -170,6 +171,41 @@ describe('reference backend ↔ client', () => {
       expect.objectContaining({ type: 'RECORD_VIEW_TYPE_CALENDAR', date_field: 'due_date' }),
       expect.objectContaining({ type: 'RECORD_VIEW_TYPE_FORM' }),
     ]))
+  })
+
+  it('Get exposes the canonical conversation payload', async () => {
+    const out = await rpc<{
+      conversation: {
+        id: string
+        viewer_id: string
+        participants: Array<{ id: string; name: string }>
+        messages: Array<{
+          id: string
+          sender_id?: string
+          reply_to_id?: string
+          reactions?: Array<{ key: string; count: number }>
+        }>
+        context: Record<string, string>
+      }
+    }>('Get', {
+      source_id: 'workspace_conversation',
+      params: { conversation_id: 'launch-room' },
+    })
+
+    expect(out.conversation).toMatchObject({
+      id: 'launch-room',
+      viewer_id: 'jun',
+      context: {
+        workspace_id: 'jim-technologies',
+        conversation_id: 'launch-room',
+      },
+    })
+    expect(out.conversation.participants.map(participant => participant.id))
+      .toEqual(expect.arrayContaining(['jun', 'maya', 'lina']))
+    expect(out.conversation.messages[0].reactions?.[0])
+      .toMatchObject({ key: 'check', count: 3 })
+    expect(out.conversation.messages.some(message => message.reply_to_id))
+      .toBe(true)
   })
 
   it('record create/update/delete is idempotent and revision-safe', async () => {

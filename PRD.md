@@ -8,7 +8,7 @@ ontology/object detail, lineage, data/file repositories, code repositories,
 typed records, saved views, forms, actions, and BI handoff.
 
 Package those capabilities in an original, professional operating-intelligence
-experience suitable for SME owners and operators, with technical platform
+experience suitable for business owners and operators, with technical platform
 surfaces available as progressive detail rather than the default entry point.
 
 The framework remains domain-neutral and frontend-only. Host applications own
@@ -24,8 +24,12 @@ In:
 - Built-in `asset_catalog`, `object_view`, and `code_browser` widgets.
 - Canonical `RecordSetPayload` with typed fields, stable record identity,
   links, saved view metadata, revisions, and mutation capabilities.
+- Canonical `ConversationPayload` with participants, messages, threads,
+  attachments, reactions, delivery state, and context selection.
 - Built-in `record_grid`, `record_board`, `record_calendar`, and `record_form`
   projections over the same record payload.
+- Built-in `conversation` projection with channel, direct-message, and
+  assistant modes.
 - `dag` support for the canonical graph contract and context-driven node
   selection.
 - Context handoff between catalog, object, lineage, and repository surfaces.

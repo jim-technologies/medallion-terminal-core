@@ -60,6 +60,7 @@ const requiredExports = [
   'BASEMAP_PRESETS',
   'normalizeBasemap',
   'MediaGallery',
+  'Conversation',
   'buildBiDescriptor',
   'exportView',
   'validateTemplateTrust',
@@ -81,6 +82,7 @@ const requiredWidgets = [
   'depth_chart',
   'geo_map',
   'media_gallery',
+  'conversation',
 ]
 for (const name of requiredWidgets) {
   if (!(library.BUILTIN_KEYS instanceof Set) || !library.BUILTIN_KEYS.has(name)) {

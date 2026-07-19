@@ -31,7 +31,11 @@ const widgetImports = [
   ),
 ].map(match => match[1])
 const widgetStoryModules = new Set(
-  widgetImports.map(moduleName => moduleName === 'MediaGalleryImpl' ? 'MediaGallery' : moduleName),
+  widgetImports.map(moduleName => {
+    if (moduleName === 'MediaGalleryImpl') return 'MediaGallery'
+    if (moduleName === 'ConversationImpl') return 'Conversation'
+    return moduleName
+  }),
 )
 const indexedImportPaths = new Set(entries.map(entry => entry.importPath))
 const missingWidgetStories = [...widgetStoryModules]
@@ -60,23 +64,24 @@ if (missingCloneStories.length > 0) {
   throw new Error(`Storybook is missing clone showcases: ${missingCloneStories.join(', ')}`)
 }
 
-const cloneGroups = ['Google', 'Palantir', 'SME']
 const cloneContracts = cloneStories.map(storyPath => {
   const source = readFileSync(storyPath, 'utf8')
   return {
     storyPath,
     title: source.match(/title:\s*['"]([^'"]+)['"]/)?.[1],
+    product: source.match(/cloneProduct:\s*['"]([^'"]+)['"]/)?.[1],
     namespace: source.match(/cloneNamespace:\s*['"]([^'"]+)['"]/)?.[1],
   }
 })
-const invalidCloneContracts = cloneContracts.filter(({ title, namespace }) =>
-  !cloneGroups.some(group => title?.startsWith(`Clones/${group}/`))
+const invalidCloneContracts = cloneContracts.filter(({ title, product, namespace }) =>
+  !(title === `Clones/${product}` || title?.startsWith(`Clones/${product}/`))
+  || !/^[A-Za-z0-9][A-Za-z0-9 .&+-]*$/.test(product ?? '')
   || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(namespace ?? ''),
 )
 if (invalidCloneContracts.length > 0) {
   throw new Error(
-    'Clone stories must use a Clones/Google, Clones/Palantir, or Clones/SME title '
-    + `and a kebab-case cloneNamespace: ${
+    'Clone stories must declare cloneProduct, use a product-first Clones/<product> title, '
+    + `and declare a kebab-case cloneNamespace: ${
       invalidCloneContracts.map(({ storyPath }) => storyPath).join(', ')
     }`,
   )
@@ -89,12 +94,6 @@ if (new Set(cloneTitles).size !== cloneTitles.length) {
 }
 if (new Set(cloneNamespaces).size !== cloneNamespaces.length) {
   throw new Error('Clone story namespaces must be unique')
-}
-const missingCloneGroups = cloneGroups.filter(group =>
-  !cloneTitles.some(title => title?.startsWith(`Clones/${group}/`)),
-)
-if (missingCloneGroups.length > 0) {
-  throw new Error(`Storybook is missing clone groups: ${missingCloneGroups.join(', ')}`)
 }
 
 console.log(

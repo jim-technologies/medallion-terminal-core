@@ -27,6 +27,7 @@ http://localhost:5173/?template=/examples/platform-foundation.json&backend=http:
 | Lineage / dependency graph | `dag` | `GraphPayload` | Graph traversal, lineage extraction, impact analysis, access filtering |
 | Operational geography | `geo_map` | `GeoPayload` / GeoJSON | Geospatial query, authorized features, host-controlled MapLibre style and tiles |
 | Photo/video libraries | `media_gallery` | `MediaPayload` | Authorized media query, thumbnails/transcodes, albums, indexing, signed originals, HTTP Range |
+| Channels, direct messages, and AI transcripts | `conversation` | `ConversationPayload` | Authorized history, search, pagination, realtime delivery, message writes, moderation, and retention |
 | Code repositories | `code_browser` | `RepositoryPayload` | Git/ref resolution, tree listing, content retrieval, truncation, raw URLs |
 | Record workspaces / business apps | `record_grid`, `record_board`, `record_calendar`, `record_form` | `RecordSetPayload` | Schemas, records, links, views, policy, formulas, revisions, automations |
 | Files and data repositories | `file_browser`, `table`, charts | `TablePayload` and existing analytical shapes | Object storage, tabular query, previews, signed downloads, HTTP Range |
@@ -48,40 +49,92 @@ growing a second widget family for each adjacent product:
 
 | Product surface | Compose these built-ins | What is ready |
 |---|---|---|
-| Palantir-like governed operating platform | `asset_catalog` + `object_view` + `dag` + `geo_map` + `action_form` + `code_browser` + record/analytical widgets | Discovery, ontology detail, links, lineage, operational geography, governed actions, source browsing, workflows, and analysis |
-| Google Drive-like file workspace | `file_browser` + `asset_catalog` + `object_view` + `events` / `action_log` + optional `action_form` | Paths, breadcrumbs, search, paging, upload/download, list/gallery, previews, details/activity, and policy-gated file operations |
-| Google Photos-like media workspace | `media_gallery` + `file_browser` + optional `object_view`, `events`, and `action_form` | Capture timelines, albums, photo/video filtering, favorites, metadata, native playback, selection, storage upload, and policy-gated media operations |
-| Google Timeline-like location history | `geo_map` + `events` + `table` + optional `media_gallery` | Provider-neutral MapLibre paths and places, chronological activity, detail tables, related photos/video, and host-swappable basemaps |
-| Document, spreadsheet, and presentation workspace | `file_browser` + `table` + `text` + `image` / `iframe` + consumer-registered editors | File discovery, structured data, previews, context linking, and reference editor shells; persistence, realtime collaboration, formulas, and document formats remain host/editor services |
-| Airtable-style operational app | `record_grid` + `record_board` + `record_calendar` + `record_form` | Typed fields, links, saved views, filters/sorts, inline edits, governed CRUD, revision checks, and multiple projections over one record set |
-| SME business operating suite | `MultiDashboard` + record views + analytical widgets + `action_form` + `events` / `action_log` | Owner pulse, CRM/projects, commerce, support, finance, governed workflows, and drill-through into shared business objects |
-| Grafana / Superset-style analytics | `metric`, `stat_strip`, `timeseries`, `area_chart`, `bar_chart`, `table`, `heatmap`, `histogram`, `boxplot`, `scatter`, `treemap`, `gauge`, `events`, `alert_log` | Context-driven filters, streaming/polling, freshness and retry state, annotations, alerts, drill-down, snapshots, export, and embedding |
-| Binance-like exchange | `stat_strip` + `candlestick` + `orderbook` + `depth_chart` + `tape` + `trade` + orders/holdings tables | Market statistics, candles, ladder and cumulative liquidity, prints, order entry, lifecycle, history, and watchlists |
-| CoinGecko-like market intelligence | `table` + `metric` / `stat_strip` + `timeseries` / `candlestick` + `distribution` + `text` | Ranked markets, coin detail, price/volume/cap history, metadata, categories, portfolio/watchlists, and news |
-| Polymarket-like prediction market | `asset_catalog` / `table` + `gauge` + `timeseries` + `distribution` + `orderbook` / `depth_chart` + `trade` + `events` | Market discovery, implied probability, history, outcomes, liquidity, execution, positions, and activity |
-| IBKR-like brokerage workstation | `MultiDashboard` + analytical set + `candlestick` + `orderbook` + `depth_chart` + `paired_grid` + `trade` / `action_form` + `action_log` + `text` | Linked watchlists/scanners, portfolio and account views, charts, Level II, options, compact and advanced tickets, order monitoring, and news |
+| Palantir Foundry | `asset_catalog` + `object_view` + `dag` + `geo_map` + `action_form` + `code_browser` + record/analytical widgets | Discovery, ontology detail, links, lineage, operational geography, governed actions, source browsing, workflows, and analysis |
+| Google Drive | `file_browser` + `asset_catalog` + `object_view` + `events` / `action_log` + optional `action_form` | Paths, breadcrumbs, search, paging, upload/download, list/gallery, previews, details/activity, and policy-gated file operations |
+| Google Photos | `media_gallery` + `file_browser` + optional `object_view`, `events`, and `action_form` | Capture timelines, albums, photo/video filtering, favorites, metadata, native playback, selection, storage upload, and policy-gated media operations |
+| Google Maps Timeline | `geo_map` + `events` + `table` + optional `media_gallery` | Provider-neutral MapLibre paths and places, chronological activity, detail tables, related photos/video, and host-swappable basemaps |
+| Google Docs / Google Sheets / Google Slides | `file_browser` + `table` + `text` + `image` / `iframe` + consumer-registered editors | File discovery, structured data, previews, context linking, and reference editor shells; persistence, realtime collaboration, formulas, and document formats remain host/editor services |
+| Airtable | `record_grid` + `record_board` + `record_calendar` + `record_form` | Typed fields, links, saved views, filters/sorts, inline edits, governed CRUD, revision checks, and multiple projections over one record set |
+| Business operating workspace | `MultiDashboard` + record views + analytical widgets + `action_form` + `events` / `action_log` | Owner pulse, CRM/projects, commerce, support, finance, governed workflows, and drill-through into shared business objects |
+| Grafana / Apache Superset | `metric`, `stat_strip`, `timeseries`, `area_chart`, `bar_chart`, `table`, `heatmap`, `histogram`, `boxplot`, `scatter`, `treemap`, `gauge`, `events`, `alert_log` | Context-driven filters, streaming/polling, freshness and retry state, annotations, alerts, drill-down, snapshots, export, and embedding |
+| Binance | `stat_strip` + `candlestick` + `orderbook` + `depth_chart` + `tape` + `trade` + orders/holdings tables | Market statistics, candles, ladder and cumulative liquidity, prints, order entry, lifecycle, history, and watchlists |
+| CoinGecko | `table` + `metric` / `stat_strip` + `timeseries` / `candlestick` + `distribution` + `text` | Ranked markets, coin detail, price/volume/cap history, metadata, categories, portfolio/watchlists, and news |
+| Polymarket | `asset_catalog` / `table` + `gauge` + `timeseries` + `distribution` + `orderbook` / `depth_chart` + `trade` + `events` | Market discovery, implied probability, history, outcomes, liquidity, execution, positions, and activity |
+| Interactive Brokers | `MultiDashboard` + analytical set + `candlestick` + `orderbook` + `depth_chart` + `paired_grid` + `trade` / `action_form` + `action_log` + `text` | Linked watchlists/scanners, portfolio and account views, charts, Level II, options, compact and advanced tickets, order monitoring, and news |
+| Slack / WhatsApp / ChatGPT | `conversation` + `table` / `asset_catalog` + `events` + optional `action_form` / `prompt` | Channels, direct messaging, support, assistant/tool turns, participants, replies, reactions, files, delivery states, search, and context-driven drill-through |
 
 These are capability-level analogues, not copies of another product's layout
 or trade dress. A host can put them in tabs with `MultiDashboard`, retarget
 all panels through shared `ctx`, and register a custom widget when a genuinely
 new projection is required.
 
-## Reference showcase catalog
+## Product showcase catalog
 
 Storybook keeps product-faithful presentation references outside the published
-core, grouped under stable namespaces:
+core. Every story declares `cloneProduct`, uses that product directly beneath
+`Clones/`, and owns a unique implementation namespace:
 
-| Storybook group | Namespaced showcases | Generic framework foundation |
+| Product | Storybook path | Generic framework foundation |
 |---|---|---|
-| `Clones/Google` | Drive, Photos, Maps Timeline, Workspace Docs, Sheets, and Slides | Files, media, maps/events, tables/text/embeds, shared context |
-| `Clones/Palantir` | Foundry Foundation and Ontology & Operations | Catalog, ontology objects, lineage, maps, data connections, code, records, actions |
-| `Clones/SME` | Airtable, HubSpot, QuickBooks, Shopify, Stripe, and Intercom | Records/views, analytics, events, forms/actions, tables, shared context |
+| Google Drive | `Clones/Google Drive` | Files, catalog, object detail, activity, actions |
+| Google Photos | `Clones/Google Photos` | Media timeline, collections, files, metadata, actions |
+| Google Maps | `Clones/Google Maps/Timeline` | Maps, routes, events, media, provider-neutral basemaps |
+| Google Docs | `Clones/Google Docs` | Files, text, embeds, context, consumer-registered editor |
+| Google Sheets | `Clones/Google Sheets` | Tables, records, analytics, context, consumer-registered editor |
+| Google Slides | `Clones/Google Slides` | Files, images, embeds, context, consumer-registered editor |
+| Palantir Foundry | `Clones/Palantir Foundry/Foundation` and `Ontology & Operations` | Catalog, ontology, lineage, maps, data connections, code, records, actions |
+| Airtable | `Clones/Airtable` | Record grid, board, calendar, form, views, actions |
+| HubSpot | `Clones/HubSpot` | Records, customer detail, pipeline, activity, actions |
+| QuickBooks | `Clones/QuickBooks` | Metrics, cash flow, invoices, transactions, review actions |
+| Shopify | `Clones/Shopify` | Commerce metrics, orders, inventory, fulfillment, actions |
+| Stripe | `Clones/Stripe` | Payments, subscriptions, payouts, disputes, analytics |
+| Intercom | `Clones/Intercom` | Inbox, conversation detail, tickets, customer context, reporting |
+| Slack | `Clones/Slack` | Workspace navigation, channels, presence, search, reactions, files, threads, app messages, composition |
 
 The showcases accept host-provided records/content and demonstrate application
 anatomy; they are not added to the npm barrel as vendor-specific framework
-APIs. `storybookCoverage.test.ts` and `check-storybook.mjs` enforce grouping,
-unique namespaces, discoverability, and coverage of every built-in and public
-dashboard example.
+APIs. `storybookCoverage.test.ts` and `check-storybook.mjs` enforce the
+product-first title contract, unique namespaces, discoverability, and coverage
+of every built-in and public dashboard example.
+
+### Composition-ready products without a dedicated shell
+
+These already have complete generic dashboard examples and readiness tests;
+adding a product-faithful shell is presentation work, not a core capability
+gap:
+
+| Product | Existing proof |
+|---|---|
+| Binance | `spot-market.json` |
+| CoinGecko | `crypto-watch.json` |
+| Polymarket | `prediction-market.json` |
+| Interactive Brokers | `medallion-terminal.json`, `options-desk.json`, `trading-floor.json` |
+| Grafana / Superset | Analytical and operations examples across the public gallery |
+
+### Next distinct interaction archetypes
+
+If more product references are added, prioritize products that prove a new
+interaction model rather than near-duplicates:
+
+1. Gmail or Outlook plus Calendar — inbox/thread actions, composing, scheduling,
+   invitations, and agenda/time-grid views.
+2. Notion or Confluence — block documents, nested knowledge navigation,
+   backlinks, comments, and permissions.
+3. Linear or Jira — backlog, sprint planning, issue detail, dependencies, and
+   workflow transitions over the existing record contract.
+4. GitHub or GitLab — pull requests, review threads, checks, commits, and CI
+   status around the existing code browser and DAG.
+5. Databricks or Snowflake — query/notebook editing, result grids, job runs,
+   lineage, and governed publication around the existing data-platform set.
+
+Slack now proves the shared conversation archetype; the generic widget stories
+also show WhatsApp direct messaging and ChatGPT assistant/tool turns. The
+first, second, fourth, and fifth remaining items introduce meaningful editor
+behavior. Linear/Jira is already capability-complete through record views and
+mainly needs a faithful reference shell. Equivalent products such as
+Microsoft Teams, Dropbox/OneDrive, Xero, Salesforce, or Adyen should reuse the
+matching conversation, file, accounting, CRM, or payments archetype unless a
+concrete workflow proves that the shared primitives are insufficient.
 
 The current file surface intentionally stops short of pretending that storage
 policy is a UI concern. Rename, move, delete, share, retention, and folder

@@ -50,6 +50,8 @@ export { Candlestick } from './widgets/Candlestick'
 export { DataTable } from './widgets/DataTable'
 export { Metric } from './widgets/Metric'
 export { Text } from './widgets/Text'
+export { Conversation } from './widgets/Conversation'
+export type { ConversationMode, ConversationOptions } from './widgets/ConversationImpl'
 export { Prompt } from './widgets/Prompt'
 export { Gauge } from './widgets/Gauge'
 export { Distribution } from './widgets/Distribution'
@@ -199,6 +201,14 @@ export type {
   MediaFilter,
   MediaGroup,
 } from './widgets/mediaShape'
+export type {
+  ConversationMessageKind,
+  ConversationParticipantData,
+  ConversationAttachmentData,
+  ConversationReactionData,
+  ConversationMessageData,
+  ConversationData,
+} from './widgets/conversationShape'
 export type {
   AssetCatalogData,
   AssetCatalogItem,

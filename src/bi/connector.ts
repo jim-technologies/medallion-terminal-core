@@ -39,6 +39,7 @@ export type BiShape =
   | 'SHAPE_RECORD_SET'
   | 'SHAPE_GEO'
   | 'SHAPE_MEDIA'
+  | 'SHAPE_CONVERSATION'
 
 const BI_SHAPES: readonly BiShape[] = [
   'SHAPE_UNSPECIFIED',
@@ -61,6 +62,7 @@ const BI_SHAPES: readonly BiShape[] = [
   'SHAPE_RECORD_SET',
   'SHAPE_GEO',
   'SHAPE_MEDIA',
+  'SHAPE_CONVERSATION',
 ]
 
 function normalizeBiShape(shape: unknown): BiShape | undefined {
@@ -297,6 +299,25 @@ function shapeColumns(shape: unknown): BiColumn[] {
         { name: 'favorite', type: 'boolean' },
         { name: 'tags', type: 'json' },
         { name: 'collection_ids', type: 'json' },
+        { name: 'metadata', type: 'json' },
+        { name: 'context', type: 'json' },
+      ]
+    case 20:
+    case 'SHAPE_CONVERSATION':
+      return [
+        t('conversation_id'),
+        t('id'),
+        t('timestamp', true),
+        t('sender_id'),
+        t('sender_name'),
+        t('kind'),
+        t('body'),
+        t('reply_to_id'),
+        { name: 'edited', type: 'boolean' },
+        t('status'),
+        { name: 'attachments', type: 'json' },
+        { name: 'reactions', type: 'json' },
+        { name: 'thread_reply_count', type: 'integer' },
         { name: 'metadata', type: 'json' },
         { name: 'context', type: 'json' },
       ]

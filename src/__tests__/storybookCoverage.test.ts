@@ -83,22 +83,27 @@ describe('Storybook coverage', () => {
     }
   })
 
-  it('keeps product-faithful clone stories outside the core with unique grouped namespaces', () => {
+  it('keeps product-faithful clone stories outside the core with product-first namespaces', () => {
     const cloneStories = storyFilesUnder(new URL('../../examples/clones/', import.meta.url))
-    const allowedGroups = ['Google', 'Palantir', 'SME']
     const titles: string[] = []
     const namespaces: string[] = []
+    const products: string[] = []
 
     expect(cloneStories.length).toBeGreaterThan(0)
     for (const storyUrl of cloneStories) {
       const source = readFileSync(storyUrl, 'utf8')
       const title = storyMetaValue(source, 'title')
+      const product = storyMetaValue(source, 'cloneProduct')
       const namespace = storyMetaValue(source, 'cloneNamespace')
 
       expect(title, `${storyUrl.pathname} must declare a story title`).toBeDefined()
       expect(
-        allowedGroups.some(group => title?.startsWith(`Clones/${group}/`)),
-        `${storyUrl.pathname} must be grouped under ${allowedGroups.join(', ')}`,
+        product,
+        `${storyUrl.pathname} must declare parameters.cloneProduct`,
+      ).toMatch(/^[A-Za-z0-9][A-Za-z0-9 .&+-]*$/)
+      expect(
+        title === `Clones/${product}` || title?.startsWith(`Clones/${product}/`),
+        `${storyUrl.pathname} must be grouped directly under its product name`,
       ).toBe(true)
       expect(
         namespace,
@@ -108,15 +113,12 @@ describe('Storybook coverage', () => {
 
       titles.push(title!)
       namespaces.push(namespace!)
+      products.push(product!)
     }
 
     expect(new Set(titles).size, 'clone story titles must be unique').toBe(titles.length)
     expect(new Set(namespaces).size, 'clone namespaces must be unique').toBe(namespaces.length)
-    for (const group of allowedGroups) {
-      expect(
-        titles.some(title => title.startsWith(`Clones/${group}/`)),
-        `${group} must remain represented in the clone catalog`,
-      ).toBe(true)
-    }
+    expect(new Set(products).size, 'the catalog must cover several distinct products')
+      .toBeGreaterThan(5)
   })
 })

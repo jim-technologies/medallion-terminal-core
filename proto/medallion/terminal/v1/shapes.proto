@@ -688,6 +688,123 @@ message TextItem {
   optional double sentiment = 8;
 }
 
+// --- Conversation ---
+// Use for: channel history, direct messaging, customer support threads,
+// human/AI conversations, and other chronological message transcripts.
+//
+// Messages stay product-neutral. `kind` and `status` are intentionally
+// free-form strings so a backend can represent ordinary messages, assistant
+// responses, system notices, tool calls, delivery receipts, or domain-specific
+// states without extending the wire contract.
+//
+// JSON example:
+//   {
+//     "id": "channel-operations",
+//     "title": "operations",
+//     "viewer_id": "user-jun",
+//     "participants": [
+//       { "id": "user-jun", "name": "Jun", "status": "online" },
+//       { "id": "user-maya", "name": "Maya Chen", "status": "away" }
+//     ],
+//     "messages": [
+//       {
+//         "id": "message-104",
+//         "timestamp": "2026-07-18T16:42:00Z",
+//         "sender_id": "user-maya",
+//         "body": "The launch checklist is ready for review.",
+//         "reactions": [{ "key": "check", "label": "✓", "count": 3 }],
+//         "context": { "message_id": "message-104" }
+//       }
+//     ]
+//   }
+message ConversationPayload {
+  string id = 1;
+  optional string title = 2;
+  optional string subtitle = 3;
+
+  // Participant representing the current viewer. Renderers can use this to
+  // align the viewer's messages without product-specific "me" conventions.
+  optional string viewer_id = 4;
+
+  repeated ConversationParticipant participants = 5;
+
+  // Ordered oldest to newest. Backends should return the visible window in
+  // presentation order and use next_page_token for older history.
+  repeated ConversationMessage messages = 6;
+
+  optional uint32 unread_count = 7;
+  optional string next_page_token = 8;
+
+  // Applied when the conversation header is selected.
+  map<string, string> context = 9;
+}
+
+message ConversationParticipant {
+  string id = 1;
+  string name = 2;
+  optional string avatar_url = 3;
+
+  // Free-form membership or business role: "owner", "member", "customer",
+  // "agent", "assistant", etc.
+  optional string role = 4;
+
+  // Free-form presence/availability value.
+  optional string status = 5;
+
+  map<string, string> context = 6;
+}
+
+message ConversationMessage {
+  string id = 1;
+  optional string timestamp = 2;
+  optional string sender_id = 3;
+
+  // Denormalized fallbacks for transcripts where a participant catalog is
+  // unavailable or historical sender records were removed.
+  optional string sender_name = 4;
+  optional string sender_avatar_url = 5;
+
+  // Recognized renderer hints include "message", "assistant", "system",
+  // "tool", and "event"; unknown values render as ordinary messages.
+  optional string kind = 6;
+  optional string body = 7;
+  optional string reply_to_id = 8;
+  bool edited = 9;
+
+  // Free-form delivery/lifecycle state such as "sending", "sent",
+  // "delivered", "read", or "failed".
+  optional string status = 10;
+
+  repeated ConversationAttachment attachments = 11;
+  repeated ConversationReaction reactions = 12;
+  optional uint32 thread_reply_count = 13;
+  optional google.protobuf.Struct metadata = 14;
+
+  // Applied when the message is selected.
+  map<string, string> context = 15;
+}
+
+message ConversationAttachment {
+  string id = 1;
+  string name = 2;
+
+  // Free-form renderer hint: "file", "image", "video", "audio", "link",
+  // "code", etc.
+  optional string kind = 3;
+  optional string url = 4;
+  optional string thumbnail_url = 5;
+  optional string content_type = 6;
+  optional uint64 size_bytes = 7;
+}
+
+message ConversationReaction {
+  // Stable backend key, independent of display glyph/localization.
+  string key = 1;
+  string label = 2;
+  uint32 count = 3;
+  bool viewer_reacted = 4;
+}
+
 // --- Asset Catalog ---
 // Use for: governed discovery surfaces that list datasets, object
 // types, pipelines, models, repositories, dashboards, documents, and

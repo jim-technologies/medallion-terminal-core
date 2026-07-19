@@ -1,6 +1,6 @@
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import type { StructJson } from "@bufbuild/protobuf/wkt";
-import type { AssetCatalogPayload, AssetCatalogPayloadJson, CandlePayload, CandlePayloadJson, DistributionPayload, DistributionPayloadJson, EmbedPayload, EmbedPayloadJson, EventPayload, EventPayloadJson, GaugePayload, GaugePayloadJson, GeoPayload, GeoPayloadJson, GraphPayload, GraphPayloadJson, HeatmapPayload, HeatmapPayloadJson, MediaPayload, MediaPayloadJson, MetricPayload, MetricPayloadJson, ObjectPayload, ObjectPayloadJson, OrderBookPayload, OrderBookPayloadJson, PairedGridPayload, PairedGridPayloadJson, RecordSetPayload, RecordSetPayloadJson, RepositoryPayload, RepositoryPayloadJson, TablePayload, TablePayloadJson, TextPayload, TextPayloadJson, TimeseriesPayload, TimeseriesPayloadJson } from "./shapes_pb.js";
+import type { AssetCatalogPayload, AssetCatalogPayloadJson, CandlePayload, CandlePayloadJson, ConversationPayload, ConversationPayloadJson, DistributionPayload, DistributionPayloadJson, EmbedPayload, EmbedPayloadJson, EventPayload, EventPayloadJson, GaugePayload, GaugePayloadJson, GeoPayload, GeoPayloadJson, GraphPayload, GraphPayloadJson, HeatmapPayload, HeatmapPayloadJson, MediaPayload, MediaPayloadJson, MetricPayload, MetricPayloadJson, ObjectPayload, ObjectPayloadJson, OrderBookPayload, OrderBookPayloadJson, PairedGridPayload, PairedGridPayloadJson, RecordSetPayload, RecordSetPayloadJson, RepositoryPayload, RepositoryPayloadJson, TablePayload, TablePayloadJson, TextPayload, TextPayloadJson, TimeseriesPayload, TimeseriesPayloadJson } from "./shapes_pb.js";
 import type { Context, ContextJson, Widget, WidgetAction, WidgetActionJson, WidgetJson } from "./template_pb.js";
 import type { JsonObject, Message } from "@bufbuild/protobuf";
 /**
@@ -179,6 +179,12 @@ export type DataResponse = Message<"medallion.terminal.v1.DataResponse"> & {
         value: MediaPayload;
         case: "media";
     } | {
+        /**
+         * @generated from field: medallion.terminal.v1.ConversationPayload conversation = 20;
+         */
+        value: ConversationPayload;
+        case: "conversation";
+    } | {
         case: undefined;
         value?: undefined;
     };
@@ -266,6 +272,10 @@ export type DataResponseJson = {
      * @generated from field: medallion.terminal.v1.MediaPayload media = 19;
      */
     media?: MediaPayloadJson;
+    /**
+     * @generated from field: medallion.terminal.v1.ConversationPayload conversation = 20;
+     */
+    conversation?: ConversationPayloadJson;
 };
 /**
  * Describes the message medallion.terminal.v1.DataResponse.
@@ -1241,7 +1251,11 @@ export declare enum Shape {
     /**
      * @generated from enum value: SHAPE_MEDIA = 19;
      */
-    MEDIA = 19
+    MEDIA = 19,
+    /**
+     * @generated from enum value: SHAPE_CONVERSATION = 20;
+     */
+    CONVERSATION = 20
 }
 /**
  * Shape names the payload variant a Source returns. The values
@@ -1250,7 +1264,7 @@ export declare enum Shape {
  *
  * @generated from enum medallion.terminal.v1.Shape
  */
-export type ShapeJson = "SHAPE_UNSPECIFIED" | "SHAPE_TIMESERIES" | "SHAPE_CANDLES" | "SHAPE_TABLE" | "SHAPE_METRIC" | "SHAPE_GAUGE" | "SHAPE_HEATMAP" | "SHAPE_EVENTS" | "SHAPE_DISTRIBUTION" | "SHAPE_TEXT" | "SHAPE_ORDERBOOK" | "SHAPE_PAIRED_GRID" | "SHAPE_EMBED" | "SHAPE_ASSET_CATALOG" | "SHAPE_OBJECT" | "SHAPE_GRAPH" | "SHAPE_REPOSITORY" | "SHAPE_RECORD_SET" | "SHAPE_GEO" | "SHAPE_MEDIA";
+export type ShapeJson = "SHAPE_UNSPECIFIED" | "SHAPE_TIMESERIES" | "SHAPE_CANDLES" | "SHAPE_TABLE" | "SHAPE_METRIC" | "SHAPE_GAUGE" | "SHAPE_HEATMAP" | "SHAPE_EVENTS" | "SHAPE_DISTRIBUTION" | "SHAPE_TEXT" | "SHAPE_ORDERBOOK" | "SHAPE_PAIRED_GRID" | "SHAPE_EMBED" | "SHAPE_ASSET_CATALOG" | "SHAPE_OBJECT" | "SHAPE_GRAPH" | "SHAPE_REPOSITORY" | "SHAPE_RECORD_SET" | "SHAPE_GEO" | "SHAPE_MEDIA" | "SHAPE_CONVERSATION";
 /**
  * Describes the enum medallion.terminal.v1.Shape.
  */

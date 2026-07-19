@@ -207,6 +207,34 @@ function flattenText(data: unknown): FlatTable | null {
   return null
 }
 
+// conversation: one export row per message, retaining nested attachments,
+// reactions, metadata, and context as JSON cells.
+function flattenConversation(data: unknown): FlatTable | null {
+  if (!isObject(data) || !Array.isArray(data.messages)) return null
+  const conversationId = data.id ?? data.conversation_id ?? data.conversationId
+  return fromRowObjects(
+    (data.messages as unknown[])
+      .filter(isObject)
+      .map(message => ({
+        conversation_id: conversationId,
+        id: message.id ?? message.message_id ?? message.messageId,
+        timestamp: message.timestamp ?? message.created_at ?? message.createdAt,
+        sender_id: message.sender_id ?? message.senderId,
+        sender_name: message.sender_name ?? message.senderName ?? message.author,
+        kind: message.kind ?? message.type ?? message.role,
+        body: message.body ?? message.text ?? message.content,
+        reply_to_id: message.reply_to_id ?? message.replyToId,
+        edited: message.edited ?? message.is_edited ?? message.isEdited,
+        status: message.status ?? message.delivery_status ?? message.deliveryStatus,
+        attachments: message.attachments,
+        reactions: message.reactions,
+        thread_reply_count: message.thread_reply_count ?? message.threadReplyCount,
+        metadata: message.metadata,
+        context: message.context,
+      })),
+  )
+}
+
 // orderbook: {bids:[{price,size}], asks:[...]} → tagged side column.
 function flattenOrderbook(data: unknown): FlatTable | null {
   const book = normalizeOrderBook(data)
@@ -403,6 +431,7 @@ const PROJECTORS: Record<string, (d: unknown) => FlatTable | null> = {
   alert_log: flattenEvents,
   text: flattenText,
   ticker: flattenText,
+  conversation: flattenConversation,
   orderbook: flattenOrderbook,
   depth_chart: flattenOrderbook,
   metric: flattenMetric,
@@ -426,6 +455,7 @@ const PROJECTORS: Record<string, (d: unknown) => FlatTable | null> = {
   SHAPE_EVENTS: flattenEvents,
   SHAPE_DISTRIBUTION: flattenDistribution,
   SHAPE_TEXT: flattenText,
+  SHAPE_CONVERSATION: flattenConversation,
   SHAPE_ORDERBOOK: flattenOrderbook,
   SHAPE_ASSET_CATALOG: flattenAssetCatalog,
   SHAPE_OBJECT: flattenObject,
@@ -484,6 +514,7 @@ export function flatten(data: unknown, componentOrShape?: string): FlatTable {
     flattenHeatmap,
     flattenDistribution,
     flattenEvents,
+    flattenConversation,
     flattenText,
     flattenOrderbook,
     flattenMedia,

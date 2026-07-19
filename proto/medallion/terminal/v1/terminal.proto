@@ -90,6 +90,7 @@ message DataResponse {
     RecordSetPayload records = 17;
     GeoPayload geo = 18;
     MediaPayload media = 19;
+    ConversationPayload conversation = 20;
   }
 }
 
@@ -211,6 +212,7 @@ enum Shape {
   SHAPE_RECORD_SET = 17;
   SHAPE_GEO = 18;
   SHAPE_MEDIA = 19;
+  SHAPE_CONVERSATION = 20;
 }
 
 // ----- Generate (AI) -----

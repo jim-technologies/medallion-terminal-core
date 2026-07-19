@@ -211,6 +211,30 @@ describe('buildBiDescriptor', () => {
     ])
   })
 
+  it('declares the stable conversation export columns', () => {
+    const descriptor = buildBiDescriptor([{
+      id: 'conversations',
+      shape: 'SHAPE_CONVERSATION',
+    }], { name: 'M', endpoint: 'https://api.example.com' })
+    expect(descriptor.tables[0].columns.map(column => column.name)).toEqual([
+      'conversation_id',
+      'id',
+      'timestamp',
+      'sender_id',
+      'sender_name',
+      'kind',
+      'body',
+      'reply_to_id',
+      'edited',
+      'status',
+      'attachments',
+      'reactions',
+      'thread_reply_count',
+      'metadata',
+      'context',
+    ])
+  })
+
   it('omits connect fields for a sql-protocol descriptor', () => {
     const d = buildBiDescriptor(SOURCES, { name: 'M', endpoint: 'https://sql.example.com', protocol: 'sql' })
     expect(d.protocol).toBe('sql')

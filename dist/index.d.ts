@@ -24,6 +24,8 @@ export { Candlestick } from './widgets/Candlestick';
 export { DataTable } from './widgets/DataTable';
 export { Metric } from './widgets/Metric';
 export { Text } from './widgets/Text';
+export { Conversation } from './widgets/Conversation';
+export type { ConversationMode, ConversationOptions } from './widgets/ConversationImpl';
 export { Prompt } from './widgets/Prompt';
 export { Gauge } from './widgets/Gauge';
 export { Distribution } from './widgets/Distribution';
@@ -82,6 +84,7 @@ export { BASEMAP_PRESETS, BASEMAP_PRESET_IDS, isBasemapPresetId, normalizeBasema
 export type { BasemapPresetDefinition, BasemapPresetId, PresetBasemapConfig, StyleBasemapConfig, RasterBasemapConfig, BasemapConfig, NormalizedAnalyticalBasemap, NormalizedStyleBasemap, NormalizedRasterBasemap, NormalizedBasemap, MapLibreBasemapStyle, } from './maps/basemaps';
 export { normalizeMediaLibrary, sortMediaItems, filterMediaItems, groupMediaItems, safeMediaUrl, formatMediaDuration, formatMediaDate, } from './widgets/mediaShape';
 export type { MediaKind, MediaGroupMode, MediaItemData, MediaCollectionData, MediaLibraryData, MediaFilter, MediaGroup, } from './widgets/mediaShape';
+export type { ConversationMessageKind, ConversationParticipantData, ConversationAttachmentData, ConversationReactionData, ConversationMessageData, ConversationData, } from './widgets/conversationShape';
 export type { AssetCatalogData, AssetCatalogItem, ObjectData, ObjectProperty, ObjectLink, ObjectAction, GraphData, GraphNodeData, GraphEdgeData, RepositoryData, RepositoryEntryData, RepositoryEntryKind, RepositoryFileData, } from './widgets/platformShapes';
 export { WidgetShell } from './widgets/WidgetShell';
 export { Placeholder } from './widgets/Placeholder';

@@ -99,6 +99,17 @@ const SOURCES = [
     ],
   },
   {
+    id: 'workspace_conversation',
+    name: 'Workspace conversation',
+    description: 'Product-neutral channel transcript with participants, replies, reactions, attachments, and selection context.',
+    shape: 'SHAPE_CONVERSATION',
+    streamable: false,
+    tags: ['conversation', 'collaboration', 'demo'],
+    params: [
+      { key: 'conversation_id', description: 'Conversation or channel id', type: 'PARAM_TYPE_STRING', default_value: 'launch-room' },
+    ],
+  },
+  {
     id: 'btc_spot',
     name: 'BTC spot price',
     description: 'Last trade price for BTC/USD. Streams a fresh tick every second.',
@@ -913,12 +924,68 @@ function getBusinessRecords(params) {
   }
 }
 
+function getWorkspaceConversation(params) {
+  const conversationId = params.conversation_id ?? 'launch-room'
+  return {
+    conversation: {
+      id: conversationId,
+      title: conversationId === 'launch-room' ? '# launch-room' : conversationId,
+      subtitle: 'Launch coordination · reference source',
+      viewer_id: 'jun',
+      unread_count: 2,
+      participants: [
+        { id: 'jun', name: 'Jun', role: 'owner', status: 'online' },
+        { id: 'maya', name: 'Maya Chen', role: 'operations', status: 'online' },
+        { id: 'lina', name: 'Lina Torres', role: 'customer success', status: 'away' },
+      ],
+      messages: [
+        {
+          id: 'reference-message-1',
+          timestamp: '2026-07-18T16:02:00Z',
+          sender_id: 'maya',
+          body: 'The operating brief and open decisions are ready for review.',
+          attachments: [{
+            id: 'reference-brief',
+            name: 'Launch operating brief.pdf',
+            kind: 'file',
+            url: '/files/launch-operating-brief.pdf',
+            content_type: 'application/pdf',
+            size_bytes: 2480000,
+          }],
+          reactions: [{ key: 'check', label: '✅', count: 3, viewer_reacted: true }],
+          thread_reply_count: 1,
+          context: { workstream: 'launch' },
+        },
+        {
+          id: 'reference-message-2',
+          timestamp: '2026-07-18T16:08:00Z',
+          sender_id: 'jun',
+          body: 'I’ll assign the remaining owner before the review.',
+          status: 'read',
+        },
+        {
+          id: 'reference-message-1-reply-1',
+          timestamp: '2026-07-18T16:09:00Z',
+          sender_id: 'lina',
+          reply_to_id: 'reference-message-1',
+          body: 'Customer communications are approved and staged.',
+        },
+      ],
+      context: {
+        workspace_id: 'jim-technologies',
+        conversation_id: conversationId,
+      },
+    },
+  }
+}
+
 const HANDLERS = {
   platform_assets:     () => getPlatformAssets(),
   platform_object:     p => getPlatformObject(p),
   platform_lineage:    p => getPlatformLineage(p),
   platform_repository: p => getPlatformRepository(p),
   business_records:    p => getBusinessRecords(p),
+  workspace_conversation: p => getWorkspaceConversation(p),
   btc_spot:      () => getBtcSpot(),
   btc_candles:   p => getBtcCandles(parseInt(p.limit ?? '60', 10)),
   btc_orderbook: () => getBtcOrderbook(),
