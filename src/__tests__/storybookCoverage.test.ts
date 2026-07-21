@@ -145,7 +145,7 @@ describe('Storybook coverage', () => {
     expect(new Set(namespaces).size, 'clone namespaces must be unique').toBe(namespaces.length)
     expect(new Set(products).size, 'the catalog must cover several distinct products')
       .toBeGreaterThan(5)
-    expect(vendors.filter(vendor => vendor === 'Google').length).toBe(6)
+    expect(vendors.filter(vendor => vendor === 'Google').length).toBe(7)
     expect(vendors.filter(vendor => vendor === 'Palantir').length).toBe(2)
   })
 })

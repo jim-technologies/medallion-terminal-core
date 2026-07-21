@@ -43,6 +43,21 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Added
 
+- **Netflix product showcase.** `Clones/Netflix` provides host-data-injectable
+  personalized browse rails, Continue Watching and Top 10 treatments, title
+  search, My List, profiles, title and episode details, and player chrome.
+  Original sample content keeps the example self-contained; catalog,
+  recommendation, entitlement, delivery, and DRM services remain host-owned.
+- **Google Calendar product showcase.** `Clones/Google/Calendar` provides
+  host-data-injectable month, week, day, and schedule views plus multiple
+  calendars, event details, guests, rooms, conferencing, tasks, appointment
+  scheduling, and quick creation. The implementation remains example-only and
+  projects neutral calendar sources and event records.
+- **Snowflake and Databricks product showcases.** `Clones/Snowflake` models
+  current file-based Workspaces, Horizon Catalog, SQL results, and query
+  monitoring. `Clones/Databricks` covers collaborative notebooks, the new SQL
+  editor, Lakeflow Jobs, Unity Catalog, compute context, and assistant
+  presentation. Both accept host data and remain outside the published core.
 - **Generic conversation foundation.** `ConversationPayload` and the
   `conversation` built-in cover channel history, direct messaging, support
   threads, and human/AI transcripts through one vendor-neutral contract.

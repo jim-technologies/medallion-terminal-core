@@ -50,10 +50,14 @@ growing a second widget family for each adjacent product:
 | Product surface | Compose these built-ins | What is ready |
 |---|---|---|
 | Palantir Foundry | `asset_catalog` + `object_view` + `dag` + `geo_map` + `action_form` + `code_browser` + record/analytical widgets | Discovery, ontology detail, links, lineage, operational geography, governed actions, source browsing, workflows, and analysis |
+| Google Calendar | `record_calendar` + `events` + optional `action_form`, `conversation`, and `object_view` | Month/week/day/schedule projections, multiple calendars, event detail, guests, rooms, conferencing, tasks, appointment surfaces, and host-governed scheduling actions |
 | Google Drive | `file_browser` + `asset_catalog` + `object_view` + `events` / `action_log` + optional `action_form` | Paths, breadcrumbs, search, paging, upload/download, list/gallery, previews, details/activity, and policy-gated file operations |
 | Google Photos | `media_gallery` + `file_browser` + optional `object_view`, `events`, and `action_form` | Capture timelines, albums, photo/video filtering, favorites, metadata, native playback, selection, storage upload, and policy-gated media operations |
 | Google Maps Timeline | `geo_map` + `events` + `table` + optional `media_gallery` | Provider-neutral MapLibre paths and places, chronological activity, detail tables, related photos/video, and host-swappable basemaps |
 | Google Docs / Google Sheets / Google Slides | `file_browser` + `table` + `text` + `image` / `iframe` + consumer-registered editors | File discovery, structured data, previews, context linking, and reference editor shells; persistence, realtime collaboration, formulas, and document formats remain host/editor services |
+| Netflix | `asset_catalog` + `media_gallery` + `text` + `events` + optional `action_form` / consumer player | Personalized title discovery, visual rails, search, saved lists, title and episode detail, profiles, and player presentation; recommendations, rights, encoding, CDN delivery, entitlement, and DRM remain host services |
+| Databricks | `code_browser` + `asset_catalog` + `table` + analytical widgets + `dag` + `events` / `action_log` | Notebook and SQL authoring shells, Unity Catalog discovery, Lakeflow task graphs and runs, result visualization, and AI-assistant presentation |
+| Snowflake | `code_browser` + `asset_catalog` + `table` + analytical widgets + `events` / `action_log` + `dag` | File-based SQL projects, governed catalog discovery, query results, performance monitoring, transformation graphs, and current Workspaces reference anatomy |
 | Airtable | `record_grid` + `record_board` + `record_calendar` + `record_form` | Typed fields, links, saved views, filters/sorts, inline edits, governed CRUD, revision checks, and multiple projections over one record set |
 | Business operating workspace | `MultiDashboard` + record views + analytical widgets + `action_form` + `events` / `action_log` | Owner pulse, CRM/projects, commerce, support, finance, governed workflows, and drill-through into shared business objects |
 | Grafana / Apache Superset | `metric`, `stat_strip`, `timeseries`, `area_chart`, `bar_chart`, `table`, `heatmap`, `histogram`, `boxplot`, `scatter`, `treemap`, `gauge`, `events`, `alert_log` | Context-driven filters, streaming/polling, freshness and retry state, annotations, alerts, drill-down, snapshots, export, and embedding |
@@ -77,6 +81,7 @@ vendor before product:
 
 | Vendor | Product | Storybook path | Generic framework foundation |
 |---|---|---|---|
+| Google | Calendar | `Clones/Google/Calendar` | Calendar records, events, scheduling actions, people, rooms, and conferencing |
 | Google | Docs | `Clones/Google/Docs` | Files, text, embeds, context, consumer-registered editor |
 | Google | Drive | `Clones/Google/Drive` | Files, catalog, object detail, activity, actions |
 | Google | Maps | `Clones/Google/Maps/Timeline` | Maps, routes, events, media, provider-neutral basemaps |
@@ -85,11 +90,14 @@ vendor before product:
 | Google | Slides | `Clones/Google/Slides` | Files, images, embeds, context, consumer-registered editor |
 | Palantir | Foundry | `Clones/Palantir/Foundry/Foundation` and `Clones/Palantir/Foundry/Ontology & Operations` | Catalog, ontology, lineage, maps, data connections, code, records, actions |
 | Airtable | Airtable | `Clones/Airtable` | Record grid, board, calendar, form, views, actions |
+| Databricks | Databricks | `Clones/Databricks` | Notebooks, SQL editor, Lakeflow Jobs, Unity Catalog, compute, assistant |
 | HubSpot | HubSpot | `Clones/HubSpot` | Records, customer detail, pipeline, activity, actions |
 | Intercom | Intercom | `Clones/Intercom` | Inbox, conversation detail, tickets, customer context, reporting |
+| Netflix | Netflix | `Clones/Netflix` | Personalized rails, title discovery, My List, profiles, episodes, and playback presentation |
 | QuickBooks | QuickBooks | `Clones/QuickBooks` | Metrics, cash flow, invoices, transactions, review actions |
 | Shopify | Shopify | `Clones/Shopify` | Commerce metrics, orders, inventory, fulfillment, actions |
 | Slack | Slack | `Clones/Slack` | Workspace navigation, channels, presence, search, reactions, files, threads, app messages, composition |
+| Snowflake | Snowflake | `Clones/Snowflake` | Workspaces, SQL projects, Horizon Catalog, query results and monitoring |
 | Stripe | Stripe | `Clones/Stripe` | Payments, subscriptions, payouts, disputes, analytics |
 
 The showcases accept host-provided records/content and demonstrate application
@@ -117,22 +125,21 @@ gap:
 If more product references are added, prioritize products that prove a new
 interaction model rather than near-duplicates:
 
-1. Gmail or Outlook plus Calendar — inbox/thread actions, composing, scheduling,
-   invitations, and agenda/time-grid views.
+1. Gmail or Outlook — inbox/thread actions, composing, labels, search, and
+   message lifecycle around Calendar’s now-proven scheduling surfaces.
 2. Notion or Confluence — block documents, nested knowledge navigation,
    backlinks, comments, and permissions.
 3. Linear or Jira — backlog, sprint planning, issue detail, dependencies, and
    workflow transitions over the existing record contract.
 4. GitHub or GitLab — pull requests, review threads, checks, commits, and CI
    status around the existing code browser and DAG.
-5. Databricks or Snowflake — query/notebook editing, result grids, job runs,
-   lineage, and governed publication around the existing data-platform set.
 
 Slack now proves the shared conversation archetype; the generic widget stories
-also show WhatsApp direct messaging and ChatGPT assistant/tool turns. The
-first, second, fourth, and fifth remaining items introduce meaningful editor
-behavior. Linear/Jira is already capability-complete through record views and
-mainly needs a faithful reference shell. Equivalent products such as
+also show WhatsApp direct messaging and ChatGPT assistant/tool turns. Calendar
+now proves agenda and time-grid scheduling. The first, second, and fourth
+remaining items introduce meaningful editor behavior. Linear/Jira is already
+capability-complete through record views and mainly needs a faithful reference
+shell. Equivalent products such as
 Microsoft Teams, Dropbox/OneDrive, Xero, Salesforce, or Adyen should reuse the
 matching conversation, file, accounting, CRM, or payments archetype unless a
 concrete workflow proves that the shared primitives are insufficient.
