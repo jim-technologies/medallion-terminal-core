@@ -111,7 +111,7 @@ export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
         </div>
       )}
 
-      <div className="flex items-center justify-between py-1.5 text-[10px] uppercase tracking-wider text-zinc-600 shrink-0">
+      <div className="flex items-center justify-between py-1.5 text-[10px] uppercase tracking-wider text-zinc-500 shrink-0">
         <span>{filtered.length.toLocaleString()} shown</span>
         {catalog.total != null && <span>{catalog.total.toLocaleString()} total</span>}
       </div>
@@ -156,7 +156,7 @@ export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
                         </span>
                       )}
                     </div>
-                    <div className="ml-7 mt-0.5 flex items-center gap-2 text-[10px] text-zinc-600 min-w-0">
+                    <div className="ml-7 mt-0.5 flex items-center gap-2 text-[10px] text-zinc-500 min-w-0">
                       <span className="font-mono truncate">{item.id}</span>
                       <span className="shrink-0">{humanize(item.kind)}</span>
                       {item.owner && <span className="truncate">owner {item.owner}</span>}
@@ -167,7 +167,7 @@ export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
                       </div>
                     )}
                     {(metadata.length > 0 || item.updatedAt) && (
-                      <div className="ml-7 mt-1 flex gap-x-3 gap-y-1 flex-wrap text-[10px] text-zinc-600">
+                      <div className="ml-7 mt-1 flex gap-x-3 gap-y-1 flex-wrap text-[10px] text-zinc-500">
                         {metadata.map(([key, value]) => (
                           <span key={key}>
                             {humanize(key)} <span className="text-zinc-400">{String(value)}</span>
@@ -190,7 +190,7 @@ export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
                     <a
                       href={url}
                       {...(url.startsWith('/') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-                      className="text-xs text-zinc-600 hover:text-sky-300 px-1 shrink-0"
+                      className="text-xs text-zinc-500 hover:text-sky-300 px-1 shrink-0"
                       title="Open asset page"
                     >
                       ↗

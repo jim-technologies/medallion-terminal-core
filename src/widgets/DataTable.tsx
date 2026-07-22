@@ -209,7 +209,7 @@ export function DataTable({ data, options }: WidgetProps) {
           )}
         </div>
       )}
-      <div className="overflow-auto flex-1 min-h-0">
+      <div className="overflow-auto flex-1 min-h-0" tabIndex={0} aria-label="Table data">
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-zinc-900">
             <tr>

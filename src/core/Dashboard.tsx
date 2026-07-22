@@ -794,7 +794,7 @@ export function Dashboard({
           </div>
           {chrome === 'full' && Object.keys(ctx).length > 0 && (
             <div className="px-3 md:px-5 pb-3 flex items-center gap-2 flex-wrap">
-              <span className="text-[9px] uppercase tracking-[0.14em] text-zinc-600 mr-1">Context</span>
+              <span className="text-[9px] uppercase tracking-[0.14em] text-zinc-500 mr-1">Context</span>
               {Object.entries(ctx).map(([k, v]) => {
                 if (k === 'range') {
                   return <RangeSelector key={k} value={v} onChange={val => setCtx(k, val)} />

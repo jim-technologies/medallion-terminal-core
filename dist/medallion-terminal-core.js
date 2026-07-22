@@ -1,5 +1,5 @@
 import { n as e, t } from "./connectFraming-C7uFpPlK.js";
-import { n, r, t as i } from "./states-BJ0AAwxU.js";
+import { n, r, t as i } from "./states-C06aUH_Z.js";
 import { n as a, t as o } from "./DashboardContext-65LG4CII.js";
 import { a as s, c, i as l, l as u, n as d, o as f, r as p, s as m, t as h } from "./resolveSource-D7AiNCce.js";
 import { n as g, r as _, t as v } from "./NowContext-9hD6X8q-.js";
@@ -266,7 +266,7 @@ var X = (e, t) => at(() => e().then((e) => ({ default: e[t] }))), nn = /* @__PUR
 	["table", X(() => Promise.resolve().then(() => Da), "DataTable")],
 	["metric", X(() => Promise.resolve().then(() => La), "Metric")],
 	["text", X(() => Promise.resolve().then(() => Ua), "Text")],
-	["conversation", X(() => import("./ConversationImpl-F43Vunuv.js"), "ConversationImpl")],
+	["conversation", X(() => import("./ConversationImpl-ofqx9Eju.js"), "ConversationImpl")],
 	["prompt", X(() => Promise.resolve().then(() => Xa), "Prompt")],
 	["gauge", X(() => Promise.resolve().then(() => Qa), "Gauge")],
 	["distribution", X(() => Promise.resolve().then(() => io), "Distribution")],
@@ -303,7 +303,7 @@ var X = (e, t) => at(() => e().then((e) => ({ default: e[t] }))), nn = /* @__PUR
 	["radar", X(() => Promise.resolve().then(() => Al), "Radar")],
 	["dag", X(() => Promise.resolve().then(() => Ll), "Dag")],
 	["geo_map", X(() => Promise.resolve().then(() => Jl), "GeoMap")],
-	["media_gallery", X(() => import("./MediaGalleryImpl-DMF30cGp.js"), "MediaGalleryImpl")],
+	["media_gallery", X(() => import("./MediaGalleryImpl-ClDVmGl2.js"), "MediaGalleryImpl")],
 	["multi_select", X(() => Promise.resolve().then(() => lu), "MultiSelect")],
 	["json", X(() => Promise.resolve().then(() => du), "Json")],
 	["sparkline", X(() => Promise.resolve().then(() => mu), "Sparkline")],
@@ -2794,7 +2794,7 @@ function Gi({ template: e, backendUrl: t, backendHeaders: n = Wi, onEvent: r, on
 							}), s === "full" && Object.keys(E).length > 0 && /* @__PURE__ */ J("div", {
 								className: "px-3 md:px-5 pb-3 flex items-center gap-2 flex-wrap",
 								children: [/* @__PURE__ */ q("span", {
-									className: "text-[9px] uppercase tracking-[0.14em] text-zinc-600 mr-1",
+									className: "text-[9px] uppercase tracking-[0.14em] text-zinc-500 mr-1",
 									children: "Context"
 								}), Object.entries(E).map(([e, t]) => e === "range" ? /* @__PURE__ */ q(ki, {
 									value: t,
@@ -3017,7 +3017,7 @@ function ea({ tabs: e, activeIndex: t, onSelect: n }) {
 				className: `px-3 py-1.5 text-xs font-medium rounded-t whitespace-nowrap transition-colors flex items-center gap-2 ${a ? "mtc-tab-active text-zinc-100 border-x border-t" : "text-zinc-500 hover:text-zinc-300"}`,
 				title: o ? `Switch with ${o}` : void 0,
 				children: [/* @__PURE__ */ q("span", { children: e.label || `Tab ${i + 1}` }), o && /* @__PURE__ */ q("span", {
-					className: "text-[9px] text-zinc-600 font-mono uppercase tracking-wider",
+					className: "text-[9px] text-zinc-500 font-mono uppercase tracking-wider",
 					children: o
 				})]
 			}, i);
@@ -3620,6 +3620,8 @@ function Aa({ data: e, options: t }) {
 			}),
 			/* @__PURE__ */ q("div", {
 				className: "overflow-auto flex-1 min-h-0",
+				tabIndex: 0,
+				"aria-label": "Table data",
 				children: /* @__PURE__ */ J("table", {
 					className: "w-full text-sm",
 					children: [/* @__PURE__ */ q("thead", {
@@ -4000,7 +4002,7 @@ function qa(e) {
 }
 //#endregion
 //#region src/widgets/Conversation.tsx
-var Ja = at(() => import("./ConversationImpl-F43Vunuv.js").then((e) => ({ default: e.ConversationImpl })));
+var Ja = at(() => import("./ConversationImpl-ofqx9Eju.js").then((e) => ({ default: e.ConversationImpl })));
 function Ya(e) {
 	return /* @__PURE__ */ q(it, {
 		fallback: /* @__PURE__ */ q(r, { component: "conversation" }),
@@ -4557,6 +4559,8 @@ function wo() {
 	}
 	return /* @__PURE__ */ q("div", {
 		className: "h-full overflow-auto pr-1",
+		tabIndex: 0,
+		"aria-label": "Source catalog",
 		children: Object.entries(u).map(([e, t]) => /* @__PURE__ */ J("div", {
 			className: "mb-4 last:mb-0",
 			children: [/* @__PURE__ */ J("div", {
@@ -4565,7 +4569,7 @@ function wo() {
 					e,
 					" ",
 					/* @__PURE__ */ J("span", {
-						className: "text-zinc-700",
+						className: "text-zinc-500",
 						children: ["— ", t.length]
 					})
 				]
@@ -4667,7 +4671,7 @@ function Do({ data: e, options: t, widgetId: n }) {
 				})]
 			}),
 			/* @__PURE__ */ J("div", {
-				className: "flex items-center justify-between py-1.5 text-[10px] uppercase tracking-wider text-zinc-600 shrink-0",
+				className: "flex items-center justify-between py-1.5 text-[10px] uppercase tracking-wider text-zinc-500 shrink-0",
 				children: [/* @__PURE__ */ J("span", { children: [v.length.toLocaleString(), " shown"] }), c.total != null && /* @__PURE__ */ J("span", { children: [c.total.toLocaleString(), " total"] })]
 			}),
 			/* @__PURE__ */ q("div", {
@@ -4706,7 +4710,7 @@ function Do({ data: e, options: t, widgetId: n }) {
 										]
 									}),
 									/* @__PURE__ */ J("div", {
-										className: "ml-7 mt-0.5 flex items-center gap-2 text-[10px] text-zinc-600 min-w-0",
+										className: "ml-7 mt-0.5 flex items-center gap-2 text-[10px] text-zinc-500 min-w-0",
 										children: [
 											/* @__PURE__ */ q("span", {
 												className: "font-mono truncate",
@@ -4727,7 +4731,7 @@ function Do({ data: e, options: t, widgetId: n }) {
 										children: e.description
 									}),
 									(r.length > 0 || e.updatedAt) && /* @__PURE__ */ J("div", {
-										className: "ml-7 mt-1 flex gap-x-3 gap-y-1 flex-wrap text-[10px] text-zinc-600",
+										className: "ml-7 mt-1 flex gap-x-3 gap-y-1 flex-wrap text-[10px] text-zinc-500",
 										children: [r.map(([e, t]) => /* @__PURE__ */ J("span", { children: [
 											ko(e),
 											" ",
@@ -4754,7 +4758,7 @@ function Do({ data: e, options: t, widgetId: n }) {
 									target: "_blank",
 									rel: "noopener noreferrer"
 								},
-								className: "text-xs text-zinc-600 hover:text-sky-300 px-1 shrink-0",
+								className: "text-xs text-zinc-500 hover:text-sky-300 px-1 shrink-0",
 								title: "Open asset page",
 								children: "↗"
 							})]
@@ -4824,12 +4828,12 @@ function jo({ data: e, options: t, widgetId: n }) {
 									className: "text-[10px] uppercase tracking-wider text-zinc-500",
 									children: r.objectType || "object"
 								}),
-								/* @__PURE__ */ q("h4", {
+								/* @__PURE__ */ q("h3", {
 									className: "text-base text-zinc-100 mt-0.5 truncate",
 									children: r.title
 								}),
 								r.objectId && /* @__PURE__ */ q("div", {
-									className: "text-[10px] font-mono text-zinc-600 mt-0.5 truncate",
+									className: "text-[10px] font-mono text-zinc-500 mt-0.5 truncate",
 									children: r.objectId
 								})
 							]
@@ -4848,7 +4852,7 @@ function jo({ data: e, options: t, widgetId: n }) {
 							className: "text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400",
 							children: e
 						}, e)), r.updatedAt && /* @__PURE__ */ J("span", {
-							className: "text-[10px] text-zinc-600 ml-auto",
+							className: "text-[10px] text-zinc-500 ml-auto",
 							children: ["updated ", String(Oe(r.updatedAt))]
 						})]
 					})
@@ -4856,7 +4860,7 @@ function jo({ data: e, options: t, widgetId: n }) {
 			}),
 			p.map(([e, t]) => /* @__PURE__ */ J("section", {
 				className: "py-3 border-b border-zinc-800/70 last:border-0",
-				children: [/* @__PURE__ */ q("h5", {
+				children: [/* @__PURE__ */ q("h4", {
 					className: "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5",
 					children: e
 				}), /* @__PURE__ */ q("dl", { children: t.map((e) => /* @__PURE__ */ J("div", {
@@ -4873,7 +4877,7 @@ function jo({ data: e, options: t, widgetId: n }) {
 			}, e)),
 			r.links.length > 0 && /* @__PURE__ */ J("section", {
 				className: "py-3 border-b border-zinc-800/70",
-				children: [/* @__PURE__ */ q("h5", {
+				children: [/* @__PURE__ */ q("h4", {
 					className: "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5",
 					children: "Relationships"
 				}), /* @__PURE__ */ q("div", {
@@ -4883,7 +4887,7 @@ function jo({ data: e, options: t, widgetId: n }) {
 						className: "w-full flex items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-zinc-800/60 group",
 						children: [
 							/* @__PURE__ */ q("span", {
-								className: "text-[10px] uppercase tracking-wider text-zinc-600 w-24 truncate shrink-0",
+								className: "text-[10px] uppercase tracking-wider text-zinc-500 w-24 truncate shrink-0",
 								children: e.relation || "related"
 							}),
 							/* @__PURE__ */ q("span", {
@@ -4891,7 +4895,7 @@ function jo({ data: e, options: t, widgetId: n }) {
 								children: e.label
 							}),
 							/* @__PURE__ */ q("span", {
-								className: "text-[10px] font-mono text-zinc-600 truncate ml-auto",
+								className: "text-[10px] font-mono text-zinc-500 truncate ml-auto",
 								children: e.targetType
 							}),
 							e.status && /* @__PURE__ */ q("span", {
@@ -4899,6 +4903,7 @@ function jo({ data: e, options: t, widgetId: n }) {
 								children: "●"
 							}),
 							/* @__PURE__ */ q("span", {
+								"aria-hidden": "true",
 								className: "text-zinc-600",
 								children: "→"
 							})
@@ -4909,7 +4914,7 @@ function jo({ data: e, options: t, widgetId: n }) {
 			o.enable_actions === !0 && r.actions.length > 0 && /* @__PURE__ */ J("section", {
 				className: "pt-3",
 				children: [
-					/* @__PURE__ */ q("h5", {
+					/* @__PURE__ */ q("h4", {
 						className: "text-[10px] uppercase tracking-wider text-zinc-500 mb-2",
 						children: "Actions"
 					}),
@@ -4959,7 +4964,7 @@ function No({ property: e }) {
 		className: "text-sky-400 hover:underline break-all",
 		children: t
 	}) : e.value == null ? /* @__PURE__ */ q("span", {
-		className: "text-zinc-600",
+		className: "text-zinc-500",
 		children: "—"
 	}) : typeof e.value == "object" ? /* @__PURE__ */ q("pre", {
 		className: "font-mono text-[10px] whitespace-pre-wrap break-words text-zinc-400",
@@ -7950,24 +7955,26 @@ function yl(e, t, n) {
 //#region src/widgets/Select.tsx
 var bl = /* @__PURE__ */ Y({ Select: () => xl });
 function xl({ data: e, options: t }) {
-	let n = t ?? {}, { ctx: r, setCtx: o } = a(), s = n.key, c = Sl(e, n), { current: l, shouldSync: u } = yl(s ? r[s] : void 0, n.default, c);
+	let n = t ?? {}, { ctx: r, setCtx: o } = a(), s = ot(), c = n.key, l = Sl(e, n), { current: u, shouldSync: d } = yl(c ? r[c] : void 0, n.default, l);
 	return U(() => {
-		s && u && o(s, l);
+		c && d && o(c, u);
 	}, [
-		s,
+		c,
+		d,
 		u,
-		l,
 		o
-	]), s ? c.length === 0 ? /* @__PURE__ */ q(i, { children: "Select has no choices" }) : /* @__PURE__ */ J("div", {
+	]), c ? l.length === 0 ? /* @__PURE__ */ q(i, { children: "Select has no choices" }) : /* @__PURE__ */ J("div", {
 		className: "flex flex-col h-full justify-center gap-1.5 px-2",
 		children: [/* @__PURE__ */ q("label", {
+			htmlFor: s,
 			className: "text-[10px] uppercase tracking-wider text-zinc-500",
 			children: n.label ?? n.key
 		}), /* @__PURE__ */ q("select", {
-			value: l,
+			id: s,
+			value: u,
 			onChange: (e) => o(n.key, e.target.value),
 			className: "bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 outline-none focus:border-zinc-500",
-			children: c.map((e) => /* @__PURE__ */ q("option", {
+			children: l.map((e) => /* @__PURE__ */ q("option", {
 				value: e.value,
 				children: e.label
 			}, e.value))
@@ -8740,7 +8747,7 @@ function ou(e) {
 }
 //#endregion
 //#region src/widgets/MediaGallery.tsx
-var su = at(() => import("./MediaGalleryImpl-DMF30cGp.js").then((e) => ({ default: e.MediaGalleryImpl })));
+var su = at(() => import("./MediaGalleryImpl-ClDVmGl2.js").then((e) => ({ default: e.MediaGalleryImpl })));
 function cu(e) {
 	return /* @__PURE__ */ q(it, {
 		fallback: /* @__PURE__ */ q(r, { component: "media_gallery" }),
@@ -8952,7 +8959,7 @@ function Cu({ options: e }) {
 							children: e.message
 						}),
 						/* @__PURE__ */ q("span", {
-							className: "text-zinc-600 text-[10px] shrink-0",
+							className: "text-zinc-500 text-[10px] shrink-0",
 							children: xu(e.clientRequestId)
 						})
 					]

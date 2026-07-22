@@ -74,9 +74,9 @@ export function ObjectView({ data, options, widgetId }: WidgetProps) {
             <div className="text-[10px] uppercase tracking-wider text-zinc-500">
               {object.objectType || 'object'}
             </div>
-            <h4 className="text-base text-zinc-100 mt-0.5 truncate">{object.title}</h4>
+            <h3 className="text-base text-zinc-100 mt-0.5 truncate">{object.title}</h3>
             {object.objectId && (
-              <div className="text-[10px] font-mono text-zinc-600 mt-0.5 truncate">
+              <div className="text-[10px] font-mono text-zinc-500 mt-0.5 truncate">
                 {object.objectId}
               </div>
             )}
@@ -97,7 +97,7 @@ export function ObjectView({ data, options, widgetId }: WidgetProps) {
             </span>
           ))}
           {object.updatedAt && (
-            <span className="text-[10px] text-zinc-600 ml-auto">
+            <span className="text-[10px] text-zinc-500 ml-auto">
               updated {String(localDate(object.updatedAt))}
             </span>
           )}
@@ -106,7 +106,7 @@ export function ObjectView({ data, options, widgetId }: WidgetProps) {
 
       {groups.map(([group, properties]) => (
         <section key={group} className="py-3 border-b border-zinc-800/70 last:border-0">
-          <h5 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5">{group}</h5>
+          <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5">{group}</h4>
           <dl>
             {properties.map((property) => (
               <div key={property.key} className="grid grid-cols-[minmax(7rem,0.42fr)_minmax(0,1fr)] gap-3 py-1.5">
@@ -124,7 +124,7 @@ export function ObjectView({ data, options, widgetId }: WidgetProps) {
 
       {object.links.length > 0 && (
         <section className="py-3 border-b border-zinc-800/70">
-          <h5 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5">Relationships</h5>
+          <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5">Relationships</h4>
           <div className="space-y-1">
             {object.links.map((link, index) => (
               <button
@@ -132,13 +132,13 @@ export function ObjectView({ data, options, widgetId }: WidgetProps) {
                 onClick={() => selectLink(link)}
                 className="w-full flex items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-zinc-800/60 group"
               >
-                <span className="text-[10px] uppercase tracking-wider text-zinc-600 w-24 truncate shrink-0">
+                <span className="text-[10px] uppercase tracking-wider text-zinc-500 w-24 truncate shrink-0">
                   {link.relation || 'related'}
                 </span>
                 <span className="text-xs text-zinc-200 truncate group-hover:text-sky-300">{link.label}</span>
-                <span className="text-[10px] font-mono text-zinc-600 truncate ml-auto">{link.targetType}</span>
+                <span className="text-[10px] font-mono text-zinc-500 truncate ml-auto">{link.targetType}</span>
                 {link.status && <span className={statusTone(link.status)}>●</span>}
-                <span className="text-zinc-600">→</span>
+                <span aria-hidden="true" className="text-zinc-600">→</span>
               </button>
             ))}
           </div>
@@ -147,7 +147,7 @@ export function ObjectView({ data, options, widgetId }: WidgetProps) {
 
       {opts.enable_actions === true && object.actions.length > 0 && (
         <section className="pt-3">
-          <h5 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Actions</h5>
+          <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Actions</h4>
           <div className="flex gap-2 flex-wrap">
             {object.actions.map((action) => {
               const isConfirming = confirming === action.id
@@ -212,7 +212,7 @@ function PropertyValue({ property }: { property: ObjectProperty }) {
     )
   }
 
-  if (property.value == null) return <span className="text-zinc-600">—</span>
+  if (property.value == null) return <span className="text-zinc-500">—</span>
   if (typeof property.value === 'object') {
     return (
       <pre className="font-mono text-[10px] whitespace-pre-wrap break-words text-zinc-400">

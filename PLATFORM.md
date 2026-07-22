@@ -77,6 +77,20 @@ or trade dress. A host can put them in tabs with `MultiDashboard`, retarget
 all panels through shared `ctx`, and register a custom widget when a genuinely
 new projection is required.
 
+## Production readiness suite
+
+Storybook's `Examples/Production Readiness` group complements the product
+showcases with backend-bound behavior. A connected `MultiDashboard` and four
+focused stories prove host-supplied authorization, an intentional fail-closed
+403, empty/rate-limited/unavailable states, opaque source-scoped pagination,
+and a confirmed idempotent `SubmitAction` / `WatchAction` lifecycle. The suite
+uses only generic built-ins and a fixture restricted to a reserved
+`example.test` origin, so none of its credentials or service behavior enters
+the published package.
+
+See [`examples/readiness/README.md`](examples/readiness/README.md) for the
+scenario map and focused verification commands.
+
 ## Product showcase catalog
 
 Storybook keeps product-faithful presentation references outside the published

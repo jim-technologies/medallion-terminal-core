@@ -758,6 +758,13 @@ application and library builds, committed package artifacts, the static
 Storybook catalog, curated accessibility checks, interaction flows, and visual
 snapshots.
 
+Storybook's `Examples/Production Readiness` suite adds a connected proof for
+host-owned authorization, safe policy denial, failure/recovery states, opaque
+cursor pagination, and an idempotent confirmed action lifecycle. Its scoped
+browser fixture is documented in
+[`examples/readiness/README.md`](examples/readiness/README.md); it is test
+infrastructure, not a production backend.
+
 Run the backend contract suite against any implementation independently:
 
 ```bash

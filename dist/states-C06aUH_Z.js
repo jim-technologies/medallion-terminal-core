@@ -67,7 +67,8 @@ function i({ children: n, padded: r }) {
 	return /* @__PURE__ */ t("div", {
 		className: `flex flex-col items-center justify-center h-full gap-1.5 text-zinc-500 text-sm${r ? " px-4 text-center" : ""}`,
 		children: [/* @__PURE__ */ e("span", {
-			className: "text-zinc-700 text-xs uppercase tracking-[0.2em] leading-none",
+			"aria-hidden": "true",
+			className: "text-zinc-500 text-xs uppercase tracking-[0.2em] leading-none",
 			children: "·  ·  ·"
 		}), n]
 	});

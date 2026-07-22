@@ -101,7 +101,7 @@ export function ConversationImpl({ data, options, widgetId }: WidgetProps) {
         ))}
       </div>
       {hasPagination && (
-        <div className="border-t border-zinc-800 pt-1.5 flex items-center justify-between gap-2 text-[10px] text-zinc-600 shrink-0">
+        <div className="border-t border-zinc-800 pt-1.5 flex items-center justify-between gap-2 text-[10px] text-zinc-500 shrink-0">
           <span>{conversation.nextPageToken ? 'Older history available' : ''}</span>
           <CursorPager
             nextPageToken={conversation.nextPageToken}
@@ -217,7 +217,7 @@ function ConversationMessage({
 
   if (message.kind === 'system' || message.kind === 'event') {
     return (
-      <article
+      <div
         role="button"
         tabIndex={0}
         onClick={selectMessage}
@@ -229,14 +229,14 @@ function ConversationMessage({
         }`}
       >
         {message.body ?? message.senderName}
-        {message.timestamp && <span className="ml-2 text-[9px] text-zinc-600">{formatMessageTime(message.timestamp)}</span>}
-      </article>
+        {message.timestamp && <span className="ml-2 text-[9px] text-zinc-500">{formatMessageTime(message.timestamp)}</span>}
+      </div>
     )
   }
 
   if (message.kind === 'tool') {
     return (
-      <article
+      <div
         role="button"
         tabIndex={0}
         onClick={selectMessage}
@@ -253,7 +253,7 @@ function ConversationMessage({
         </div>
         {message.body && <div className="whitespace-pre-wrap break-words text-zinc-300">{message.body}</div>}
         <Attachments attachments={message.attachments} />
-      </article>
+      </div>
     )
   }
 
@@ -262,7 +262,7 @@ function ConversationMessage({
   const bubble = mode === 'direct' || (mode === 'assistant' && !assistant)
 
   return (
-    <article
+    <div
       role="button"
       tabIndex={0}
       onClick={selectMessage}
@@ -289,11 +289,11 @@ function ConversationMessage({
               {message.senderName}
             </strong>
             {message.timestamp && (
-              <time className="shrink-0 text-[9px] text-zinc-600" dateTime={message.timestamp}>
+              <time className="shrink-0 text-[9px] text-zinc-500" dateTime={message.timestamp}>
                 {formatMessageTime(message.timestamp)}
               </time>
             )}
-            {message.edited && <span className="text-[9px] text-zinc-600">edited</span>}
+            {message.edited && <span className="text-[9px] text-zinc-500">edited</span>}
           </div>
         )}
         {reply && <ReplyPreview message={reply} />}
@@ -340,7 +340,7 @@ function ConversationMessage({
           )}
         </div>
       </div>
-    </article>
+    </div>
   )
 }
 
@@ -378,7 +378,7 @@ function Attachments({ attachments }: { attachments: ConversationAttachmentData[
               <strong className="block truncate text-[11px] font-medium text-zinc-300">
                 {attachment.name}
               </strong>
-              <span className="block text-[9px] text-zinc-600">
+              <span className="block text-[9px] text-zinc-500">
                 {[humanize(attachment.kind), formatBytes(attachment.sizeBytes)]
                   .filter(Boolean)
                   .join(' · ')}
@@ -449,7 +449,7 @@ function statusTone(status: string): string {
   if (normalized.includes('fail') || normalized.includes('error')) return 'text-red-400'
   if (normalized.includes('read') || normalized.includes('deliver')) return 'text-sky-400'
   if (normalized.includes('send')) return 'text-amber-400'
-  return 'text-zinc-600'
+  return 'text-zinc-500'
 }
 
 function attachmentGlyph(kind: string): string {

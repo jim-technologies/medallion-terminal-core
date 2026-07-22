@@ -82,7 +82,7 @@ export function ActionLog({ options }: WidgetProps) {
               {r.message && (
                 <span className="text-zinc-400 truncate flex-1 min-w-0">{r.message}</span>
               )}
-              <span className="text-zinc-600 text-[10px] shrink-0">{shortClientId(r.clientRequestId)}</span>
+              <span className="text-zinc-500 text-[10px] shrink-0">{shortClientId(r.clientRequestId)}</span>
             </div>
           )
         })}

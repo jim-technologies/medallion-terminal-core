@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useId } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
@@ -29,6 +29,7 @@ interface SelectOptions {
 export function Select({ data, options }: WidgetProps) {
   const opts = (options ?? {}) as SelectOptions
   const { ctx, setCtx } = useDashboard()
+  const selectId = useId()
 
   const key = opts.key
   const choices = resolveChoices(data, opts)
@@ -55,10 +56,11 @@ export function Select({ data, options }: WidgetProps) {
 
   return (
     <div className="flex flex-col h-full justify-center gap-1.5 px-2">
-      <label className="text-[10px] uppercase tracking-wider text-zinc-500">
+      <label htmlFor={selectId} className="text-[10px] uppercase tracking-wider text-zinc-500">
         {opts.label ?? opts.key}
       </label>
       <select
+        id={selectId}
         value={current}
         onChange={e => setCtx(opts.key!, e.target.value)}
         className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 text-sm text-zinc-100 outline-none focus:border-zinc-500"

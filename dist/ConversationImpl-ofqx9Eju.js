@@ -1,4 +1,4 @@
-import { t as e } from "./states-BJ0AAwxU.js";
+import { t as e } from "./states-C06aUH_Z.js";
 import { n as t } from "./DashboardContext-65LG4CII.js";
 import { r as n, t as r } from "./textNormalize-Ba1I6dwH.js";
 import { n as i, t as a } from "./CursorPager-ByrL0U0d.js";
@@ -165,7 +165,7 @@ function w({ data: n, options: r, widgetId: c }) {
 				}, e.id))
 			}),
 			h && /* @__PURE__ */ u("div", {
-				className: "border-t border-zinc-800 pt-1.5 flex items-center justify-between gap-2 text-[10px] text-zinc-600 shrink-0",
+				className: "border-t border-zinc-800 pt-1.5 flex items-center justify-between gap-2 text-[10px] text-zinc-500 shrink-0",
 				children: [/* @__PURE__ */ l("span", { children: f.nextPageToken ? "Older history available" : "" }), /* @__PURE__ */ l(a, {
 					nextPageToken: f.nextPageToken,
 					widgetId: c,
@@ -224,18 +224,18 @@ function E({ conversation: e, message: n, previous: r, mode: i, options: a }) {
 	}, _ = (e) => {
 		(e.key === "Enter" || e.key === " ") && (e.preventDefault(), g());
 	};
-	if (n.kind === "system" || n.kind === "event") return /* @__PURE__ */ u("article", {
+	if (n.kind === "system" || n.kind === "event") return /* @__PURE__ */ u("div", {
 		role: "button",
 		tabIndex: 0,
 		onClick: g,
 		onKeyDown: _,
 		className: `mx-auto my-2 max-w-[92%] rounded border px-3 py-1.5 text-center text-[11px] ${d ? "border-sky-500/50 bg-sky-500/10 text-sky-200" : "border-zinc-800 bg-zinc-900/70 text-zinc-500 hover:border-zinc-700"}`,
 		children: [n.body ?? n.senderName, n.timestamp && /* @__PURE__ */ l("span", {
-			className: "ml-2 text-[9px] text-zinc-600",
+			className: "ml-2 text-[9px] text-zinc-500",
 			children: A(n.timestamp)
 		})]
 	});
-	if (n.kind === "tool") return /* @__PURE__ */ u("article", {
+	if (n.kind === "tool") return /* @__PURE__ */ u("div", {
 		role: "button",
 		tabIndex: 0,
 		onClick: g,
@@ -257,7 +257,7 @@ function E({ conversation: e, message: n, previous: r, mode: i, options: a }) {
 		]
 	});
 	let v = i === "assistant" && n.kind === "assistant", y = i !== "channel" && p, b = i === "direct" || i === "assistant" && !v;
-	return /* @__PURE__ */ u("article", {
+	return /* @__PURE__ */ u("div", {
 		role: "button",
 		tabIndex: 0,
 		onClick: g,
@@ -281,12 +281,12 @@ function E({ conversation: e, message: n, previous: r, mode: i, options: a }) {
 							children: n.senderName
 						}),
 						n.timestamp && /* @__PURE__ */ l("time", {
-							className: "shrink-0 text-[9px] text-zinc-600",
+							className: "shrink-0 text-[9px] text-zinc-500",
 							dateTime: n.timestamp,
 							children: A(n.timestamp)
 						}),
 						n.edited && /* @__PURE__ */ l("span", {
-							className: "text-[9px] text-zinc-600",
+							className: "text-[9px] text-zinc-500",
 							children: "edited"
 						})
 					]
@@ -358,7 +358,7 @@ function O({ attachments: e }) {
 					className: "block truncate text-[11px] font-medium text-zinc-300",
 					children: e.name
 				}), /* @__PURE__ */ l("span", {
-					className: "block text-[9px] text-zinc-600",
+					className: "block text-[9px] text-zinc-500",
 					children: [M(e.kind), F(e.sizeBytes)].filter(Boolean).join(" · ")
 				})]
 			})] });
@@ -403,7 +403,7 @@ function M(e) {
 }
 function N(e) {
 	let t = e.toLowerCase();
-	return t.includes("fail") || t.includes("error") ? "text-red-400" : t.includes("read") || t.includes("deliver") ? "text-sky-400" : t.includes("send") ? "text-amber-400" : "text-zinc-600";
+	return t.includes("fail") || t.includes("error") ? "text-red-400" : t.includes("read") || t.includes("deliver") ? "text-sky-400" : t.includes("send") ? "text-amber-400" : "text-zinc-500";
 }
 function P(e) {
 	return e.includes("video") ? "▶" : e.includes("audio") ? "♪" : e.includes("link") ? "↗" : e.includes("code") ? "</>" : "▧";

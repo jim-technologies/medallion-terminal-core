@@ -100,11 +100,11 @@ export function Catalog() {
   }
 
   return (
-    <div className="h-full overflow-auto pr-1">
+    <div className="h-full overflow-auto pr-1" tabIndex={0} aria-label="Source catalog">
       {Object.entries(grouped).map(([shape, list]) => (
         <div key={shape} className="mb-4 last:mb-0">
           <div className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5">
-            {shape} <span className="text-zinc-700">— {list.length}</span>
+            {shape} <span className="text-zinc-500">— {list.length}</span>
           </div>
           {list.map(s => (
             <div key={s.id} className="py-2 border-b border-zinc-800/60 last:border-0">

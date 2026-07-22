@@ -78,7 +78,7 @@ export function Empty({ children, padded }: { children: React.ReactNode; padded?
     <div
       className={`flex flex-col items-center justify-center h-full gap-1.5 text-zinc-500 text-sm${padded ? ' px-4 text-center' : ''}`}
     >
-      <span className="text-zinc-700 text-xs uppercase tracking-[0.2em] leading-none">·  ·  ·</span>
+      <span aria-hidden="true" className="text-zinc-500 text-xs uppercase tracking-[0.2em] leading-none">·  ·  ·</span>
       {children}
     </div>
   )
