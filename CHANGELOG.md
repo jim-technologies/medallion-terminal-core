@@ -6,6 +6,11 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- **Clone showcase visual polish.** Google Docs now uses a page-aligned,
+  responsive ruler with quiet margin zones, measured ticks, and distinct
+  indent controls. Mobile Shopify retains its complete account toolbar without
+  page overflow, and Databricks notebooks reclaim the hidden navigation column
+  so cells, result tables, and charts remain readable on narrow screens.
 - **Vendor-first showcase catalog.** Storybook and `examples/clones` group
   multi-product suites under Google and Palantir, then retain exact product
   names such as Drive, Photos, Maps, Docs, Sheets, Slides, and Foundry.
@@ -43,11 +48,24 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Added
 
+- **Complete provider-grouped product showcase catalog.** Storybook now adds
+  dedicated suites for Google Gmail, Microsoft Outlook, Notion, Atlassian
+  Confluence and Jira, Linear, GitHub, GitLab, Binance, CoinGecko, Polymarket,
+  Interactive Brokers Trader Workstation, Grafana Labs Grafana, Apache
+  Superset, Meta WhatsApp, and OpenAI ChatGPT. Forty-eight representative
+  states share seven neutral presentation archetypes so the examples remain
+  maintainable and outside the published package while covering mail,
+  knowledge, work tracking, code review, markets, analytics, and conversation.
 - **Netflix product showcase.** `Clones/Netflix` provides host-data-injectable
   personalized browse rails, Continue Watching and Top 10 treatments, title
   search, My List, profiles, title and episode details, and player chrome.
   Original sample content keeps the example self-contained; catalog,
   recommendation, entitlement, delivery, and DRM services remain host-owned.
+- **Spotify product showcase.** `Clones/Spotify` provides host-data-injectable
+  personalized discovery, search and browse, Your Library, playlist and track
+  detail, Now Playing, queue and Jam presentation, and a persistent responsive
+  player. Original sample content keeps the example self-contained; audio
+  delivery, recommendations, rights, and persistence remain host-owned.
 - **Google Calendar product showcase.** `Clones/Google/Calendar` provides
   host-data-injectable month, week, day, and schedule views plus multiple
   calendars, event details, guests, rooms, conferencing, tasks, appointment

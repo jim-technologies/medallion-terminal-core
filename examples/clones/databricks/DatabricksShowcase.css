@@ -2085,13 +2085,31 @@
     display: none;
   }
 
-  .dbx-notebook-body {
-    grid-template-columns: minmax(440px, 1fr);
-    overflow-x: auto;
+  .dbx-notebook-body,
+  .dbx-notebook.with-assistant .dbx-notebook-body {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: hidden;
   }
 
   .dbx-workspace-tree {
     display: none;
+  }
+
+  .dbx-cell-chart {
+    margin-right: 8px;
+    margin-left: 8px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .dbx-chart-axis {
+    margin-right: 20px;
+    margin-left: 72px;
+  }
+
+  .dbx-cell-chart > div:not(.dbx-chart-axis) {
+    grid-template-columns: minmax(68px, 0.8fr) minmax(76px, 1.2fr) 20px;
+    gap: 5px;
   }
 
   .dbx-sql-body {

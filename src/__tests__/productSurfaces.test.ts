@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest'
+import auditTrail from '../../public/examples/audit-trail.json'
 import businessOperations from '../../public/examples/business-operations.json'
 import cryptoWatch from '../../public/examples/crypto-watch.json'
 import fileBrowser from '../../public/examples/file-browser.json'
 import logisticsOps from '../../public/examples/logistics-ops.json'
 import medallionTerminal from '../../public/examples/medallion-terminal.json'
+import mlMonitoring from '../../public/examples/ml-monitoring.json'
 import optionsDesk from '../../public/examples/options-desk.json'
 import platformFoundation from '../../public/examples/platform-foundation.json'
 import predictionMarket from '../../public/examples/prediction-market.json'
+import serviceOps from '../../public/examples/service-ops.json'
 import spotMarket from '../../public/examples/spot-market.json'
 import tradingFloor from '../../public/examples/trading-floor.json'
 import workManagement from '../../public/examples/work-management.json'
@@ -65,6 +68,41 @@ const SURFACES: Array<{
     required: ['conversation', 'stat_strip', 'table', 'events'],
   },
   {
+    name: 'mail and governed knowledge workspace',
+    components: components(
+      communicationsHub,
+      businessOperations,
+      fileBrowser,
+      platformFoundation,
+      workManagement,
+    ),
+    required: [
+      'conversation',
+      'text',
+      'table',
+      'file_browser',
+      'events',
+      'asset_catalog',
+      'record_grid',
+    ],
+  },
+  {
+    name: 'work tracking and code collaboration workspace',
+    components: components(platformFoundation, workManagement, communicationsHub),
+    required: [
+      'code_browser',
+      'conversation',
+      'dag',
+      'events',
+      'action_form',
+      'record_grid',
+      'record_board',
+      'record_calendar',
+      'record_form',
+      'object_view',
+    ],
+  },
+  {
     name: 'business application and productivity workspace',
     components: components(
       businessOperations,
@@ -93,6 +131,37 @@ const SURFACES: Array<{
     name: 'location-aware operations and timeline',
     components: components(logisticsOps, mediaLibrary),
     required: ['geo_map', 'stat_strip', 'heatmap', 'treemap', 'area_chart', 'events', 'table', 'media_gallery'],
+  },
+  {
+    name: 'observability and business intelligence workspace',
+    components: components(auditTrail, serviceOps, mlMonitoring, logisticsOps),
+    required: [
+      'metric',
+      'stat_strip',
+      'timeseries',
+      'area_chart',
+      'bar_chart',
+      'table',
+      'heatmap',
+      'histogram',
+      'boxplot',
+      'scatter',
+      'treemap',
+      'gauge',
+      'events',
+    ],
+  },
+  {
+    name: 'media discovery, music, and entertainment workspace',
+    components: components(mediaLibrary, fileBrowser, platformFoundation, businessOperations),
+    required: [
+      'asset_catalog',
+      'media_gallery',
+      'file_browser',
+      'text',
+      'events',
+      'action_form',
+    ],
   },
   {
     name: 'spot exchange',

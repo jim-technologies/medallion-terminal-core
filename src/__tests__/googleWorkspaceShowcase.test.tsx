@@ -26,6 +26,10 @@ describe('GoogleWorkspaceEditor', () => {
     expect(html).toContain('Saved to Drive')
     expect(html).toContain('Share')
     expect(html).toContain('Account: Jun')
+    expect(html).toContain('workspace-ruler-scale')
+    expect(html.match(/workspace-ruler-unit/g)).toHaveLength(6)
+    expect(html.match(/workspace-ruler-margin/g)).toHaveLength(2)
+    expect(html.match(/workspace-ruler-indent/g)).toHaveLength(3)
   })
 
   it('server-renders the Sheets grid, formula bar, and tabs', () => {

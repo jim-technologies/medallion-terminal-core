@@ -462,37 +462,48 @@ function DocsCanvas({
         {content.sections.map(section => <button type="button" key={section.heading}>{section.heading}</button>)}
       </aside>
       <div className="workspace-doc-stage">
-        <div className="workspace-ruler">
-          {Array.from({ length: 11 }, (_, index) => <span key={index}>{index + 1}</span>)}
-          <i className="workspace-ruler-indent" />
-        </div>
-        <article className="workspace-paper" aria-label={content.title}>
-          {content.eyebrow && <div className="workspace-doc-eyebrow">{content.eyebrow}</div>}
-          <h1>{content.heading}</h1>
-          {content.subtitle && <p className="workspace-doc-subtitle">{content.subtitle}</p>}
-          <div className="workspace-doc-meta">
-            <span><WorkspaceIcon name="person" /> {CLONE_DEMO_IDENTITY.user}</span>
-            <span><WorkspaceIcon name="calendar" /> July 17, 2026</span>
-            <span><WorkspaceIcon name="status" /> On track</span>
+        <div className="workspace-doc-page">
+          <div className="workspace-ruler" aria-hidden="true">
+            <span className="workspace-ruler-margin is-start" />
+            <span className="workspace-ruler-origin">0</span>
+            <div className="workspace-ruler-scale">
+              {Array.from({ length: 6 }, (_, index) => (
+                <span className="workspace-ruler-unit" key={index}>{index + 1}</span>
+              ))}
+            </div>
+            <span className="workspace-ruler-margin is-end" />
+            <i className="workspace-ruler-indent is-first-line" />
+            <i className="workspace-ruler-indent is-left" />
+            <i className="workspace-ruler-indent is-right" />
           </div>
-          {content.sections.map((section, index) => (
-            <section key={section.heading}>
-              <h2>{section.heading}</h2>
-              {section.paragraphs?.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
-              {section.bullets && (
-                <ul>{section.bullets.map(bullet => <li key={bullet}>{bullet}</li>)}</ul>
-              )}
-              {index === 0 && (
-                <div className="workspace-doc-callout">
-                  <span><WorkspaceIcon name="sparkles" /></span>
-                  <div><strong>Q3 focus</strong><p>Make connected workflows the fastest path from raw data to a confident business decision.</p></div>
-                </div>
-              )}
-            </section>
-          ))}
-          <div className="workspace-doc-caret"><span>Maya</span></div>
-          {commentsOpen && <span className="workspace-comment-anchor"><WorkspaceIcon name="comment" /></span>}
-        </article>
+          <article className="workspace-paper" aria-label={content.title}>
+            {content.eyebrow && <div className="workspace-doc-eyebrow">{content.eyebrow}</div>}
+            <h1>{content.heading}</h1>
+            {content.subtitle && <p className="workspace-doc-subtitle">{content.subtitle}</p>}
+            <div className="workspace-doc-meta">
+              <span><WorkspaceIcon name="person" /> {CLONE_DEMO_IDENTITY.user}</span>
+              <span><WorkspaceIcon name="calendar" /> July 17, 2026</span>
+              <span><WorkspaceIcon name="status" /> On track</span>
+            </div>
+            {content.sections.map((section, index) => (
+              <section key={section.heading}>
+                <h2>{section.heading}</h2>
+                {section.paragraphs?.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+                {section.bullets && (
+                  <ul>{section.bullets.map(bullet => <li key={bullet}>{bullet}</li>)}</ul>
+                )}
+                {index === 0 && (
+                  <div className="workspace-doc-callout">
+                    <span><WorkspaceIcon name="sparkles" /></span>
+                    <div><strong>Q3 focus</strong><p>Make connected workflows the fastest path from raw data to a confident business decision.</p></div>
+                  </div>
+                )}
+              </section>
+            ))}
+            <div className="workspace-doc-caret"><span>Maya</span></div>
+            {commentsOpen && <span className="workspace-comment-anchor"><WorkspaceIcon name="comment" /></span>}
+          </article>
+        </div>
       </div>
     </div>
   )

@@ -6555,7 +6555,7 @@
   }
 
   .shopify-logo {
-    min-width: 88px;
+    min-width: 36px;
   }
 
   .shopify-logo strong {
@@ -6565,6 +6565,7 @@
   .shopify-global-search {
     flex: 1;
     margin: 0 7px;
+    min-width: 0;
     width: auto;
   }
 
