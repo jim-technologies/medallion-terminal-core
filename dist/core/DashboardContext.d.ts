@@ -55,6 +55,7 @@ export interface DashboardContextValue {
     setCtx: (key: string, value: string) => void;
     widgets: WidgetConfig[];
     backendUrl?: string;
+    backendHeaders: Record<string, string>;
     refreshIntervalMs?: number;
     toast: (message: string, severity?: Severity) => void;
     compact: boolean;

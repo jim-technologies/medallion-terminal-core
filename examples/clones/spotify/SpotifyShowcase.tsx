@@ -511,7 +511,7 @@ function SpotifySidebar({
   onViewChange: (view: SpotifyView) => void
 }) {
   return (
-    <aside className="spt-sidebar">
+    <aside className="spt-sidebar" aria-label="Spotify navigation and library">
       <section className="spt-sidebar__primary">
         <SpotifyBrand />
         <nav aria-label="Spotify primary navigation">

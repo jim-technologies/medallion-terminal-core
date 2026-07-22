@@ -4,6 +4,11 @@ import type { WidgetProps } from '../types/template'
 import { localDate, safeUrl } from './textNormalize'
 import { Empty } from './states'
 import {
+  CursorPager,
+  cursorPageTokenKey,
+  type CursorPaginationOptions,
+} from './CursorPager'
+import {
   conversationSelectionContext,
   normalizeConversation,
   type ConversationAttachmentData,
@@ -14,7 +19,7 @@ import {
 
 export type ConversationMode = 'channel' | 'direct' | 'assistant'
 
-export interface ConversationOptions {
+export interface ConversationOptions extends CursorPaginationOptions {
   mode?: ConversationMode
   search?: boolean
   show_header?: boolean
@@ -29,10 +34,12 @@ export interface ConversationOptions {
   }
 }
 
-export function ConversationImpl({ data, options }: WidgetProps) {
+export function ConversationImpl({ data, options, widgetId }: WidgetProps) {
+  const { ctx } = useDashboard()
   const conversation = useMemo(() => normalizeConversation(data), [data])
   const opts = (options ?? {}) as ConversationOptions
   const mode = opts.mode ?? 'channel'
+  const hasPagination = !!conversation.nextPageToken || !!ctx[cursorPageTokenKey(widgetId, opts)]
   const [query, setQuery] = useState('')
   const visible = useMemo(() => {
     const normalized = query.trim().toLowerCase()
@@ -45,11 +52,14 @@ export function ConversationImpl({ data, options }: WidgetProps) {
     ].filter(value => value != null).join(' ').toLowerCase().includes(normalized))
   }, [conversation.messages, query])
 
-  if (conversation.messages.length === 0) return <Empty>No messages</Empty>
-
   return (
     <div className="h-full min-h-0 flex flex-col">
       {opts.show_header !== false && (
+        conversation.title
+        || conversation.subtitle
+        || conversation.participants.length > 0
+        || (conversation.unreadCount ?? 0) > 0
+      ) && (
         <ConversationHeader
           conversation={conversation}
           showParticipants={opts.show_participants !== false}
@@ -75,7 +85,9 @@ export function ConversationImpl({ data, options }: WidgetProps) {
         role="log"
         aria-label={conversation.title ? `${conversation.title} messages` : 'Conversation messages'}
       >
-        {visible.length === 0 ? (
+        {conversation.messages.length === 0 ? (
+          <Empty>No messages</Empty>
+        ) : visible.length === 0 ? (
           <Empty>No matching messages</Empty>
         ) : visible.map((message, index) => (
           <ConversationMessage
@@ -88,9 +100,19 @@ export function ConversationImpl({ data, options }: WidgetProps) {
           />
         ))}
       </div>
-      {conversation.nextPageToken && (
-        <div className="border-t border-zinc-800 pt-1.5 text-center text-[10px] text-zinc-600">
-          Older history available
+      {hasPagination && (
+        <div className="border-t border-zinc-800 pt-1.5 flex items-center justify-between gap-2 text-[10px] text-zinc-600 shrink-0">
+          <span>{conversation.nextPageToken ? 'Older history available' : ''}</span>
+          <CursorPager
+            nextPageToken={conversation.nextPageToken}
+            widgetId={widgetId}
+            options={{
+              ...opts,
+              previous_label: opts.previous_label ?? 'Newer',
+              next_label: opts.next_label ?? 'Older',
+            }}
+            ariaLabel="Conversation history pages"
+          />
         </div>
       )}
     </div>

@@ -4,7 +4,8 @@
   "context": {
     "values": {
       "table_id": "work_items",
-      "record_id": "work-101"
+      "record_id": "work-101",
+      "records_page_token": ""
     }
   },
   "shortcuts": [
@@ -33,13 +34,16 @@
       "options": {
         "view_id": "all_work",
         "page_size": 12,
+        "page_token_key": "records_page_token",
         "search": true,
         "inline_edit": true
       },
       "source": {
         "source_id": "business_records",
         "params": {
-          "table_id": "${ctx.table_id}"
+          "table_id": "${ctx.table_id}",
+          "page_token": "${ctx.records_page_token}",
+          "page_size": "4"
         }
       }
     },

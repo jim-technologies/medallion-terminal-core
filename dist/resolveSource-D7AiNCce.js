@@ -46,34 +46,37 @@ function u(e, t, n) {
 		return "";
 	});
 }
-function d(t, n, r) {
+function d(t, n, r, i = {}) {
 	if (t.source_id) {
 		if (r === void 0) return c ||= (console.warn(`[medallion] source_id "${t.source_id}" requires a backendUrl on <Dashboard>; widget will not load until one is set.`), !0), t;
-		let i = t.stream ? "Stream" : "Get", a = r.replace(/\/$/, ""), o = {};
-		if (t.params) for (let [e, r] of Object.entries(t.params)) o[e] = u(r, n, { strict: !0 });
+		let a = t.stream ? "Stream" : "Get", o = r.replace(/\/$/, ""), s = {};
+		if (t.params) for (let [e, r] of Object.entries(t.params)) s[e] = u(r, n, { strict: !0 });
 		return {
-			url: `${a}/${e}/${i}`,
+			url: `${o}/${e}/${a}`,
 			method: "POST",
-			headers: { "Content-Type": "application/json" },
+			headers: {
+				...i,
+				"Content-Type": "application/json"
+			},
 			body: {
 				source_id: t.source_id,
-				params: o
+				params: s
 			},
 			stream: t.stream ? "connect" : !1,
 			refreshIntervalMs: t.refreshIntervalMs ?? t.refreshInterval
 		};
 	}
 	if (!t.url && !t.params) return t;
-	let i = { ...t };
+	let a = { ...t };
 	if (t.url) {
 		let e = u(t.url, n, { strict: !0 });
 		if (t.params && Object.keys(t.params).length > 0) {
 			let r = Object.entries(t.params).map(([e, t]) => `${encodeURIComponent(e)}=${encodeURIComponent(u(t, n, { strict: !0 }))}`).join("&");
 			e = e.includes("?") ? `${e}&${r}` : `${e}?${r}`;
 		}
-		i.url = e;
+		a.url = e;
 	}
-	return i;
+	return a;
 }
 //#endregion
 export { r as a, s as c, t as i, d as l, o as n, i as o, n as r, u as s, a as t };

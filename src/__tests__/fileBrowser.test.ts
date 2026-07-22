@@ -14,6 +14,7 @@ import {
   nextInQueue,
   prevInQueue,
   resolveEndpointUrl,
+  backendHeadersForEndpoint,
 } from '../widgets/fileBrowserHelpers'
 import { prettyJSON, parseCSV } from '../widgets/fileBrowserDecoders'
 
@@ -159,6 +160,36 @@ describe('FileBrowser helpers', () => {
       expect(resolveEndpointUrl('', '/media?id=1')).toBe('/media?id=1')
       expect(resolveEndpointUrl('https://api.example.com', 'https://cdn.example.com/file'))
         .toBe('https://cdn.example.com/file')
+      expect(resolveEndpointUrl('', '//cdn.example.com/file'))
+        .toBe('//cdn.example.com/file')
+    })
+  })
+
+  describe('backendHeadersForEndpoint', () => {
+    const headers = { Authorization: 'Bearer host-secret', 'X-Tenant-ID': 'jim' }
+
+    it('keeps host headers on relative and same-backend endpoints', () => {
+      expect(backendHeadersForEndpoint('https://api.example.com', '/media', headers))
+        .toBe(headers)
+      expect(backendHeadersForEndpoint(
+        'https://api.example.com/v1',
+        'https://api.example.com/files',
+        headers,
+      )).toBe(headers)
+    })
+
+    it('drops host headers for a federated or malformed absolute endpoint', () => {
+      expect(backendHeadersForEndpoint(
+        'https://api.example.com',
+        'https://cdn.example.com/file',
+        headers,
+      )).toEqual({})
+      expect(backendHeadersForEndpoint(undefined, 'https://cdn.example.com/file', headers))
+        .toEqual({})
+      expect(backendHeadersForEndpoint('https://api.example.com', '//cdn.example.com/file', headers))
+        .toEqual({})
+      expect(backendHeadersForEndpoint('not a URL', 'https://api.example.com/file', headers))
+        .toEqual({})
     })
   })
 

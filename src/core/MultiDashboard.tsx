@@ -38,6 +38,7 @@ export function MultiDashboard({
   activeIndex,
   onSelect,
   backendUrl,
+  backendHeaders,
   theme = 'dark',
   templateTrust,
   templateTrustPolicy,
@@ -46,6 +47,7 @@ export function MultiDashboard({
   activeIndex: number
   onSelect: (index: number) => void
   backendUrl?: string
+  backendHeaders?: Record<string, string>
   theme?: DashboardTheme
   templateTrust?: DashboardTemplateTrust
   templateTrustPolicy?: TemplateTrustPolicy
@@ -71,6 +73,7 @@ export function MultiDashboard({
               <Dashboard
                 template={tab.template}
                 backendUrl={backendUrl}
+                backendHeaders={backendHeaders}
                 theme={theme}
                 templateTrust={templateTrust}
                 templateTrustPolicy={templateTrustPolicy}

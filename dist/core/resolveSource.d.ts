@@ -35,5 +35,5 @@ export declare class InterpolationError extends Error {
 export declare function interpolate(s: string, ctx: Record<string, string>, opts?: {
     strict?: boolean;
 }): string;
-export declare function resolveSource(source: DataSource, ctx: Record<string, string>, backendUrl?: string): DataSource;
+export declare function resolveSource(source: DataSource, ctx: Record<string, string>, backendUrl?: string, backendHeaders?: Record<string, string>): DataSource;
 export declare function _resetWarnings(): void;

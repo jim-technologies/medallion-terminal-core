@@ -210,7 +210,7 @@ function StatusBar() {
             )}
           </span>
         ) : (
-          <span className="text-zinc-600">idle</span>
+          <span className="text-zinc-500">idle</span>
         )}
       </div>
       {streams.length > 0 && (
@@ -370,9 +370,12 @@ function downloadSnapshot(snapshot: Template): void {
   setTimeout(() => URL.revokeObjectURL(url), 0)
 }
 
+const EMPTY_BACKEND_HEADERS: Record<string, string> = {}
+
 export function Dashboard({
   template,
   backendUrl,
+  backendHeaders = EMPTY_BACKEND_HEADERS,
   onEvent,
   onCtxChange,
   paletteSuggest,
@@ -384,6 +387,9 @@ export function Dashboard({
 }: {
   template: Template
   backendUrl?: string
+  // Authentication/tenant headers supplied by trusted host code. Change the
+  // object when a token rotates; active sources and action transports refetch.
+  backendHeaders?: Record<string, string>
   // Chrome level. "full" (default) renders the top toolbar (ctx chips,
   // health pill, refresh/sound/density/snapshot controls) and the
   // status-bar footer. "minimal" hides both, leaving only the widget
@@ -639,6 +645,7 @@ export function Dashboard({
       ctx,
       setCtx,
       backendUrl,
+      backendHeaders,
       widgets,
       refreshIntervalMs: refreshIntervalMs ?? undefined,
       toast,
@@ -660,7 +667,7 @@ export function Dashboard({
       registerWidgetData,
       snapshot,
     }),
-    [dispatch, ctx, setCtx, backendUrl, widgets, refreshIntervalMs, toast, compact,
+    [dispatch, ctx, setCtx, backendUrl, backendHeaders, widgets, refreshIntervalMs, toast, compact,
      fullscreenId, focusedId, refreshPulse, requestRefresh, emit,
      recentActions, clearRecentActions, recentAlerts, clearRecentAlerts,
      soundEnabled, widgetHealth, reportWidgetHealth, registerWidgetData, snapshot],
@@ -918,6 +925,9 @@ function FullscreenOverlay({ widget, onClose }: { widget: WidgetConfig; onClose:
     <div
       className="fixed inset-0 z-30 bg-zinc-950/95 backdrop-blur-sm p-4 md:p-8 flex flex-col motion-safe:animate-[fadeIn_180ms_ease-out]"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Fullscreen ${widget.title ?? widget.id ?? widget.component}`}
     >
       <div className="flex items-center justify-between mb-3 shrink-0">
         <span className="text-[10px] uppercase tracking-wider text-zinc-500">
@@ -925,6 +935,7 @@ function FullscreenOverlay({ widget, onClose }: { widget: WidgetConfig; onClose:
         </span>
         <button
           onClick={onClose}
+          autoFocus
           className="mtc-control text-zinc-500 hover:text-zinc-200 px-2 py-0.5 text-xs"
         >
           Close

@@ -4,6 +4,9 @@ node_modules
 # with `pnpm build:lib` and commit the result when src/ changes.
 dist-app
 storybook-static
+playwright-report
+test-results
+blob-report
 *.tsbuildinfo
 *.local
 .DS_Store

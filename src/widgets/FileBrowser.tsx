@@ -24,6 +24,7 @@ import {
   prevInQueue,
   errorMessage,
   resolveEndpointUrl,
+  backendHeadersForEndpoint,
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
 import { isErrorStatus, isTerminalStatus } from '../hooks/useWatchAction'
@@ -103,7 +104,7 @@ interface FileBrowserOptions {
 
 export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const opts = (options ?? {}) as FileBrowserOptions
-  const { ctx, setCtx, backendUrl, toast, requestRefresh } = useDashboard()
+  const { ctx, setCtx, backendUrl, backendHeaders, toast, requestRefresh } = useDashboard()
 
   const pathKey = opts.path_ctx ?? 'path'
   const bucketKey = opts.bucket_ctx ?? 'org'
@@ -200,9 +201,14 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     searchController.current = controller
     setSearching(true)
     try {
-      const res = await fetch(resolveEndpointUrl(backendUrl, searchUrl), {
+      const endpoint = resolveEndpointUrl(backendUrl, searchUrl)
+      const res = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
+        headers: {
+          ...backendHeadersForEndpoint(backendUrl, endpoint, backendHeaders),
+          'Content-Type': 'application/json',
+          'Connect-Protocol-Version': '1',
+        },
         body: JSON.stringify({ [bucketParam]: bucket, query: q }),
         signal: controller.signal,
       })
@@ -267,9 +273,14 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     uploadInFlight.current = true
     setDlgBusy(true)
     try {
-      const res = await fetch(resolveEndpointUrl(backendUrl, ingestUrl), {
+      const endpoint = resolveEndpointUrl(backendUrl, ingestUrl)
+      const res = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
+        headers: {
+          ...backendHeadersForEndpoint(backendUrl, endpoint, backendHeaders),
+          'Content-Type': 'application/json',
+          'Connect-Protocol-Version': '1',
+        },
         body: JSON.stringify({ [bucketParam]: bucket, repo, path: name, url: src }),
       })
       if (!res.ok) {
@@ -367,6 +378,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       const res = await fetch(url, {
         method: 'POST',
         headers: {
+          ...backendHeadersForEndpoint(backendUrl, url, backendHeaders),
           'Content-Type': 'application/json',
           'Connect-Protocol-Version': '1',
         },
@@ -397,7 +409,11 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       const qs = new URLSearchParams({ [bucketParam]: bucket, repo, path, content_type: contentType })
       const endpoint = resolveEndpointUrl(backendUrl, uploadUrl)
       const separator = endpoint.includes('?') ? '&' : '?'
-      const res = await fetch(`${endpoint}${separator}${qs.toString()}`, { method: 'POST', body: file })
+      const res = await fetch(`${endpoint}${separator}${qs.toString()}`, {
+        method: 'POST',
+        headers: backendHeadersForEndpoint(backendUrl, endpoint, backendHeaders),
+        body: file,
+      })
       if (!res.ok) throw new Error((await res.text()) || `HTTP ${res.status}`)
       return
     }
@@ -410,7 +426,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     })
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
+      headers: { ...backendHeaders, 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
       body: JSON.stringify(req),
     })
     if (!res.ok) throw new Error(await readConnectErrorMessage(res))

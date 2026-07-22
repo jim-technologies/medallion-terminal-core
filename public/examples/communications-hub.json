@@ -103,7 +103,6 @@
               "context": { "workstream": "customer-communications" }
             }
           ],
-          "next_page_token": "older-launch-messages",
           "context": { "workspace_id": "jim-technologies" }
         }
       }

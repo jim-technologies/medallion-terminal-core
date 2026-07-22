@@ -1,6 +1,7 @@
 import type { WidgetProps } from '../types/template';
+import { type CursorPaginationOptions } from './CursorPager';
 export type ConversationMode = 'channel' | 'direct' | 'assistant';
-export interface ConversationOptions {
+export interface ConversationOptions extends CursorPaginationOptions {
     mode?: ConversationMode;
     search?: boolean;
     show_header?: boolean;
@@ -14,4 +15,4 @@ export interface ConversationOptions {
         sender_key?: string;
     };
 }
-export declare function ConversationImpl({ data, options }: WidgetProps): import("react").JSX.Element;
+export declare function ConversationImpl({ data, options, widgetId }: WidgetProps): import("react").JSX.Element;

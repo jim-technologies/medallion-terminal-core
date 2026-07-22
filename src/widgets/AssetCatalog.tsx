@@ -4,8 +4,13 @@ import type { WidgetProps } from '../types/template'
 import { localDate, safeUrl } from './textNormalize'
 import { Empty } from './states'
 import { normalizeAssetCatalog, type AssetCatalogItem } from './platformShapes'
+import {
+  CursorPager,
+  cursorPageTokenKey,
+  type CursorPaginationOptions,
+} from './CursorPager'
 
-interface AssetCatalogOptions {
+interface AssetCatalogOptions extends CursorPaginationOptions {
   search?: boolean
   kind_filter?: boolean
   item_context?: {
@@ -30,7 +35,7 @@ const KIND_ICON: Record<string, string> = {
 // canonical AssetCatalogPayload and applies each item's context map on
 // selection so detail, lineage, repository, and data widgets retarget
 // together.
-export function AssetCatalog({ data, options }: WidgetProps) {
+export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
   const opts = (options ?? {}) as AssetCatalogOptions
   const { ctx, setCtx } = useDashboard()
   const catalog = useMemo(() => normalizeAssetCatalog(data), [data])
@@ -39,6 +44,7 @@ export function AssetCatalog({ data, options }: WidgetProps) {
   const idKey = opts.item_context?.key ?? 'asset_id'
   const kindKey = opts.item_context?.kind_key ?? 'asset_kind'
   const ownerKey = opts.item_context?.owner_key
+  const hasPagination = !!catalog.nextPageToken || !!ctx[cursorPageTokenKey(widgetId, opts)]
 
   const kinds = useMemo(
     () => [...new Set(catalog.items.map((item) => item.kind))].sort(),
@@ -71,8 +77,6 @@ export function AssetCatalog({ data, options }: WidgetProps) {
     if (!(kindKey in item.context)) setCtx(kindKey, item.kind)
     if (ownerKey && item.owner && !(ownerKey in item.context)) setCtx(ownerKey, item.owner)
   }
-
-  if (catalog.items.length === 0) return <Empty>No assets</Empty>
 
   return (
     <div className="h-full flex flex-col min-h-0">
@@ -113,7 +117,9 @@ export function AssetCatalog({ data, options }: WidgetProps) {
       </div>
 
       <div className="flex-1 overflow-auto min-h-0">
-        {filtered.length === 0 ? (
+        {catalog.items.length === 0 ? (
+          <Empty>No assets</Empty>
+        ) : filtered.length === 0 ? (
           <Empty>No matching assets</Empty>
         ) : (
           <div className="divide-y divide-zinc-800/70">
@@ -196,6 +202,16 @@ export function AssetCatalog({ data, options }: WidgetProps) {
           </div>
         )}
       </div>
+      {hasPagination && (
+        <div className="pt-2 flex justify-end shrink-0">
+          <CursorPager
+            nextPageToken={catalog.nextPageToken}
+            widgetId={widgetId}
+            options={opts}
+            ariaLabel="Asset catalog pages"
+          />
+        </div>
+      )}
     </div>
   )
 }

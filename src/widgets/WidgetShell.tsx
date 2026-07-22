@@ -130,6 +130,7 @@ function ActionMenu({
         onClick={() => setOpen(o => !o)}
         className="text-zinc-600 hover:text-zinc-300 px-1.5 py-0.5 text-base leading-none rounded"
         aria-label="Widget actions"
+        aria-expanded={open}
       >
         ⋮
       </button>
@@ -203,7 +204,7 @@ function ActionMenu({
 }
 
 export function WidgetShell({ config, contentHeight, snapshotKey }: { config: WidgetConfig; contentHeight: number; snapshotKey?: string }) {
-  const { ctx, backendUrl, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit, soundEnabled, reportWidgetHealth, registerWidgetData } = useDashboard()
+  const { ctx, backendUrl, backendHeaders, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit, soundEnabled, reportWidgetHealth, registerWidgetData } = useDashboard()
   // Title interpolation is lenient — partial substitution is fine for a
   // human-facing string. Source interpolation is strict (resolveSource).
   const title = useMemo(
@@ -217,7 +218,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey }: { config: Wi
   const resolution = useMemo(() => {
     if (!config.source) return { source: undefined, error: null }
     try {
-      const resolved = resolveSource(config.source, ctx, backendUrl)
+      const resolved = resolveSource(config.source, ctx, backendUrl, backendHeaders)
       if (refreshIntervalMs && refreshIntervalMs > 0 && !resolved.stream) {
         return { source: { ...resolved, refreshIntervalMs }, error: null }
       }
@@ -225,7 +226,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey }: { config: Wi
     } catch (e) {
       return { source: undefined, error: e instanceof Error ? e.message : 'Resolution error' }
     }
-  }, [config.source, ctx, backendUrl, refreshIntervalMs])
+  }, [config.source, ctx, backendUrl, backendHeaders, refreshIntervalMs])
   const source = resolution.source
   const { data, loading, error, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(source)
   const Component = getWidget(config.component)
@@ -345,7 +346,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey }: { config: Wi
     >
       {title && (
         <div className={`mtc-widget-header ${compact ? 'px-2.5 py-1.5' : 'px-4 py-2.5'} flex items-center justify-between`}>
-          <h3 className={`${compact ? 'text-[11px]' : 'text-xs'} font-semibold tracking-[0.01em] text-zinc-100 truncate`}>{title}</h3>
+          <h2 className={`${compact ? 'text-[11px]' : 'text-xs'} font-semibold tracking-[0.01em] text-zinc-100 truncate`}>{title}</h2>
           <div className="flex items-center gap-2 shrink-0 ml-2">
             {isLive && lastUpdated && (
               <span className={`text-[10px] ${isStale ? 'text-amber-400/80' : 'text-zinc-600'}`}>

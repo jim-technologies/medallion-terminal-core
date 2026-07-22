@@ -52,6 +52,7 @@ interface ActiveAction {
 export function useSubmitAction(widgetId?: string) {
   const {
     backendUrl,
+    backendHeaders,
     emit,
     requestRefresh,
     toast,
@@ -67,6 +68,7 @@ export function useSubmitAction(widgetId?: string) {
   const watch = useWatchAction(
     backendUrl,
     active ? { clientRequestId: active.clientRequestId } : null,
+    backendHeaders,
   )
 
   const finish = useCallback((reply: SubmitActionReply, config: ActiveAction) => {
@@ -190,7 +192,7 @@ export function useSubmitAction(widgetId?: string) {
     try {
       const response = await fetch(buildSubmitActionUrl(backendUrl), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...backendHeaders, 'Content-Type': 'application/json' },
         body: JSON.stringify(buildActionRequest({
           actionId,
           params: input.params,
@@ -246,7 +248,7 @@ export function useSubmitAction(widgetId?: string) {
       finish(reply, config)
       return reply
     }
-  }, [backendUrl, emit, finish, toast, widgetId])
+  }, [backendUrl, backendHeaders, emit, finish, toast, widgetId])
 
   return {
     submit,

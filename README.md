@@ -197,6 +197,35 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `tape` | `{events: [{timestamp, price?, size?, side?, label?}]}` or one event | Time-and-sales / high-frequency append-only stream |
 | `file_browser` | `{entries: [{kind, name, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download, inline preview for video/audio/image/PDF, paginated listings, icons/gallery toggle, keyboard-navigable preview. Identifies entries by `name` within the current directory — backends MUST guarantee unique names per directory (any filesystem-shaped store does). |
 
+### Cursor pagination
+
+`asset_catalog`, `media_gallery`, `conversation`, and `record_grid` share one
+opaque-cursor convention. Bind `source.params.page_token` to a context key and
+return `next_page_token` only when another page exists:
+
+```jsonc
+{
+  "id": "assets",
+  "component": "asset_catalog",
+  "source": {
+    "source_id": "platform_assets",
+    "params": {
+      "page_token": "${ctx.assets_page_token}",
+      "page_size": "25"
+    }
+  },
+  "options": { "page_token_key": "assets_page_token" }
+}
+```
+
+The pager keeps only previously visited cursors in local UI state; it never
+decodes a token or invents an offset. Backends should scope and sign cursors to
+the source, tenant, sort, and filter set, cap `page_size`, and reject malformed
+or cross-scope tokens. When a server-side filter changes, clear the associated
+context token to `""`. Record grids do not apply a second client-side slice
+when a continuation token is present, and conversation paging preserves each
+older-history window in chronological order.
+
 `media_gallery` is the presentation projection for photo/video products;
 `file_browser` remains the storage projection. The gallery groups authorized
 items by capture day or month, understands albums/collections and favorites,
@@ -224,7 +253,7 @@ The file_browser previews video and audio through a native `<video>` / `<audio>`
 
 Backends supply entries with just `{kind, name, size_bytes?, content_type?, modified_at?}` — no opaque IDs. The widget computes a full path on the fly as `currentPath + '/' + entry.name` whenever it needs a stable identifier (URLs, queue navigation, downloads).
 
-#### Pagination
+### File-browser pagination
 
 For large folders, FileBrowser pages the listing through ctx — no client-side virtualisation, no all-at-once fetch. Wire `page` and `page_size` as source params (driven from ctx), and return only that page as ordinary `TablePayload.rows`:
 
@@ -247,11 +276,11 @@ For large folders, FileBrowser pages the listing through ctx — no client-side 
 
 The widget shows a Prev/Next pager without claiming a total page count — Next is enabled while the current page came back full (entries.length === page_size), implying there may be more; a partial page disables Next. Backends that want richer pagination (jump-to-page, total count) can compose their own pager widget above the file_browser. The default keeps the widget protocol-agnostic.
 
-#### Gallery vs. icons
+### Gallery vs. icons
 
 A toolbar toggle switches between **Icons** (default — filename + emoji icon, zero image bytes fetched) and **Gallery** (grid of thumbnails via lazy `<img loading="lazy">`). Use Icons for thousand-file folders where you'd otherwise hammer the backend with hundreds of `/media` requests; Gallery for browsing photos. Image bytes only fetch when the cell scrolls into view; backend `Cache-Control: public, max-age=…, immutable` on `/media` for image content types is recommended.
 
-#### Keyboard nav in the preview overlay
+### Keyboard nav in the preview overlay
 
 | Key | Action |
 |-----|--------|
@@ -644,7 +673,30 @@ For wiring this into a real product, in order:
 
 3. **Connect HTTP/JSON framing.** Streaming RPCs use envelopes: `[flags(1)][length(4 BE)][payload N]`. `flags & 0x02` = trailer (end-of-stream). Trailer body is JSON `{ metadata?, error? }`; non-null `error` surfaces to the client widget.
 
-4. **Mount `<Dashboard>`.** Pass `backendUrl` so widgets resolve `source_id`s through your service. Templates ship as JSON; `${ctx.symbol}` substitution links them to the dashboard's context bag.
+4. **Mount `<Dashboard>`.** Pass `backendUrl` so widgets resolve `source_id`s
+   through your service. Authentication and tenant-routing headers belong to
+   trusted host code, never template JSON:
+
+   ```tsx
+   const backendHeaders = useMemo(() => ({
+     Authorization: `Bearer ${accessToken}`,
+     'X-Tenant-ID': tenantId,
+   }), [accessToken, tenantId])
+
+   <Dashboard
+     template={template}
+     backendUrl={apiUrl}
+     backendHeaders={backendHeaders}
+   />
+   ```
+
+   These headers cover `ListSources`, `Get`, `Stream`, `Generate`, action
+   lifecycle calls, and backend-relative file operations. They are not copied
+   into templates or static snapshots, and FileBrowser strips them from any
+   configurable endpoint on another origin. Replace the object when
+   credentials rotate. Native `<img>`, `<video>`, `<audio>`, and iframe requests cannot set
+   bearer headers; serve those through same-site secure cookies or short-lived
+   signed URLs instead of putting reusable credentials in query strings.
 
 5. **Custom widgets.** Implement once, `registerWidget('your_name', YourComponent)` at app startup. Same `WidgetProps` contract as built-ins. See `examples/widgets/` for the Kelly sizing widget reading live odds off a `paired_grid` source.
 
@@ -652,12 +704,34 @@ For wiring this into a real product, in order:
 
 7. **URL state.** Context lives in URL params (`?ctx.symbol=BTC`). Saved layouts live in localStorage. Both are out-of-band from your backend.
 
-8. **Before non-localhost deploy.** The reference backend ships with demo defaults that are NOT production-safe:
-   - CORS is wide-open (`*`); restrict to your origin(s).
-   - No authentication; gate every RPC.
-   - No rate limits; add them at the proxy layer.
-   - Action store is in-memory and bounded at 1024 entries; persist to your real store with TTL.
-   - `__error_after` synthetic source exists for testing — remove or gate it.
+8. **Before non-localhost deploy.** The default reference backend is a demo:
+   CORS is wide-open and authorization is disabled. A fail-closed local slice
+   demonstrates the integration seams:
+
+   ```bash
+   TERMINAL_DEMO_TOKEN='replace-with-a-long-local-token' \
+   TERMINAL_ALLOWED_ORIGIN='http://localhost:5173' \
+   pnpm backend:secure
+
+   # second terminal, same local-only token
+   VITE_TERMINAL_DEMO_TOKEN='replace-with-a-long-local-token' pnpm dev
+   ```
+
+   The bundled app honors that Vite variable only in development and never
+   reads credentials from the URL. Vite variables are visible to browser code,
+   so use this solely for the local proof.
+
+   `secure-server.mjs` adds an origin allowlist, scoped bearer authorization,
+   request IDs, request-size limits, and metadata-only audit events. Its static
+   token adapter is for local integration only. In a deployed host:
+   - Validate short-lived credentials with your IdP, JWKS, or API gateway and
+     authorize each source, row/object, field, file, stream, and action.
+   - Add rate and concurrency limits at the gateway or service layer.
+   - Persist idempotency and action lifecycle state; the demo action store is
+     in-memory and bounded at 1024 entries.
+   - Remove or gate the synthetic `__error_after` source used by tests.
+   - Replace fixture files and signed media placeholders with durable,
+     tenant-isolated storage and host-owned download URLs.
 
 9. **Types.** Generated proto-derived JSON types are available at `medallion-terminal-core/proto`. Friendlier framework types (`Template`, `WidgetProps`, `DataSource`) are at the package root. Run `pnpm gen:proto` after editing protos; the lint step refuses stale generated types.
 
@@ -666,6 +740,43 @@ For wiring this into a real product, in order:
     `proto`. Rebuild with `pnpm build:lib`; CI/release checks can run
     `pnpm check:dist` or `make check-dist` from a clean checkout to fail
     when committed dist files are stale.
+
+## Production verification
+
+Install Chromium once on a development machine, then run the same checks as
+CI:
+
+```bash
+pnpm exec playwright install chromium
+pnpm ci:verify
+```
+
+`ci:verify` gates TypeScript and proto generation, Buf lint/build and
+compatibility against `origin/main`, the reusable TerminalService conformance
+suite, unit/integration tests, every Storybook story in real Chromium, both
+application and library builds, committed package artifacts, the static
+Storybook catalog, curated accessibility checks, interaction flows, and visual
+snapshots.
+
+Run the backend contract suite against any implementation independently:
+
+```bash
+node examples/conformance/terminal-service-conformance.mjs \
+  https://terminal-api.example.com \
+  --bearer-env TERMINAL_ACCESS_TOKEN \
+  --action-id safe_conformance_action
+```
+
+Omit `--action-id` when the environment has no harmless write probe. The
+read-side checks still verify the source catalog, defaults, canonical response
+oneofs, stream framing, and unknown-source behavior. Use a dedicated
+non-production tenant for write probes.
+
+Accessibility is progressive and explicit: every story is rendered and
+scanned in Chromium with findings reported in Storybook; the curated release
+flows fail CI on every selected automated violation. Automated checks do not
+replace keyboard, screen-reader, localization, data-volume, security, and
+operational testing in the consuming product.
 
 ## Styling and themes
 

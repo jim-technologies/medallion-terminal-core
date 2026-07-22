@@ -9,6 +9,17 @@ interface LoadedTab {
   template: Template
 }
 
+// Local authenticated-reference slice. Vite exposes this value to browser
+// code, so it is deliberately honored only by the development app. Deployed
+// hosts must obtain short-lived credentials from their own auth session and
+// pass backendHeaders directly to Dashboard.
+const localDemoToken = import.meta.env.DEV
+  ? import.meta.env.VITE_TERMINAL_DEMO_TOKEN?.trim()
+  : undefined
+const localBackendHeaders = localDemoToken
+  ? { Authorization: `Bearer ${localDemoToken}` }
+  : undefined
+
 export default function App() {
   const initialParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams()
   const hasTemplate = initialParams.has('template') || initialParams.has('tabs')
@@ -64,6 +75,24 @@ export default function App() {
   const theme: DashboardTheme = requestedTheme === 'operator' || requestedTheme === 'light'
     ? requestedTheme
     : 'dark'
-  if (tabs.length === 1) return <Dashboard template={tabs[0].template} backendUrl={backendUrl} theme={theme} />
-  return <MultiDashboard tabs={tabs} activeIndex={activeIndex} onSelect={setActiveIndex} backendUrl={backendUrl} theme={theme} />
+  if (tabs.length === 1) {
+    return (
+      <Dashboard
+        template={tabs[0].template}
+        backendUrl={backendUrl}
+        backendHeaders={localBackendHeaders}
+        theme={theme}
+      />
+    )
+  }
+  return (
+    <MultiDashboard
+      tabs={tabs}
+      activeIndex={activeIndex}
+      onSelect={setActiveIndex}
+      backendUrl={backendUrl}
+      backendHeaders={localBackendHeaders}
+      theme={theme}
+    />
+  )
 }

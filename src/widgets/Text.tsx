@@ -45,7 +45,7 @@ export function Text({ data }: WidgetProps) {
   }
 
   return (
-    <div className="overflow-auto h-full space-y-3">
+    <div className="overflow-auto h-full space-y-3" tabIndex={0} aria-label="Content feed">
       {items.map((item, i) => {
         const key = itemKey(item)
         const flashClass = flashing.has(key) ? 'bg-sky-500/5' : ''
@@ -56,7 +56,7 @@ export function Text({ data }: WidgetProps) {
           >
             <div className="flex-1 min-w-0">
               {(item.title || item.url) && (
-                <h4 className="text-sm font-medium text-zinc-100 mb-1 leading-snug">
+                <h3 className="text-sm font-medium text-zinc-100 mb-1 leading-snug">
                   {item.url ? (
                     <a
                       href={item.url}
@@ -71,7 +71,7 @@ export function Text({ data }: WidgetProps) {
                   ) : (
                     item.title
                   )}
-                </h4>
+                </h3>
               )}
               {item.meta && (
                 <div className="text-xs text-zinc-500 mb-1.5">{item.meta}</div>

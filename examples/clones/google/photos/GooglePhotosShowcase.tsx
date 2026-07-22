@@ -710,7 +710,7 @@ function TimelineView({
         <div className="gphotos-density-switch" aria-label="Photo density">
           <button type="button" className="is-active">Day</button>
           <button type="button">Month</button>
-          <button type="button"><PhotosIcon name="more" /></button>
+          <button type="button" aria-label="More density options"><PhotosIcon name="more" /></button>
         </div>
       </div>
 
@@ -793,44 +793,43 @@ function PhotoTile({
   const [failed, setFailed] = useState(false)
   const duration = formatMediaDuration(item.durationSeconds)
   return (
-    <button
-      type="button"
+    <div
       className={`gphotos-tile gphotos-tile-${item.layout ?? 'square'} ${selected ? 'is-selected' : ''}`}
-      onClick={onOpen}
-      onKeyDown={(event: ReactKeyboardEvent) => {
-        if (event.key === ' ') {
-          event.preventDefault()
-          onToggleSelection(event)
-        }
-      }}
-      aria-label={`Open ${item.kind === 'video' ? 'video' : 'photo'} ${item.title}`}
     >
-      {!failed ? (
-        <img
-          src={item.thumbnailUrl ?? item.url}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        <span className="gphotos-tile-fallback"><PhotosIcon name={item.kind === 'video' ? 'play' : 'photos'} /></span>
-      )}
-      <span className="gphotos-tile-overlay" />
-      <span
-        role="checkbox"
-        aria-checked={selected}
+      <button
+        type="button"
+        className="gphotos-tile-open"
+        onClick={onOpen}
+        aria-label={`Open ${item.kind === 'video' ? 'video' : 'photo'} ${item.title}`}
+      >
+        {!failed ? (
+          <img
+            src={item.thumbnailUrl ?? item.url}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            onError={() => setFailed(true)}
+          />
+        ) : (
+          <span className="gphotos-tile-fallback"><PhotosIcon name={item.kind === 'video' ? 'play' : 'photos'} /></span>
+        )}
+        <span className="gphotos-tile-overlay" />
+        {item.favorite && <span className="gphotos-favorite-badge"><PhotosIcon name="favoriteFilled" /></span>}
+        {item.kind === 'video' && (
+          <span className="gphotos-video-badge"><PhotosIcon name="play" /> {duration}</span>
+        )}
+        <span className="gphotos-tile-title">{item.title}</span>
+      </button>
+      <button
+        type="button"
         className="gphotos-select-control"
         onClick={onToggleSelection}
+        aria-label={`${selected ? 'Deselect' : 'Select'} ${item.title}`}
+        aria-pressed={selected}
       >
         {selected ? <PhotosIcon name="check" /> : null}
-      </span>
-      {item.favorite && <span className="gphotos-favorite-badge"><PhotosIcon name="favoriteFilled" /></span>}
-      {item.kind === 'video' && (
-        <span className="gphotos-video-badge"><PhotosIcon name="play" /> {duration}</span>
-      )}
-      <span className="gphotos-tile-title">{item.title}</span>
-    </button>
+      </button>
+    </div>
   )
 }
 

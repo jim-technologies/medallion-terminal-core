@@ -15,8 +15,13 @@ import {
   type WorkRecordData,
 } from './recordShapes'
 import { Empty } from './states'
+import {
+  CursorPager,
+  cursorPageTokenKey,
+  type CursorPaginationOptions,
+} from './CursorPager'
 
-interface RecordGridOptions {
+interface RecordGridOptions extends CursorPaginationOptions {
   view_id?: string
   visible_fields?: string[]
   page_size?: number
@@ -54,7 +59,7 @@ function compareValues(left: unknown, right: unknown): number {
 export function RecordGrid({ data, options, widgetId }: WidgetProps) {
   const set = useMemo(() => normalizeRecordSet(data), [data])
   const opts = (options ?? {}) as RecordGridOptions
-  const { backendUrl, setCtx } = useDashboard()
+  const { backendUrl, ctx, setCtx } = useDashboard()
   const mutation = useSubmitAction(widgetId)
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(0)
@@ -81,6 +86,8 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
     .map(key => set.fields.find(field => field.key === key))
     .filter((field): field is RecordFieldData => !!field)
   const pageSize = Math.max(1, opts.page_size ?? 25)
+  const pageTokenKey = cursorPageTokenKey(widgetId, opts)
+  const serverPaged = !!set.nextPageToken || !!ctx[pageTokenKey]
   const recordIdKey = opts.record_id_key ?? 'record_id'
   const tableIdKey = opts.table_id_key ?? 'table_id'
   const canInlineEdit = set.capabilities.update && opts.inline_edit !== false && backendUrl !== undefined
@@ -102,9 +109,11 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
     return records
   })()
 
-  const totalPages = Math.max(1, Math.ceil(visibleRecords.length / pageSize))
+  const totalPages = serverPaged ? 1 : Math.max(1, Math.ceil(visibleRecords.length / pageSize))
   const safePage = Math.min(page, totalPages - 1)
-  const pageRecords = visibleRecords.slice(safePage * pageSize, (safePage + 1) * pageSize)
+  const pageRecords = serverPaged
+    ? visibleRecords
+    : visibleRecords.slice(safePage * pageSize, (safePage + 1) * pageSize)
 
   const selectRecord = (record: WorkRecordData) => {
     setCtx(tableIdKey, set.tableId)
@@ -291,7 +300,14 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
           {set.total != null && set.total !== visibleRecords.length ? ` · ${set.total} total` : ''}
           {view ? ` · ${view.name}` : ''}
         </span>
-        {totalPages > 1 && (
+        {serverPaged ? (
+          <CursorPager
+            nextPageToken={set.nextPageToken}
+            widgetId={widgetId}
+            options={opts}
+            ariaLabel="Record pages"
+          />
+        ) : totalPages > 1 && (
           <div className="flex items-center gap-1">
             <button
               type="button"

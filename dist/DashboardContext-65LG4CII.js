@@ -4,6 +4,7 @@ var n = e({
 	ctx: {},
 	setCtx: () => {},
 	widgets: [],
+	backendHeaders: {},
 	toast: () => {},
 	compact: !1,
 	fullscreenId: null,

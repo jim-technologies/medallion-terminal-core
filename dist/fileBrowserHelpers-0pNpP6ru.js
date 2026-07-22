@@ -101,23 +101,39 @@ function _(e, t, n) {
 	return e.replace("{bucket}", r).replace("{namespace}", r).replace("{path}", encodeURIComponent(n));
 }
 function v(e, t) {
-	if (/^https?:\/\//i.test(t)) return t;
+	if (/^(?:https?:)?\/\//i.test(t)) return t;
 	let n = e ?? "";
 	return n ? `${n.replace(/\/+$/, "")}/${t.replace(/^\/+/, "")}` : t;
 }
-function y(e) {
+function y(e, t, n) {
+	if (!/^(?:https?:)?\/\//i.test(t)) return n;
+	let r;
+	if (e && /^https?:\/\//i.test(e)) try {
+		r = new URL(e).origin;
+	} catch {
+		return {};
+	}
+	else typeof window < "u" && (r = window.location.origin);
+	if (!r) return {};
+	try {
+		return new URL(t, r).origin === r ? n : {};
+	} catch {
+		return {};
+	}
+}
+function b(e) {
 	let t = "", n = new Uint8Array(e);
 	for (let e = 0; e < n.byteLength; e++) t += String.fromCharCode(n[e]);
 	return btoa(t);
 }
-async function b(e) {
+async function x(e) {
 	try {
 		return (await e.json()).message ?? `HTTP ${e.status}`;
 	} catch {
 		return `HTTP ${e.status}`;
 	}
 }
-async function x(t, n) {
+async function S(t, n) {
 	if (!t.body) throw Error("parseConnectStream: response has no body");
 	let r = t.body.getReader(), i = [], a = !1, o = null;
 	try {
@@ -151,4 +167,4 @@ async function x(t, n) {
 	return new Blob(i.map((e) => e.slice().buffer), { type: n ?? "application/octet-stream" });
 }
 //#endregion
-export { s as _, n as a, m as c, f as d, h as f, a as g, v as h, l as i, r as l, b as m, _ as n, c as o, g as p, t as r, p as s, y as t, x as u };
+export { a as _, l as a, p as c, S as d, f, v as g, x as h, t as i, m as l, g as m, y as n, n as o, h as p, _ as r, c as s, b as t, r as u, s as v };

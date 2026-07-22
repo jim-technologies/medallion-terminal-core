@@ -212,14 +212,26 @@ in `proto/medallion/terminal/v1/`.
   state when actions are asynchronous.
 - Return signed or host-controlled URLs for raw files and repository content.
   Never place credentials in templates.
+- Keep authentication headers in trusted host code via `backendHeaders`.
+  Native media and iframe requests should use same-site secure cookies or
+  short-lived signed URLs because those elements cannot attach bearer headers.
 - Apply field masking and classification policy before serializing object
   properties or table rows.
+- Treat continuation tokens as opaque, tenant/source/filter/sort-scoped
+  capabilities; cap page sizes and reject malformed or cross-scope cursors.
 - Record reads, exports, downloads, generated dashboards, and write actions in
   the host audit system.
 - Validate untrusted templates with `validateTemplateTrust`; allow arbitrary
   URLs and iframe permissions only for operator-owned templates.
 - Put rate limits, request-size limits, CORS restrictions, authentication, and
   durable storage in front of the reference backend before deployment.
+- Run the reusable TerminalService conformance suite against each environment
+  and gate proto changes with `buf breaking` before rollout.
+
+The fail-closed `examples/backend/secure-server.mjs` slice demonstrates where
+origin policy, scoped authorization, request IDs, and auditing attach. Its
+static token and in-memory domain state remain local-test fixtures, not
+production identity or storage.
 
 ## Deliberate boundary
 

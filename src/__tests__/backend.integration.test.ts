@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Server } from 'node:http'
 import { createTerminalServer } from '../../examples/backend/server.mjs'
+import { createBearerAuthorizer } from '../../examples/backend/auth.mjs'
 import {
   buildActionRequest,
   buildActionWatchRequest,
@@ -51,6 +52,7 @@ describe('reference backend ↔ client', () => {
     expect(ids).toContain('btc_options')
     expect(ids).toEqual(expect.arrayContaining([
       'files',
+      'media_library',
       'platform_assets',
       'platform_object',
       'platform_lineage',
@@ -65,6 +67,20 @@ describe('reference backend ↔ client', () => {
         if (p.type) expect(p.type).toMatch(/^PARAM_TYPE_/)
       }
     }
+  })
+
+  it('enforces the JSON POST transport contract', async () => {
+    const get = await fetch(`${backendUrl}/${SERVICE}/ListSources`)
+    expect(get.status).toBe(405)
+    expect(get.headers.get('allow')).toBe('POST')
+
+    const wrongType = await fetch(`${backendUrl}/${SERVICE}/ListSources`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: '{}',
+    })
+    expect(wrongType.status).toBe(415)
+    await expect(wrongType.json()).resolves.toMatchObject({ code: 'invalid_argument' })
   })
 
   it('Get(btc_options) returns a paired_grid payload matching the new contract', async () => {
@@ -202,10 +218,175 @@ describe('reference backend ↔ client', () => {
     })
     expect(out.conversation.participants.map(participant => participant.id))
       .toEqual(expect.arrayContaining(['jun', 'maya', 'lina']))
-    expect(out.conversation.messages[0].reactions?.[0])
+    expect(out.conversation.messages.find(message => message.id === 'reference-message-1')?.reactions?.[0])
       .toMatchObject({ key: 'check', count: 3 })
     expect(out.conversation.messages.some(message => message.reply_to_id))
       .toBe(true)
+  })
+
+  it('paginates catalog, media, records, and older conversation history with opaque cursors', async () => {
+    const assetsOne = await rpc<{ assets: { items: Array<{ id: string }>; next_page_token: string } }>('Get', {
+      source_id: 'platform_assets',
+      params: { page_size: '2' },
+    })
+    const assetsTwo = await rpc<{ assets: { items: Array<{ id: string }>; next_page_token?: string } }>('Get', {
+      source_id: 'platform_assets',
+      params: { page_size: '2', page_token: assetsOne.assets.next_page_token },
+    })
+    expect(assetsOne.assets.items).toHaveLength(2)
+    expect(assetsTwo.assets.items).toHaveLength(2)
+    expect(assetsTwo.assets.items.map(item => item.id))
+      .not.toEqual(assetsOne.assets.items.map(item => item.id))
+
+    const mediaOne = await rpc<{ media: { items: Array<{ id: string }>; total: string; next_page_token: string } }>('Get', {
+      source_id: 'media_library',
+      params: { page_size: '2' },
+    })
+    const mediaTwo = await rpc<{ media: { items: Array<{ id: string }> } }>('Get', {
+      source_id: 'media_library',
+      params: { page_size: '2', page_token: mediaOne.media.next_page_token },
+    })
+    expect(Number(mediaOne.media.total)).toBe(6)
+    expect(mediaTwo.media.items.map(item => item.id))
+      .not.toEqual(mediaOne.media.items.map(item => item.id))
+
+    const recordsOne = await rpc<{ records: { records: Array<{ id: string }>; next_page_token: string } }>('Get', {
+      source_id: 'business_records',
+      params: { table_id: 'work_items', page_size: '3' },
+    })
+    const recordsTwo = await rpc<{ records: { records: Array<{ id: string }> } }>('Get', {
+      source_id: 'business_records',
+      params: {
+        table_id: 'work_items',
+        page_size: '3',
+        page_token: recordsOne.records.next_page_token,
+      },
+    })
+    expect(recordsOne.records.records).toHaveLength(3)
+    expect(recordsTwo.records.records).toHaveLength(3)
+    expect(recordsTwo.records.records.map(record => record.id))
+      .not.toEqual(recordsOne.records.records.map(record => record.id))
+
+    const newest = await rpc<{ conversation: { messages: Array<{ id: string }>; next_page_token: string } }>('Get', {
+      source_id: 'workspace_conversation',
+      params: { conversation_id: 'launch-room', page_size: '2' },
+    })
+    const older = await rpc<{ conversation: { messages: Array<{ id: string }>; next_page_token?: string } }>('Get', {
+      source_id: 'workspace_conversation',
+      params: {
+        conversation_id: 'launch-room',
+        page_size: '2',
+        page_token: newest.conversation.next_page_token,
+      },
+    })
+    expect(newest.conversation.messages.map(message => message.id)).toEqual([
+      'reference-message-1-reply-1',
+      'reference-message-3',
+    ])
+    expect(older.conversation.messages.map(message => message.id)).toEqual([
+      'reference-message-1',
+      'reference-message-2',
+    ])
+
+    const invalid = await fetch(`${backendUrl}/${SERVICE}/Get`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        source_id: 'platform_assets',
+        params: { page_token: 'not-a-cursor' },
+      }),
+    })
+    expect(invalid.status).toBe(400)
+    await expect(invalid.json()).resolves.toMatchObject({ code: 'invalid_argument' })
+  })
+
+  it('supports a fail-closed authenticated, scoped, audited server slice', async () => {
+    const audit: Array<Record<string, unknown>> = []
+    const readToken = 'read-token-for-tests-0001'
+    const operatorToken = 'operator-token-tests-0002'
+    const secure = createTerminalServer({
+      allowedOrigins: ['https://app.jimtech.xyz'],
+      maxBodyBytes: 1024,
+      authorize: createBearerAuthorizer({
+        tokens: [
+          { token: readToken, subject: 'reader@jimtech.xyz', scopes: ['terminal:read'] },
+          {
+            token: operatorToken,
+            subject: 'jun@jimtech.xyz',
+            tenant: 'jim-technologies',
+            scopes: ['terminal:read', 'terminal:write', 'terminal:media'],
+          },
+        ],
+      }),
+      onAudit: event => {
+        audit.push(event as unknown as Record<string, unknown>)
+      },
+    })
+    await new Promise<void>((resolve, reject) => {
+      secure.once('error', reject)
+      secure.listen(0, '127.0.0.1', resolve)
+    })
+    const address = secure.address()
+    if (!address || typeof address === 'string') throw new Error('secure server has no address')
+    const url = `http://127.0.0.1:${address.port}/${SERVICE}`
+    const call = (method: string, token?: string, origin = 'https://app.jimtech.xyz') => fetch(`${url}/${method}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Origin: origin,
+        'X-Request-Id': `test-${method.toLowerCase()}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(method === 'SubmitAction'
+        ? buildActionRequest({
+            actionId: 'request_asset_access',
+            clientRequestId: newClientRequestId(),
+            params: { asset_id: 'dataset.customer_360' },
+          })
+        : {}),
+    })
+
+    try {
+      expect((await call('ListSources')).status).toBe(401)
+      const wrongOrigin = await call('ListSources', readToken, 'https://evil.example')
+      expect(wrongOrigin.status).toBe(403)
+      expect(wrongOrigin.headers.get('access-control-allow-origin')).toBeNull()
+
+      const read = await call('ListSources', readToken)
+      expect(read.status).toBe(200)
+      expect(read.headers.get('access-control-allow-origin')).toBe('https://app.jimtech.xyz')
+      expect(read.headers.get('x-request-id')).toBe('test-listsources')
+
+      expect((await call('SubmitAction', readToken)).status).toBe(403)
+      expect((await call('SubmitAction', operatorToken)).status).toBe(200)
+
+      const preflight = await fetch(`${url}/Get`, {
+        method: 'OPTIONS',
+        headers: { Origin: 'https://app.jimtech.xyz' },
+      })
+      expect(preflight.status).toBe(204)
+      expect(preflight.headers.get('access-control-allow-headers')).toContain('Authorization')
+
+      const oversized = await fetch(`${url}/Get`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: 'https://app.jimtech.xyz',
+          Authorization: `Bearer ${operatorToken}`,
+        },
+        body: JSON.stringify({ source_id: 'btc_spot', padding: 'x'.repeat(2048) }),
+      })
+      expect(oversized.status).toBe(413)
+
+      expect(audit).toEqual(expect.arrayContaining([
+        expect.objectContaining({ operation: 'ListSources', subject: 'reader@jimtech.xyz', outcome: 'allowed', status: 200 }),
+        expect.objectContaining({ operation: 'SubmitAction', subject: 'reader@jimtech.xyz', outcome: 'denied', status: 403 }),
+        expect.objectContaining({ operation: 'SubmitAction', subject: 'jun@jimtech.xyz', outcome: 'allowed', status: 200 }),
+      ]))
+      expect(audit.every(event => !('body' in event) && !('token' in event))).toBe(true)
+    } finally {
+      await new Promise<void>(resolve => secure.close(() => resolve()))
+    }
   })
 
   it('record create/update/delete is idempotent and revision-safe', async () => {
@@ -515,5 +696,27 @@ describe('reference backend ↔ client', () => {
     })
     const downloaded = Buffer.concat(chunks.map(chunk => Buffer.from(chunk, 'base64'))).toString()
     expect(downloaded).toBe(content)
+  })
+
+  it('rejects traversal-shaped file paths', async () => {
+    const response = await fetch(`${backendUrl}/${SERVICE}/SubmitAction`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(buildActionRequest({
+        actionId: 'upload',
+        params: {
+          namespace: 'demo',
+          path: '../escape.txt',
+          content_type: 'text/plain',
+          data_b64: Buffer.from('blocked').toString('base64'),
+        },
+        clientRequestId: newClientRequestId(),
+      })),
+    })
+    expect(response.status).toBe(400)
+    await expect(response.json()).resolves.toMatchObject({
+      code: 'invalid_argument',
+      message: 'path traversal segments are not allowed',
+    })
   })
 })

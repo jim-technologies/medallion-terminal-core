@@ -76,15 +76,19 @@ const UPDATE_HISTORY_CAP = 64
 export function useWatchAction(
   backendUrl: string | undefined,
   target: WatchTarget | null,
+  backendHeaders: Record<string, string> = {},
 ): UseWatchActionState {
   const [updates, setUpdates] = useState<ActionUpdate[]>([])
   const [done, setDone] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [stateKey, setStateKey] = useState('')
   const requestedKey = target
-    ? JSON.stringify([backendUrl, target.clientRequestId, target.id, target.actionId])
+    ? JSON.stringify([backendUrl, backendHeaders, target.clientRequestId, target.id, target.actionId])
     : ''
 
+  // requestedKey already includes the header values. Depending on the object
+  // identity as well would reconnect whenever a host recreates an equivalent
+  // headers object during render.
   useEffect(() => {
     // An empty backend URL intentionally means same-origin.
     if (backendUrl === undefined || !target) return
@@ -103,7 +107,7 @@ export function useWatchAction(
       try {
         const res = await fetch(buildWatchActionUrl(backendUrl), {
           method: 'POST',
-          headers: { 'Content-Type': CONNECT_JSON_CONTENT_TYPE },
+          headers: { ...backendHeaders, 'Content-Type': CONNECT_JSON_CONTENT_TYPE },
           body: JSON.stringify(buildActionWatchRequest(target)),
           signal: ctrl.signal,
         })

@@ -267,6 +267,17 @@ const platformSamples: Record<string, unknown> = {
 const workManagementStatic = inlineFallback(workManagement as Template, {
   business_records: RECORD_SET_STORY_DATA,
 })
+const referenceMedia = (mediaLibrary as Template).widgets
+  .find(widget => widget.id === 'media-gallery')?.source?.inline
+const referenceConversation = (communicationsHub as Template).widgets
+  .find(widget => widget.id === 'team-channel')?.source?.inline
+const referenceBackendStatic = inlineFallback(referenceBackend as Template, {
+  ...referenceBackendSamples,
+  platform_assets: platformSamples.platform_assets,
+  media_library: referenceMedia,
+  workspace_conversation: referenceConversation,
+  business_records: RECORD_SET_STORY_DATA,
+})
 
 export const MedallionTerminal    = story('medallion-terminal', medallionTerminal)
 export const BusinessOperations   = story('business-operations', businessOperations)
@@ -303,7 +314,7 @@ export const SportsBetting        = story(
 )
 export const ReferenceBackend     = story(
   'reference-backend',
-  inlineFallback(referenceBackend as Template, referenceBackendSamples),
+  referenceBackendStatic,
 )
 export const PlatformFoundation   = story(
   'platform-foundation',

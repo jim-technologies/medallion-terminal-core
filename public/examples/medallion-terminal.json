@@ -9,7 +9,7 @@
   ],
   "widgets": [
     {
-      "id": "tape",
+      "id": "market-strip",
       "component": "stat_strip",
       "span": 12,
       "height": 80,

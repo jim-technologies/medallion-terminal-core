@@ -7,7 +7,8 @@
       "asset_kind": "dataset",
       "repository": "analytics",
       "repo_ref": "main",
-      "repo_path": ""
+      "repo_path": "",
+      "assets_page_token": ""
     }
   },
   "widgets": [
@@ -17,8 +18,15 @@
       "span": 4,
       "height": 520,
       "title": "Assets",
+      "options": {
+        "page_token_key": "assets_page_token"
+      },
       "source": {
-        "source_id": "platform_assets"
+        "source_id": "platform_assets",
+        "params": {
+          "page_token": "${ctx.assets_page_token}",
+          "page_size": "4"
+        }
       }
     },
     {
@@ -117,7 +125,6 @@
       "title": "Governed Action",
       "options": {
         "action_id": "request_asset_access",
-        "url": "/api/actions/request-access",
         "submit_label": "Request access",
         "success_message": "Access request submitted",
         "description": "Schema-driven action surface for ontology actions, approvals, and administrative workflows.",

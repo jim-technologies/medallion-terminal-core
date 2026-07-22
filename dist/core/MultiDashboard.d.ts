@@ -5,11 +5,12 @@ interface Tab {
     label: string;
     template: Template;
 }
-export declare function MultiDashboard({ tabs, activeIndex, onSelect, backendUrl, theme, templateTrust, templateTrustPolicy, }: {
+export declare function MultiDashboard({ tabs, activeIndex, onSelect, backendUrl, backendHeaders, theme, templateTrust, templateTrustPolicy, }: {
     tabs: Tab[];
     activeIndex: number;
     onSelect: (index: number) => void;
     backendUrl?: string;
+    backendHeaders?: Record<string, string>;
     theme?: DashboardTheme;
     templateTrust?: DashboardTemplateTrust;
     templateTrustPolicy?: TemplateTrustPolicy;

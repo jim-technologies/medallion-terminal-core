@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - uses: actions/cache@v5
         with:
@@ -21,4 +23,23 @@ jobs:
       - uses: flox/install-flox-action@v2
       - uses: flox/activate-action@v1
         with:
-          command: pnpm run ci
+          command: pnpm install --frozen-lockfile
+
+      - uses: flox/activate-action@v1
+        with:
+          command: pnpm exec playwright install --with-deps chromium
+
+      - uses: flox/activate-action@v1
+        with:
+          command: pnpm run ci:verify
+
+      - name: Upload browser failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: browser-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+          retention-days: 7

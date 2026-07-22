@@ -17,7 +17,9 @@
 // ║   • In-memory action store bounded at 1024 (LRU eviction)        ║
 // ║ Replace each before any non-localhost deploy.                    ║
 // ╚══════════════════════════════════════════════════════════════════╝
+// For the fail-closed local auth/CORS/audit slice, run `pnpm backend:secure`.
 
+import { randomUUID } from 'node:crypto'
 import { createServer } from 'node:http'
 
 const PORT = Number(process.env.PORT ?? 3001)
@@ -49,7 +51,22 @@ const SOURCES = [
     shape: 'SHAPE_ASSET_CATALOG',
     streamable: false,
     tags: ['catalog', 'governance', 'platform'],
-    params: [],
+    params: [
+      { key: 'page_token', description: 'Opaque continuation cursor', type: 'PARAM_TYPE_STRING', default_value: '' },
+      { key: 'page_size', description: 'Assets per page (1–100)', type: 'PARAM_TYPE_INTEGER', default_value: '25' },
+    ],
+  },
+  {
+    id: 'media_library',
+    name: 'Authorized media library',
+    description: 'Photo/video timeline metadata with collections, authorized media URLs, and cursor pagination.',
+    shape: 'SHAPE_MEDIA',
+    streamable: false,
+    tags: ['media', 'photos', 'video'],
+    params: [
+      { key: 'page_token', description: 'Opaque continuation cursor', type: 'PARAM_TYPE_STRING', default_value: '' },
+      { key: 'page_size', description: 'Media items per page (1–100)', type: 'PARAM_TYPE_INTEGER', default_value: '25' },
+    ],
   },
   {
     id: 'platform_object',
@@ -96,6 +113,8 @@ const SOURCES = [
     tags: ['records', 'workflow', 'business'],
     params: [
       { key: 'table_id', description: 'Logical record table', type: 'PARAM_TYPE_STRING', default_value: 'work_items' },
+      { key: 'page_token', description: 'Opaque continuation cursor', type: 'PARAM_TYPE_STRING', default_value: '' },
+      { key: 'page_size', description: 'Records per page (1–100)', type: 'PARAM_TYPE_INTEGER', default_value: '25' },
     ],
   },
   {
@@ -107,6 +126,8 @@ const SOURCES = [
     tags: ['conversation', 'collaboration', 'demo'],
     params: [
       { key: 'conversation_id', description: 'Conversation or channel id', type: 'PARAM_TYPE_STRING', default_value: 'launch-room' },
+      { key: 'page_token', description: 'Opaque cursor for older history', type: 'PARAM_TYPE_STRING', default_value: '' },
+      { key: 'page_size', description: 'Messages per history window (1–100)', type: 'PARAM_TYPE_INTEGER', default_value: '25' },
     ],
   },
   {
@@ -420,8 +441,155 @@ const PLATFORM_ASSETS = [
   },
 ]
 
-function getPlatformAssets() {
-  return { assets: { items: PLATFORM_ASSETS, total: String(PLATFORM_ASSETS.length) } }
+function pageSize(value, fallback = 25) {
+  const parsed = Number.parseInt(String(value ?? fallback), 10)
+  if (!Number.isFinite(parsed)) return fallback
+  return Math.max(1, Math.min(parsed, 100))
+}
+
+function encodeCursor(scope, offset) {
+  return Buffer.from(JSON.stringify({ v: 1, scope, offset })).toString('base64url')
+}
+
+function decodeCursor(value, scope, fallback) {
+  if (!value) return fallback
+  try {
+    const parsed = JSON.parse(Buffer.from(String(value), 'base64url').toString('utf8'))
+    if (parsed?.v !== 1 || parsed.scope !== scope || !Number.isSafeInteger(parsed.offset) || parsed.offset < 0) {
+      throw new Error('invalid cursor fields')
+    }
+    return parsed.offset
+  } catch {
+    throw Object.assign(new Error('invalid or expired page_token'), {
+      statusCode: 400,
+      code: 'invalid_argument',
+    })
+  }
+}
+
+function paginateForward(items, params, scope) {
+  const size = pageSize(params.page_size)
+  const start = Math.min(decodeCursor(params.page_token, scope, 0), items.length)
+  const end = Math.min(start + size, items.length)
+  return {
+    items: items.slice(start, end),
+    nextPageToken: end < items.length ? encodeCursor(scope, end) : undefined,
+  }
+}
+
+function paginateOlder(items, params, scope) {
+  const size = pageSize(params.page_size)
+  const end = Math.min(decodeCursor(params.page_token, scope, items.length), items.length)
+  const start = Math.max(0, end - size)
+  return {
+    items: items.slice(start, end),
+    nextPageToken: start > 0 ? encodeCursor(scope, start) : undefined,
+  }
+}
+
+function getPlatformAssets(params) {
+  const page = paginateForward(PLATFORM_ASSETS, params, 'platform_assets')
+  return {
+    assets: {
+      items: page.items,
+      total: String(PLATFORM_ASSETS.length),
+      ...(page.nextPageToken ? { next_page_token: page.nextPageToken } : {}),
+    },
+  }
+}
+
+const MEDIA_COLLECTIONS = [
+  { id: 'operations', name: 'Operations', item_count: '3' },
+  { id: 'travel', name: 'Travel', item_count: '3' },
+]
+
+const MEDIA_ITEMS = [
+  {
+    id: 'media-coast-01',
+    title: 'Northern coast',
+    kind: 'MEDIA_KIND_IMAGE',
+    url: '/examples/media-demo.svg#coast',
+    thumbnail_url: '/examples/media-demo.svg#coast',
+    captured_at: '2026-07-16T18:42:00Z',
+    content_type: 'image/svg+xml',
+    favorite: true,
+    tags: ['coast', 'summer'],
+    collection_ids: ['travel'],
+    context: { media_id: 'media-coast-01' },
+  },
+  {
+    id: 'media-ridge-01',
+    title: 'Evening ridge',
+    kind: 'MEDIA_KIND_IMAGE',
+    url: '/examples/media-demo.svg#ridge',
+    thumbnail_url: '/examples/media-demo.svg#ridge',
+    captured_at: '2026-07-16T17:18:00Z',
+    content_type: 'image/svg+xml',
+    tags: ['mountains', 'sunset'],
+    collection_ids: ['travel'],
+    context: { media_id: 'media-ridge-01' },
+  },
+  {
+    id: 'media-coast-video',
+    title: 'Coastal approach',
+    kind: 'MEDIA_KIND_VIDEO',
+    url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    thumbnail_url: '/examples/media-demo.svg#harbor',
+    captured_at: '2026-07-16T16:55:00Z',
+    duration_seconds: 15,
+    content_type: 'video/mp4',
+    collection_ids: ['travel'],
+    context: { media_id: 'media-coast-video' },
+  },
+  {
+    id: 'media-studio-01',
+    title: 'Campaign selects',
+    kind: 'MEDIA_KIND_IMAGE',
+    url: '/examples/media-demo.svg#studio',
+    thumbnail_url: '/examples/media-demo.svg#studio',
+    captured_at: '2026-06-28T19:05:00Z',
+    content_type: 'image/svg+xml',
+    tags: ['campaign', 'approved'],
+    collection_ids: ['operations'],
+    metadata: { status: 'approved', owner: 'Creative' },
+    context: { media_id: 'media-studio-01' },
+  },
+  {
+    id: 'media-harbor-01',
+    title: 'Harbor inspection',
+    kind: 'MEDIA_KIND_IMAGE',
+    url: '/examples/media-demo.svg#harbor',
+    thumbnail_url: '/examples/media-demo.svg#harbor',
+    captured_at: '2026-06-28T18:16:00Z',
+    content_type: 'image/svg+xml',
+    collection_ids: ['operations'],
+    metadata: { site: 'Pier 4', inspection: 'complete' },
+    context: { media_id: 'media-harbor-01' },
+  },
+  {
+    id: 'media-walkthrough-video',
+    title: 'Studio walkthrough',
+    kind: 'MEDIA_KIND_VIDEO',
+    url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    thumbnail_url: '/examples/media-demo.svg#studio',
+    captured_at: '2026-06-28T17:44:00Z',
+    duration_seconds: 15,
+    content_type: 'video/mp4',
+    collection_ids: ['operations'],
+    context: { media_id: 'media-walkthrough-video', project_id: 'campaign-26' },
+  },
+]
+
+function getMediaLibrary(params) {
+  const page = paginateForward(MEDIA_ITEMS, params, 'media_library')
+  return {
+    media: {
+      items: page.items,
+      collections: MEDIA_COLLECTIONS,
+      total: String(MEDIA_ITEMS.length),
+      ...(page.nextPageToken ? { next_page_token: page.nextPageToken } : {}),
+    },
+  }
 }
 
 function getPlatformObject(params) {
@@ -901,6 +1069,8 @@ function materializeWorkRecord(record) {
 
 function getBusinessRecords(params) {
   const tableId = params.table_id ?? 'work_items'
+  const allRecords = tableId === 'work_items' ? WORK_RECORDS.map(materializeWorkRecord) : []
+  const page = paginateForward(allRecords, params, `business_records:${tableId}`)
   return {
     records: {
       workspace_id: 'business-ops',
@@ -908,10 +1078,11 @@ function getBusinessRecords(params) {
       table_name: tableId === 'work_items' ? 'Work items' : tableId,
       primary_field: 'name',
       fields: WORK_FIELDS,
-      records: tableId === 'work_items' ? WORK_RECORDS.map(materializeWorkRecord) : [],
+      records: page.items,
       views: WORK_VIEWS,
       active_view_id: 'all_work',
-      total: tableId === 'work_items' ? String(WORK_RECORDS.length) : '0',
+      total: String(allRecords.length),
+      ...(page.nextPageToken ? { next_page_token: page.nextPageToken } : {}),
       capabilities: {
         create: tableId === 'work_items',
         update: tableId === 'work_items',
@@ -924,8 +1095,60 @@ function getBusinessRecords(params) {
   }
 }
 
+const WORKSPACE_MESSAGES = [
+  {
+    id: 'reference-message-0',
+    timestamp: '2026-07-18T15:48:00Z',
+    sender_id: 'lina',
+    body: 'Customer communications are approved and staged.',
+  },
+  {
+    id: 'reference-message-1',
+    timestamp: '2026-07-18T16:02:00Z',
+    sender_id: 'maya',
+    body: 'The operating brief and open decisions are ready for review.',
+    attachments: [{
+      id: 'reference-brief',
+      name: 'Launch operating brief.pdf',
+      kind: 'file',
+      url: '/files/launch-operating-brief.pdf',
+      content_type: 'application/pdf',
+      size_bytes: 2480000,
+    }],
+    reactions: [{ key: 'check', label: '✅', count: 3, viewer_reacted: true }],
+    thread_reply_count: 1,
+    context: { workstream: 'launch' },
+  },
+  {
+    id: 'reference-message-2',
+    timestamp: '2026-07-18T16:08:00Z',
+    sender_id: 'jun',
+    body: 'I’ll assign the remaining owner before the review.',
+    status: 'read',
+  },
+  {
+    id: 'reference-message-1-reply-1',
+    timestamp: '2026-07-18T16:09:00Z',
+    sender_id: 'lina',
+    reply_to_id: 'reference-message-1',
+    body: 'The launch checklist is attached to the decision log.',
+  },
+  {
+    id: 'reference-message-3',
+    timestamp: '2026-07-18T16:14:00Z',
+    sender_id: 'maya',
+    body: 'Support coverage is now confirmed for the launch window.',
+    reactions: [{ key: 'rocket', label: '🚀', count: 2 }],
+  },
+]
+
 function getWorkspaceConversation(params) {
   const conversationId = params.conversation_id ?? 'launch-room'
+  const page = paginateOlder(
+    WORKSPACE_MESSAGES,
+    params,
+    `workspace_conversation:${conversationId}`,
+  )
   return {
     conversation: {
       id: conversationId,
@@ -938,39 +1161,8 @@ function getWorkspaceConversation(params) {
         { id: 'maya', name: 'Maya Chen', role: 'operations', status: 'online' },
         { id: 'lina', name: 'Lina Torres', role: 'customer success', status: 'away' },
       ],
-      messages: [
-        {
-          id: 'reference-message-1',
-          timestamp: '2026-07-18T16:02:00Z',
-          sender_id: 'maya',
-          body: 'The operating brief and open decisions are ready for review.',
-          attachments: [{
-            id: 'reference-brief',
-            name: 'Launch operating brief.pdf',
-            kind: 'file',
-            url: '/files/launch-operating-brief.pdf',
-            content_type: 'application/pdf',
-            size_bytes: 2480000,
-          }],
-          reactions: [{ key: 'check', label: '✅', count: 3, viewer_reacted: true }],
-          thread_reply_count: 1,
-          context: { workstream: 'launch' },
-        },
-        {
-          id: 'reference-message-2',
-          timestamp: '2026-07-18T16:08:00Z',
-          sender_id: 'jun',
-          body: 'I’ll assign the remaining owner before the review.',
-          status: 'read',
-        },
-        {
-          id: 'reference-message-1-reply-1',
-          timestamp: '2026-07-18T16:09:00Z',
-          sender_id: 'lina',
-          reply_to_id: 'reference-message-1',
-          body: 'Customer communications are approved and staged.',
-        },
-      ],
+      messages: page.items,
+      ...(page.nextPageToken ? { next_page_token: page.nextPageToken } : {}),
       context: {
         workspace_id: 'jim-technologies',
         conversation_id: conversationId,
@@ -980,7 +1172,8 @@ function getWorkspaceConversation(params) {
 }
 
 const HANDLERS = {
-  platform_assets:     () => getPlatformAssets(),
+  platform_assets:     p => getPlatformAssets(p),
+  media_library:       p => getMediaLibrary(p),
   platform_object:     p => getPlatformObject(p),
   platform_lineage:    p => getPlatformLineage(p),
   platform_repository: p => getPlatformRepository(p),
@@ -1275,25 +1468,38 @@ function scheduleOrderProgress(entry) {
 
 // Exported for the integration test (vitest) and any embedder. The
 // CLI entrypoint at the bottom auto-starts on PORT when run directly.
-export function createTerminalServer() {
-  return createServer(handleRequest)
+export function createTerminalServer(options = {}) {
+  return createServer((req, res) => {
+    void handleRequest(req, res, options).catch(error => {
+      handleRequestError(res, error)
+    })
+  })
 }
 
-async function handleRequest(req, res) {
+async function handleRequest(req, res, options) {
+  const startedAt = Date.now()
+  const requestUrl = new URL(req.url || '/', 'http://localhost')
+  const path = requestUrl.pathname
+  const requestId = safeRequestId(req.headers['x-request-id']) ?? randomUUID()
+  res.setHeader('X-Request-Id', requestId)
+
+  if (!applyCors(req, res, options)) {
+    return writeError(res, 403, 'permission_denied', 'origin is not allowed')
+  }
   if (req.method === 'OPTIONS') {
-    res.writeHead(204, corsHeaders())
+    res.writeHead(204)
     res.end()
     return
   }
-  res.setHeader('Access-Control-Allow-Origin', '*')
-
-  const requestUrl = new URL(req.url || '/', 'http://localhost')
-  const path = requestUrl.pathname
 
   // Bodyless routes — handled before body capture so a large GET (e.g.
   // a partial-content video range) doesn't trip the byte cap.
   if ((req.method === 'GET' || req.method === 'HEAD') &&
       (path === '/media' || path.startsWith('/media/'))) {
+    const context = requestContext(req, requestId, 'Media', {}, ['terminal:media'])
+    const auth = await authorizeRequest(res, options, context, startedAt)
+    if (!auth) return
+    auditResponse(res, options, context, auth, startedAt)
     return handleMedia(req, res, requestUrl)
   }
 
@@ -1301,24 +1507,40 @@ async function handleRequest(req, res) {
     res.writeHead(404).end()
     return
   }
+  if (req.method !== 'POST') return methodNotAllowed(res, 'POST')
+
+  const contentType = String(req.headers['content-type'] ?? '')
+    .split(';', 1)[0]
+    .trim()
+    .toLowerCase()
+  if (contentType !== 'application/json' && contentType !== 'application/connect+json') {
+    return writeError(res, 415, 'invalid_argument', 'content-type must be application/json or application/connect+json')
+  }
 
   // 32 MiB body cap — bumped from the 1 MiB CRUD default because file
   // uploads (base64-encoded) need headroom. Real backends route through
   // a reverse proxy with stricter, route-aware limits.
-  const MAX_BODY = 32 << 20
-  let body = ''
+  const configuredMaxBody = Number(options.maxBodyBytes ?? (32 << 20))
+  const MAX_BODY = Number.isFinite(configuredMaxBody) && configuredMaxBody > 0
+    ? Math.floor(configuredMaxBody)
+    : (32 << 20)
+  const declaredLength = Number(req.headers['content-length'])
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY) {
+    return writeError(res, 413, 'resource_exhausted', `body exceeds ${MAX_BODY} bytes`)
+  }
+  const chunks = []
   let bodyBytes = 0
   let oversize = false
   for await (const chunk of req) {
-    bodyBytes += chunk.length
+    const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
+    bodyBytes += bytes.length
     if (bodyBytes > MAX_BODY) { oversize = true; break }
-    body += chunk
+    chunks.push(bytes)
   }
   if (oversize) {
-    res.writeHead(413, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ code: 'resource_exhausted', message: `body exceeds ${MAX_BODY} bytes` }))
-    return
+    return writeError(res, 413, 'resource_exhausted', `body exceeds ${MAX_BODY} bytes`)
   }
+  const body = Buffer.concat(chunks, bodyBytes).toString('utf8')
   let parsed = {}
   try { parsed = body ? JSON.parse(body) : {} } catch {
     res.writeHead(400, { 'Content-Type': 'application/json' })
@@ -1329,21 +1551,129 @@ async function handleRequest(req, res) {
   // Connect-style Download lives outside the TerminalService namespace
   // because file_browser's default options.download_url targets it.
   if (path === '/files.v1.FileService/Download') {
+    const context = requestContext(req, requestId, 'Download', parsed, ['terminal:media'])
+    const auth = await authorizeRequest(res, options, context, startedAt)
+    if (!auth) return
+    auditResponse(res, options, context, auth, startedAt)
     return handleFileDownload(res, parsed)
   }
 
   const rpc = path.slice(SERVICE.length + 2)
-  switch (rpc) {
-    case 'ListSources': return json(res, { sources: SOURCES })
-    case 'Get':         return handleGet(res, parsed)
-    case 'Stream':      return handleStream(res, parsed)
-    case 'Generate':    return handleGenerate(res, parsed)
-    case 'SubmitAction': return handleSubmit(res, parsed)
-    case 'WatchAction':  return handleWatch(res, parsed)
-    default:
-      res.writeHead(404, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify({ code: 'not_found', message: `unknown RPC: ${rpc}` }))
+  const requiredScopes = rpc === 'SubmitAction' || rpc === 'WatchAction'
+    ? ['terminal:write']
+    : ['terminal:read']
+  const knownRpcs = new Set(['ListSources', 'Get', 'Stream', 'Generate', 'SubmitAction', 'WatchAction'])
+  if (!knownRpcs.has(rpc)) return notFound(res, `unknown RPC: ${rpc}`)
+
+  const context = requestContext(req, requestId, rpc, parsed, requiredScopes)
+  const auth = await authorizeRequest(res, options, context, startedAt)
+  if (!auth) return
+  auditResponse(res, options, context, auth, startedAt)
+
+  try {
+    switch (rpc) {
+      case 'ListSources': return json(res, { sources: SOURCES })
+      case 'Get':         return handleGet(res, parsed)
+      case 'Stream':      return handleStream(res, parsed)
+      case 'Generate':    return handleGenerate(res, parsed)
+      case 'SubmitAction': return handleSubmit(res, parsed)
+      case 'WatchAction':  return handleWatch(res, parsed)
+    }
+  } catch (error) {
+    handleRequestError(res, error)
   }
+}
+
+function safeRequestId(value) {
+  const candidate = Array.isArray(value) ? value[0] : value
+  return typeof candidate === 'string' && /^[A-Za-z0-9._:-]{1,128}$/.test(candidate)
+    ? candidate
+    : undefined
+}
+
+function requestContext(request, requestId, operation, body, requiredScopes) {
+  return {
+    request,
+    requestId,
+    operation,
+    sourceId: typeof body.source_id === 'string' ? body.source_id : undefined,
+    actionId: typeof body.action_id === 'string' ? body.action_id : undefined,
+    requiredScopes,
+    body,
+  }
+}
+
+async function authorizeRequest(res, options, context, startedAt) {
+  if (typeof options.authorize !== 'function') return { principal: undefined }
+  let result
+  try {
+    result = await options.authorize(context)
+  } catch {
+    emitAudit(options, context, undefined, 'error', 503, Date.now() - startedAt)
+    writeError(res, 503, 'unavailable', 'authorization service unavailable')
+    return null
+  }
+
+  const allowed = result === true || (result && result.allowed === true)
+  if (!allowed) {
+    const requestedStatus = typeof result === 'object' ? Number(result.status) : 403
+    const status = requestedStatus === 401 ? 401 : 403
+    const message = typeof result === 'object' && typeof result.message === 'string'
+      ? result.message
+      : status === 401 ? 'authentication required' : 'permission denied'
+    if (status === 401) res.setHeader('WWW-Authenticate', 'Bearer')
+    emitAudit(options, context, result?.principal, 'denied', status, Date.now() - startedAt)
+    writeError(res, status, status === 401 ? 'unauthenticated' : 'permission_denied', message)
+    return null
+  }
+  return { principal: typeof result === 'object' ? result.principal : undefined }
+}
+
+function auditResponse(res, options, context, auth, startedAt) {
+  res.once('finish', () => {
+    emitAudit(
+      options,
+      context,
+      auth.principal,
+      res.statusCode >= 400 ? 'error' : 'allowed',
+      res.statusCode,
+      Date.now() - startedAt,
+    )
+  })
+}
+
+function emitAudit(options, context, principal, outcome, status, durationMs) {
+  if (typeof options.onAudit !== 'function') return
+  const event = {
+    timestamp: new Date().toISOString(),
+    request_id: context.requestId,
+    operation: context.operation,
+    source_id: context.sourceId,
+    action_id: context.actionId,
+    subject: principal?.subject ?? principal?.id,
+    outcome,
+    status,
+    duration_ms: durationMs,
+  }
+  try {
+    Promise.resolve(options.onAudit(event)).catch(() => {})
+  } catch {
+    // Audit exporters are observability sinks; they must not break requests.
+  }
+}
+
+function handleRequestError(res, error) {
+  if (res.headersSent) {
+    if (!res.writableEnded) res.destroy(error instanceof Error ? error : undefined)
+    return
+  }
+  const status = Number(error?.statusCode)
+  writeError(
+    res,
+    Number.isInteger(status) && status >= 400 && status <= 599 ? status : 500,
+    typeof error?.code === 'string' ? error.code : 'internal',
+    status >= 400 && status < 500 && error instanceof Error ? error.message : 'internal server error',
+  )
 }
 
 function handleGet(res, req) {
@@ -1363,7 +1693,7 @@ function handleStream(res, req) {
     const count = Math.max(0, Math.min(Number.isFinite(requested) ? requested : 0, 1000))
     const code = req.params?.code ?? 'internal'
     const message = req.params?.message ?? 'simulated stream error'
-    res.writeHead(200, { 'Content-Type': 'application/connect+json', 'Access-Control-Allow-Origin': '*' })
+    res.writeHead(200, { 'Content-Type': 'application/connect+json' })
     for (let i = 0; i < count; i++) {
       res.write(frame({ metric: { value: i, unit: 'count' } }))
     }
@@ -1377,7 +1707,6 @@ function handleStream(res, req) {
 
   res.writeHead(200, {
     'Content-Type': 'application/connect+json',
-    'Access-Control-Allow-Origin': '*',
   })
 
   // Per-connection state for sources that need to evolve a series.
@@ -1543,7 +1872,6 @@ function handleWatch(res, req) {
 
   res.writeHead(200, {
     'Content-Type': 'application/connect+json',
-    'Access-Control-Allow-Origin': '*',
   })
 
   let cursor = 0
@@ -1579,14 +1907,39 @@ function handleWatch(res, req) {
 const TERMINAL = new Set(['ACTION_STATUS_OK', 'ACTION_STATUS_REJECTED', 'ACTION_STATUS_FAILED', 'ACTION_STATUS_CANCELLED'])
 function isTerminal(s) { return TERMINAL.has(s) }
 
-function corsHeaders() {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Idempotency-Key, Range, Connect-Protocol-Version',
-    'Access-Control-Expose-Headers': 'Content-Range, Accept-Ranges, Content-Length',
-    'Access-Control-Max-Age': '86400',
-  }
+function applyCors(req, res, options) {
+  const origin = typeof req.headers.origin === 'string' ? req.headers.origin : undefined
+  const policy = options.allowedOrigins
+  const allowed = !origin || policy === undefined || policy === '*'
+    || (Array.isArray(policy) && policy.includes(origin))
+    || (typeof policy === 'function' && policy(origin) === true)
+  if (!allowed) return false
+
+  const allowOrigin = policy === undefined || policy === '*' ? '*' : origin
+  if (allowOrigin) res.setHeader('Access-Control-Allow-Origin', allowOrigin)
+  if (policy !== undefined && policy !== '*') res.setHeader('Vary', 'Origin')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Authorization, Content-Type, Idempotency-Key, Range, Connect-Protocol-Version, X-Request-Id, X-Tenant-Id',
+  )
+  res.setHeader(
+    'Access-Control-Expose-Headers',
+    'Content-Range, Accept-Ranges, Content-Length, X-Request-Id',
+  )
+  res.setHeader('Access-Control-Max-Age', '86400')
+  return true
+}
+
+function writeError(res, status, code, message) {
+  if (res.writableEnded) return
+  res.writeHead(status, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ code, message }))
+}
+
+function methodNotAllowed(res, allow) {
+  res.setHeader('Allow', allow)
+  return writeError(res, 405, 'invalid_argument', `method must be ${allow}`)
 }
 
 // =============================================================
@@ -1634,7 +1987,30 @@ function hivePartition(rawPath, contentType) {
 }
 
 function normalizePath(value) {
-  return String(value ?? '').replace(/^\/+|\/+$/g, '').replace(/\/{2,}/g, '/')
+  const raw = String(value ?? '')
+  if (raw.includes('\0') || raw.includes('\\')) {
+    throw invalidPath('path contains a forbidden character')
+  }
+  const segments = raw.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean)
+  if (segments.some(segment => segment === '.' || segment === '..')) {
+    throw invalidPath('path traversal segments are not allowed')
+  }
+  return segments.join('/')
+}
+
+function invalidPath(message) {
+  return Object.assign(new Error(message), {
+    statusCode: 400,
+    code: 'invalid_argument',
+  })
+}
+
+function decodePathPart(value) {
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    throw invalidPath('path contains malformed URL encoding')
+  }
 }
 
 function joinPath(dir, name) {
@@ -1743,10 +2119,10 @@ function handleMedia(req, res, requestUrl) {
   const parts = requestUrl.pathname.split('/').filter(Boolean)
   const namespace = requestUrl.searchParams.get('namespace')
     ?? requestUrl.searchParams.get('org')
-    ?? (parts[1] ? decodeURIComponent(parts[1]) : '')
+    ?? (parts[1] ? decodePathPart(parts[1]) : '')
   const filePath = normalizePath(
     requestUrl.searchParams.get('path')
-      ?? (parts.length > 2 ? parts.slice(2).map(decodeURIComponent).join('/') : ''),
+      ?? (parts.length > 2 ? parts.slice(2).map(decodePathPart).join('/') : ''),
   )
   if (!namespace || !filePath) {
     return notFound(res, 'expected /media?namespace=<bucket>&path=<file>')
@@ -1756,8 +2132,6 @@ function handleMedia(req, res, requestUrl) {
 
   const total = file.bytes.length
   const base = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Expose-Headers': 'Content-Range, Accept-Ranges, Content-Length',
     'Accept-Ranges': 'bytes',
     'Content-Type': file.contentType,
     'Cache-Control': 'private, max-age=60',
@@ -1807,7 +2181,6 @@ function handleFileDownload(res, req) {
   const filePath = normalizePath(req.path ?? req.params?.path ?? '')
   res.writeHead(200, {
     'Content-Type': 'application/connect+json',
-    'Access-Control-Allow-Origin': '*',
   })
   const file = getNamespace(namespace).get(filePath)
   if (!file) {
@@ -1825,17 +2198,17 @@ function handleFileDownload(res, req) {
 }
 
 function json(res, obj) {
-  res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' })
+  res.writeHead(200, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(obj))
 }
 
 function notFound(res, msg) {
-  res.writeHead(404, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' })
+  res.writeHead(404, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify({ code: 'not_found', message: msg }))
 }
 
 function badRequest(res, msg) {
-  res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' })
+  res.writeHead(400, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify({ code: 'invalid_argument', message: msg }))
 }
 

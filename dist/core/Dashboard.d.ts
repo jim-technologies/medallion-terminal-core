@@ -4,9 +4,10 @@ import { type PaletteSuggest } from './CommandPalette';
 import { type TemplateTrustPolicy } from './templateSecurity';
 export type DashboardTheme = 'dark' | 'operator' | 'light';
 export type DashboardTemplateTrust = 'untrusted' | 'trusted';
-export declare function Dashboard({ template, backendUrl, onEvent, onCtxChange, paletteSuggest, chrome, onShare, theme, templateTrust, templateTrustPolicy, }: {
+export declare function Dashboard({ template, backendUrl, backendHeaders, onEvent, onCtxChange, paletteSuggest, chrome, onShare, theme, templateTrust, templateTrustPolicy, }: {
     template: Template;
     backendUrl?: string;
+    backendHeaders?: Record<string, string>;
     chrome?: 'full' | 'minimal';
     onEvent?: (event: DashboardEvent) => void;
     onCtxChange?: (ctx: Record<string, string>) => void;

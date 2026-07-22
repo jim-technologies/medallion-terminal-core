@@ -228,10 +228,38 @@ export function buildMediaUrl(template: string, bucket: string, path: string): s
 // Absolute HTTP(S) endpoints remain untouched (CDN/federated storage);
 // relative endpoints join cleanly to the backend, including same-origin "".
 export function resolveEndpointUrl(backendUrl: string | undefined, endpoint: string): string {
-  if (/^https?:\/\//i.test(endpoint)) return endpoint
+  if (/^(?:https?:)?\/\//i.test(endpoint)) return endpoint
   const base = backendUrl ?? ''
   if (!base) return endpoint
   return `${base.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`
+}
+
+// Host credentials are scoped to Dashboard.backendUrl. FileBrowser endpoint
+// options may deliberately point at a CDN or federated service, so never copy
+// backend headers across an origin boundary. Relative endpoints are backend-
+// relative by definition. A same-origin absolute URL is also safe when its
+// origin can be established from backendUrl (or from window for same-origin
+// deployments).
+export function backendHeadersForEndpoint(
+  backendUrl: string | undefined,
+  endpoint: string,
+  headers: Record<string, string>,
+): Record<string, string> {
+  if (!/^(?:https?:)?\/\//i.test(endpoint)) return headers
+
+  let trustedOrigin: string | undefined
+  if (backendUrl && /^https?:\/\//i.test(backendUrl)) {
+    try { trustedOrigin = new URL(backendUrl).origin } catch { return {} }
+  } else if (typeof window !== 'undefined') {
+    trustedOrigin = window.location.origin
+  }
+  if (!trustedOrigin) return {}
+
+  try {
+    return new URL(endpoint, trustedOrigin).origin === trustedOrigin ? headers : {}
+  } catch {
+    return {}
+  }
 }
 
 export function arrayBufferToBase64(buf: ArrayBuffer): string {

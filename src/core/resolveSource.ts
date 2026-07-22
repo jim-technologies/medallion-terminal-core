@@ -108,6 +108,7 @@ export function resolveSource(
   source: DataSource,
   ctx: Record<string, string>,
   backendUrl?: string,
+  backendHeaders: Record<string, string> = {},
 ): DataSource {
   // Mode 1: source_id — translate to a Connect HTTP/JSON call
   if (source.source_id) {
@@ -137,7 +138,7 @@ export function resolveSource(
     return {
       url: `${base}/${TERMINAL_SERVICE}/${method}`,
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...backendHeaders, 'Content-Type': 'application/json' },
       body: { source_id: source.source_id, params },
       stream: source.stream ? 'connect' : false,
       refreshIntervalMs: source.refreshIntervalMs ?? source.refreshInterval,

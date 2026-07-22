@@ -95,7 +95,8 @@
 .gphotos-search button:focus-visible,
 .gphotos-viewer-button:focus-visible,
 .gphotos-nav-item:focus-visible,
-.gphotos-tile:focus-visible {
+.gphotos-tile-open:focus-visible,
+.gphotos-select-control:focus-visible {
   outline: 2px solid #0b57d0;
   outline-offset: 2px;
 }
@@ -645,7 +646,7 @@
 }
 
 .gphotos-day > header > span {
-  color: #80868b;
+  color: #5f6368;
   font-size: 11px;
 }
 
@@ -661,10 +662,19 @@
   position: relative;
   min-width: 0;
   min-height: 0;
-  padding: 0;
-  border: 0;
   border-radius: 2px;
   background: #e8eaed;
+  overflow: hidden;
+}
+
+.gphotos-tile-open {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
   overflow: hidden;
   cursor: pointer;
 }
@@ -689,7 +699,7 @@
   grid-row: span 3;
 }
 
-.gphotos-tile > img {
+.gphotos-tile-open > img {
   display: block;
   width: 100%;
   height: 100%;
@@ -697,7 +707,7 @@
   transition: transform 220ms ease, filter 150ms ease;
 }
 
-.gphotos-tile:hover > img {
+.gphotos-tile:hover .gphotos-tile-open > img {
   transform: scale(1.012);
 }
 
@@ -711,7 +721,7 @@
 
 .gphotos-tile:hover .gphotos-tile-overlay,
 .gphotos-tile.is-selected .gphotos-tile-overlay,
-.gphotos-tile:focus-visible .gphotos-tile-overlay {
+.gphotos-tile:focus-within .gphotos-tile-overlay {
   opacity: 1;
 }
 
@@ -732,18 +742,20 @@
   justify-content: center;
   width: 23px;
   height: 23px;
+  padding: 0;
   border: 2px solid #fff;
   border-radius: 50%;
   color: #fff;
   background: rgba(32, 33, 36, 0.3);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
   opacity: 0;
+  z-index: 2;
   cursor: pointer;
   transition: opacity 120ms ease, background 120ms ease;
 }
 
 .gphotos-tile:hover .gphotos-select-control,
-.gphotos-tile:focus-visible .gphotos-select-control,
+.gphotos-tile:focus-within .gphotos-select-control,
 .gphotos-tile.is-selected .gphotos-select-control {
   opacity: 1;
 }
@@ -769,7 +781,7 @@
 }
 
 .gphotos-tile:hover .gphotos-favorite-badge,
-.gphotos-tile:focus-visible .gphotos-favorite-badge {
+.gphotos-tile:focus-within .gphotos-favorite-badge {
   opacity: 1;
 }
 
@@ -816,7 +828,7 @@
 }
 
 .gphotos-tile:hover .gphotos-tile-title,
-.gphotos-tile:focus-visible .gphotos-tile-title {
+.gphotos-tile:focus-within .gphotos-tile-title {
   opacity: 1;
 }
 

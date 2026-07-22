@@ -11,6 +11,16 @@ const preview: Preview = {
     ),
   ],
   parameters: {
+    a11y: {
+      // Keep the full audit visible in Storybook while the curated Playwright
+      // gate blocks automated regressions on representative product
+      // surfaces. Dense terminal contrast/target-size findings remain tracked
+      // as TODOs instead of making the all-story smoke suite unactionable.
+      test: 'todo',
+      options: {
+        runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'],
+      },
+    },
     backgrounds: {
       default: 'graphite',
       values: [

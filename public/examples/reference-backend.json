@@ -1,6 +1,16 @@
 {
   "title": "Reference Backend — BTC desk",
-  "context": { "values": { "symbol": "BTCUSD" } },
+  "context": { "values": {
+    "symbol": "BTCUSD",
+    "asset_id": "dataset.customer_360",
+    "asset_kind": "dataset",
+    "catalog_page_token": "",
+    "media_page_token": "",
+    "conversation_page_token": "",
+    "records_page_token": "",
+    "table_id": "work_items",
+    "conversation_id": "launch-room"
+  } },
   "widgets": [
     { "id": "ai",     "component": "prompt", "span": 12, "height": 110, "title": "Ask (try: \"show me ETH candles\", \"options chain\", \"rebuild for SOL\")",
       "options": {} },
@@ -22,6 +32,20 @@
       "options": { "symbol": "${ctx.symbol}", "quote_unit": "BTC", "available": 1.25, "confirm": true, "action_id": "place_order" } },
 
     { "id": "news",   "component": "text", "span": 12, "height": 240, "title": "News",
-      "source": { "source_id": "news", "params": { "symbol": "${ctx.symbol}" } } }
+      "source": { "source_id": "news", "params": { "symbol": "${ctx.symbol}" } } },
+
+    { "id": "catalog", "component": "asset_catalog", "span": 4, "height": 470, "title": "Governed assets",
+      "options": { "page_token_key": "catalog_page_token" },
+      "source": { "source_id": "platform_assets", "params": { "page_token": "${ctx.catalog_page_token}", "page_size": "3" } } },
+    { "id": "media", "component": "media_gallery", "span": 8, "height": 470, "title": "Authorized media",
+      "options": { "page_token_key": "media_page_token", "group_by": "day" },
+      "source": { "source_id": "media_library", "params": { "page_token": "${ctx.media_page_token}", "page_size": "4" } } },
+
+    { "id": "conversation", "component": "conversation", "span": 5, "height": 460, "title": "Workspace conversation",
+      "options": { "page_token_key": "conversation_page_token", "mode": "channel", "search": true },
+      "source": { "source_id": "workspace_conversation", "params": { "conversation_id": "${ctx.conversation_id}", "page_token": "${ctx.conversation_page_token}", "page_size": "3" } } },
+    { "id": "records", "component": "record_grid", "span": 7, "height": 460, "title": "Business records",
+      "options": { "page_token_key": "records_page_token", "view_id": "all_work", "inline_edit": true },
+      "source": { "source_id": "business_records", "params": { "table_id": "${ctx.table_id}", "page_token": "${ctx.records_page_token}", "page_size": "4" } } }
   ]
 }

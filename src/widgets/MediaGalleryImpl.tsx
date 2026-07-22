@@ -3,6 +3,11 @@ import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 import {
+  CursorPager,
+  cursorPageTokenKey,
+  type CursorPaginationOptions,
+} from './CursorPager'
+import {
   filterMediaItems,
   formatMediaDate,
   formatMediaDuration,
@@ -14,7 +19,7 @@ import {
   type MediaKind,
 } from './mediaShape'
 
-interface MediaGalleryOptions {
+interface MediaGalleryOptions extends CursorPaginationOptions {
   search?: boolean
   kind_filter?: boolean
   collection_filter?: boolean
@@ -35,7 +40,7 @@ type KindFilter = 'all' | MediaKind | 'favorite'
 // sharing, deletion, face recognition, and policy remain backend concerns;
 // this widget consumes authorized media URLs and provides the reusable
 // browsing/viewing projection.
-export function MediaGalleryImpl({ data, options }: WidgetProps) {
+export function MediaGalleryImpl({ data, options, widgetId }: WidgetProps) {
   const opts = (options ?? {}) as MediaGalleryOptions
   const { ctx, setCtx } = useDashboard()
   const library = useMemo(() => normalizeMediaLibrary(data), [data])
@@ -58,6 +63,7 @@ export function MediaGalleryImpl({ data, options }: WidgetProps) {
   const selected = selectedIndex >= 0 ? filtered[selectedIndex] : undefined
   const selectedContextKey = opts.media_context?.key ?? 'media_id'
   const selectedKindKey = opts.media_context?.kind_key ?? 'media_kind'
+  const hasPagination = !!library.nextPageToken || !!ctx[cursorPageTokenKey(widgetId, opts)]
 
   const openItem = useCallback((item: MediaItemData) => {
     for (const [key, value] of Object.entries(item.context)) setCtx(key, value)
@@ -98,8 +104,6 @@ export function MediaGalleryImpl({ data, options }: WidgetProps) {
     window.addEventListener('keydown', onKeyDown, true)
     return () => window.removeEventListener('keydown', onKeyDown, true)
   }, [moveSelection, selected])
-
-  if (library.items.length === 0) return <Empty>No photos or videos</Empty>
 
   const hasFavorites = library.items.some(item => item.favorite)
   const showFilters = opts.kind_filter !== false
@@ -168,7 +172,9 @@ export function MediaGalleryImpl({ data, options }: WidgetProps) {
       </div>
 
       <div className="flex-1 min-h-0 overflow-auto pr-1">
-        {filtered.length === 0 ? (
+        {library.items.length === 0 ? (
+          <Empty>No photos or videos</Empty>
+        ) : filtered.length === 0 ? (
           <Empty>No matching media</Empty>
         ) : (
           <div className="space-y-4 pb-1">
@@ -200,6 +206,17 @@ export function MediaGalleryImpl({ data, options }: WidgetProps) {
           </div>
         )}
       </div>
+
+      {hasPagination && (
+        <div className="pt-2 flex justify-end shrink-0">
+          <CursorPager
+            nextPageToken={library.nextPageToken}
+            widgetId={widgetId}
+            options={opts}
+            ariaLabel="Media pages"
+          />
+        </div>
+      )}
 
       {selected && (
         <MediaViewer

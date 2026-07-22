@@ -1,11 +1,11 @@
-import { n as e } from "./DashboardContext-BKgLoCrb.js";
-import { a as t, c as n, t as r } from "./resolveSource-BZ3Z0pkp.js";
-import { i, n as a, r as o, t as s } from "./useWatchAction-DzSgZqJt.js";
+import { n as e } from "./DashboardContext-65LG4CII.js";
+import { a as t, c as n, t as r } from "./resolveSource-D7AiNCce.js";
+import { i, n as a, r as o, t as s } from "./useWatchAction-BA_2h6mG.js";
 import { useCallback as c, useEffect as l, useRef as u, useState as d } from "react";
 //#region src/hooks/useSubmitAction.ts
 function f(f) {
-	let { backendUrl: p, emit: m, requestRefresh: h, toast: g } = e(), [_, v] = d(!1), [y, b] = d(null), [x, S] = d(null), C = u(""), w = u(!1), T = i(p, y ? { clientRequestId: y.clientRequestId } : null), E = c((e, t) => {
-		if (S(e), m({
+	let { backendUrl: p, backendHeaders: m, emit: h, requestRefresh: g, toast: _ } = e(), [v, y] = d(!1), [b, x] = d(null), [S, C] = d(null), w = u(""), T = u(!1), E = i(p, b ? { clientRequestId: b.clientRequestId } : null, m), D = c((e, t) => {
+		if (C(e), h({
 			type: "action",
 			actionId: e.actionId,
 			clientRequestId: e.clientRequestId,
@@ -14,67 +14,67 @@ function f(f) {
 			terminal: e.terminal
 		}), !e.terminal) return;
 		let n = s(e.status);
-		(n || t.announce) && g(e.message ?? (n ? `${e.actionId} failed` : t.successMessage ?? `${e.actionId} completed`), n ? "error" : "ok"), !n && t.refresh && h(t.refreshTarget), b(null), v(!1), w.current = !1, t.onComplete?.(e);
+		(n || t.announce) && _(e.message ?? (n ? `${e.actionId} failed` : t.successMessage ?? `${e.actionId} completed`), n ? "error" : "ok"), !n && t.refresh && g(t.refreshTarget), x(null), y(!1), T.current = !1, t.onComplete?.(e);
 	}, [
-		m,
 		h,
-		g
+		g,
+		_
 	]);
 	return l(() => {
-		if (!y) return;
-		if (T.error) {
-			let e = `${y.clientRequestId}:error:${T.error}`;
-			if (e === C.current) return;
-			C.current = e, E({
-				id: T.latest?.id ?? "",
-				actionId: T.latest?.action_id || y.actionId,
-				clientRequestId: T.latest?.client_request_id || y.clientRequestId,
+		if (!b) return;
+		if (E.error) {
+			let e = `${b.clientRequestId}:error:${E.error}`;
+			if (e === w.current) return;
+			w.current = e, D({
+				id: E.latest?.id ?? "",
+				actionId: E.latest?.action_id || b.actionId,
+				clientRequestId: E.latest?.client_request_id || b.clientRequestId,
 				status: "ACTION_STATUS_FAILED",
-				message: T.error,
+				message: E.error,
 				terminal: !0
-			}, y);
+			}, b);
 			return;
 		}
-		let e = T.latest;
+		let e = E.latest;
 		if (e) {
-			let t = `${y.clientRequestId}:${e.sequence}:${e.status}`;
-			if (t !== C.current) {
-				C.current = t;
+			let t = `${b.clientRequestId}:${e.sequence}:${e.status}`;
+			if (t !== w.current) {
+				w.current = t;
 				let n = o(e.status) || a(e.status), r = !a(e.status);
-				if (E({
+				if (D({
 					id: e.id,
-					actionId: e.action_id || y.actionId,
-					clientRequestId: e.client_request_id || y.clientRequestId,
+					actionId: e.action_id || b.actionId,
+					clientRequestId: e.client_request_id || b.clientRequestId,
 					status: n ? e.status : "ACTION_STATUS_FAILED",
 					message: n ? e.message ?? e.status_detail : `WatchAction returned invalid status ${JSON.stringify(e.status)}`,
 					data: e.data,
 					terminal: r
-				}, y), r) return;
+				}, b), r) return;
 			} else if (!a(e.status)) return;
 		}
-		if (!T.done) return;
-		let t = `${y.clientRequestId}:ended-without-terminal`;
-		t !== C.current && (C.current = t, E({
+		if (!E.done) return;
+		let t = `${b.clientRequestId}:ended-without-terminal`;
+		t !== w.current && (w.current = t, D({
 			id: e?.id ?? "",
-			actionId: e?.action_id || y.actionId,
-			clientRequestId: e?.client_request_id || y.clientRequestId,
+			actionId: e?.action_id || b.actionId,
+			clientRequestId: e?.client_request_id || b.clientRequestId,
 			status: "ACTION_STATUS_FAILED",
 			message: "WatchAction ended before a terminal status",
 			terminal: !0
-		}, y));
+		}, b));
 	}, [
-		y,
-		E,
-		T.done,
-		T.error,
-		T.latest
+		b,
+		D,
+		E.done,
+		E.error,
+		E.latest
 	]), {
 		submit: c(async (e) => {
-			if (w.current) return null;
+			if (T.current) return null;
 			let i = e.actionId.trim();
-			if (!i) return g("actionId is required", "error"), null;
-			if (p === void 0) return g("This action requires backendUrl", "error"), null;
-			w.current = !0;
+			if (!i) return _("actionId is required", "error"), null;
+			if (p === void 0) return _("This action requires backendUrl", "error"), null;
+			T.current = !0;
 			let s = n(), c = {
 				actionId: i,
 				clientRequestId: s,
@@ -84,11 +84,14 @@ function f(f) {
 				announce: e.announce !== !1,
 				onComplete: e.onComplete
 			};
-			v(!0), S(null), C.current = "";
+			y(!0), C(null), w.current = "";
 			try {
 				let n = await fetch(t(p), {
 					method: "POST",
-					headers: { "Content-Type": "application/json" },
+					headers: {
+						...m,
+						"Content-Type": "application/json"
+					},
 					body: JSON.stringify(r({
 						actionId: i,
 						params: e.params,
@@ -105,14 +108,14 @@ function f(f) {
 					data: l.data,
 					terminal: !a(u)
 				};
-				return f.terminal ? E(f, c) : (S(f), m({
+				return f.terminal ? D(f, c) : (C(f), h({
 					type: "action",
 					actionId: f.actionId,
 					clientRequestId: s,
 					status: u,
 					message: f.message,
 					terminal: !1
-				}), b(c)), f;
+				}), x(c)), f;
 			} catch (e) {
 				let t = {
 					id: "",
@@ -122,18 +125,19 @@ function f(f) {
 					message: e instanceof Error ? e.message : "Action failed",
 					terminal: !0
 				};
-				return E(t, c), t;
+				return D(t, c), t;
 			}
 		}, [
 			p,
 			m,
-			E,
-			g,
+			h,
+			D,
+			_,
 			f
 		]),
-		submitting: _ || y != null,
-		activeActionId: y?.actionId ?? null,
-		result: x
+		submitting: v || b != null,
+		activeActionId: b?.actionId ?? null,
+		result: S
 	};
 }
 //#endregion

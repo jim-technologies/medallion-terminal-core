@@ -86,6 +86,22 @@ describe('resolveSource — source_id mode', () => {
     expect(out.stream).toBe('connect')
   })
 
+  it('adds trusted host headers without putting them in template data', () => {
+    const source = { source_id: 'governed_assets' }
+    const out = resolveSource(
+      source,
+      {},
+      'https://api.example.com',
+      { Authorization: 'Bearer host-token', 'X-Tenant-Id': 'jim-technologies' },
+    )
+    expect(out.headers).toEqual({
+      Authorization: 'Bearer host-token',
+      'X-Tenant-Id': 'jim-technologies',
+      'Content-Type': 'application/json',
+    })
+    expect(source).toEqual({ source_id: 'governed_assets' })
+  })
+
   it('strips trailing slash from backendUrl', () => {
     const out = resolveSource(
       { source_id: 'x' },

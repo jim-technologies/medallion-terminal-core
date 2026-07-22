@@ -92,6 +92,10 @@ export interface DashboardContextValue {
   // Connect backend that resolves widgets with `source_id` and powers
   // the Generate RPC. Optional — fallback paths exist for both.
   backendUrl?: string
+  // Host-owned headers for TerminalService and backend-relative file
+  // operations (for example Authorization and tenant routing). These are
+  // never read from template JSON or included in snapshots.
+  backendHeaders: Record<string, string>
   // Dashboard-level refresh interval (ms). Overrides per-widget
   // `source.refreshInterval` when set. 0 / undefined = no override.
   // Streaming sources are unaffected.
@@ -171,6 +175,7 @@ export const DEFAULT_DASHBOARD_CONTEXT: DashboardContextValue = {
   ctx: {},
   setCtx: () => {},
   widgets: [],
+  backendHeaders: {},
   toast: () => {},
   compact: false,
   fullscreenId: null,
