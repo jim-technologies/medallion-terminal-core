@@ -106,7 +106,7 @@ data mechanics support them.
   linked selection, saved views, create/update/delete, idempotency, and stale
   revision rejection.
 - Proto generation is stable and generated JSON types are publicly exported.
-- `pnpm check` is green.
+- `make validate` is green.
 - `pnpm build:storybook` is green.
 - File upload/list/Range/download integration is covered.
 - Documentation clearly separates frontend readiness from backend services

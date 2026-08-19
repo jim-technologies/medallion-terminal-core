@@ -29,4 +29,4 @@ flox activate -- pnpm exec vitest run src/__tests__/productionReadinessExamples.
 flox activate -- pnpm exec playwright test --grep 'readiness|Production readiness'
 ```
 
-Run `pnpm ci:verify` for the complete release gate.
+Run `make validate` for the complete release gate.
