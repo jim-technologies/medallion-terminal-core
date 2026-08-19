@@ -31,7 +31,7 @@ jobs:
 
       - uses: flox/activate-action@v1
         with:
-          command: pnpm run ci:verify
+          command: make validate
 
       - name: Upload browser failure diagnostics
         if: failure()
