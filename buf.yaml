@@ -3,7 +3,11 @@ modules:
   - path: proto
 lint:
   use:
+    # STANDARD is buf v2's DEFAULT-level rule set.
     - STANDARD
+    # Comments are part of the public contract: every published
+    # service, RPC, message, field, enum, and oneof is documented.
+    - COMMENTS
   except:
     # Get/Stream intentionally share DataRequest/DataResponse — the
     # whole-point of the design is one request type, one response type.
