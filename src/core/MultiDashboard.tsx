@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Dashboard, type DashboardTemplateTrust, type DashboardTheme } from './Dashboard'
+import {
+  Dashboard,
+  type DashboardProps,
+  type DashboardTemplateTrust,
+  type DashboardTheme,
+} from './Dashboard'
 import type { TemplateTrustPolicy } from './templateSecurity'
 import type { Template } from '../types/template'
 
@@ -42,6 +47,13 @@ export function MultiDashboard({
   theme = 'dark',
   templateTrust,
   templateTrustPolicy,
+  resolveAssetIntent,
+  assetRenderers,
+  assetApplicationFrame,
+  saveAssetOpenPreference,
+  onAssetOpenError,
+  onIntent,
+  registry,
 }: {
   tabs: Tab[]
   activeIndex: number
@@ -51,6 +63,13 @@ export function MultiDashboard({
   theme?: DashboardTheme
   templateTrust?: DashboardTemplateTrust
   templateTrustPolicy?: TemplateTrustPolicy
+  resolveAssetIntent?: DashboardProps['resolveAssetIntent']
+  assetRenderers?: DashboardProps['assetRenderers']
+  assetApplicationFrame?: DashboardProps['assetApplicationFrame']
+  saveAssetOpenPreference?: DashboardProps['saveAssetOpenPreference']
+  onAssetOpenError?: DashboardProps['onAssetOpenError']
+  onIntent?: DashboardProps['onIntent']
+  registry?: DashboardProps['registry']
 }) {
   const safeIndex = Math.max(0, Math.min(activeIndex, tabs.length - 1))
   useTabHotkeys(tabs.length, onSelect)
@@ -77,6 +96,13 @@ export function MultiDashboard({
                 theme={theme}
                 templateTrust={templateTrust}
                 templateTrustPolicy={templateTrustPolicy}
+                resolveAssetIntent={resolveAssetIntent}
+                assetRenderers={assetRenderers}
+                assetApplicationFrame={assetApplicationFrame}
+                saveAssetOpenPreference={saveAssetOpenPreference}
+                onAssetOpenError={onAssetOpenError}
+                onIntent={onIntent}
+                registry={registry}
               />
             )}
           </div>

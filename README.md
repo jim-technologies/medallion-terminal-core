@@ -27,6 +27,99 @@ For the data-platform foundation demo, open
 For the typed record workspace, open
 `http://localhost:5173/?template=/examples/work-management.json&backend=http://localhost:3001`.
 
+## Building applications with Terminal Core
+
+Terminal Core is also Medallion's shared React UI and workbench toolkit.
+Compass, Ontology, Terminal, Connect, and trusted custom applications can
+compose the same controls and data-dense layout patterns without rendering a
+`Dashboard`:
+
+```tsx
+import {
+  AppSurface,
+  Button,
+  DesignSystemProvider,
+  Inspector,
+  PropertyList,
+  Sidebar,
+  SplitPane,
+  Toolbar,
+  Tree,
+} from 'medallion-terminal-core/toolkit'
+import 'medallion-terminal-core/styles'
+
+export function ObjectWorkbench() {
+  return (
+    <DesignSystemProvider theme="dark" density="compact">
+      <AppSurface>
+        <Toolbar label="Object actions">
+          <Button intent="primary" variant="solid">New object</Button>
+        </Toolbar>
+        <SplitPane
+          primary={<Sidebar label="Explorer">...</Sidebar>}
+          secondary={(
+            <Inspector label="Selection" title="Selected object">
+              <PropertyList properties={{ owner: 'Jun', status: 'Active' }} />
+            </Inspector>
+          )}
+        />
+      </AppSurface>
+    </DesignSystemProvider>
+  )
+}
+```
+
+The package includes scoped foundations, accessible application controls, and
+generic workbench primitives. It does not provide application installation,
+authentication, tenant policy, storage, indexing, ontology semantics, routing,
+or sandboxing. Those remain host responsibilities. See [TOOLKIT.md](TOOLKIT.md)
+for the component catalog, token contract, accessibility behavior,
+composition guidance, and migration notes.
+
+Storybook also includes a generic database explorer composition with a
+connection/schema/table tree, sortable and filterable row preview, structure
+and index metadata, editable query presentation, bounded paging, and row
+inspection, plus a focused **View table** sample with user-controlled columns.
+They consume host-provided metadata and rows; credentials, authorization, SQL
+execution, cancellation, and cursor paging remain backend or trusted-host
+responsibilities.
+
+Use the narrowest public entry for each surface:
+
+| Entry | Use it for |
+|---|---|
+| `medallion-terminal-core/toolkit` | Controls and workbench composition without Dashboard |
+| `medallion-terminal-core/dashboard` | Dashboard, widget registry, templates, and host intents |
+| `medallion-terminal-core/asset-open` | Asset resolver, renderer, and application-frame contracts |
+| `medallion-terminal-core` | Backward-compatible combined SDK |
+
+Built-in widgets and host-registered `React.lazy` applications retain dynamic
+import boundaries. Package checks enforce entry-size budgets and prevent
+chart, map, or media runtimes from leaking into consumers that only import the
+toolkit or asset-open bridge. Recharts, lightweight-charts, and MapLibre are
+optional renderer peers: focused toolkit/asset-open consumers do not install
+them; Dashboard hosts install the engines required by their enabled built-ins.
+
+Dashboard hosts can receive generic object and command intents without moving
+authorization into this package:
+
+```tsx
+<Dashboard
+  template={template}
+  onIntent={intent => hostIntentBus.publish(intent)}
+/>
+```
+
+Custom widgets can remain process-global through `registerWidget()`, or be
+isolated per host:
+
+```tsx
+const registry = createWidgetRegistry()
+registry.register('custom_summary', CustomSummary)
+
+<Dashboard template={template} registry={registry} />
+```
+
 ## How It Works
 
 1. Backend implements `TerminalService` (proto in `proto/medallion/terminal/v1/`):
@@ -61,6 +154,14 @@ Selections flow through `ctx`, so one asset click can retarget object detail,
 lineage, repository, record, and analytical widgets together. The reference
 backend implements the canonical platform and record payloads; the bundled
 examples wire them into complete workspaces.
+
+Storybook's `Clones/Spotify/Backstage` suite demonstrates how those neutral
+parts compose into an internal developer portal: software catalog, entity and
+plugin pages, CI/CD, API relationships, Kubernetes status, dependency
+topology, self-service templates, and TechDocs. It is an example-only
+presentation shell; the host still owns catalog ingestion, permissions,
+indexed search, template execution, infrastructure discovery, and docs
+publication.
 
 See [PLATFORM.md](PLATFORM.md) for the production service boundaries,
 authorization invariants, and the remaining backend responsibilities for a
@@ -195,7 +296,7 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `action_log` | (none) | Live order blotter — listens to `emit({type:'action'})` |
 | `alert_log` | (none) | Live alert feed — listens to `emit({type:'alert'})` |
 | `tape` | `{events: [{timestamp, price?, size?, side?, label?}]}` or one event | Time-and-sales / high-frequency append-only stream |
-| `file_browser` | `{entries: [{kind, name, size_bytes?, content_type?, modified_at?}]}` | Object-store front: breadcrumb nav, drag-drop upload, click-to-download, inline preview for video/audio/image/PDF, paginated listings, icons/gallery toggle, keyboard-navigable preview. Identifies entries by `name` within the current directory — backends MUST guarantee unique names per directory (any filesystem-shaped store does). |
+| `file_browser` | `{entries: [{id?, kind?, name?, path?, is_container?, size_bytes?, content_type?, modified_at?, capabilities?, symlink_target_id?}]}` | Object-store front: breadcrumb navigation, drag-drop upload, double-click/keyboard activation, inline media/document preview, pagination, icons/gallery views, and workspace-scoped “Open with…”. Stable `id` is preferred when present; path-derived identity remains compatible. |
 
 ### Cursor pagination
 
@@ -249,9 +350,76 @@ forking the protocol, while `message_context` can rename the default
 `conversation_id`, `message_id`, and `sender_id` context keys. The complete
 `communications-hub.json` example displays all three modes together.
 
-The file_browser previews video and audio through a native `<video>` / `<audio>` element pointed at `options.media_url_template` (default `/media?namespace={namespace}&path={path}` — both placeholders URL-encoded). For scrub to work on long files the backend **must** support HTTP `Range:` and reply `206 Partial Content`. MP4s should be encoded with `-movflags +faststart` so the player can read metadata before downloading the whole file.
+The file_browser previews browser-native video and audio through a native
+`<video>` / `<audio>` element pointed at `options.media_url_template` (default
+`/media?namespace={namespace}&path={path}` — both placeholders URL-encoded).
+For scrub to work on long files the backend **must** support HTTP `Range:` and
+reply `206 Partial Content`. MP4s should be encoded with `-movflags +faststart`
+so the player can read metadata before downloading the whole file. HEIC and
+MKV remain discoverable semantic/media kinds, but require a registered
+application or a backend-provided browser-compatible rendition; Terminal Core
+does not ship a transcoder into every consumer.
 
-Backends supply entries with just `{kind, name, size_bytes?, content_type?, modified_at?}` — no opaque IDs. The widget computes a full path on the fly as `currentPath + '/' + entry.name` whenever it needs a stable identifier (URLs, queue navigation, downloads).
+Backends may still supply entries with just
+`{kind, name, size_bytes?, content_type?, modified_at?}`—no opaque ID is
+required. The widget computes a full path as
+`currentPath + '/' + entry.name` for URLs, queue navigation, and downloads.
+When available, `id` (or the legacy `object_id` alias) is preferred for React
+identity and generic host intents. An authoritative `path` remains the
+filesystem fallback.
+
+### Workspace-scoped asset applications
+
+`file_browser` and `media_gallery` can resolve an asset intent through trusted
+host code before falling back to their native viewers. This is the extension
+point for workspace-specific “Open with…” behavior without putting application
+names, executable code, or tenant policy in template JSON:
+
+```tsx
+import { lazy } from 'react'
+import { Dashboard } from 'medallion-terminal-core/dashboard'
+import type { ResolveAssetIntent } from 'medallion-terminal-core/asset-open'
+
+const WorkspaceVideoPlayer = lazy(() => import('./WorkspaceVideoPlayer'))
+
+const resolveAssetIntent: ResolveAssetIntent = request =>
+  api.resolveAssetIntent(request) // authenticated workspace/user comes from the host session
+
+<Dashboard
+  template={template}
+  backendUrl={apiUrl}
+  resolveAssetIntent={resolveAssetIntent}
+  assetRenderers={{ workspace_video: WorkspaceVideoPlayer }}
+  saveAssetOpenPreference={change => api.saveAssetOpenPreference(change)}
+/>
+```
+
+Double-click uses the resolver's `preferredApplicationId`, or the existing
+native preview when no preference exists. **Open with…** displays eligible
+applications plus native/download fallbacks. Applications declare optional
+MIME patterns (`video/mp4`, `video/*`, `*/*`), semantic object kinds
+(`movie`, `database`, `ontology.object`), and intents (`view`, `play`, `edit`,
+`inspect`); the frontend checks them again before display. When both
+`accepts` and `acceptsKinds` are present, both must match. Asset `kind`,
+`capabilities`, and unresolved `symlinkTargetId` are first-class resolver
+fields; capabilities remain presentation hints, never authorization.
+
+The resolver must be server-authoritative: derive workspace and user identity
+from the authenticated session, return only installed and permitted
+applications, and mint short-lived asset grants. Resolver data can only name a
+renderer already present in that Dashboard's `assetRenderers` map, so it cannot
+load arbitrary JavaScript. Renderer registration is Dashboard-scoped rather
+than global; trusted renderers may use `React.lazy` for code splitting. Launch
+context is transient—it is never written into templates or snapshots. A trusted
+renderer may internally open a vetted dashboard template, but that template
+remains presentation data and should still use the normal untrusted-template
+policy.
+
+The default application frame is a fullscreen dialog. A Compass host can pass
+`assetApplicationFrame` to place the resolved renderer in its own route,
+workspace pane, drawer, or portal. The frame receives the trusted renderer,
+request, close action, and “Open with…” action; templates and resolver JSON
+still cannot register UI code.
 
 ### File-browser pagination
 
@@ -293,7 +461,7 @@ Toolbar prev/next + the keyboard arrows walk the same navigable queue. Audio/vid
 
 Layout primitives: `section`, `slider`, `select`, `multi_select`, `clock`, plus chart variants (`bar_chart`, `area_chart`, `scatter`, `histogram`, `boxplot`, `radar`, `treemap`, `sparkline`, `dag`, `geo_map`, `depth_chart`, `volume_profile`).
 
-`geo_map` uses MapLibre GL JS 5.24 and one provider-neutral `basemap`
+`geo_map` uses MapLibre GL JS 6 and one provider-neutral `basemap`
 contract. With no basemap configuration it renders the network-free
 `analytical` coordinate grid, which is suitable for private overlays.
 Curated public presets are opt-in:
@@ -613,7 +781,7 @@ embed.html?template=/examples/business-operations.json&chrome=full&theme=operato
 | `ctx.<k>=v` | seed context values |
 | `stream` / `refreshMs` | live source options |
 | `chrome` | `none` (default) or `full` |
-| `theme` | `dark` (default), `operator`, or `light` |
+| `theme` | `dark` (default), `operator`, `light`, or `high-contrast` |
 
 `<Dashboard chrome="minimal">` and the exported `<EmbedView>` /
 `parseEmbedConfig` / `buildEmbedUrl` give the same surface in-app.
@@ -743,20 +911,22 @@ For wiring this into a real product, in order:
 
 ## Production verification
 
-Install Chromium once on a development machine, then run the same checks as
-CI:
+Run the same gate as CI — it installs dependencies with a frozen lockfile
+and Playwright's pinned Chromium itself (a no-op after the first run):
 
 ```bash
-pnpm exec playwright install chromium
-pnpm ci:verify
+make validate
 ```
 
-`ci:verify` gates TypeScript and proto generation, Buf lint/build and
-compatibility against `origin/main`, the reusable TerminalService conformance
-suite, unit/integration tests, every Storybook story in real Chromium, both
-application and library builds, committed package artifacts, the static
-Storybook catalog, curated accessibility checks, interaction flows, and visual
-snapshots.
+`make validate` is the single gate verb (see
+[`MAKEFILE-CONTRACT.md`](MAKEFILE-CONTRACT.md)) and is exactly what CI runs.
+It gates the public surface (no private hostnames, repository references,
+registries, or credentials), `VERSION`/`package.json` parity, TypeScript and
+proto generation, Buf lint/build and compatibility against `origin/main`, the
+reusable TerminalService conformance suite, unit/integration tests, every
+Storybook story in real Chromium, both application and library builds,
+committed package artifacts, the static Storybook catalog, curated
+accessibility checks, interaction flows, and visual snapshots.
 
 Storybook's `Examples/Production Readiness` suite adds a connected proof for
 host-owned authorization, safe policy denial, failure/recovery states, opaque
@@ -788,16 +958,18 @@ operational testing in the consuming product.
 ## Styling and themes
 
 `Dashboard` defaults to a professional graphite-and-cobalt workspace and
-accepts `theme="dark"`, `theme="operator"`, or `theme="light"`:
+accepts `theme="dark"`, `theme="operator"`, `theme="light"`, or
+`theme="high-contrast"`:
 
 ```tsx
 <Dashboard template={template} backendUrl={api} theme="dark" />
 <Dashboard template={template} backendUrl={api} theme="operator" />
 <Dashboard template={template} backendUrl={api} theme="light" />
+<Dashboard template={template} backendUrl={api} theme="high-contrast" />
 ```
 
 The bundled demo app accepts the same preset through
-`?theme=dark|operator|light`.
+`?theme=dark|operator|light|high-contrast`.
 
 Host apps can override the public variables after importing the styles:
 
@@ -812,7 +984,9 @@ Public variables include `--mtc-bg`, `--mtc-surface`,
 `--mtc-surface-raised`, `--mtc-panel`, `--mtc-border`, `--mtc-fg`,
 `--mtc-muted`, `--mtc-accent`, `--mtc-signal`, `--mtc-danger`, `--mtc-ok`,
 `--mtc-warning`, `--mtc-chart-1` through `--mtc-chart-8`,
-`--mtc-font-sans`, and `--mtc-font-mono`. The complete usage rules and
+`--mtc-font-sans`, and `--mtc-font-mono`. Descriptive aliases, spacing,
+typography, radius, elevation, duration, density, and intent tokens are
+documented in [TOOLKIT.md](TOOLKIT.md); the product usage rules and
 accessibility checklist live in [DESIGN.md](DESIGN.md).
 
 ## Demo

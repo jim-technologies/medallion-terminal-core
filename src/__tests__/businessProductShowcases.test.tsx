@@ -21,7 +21,7 @@ import {
   QuickBooksShowcase,
   quickBooksCashBalance,
   selectQuickBooksTransactions,
-} from '../../examples/clones/quickbooks/QuickBooksShowcase'
+} from '../../examples/clones/intuit/quickbooks/QuickBooksShowcase'
 import {
   formatProductCurrency,
   formatProductPercent,

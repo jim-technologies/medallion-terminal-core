@@ -1,4 +1,4 @@
-export type EmbedTheme = 'dark' | 'operator' | 'light';
+export type EmbedTheme = 'dark' | 'operator' | 'light' | 'high-contrast';
 export interface EmbedConfig {
     templateUrl?: string;
     widget?: {

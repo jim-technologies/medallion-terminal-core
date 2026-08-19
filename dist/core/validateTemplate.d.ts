@@ -6,4 +6,12 @@ export interface ValidationIssue {
     severity: ValidationSeverity;
     message: string;
 }
-export declare function validateTemplate(template: Template, knownExtra?: Iterable<string>): ValidationIssue[];
+/** Optional validator behavior for hosts with an exact scoped registry. */
+export interface ValidateTemplateOptions {
+    /**
+     * Includes Terminal Core built-ins in addition to `knownExtra`. Defaults to
+     * true for backward compatibility.
+     */
+    includeBuiltIns?: boolean;
+}
+export declare function validateTemplate(template: Template, knownExtra?: Iterable<string>, options?: ValidateTemplateOptions): ValidationIssue[];

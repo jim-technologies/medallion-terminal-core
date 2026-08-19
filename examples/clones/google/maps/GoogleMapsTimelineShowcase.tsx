@@ -286,20 +286,20 @@ export function GoogleMapsTimelineShowcase({
   return (
     <div className="ready-showcase timeline-showcase">
       <header className="timeline-topbar">
-        <button className="timeline-menu"><OperationalShowcaseIcon name="menu" /></button>
+        <button aria-label="Main menu" className="timeline-menu"><OperationalShowcaseIcon name="menu" /></button>
         <div className="timeline-logo"><span className="timeline-pin-logo"><OperationalShowcaseIcon name="location" size={21} /></span><strong>Google Maps</strong></div>
-        <label className="timeline-search"><input placeholder="Search Google Maps" /><OperationalShowcaseIcon name="search" size={18} /><button><OperationalShowcaseIcon name="send" size={18} /></button></label>
-        <div className="ready-top-actions"><button><OperationalShowcaseIcon name="help" /></button><button><OperationalShowcaseIcon name="settings" /></button><button><OperationalShowcaseIcon name="apps" /></button><OperationalShowcaseAvatar name={CLONE_DEMO_IDENTITY.user} color="#4d76b3" size={30} /></div>
+        <label className="timeline-search"><input placeholder="Search Google Maps" /><OperationalShowcaseIcon name="search" size={18} /><button aria-label="Search"><OperationalShowcaseIcon name="send" size={18} /></button></label>
+        <div className="ready-top-actions"><button aria-label="Help"><OperationalShowcaseIcon name="help" /></button><button aria-label="Settings"><OperationalShowcaseIcon name="settings" /></button><button aria-label="Google apps"><OperationalShowcaseIcon name="apps" /></button><OperationalShowcaseAvatar name={CLONE_DEMO_IDENTITY.user} color="#4d76b3" size={30} /></div>
       </header>
 
       <div className="timeline-body">
-        <aside className="timeline-sidebar">
+        <aside aria-label="Timeline history" className="timeline-sidebar">
           <div className="timeline-sidebar-heading">
-            <button><OperationalShowcaseIcon name="chevron-left" size={18} /></button>
+            <button aria-label="Back to Google Maps"><OperationalShowcaseIcon name="chevron-left" size={18} /></button>
             <div><h1>Your Timeline</h1><span>Only you can see your Timeline</span></div>
-            <button><OperationalShowcaseIcon name="more" size={18} /></button>
+            <button aria-label="Timeline options"><OperationalShowcaseIcon name="more" size={18} /></button>
           </div>
-          <nav>
+          <nav aria-label="Timeline views">
             {TIMELINE_NAV.map(item => (
               <button key={item.id} className={section === item.id ? 'active' : ''} onClick={() => setSection(item.id)}>
                 <OperationalShowcaseIcon name={item.icon} size={17} /><span>{item.label}</span>
@@ -310,9 +310,9 @@ export function GoogleMapsTimelineShowcase({
           {section === 'day' && (
             <>
               <div className="timeline-date-picker">
-                <button disabled={dayIndex >= days.length - 1} onClick={() => changeDay(1)}><OperationalShowcaseIcon name="chevron-left" size={17} /></button>
+                <button aria-label="Newer day" disabled={dayIndex >= days.length - 1} onClick={() => changeDay(1)}><OperationalShowcaseIcon name="chevron-left" size={17} /></button>
                 <button className="timeline-date-button"><OperationalShowcaseIcon name="calendar" size={17} /><span><strong>{day.label}</strong><small>{day.city}</small></span><OperationalShowcaseIcon name="chevron-down" size={13} /></button>
-                <button disabled={dayIndex <= 0} onClick={() => changeDay(-1)}><OperationalShowcaseIcon name="chevron-right" size={17} /></button>
+                <button aria-label="Older day" disabled={dayIndex <= 0} onClick={() => changeDay(-1)}><OperationalShowcaseIcon name="chevron-right" size={17} /></button>
               </div>
               <div className="timeline-day-summary">
                 <div><strong>{totals.places}</strong><span>Places</span></div>
@@ -409,14 +409,14 @@ export function GoogleMapsTimelineShowcase({
           ))}
           <div className="timeline-map-controls">
             <div><button className={mapType === 'Map' ? 'active' : ''} onClick={() => setMapType('Map')}>Map</button><button className={mapType === 'Satellite' ? 'active' : ''} onClick={() => setMapType('Satellite')}>Satellite</button></div>
-            <button><OperationalShowcaseIcon name="location" size={18} /></button>
+            <button aria-label="Center map on current location"><OperationalShowcaseIcon name="location" size={18} /></button>
             <div><button>+</button><button>−</button></div>
           </div>
           <div className="timeline-map-legend"><span>{basemapLabel}</span><button>Map data</button><button>Terms</button></div>
 
           {selectedStop && (
-            <aside className="timeline-place-card">
-              <button className="timeline-place-close" onClick={() => setSelectedStopId('')}><OperationalShowcaseIcon name="close" size={16} /></button>
+            <aside aria-label={`${selectedStop.name} details`} className="timeline-place-card">
+              <button aria-label="Close place details" className="timeline-place-close" onClick={() => setSelectedStopId('')}><OperationalShowcaseIcon name="close" size={16} /></button>
               <div className={`timeline-place-hero ${selectedStop.category.toLowerCase().replace(/\s+/g, '-')}`}>
                 {selectedStop.media.length > 0
                   ? <TimelineMediaThumbnail media={selectedStop.media[0]} large />

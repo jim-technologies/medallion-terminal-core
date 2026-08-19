@@ -22,11 +22,11 @@
 //   refreshMs  — polling interval for the single-widget source.
 //   chrome     — "none" (default) hides the toolbar/status bar;
 //                "full" shows them. Embeds default to no chrome.
-//   theme      — "dark" (default), "operator", or "light".
+//   theme      — "dark" (default), "operator", "light", or "high-contrast".
 //
 // This module is pure (no DOM) so it is unit-testable in node.
 
-export type EmbedTheme = 'dark' | 'operator' | 'light'
+export type EmbedTheme = 'dark' | 'operator' | 'light' | 'high-contrast'
 
 export interface EmbedConfig {
   // Full-dashboard mode: a template URL to fetch + render.
@@ -64,7 +64,9 @@ export function parseEmbedConfig(search: string): EmbedConfig {
 
   const chrome: EmbedConfig['chrome'] = params.get('chrome') === 'full' ? 'full' : 'none'
   const requestedTheme = params.get('theme')
-  const theme: EmbedTheme = requestedTheme === 'operator' || requestedTheme === 'light'
+  const theme: EmbedTheme = requestedTheme === 'operator'
+    || requestedTheme === 'light'
+    || requestedTheme === 'high-contrast'
     ? requestedTheme
     : 'dark'
   const title = params.get('title') ?? undefined

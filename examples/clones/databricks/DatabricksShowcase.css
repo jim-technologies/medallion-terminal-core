@@ -1,14 +1,14 @@
 .databricks-showcase {
   --dbx-ink: #202124;
   --dbx-muted: #5f6368;
-  --dbx-faint: #8a9097;
+  --dbx-faint: #697078;
   --dbx-line: #dfe1e5;
   --dbx-line-soft: #eceef0;
   --dbx-panel: #fff;
   --dbx-canvas: #f7f7f8;
   --dbx-sidebar: #f4f5f6;
-  --dbx-red: #d94b3d;
-  --dbx-red-dark: #b83a31;
+  --dbx-red: #b83a31;
+  --dbx-red-dark: #962e27;
   --dbx-red-soft: #fff0ed;
   --dbx-blue: #2166a5;
   display: grid;
@@ -97,7 +97,7 @@
   border: 0;
   border-radius: 5px;
   background: var(--dbx-red);
-  color: white;
+  color: white !important;
   font-size: 11px;
   font-weight: 650;
 }
@@ -148,7 +148,7 @@
 .dbx-nav-group > small {
   display: block;
   padding: 0 9px 3px;
-  color: #858b92;
+  color: #636a71;
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.7px;
@@ -236,7 +236,7 @@
   padding: 0 9px;
   border: 1px solid #d3d6da;
   background: #f7f8f9;
-  color: #7b8289;
+  color: #60676e;
 }
 
 .dbx-global-search span {
@@ -254,7 +254,7 @@
   border: 1px solid #d1d4d8;
   border-radius: 3px;
   background: white;
-  color: #858a90;
+  color: #63696f;
   font-family: inherit;
   font-size: 8px;
 }
@@ -423,7 +423,7 @@
   align-self: center;
   margin-left: auto;
   padding-right: 12px;
-  color: #438064;
+  color: #2e6c4e;
   font-size: 8px;
 }
 
@@ -476,7 +476,7 @@
   border: 1px solid #d7dadd;
   border-radius: 4px;
   background: white;
-  color: #7a8086;
+  color: #5f666d;
 }
 
 .dbx-workspace-tree input {
@@ -625,7 +625,7 @@
 }
 
 .dbx-cell-rail span {
-  color: #989da2;
+  color: #60666c;
   font-family: "SFMono-Regular", Consolas, monospace;
   font-size: 7px;
 }
@@ -734,7 +734,7 @@
   display: flex;
   justify-content: space-between;
   margin: 0 30px 7px 120px;
-  color: #94999e;
+  color: #62686e;
   font-size: 7px;
 }
 
@@ -752,7 +752,7 @@
   display: block;
   height: 10px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #e1695e, #d94b3d);
+  background: linear-gradient(90deg, #d15b50, var(--dbx-red));
 }
 
 .dbx-cell-chart strong {
@@ -763,7 +763,7 @@
 .dbx-cell-duration {
   display: block;
   padding: 0 15px 9px;
-  color: #748078;
+  color: #5d695f;
   font-size: 7px;
 }
 
@@ -846,7 +846,7 @@
 }
 
 .dbx-assistant-context strong {
-  color: #888e94;
+  color: #626970;
   font-weight: 500;
 }
 
@@ -918,8 +918,8 @@
   right: 6px;
   bottom: 6px;
   display: grid;
-  width: 23px;
-  height: 23px;
+  width: 24px;
+  height: 24px;
   place-items: center;
   border: 0;
   border-radius: 4px;
@@ -1856,7 +1856,7 @@
 }
 
 .dbx-asset-detail > header span {
-  color: #7a8086;
+  color: #5f666d;
   font-size: 7px;
   text-transform: uppercase;
 }
@@ -1910,7 +1910,7 @@
   justify-content: center;
   flex-direction: column;
   border-right: 1px solid var(--dbx-line);
-  color: #7a8086;
+  color: #5f666d;
   font-size: 7px;
 }
 

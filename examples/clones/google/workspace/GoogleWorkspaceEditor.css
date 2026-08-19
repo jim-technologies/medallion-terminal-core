@@ -1054,7 +1054,7 @@
 
 .workspace-sheet-tabs small {
   padding: 0 8px;
-  color: #80868b;
+  color: #5f6368;
   font-size: 8px;
   white-space: nowrap;
 }
@@ -1161,7 +1161,7 @@
   min-height: 96px;
   margin: auto auto 0;
   padding: 13px 16px;
-  color: #80868b;
+  color: #5f6368;
   background: #fff;
   border: 1px solid #c7c7c7;
   font-family: Arial, sans-serif;
@@ -1495,7 +1495,7 @@
   z-index: 3;
   padding: 2px 5px;
   color: #fff;
-  background: #8b5cf6;
+  background: #6d3bd1;
   font-size: 8px;
   line-height: 1.2;
 }
@@ -1507,7 +1507,7 @@
   width: 0;
   height: 0;
   border-top: 6px solid transparent;
-  border-right: 7px solid #8b5cf6;
+  border-right: 7px solid #6d3bd1;
 }
 
 .workspace-side-panel {
@@ -1659,7 +1659,7 @@
 }
 
 .workspace-gemini-input textarea::placeholder {
-  color: #80868b;
+  color: #5f6368;
 }
 
 .workspace-gemini-input > div {
@@ -1696,7 +1696,7 @@
 
 .workspace-gemini-disclaimer {
   display: block;
-  color: #80868b;
+  color: #5f6368;
   font-size: 8px;
   text-align: center;
 }
@@ -1754,7 +1754,7 @@
 
 .workspace-comments-panel article strong small {
   margin-left: 5px;
-  color: #80868b;
+  color: #5f6368;
   font-weight: 400;
 }
 

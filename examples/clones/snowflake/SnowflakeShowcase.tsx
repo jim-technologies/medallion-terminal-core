@@ -262,7 +262,7 @@ function SnowflakeWorkspace({
         <span>ANALYTICS / GOLD</span>
         <span className="snow-context-spacer" />
         <button type="button"><OperationalShowcaseIcon name="search" size={14} /> Find</button>
-        <button type="button"><OperationalShowcaseIcon name="more" size={14} /></button>
+        <button type="button" aria-label="Workspace options"><OperationalShowcaseIcon name="more" size={14} /></button>
       </div>
 
       <div className="snow-workspace-grid">
@@ -374,8 +374,8 @@ function SnowflakeWorkspace({
           </div>
         </div>
 
-        <aside className="snow-query-history">
-          <div><strong>Query history</strong><button type="button"><OperationalShowcaseIcon name="close" size={14} /></button></div>
+        <aside className="snow-query-history" aria-label="Query history">
+          <div><strong>Query history</strong><button type="button" aria-label="Close query history"><OperationalShowcaseIcon name="close" size={14} /></button></div>
           <button className="active" type="button">
             <span className="snow-status-dot succeeded" />
             <span><strong>customer_health.sql</strong><small>1.28s · 5 rows</small></span>
@@ -446,11 +446,11 @@ function SnowflakeCatalog({
           {filtered.length === 0 ? <div className="snow-empty">No catalog objects match this search.</div> : null}
         </div>
         {selected ? (
-          <aside className="snow-object-detail">
+          <aside className="snow-object-detail" aria-label="Object details">
             <div className="snow-object-detail-title">
               <i><OperationalShowcaseIcon name="database" size={20} /></i>
               <div><span>{selected.kind}</span><h2>{selected.name}</h2></div>
-              <button type="button"><OperationalShowcaseIcon name="more" size={16} /></button>
+              <button type="button" aria-label="Object options"><OperationalShowcaseIcon name="more" size={16} /></button>
             </div>
             <p>{selected.description}</p>
             <div className="snow-detail-status">
@@ -553,10 +553,10 @@ export function SnowflakeShowcase({
 
   return (
     <div className="snowflake-showcase">
-      <aside className="snow-sidebar">
+      <aside className="snow-sidebar" aria-label="Snowflake navigation">
         <SnowflakeBrand />
         <button className="snow-global-search" type="button"><OperationalShowcaseIcon name="search" size={16} /><span>Search</span><kbd>⌘ K</kbd></button>
-        <nav>
+        <nav aria-label="Snowflake sections">
           <button type="button"><OperationalShowcaseIcon name="home" size={17} /><span>Home</span></button>
           {SNOWFLAKE_NAV.map(item => (
             <div className="snow-nav-group" key={item.id}>
@@ -584,8 +584,8 @@ export function SnowflakeShowcase({
         <header className="snow-topbar">
           <div><strong>{accountName}</strong><span>ACME_US_WEST</span></div>
           <span className="snow-topbar-spacer" />
-          <button type="button"><OperationalShowcaseIcon name="help" size={17} /></button>
-          <button type="button"><OperationalShowcaseIcon name="bell" size={17} /><i /></button>
+          <button type="button" aria-label="Help"><OperationalShowcaseIcon name="help" size={17} /></button>
+          <button type="button" aria-label="Notifications"><OperationalShowcaseIcon name="bell" size={17} /><i /></button>
           <button className="snow-copilot-button" type="button"><OperationalShowcaseIcon name="sparkles" size={15} /> Copilot</button>
         </header>
         <main>

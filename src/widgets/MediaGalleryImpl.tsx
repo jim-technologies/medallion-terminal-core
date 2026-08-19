@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDashboard } from '../core/DashboardContext'
+import {
+  useAssetOpen,
+  type AssetOpenRequest,
+} from '../core/AssetOpen'
+import { handleModalKeyDown, useModalFocus } from '../components/utils'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 import {
@@ -28,6 +33,9 @@ interface MediaGalleryOptions extends CursorPaginationOptions {
   autoplay_videos?: boolean
   loop_videos?: boolean
   show_details?: boolean
+  // Enabled automatically when Dashboard.resolveAssetIntent is present.
+  // Set false when this gallery must remain native-viewer only.
+  open_with?: boolean
   media_context?: {
     key?: string
     kind_key?: string
@@ -43,6 +51,11 @@ type KindFilter = 'all' | MediaKind | 'favorite'
 export function MediaGalleryImpl({ data, options, widgetId }: WidgetProps) {
   const opts = (options ?? {}) as MediaGalleryOptions
   const { ctx, setCtx } = useDashboard()
+  const {
+    available: assetApplicationsAvailable,
+    openAsset,
+    openWith,
+  } = useAssetOpen()
   const library = useMemo(() => normalizeMediaLibrary(data), [data])
   const [query, setQuery] = useState('')
   const [kind, setKind] = useState<KindFilter>('all')
@@ -64,13 +77,52 @@ export function MediaGalleryImpl({ data, options, widgetId }: WidgetProps) {
   const selectedContextKey = opts.media_context?.key ?? 'media_id'
   const selectedKindKey = opts.media_context?.kind_key ?? 'media_kind'
   const hasPagination = !!library.nextPageToken || !!ctx[cursorPageTokenKey(widgetId, opts)]
+  const openWithEnabled = assetApplicationsAvailable && opts.open_with !== false
+
+  const requestFor = useCallback((item: MediaItemData): AssetOpenRequest => ({
+    asset: {
+      id: item.id,
+      name: item.title,
+      kind: item.kind,
+      contentType: item.contentType ?? (item.kind === 'video' ? 'video/*' : 'image/*'),
+      url: item.url,
+      metadata: {
+        ...item.metadata,
+        capturedAt: item.capturedAt,
+        createdAt: item.createdAt,
+        width: item.width,
+        height: item.height,
+        durationSeconds: item.durationSeconds,
+        collectionIds: item.collectionIds,
+      },
+    },
+    intent: item.kind === 'video' ? 'play' : 'view',
+    source: { component: 'media_gallery', widgetId },
+  }), [widgetId])
 
   const openItem = useCallback((item: MediaItemData) => {
     for (const [key, value] of Object.entries(item.context)) setCtx(key, value)
     if (!(selectedContextKey in item.context)) setCtx(selectedContextKey, item.id)
     if (!(selectedKindKey in item.context)) setCtx(selectedKindKey, item.kind)
-    setSelectedId(item.id)
-  }, [selectedContextKey, selectedKindKey, setCtx])
+    if (openWithEnabled) {
+      void openAsset(
+        requestFor(item),
+        {
+          native: () => setSelectedId(item.id),
+          nativeLabel: item.kind === 'video' ? 'Native video player' : 'Native photo viewer',
+        },
+      )
+    } else {
+      setSelectedId(item.id)
+    }
+  }, [
+    openAsset,
+    openWithEnabled,
+    requestFor,
+    selectedContextKey,
+    selectedKindKey,
+    setCtx,
+  ])
 
   const moveSelection = useCallback((delta: number) => {
     if (filtered.length < 2 || selectedIndex < 0) return
@@ -83,27 +135,6 @@ export function MediaGalleryImpl({ data, options, widgetId }: WidgetProps) {
       setSelectedId(null)
     }
   }, [library.items, selectedId])
-
-  useEffect(() => {
-    if (!selected) return
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        event.stopPropagation()
-        setSelectedId(null)
-      } else if (event.key === 'ArrowRight') {
-        event.preventDefault()
-        event.stopPropagation()
-        moveSelection(1)
-      } else if (event.key === 'ArrowLeft') {
-        event.preventDefault()
-        event.stopPropagation()
-        moveSelection(-1)
-      }
-    }
-    window.addEventListener('keydown', onKeyDown, true)
-    return () => window.removeEventListener('keydown', onKeyDown, true)
-  }, [moveSelection, selected])
 
   const hasFavorites = library.items.some(item => item.favorite)
   const showFilters = opts.kind_filter !== false
@@ -231,6 +262,19 @@ export function MediaGalleryImpl({ data, options, widgetId }: WidgetProps) {
           onClose={() => setSelectedId(null)}
           onPrevious={() => moveSelection(-1)}
           onNext={() => moveSelection(1)}
+          onOpenWith={openWithEnabled
+            ? () => {
+                void openWith(
+                  requestFor(selected),
+                  {
+                    native: () => {},
+                    nativeLabel: selected.kind === 'video'
+                      ? 'Native video player'
+                      : 'Native photo viewer',
+                  },
+                )
+              }
+            : undefined}
         />
       )}
     </div>
@@ -321,6 +365,7 @@ function MediaViewer({
   onClose,
   onPrevious,
   onNext,
+  onOpenWith,
 }: {
   item: MediaItemData
   collections: MediaCollectionData[]
@@ -332,9 +377,11 @@ function MediaViewer({
   onClose: () => void
   onPrevious: () => void
   onNext: () => void
+  onOpenWith?: () => void
 }) {
   const [loading, setLoading] = useState(true)
   const [failed, setFailed] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const collectionNames = item.collectionIds
     .map(id => collections.find(collection => collection.id === id)?.name ?? id)
@@ -342,9 +389,7 @@ function MediaViewer({
     .filter(([, value]) => value == null || ['string', 'number', 'boolean'].includes(typeof value))
     .slice(0, 10)
 
-  useEffect(() => {
-    closeRef.current?.focus()
-  }, [])
+  useModalFocus(true, dialogRef, closeRef)
 
   const closeFromBackdrop = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) onClose()
@@ -352,11 +397,24 @@ function MediaViewer({
 
   return (
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-50 flex flex-col bg-zinc-950/98 text-zinc-100"
       role="dialog"
       aria-modal="true"
       aria-label={item.title}
+      tabIndex={-1}
       onClick={closeFromBackdrop}
+      onKeyDown={(event) => {
+        handleModalKeyDown(event, dialogRef, true, onClose)
+        if (event.defaultPrevented) return
+        if (event.key === 'ArrowRight') {
+          event.preventDefault()
+          onNext()
+        } else if (event.key === 'ArrowLeft') {
+          event.preventDefault()
+          onPrevious()
+        }
+      }}
     >
       <div className="flex items-center gap-3 px-4 py-2 border-b border-zinc-800 bg-zinc-900/95 shrink-0">
         <div className="min-w-0 flex-1">
@@ -368,6 +426,15 @@ function MediaViewer({
         <span className="text-xs tabular-nums text-zinc-500">
           {index + 1} / {count}
         </span>
+        {onOpenWith && (
+          <button
+            type="button"
+            onClick={onOpenWith}
+            className="text-xs text-zinc-400 hover:text-zinc-100"
+          >
+            Open with…
+          </button>
+        )}
         <a
           href={item.url}
           target="_blank"

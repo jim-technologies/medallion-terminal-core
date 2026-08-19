@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import type { Template, WidgetConfig } from '../types/template'
+import type { TerminalIntent } from './TerminalIntent'
 
 export type Severity = 'ok' | 'warn' | 'error' | 'info'
 
@@ -125,6 +126,10 @@ export interface DashboardContextValue {
   // Widgets emit via this rather than calling props directly so the
   // surface stays uniform across alerts, errors, and actions.
   emit: EmitEvent
+  // Generic bridge to the trusted host. Emitting an intent never authorizes
+  // or executes an operation inside Terminal Core. Optional so existing
+  // consumer-authored context values remain structurally compatible.
+  emitIntent?: (intent: TerminalIntent) => void
   // In-memory ring of recent action events. The action_log widget
   // reads from this; capped so a misbehaving backend can't grow state
   // forever. Each emit({type:'action'}) appends an entry.
@@ -185,6 +190,7 @@ export const DEFAULT_DASHBOARD_CONTEXT: DashboardContextValue = {
   refreshPulse: null,
   requestRefresh: () => {},
   emit: () => {},
+  emitIntent: () => {},
   recentActions: [],
   clearRecentActions: () => {},
   recentAlerts: [],

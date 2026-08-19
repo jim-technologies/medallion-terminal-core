@@ -373,9 +373,9 @@ function HubSpotSectionNav({
   onSectionChange: (section: HubSpotShowcaseSection) => void
 }) {
   return (
-    <aside className="hubspot-section-nav">
+    <aside aria-label="CRM navigation" className="hubspot-section-nav">
       <div className="hubspot-section-title">CRM</div>
-      <nav>
+      <nav aria-label="CRM records">
         <button className={section === 'contacts' || section === 'record' ? 'is-active' : ''} onClick={() => onSectionChange('contacts')}>
           <ProductShowcaseIcon name="contact" size={17} /> Contacts
         </button>
@@ -387,7 +387,7 @@ function HubSpotSectionNav({
         <button><ProductShowcaseIcon name="document" size={17} /> Lists</button>
       </nav>
       <div className="hubspot-section-subtitle">My workspace</div>
-      <nav>
+      <nav aria-label="CRM workspace">
         <button><ProductShowcaseIcon name="task" size={17} /> Tasks</button>
         <button><ProductShowcaseIcon name="activity" size={17} /> Activity feed</button>
         <button><ProductShowcaseIcon name="reports" size={17} /> Forecast</button>
@@ -479,10 +479,15 @@ function HubSpotContacts({
           </thead>
           <tbody>
             {contacts.map(contact => (
-              <tr key={contact.id} onClick={() => onSelect(contact)}>
+              <tr key={contact.id}>
                 <td><input type="checkbox" aria-label={`Select ${contact.name}`} /></td>
                 <td>
-                  <button className="hubspot-contact-name">
+                  <button
+                    type="button"
+                    className="hubspot-contact-name"
+                    onClick={() => onSelect(contact)}
+                    aria-label={`Open ${contact.name}`}
+                  >
                     <ProductShowcaseAvatar name={contact.name} color={contact.ownerColor} size={30} />
                     <span><strong>{contact.name}</strong><small>{contact.role}</small></span>
                   </button>
@@ -500,8 +505,8 @@ function HubSpotContacts({
       </div>
       <footer className="hubspot-pagination">
         <span>1–{contacts.length} of {contacts.length}</span>
-        <button disabled><ProductShowcaseIcon name="chevron-left" size={14} /></button>
-        <button disabled><ProductShowcaseIcon name="chevron-right" size={14} /></button>
+        <button aria-label="Previous page" disabled><ProductShowcaseIcon name="chevron-left" size={14} /></button>
+        <button aria-label="Next page" disabled><ProductShowcaseIcon name="chevron-right" size={14} /></button>
       </footer>
     </div>
   )
@@ -552,7 +557,7 @@ function HubSpotRecord({
         </div>
       </div>
       <div className="hubspot-record-columns">
-        <aside className="hubspot-record-left">
+        <aside aria-label="Contact summary" className="hubspot-record-left">
           <div className="hubspot-contact-hero">
             <ProductShowcaseAvatar name={contact.name} color={contact.ownerColor} size={54} />
             <h1>{contact.name}</h1>
@@ -613,7 +618,7 @@ function HubSpotRecord({
             ))}
           </div>
         </main>
-        <aside className="hubspot-record-right">
+        <aside aria-label="Contact associations" className="hubspot-record-right">
           <section className="hubspot-record-card">
             <header><strong>Company (1)</strong><button><ProductShowcaseIcon name="plus" size={14} /> Add</button></header>
             <div className="hubspot-association">

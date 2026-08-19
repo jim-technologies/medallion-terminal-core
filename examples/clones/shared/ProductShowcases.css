@@ -266,7 +266,7 @@
 
 .airtable-base-icon {
   align-items: center;
-  background: #d65555;
+  background: #b83f3f;
   border-radius: 6px;
   color: #fff;
   display: inline-flex;
@@ -321,7 +321,7 @@
 }
 
 .airtable-share-button {
-  background: #2d7ff9 !important;
+  background: #1769cf !important;
   border-radius: 6px !important;
   color: #fff !important;
   font-weight: 650 !important;
@@ -608,7 +608,7 @@
 
 .airtable-grid-table th > svg,
 .airtable-grid-table th > span:first-child {
-  color: #8a8a85;
+  color: #5f5f5b;
   margin-right: 5px;
 }
 
@@ -664,7 +664,7 @@
 }
 
 .airtable-cell-meta {
-  color: #898984;
+  color: #5f5f5b;
   float: right;
   font-size: 11px;
 }
@@ -741,7 +741,7 @@
 }
 
 .airtable-muted-cell {
-  color: #7c7c77;
+  color: #666661;
 }
 
 .airtable-add-column {
@@ -1546,7 +1546,7 @@
 
 .hubspot-section-subtitle {
   border-top: 1px solid #dfe3eb;
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .07em;
@@ -1611,7 +1611,7 @@
 }
 
 .hubspot-breadcrumb {
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 11px;
   gap: 3px;
   margin-bottom: 7px;
@@ -1647,13 +1647,13 @@
 }
 
 .hubspot-primary-button {
-  background: #ff7a59 !important;
-  border: 1px solid #ff7a59 !important;
+  background: #c94f32 !important;
+  border: 1px solid #c94f32 !important;
   color: #fff !important;
 }
 
 .hubspot-primary-button:hover {
-  background: #ff8f73 !important;
+  background: #ad3f27 !important;
 }
 
 .hubspot-secondary-button {
@@ -1810,10 +1810,6 @@
   width: 42px;
 }
 
-.hubspot-contact-table tbody tr {
-  cursor: pointer;
-}
-
 .hubspot-contact-table tbody tr:hover {
   background: #f8fbfc;
   box-shadow: inset 3px 0 #00a4bd;
@@ -1827,8 +1823,16 @@
 }
 
 .hubspot-contact-name {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
   gap: 9px;
+  padding: 0;
   text-align: left;
+}
+
+.hubspot-contact-name:hover strong {
+  text-decoration: underline;
 }
 
 .hubspot-contact-name span {
@@ -1841,7 +1845,7 @@
 }
 
 .hubspot-contact-name small {
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 10px;
   margin-top: 2px;
 }
@@ -1906,7 +1910,7 @@
 
 .hubspot-empty,
 .quickbooks-empty {
-  color: #7c98b6;
+  color: #526f8f;
   padding: 42px;
   text-align: center;
 }
@@ -2141,7 +2145,7 @@
   background: #fff;
   border: 1px solid #cbd6e2;
   border-radius: 3px;
-  color: #7c98b6;
+  color: #526f8f;
   flex: 1;
   gap: 6px;
   height: 31px;
@@ -2165,7 +2169,7 @@
 }
 
 .hubspot-timeline-date {
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .06em;
@@ -2238,7 +2242,7 @@
 }
 
 .hubspot-timeline article header small {
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 10px;
   margin-top: 2px;
 }
@@ -2252,7 +2256,7 @@
 
 .hubspot-timeline article footer {
   border-top: 1px solid #edf0f3;
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 10px;
   padding: 8px 11px;
 }
@@ -2298,7 +2302,7 @@
 }
 
 .hubspot-association small {
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 10px;
   margin-top: 2px;
 }
@@ -2325,7 +2329,7 @@
 }
 
 .hubspot-card-empty {
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 11px;
   margin: 0;
   padding: 15px 11px;
@@ -2354,7 +2358,7 @@
 }
 
 .hubspot-attachment small {
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 9px;
   margin-top: 2px;
 }
@@ -2450,7 +2454,7 @@
 
 .hubspot-pipeline-board section > header span,
 .hubspot-pipeline-board section > header small {
-  color: #7c98b6;
+  color: #526f8f;
   font-size: 10px;
 }
 
@@ -2535,7 +2539,7 @@
 /* -------------------------------------------------------------------------- */
 
 .quickbooks-clone {
-  --qb-green: #2ca01c;
+  --qb-green: #237b18;
   --qb-green-dark: #218113;
   --qb-copy: #2d2d2d;
   --qb-muted: #6b6c72;
@@ -3809,6 +3813,20 @@
   font-size: 10px;
   justify-content: space-between;
   padding: 10px 12px;
+}
+
+/* Muted financial metadata remains readable at the small sizes used by the product. */
+.quickbooks-card-period,
+.quickbooks-chart-labels,
+.quickbooks-task-item small,
+.quickbooks-donut small,
+.quickbooks-bank-account small,
+.quickbooks-cash-kpis small,
+.quickbooks-upcoming-row p small,
+.quickbooks-insight p small,
+.quickbooks-account-strip small,
+.quickbooks-transaction-table td small {
+  color: #696a70;
 }
 
 /* -------------------------------------------------------------------------- */

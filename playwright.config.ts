@@ -5,7 +5,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  // Keep the local Storybook dev server below its transform/concurrency limit.
+  // Unbounded local workers can turn transient Storybook error pages into
+  // misleading accessibility and screenshot failures as the catalog grows.
+  workers: process.env.CI ? 2 : 8,
   reporter: process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'line',
   snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
   expect: {

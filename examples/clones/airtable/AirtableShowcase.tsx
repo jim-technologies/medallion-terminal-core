@@ -393,7 +393,7 @@ function AirtableGrid({
       <table className="airtable-grid-table">
         <thead>
           <tr>
-            <th className="airtable-row-number"><input type="checkbox" aria-label="Select all rows" /></th>
+            <th className="airtable-row-number"><span className="product-sr-only">Select rows</span><input type="checkbox" aria-label="Select all rows" /></th>
             <th className="airtable-primary-column"><span>Aa</span> Project</th>
             <th><span>▾</span> Status</th>
             <th><ProductShowcaseIcon name="contact" size={13} /> Owner</th>
@@ -402,7 +402,7 @@ function AirtableGrid({
             <th><span>$</span> Budget</th>
             <th><span>%</span> Progress</th>
             <th><ProductShowcaseIcon name="activity" size={13} /> Last modified</th>
-            <th className="airtable-add-column"><ProductShowcaseIcon name="plus" size={14} /></th>
+            <th className="airtable-add-column"><span className="product-sr-only">Add field</span><ProductShowcaseIcon name="plus" size={14} /></th>
           </tr>
         </thead>
         <tbody>

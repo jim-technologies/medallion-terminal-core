@@ -38,9 +38,10 @@ describe('parseEmbedConfig', () => {
     expect(c.widget!.refreshIntervalMs).toBe(5000)
   })
 
-  it('accepts operator and light themes and falls back safely', () => {
+  it('accepts every scoped theme and falls back safely', () => {
     expect(parseEmbedConfig('src=x&theme=operator').theme).toBe('operator')
     expect(parseEmbedConfig('src=x&theme=light').theme).toBe('light')
+    expect(parseEmbedConfig('src=x&theme=high-contrast').theme).toBe('high-contrast')
     expect(parseEmbedConfig('src=x&theme=unknown').theme).toBe('dark')
   })
 

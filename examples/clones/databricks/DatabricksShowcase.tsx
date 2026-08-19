@@ -340,8 +340,8 @@ function DatabricksNotebook({ cells }: { cells: readonly DatabricksNotebookCell[
         <span>{runMessage}</span>
       </div>
       <div className="dbx-notebook-body">
-        <aside className="dbx-workspace-tree">
-          <div><strong>Workspace</strong><button type="button"><OperationalShowcaseIcon name="plus" size={14} /></button></div>
+        <aside className="dbx-workspace-tree" aria-label="Workspace files">
+          <div><strong>Workspace</strong><button aria-label="New workspace item" type="button"><OperationalShowcaseIcon name="plus" size={14} /></button></div>
           <label><OperationalShowcaseIcon name="search" size={14} /><input aria-label="Filter workspace" placeholder="Filter" /></label>
           <button type="button"><OperationalShowcaseIcon name="chevron-down" size={13} /><strong>Jim Technologies</strong></button>
           <button type="button"><OperationalShowcaseIcon name="chevron-down" size={13} /><span>Shared</span></button>
@@ -354,7 +354,7 @@ function DatabricksNotebook({ cells }: { cells: readonly DatabricksNotebookCell[
         <div className="dbx-cell-canvas">
           <div className="dbx-notebook-title">
             <div><span>Python</span><span>Default language</span></div>
-            <button type="button"><OperationalShowcaseIcon name="more" size={15} /></button>
+            <button aria-label="Notebook options" type="button"><OperationalShowcaseIcon name="more" size={15} /></button>
           </div>
           {cells.map(cell => (
             <article className={`dbx-cell dbx-cell-${cell.language}`} key={cell.id}>
@@ -394,14 +394,14 @@ function DatabricksNotebook({ cells }: { cells: readonly DatabricksNotebookCell[
                 ) : null}
                 {cell.duration ? <small className="dbx-cell-duration">Command finished · {cell.duration}</small> : null}
               </div>
-              <button className="dbx-cell-menu" type="button"><OperationalShowcaseIcon name="more" size={14} /></button>
+              <button aria-label={`Options for ${cell.id}`} className="dbx-cell-menu" type="button"><OperationalShowcaseIcon name="more" size={14} /></button>
             </article>
           ))}
           <button className="dbx-add-cell" type="button"><OperationalShowcaseIcon name="plus" size={13} /> Code <span>⌄</span></button>
         </div>
         {assistantOpen ? (
-          <aside className="dbx-assistant">
-            <header><span><OperationalShowcaseIcon name="sparkles" size={16} /> Assistant</span><button onClick={() => setAssistantOpen(false)} type="button"><OperationalShowcaseIcon name="close" size={14} /></button></header>
+          <aside className="dbx-assistant" aria-label="Databricks Assistant">
+            <header><span><OperationalShowcaseIcon name="sparkles" size={16} /> Assistant</span><button aria-label="Close Assistant" onClick={() => setAssistantOpen(false)} type="button"><OperationalShowcaseIcon name="close" size={14} /></button></header>
             <div className="dbx-assistant-context"><OperationalShowcaseIcon name="document" size={13} /><span>Customer health intelligence</span><strong>3 cells</strong></div>
             <div className="dbx-assistant-message">
               <span className="dbx-assistant-mark"><OperationalShowcaseIcon name="sparkles" size={14} /></span>
@@ -412,7 +412,7 @@ function DatabricksNotebook({ cells }: { cells: readonly DatabricksNotebookCell[
               <button type="button">Add data quality checks</button>
               <button type="button">Optimize the join</button>
             </div>
-            <label><textarea aria-label="Ask Databricks Assistant" placeholder="Ask about this notebook…" /><button type="button"><OperationalShowcaseIcon name="send" size={14} /></button></label>
+            <label><textarea aria-label="Ask Databricks Assistant" placeholder="Ask about this notebook…" /><button aria-label="Send to Assistant" type="button"><OperationalShowcaseIcon name="send" size={14} /></button></label>
           </aside>
         ) : null}
       </div>
@@ -435,7 +435,7 @@ function DatabricksSqlEditor() {
         </div>
       </header>
       <div className="dbx-sql-body">
-        <aside className="dbx-sql-catalog">
+        <aside className="dbx-sql-catalog" aria-label="SQL catalog">
           <div className="dbx-sql-catalog-tabs"><button className="active" type="button">Catalog</button><button type="button">Queries</button></div>
           <label><OperationalShowcaseIcon name="search" size={14} /><input aria-label="Search catalog" placeholder="Search data" /></label>
           <div className="dbx-catalog-selectors"><button type="button">main <OperationalShowcaseIcon name="chevron-down" size={12} /></button><button type="button">gold <OperationalShowcaseIcon name="chevron-down" size={12} /></button></div>
@@ -529,7 +529,7 @@ function DatabricksJobs({
           ))}
         </div>
         {selected ? (
-          <aside className="dbx-job-detail">
+          <aside className="dbx-job-detail" aria-label="Job details">
             <header>
               <div><span>Job</span><h2>{selected.name}</h2><p>{selected.trigger} · owned by {selected.owner}</p></div>
               <button type="button"><OperationalShowcaseIcon name="bolt" size={14} /> Run now</button>
@@ -589,7 +589,7 @@ function DatabricksCatalog({
         <span>{filtered.length} assets</span>
       </div>
       <div className="dbx-catalog-layout">
-        <aside className="dbx-catalog-tree">
+        <aside className="dbx-catalog-tree" aria-label="Catalog explorer">
           <strong>Catalogs</strong>
           <button type="button"><OperationalShowcaseIcon name="chevron-down" size={13} /><OperationalShowcaseIcon name="layers" size={13} /><span>main</span></button>
           <button className="active" type="button"><OperationalShowcaseIcon name="chevron-down" size={13} /><OperationalShowcaseIcon name="database" size={13} /><span>gold</span></button>
@@ -609,8 +609,8 @@ function DatabricksCatalog({
           ))}
         </div>
         {selected ? (
-          <aside className="dbx-asset-detail">
-            <header><i><OperationalShowcaseIcon name={selected.kind === 'Model' ? 'sparkles' : 'database'} size={20} /></i><div><span>{selected.kind}</span><h2>{selected.name}</h2><small>{selected.catalog}.{selected.schema}.{selected.name}</small></div><button type="button"><OperationalShowcaseIcon name="more" size={15} /></button></header>
+          <aside className="dbx-asset-detail" aria-label="Asset details">
+            <header><i><OperationalShowcaseIcon name={selected.kind === 'Model' ? 'sparkles' : 'database'} size={20} /></i><div><span>{selected.kind}</span><h2>{selected.name}</h2><small>{selected.catalog}.{selected.schema}.{selected.name}</small></div><button aria-label="Asset options" type="button"><OperationalShowcaseIcon name="more" size={15} /></button></header>
             <p>{selected.description}</p>
             <div className="dbx-detail-metrics"><span><strong>{selected.format}</strong>Format</span><span><strong>{selected.rows ? selected.rows.toLocaleString() : '—'}</strong>Rows</span><span><strong>{selected.updatedAt}</strong>Updated</span></div>
             <div className="dbx-asset-tabs"><button className="active" type="button">Overview</button><button type="button">Sample data</button><button type="button">Lineage</button><button type="button">Permissions</button></div>
@@ -648,10 +648,10 @@ export function DatabricksShowcase({
 
   return (
     <div className="databricks-showcase">
-      <aside className="dbx-sidebar">
+      <aside className="dbx-sidebar" aria-label="Databricks navigation">
         <DatabricksBrand />
         <button className="dbx-new-menu" type="button"><OperationalShowcaseIcon name="plus" size={15} /><span>New</span><OperationalShowcaseIcon name="chevron-down" size={12} /></button>
-        <nav>
+        <nav aria-label="Databricks sections">
           <button type="button"><OperationalShowcaseIcon name="home" size={16} /><span>Home</span></button>
           <button type="button"><OperationalShowcaseIcon name="clock" size={16} /><span>Recents</span></button>
           {DATABRICKS_NAV.map((item, index) => (
@@ -676,10 +676,10 @@ export function DatabricksShowcase({
           <button className="dbx-workspace-switcher" type="button"><span>JT</span><strong>{workspaceName}</strong><OperationalShowcaseIcon name="chevron-down" size={13} /></button>
           <button className="dbx-global-search" type="button"><OperationalShowcaseIcon name="search" size={15} /><span>Search data, notebooks, queries, and jobs</span><kbd>⌘ K</kbd></button>
           <span className="dbx-topbar-spacer" />
-          <button type="button"><OperationalShowcaseIcon name="sparkles" size={16} /></button>
-          <button type="button"><OperationalShowcaseIcon name="help" size={16} /></button>
-          <button type="button"><OperationalShowcaseIcon name="bell" size={16} /><i /></button>
-          <button className="dbx-user" type="button">{CLONE_DEMO_IDENTITY.user.slice(0, 1)}</button>
+          <button aria-label="Databricks Assistant" type="button"><OperationalShowcaseIcon name="sparkles" size={16} /></button>
+          <button aria-label="Help" type="button"><OperationalShowcaseIcon name="help" size={16} /></button>
+          <button aria-label="Notifications" type="button"><OperationalShowcaseIcon name="bell" size={16} /><i /></button>
+          <button aria-label={`${CLONE_DEMO_IDENTITY.user} account`} className="dbx-user" type="button">{CLONE_DEMO_IDENTITY.user.slice(0, 1)}</button>
         </header>
         <main>
           {section === 'notebook' ? <DatabricksNotebook cells={cells} /> : null}

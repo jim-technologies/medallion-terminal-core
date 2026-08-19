@@ -52,6 +52,7 @@ const themes = {
   dark: base,
   operator: { ...base, ...tokens(block('.mtc-root[data-theme="operator"]')) },
   light: { ...base, ...tokens(block('.mtc-root[data-theme="light"]')) },
+  highContrast: { ...base, ...tokens(block('.mtc-root[data-theme="high-contrast"]')) },
 }
 
 const readableText = [
@@ -67,6 +68,8 @@ const readableText = [
   'warning-soft',
   'danger',
   'danger-soft',
+  'info',
+  'info-soft',
 ]
 
 describe('theme color accessibility', () => {

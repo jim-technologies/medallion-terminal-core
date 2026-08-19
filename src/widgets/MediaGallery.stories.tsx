@@ -1,5 +1,44 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { expect, userEvent, within } from 'storybook/test'
 import { MediaGallery } from './MediaGallery'
+import {
+  AssetOpenProvider,
+  type AssetAppRendererProps,
+  type ResolveAssetIntent,
+} from '../core/AssetOpen'
+
+function JimMediaPlayer({ asset }: AssetAppRendererProps) {
+  return (
+    <div className="h-full min-h-[32rem] bg-black flex items-center justify-center p-8">
+      <div className="w-full max-w-4xl aspect-video bg-zinc-950 border border-zinc-800 shadow-2xl flex flex-col">
+        <div className="flex-1 flex items-center justify-center">
+          <span className="size-16 rounded-full border border-zinc-700 flex items-center justify-center pl-1 text-2xl text-zinc-400">
+            ▶
+          </span>
+        </div>
+        <div className="h-14 border-t border-zinc-800 px-4 flex items-center gap-3">
+          <span className="text-sm text-zinc-200 truncate">{asset.name}</span>
+          <span className="ml-auto text-[10px] uppercase tracking-[0.14em] text-zinc-600">
+            Workspace player
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const resolveMediaPlayer: ResolveAssetIntent = () => ({
+  applications: [{
+    id: 'jim-media-installation',
+    name: 'Jim Media Player',
+    description: 'Workspace playback and review',
+    renderer: 'jim-media-player',
+    accepts: ['video/*'],
+    intents: ['play'],
+    icon: 'JM',
+  }],
+  preferredApplicationId: 'jim-media-installation',
+})
 
 const media = {
   total: 8,
@@ -133,5 +172,37 @@ export const CompactCollection: Story = {
       density: 'compact',
       show_details: false,
     },
+  },
+}
+
+export const WorkspacePlayer: Story = {
+  decorators: [
+    Story => (
+      <AssetOpenProvider
+        resolveAssetIntent={resolveMediaPlayer}
+        renderers={{ 'jim-media-player': JimMediaPlayer }}
+      >
+        <Story />
+      </AssetOpenProvider>
+    ),
+  ],
+  args: {
+    options: {
+      group_by: 'day',
+      search: true,
+      kind_filter: true,
+      collection_filter: true,
+      open_with: true,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Open video Coastal approach' }),
+    )
+    const player = await canvas.findByRole('dialog', {
+      name: 'Jim Media Player: Coastal approach',
+    })
+    await expect(within(player).getByText('Workspace player')).toBeVisible()
   },
 }

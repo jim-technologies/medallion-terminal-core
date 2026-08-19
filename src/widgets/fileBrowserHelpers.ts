@@ -2,11 +2,10 @@
 // only the component (WidgetRegistry's lazy loader requires homogeneous
 // ComponentType<WidgetProps> module shape).
 //
-// medallion-terminal-core is intentionally generic — these helpers
-// have NO knowledge of any specific backend (no ULIDs, no object_ids,
-// no protocol-specific sentinels). A row is just `{kind, name, ...}`;
-// the "stable identifier" for an entry within a listing is its name
-// (which the backend guarantees unique per directory).
+// medallion-terminal-core is intentionally generic — these helpers have no
+// knowledge of any specific backend identifier format or protocol sentinel.
+// Stable IDs are preferred when supplied; paths remain the compatibility
+// identity for filesystem-shaped backends.
 
 import { parseConnectEnvelopes } from '../core/connectFraming'
 
@@ -23,22 +22,58 @@ export function errorMessage(err: unknown): string {
   }
 }
 
+/** Generic object entry accepted by the FileBrowser widget. */
 export interface FileBrowserEntry {
+  /** Preferred stable host object ID. */
+  id?: string
+  /** Legacy stable-ID alias. New integrations should prefer `id`. */
+  object_id?: string
+  /** Semantic object kind. Authoritative when it names a known media kind. */
   kind?: string
+  /** Human-readable entry name. */
   name?: string
+  /** Content size in bytes. */
   size_bytes?: number
+  /** Declared MIME content type. Preferred over filename extensions. */
   content_type?: string
+  /** Last-modified timestamp supplied by the host. */
   modified_at?: string
-  // Full path within the namespace. Normal directory listings omit it
-  // (the widget derives it from the current dir + name); SEARCH results
-  // set it, since a hit can live in any directory. When present it's the
-  // authoritative path for download / preview / navigation.
+  /** Explicit container status, preferred over `kind` inference. */
+  is_container?: boolean
+  /** Passive host capabilities for presentation and intent decisions. */
+  capabilities?: string[]
+  /** Passive link target metadata. Terminal Core never resolves the link. */
+  symlink_target_id?: string
+  /** Additional host metadata forwarded to asset-open resolution. */
+  metadata?: Record<string, unknown>
+  /**
+   * Full path within the namespace. When omitted, FileBrowser derives a path
+   * from the current directory and `name`.
+   */
   path?: string
 }
 
 export function isFolder(e: FileBrowserEntry): boolean {
+  if (typeof e.is_container === 'boolean') return e.is_container
   const k = (e.kind ?? '').toString().toUpperCase()
-  return k === 'FOLDER' || k === 'KIND_FOLDER'
+  return k === 'FOLDER'
+    || k === 'KIND_FOLDER'
+    || k === 'DIRECTORY'
+    || k === 'KIND_DIRECTORY'
+    || k === 'CONTAINER'
+    || k === 'KIND_CONTAINER'
+}
+
+/**
+ * Stable presentation identity. Object IDs win, then an authoritative entry
+ * path, then the path derived from the current directory and name.
+ */
+export function fileEntryIdentity(e: FileBrowserEntry, parentPath = ''): string {
+  const objectId = e.id ?? e.object_id
+  if (objectId) return `id:${objectId}`
+  const path = e.path || joinPath(parentPath, e.name ?? '')
+  if (path) return `path:${path}`
+  return `entry:${e.kind ?? ''}:${e.name ?? ''}`
 }
 
 export function normalizeEntries(data: unknown): FileBrowserEntry[] {
@@ -101,18 +136,18 @@ export function humanSize(n: number): string {
 // playableKinds is the set of preview kinds that have a `ended` event and
 // make sense in an auto-advancing playlist. Images, PDFs, plain text etc.
 // don't time-out; they don't belong in the auto-advance queue.
-const playablePreviewKinds = new Set(['audio', 'video', 'mkv'])
+const playablePreviewKinds = new Set(['audio', 'video'])
 
 // navigablePreviewKinds is the superset used for keyboard ← → navigation
 // in the overlay. Images join the queue so the user can flip through
 // photos the same way they advance music tracks.
-const navigablePreviewKinds = new Set(['audio', 'video', 'mkv', 'image', 'heic'])
+const navigablePreviewKinds = new Set(['audio', 'video', 'image'])
 
 // playableQueue filters entries for the auto-advance path (audio/video
 // onEnded). Same natural sort order as the file table.
 export function playableQueue(entries: FileBrowserEntry[]): FileBrowserEntry[] {
   return entries.filter((e) => {
-    const k = previewKind(e.content_type, e.name)
+    const k = previewKind(e.content_type, e.name, e.kind)
     return k !== null && playablePreviewKinds.has(k)
   })
 }
@@ -121,13 +156,14 @@ export function playableQueue(entries: FileBrowserEntry[]): FileBrowserEntry[] {
 // buttons walk. Includes images so the overlay doubles as a slideshow.
 export function navigableQueue(entries: FileBrowserEntry[]): FileBrowserEntry[] {
   return entries.filter((e) => {
-    const k = previewKind(e.content_type, e.name)
+    const k = previewKind(e.content_type, e.name, e.kind)
     return k !== null && navigablePreviewKinds.has(k)
   })
 }
 
-// nextInQueue picks the next entry to play. The queue's stable
-// identifier is each entry's `name` (unique within the listing).
+// nextInQueue picks the next entry to play. `currentName` remains accepted for
+// backward compatibility; callers may pass fileEntryIdentity(entry) to avoid
+// path/name ambiguity when object IDs are available.
 // `shuffle` returns a random other entry; otherwise advances linearly.
 // When at the end:
 //   - repeat = true  → wraps to start (shuffle: re-rolls)
@@ -142,11 +178,11 @@ export function nextInQueue(
 ): FileBrowserEntry | null {
   if (queue.length === 0) return null
   if (queue.length === 1) return repeat ? queue[0] : null
-  const idx = queue.findIndex((e) => e.name === currentName)
+  const idx = queue.findIndex((e) => entryMatchesIdentity(e, currentName))
   if (shuffle) {
     for (let tries = 0; tries < 5; tries++) {
       const candidate = queue[Math.floor(rand() * queue.length)]
-      if (candidate.name !== currentName) return candidate
+      if (!entryMatchesIdentity(candidate, currentName)) return candidate
     }
     return queue[(idx + 1) % queue.length]
   }
@@ -164,7 +200,7 @@ export function prevInQueue(
   repeat: boolean,
 ): FileBrowserEntry | null {
   if (queue.length === 0) return null
-  const idx = queue.findIndex((e) => e.name === currentName)
+  const idx = queue.findIndex((e) => entryMatchesIdentity(e, currentName))
   if (idx > 0) return queue[idx - 1]
   return repeat ? queue[queue.length - 1] : null
 }
@@ -173,9 +209,8 @@ export function prevInQueue(
 // inline-preview category the FileBrowser renders, or null for "not
 // previewable, download instead".
 //
-// Special kinds (`heic`, `mkv`, `markdown`) need client-side decode /
-// remux / render before the native element can show them — the
-// PreviewOverlay loads the helpers for those on demand.
+// HEIC and MKV remain distinct classifications so a host application resolver
+// can match them, but they are not native FileBrowser previews.
 export type PreviewKind =
   | 'video'
   | 'audio'
@@ -190,22 +225,77 @@ export type PreviewKind =
   | 'csv'
   | null
 
-export function previewKind(contentType?: string, filename?: string): PreviewKind {
+export function previewKind(
+  contentType?: string,
+  filename?: string,
+  semanticKind?: string,
+): PreviewKind {
   const ext = (filename ?? '').toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] ?? ''
   const ct = (contentType ?? '').toLowerCase().split(';')[0].trim()
+  const semantic = (semanticKind ?? '').toLowerCase().replace(/^kind_|^media_kind_/, '')
 
-  if (ct === 'image/heic' || ct === 'image/heif' || ext === 'heic' || ext === 'heif') return 'heic'
-  if (ct === 'video/x-matroska' || ct === 'application/x-matroska' || ext === 'mkv') return 'mkv'
-  if (ct.startsWith('video/')) return 'video'
-  if (ct.startsWith('audio/')) return 'audio'
-  if (ct.startsWith('image/')) return 'image'
-  if (ct === 'application/pdf' || ext === 'pdf') return 'pdf'
-  if (ct === 'application/json' || ct === 'text/json' || ext === 'json') return 'json'
-  if (ct === 'application/yaml' || ct === 'text/yaml' || ct === 'application/x-yaml' || ext === 'yaml' || ext === 'yml') return 'yaml'
-  if (ct === 'text/markdown' || ct === 'text/x-markdown' || ext === 'md' || ext === 'markdown') return 'markdown'
-  if (ct === 'text/csv' || ct === 'application/csv' || ext === 'csv') return 'csv'
-  if (ct.startsWith('text/') || ext === 'txt' || ext === 'log' || ext === 'ini' || ext === 'conf') return 'text'
+  // A semantic kind is authoritative when it carries media/document meaning.
+  if (semantic === 'video') return 'video'
+  if (semantic === 'audio') return 'audio'
+  if (semantic === 'image' || semantic === 'photo') return 'image'
+  if (semantic === 'heic' || semantic === 'heif') return 'heic'
+  if (semantic === 'mkv' || semantic === 'matroska') return 'mkv'
+  if (semantic === 'pdf') return 'pdf'
+  if (semantic === 'json') return 'json'
+  if (semantic === 'yaml') return 'yaml'
+  if (semantic === 'markdown') return 'markdown'
+  if (semantic === 'csv') return 'csv'
+  if (semantic === 'text') return 'text'
+
+  // A declared content type wins over the filename extension.
+  const hasInformativeContentType = !!ct
+    && ct !== 'application/octet-stream'
+    && ct !== 'binary/octet-stream'
+  if (hasInformativeContentType) {
+    if (ct === 'image/heic' || ct === 'image/heif') return 'heic'
+    if (ct === 'video/x-matroska' || ct === 'application/x-matroska') return 'mkv'
+    if (ct.startsWith('video/')) return 'video'
+    if (ct.startsWith('audio/')) return 'audio'
+    if (ct.startsWith('image/')) return 'image'
+    if (ct === 'application/pdf') return 'pdf'
+    if (ct === 'application/json' || ct === 'text/json') return 'json'
+    if (ct === 'application/yaml' || ct === 'text/yaml' || ct === 'application/x-yaml') return 'yaml'
+    if (ct === 'text/markdown' || ct === 'text/x-markdown') return 'markdown'
+    if (ct === 'text/csv' || ct === 'application/csv') return 'csv'
+    if (ct.startsWith('text/')) return 'text'
+    return null
+  }
+
+  // Extension is a compatibility fallback only when no semantic metadata is
+  // available.
+  if (ext === 'heic' || ext === 'heif') return 'heic'
+  if (ext === 'mkv') return 'mkv'
+  if (['mp4', 'webm', 'mov', 'm4v'].includes(ext)) return 'video'
+  if (['mp3', 'wav', 'm4a', 'aac', 'ogg', 'flac'].includes(ext)) return 'audio'
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg'].includes(ext)) return 'image'
+  if (ext === 'pdf') return 'pdf'
+  if (ext === 'json') return 'json'
+  if (ext === 'yaml' || ext === 'yml') return 'yaml'
+  if (ext === 'md' || ext === 'markdown') return 'markdown'
+  if (ext === 'csv') return 'csv'
+  if (ext === 'txt' || ext === 'log' || ext === 'ini' || ext === 'conf') return 'text'
   return null
+}
+
+/** Whether FileBrowser can render this kind without an installed application. */
+export function isNativePreviewKind(
+  kind: PreviewKind,
+): kind is Exclude<PreviewKind, 'heic' | 'mkv' | null> {
+  return kind !== null && kind !== 'heic' && kind !== 'mkv'
+}
+
+function entryMatchesIdentity(entry: FileBrowserEntry, identity: string | undefined): boolean {
+  if (!identity) return false
+  return fileEntryIdentity(entry) === identity
+    || entry.name === identity
+    || entry.path === identity
+    || entry.id === identity
+    || entry.object_id === identity
 }
 
 // buildMediaUrl substitutes the bucket + path tokens in the configured

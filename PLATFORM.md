@@ -34,6 +34,7 @@ http://localhost:5173/?template=/examples/platform-foundation.json&backend=http:
 | Source catalog / Compass-style connection inventory | `catalog` | `ListSources` | Source registration, parameter schemas, health, authorization |
 | Object and workflow actions | `object_view`, `trade`, custom forms | `SubmitAction` / `WatchAction` | Policy checks, idempotency, execution, lifecycle, audit |
 | Schema-driven actions | `action_form` | Template field schema + `SubmitAction` / `WatchAction` | Field policy, server validation, authorization, execution, audit |
+| Workspace-scoped “Open with…” | `AssetOpenProvider`, `AssetApplicationFrame` | `AssetReference`, `AssetOpenResolution` | Installed-application catalog, workspace policy, preference persistence, authorization, and short-lived asset grants |
 | AI-assisted views | `prompt` | `Generate` | Model orchestration, retrieval, policy, template validation |
 | Reporting and BI | Export menu, embed mode, BI descriptor | `flatten()` / `BiConnectorDescriptor` | Optional SQL, ODBC, Arrow Flight, or query gateway |
 
@@ -56,15 +57,20 @@ growing a second widget family for each adjacent product:
 | Google Maps Timeline | `geo_map` + `events` + `table` + optional `media_gallery` | Provider-neutral MapLibre paths and places, chronological activity, detail tables, related photos/video, and host-swappable basemaps |
 | Google Docs / Google Sheets / Google Slides | `file_browser` + `table` + `text` + `image` / `iframe` + consumer-registered editors | File discovery, structured data, previews, context linking, and reference editor shells; persistence, realtime collaboration, formulas, and document formats remain host/editor services |
 | Google Gmail / Microsoft Outlook | `conversation` + `text` + `table` + `file_browser` + `events` + optional `action_form` | Folder/label navigation, message lists, thread projections, attachments, search, composition, and host-governed mail actions |
+| Meta Instagram / Facebook / Threads | `media_gallery` + `conversation` + `text` + `events` + `asset_catalog` + optional `action_form` | Feeds, stories, media discovery, profiles, groups and business pages, threaded posts, search, engagement state, and host-observable social actions |
 | Notion / Atlassian Confluence | `file_browser` + `asset_catalog` + `record_grid` + `text` + `conversation` + `events` + consumer-registered editor | Nested knowledge navigation, documents, databases, comments, activity, and host-owned persistence, collaboration, permissions, and revision history |
 | Linear / Atlassian Jira | `record_grid` + `record_board` + `record_calendar` + `record_form` + `object_view` + `dag` + `events` / `action_log` | Backlogs, cycles/sprints, boards, work-item detail, dependencies, governed mutations, and workflow history over one record model |
 | GitHub / GitLab | `code_browser` + `conversation` + `dag` + `events` / `action_log` + optional `action_form` | Repository browsing, pull/merge request projections, diffs, reviews, checks/pipelines, approval state, and host-governed merge actions |
 | Netflix | `asset_catalog` + `media_gallery` + `text` + `events` + optional `action_form` / consumer player | Personalized title discovery, visual rails, search, saved lists, title and episode detail, profiles, and player presentation; recommendations, rights, encoding, CDN delivery, entitlement, and DRM remain host services |
 | Spotify | `asset_catalog` + `file_browser` + `table` + `text` + `events` + optional `action_form` / consumer player | Music and podcast discovery, saved library projections, search, playlist and track detail, Now Playing, queues, collaborative-session presentation, and persistent player controls; recommendations, rights, audio delivery, and playback state remain host services |
+| Spotify Backstage | `asset_catalog` + `object_view` + `dag` + `code_browser` + `file_browser` / `text` + `events` / `action_log` + optional `action_form` and workbench primitives | Software Catalog, ownership, entity/plugin views, service topology, source and docs links, CI/CD and Kubernetes projections, Software Templates, and TechDocs; ingestion, indexed search, permissions, execution, infrastructure discovery, and publication remain host services |
 | Databricks | `code_browser` + `asset_catalog` + `table` + analytical widgets + `dag` + `events` / `action_log` | Notebook and SQL authoring shells, Unity Catalog discovery, Lakeflow task graphs and runs, result visualization, and AI-assistant presentation |
 | Snowflake | `code_browser` + `asset_catalog` + `table` + analytical widgets + `events` / `action_log` + `dag` | File-based SQL projects, governed catalog discovery, query results, performance monitoring, transformation graphs, and current Workspaces reference anatomy |
 | Airtable | `record_grid` + `record_board` + `record_calendar` + `record_form` | Typed fields, links, saved views, filters/sorts, inline edits, governed CRUD, revision checks, and multiple projections over one record set |
 | Business operating workspace | `MultiDashboard` + record views + analytical widgets + `action_form` + `events` / `action_log` | Owner pulse, CRM/projects, commerce, support, finance, governed workflows, and drill-through into shared business objects |
+| HubSpot / Intercom | `record_grid` + `record_board` + `object_view` + `conversation` + `events` + optional `action_form` | CRM pipelines, customer records, support inboxes, tickets, customer context, reporting, and host-governed updates |
+| Intuit QuickBooks | `metric` / `stat_strip` + `timeseries` + `table` + `events` / `action_log` + optional `action_form` | Business health, cash forecasting, invoices, banking transactions, categorization review, reporting, and governed accounting actions |
+| Shopify / Stripe | `metric` / `stat_strip` + `timeseries` + `table` / record views + `object_view` + `events` / `action_log` + optional `action_form` | Orders, inventory, fulfillment, payments, subscriptions, payouts, disputes, analytics, and host-governed operational actions |
 | Grafana / Apache Superset | `metric`, `stat_strip`, `timeseries`, `area_chart`, `bar_chart`, `table`, `heatmap`, `histogram`, `boxplot`, `scatter`, `treemap`, `gauge`, `events`, `alert_log` | Context-driven filters, streaming/polling, freshness and retry state, annotations, alerts, drill-down, snapshots, export, and embedding |
 | Binance | `stat_strip` + `candlestick` + `orderbook` + `depth_chart` + `tape` + `trade` + orders/holdings tables | Market statistics, candles, ladder and cumulative liquidity, prints, order entry, lifecycle, history, and watchlists |
 | CoinGecko | `table` + `metric` / `stat_strip` + `timeseries` / `candlestick` + `distribution` + `text` | Ranked markets, coin detail, price/volume/cap history, metadata, categories, portfolio/watchlists, and news |
@@ -107,8 +113,8 @@ vendor before product:
 | Binance | Binance | `Clones/Binance` | Spot charting, watchlists, order book, trade entry, wallet context, and orders |
 | CoinGecko | CoinGecko | `Clones/CoinGecko` | Asset rankings, coin detail, price history, statistics, watchlists, and portfolios |
 | Databricks | Databricks | `Clones/Databricks` | Notebooks, SQL editor, Lakeflow Jobs, Unity Catalog, compute, assistant |
-| GitHub | GitHub | `Clones/GitHub` | Pull requests, file-tree diffs, reviews, checks, issues, and merge readiness |
-| GitLab | GitLab | `Clones/GitLab` | Merge requests, changes, reviewers, approval gates, CI/CD pipelines, and jobs |
+| GitHub | GitHub | `Clones/GitHub` | Pull-request conversation, file-tree review, inline diffs, checks, job logs, artifacts, and merge readiness |
+| GitLab | GitLab | `Clones/GitLab` | Project navigation, merge requests, assignee/reviewer roles, approval rules, changed files, stage pipelines, and jobs |
 | Google | Calendar | `Clones/Google/Calendar` | Calendar records, events, scheduling actions, people, rooms, and conferencing |
 | Google | Docs | `Clones/Google/Docs` | Files, text, embeds, context, consumer-registered editor |
 | Google | Drive | `Clones/Google/Drive` | Files, catalog, object detail, activity, actions |
@@ -122,6 +128,9 @@ vendor before product:
 | Intercom | Intercom | `Clones/Intercom` | Inbox, conversation detail, tickets, customer context, reporting |
 | Interactive Brokers | Trader Workstation | `Clones/Interactive Brokers/Trader Workstation` | Mosaic watchlists, charts, portfolio, Level II, linked order entry, and monitoring |
 | Linear | Linear | `Clones/Linear` | Issue lists, custom views, cycles, projects, priorities, and issue detail |
+| Meta | Facebook | `Clones/Meta/Facebook` | Stories, social feed, groups, business pages, contacts, search, and engagement presentation |
+| Meta | Instagram | `Clones/Meta/Instagram` | Stories, media-first feed, discovery, profiles, search, and engagement presentation |
+| Meta | Threads | `Clones/Meta/Threads` | For-you and following feeds, threaded media posts, discovery, profiles, and engagement presentation |
 | Meta | WhatsApp | `Clones/Meta/WhatsApp` | Direct/group chats, communities, attachments, media, calls, and delivery presentation |
 | Microsoft | Outlook | `Clones/Microsoft/Outlook` | Focused inbox, folders, message list, reading pane, search, and composition |
 | Netflix | Netflix | `Clones/Netflix` | Personalized rails, title discovery, My List, profiles, episodes, and playback presentation |
@@ -129,11 +138,12 @@ vendor before product:
 | OpenAI | ChatGPT | `Clones/OpenAI/ChatGPT` | Assistant conversations, project context, tools, structured answers, and canvas presentation |
 | Palantir | Foundry | `Clones/Palantir/Foundry/Foundation` and `Clones/Palantir/Foundry/Ontology & Operations` | Catalog, ontology, lineage, maps, data connections, code, records, actions |
 | Polymarket | Polymarket | `Clones/Polymarket` | Market discovery, probabilities, history, resolution, CLOB depth, trading, and positions |
-| QuickBooks | QuickBooks | `Clones/QuickBooks` | Metrics, cash flow, invoices, transactions, review actions |
+| Intuit | QuickBooks | `Clones/Intuit/QuickBooks` | Metrics, cash flow, invoices, transactions, review actions |
 | Shopify | Shopify | `Clones/Shopify` | Commerce metrics, orders, inventory, fulfillment, actions |
 | Slack | Slack | `Clones/Slack` | Workspace navigation, channels, presence, search, reactions, files, threads, app messages, composition |
 | Snowflake | Snowflake | `Clones/Snowflake` | Workspaces, SQL projects, Horizon Catalog, query results and monitoring |
 | Spotify | Spotify | `Clones/Spotify` | Personalized discovery, search and browse, saved library, playlists, track rows, Now Playing, queue, Jam, and persistent player presentation |
+| Spotify | Backstage | `Clones/Spotify/Backstage` | Software Catalog, entity/plugin views, ownership, API relations, CI/CD, Kubernetes status, system topology, Software Templates, and TechDocs |
 | Stripe | Stripe | `Clones/Stripe` | Payments, subscriptions, payouts, disputes, analytics |
 
 The showcases accept host-provided records/content and demonstrate application
@@ -150,15 +160,28 @@ product story over a shared implementation. Binance, CoinGecko, Polymarket,
 Interactive Brokers, Grafana, and Superset retain their generic JSON dashboard
 proofs in addition to their product-faithful Storybook shells.
 
-The newer suites share seven presentation implementations—mail, knowledge,
-work tracking, code collaboration, markets, analytics, and conversation—so
-the catalog demonstrates provider anatomy without adding vendor-specific APIs
-or duplicated component families to the package. Future showcases should only
-be admitted when they expose an interaction model that these archetypes and
-the generic built-ins cannot already demonstrate. Equivalent products such as
-Microsoft Teams, Dropbox/OneDrive, Xero, Salesforce, or Adyen should reuse the
-matching conversation, file, accounting, CRM, or payments archetype unless a
-concrete workflow proves that the shared primitives are insufficient.
+Spotify Backstage is represented as a developer-portal composition rather than
+a new vendor-specific core. Its catalog, ownership, plugin tabs, templates,
+TechDocs, and system topology project host data over the existing neutral
+catalog, object, graph, code, workflow, document, status, and workbench
+foundations. Catalog ingestion, indexed search, permissions, scaffolder
+execution, Kubernetes discovery, secrets, and documentation publication remain
+host responsibilities.
+
+The archetype suites share six presentation implementations—mail, knowledge,
+work tracking, markets, analytics, and conversation. GitHub and GitLab share a
+neutral collaboration data contract but deliberately use separate product
+renderers, preserving GitHub pull-request/checks anatomy and GitLab
+merge-request/approval/pipeline anatomy.
+Instagram, Facebook, and Threads add one provider-local social implementation
+because their related feed, story, profile, and engagement anatomy belongs
+together. This keeps vendor presentation outside the package and avoids three
+duplicated component families. Future showcases should only be admitted when
+they expose an interaction model that these archetypes and the generic
+built-ins cannot already demonstrate. Equivalent products such as Microsoft
+Teams, Dropbox/OneDrive, Xero, Salesforce, or Adyen should reuse the matching
+conversation, file, accounting, CRM, or payments archetype unless a concrete
+workflow proves that the shared primitives are insufficient.
 
 The current file surface intentionally stops short of pretending that storage
 policy is a UI concern. Rename, move, delete, share, retention, and folder

@@ -9,8 +9,10 @@ export type OperationalShowcaseIconName =
   | 'bank'
   | 'bell'
   | 'bolt'
+  | 'bookmark'
   | 'box'
   | 'calendar'
+  | 'camera'
   | 'cart'
   | 'chart'
   | 'check'
@@ -25,8 +27,10 @@ export type OperationalShowcaseIconName =
   | 'download'
   | 'filter'
   | 'flag'
+  | 'globe'
   | 'graph'
   | 'help'
+  | 'heart'
   | 'home'
   | 'inbox'
   | 'inventory'
@@ -41,6 +45,7 @@ export type OperationalShowcaseIconName =
   | 'package'
   | 'people'
   | 'phone'
+  | 'play'
   | 'plus'
   | 'refresh'
   | 'return'
@@ -101,10 +106,14 @@ export function OperationalShowcaseIcon({
       return <svg {...common} {...props}><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
     case 'bolt':
       return <svg {...common} {...props}><path d="m13 2-9 12h8l-1 8 9-12h-8z" /></svg>
+    case 'bookmark':
+      return <svg {...common} {...props}><path d="M6 4h12v17l-6-4-6 4z" /></svg>
     case 'box':
       return <svg {...common} {...props}><path d="m4 7 8-4 8 4-8 4zM4 7v10l8 4 8-4V7M12 11v10" /></svg>
     case 'calendar':
       return <svg {...common} {...props}><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></svg>
+    case 'camera':
+      return <svg {...common} {...props}><path d="M4 7h4l1.5-2h5L16 7h4v12H4z" /><circle cx="12" cy="13" r="3.5" /></svg>
     case 'cart':
       return <svg {...common} {...props}><path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 8H6M10 20h.01M17 20h.01" /></svg>
     case 'chart':
@@ -133,10 +142,14 @@ export function OperationalShowcaseIcon({
       return <svg {...common} {...props}><path d="M4 5h16l-6 7v6l-4 2v-8z" /></svg>
     case 'flag':
       return <svg {...common} {...props}><path d="M5 21V4m0 1h11l-2 4 2 4H5" /></svg>
+    case 'globe':
+      return <svg {...common} {...props}><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" /></svg>
     case 'graph':
       return <svg {...common} {...props}><circle cx="5" cy="12" r="2.5" /><circle cx="18" cy="5" r="2.5" /><circle cx="18" cy="19" r="2.5" /><path d="m7.2 10.8 8.6-4.6M7.2 13.2l8.6 4.6" /></svg>
     case 'help':
       return <svg {...common} {...props}><circle cx="12" cy="12" r="9" /><path d="M9.8 9a2.3 2.3 0 1 1 3.4 2c-.8.5-1.2 1-1.2 2M12 17h.01" /></svg>
+    case 'heart':
+      return <svg {...common} {...props}><path d="M20.8 5.8a5.4 5.4 0 0 0-7.7 0L12 6.9l-1.1-1.1a5.4 5.4 0 0 0-7.7 7.7L12 22l8.8-8.5a5.4 5.4 0 0 0 0-7.7Z" /></svg>
     case 'home':
       return <svg {...common} {...props}><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z" /></svg>
     case 'inbox':
@@ -165,6 +178,8 @@ export function OperationalShowcaseIcon({
       return <svg {...common} {...props}><circle cx="9" cy="8" r="3" /><circle cx="17" cy="9" r="2.5" /><path d="M3 21a6 6 0 0 1 12 0m-1.5-5a5 5 0 0 1 7.5 4.4" /></svg>
     case 'phone':
       return <svg {...common} {...props}><path d="M5 4h4l2 5-3 2a14 14 0 0 0 5 5l2-3 5 2v4c0 1-1 2-2 2C10 21 3 14 3 6c0-1 1-2 2-2Z" /></svg>
+    case 'play':
+      return <svg {...common} {...props}><circle cx="12" cy="12" r="9" /><path d="m10 8 6 4-6 4z" /></svg>
     case 'plus':
       return <svg {...common} {...props}><path d="M12 5v14M5 12h14" /></svg>
     case 'refresh':

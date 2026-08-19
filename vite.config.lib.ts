@@ -8,9 +8,14 @@ export default defineConfig({
   publicDir: false,
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        'medallion-terminal-core': resolve(__dirname, 'src/index.ts'),
+        toolkit: resolve(__dirname, 'src/toolkit.ts'),
+        dashboard: resolve(__dirname, 'src/dashboard.ts'),
+        'asset-open': resolve(__dirname, 'src/asset-open.ts'),
+      },
       formats: ['es'],
-      fileName: 'medallion-terminal-core',
+      fileName: (_format, entryName) => `${entryName}.js`,
       cssFileName: 'styles',
     },
     rollupOptions: {

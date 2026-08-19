@@ -113,6 +113,18 @@ describe('Storybook coverage', () => {
 
       expect(title, `${storyUrl.pathname} must declare a story title`).toBeDefined()
       expect(
+        storyMetaValue(source, 'layout'),
+        `${storyUrl.pathname} must render as a complete product surface`,
+      ).toBe('fullscreen')
+      expect(
+        source,
+        `${storyUrl.pathname} must bind its showcase component to Storybook metadata`,
+      ).toMatch(/\bcomponent:\s*[A-Z][A-Za-z0-9.]*/)
+      expect(
+        source,
+        `${storyUrl.pathname} must explain the reference surface in generated docs`,
+      ).toMatch(/\bdocs:\s*{[\s\S]*?\bdescription:\s*{[\s\S]*?\bcomponent:/)
+      expect(
         vendor,
         `${storyUrl.pathname} must declare parameters.cloneVendor`,
       ).toMatch(/^[A-Za-z0-9][A-Za-z0-9 .&+-]*$/)
@@ -148,5 +160,8 @@ describe('Storybook coverage', () => {
     expect(vendors.filter(vendor => vendor === 'Google').length).toBe(8)
     expect(vendors.filter(vendor => vendor === 'Palantir').length).toBe(2)
     expect(vendors.filter(vendor => vendor === 'Atlassian').length).toBe(2)
+    expect(vendors.filter(vendor => vendor === 'Intuit').length).toBe(1)
+    expect(vendors.filter(vendor => vendor === 'Meta').length).toBe(4)
+    expect(vendors.filter(vendor => vendor === 'Spotify').length).toBe(2)
   })
 })

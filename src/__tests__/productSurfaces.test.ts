@@ -13,6 +13,7 @@ import serviceOps from '../../public/examples/service-ops.json'
 import spotMarket from '../../public/examples/spot-market.json'
 import tradingFloor from '../../public/examples/trading-floor.json'
 import workManagement from '../../public/examples/work-management.json'
+import workflowOrchestrator from '../../public/examples/workflow-orchestrator.json'
 import mediaLibrary from '../../public/examples/media-library.json'
 import communicationsHub from '../../public/examples/communications-hub.json'
 import { BUILTIN_KEYS } from '../core/WidgetRegistry'
@@ -100,6 +101,28 @@ const SURFACES: Array<{
       'record_calendar',
       'record_form',
       'object_view',
+    ],
+  },
+  {
+    name: 'internal developer portal and service topology',
+    components: components(
+      platformFoundation,
+      workflowOrchestrator,
+      serviceOps,
+      fileBrowser,
+    ),
+    required: [
+      'asset_catalog',
+      'object_view',
+      'dag',
+      'code_browser',
+      'action_form',
+      'file_browser',
+      'text',
+      'events',
+      'table',
+      'stat_strip',
+      'gauge',
     ],
   },
   {
@@ -216,7 +239,43 @@ describe('product-surface readiness', () => {
   }
 
   it('keeps built-in names vendor-neutral', () => {
-    const vendorNames = ['palantir', 'google', 'binance', 'coingecko', 'polymarket', 'ibkr']
+    const vendorNames = [
+      'airtable',
+      'atlassian',
+      'binance',
+      'chatgpt',
+      'coingecko',
+      'confluence',
+      'databricks',
+      'facebook',
+      'foundry',
+      'github',
+      'gitlab',
+      'google',
+      'grafana',
+      'hubspot',
+      'ibkr',
+      'instagram',
+      'intercom',
+      'intuit',
+      'jira',
+      'linear',
+      'netflix',
+      'notion',
+      'openai',
+      'outlook',
+      'palantir',
+      'polymarket',
+      'quickbooks',
+      'shopify',
+      'slack',
+      'snowflake',
+      'spotify',
+      'stripe',
+      'superset',
+      'threads',
+      'whatsapp',
+    ]
     for (const component of BUILTIN_KEYS) {
       expect(vendorNames.some(vendor => component.includes(vendor))).toBe(false)
     }

@@ -1,6 +1,6 @@
 {
   "name": "medallion-terminal-core",
-  "version": "0.4.20",
+  "version": "0.5.0",
   "type": "module",
   "packageManager": "pnpm@11.9.0",
   "main": "./dist/medallion-terminal-core.js",
@@ -10,6 +10,21 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/medallion-terminal-core.js",
       "default": "./dist/medallion-terminal-core.js"
+    },
+    "./toolkit": {
+      "types": "./dist/toolkit.d.ts",
+      "import": "./dist/toolkit.js",
+      "default": "./dist/toolkit.js"
+    },
+    "./dashboard": {
+      "types": "./dist/dashboard.d.ts",
+      "import": "./dist/dashboard.js",
+      "default": "./dist/dashboard.js"
+    },
+    "./asset-open": {
+      "types": "./dist/asset-open.d.ts",
+      "import": "./dist/asset-open.js",
+      "default": "./dist/asset-open.js"
     },
     "./proto": {
       "types": "./dist/proto.d.ts"
@@ -35,55 +50,64 @@
     "preview": "vite preview",
     "check:dist": "node scripts/check-dist.mjs",
     "check:package": "node scripts/check-package.mjs",
+    "check:bundles": "node scripts/check-bundle-isolation.mjs",
     "check:breaking": "buf breaking --against '.git#branch=origin/main'",
-    "check": "pnpm lint && pnpm test && pnpm build && pnpm build:lib && pnpm check:package",
+    "check:surface": "node scripts/public-surface-check.mjs",
+    "check:version": "node scripts/check-version.mjs",
     "backend": "node examples/backend/server.mjs",
     "backend:secure": "node examples/backend/secure-server.mjs",
     "storybook": "storybook dev -p 6006",
     "check:storybook": "node scripts/check-storybook.mjs",
     "check:conformance": "node scripts/check-reference-conformance.mjs",
     "build:storybook": "storybook build && pnpm check:storybook",
-    "ci:verify": "pnpm lint && pnpm check:breaking && pnpm check:conformance && pnpm test && pnpm test:storybook && pnpm build && pnpm check:dist && pnpm check:package && pnpm build:storybook && pnpm test:browser",
-    "ci": "pnpm install --frozen-lockfile && pnpm ci:verify"
+    "validate": "pnpm check:surface && pnpm check:version && pnpm lint && pnpm check:breaking && pnpm check:conformance && pnpm test && pnpm test:storybook && pnpm build && pnpm check:dist && pnpm check:package && pnpm check:bundles && pnpm build:storybook && pnpm test:browser"
   },
   "peerDependencies": {
     "lightweight-charts": "^5.0.0",
-    "maplibre-gl": "^5.0.0",
+    "maplibre-gl": "^5.0.0 || ^6.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^3.0.0"
   },
+  "peerDependenciesMeta": {
+    "lightweight-charts": {
+      "optional": true
+    },
+    "maplibre-gl": {
+      "optional": true
+    },
+    "recharts": {
+      "optional": true
+    }
+  },
   "dependencies": {
-    "@ffmpeg/ffmpeg": "^0.12.15",
-    "@ffmpeg/util": "^0.12.2",
     "dompurify": "^3.4.12",
-    "heic2any": "^0.0.4",
     "hyparquet-writer": "^0.16.1",
-    "lightweight-charts": "^5.2.0",
-    "maplibre-gl": "^5.24.0",
-    "marked": "^18.0.7",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "recharts": "^3.10.0"
+    "marked": "^18.0.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",
-    "@bufbuild/protobuf": "^2.12.1",
-    "@bufbuild/protoc-gen-es": "^2.12.1",
+    "@bufbuild/protobuf": "^2.13.0",
+    "@bufbuild/protoc-gen-es": "^2.13.0",
     "@playwright/test": "1.61.1",
-    "@storybook/addon-a11y": "10.5.3",
-    "@storybook/addon-vitest": "10.5.3",
-    "@storybook/react": "^10.5.3",
-    "@storybook/react-vite": "^10.5.3",
+    "@storybook/addon-a11y": "10.5.4",
+    "@storybook/addon-vitest": "10.5.4",
+    "@storybook/react": "^10.5.4",
+    "@storybook/react-vite": "^10.5.4",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
+    "@vitejs/plugin-react": "^6.0.4",
     "@vitest/browser-playwright": "4.1.10",
     "esbuild": "^0.28.1",
     "hyparquet": "^1.26.2",
-    "storybook": "^10.5.3",
+    "lightweight-charts": "^5.2.0",
+    "maplibre-gl": "^6.0.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "recharts": "^3.10.0",
+    "storybook": "^10.5.4",
     "tailwindcss": "^4.3.3",
     "typescript": "~7.0.2",
     "vite": "^8.1.5",

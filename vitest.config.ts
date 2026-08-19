@@ -40,6 +40,10 @@ export default mergeConfig(viteConfig, defineConfig({
             enabled: true,
             headless: true,
             provider: playwright({}),
+            // Story files share one non-isolated Storybook preview. Serial
+            // files keep React act boundaries deterministic when lazy widgets
+            // resolve under load, while individual play steps remain fast.
+            fileParallelism: false,
             instances: [{ browser: 'chromium' }],
           },
         },

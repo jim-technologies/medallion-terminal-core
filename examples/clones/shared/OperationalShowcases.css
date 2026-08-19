@@ -221,7 +221,7 @@
   --foundry-border-strong: #3c4855;
   --foundry-text: #edf1f4;
   --foundry-soft: #b8c0c9;
-  --foundry-muted: #7f8a96;
+  --foundry-muted: #9aa6b3;
   --foundry-accent: #5fa6e9;
   background: var(--foundry-bg);
   color: var(--foundry-text);
@@ -1533,7 +1533,7 @@
   --shopify-border-strong: #c7c7c7;
   --shopify-text: #202223;
   --shopify-soft: #4a4d4f;
-  --shopify-muted: #6d7175;
+  --shopify-muted: #62666a;
   --shopify-green: #16845b;
   background: var(--shopify-bg);
   color: var(--shopify-text);
@@ -1712,7 +1712,7 @@
 
 .shopify-nav-heading {
   align-items: center;
-  color: #737576;
+  color: #626465;
   display: flex;
   font-size: 9px;
   font-weight: 650;
@@ -1924,7 +1924,7 @@
 }
 
 .shopify-chart-axis {
-  color: #8a8d8f;
+  color: #646769;
   display: flex;
   flex-direction: column;
   font-size: 8px;
@@ -1961,7 +1961,7 @@
 
 .shopify-chart-labels {
   bottom: 0;
-  color: #8a8d8f;
+  color: #646769;
   display: flex;
   font-size: 8px;
   justify-content: space-between;
@@ -2709,7 +2709,7 @@
   --stripe-border-strong: #c8ccd2;
   --stripe-text: #30313d;
   --stripe-soft: #5b5d6b;
-  --stripe-muted: #858896;
+  --stripe-muted: #626572;
   --stripe-purple: #635bff;
   background: var(--stripe-bg);
   color: var(--stripe-text);
@@ -2982,7 +2982,7 @@
 .stripe-billing-stats small,
 .stripe-dispute-stats small {
   align-items: center;
-  color: #278763;
+  color: #20785a;
   display: flex;
   font-size: 8px;
   gap: 2px;
@@ -2990,7 +2990,7 @@
 }
 
 .stripe-overview-metrics small.good {
-  color: #278763;
+  color: #20785a;
 }
 
 .stripe-overview-metrics .ready-sparkline {
@@ -3889,7 +3889,7 @@
   --intercom-border: #e6e6e8;
   --intercom-text: #1f2023;
   --intercom-soft: #55575d;
-  --intercom-muted: #898b91;
+  --intercom-muted: #62646b;
   --intercom-purple: #6255d9;
   background: var(--intercom-bg);
   color: var(--intercom-text);
@@ -4582,6 +4582,7 @@
   font-size: 8px;
   height: 25px;
   justify-content: center;
+  min-width: 24px;
   padding: 0 6px;
 }
 
@@ -4772,9 +4773,9 @@
   border-radius: 50%;
   color: var(--intercom-muted);
   display: flex;
-  height: 20px;
+  height: 24px;
   justify-content: center;
-  width: 20px;
+  width: 24px;
 }
 
 .intercom-order-card {
@@ -4960,11 +4961,11 @@
 /* -------------------------------------------------------------------------- */
 
 .timeline-showcase {
-  --timeline-blue: #1a73e8;
+  --timeline-blue: #185abc;
   --timeline-border: #e0e0e0;
   --timeline-text: #202124;
   --timeline-soft: #5f6368;
-  --timeline-muted: #80868b;
+  --timeline-muted: #5f6368;
   background: white;
   color: var(--timeline-text);
   height: 100vh;
@@ -5828,7 +5829,7 @@
 }
 
 .timeline-map-controls > button {
-  bottom: 28px;
+  bottom: 68px;
   position: absolute;
   right: 0;
 }

@@ -72,7 +72,9 @@ export default function App() {
 
   const backendUrl = initialParams.get('backend') ?? undefined
   const requestedTheme = initialParams.get('theme')
-  const theme: DashboardTheme = requestedTheme === 'operator' || requestedTheme === 'light'
+  const theme: DashboardTheme = requestedTheme === 'operator'
+    || requestedTheme === 'light'
+    || requestedTheme === 'high-contrast'
     ? requestedTheme
     : 'dark'
   if (tabs.length === 1) {

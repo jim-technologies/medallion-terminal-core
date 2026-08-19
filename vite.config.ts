@@ -12,6 +12,12 @@ import { resolve } from 'path'
 // at — it renders a single widget or dashboard with minimal chrome.
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // MapLibre 6 ships its worker as a separate ESM entry. Let the browser load
+  // that entry directly instead of having Vite's dependency optimizer create
+  // a transient worker bundle that Storybook's browser tests cannot retain.
+  optimizeDeps: {
+    exclude: ['maplibre-gl'],
+  },
   build: {
     outDir: 'dist-app',
     rollupOptions: {

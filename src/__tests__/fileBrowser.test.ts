@@ -7,6 +7,7 @@ import {
   joinPath,
   humanSize,
   previewKind,
+  isNativePreviewKind,
   buildMediaUrl,
   parseConnectStream,
   playableQueue,
@@ -115,7 +116,7 @@ describe('FileBrowser helpers', () => {
       ['application/octet-stream', 'movie.mkv', 'mkv'],
       ['application/octet-stream', 'doc.pdf', 'pdf'],
       // Content-type wins over extension when both are present and useful.
-      ['video/mp4', 'unknown.mkv', 'mkv'], // mkv extension still triggers — extension hint is the conservative path
+      ['video/mp4', 'unknown.mkv', 'video'],
       // Filename without recognized extension → unchanged classification.
       ['application/octet-stream', 'README', null],
       // Text-family kinds.
@@ -135,6 +136,12 @@ describe('FileBrowser helpers', () => {
       ['application/octet-stream', 'app.log', 'text'],
     ])('%q + %q → %s', (ct, name, want) => {
       expect(previewKind(ct as string | undefined, name)).toBe(want as ReturnType<typeof previewKind>)
+    })
+
+    it('keeps HEIC and MKV discoverable without claiming browser-native preview', () => {
+      expect(isNativePreviewKind(previewKind('image/heic', 'photo.heic'))).toBe(false)
+      expect(isNativePreviewKind(previewKind('video/x-matroska', 'movie.mkv'))).toBe(false)
+      expect(isNativePreviewKind(previewKind('video/mp4', 'movie.mp4'))).toBe(true)
     })
   })
 
@@ -217,7 +224,7 @@ describe('FileBrowser helpers', () => {
   })
 
   describe('playableQueue', () => {
-    it('keeps audio/video/mkv in display order; drops images, pdfs, text', () => {
+    it('keeps native audio/video in display order; leaves MKV to an installed app', () => {
       const entries = [
         { kind: 'file', name: 'a.jpg', content_type: 'image/jpeg' },
         { kind: 'file', name: 'b.mp3', content_type: 'audio/mpeg' },
@@ -226,7 +233,7 @@ describe('FileBrowser helpers', () => {
         { kind: 'file', name: 'e.mkv', content_type: 'video/x-matroska' },
         { kind: 'file', name: 'f.txt', content_type: 'text/plain' },
       ]
-      expect(playableQueue(entries).map((e) => e.name)).toEqual(['b.mp3', 'd.mp4', 'e.mkv'])
+      expect(playableQueue(entries).map((e) => e.name)).toEqual(['b.mp3', 'd.mp4'])
     })
   })
 

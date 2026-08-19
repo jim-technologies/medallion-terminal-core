@@ -598,6 +598,7 @@ function SheetRow({
         const isStatus = columnIndex === columnCount - 1 && rowIndex > 0 && value
         return (
           <button
+            aria-label={`${cell}: ${value || 'empty'}`}
             type="button"
             className={`workspace-cell ${rowIndex === 0 ? 'is-table-header' : ''} ${selectedCell === cell ? 'is-selected' : ''} ${isStatus ? `is-status status-${String(value).toLowerCase()}` : ''}`}
             key={cell}
@@ -640,7 +641,7 @@ function SlidesCanvas({
         ))}
         <button type="button" className="workspace-add-slide"><WorkspaceIcon name="plus" /> Add slide</button>
       </aside>
-      <div className="workspace-slide-stage">
+      <div aria-label="Slide editing canvas" className="workspace-slide-stage" tabIndex={0}>
         <div className="workspace-slide-canvas">
           <SlideContent slide={active} />
           <span className="workspace-live-cursor"><i /> Maya</span>

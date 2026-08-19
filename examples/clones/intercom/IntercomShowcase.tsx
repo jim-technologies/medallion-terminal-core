@@ -282,19 +282,19 @@ export function IntercomShowcase({
 
   return (
     <div className="ready-showcase intercom-showcase">
-      <aside className="intercom-rail">
+      <aside aria-label="Intercom applications" className="intercom-rail">
         <div className="intercom-mark">I</div>
-        <nav>
-          <button className={section === 'inbox' ? 'active' : ''} onClick={() => { setSection('inbox'); setStateFilter(undefined) }}><OperationalShowcaseIcon name="inbox" /></button>
-          <button className={section === 'tickets' ? 'active' : ''} onClick={() => { setSection('tickets'); setStateFilter('Open') }}><OperationalShowcaseIcon name="ticket" /></button>
-          <button><OperationalShowcaseIcon name="people" /></button>
-          <button className={section === 'reporting' ? 'active' : ''} onClick={() => setSection('reporting')}><OperationalShowcaseIcon name="chart" /></button>
-          <button><OperationalShowcaseIcon name="sparkles" /></button>
+        <nav aria-label="Intercom applications">
+          <button aria-label="Inbox" className={section === 'inbox' ? 'active' : ''} onClick={() => { setSection('inbox'); setStateFilter(undefined) }}><OperationalShowcaseIcon name="inbox" /></button>
+          <button aria-label="Tickets" className={section === 'tickets' ? 'active' : ''} onClick={() => { setSection('tickets'); setStateFilter('Open') }}><OperationalShowcaseIcon name="ticket" /></button>
+          <button aria-label="Contacts"><OperationalShowcaseIcon name="people" /></button>
+          <button aria-label="Reports" className={section === 'reporting' ? 'active' : ''} onClick={() => setSection('reporting')}><OperationalShowcaseIcon name="chart" /></button>
+          <button aria-label="AI tools"><OperationalShowcaseIcon name="sparkles" /></button>
         </nav>
-        <div className="intercom-rail-footer"><button><OperationalShowcaseIcon name="settings" /></button><OperationalShowcaseAvatar name={currentTeammate} color="#6558c5" size={30} /></div>
+        <div className="intercom-rail-footer"><button aria-label="Settings"><OperationalShowcaseIcon name="settings" /></button><OperationalShowcaseAvatar name={currentTeammate} color="#6558c5" size={30} /></div>
       </aside>
 
-      <aside className="intercom-nav">
+      <aside aria-label="Inbox navigation" className="intercom-nav">
         <div className="intercom-workspace-switcher"><span className="intercom-workspace-avatar">{operationalShowcaseInitials(workspaceName).charAt(0)}</span><strong>{workspaceName}</strong><OperationalShowcaseIcon name="chevron-down" size={13} /></div>
         <button className="intercom-new-message"><OperationalShowcaseIcon name="plus" size={15} />New conversation</button>
         <div className="intercom-nav-group">
@@ -322,7 +322,7 @@ export function IntercomShowcase({
         <>
           <section className="intercom-list">
             <header>
-              <div><h1>{section === 'tickets' ? 'Tickets' : 'Your inbox'}</h1><button><OperationalShowcaseIcon name="more" size={17} /></button></div>
+              <div><h1>{section === 'tickets' ? 'Tickets' : 'Your inbox'}</h1><button aria-label="Inbox options"><OperationalShowcaseIcon name="more" size={17} /></button></div>
               <label><OperationalShowcaseIcon name="search" size={15} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search conversations" /></label>
               <div className="intercom-list-filters">
                 <button onClick={() => setStateFilter(stateFilter ? undefined : 'Open')}>{stateFilter ?? 'Open'} <OperationalShowcaseIcon name="chevron-down" size={12} /></button>
@@ -356,11 +356,11 @@ export function IntercomShowcase({
           {selectedConversation && (
             <section className="intercom-thread">
               <header>
-                <button className="intercom-thread-back"><OperationalShowcaseIcon name="chevron-left" size={17} /></button>
+                <button aria-label="Back to conversations" className="intercom-thread-back"><OperationalShowcaseIcon name="chevron-left" size={17} /></button>
                 <div><h2>{selectedConversation.subject}</h2><span>{selectedConversation.customer} · {selectedConversation.company}</span></div>
                 <div>
-                  <button title="Priority" className={selectedConversation.priority === 'Priority' ? 'active' : ''}><OperationalShowcaseIcon name="flag" size={16} /></button>
-                  <button title="More"><OperationalShowcaseIcon name="more" size={17} /></button>
+                  <button aria-label="Mark priority" title="Priority" className={selectedConversation.priority === 'Priority' ? 'active' : ''}><OperationalShowcaseIcon name="flag" size={16} /></button>
+                  <button aria-label="Conversation options" title="More"><OperationalShowcaseIcon name="more" size={17} /></button>
                   <button className="intercom-resolve"><OperationalShowcaseIcon name="check" size={15} />Resolve</button>
                 </div>
               </header>
@@ -380,7 +380,7 @@ export function IntercomShowcase({
                 <div className="intercom-composer-tabs"><button className={composerMode === 'reply' ? 'active' : ''} onClick={() => setComposerMode('reply')}>Reply</button><button className={composerMode === 'note' ? 'active' : ''} onClick={() => setComposerMode('note')}>Note</button><span>To: {selectedConversation.customer}</span></div>
                 <textarea value={draft} onChange={event => setDraft(event.target.value)} placeholder={composerMode === 'reply' ? 'Use CtrlK for shortcuts' : 'Leave an internal note…'} />
                 <div className="intercom-composer-actions">
-                  <div><button><strong>B</strong></button><button><em>I</em></button><button><OperationalShowcaseIcon name="link" size={14} /></button><button><OperationalShowcaseIcon name="document" size={14} /></button><button><OperationalShowcaseIcon name="apps" size={14} /></button></div>
+                  <div><button aria-label="Bold"><strong>B</strong></button><button aria-label="Italic"><em>I</em></button><button aria-label="Insert link"><OperationalShowcaseIcon name="link" size={14} /></button><button aria-label="Attach file"><OperationalShowcaseIcon name="document" size={14} /></button><button aria-label="More composer tools"><OperationalShowcaseIcon name="apps" size={14} /></button></div>
                   <div><button className="intercom-ai-button"><OperationalShowcaseIcon name="sparkles" size={14} />AI</button><button className="intercom-send-button" disabled={!draft.trim()} onClick={send}>Send <OperationalShowcaseIcon name="chevron-down" size={12} /></button></div>
                 </div>
               </footer>
@@ -388,12 +388,12 @@ export function IntercomShowcase({
           )}
 
           {selectedConversation && (
-            <aside className="intercom-details">
-              <header><h2>Details</h2><button><OperationalShowcaseIcon name="close" size={16} /></button></header>
+            <aside aria-label="Conversation details" className="intercom-details">
+              <header><h2>Details</h2><button aria-label="Close conversation details"><OperationalShowcaseIcon name="close" size={16} /></button></header>
               <div className="intercom-customer-hero">
                 <OperationalShowcaseAvatar name={selectedConversation.customer} color={customerColor(selectedConversation.customer)} size={48} />
                 <h3>{selectedConversation.customer}</h3><span>{selectedConversation.company}</span>
-                <div><button><OperationalShowcaseIcon name="mail" size={15} /></button><button><OperationalShowcaseIcon name="phone" size={15} /></button><button><OperationalShowcaseIcon name="more" size={15} /></button></div>
+                <div><button aria-label="Email customer"><OperationalShowcaseIcon name="mail" size={15} /></button><button aria-label="Call customer"><OperationalShowcaseIcon name="phone" size={15} /></button><button aria-label="More customer actions"><OperationalShowcaseIcon name="more" size={15} /></button></div>
               </div>
               <IntercomDetailSection title="Conversation attributes">
                 <dl>
@@ -412,7 +412,7 @@ export function IntercomShowcase({
                 <dl>{Object.entries(selectedConversation.attributes).map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
               </IntercomDetailSection>
               <IntercomDetailSection title="Tags">
-                <div className="intercom-tags">{selectedConversation.tags.map(tag => <span key={tag}>{tag}</span>)}<button><OperationalShowcaseIcon name="plus" size={12} /></button></div>
+                <div className="intercom-tags">{selectedConversation.tags.map(tag => <span key={tag}>{tag}</span>)}<button aria-label="Add tag"><OperationalShowcaseIcon name="plus" size={12} /></button></div>
               </IntercomDetailSection>
               <IntercomDetailSection title="Recent orders">
                 <div className="intercom-order-card"><span>#1057</span><strong>$428.00</strong><small>Paid · Unfulfilled</small></div>

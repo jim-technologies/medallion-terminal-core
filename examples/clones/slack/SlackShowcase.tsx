@@ -696,7 +696,7 @@ export function SlackShowcase({
 
 function SlackMark({ compact = false }: { compact?: boolean }) {
   return (
-    <span className={`slack-clone__mark ${compact ? 'compact' : ''}`} aria-label="Slack">
+    <span className={`slack-clone__mark ${compact ? 'compact' : ''}`} role="img" aria-label="Slack">
       <i className="cyan" />
       <i className="green" />
       <i className="yellow" />

@@ -26,6 +26,15 @@ export interface ValidationIssue {
   message: string
 }
 
+/** Optional validator behavior for hosts with an exact scoped registry. */
+export interface ValidateTemplateOptions {
+  /**
+   * Includes Terminal Core built-ins in addition to `knownExtra`. Defaults to
+   * true for backward compatibility.
+   */
+  includeBuiltIns?: boolean
+}
+
 // Walks a template and surfaces the authoring mistakes that lose time at
 // runtime: unknown components, conflicting source modes, span out of
 // range, malformed alert predicates. Returns [] for a valid template.
@@ -33,6 +42,7 @@ export interface ValidationIssue {
 export function validateTemplate(
   template: Template,
   knownExtra?: Iterable<string>,
+  options: ValidateTemplateOptions = {},
 ): ValidationIssue[] {
   const issues: ValidationIssue[] = []
   if (!template || typeof template !== 'object') {
@@ -43,7 +53,11 @@ export function validateTemplate(
     issues.push({ path: 'widgets', severity: 'error', message: 'widgets must be an array' })
     return issues
   }
-  const known = knownExtra ? new Set([...BUILTIN_COMPONENTS, ...knownExtra]) : BUILTIN_COMPONENTS
+  const known = options.includeBuiltIns === false
+    ? new Set(knownExtra ?? [])
+    : knownExtra
+      ? new Set([...BUILTIN_COMPONENTS, ...knownExtra])
+      : BUILTIN_COMPONENTS
 
   template.widgets.forEach((w, i) => {
     const p = `widgets[${i}]`
@@ -57,7 +71,7 @@ export function validateTemplate(
       issues.push({
         path: `${p}.component`,
         severity: 'warn',
-        message: `unknown component "${w.component}" — register via registerWidget() or fix the spelling`,
+        message: `unknown component "${w.component}" — register it in the active widget registry or fix the spelling`,
       })
     }
     if (w.span != null && (!Number.isInteger(w.span) || w.span < 1 || w.span > 12)) {

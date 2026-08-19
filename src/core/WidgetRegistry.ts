@@ -9,12 +9,15 @@ import { Placeholder } from '../widgets/Placeholder'
 // to rendered widget reuses the same loading visual the data-loading
 // path already uses.
 
-type AnyWidget = ComponentType<WidgetProps> | LazyExoticComponent<ComponentType<WidgetProps>>
+/** A synchronous or lazily loaded dashboard widget implementation. */
+export type WidgetComponent =
+  | ComponentType<WidgetProps>
+  | LazyExoticComponent<ComponentType<WidgetProps>>
 
 const lazyWidget = (loader: () => Promise<{ [k: string]: ComponentType<WidgetProps> }>, name: string) =>
   lazy(() => loader().then(m => ({ default: m[name] })))
 
-const registry = new Map<string, AnyWidget>([
+const builtInWidgets = new Map<string, WidgetComponent>([
   ['timeseries',     lazyWidget(() => import('../widgets/Timeseries'), 'Timeseries')],
   ['candlestick',    lazyWidget(() => import('../widgets/Candlestick'), 'Candlestick')],
   ['table',          lazyWidget(() => import('../widgets/DataTable'), 'DataTable')],
@@ -71,12 +74,79 @@ const registry = new Map<string, AnyWidget>([
 // built-in widgets, before any consumer-side registerWidget calls. The
 // validator's BUILTIN_COMPONENTS list is asserted equal to this set in
 // a test so the two never drift.
-export const BUILTIN_KEYS: ReadonlySet<string> = new Set(registry.keys())
+export const BUILTIN_KEYS: ReadonlySet<string> = new Set(builtInWidgets.keys())
 
-export function getWidget(name: string): AnyWidget {
-  return registry.get(name) || Placeholder
+/** Options for an isolated registry instance. */
+export interface CreateWidgetRegistryOptions {
+  /** Seed the registry with every built-in widget. Defaults to true. */
+  includeBuiltIns?: boolean
 }
 
-export function registerWidget(name: string, component: AnyWidget) {
-  registry.set(name, component)
+/** Instance-local widget registry used by one or more explicit Dashboards. */
+export interface WidgetRegistry {
+  /** Registers or replaces a widget and returns this registry for chaining. */
+  register(name: string, component: WidgetComponent): WidgetRegistry
+  /** Removes a widget from this registry only. */
+  unregister(name: string): boolean
+  /** Returns the registered implementation without a placeholder fallback. */
+  get(name: string): WidgetComponent | undefined
+  /** Reports whether this registry contains the widget name. */
+  has(name: string): boolean
+  /** Returns an immutable snapshot of the currently registered names. */
+  keys(): ReadonlySet<string>
+}
+
+class ScopedWidgetRegistry implements WidgetRegistry {
+  readonly #widgets: Map<string, WidgetComponent>
+
+  constructor(options: CreateWidgetRegistryOptions = {}) {
+    this.#widgets = options.includeBuiltIns === false
+      ? new Map()
+      : new Map(builtInWidgets)
+  }
+
+  register(name: string, component: WidgetComponent): WidgetRegistry {
+    this.#widgets.set(name, component)
+    return this
+  }
+
+  unregister(name: string): boolean {
+    return this.#widgets.delete(name)
+  }
+
+  get(name: string): WidgetComponent | undefined {
+    return this.#widgets.get(name)
+  }
+
+  has(name: string): boolean {
+    return this.#widgets.has(name)
+  }
+
+  keys(): ReadonlySet<string> {
+    return new Set(this.#widgets.keys())
+  }
+}
+
+/**
+ * Creates a widget registry with no shared mutable state. Built-ins are copied
+ * into each instance by default; legacy global registrations are never copied.
+ */
+export function createWidgetRegistry(
+  options: CreateWidgetRegistryOptions = {},
+): WidgetRegistry {
+  return new ScopedWidgetRegistry(options)
+}
+
+// Legacy process-global registry. This remains separate from all instance
+// registries so existing registerWidget() consumers keep their behavior while
+// new hosts can opt into strict registry isolation.
+const globalWidgets = new Map(builtInWidgets)
+
+export function getWidget(name: string, scopedRegistry?: WidgetRegistry): WidgetComponent {
+  return (scopedRegistry ? scopedRegistry.get(name) : globalWidgets.get(name)) || Placeholder
+}
+
+/** Registers a widget in the legacy process-global registry. */
+export function registerWidget(name: string, component: WidgetComponent): void {
+  globalWidgets.set(name, component)
 }

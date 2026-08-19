@@ -34,8 +34,14 @@ clones/
   intercom/
   interactive-brokers/
     trader-workstation/
+  intuit/
+    quickbooks/
   linear/
   meta/
+    facebook/
+    instagram/
+    shared/       # provider-local social presentation only
+    threads/
     whatsapp/
   microsoft/
     outlook/
@@ -46,12 +52,12 @@ clones/
   palantir/
     foundry/
   polymarket/
-  quickbooks/
   shared/        # vendor-neutral showcase primitives only
   shopify/
   slack/
   snowflake/
-  spotify/
+  spotify/        # Spotify music product at the provider root
+    backstage/
   stripe/
 ```
 
@@ -86,8 +92,13 @@ Clones/
   Intercom
   Interactive Brokers/
     Trader Workstation
+  Intuit/
+    QuickBooks
   Linear
   Meta/
+    Facebook
+    Instagram
+    Threads
     WhatsApp
   Microsoft/
     Outlook
@@ -100,11 +111,12 @@ Clones/
       Foundation
       Ontology & Operations
   Polymarket
-  QuickBooks
   Shopify
   Slack
   Snowflake
-  Spotify
+  Spotify         # consumer music product stories
+  Spotify/
+    Backstage
   Stripe
 ```
 
@@ -117,17 +129,27 @@ Each clone story must declare:
 - `cloneNamespace`: a unique kebab-case implementation namespace.
 
 Standalone products such as Airtable, Binance, CoinGecko, Databricks, GitHub,
-GitLab, Linear, Netflix, Notion, Polymarket, Slack, Snowflake, Spotify, and Stripe
+GitLab, Linear, Netflix, Notion, Polymarket, Slack, Snowflake, and Stripe
 remain one level deep because their vendor and product names are identical.
 Products owned by a broader provider use another level, such as
-`Google/Gmail`, `Atlassian/Jira`, `Meta/WhatsApp`, or `OpenAI/ChatGPT`. Do not
-introduce broad market-segment folders such as “SME” or “finance”; those
-obscure the products and make the catalog harder to scan.
+`Google/Gmail`, `Atlassian/Jira`, `Meta/Instagram`, `OpenAI/ChatGPT`, or
+`Spotify/Backstage`. Spotify's consumer music product remains at the provider
+root while Backstage uses its named product child. Do not introduce broad
+market-segment folders such as “SME” or “finance”; those obscure the products
+and make the catalog harder to scan.
 
-The remaining product suites share neutral archetype implementations from
-`shared/archetypes`: mail, knowledge, work tracking, code collaboration,
-markets, analytics, and conversation. Provider-specific story metadata and
-visual tokens keep the catalog recognizable without duplicating an entire
-component system per product.
+Some product suites share typed fixtures and low-level primitives from
+`shared/archetypes`, but every named product owns its presentation shell and
+information architecture. Outlook does not reuse Gmail chrome, Jira does not
+reuse Linear chrome, Confluence does not reuse Notion chrome, Trader Workstation
+does not reuse Binance chrome, and Superset does not reuse Grafana chrome.
+
+GitHub and GitLab likewise use independent product renderers over one neutral
+code-collaboration data contract; their pull-request/checks and
+merge-request/pipeline information architectures stay intentionally distinct.
+Instagram, Facebook, and Threads share one typed, provider-local renderer under
+`meta/shared`; it keeps their common social data and interaction contract
+together without turning Meta-specific presentation into a published framework
+API.
 
 `storybookCoverage.test.ts` and `check-storybook.mjs` enforce this contract.

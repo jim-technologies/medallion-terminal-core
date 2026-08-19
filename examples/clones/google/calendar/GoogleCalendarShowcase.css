@@ -112,7 +112,7 @@
 
 .gcal-logo__number {
   align-items: center;
-  color: #4285f4;
+  color: #185abc;
   display: flex;
   font-size: 14px;
   font-weight: 700;
@@ -389,7 +389,7 @@
 }
 
 .gcal-mini__day.is-outside {
-  color: #bdc1c6;
+  color: #6f7479;
 }
 
 .gcal-mini__day.is-today {
@@ -698,8 +698,13 @@
   border-top: 1px solid var(--gcal-border);
   display: grid;
   flex: 1;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
   grid-template-rows: repeat(6, minmax(82px, 1fr));
+  min-height: 0;
+}
+
+.gcal-month__week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   min-height: 0;
 }
 
@@ -711,11 +716,11 @@
   padding: 3px 2px 2px;
 }
 
-.gcal-month__day:nth-child(7n) {
+.gcal-month__week > .gcal-month__day:last-child {
   border-right: 0;
 }
 
-.gcal-month__day:nth-last-child(-n + 7) {
+.gcal-month__week:last-child > .gcal-month__day {
   border-bottom: 0;
 }
 
@@ -744,7 +749,7 @@
 }
 
 .gcal-month__day.is-outside .gcal-month__date {
-  color: #9aa0a6;
+  color: #6f7479;
 }
 
 .gcal-month__date:hover {

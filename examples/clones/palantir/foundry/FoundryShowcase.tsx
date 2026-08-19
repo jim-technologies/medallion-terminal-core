@@ -432,9 +432,9 @@ export function FoundryShowcase({
       </header>
 
       <div className="foundry-body">
-        <aside className="foundry-sidebar">
+        <aside aria-label="Foundry workspace navigation" className="foundry-sidebar">
           <div className="foundry-space-label">Operations model</div>
-          <nav>
+          <nav aria-label="Ontology workspace">
             {FOUNDRY_NAV.map(item => (
               <button
                 key={item.id}
@@ -492,7 +492,7 @@ export function FoundryShowcase({
                         placeholder="Search object types"
                       />
                     </label>
-                    <button className="ready-icon-button"><OperationalShowcaseIcon name="filter" size={15} /></button>
+                    <button aria-label="Filter object types" className="ready-icon-button"><OperationalShowcaseIcon name="filter" size={15} /></button>
                   </div>
                   <div className="foundry-type-header">
                     <span>Object type</span><span>Backing dataset</span><span>Objects</span><span>Status</span>
@@ -517,11 +517,11 @@ export function FoundryShowcase({
                 </section>
 
                 {selectedType && (
-                  <aside className="foundry-inspector">
+                  <aside aria-label={`${selectedType.name} inspector`} className="foundry-inspector">
                     <div className="foundry-inspector-heading">
                       <i style={{ '--foundry-type-color': selectedType.color } as CSSProperties}>{selectedType.icon}</i>
                       <div><h2>{selectedType.name}</h2><span>Object type · {selectedType.modifiedAt}</span></div>
-                      <button><OperationalShowcaseIcon name="more" /></button>
+                      <button aria-label="Object type options"><OperationalShowcaseIcon name="more" /></button>
                     </div>
                     <p>{selectedType.description}</p>
                     <div className="foundry-inspector-tabs"><button className="active">Schema</button><button>Datasets</button><button>Usage</button></div>
@@ -566,7 +566,7 @@ export function FoundryShowcase({
                 <section className="foundry-object-results">
                   <div className="ready-panel-toolbar">
                     <label className="ready-search-field"><OperationalShowcaseIcon name="search" size={15} /><input placeholder="Search Customers" /></label>
-                    <button className="ready-icon-button"><OperationalShowcaseIcon name="filter" size={15} /></button>
+                    <button aria-label="Filter objects" className="ready-icon-button"><OperationalShowcaseIcon name="filter" size={15} /></button>
                   </div>
                   <div className="foundry-object-count">12,842 Customer objects</div>
                   {objects.map(object => (

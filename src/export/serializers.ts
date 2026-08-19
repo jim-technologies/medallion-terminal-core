@@ -3,8 +3,7 @@
 // Three of the four formats are pure and synchronous (CSV, JSON,
 // NDJSON). Parquet requires a writer library; it is loaded lazily via
 // dynamic import so the ~390 KB hyparquet-writer never enters the core
-// bundle unless someone actually exports Parquet (mirrors the heic2any
-// lazy-load pattern).
+// bundle unless someone actually exports Parquet.
 //
 // All serializers operate on the FlatTable produced by flatten() — they
 // never see a raw widget payload, keeping shape-knowledge in one place.

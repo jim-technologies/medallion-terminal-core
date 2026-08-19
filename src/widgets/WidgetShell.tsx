@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useMemo, useRef, useState, type ComponentType } from 'react'
 import { useDataSource } from '../hooks/useDataSource'
-import { getWidget } from '../core/WidgetRegistry'
+import { getWidget, type WidgetRegistry } from '../core/WidgetRegistry'
 import { ErrorBoundary } from '../core/ErrorBoundary'
 import { useDashboard } from '../core/DashboardContext'
 import { resolveSource, interpolate } from '../core/resolveSource'
@@ -203,7 +203,14 @@ function ActionMenu({
   )
 }
 
-export function WidgetShell({ config, contentHeight, snapshotKey }: { config: WidgetConfig; contentHeight: number; snapshotKey?: string }) {
+export interface WidgetShellProps {
+  config: WidgetConfig
+  contentHeight: number
+  snapshotKey?: string
+  registry?: WidgetRegistry
+}
+
+export function WidgetShell({ config, contentHeight, snapshotKey, registry }: WidgetShellProps) {
   const { ctx, backendUrl, backendHeaders, refreshIntervalMs, compact, toast, focusedId, setFocusedId, refreshPulse, emit, soundEnabled, reportWidgetHealth, registerWidgetData } = useDashboard()
   // Title interpolation is lenient — partial substitution is fine for a
   // human-facing string. Source interpolation is strict (resolveSource).
@@ -229,7 +236,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey }: { config: Wi
   }, [config.source, ctx, backendUrl, backendHeaders, refreshIntervalMs])
   const source = resolution.source
   const { data, loading, error, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(source)
-  const Component = getWidget(config.component)
+  const Component = getWidget(config.component, registry)
 
   // Snapshot capture: expose the current rendered data to the dashboard
   // via a ref-backed getter so "Share" can freeze exactly what's on

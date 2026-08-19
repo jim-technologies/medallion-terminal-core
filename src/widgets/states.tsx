@@ -3,6 +3,11 @@
 // The empty state stays per-widget — each widget knows what "empty"
 // means in its domain (e.g. "No events" vs "No data").
 
+import {
+  EmptyState as WorkbenchEmptyState,
+  ErrorState as WorkbenchErrorState,
+} from '../workbench/States'
+
 const ARCHETYPE: Record<string, string> = {
   timeseries: 'chart',
   candlestick: 'chart',
@@ -75,33 +80,16 @@ export function Skeleton({ component }: { component?: string }) {
 // with real content.
 export function Empty({ children, padded }: { children: React.ReactNode; padded?: boolean }) {
   return (
-    <div
-      className={`flex flex-col items-center justify-center h-full gap-1.5 text-zinc-500 text-sm${padded ? ' px-4 text-center' : ''}`}
-    >
-      <span aria-hidden="true" className="text-zinc-500 text-xs uppercase tracking-[0.2em] leading-none">·  ·  ·</span>
-      {children}
-    </div>
+    <WorkbenchEmptyState
+      title={children}
+      compact
+      icon={<span className="text-xs uppercase tracking-[0.2em] leading-none">·  ·  ·</span>}
+      className={`h-full${padded ? ' px-4' : ''}`}
+    />
   )
 }
 
-export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
-  return (
-    <div className="h-full flex flex-col items-center justify-center gap-2 px-2">
-      <div className="flex items-center gap-2 text-sm max-w-full">
-        <span className="text-red-400 shrink-0">⚠</span>
-        <span className="text-zinc-400 font-mono text-xs truncate">{message}</span>
-      </div>
-      {onRetry && (
-        <button
-          onClick={onRetry}
-          className="text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800"
-        >
-          Retry
-        </button>
-      )}
-    </div>
-  )
-}
+export { WorkbenchErrorState as ErrorState }
 
 // --- archetypes ---
 

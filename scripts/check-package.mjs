@@ -2,17 +2,31 @@ import { access, readFile, readdir } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { gzipSync } from 'node:zlib'
 import path from 'node:path'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const packageJson = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'))
+const optionalRendererPeers = ['lightweight-charts', 'maplibre-gl', 'recharts']
+
+for (const packageName of optionalRendererPeers) {
+  if (packageJson.dependencies?.[packageName]) {
+    throw new Error(`${packageName} must not be an eager runtime dependency`)
+  }
+  if (!packageJson.peerDependencies?.[packageName]) {
+    throw new Error(`${packageName} must remain a declared renderer peer`)
+  }
+  if (packageJson.peerDependenciesMeta?.[packageName]?.optional !== true) {
+    throw new Error(`${packageName} must remain optional for focused-entry consumers`)
+  }
+}
 
 const requiredFiles = new Set([
   packageJson.main,
   packageJson.types,
-  packageJson.exports?.['.']?.import,
-  packageJson.exports?.['.']?.types,
-  packageJson.exports?.['./proto']?.types,
-  packageJson.exports?.['./styles'],
+  ...Object.values(packageJson.exports ?? {}).flatMap(value => (
+    typeof value === 'string' ? [value] : Object.values(value ?? {})
+  )),
 ])
 
 for (const relative of requiredFiles) {
@@ -43,10 +57,43 @@ for (const relative of distFiles) {
 
 const entryPath = path.resolve(root, packageJson.main)
 const library = await import(`${pathToFileURL(entryPath).href}?package-check=${Date.now()}`)
+const toolkit = await import(
+  `${pathToFileURL(path.resolve(root, packageJson.exports['./toolkit'].import)).href}`
+  + `?package-check=${Date.now()}`
+)
+const dashboard = await import(
+  `${pathToFileURL(path.resolve(root, packageJson.exports['./dashboard'].import)).href}`
+  + `?package-check=${Date.now()}`
+)
+const assetOpen = await import(
+  `${pathToFileURL(path.resolve(root, packageJson.exports['./asset-open'].import)).href}`
+  + `?package-check=${Date.now()}`
+)
 const requiredExports = [
   'Dashboard',
   'MultiDashboard',
   'registerWidget',
+  'AssetOpenProvider',
+  'useAssetOpen',
+  'assetKindMatches',
+  'normalizeAssetOpenResolution',
+  'DesignSystemProvider',
+  'Icon',
+  'Button',
+  'IconButton',
+  'Input',
+  'Combobox',
+  'Menu',
+  'Dialog',
+  'Drawer',
+  'Tabs',
+  'AppSurface',
+  'Toolbar',
+  'SplitPane',
+  'Tree',
+  'PropertyList',
+  'createWidgetRegistry',
+  'fileEntryIdentity',
   'AssetCatalog',
   'ObjectView',
   'CodeBrowser',
@@ -67,6 +114,56 @@ const requiredExports = [
 ]
 for (const name of requiredExports) {
   if (!(name in library)) throw new Error(`Published entry is missing export ${JSON.stringify(name)}`)
+}
+for (const [entry, module, names] of [
+  ['./toolkit', toolkit, ['DesignSystemProvider', 'Button', 'Dialog', 'AppSurface', 'Tree']],
+  ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
+  [
+    './asset-open',
+    assetOpen,
+    ['AssetOpenProvider', 'useAssetOpen', 'assetKindMatches', 'assetApplicationSupports'],
+  ],
+]) {
+  for (const name of names) {
+    if (!(name in module)) {
+      throw new Error(`Published ${entry} entry is missing export ${JSON.stringify(name)}`)
+    }
+  }
+}
+
+const renderedToolkit = renderToStaticMarkup(
+  createElement(
+    toolkit.DesignSystemProvider,
+    { theme: 'light', density: 'compact' },
+    createElement(toolkit.Button, null, 'Inspect'),
+  ),
+)
+if (
+  !renderedToolkit.includes('mtc-theme-light')
+  || !renderedToolkit.includes('data-density="compact"')
+  || !renderedToolkit.includes('mtc-button')
+) {
+  throw new Error('Published toolkit exports could not render a themed control')
+}
+
+const declarationFiles = distFiles.filter(relative => relative.endsWith('.d.ts'))
+const declarations = (
+  await Promise.all(declarationFiles.map(relative => readFile(path.join(root, 'dist', relative), 'utf8')))
+).join('\n')
+for (const name of [
+  'DesignSystemProviderProps',
+  'ButtonProps',
+  'DialogProps',
+  'TreeProps',
+  'DashboardProps',
+  'AssetApplicationFrame',
+  'TerminalIntent',
+  'WidgetRegistry',
+  'FileBrowserEntry',
+]) {
+  if (!new RegExp(`\\b${name}\\b`).test(declarations)) {
+    throw new Error(`Published declarations are missing ${JSON.stringify(name)}`)
+  }
 }
 
 const requiredWidgets = [
@@ -93,13 +190,29 @@ for (const name of requiredWidgets) {
 const budgets = [
   // The entry intentionally exposes every built-in for direct composition.
   // Heavy renderers remain peer dependencies; GeoMap loads MapLibre and the
-  // media viewer loads its implementation only when mounted. Keep a firm
-  // ceiling with room for harmless toolchain churn.
-  { label: 'library entry', path: entryPath, maxGzipBytes: 84 * 1024 },
+  // media viewer loads its implementation only when mounted. The entry also
+  // exposes the focused application toolkit. Keep a firm ceiling with narrow
+  // room for harmless toolchain churn.
+  { label: 'library entry', path: entryPath, maxGzipBytes: 96 * 1024 },
+  {
+    label: 'toolkit entry',
+    path: path.resolve(root, packageJson.exports['./toolkit'].import),
+    maxGzipBytes: 14 * 1024,
+  },
+  {
+    label: 'dashboard entry',
+    path: path.resolve(root, packageJson.exports['./dashboard'].import),
+    maxGzipBytes: 40 * 1024,
+  },
+  {
+    label: 'asset-open entry',
+    path: path.resolve(root, packageJson.exports['./asset-open'].import),
+    maxGzipBytes: 10 * 1024,
+  },
   {
     label: 'library styles',
     path: path.resolve(root, packageJson.exports['./styles']),
-    maxGzipBytes: 12 * 1024,
+    maxGzipBytes: 18 * 1024,
   },
 ]
 

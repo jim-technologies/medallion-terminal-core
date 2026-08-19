@@ -231,7 +231,9 @@ Cmd-K palette grammar:
 - `onEvent?: (e: DashboardEvent) => void` — alerts, widget errors, action lifecycles
 - `onCtxChange?: (ctx) => void` — fires when active ctx changes
 - `paletteSuggest?: (query) => Promise<PaletteSuggestion[]>` — backend-driven autocomplete
-- `theme?: "dark" | "operator" | "light"` — scoped visual preset; `dark` is the default
+- `theme?: "dark" | "operator" | "light" | "high-contrast"` — scoped visual preset; `dark` is the default
+- `onIntent?: (intent: TerminalIntent) => void` — emits generic host object/command intent without executing it
+- `registry?: WidgetRegistry` — isolated widget lookup created by `createWidgetRegistry()`
 
 `DashboardEvent` union: `alert` | `widget_error` | `action`. See `src/core/DashboardContext.tsx`.
 
@@ -245,6 +247,9 @@ proto/medallion/terminal/v1/
 src/
   index.ts                — Library barrel
   index.css               — Scoped theme tokens + shared product chrome
+  foundations/            — Public tokens, presentation/density types, scoped provider
+  components/             — Accessible reusable application controls
+  workbench/              — Panes, toolbars, inspectors, trees, and shared states
   types/template.ts       — Hand-rolled framework types (mirror proto)
   proto.ts                — Proto-derived JSON types (generated)
   core/
@@ -331,13 +336,15 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
 - `pnpm build` — standalone app
 - `pnpm build:lib` — npm library (JS + CSS + .d.ts)
 - `pnpm storybook` — storybook (http://localhost:6006)
-- `pnpm run ci` — install + lint + test + both builds + storybook build
-  (`pnpm ci` is pnpm 11's install alias, not this package script)
+- `make validate` — the single gate verb (see `MAKEFILE-CONTRACT.md`):
+  frozen-lockfile install + pinned Chromium + public-surface guard +
+  `VERSION` parity + lint + all test suites + builds + artifact checks;
+  CI runs exactly `flox activate -- make validate` and nothing else
 
 ## Tech stack
 
-React 19.2 + TypeScript 7.0. Vite 8, Tailwind 4.3, Recharts 3.9,
-lightweight-charts 5.2 (for `candlestick`), MapLibre GL JS 5.24 (for
+React 19.2 + TypeScript 7.0. Vite 8, Tailwind 4.3, Recharts 3.10,
+lightweight-charts 5.2 (for `candlestick`), MapLibre GL JS 6.0 (for
 `geo_map`), Vitest 4.1, Storybook 10.5,
 Protobuf + Buf 1.71, Node 24 LTS, pnpm 11, Flox.
 

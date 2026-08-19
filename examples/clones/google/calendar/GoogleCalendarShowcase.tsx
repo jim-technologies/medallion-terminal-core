@@ -102,7 +102,7 @@ export const GOOGLE_CALENDAR_SAMPLE_CALENDARS: readonly GoogleCalendarSource[] =
   {
     id: 'birthdays',
     name: 'Birthdays',
-    color: '#039be5',
+    color: '#0277a9',
     group: 'other',
   },
   {
@@ -784,50 +784,54 @@ function MonthView({
         {DAY_NAMES.map(day => <div key={day} role="columnheader">{day}</div>)}
       </div>
       <div className="gcal-month__grid">
-        {days.map(dayKey => {
-          const day = parseDateKey(dayKey)
-          const dayEvents = events.filter(event => eventOverlapsDate(event, day))
-          const visibleEvents = dayEvents.slice(0, 4)
-          return (
-            <div
-              className={[
-                'gcal-month__day',
-                day.getMonth() !== month ? 'is-outside' : '',
-                dayKey === today ? 'is-today' : '',
-              ].filter(Boolean).join(' ')}
-              key={dayKey}
-              onDoubleClick={() => onCreateAt(dayKey)}
-              role="gridcell"
-            >
-              <button
-                aria-label={`Create event on ${formatLongDate(day)}`}
-                className="gcal-month__date"
-                onClick={() => onCreateAt(dayKey)}
-                type="button"
-              >
-                {day.getDate() === 1
-                  ? `${new Intl.DateTimeFormat('en-US', { month: 'short' }).format(day)} ${day.getDate()}`
-                  : day.getDate()}
-              </button>
-              <div className="gcal-month__events">
-                {visibleEvents.map(event => (
-                  <EventPill
-                    calendarsById={calendarsById}
-                    compact={dayEvents.length > 3}
-                    event={event}
-                    key={event.id}
-                    onSelect={onSelectEvent}
-                  />
-                ))}
-                {dayEvents.length > visibleEvents.length && (
-                  <button className="gcal-month__more" type="button">
-                    {dayEvents.length - visibleEvents.length} more
+        {Array.from({ length: Math.ceil(days.length / 7) }, (_, weekIndex) => (
+          <div className="gcal-month__week" key={days[weekIndex * 7]} role="row">
+            {days.slice(weekIndex * 7, weekIndex * 7 + 7).map(dayKey => {
+              const day = parseDateKey(dayKey)
+              const dayEvents = events.filter(event => eventOverlapsDate(event, day))
+              const visibleEvents = dayEvents.slice(0, 4)
+              return (
+                <div
+                  className={[
+                    'gcal-month__day',
+                    day.getMonth() !== month ? 'is-outside' : '',
+                    dayKey === today ? 'is-today' : '',
+                  ].filter(Boolean).join(' ')}
+                  key={dayKey}
+                  onDoubleClick={() => onCreateAt(dayKey)}
+                  role="gridcell"
+                >
+                  <button
+                    aria-label={`Create event on ${formatLongDate(day)}`}
+                    className="gcal-month__date"
+                    onClick={() => onCreateAt(dayKey)}
+                    type="button"
+                  >
+                    {day.getDate() === 1
+                      ? `${new Intl.DateTimeFormat('en-US', { month: 'short' }).format(day)} ${day.getDate()}`
+                      : day.getDate()}
                   </button>
-                )}
-              </div>
-            </div>
-          )
-        })}
+                  <div className="gcal-month__events">
+                    {visibleEvents.map(event => (
+                      <EventPill
+                        calendarsById={calendarsById}
+                        compact={dayEvents.length > 3}
+                        event={event}
+                        key={event.id}
+                        onSelect={onSelectEvent}
+                      />
+                    ))}
+                    {dayEvents.length > visibleEvents.length && (
+                      <button className="gcal-month__more" type="button">
+                        {dayEvents.length - visibleEvents.length} more
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ))}
       </div>
     </div>
   )

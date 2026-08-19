@@ -153,10 +153,10 @@ export function StripeShowcase({
 
   return (
     <div className="ready-showcase stripe-showcase">
-      <aside className="stripe-sidebar">
+      <aside className="stripe-sidebar" aria-label="Stripe navigation">
         <div className="stripe-brand"><span>S</span></div>
         <button className="stripe-account-switcher"><span>{accountName}</span><small>Standard account</small><OperationalShowcaseIcon name="chevron-down" size={13} /></button>
-        <nav>
+        <nav aria-label="Commerce">
           {STRIPE_NAV.map(item => (
             <button
               key={item.id}
@@ -171,7 +171,7 @@ export function StripeShowcase({
           <button><OperationalShowcaseIcon name="package" size={16} /><span>Product catalog</span></button>
         </nav>
         <div className="stripe-nav-heading">More</div>
-        <nav>
+        <nav aria-label="More">
           <button><OperationalShowcaseIcon name="chart" size={16} /><span>Reports</span></button>
           <button><OperationalShowcaseIcon name="database" size={16} /><span>Data</span></button>
           <button><OperationalShowcaseIcon name="code" size={16} /><span>Developers</span></button>
@@ -183,8 +183,8 @@ export function StripeShowcase({
         <header className="stripe-topbar">
           <label className="stripe-global-search"><OperationalShowcaseIcon name="search" size={15} /><input placeholder="Search…" /><kbd>/</kbd></label>
           <div className="ready-top-actions">
-            <button><OperationalShowcaseIcon name="help" /></button>
-            <button className="ready-notification"><OperationalShowcaseIcon name="bell" /><i /></button>
+            <button aria-label="Help"><OperationalShowcaseIcon name="help" /></button>
+            <button aria-label="Notifications" className="ready-notification"><OperationalShowcaseIcon name="bell" /><i /></button>
             <button className="stripe-create-button"><OperationalShowcaseIcon name="plus" size={14} />Create</button>
             <OperationalShowcaseAvatar name={CLONE_DEMO_IDENTITY.user} color="#6052b8" size={27} />
           </div>
@@ -255,7 +255,7 @@ export function StripeShowcase({
                   <label className="ready-search-field"><OperationalShowcaseIcon name="search" size={15} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search payments" /></label>
                   <button className={paymentStatus ? 'active' : ''} onClick={() => setPaymentStatus(paymentStatus ? undefined : 'Succeeded')}><OperationalShowcaseIcon name="filter" size={14} />Filter</button>
                   <button><OperationalShowcaseIcon name="download" size={14} />Export</button>
-                  <button><OperationalShowcaseIcon name="more" size={15} /></button>
+                  <button aria-label="Payment table options"><OperationalShowcaseIcon name="more" size={15} /></button>
                 </div>
                 <div className="stripe-payment-table">
                   <div className="stripe-payment-head"><span>Amount</span><span>Payment method</span><span>Description</span><span>Customer</span><span>Date</span><span>Status</span></div>
@@ -308,7 +308,7 @@ export function StripeShowcase({
                     <div className="stripe-event-row"><span>charge.succeeded</span><code>200 OK</code><small>{selectedPayment.createdAt}</small></div>
                   </section>
                 </div>
-                <aside>
+                <aside aria-label="Payment relationships">
                   <section className="stripe-card stripe-side-detail">
                     <h2>Customer</h2>
                     <a>{selectedPayment.customer}</a><span>{selectedPayment.email}</span><button>View customer</button>

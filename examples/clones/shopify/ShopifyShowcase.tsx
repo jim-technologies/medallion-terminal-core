@@ -221,8 +221,8 @@ export function ShopifyShowcase({
       </header>
 
       <div className="shopify-body">
-        <aside className="shopify-sidebar">
-          <nav>
+        <aside aria-label="Shopify navigation" className="shopify-sidebar">
+          <nav aria-label="Store administration">
             {SHOPIFY_NAV.map(item => (
               <button
                 key={item.id}
@@ -237,13 +237,13 @@ export function ShopifyShowcase({
             <button><OperationalShowcaseIcon name="chart" size={16} /><span>Analytics</span></button>
             <button><OperationalShowcaseIcon name="tag" size={16} /><span>Discounts</span></button>
           </nav>
-          <div className="shopify-nav-heading"><span>Sales channels</span><button><OperationalShowcaseIcon name="plus" size={14} /></button></div>
-          <nav>
+          <div className="shopify-nav-heading"><span>Sales channels</span><button aria-label="Add sales channel"><OperationalShowcaseIcon name="plus" size={14} /></button></div>
+          <nav aria-label="Sales channels">
             <button><OperationalShowcaseIcon name="cart" size={16} /><span>Online Store</span></button>
             <button><OperationalShowcaseIcon name="apps" size={16} /><span>Shop</span></button>
           </nav>
-          <div className="shopify-nav-heading"><span>Apps</span><button><OperationalShowcaseIcon name="plus" size={14} /></button></div>
-          <nav><button><OperationalShowcaseIcon name="bolt" size={16} /><span>Flow</span></button></nav>
+          <div className="shopify-nav-heading"><span>Apps</span><button aria-label="Add application"><OperationalShowcaseIcon name="plus" size={14} /></button></div>
+          <nav aria-label="Applications"><button><OperationalShowcaseIcon name="bolt" size={16} /><span>Flow</span></button></nav>
           <div className="shopify-sidebar-footer"><button><OperationalShowcaseIcon name="settings" size={16} />Settings</button></div>
         </aside>
 
@@ -306,11 +306,11 @@ export function ShopifyShowcase({
                 <div className="ready-heading-actions"><button className="ready-button secondary">Export</button><button className="ready-button primary">Create order</button></div>
               </div>
               <section className="shopify-table-card">
-                <div className="shopify-order-tabs"><button className="active">All</button><button>Unfulfilled</button><button>Unpaid</button><button>Open</button><button>Archived</button><button><OperationalShowcaseIcon name="plus" size={13} /></button></div>
+                <div className="shopify-order-tabs"><button className="active">All</button><button>Unfulfilled</button><button>Unpaid</button><button>Open</button><button>Archived</button><button aria-label="Add saved view"><OperationalShowcaseIcon name="plus" size={13} /></button></div>
                 <div className="ready-panel-toolbar shopify-table-toolbar">
                   <label className="ready-search-field"><OperationalShowcaseIcon name="search" size={15} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search orders" /></label>
                   <button className={fulfillment ? 'active' : ''} onClick={() => setFulfillment(fulfillment ? undefined : 'Unfulfilled')}><OperationalShowcaseIcon name="filter" size={14} />Filter</button>
-                  <button><OperationalShowcaseIcon name="more" size={15} /></button>
+                  <button aria-label="Order table options"><OperationalShowcaseIcon name="more" size={15} /></button>
                 </div>
                 <div className="shopify-order-table">
                   <div className="shopify-order-table-head"><span><input type="checkbox" aria-label="Select all orders" /></span><span>Order</span><span>Date</span><span>Customer</span><span>Total</span><span>Payment</span><span>Fulfillment</span><span>Items</span><span>Delivery</span></div>
@@ -336,7 +336,7 @@ export function ShopifyShowcase({
           {section === 'orders' && showOrder && selectedOrder && (
             <div className="shopify-content-wide">
               <div className="shopify-order-detail-heading">
-                <button className="ready-icon-button" onClick={() => setShowOrder(false)}><OperationalShowcaseIcon name="chevron-left" size={18} /></button>
+                <button aria-label="Back to orders" className="ready-icon-button" onClick={() => setShowOrder(false)}><OperationalShowcaseIcon name="chevron-left" size={18} /></button>
                 <div><h1>{selectedOrder.number}</h1><span>{selectedOrder.placedAt} from {selectedOrder.channel}</span></div>
                 <ShopifyStatus label={selectedOrder.paymentStatus} />
                 <ShopifyStatus label={selectedOrder.fulfillmentStatus} />
@@ -410,7 +410,7 @@ export function ShopifyShowcase({
                 <div><span>Sell-through</span><strong>{formatOperationalPercent(0.684)}</strong><small>Last 30 days</small></div>
               </div>
               <section className="shopify-table-card">
-                <div className="ready-panel-toolbar shopify-table-toolbar"><label className="ready-search-field"><OperationalShowcaseIcon name="search" size={15} /><input placeholder="Search products and SKUs" /></label><button><OperationalShowcaseIcon name="filter" size={14} />All locations</button><button><OperationalShowcaseIcon name="more" size={15} /></button></div>
+                <div className="ready-panel-toolbar shopify-table-toolbar"><label className="ready-search-field"><OperationalShowcaseIcon name="search" size={15} /><input placeholder="Search products and SKUs" /></label><button><OperationalShowcaseIcon name="filter" size={14} />All locations</button><button aria-label="Inventory table options"><OperationalShowcaseIcon name="more" size={15} /></button></div>
                 <div className="shopify-inventory-table">
                   <div className="shopify-inventory-head"><span><input type="checkbox" aria-label="Select all inventory" /></span><span>Product</span><span>SKU</span><span>Location</span><span>Unavailable</span><span>Committed</span><span>Available</span><span>On hand</span><span>Incoming</span></div>
                   {inventory.map(item => (

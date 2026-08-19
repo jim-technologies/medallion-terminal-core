@@ -1,7 +1,7 @@
 .snowflake-showcase {
   --snow-ink: #172b4d;
-  --snow-muted: #61758a;
-  --snow-faint: #8a9bad;
+  --snow-muted: #536a80;
+  --snow-faint: #687d92;
   --snow-line: #dce4eb;
   --snow-line-soft: #e9eef3;
   --snow-panel: #fff;
@@ -152,7 +152,7 @@
 .snow-nav-group > small {
   display: block;
   padding: 0 10px 4px;
-  color: #7087a0;
+  color: #7890a8;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.9px;

@@ -20,6 +20,17 @@ import {
 } from './templateSecurity'
 import { buildSnapshot, isStaticTemplate, widgetSnapshotKey } from './snapshot'
 import { useNow } from './NowContext'
+import {
+  AssetOpenProvider,
+  type AssetApplicationFrame,
+  type AssetOpenErrorHandler,
+  type AssetRendererRegistry,
+  type ResolveAssetIntent,
+  type SaveAssetOpenPreference,
+} from './AssetOpen'
+import type { PresentationTheme } from '../foundations/types'
+import type { WidgetRegistry } from './WidgetRegistry'
+import type { TerminalIntentHandler } from './TerminalIntent'
 
 const DEFAULT_HEIGHTS: Record<string, number> = {
   metric: 120,
@@ -82,9 +93,70 @@ const RANGES = ['1d', '5d', '1m', '3m', '1y', 'max']
 const RECENT_ACTIONS_CAP = 200
 const RECENT_ALERTS_CAP = 200
 
-export type DashboardTheme = 'dark' | 'operator' | 'light'
+export type DashboardTheme = PresentationTheme
 export type DashboardTemplateTrust = 'untrusted' | 'trusted'
 type DashboardIssue = ValidationIssue | TemplateSecurityIssue
+
+/** Public configuration for the dashboard renderer and its host bridges. */
+export interface DashboardProps {
+  /** Template rendered by this Dashboard instance. */
+  template: Template
+  /** Connect/HTTP host used for source IDs, actions, and relative URLs. */
+  backendUrl?: string
+  /**
+   * Authentication headers supplied by trusted host code. Change the object
+   * identity when credentials rotate so active transports refetch.
+   */
+  backendHeaders?: Record<string, string>
+  /**
+   * `full` renders toolbar and status chrome; `minimal` leaves the title and
+   * widget grid for embedding.
+   */
+  chrome?: 'full' | 'minimal'
+  /** Receives alerts, widget errors, and action lifecycle events. */
+  onEvent?: (event: DashboardEvent) => void
+  /**
+   * Receives generic object and command intents. Terminal Core never
+   * authorizes or executes the requested host operation.
+   */
+  onIntent?: TerminalIntentHandler
+  /** Receives the complete active context whenever it changes. */
+  onCtxChange?: (ctx: Record<string, string>) => void
+  /** Supplies asynchronous command-palette context suggestions. */
+  paletteSuggest?: PaletteSuggest
+  /**
+   * Receives an in-memory static snapshot from Share. Without a handler, the
+   * Dashboard downloads the snapshot JSON.
+   */
+  onShare?: (snapshot: Template) => void | Promise<void>
+  /** Scoped visual theme; defaults to `dark`. */
+  theme?: DashboardTheme
+  /**
+   * Template trust boundary. `untrusted` applies the SDK policy before any
+   * widgets mount; `trusted` is for host-authored templates.
+   */
+  templateTrust?: DashboardTemplateTrust
+  /** Host policy applied to untrusted templates. */
+  templateTrustPolicy?: TemplateTrustPolicy
+  /**
+   * Host-scoped asset application resolver. Templates cannot provide or
+   * replace this trusted callback.
+   */
+  resolveAssetIntent?: ResolveAssetIntent
+  /** Trusted asset renderers available only to this Dashboard instance. */
+  assetRenderers?: AssetRendererRegistry
+  /** Optional host placement for resolved applications (route, pane, or modal). */
+  assetApplicationFrame?: AssetApplicationFrame
+  /** Host persistence seam for asset-open preference changes. */
+  saveAssetOpenPreference?: SaveAssetOpenPreference
+  /** Observability hook for asset resolver, renderer, and fallback failures. */
+  onAssetOpenError?: AssetOpenErrorHandler
+  /**
+   * Instance-local widget registry. Factory-created registries include
+   * built-ins unless explicitly configured otherwise.
+   */
+  registry?: WidgetRegistry
+}
 
 function RangeSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
@@ -377,6 +449,7 @@ export function Dashboard({
   backendUrl,
   backendHeaders = EMPTY_BACKEND_HEADERS,
   onEvent,
+  onIntent,
   onCtxChange,
   paletteSuggest,
   chrome = 'full',
@@ -384,56 +457,30 @@ export function Dashboard({
   theme = 'dark',
   templateTrust = 'untrusted',
   templateTrustPolicy = DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
-}: {
-  template: Template
-  backendUrl?: string
-  // Authentication/tenant headers supplied by trusted host code. Change the
-  // object when a token rotates; active sources and action transports refetch.
-  backendHeaders?: Record<string, string>
-  // Chrome level. "full" (default) renders the top toolbar (ctx chips,
-  // health pill, refresh/sound/density/snapshot controls) and the
-  // status-bar footer. "minimal" hides both, leaving only the widget
-  // grid (the dashboard title still shows if set) — used by the embed
-  // surface so a BI or reporting panel can iframe a clean live view.
-  chrome?: 'full' | 'minimal'
-  // Optional telemetry sink. Receives alerts, widget errors, and
-  // action submissions. Keep handler cheap — it runs on every event.
-  onEvent?: (event: DashboardEvent) => void
-  // Fires when the active ctx changes (palette command, row click,
-  // template shortcut, URL load). Use for analytics or to mirror ctx
-  // into your app's router.
-  onCtxChange?: (ctx: Record<string, string>) => void
-  // Optional async source of palette suggestions. Wire to your symbol
-  // search / source catalog / backend ListSources. Each suggestion
-  // carries a `ctx` map that's merged into the active context when
-  // the user clicks it.
-  paletteSuggest?: PaletteSuggest
-  // "Share" handler. The toolbar Share button freezes the live dashboard
-  // into a static, self-contained Template (every widget's current data
-  // baked into source.inline — no re-fetch, no AI regeneration) and hands
-  // it here. Typically: upload to a bucket and mint a share URL. When
-  // omitted, Share downloads the snapshot JSON so the flow works
-  // standalone. Hidden on a template that is already a snapshot.
-  onShare?: (snapshot: Template) => void | Promise<void>
-  // Visual theme for the scoped dashboard root. Host apps can also
-  // override the exposed --mtc-* CSS variables under .mtc-root.
-  theme?: DashboardTheme
-  // Untrusted is the default: URL mode, iframe/image URLs, request
-  // headers, and polling intervals are checked before widgets mount.
-  // Operator-authored dashboards that intentionally use arbitrary URL
-  // mode can pass "trusted" to bypass this SDK guardrail.
-  templateTrust?: DashboardTemplateTrust
-  // Host policy for customer-provided templates. Ignored when
-  // templateTrust="trusted".
-  templateTrustPolicy?: TemplateTrustPolicy
-}) {
+  resolveAssetIntent,
+  assetRenderers,
+  assetApplicationFrame,
+  saveAssetOpenPreference,
+  onAssetOpenError,
+  registry,
+}: DashboardProps) {
   const breakpoint = useBreakpoint()
   const columns = template.columns || 12
   const [widgets, setWidgets] = useState<WidgetConfig[]>(template.widgets)
+  const registryKeySignature = registry
+    ? [...registry.keys()].sort().join('\u0000')
+    : ''
   // Validation runs once per template identity. Errors are loud and
   // persistent; warnings are dismissible. Authors get a banner on bad
   // templates instead of a blank widget tile and a console error.
-  const authoringIssues = useMemo(() => validateTemplate(template), [template])
+  const authoringIssues = useMemo(
+    () => validateTemplate(
+      template,
+      registry?.keys(),
+      { includeBuiltIns: registry == null },
+    ),
+    [template, registry, registryKeySignature],
+  )
   const securityIssues = useMemo(
     () => templateTrust === 'trusted' ? [] : validateTemplateTrust(template, templateTrustPolicy),
     [template, templateTrust, templateTrustPolicy],
@@ -457,12 +504,28 @@ export function Dashboard({
   })
   // Dashboard-level prefs persist to localStorage so they survive reloads.
   // ctx already lives in the URL (shareable); these knobs are personal.
-  const [refreshIntervalMs, setRefreshIntervalMs] = useState<number | null>(() => readPref('refreshIntervalMs', null))
-  const [compact, setCompact] = useState<boolean>(() => readPref('compact', false))
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => readPref('soundEnabled', false))
-  useEffect(() => { writePref('refreshIntervalMs', refreshIntervalMs) }, [refreshIntervalMs])
-  useEffect(() => { writePref('compact', compact) }, [compact])
-  useEffect(() => { writePref('soundEnabled', soundEnabled) }, [soundEnabled])
+  // Start from deterministic defaults so server markup always matches the
+  // first client render. Personal browser preferences are applied after
+  // hydration, then persisted on subsequent changes.
+  const [refreshIntervalMs, setRefreshIntervalMs] = useState<number | null>(null)
+  const [compact, setCompact] = useState(false)
+  const [soundEnabled, setSoundEnabled] = useState(false)
+  const [preferencesReady, setPreferencesReady] = useState(false)
+  useEffect(() => {
+    setRefreshIntervalMs(readPref('refreshIntervalMs', null))
+    setCompact(readPref('compact', false))
+    setSoundEnabled(readPref('soundEnabled', false))
+    setPreferencesReady(true)
+  }, [])
+  useEffect(() => {
+    if (preferencesReady) writePref('refreshIntervalMs', refreshIntervalMs)
+  }, [preferencesReady, refreshIntervalMs])
+  useEffect(() => {
+    if (preferencesReady) writePref('compact', compact)
+  }, [preferencesReady, compact])
+  useEffect(() => {
+    if (preferencesReady) writePref('soundEnabled', soundEnabled)
+  }, [preferencesReady, soundEnabled])
 
   const [fullscreenId, setFullscreenId] = useState<string | null>(null)
   const [focusedId, setFocusedId] = useState<string | null>(null)
@@ -485,6 +548,11 @@ export function Dashboard({
   // identity don't tear down WidgetShell's effects.
   const onEventRef = useRef(onEvent)
   useEffect(() => { onEventRef.current = onEvent }, [onEvent])
+  const onIntentRef = useRef(onIntent)
+  useEffect(() => { onIntentRef.current = onIntent }, [onIntent])
+  const emitIntent = useCallback((intent: Parameters<TerminalIntentHandler>[0]) => {
+    onIntentRef.current?.(intent)
+  }, [])
 
   // Ring buffer of recent action events for the action_log widget.
   // Capped so a noisy backend can't grow state without bound.
@@ -657,6 +725,7 @@ export function Dashboard({
       refreshPulse,
       requestRefresh,
       emit,
+      emitIntent,
       recentActions,
       clearRecentActions,
       recentAlerts,
@@ -669,9 +738,15 @@ export function Dashboard({
     }),
     [dispatch, ctx, setCtx, backendUrl, backendHeaders, widgets, refreshIntervalMs, toast, compact,
      fullscreenId, focusedId, refreshPulse, requestRefresh, emit,
+     emitIntent,
      recentActions, clearRecentActions, recentAlerts, clearRecentAlerts,
      soundEnabled, widgetHealth, reportWidgetHealth, registerWidgetData, snapshot],
   )
+
+  const handleAssetOpenError = useCallback<AssetOpenErrorHandler>((error, request) => {
+    toast(`Could not ${request.intent} ${request.asset.name}: ${error.message}`, 'error')
+    onAssetOpenError?.(error, request)
+  }, [onAssetOpenError, toast])
 
   // Esc closes fullscreen.
   useEffect(() => {
@@ -745,7 +820,18 @@ export function Dashboard({
 
   return (
     <DashboardContext.Provider value={contextValue}>
-     <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
+     <div
+       className={`mtc-root mtc-theme-${theme}`}
+       data-theme={theme}
+       data-density={compact ? 'compact' : 'comfortable'}
+     >
+     <AssetOpenProvider
+       resolveAssetIntent={resolveAssetIntent}
+       renderers={assetRenderers}
+       applicationFrame={assetApplicationFrame}
+       savePreference={saveAssetOpenPreference}
+       onError={handleAssetOpenError}
+     >
      <NowProvider>
      <HoverProvider>
       <CommandPalette suggest={paletteSuggest} />
@@ -832,6 +918,7 @@ export function Dashboard({
                 config={widget}
                 contentHeight={widget.height || DEFAULT_HEIGHTS[widget.component] || 280}
                 snapshotKey={widgetSnapshotKey(widget, i)}
+                registry={registry}
               />
             </div>
           ))}
@@ -841,10 +928,15 @@ export function Dashboard({
        {chrome === 'full' && <StatusBar />}
       </div>
       {fullscreenWidget && (
-        <FullscreenOverlay widget={fullscreenWidget} onClose={() => setFullscreenId(null)} />
+        <FullscreenOverlay
+          widget={fullscreenWidget}
+          registry={registry}
+          onClose={() => setFullscreenId(null)}
+        />
       )}
      </HoverProvider>
      </NowProvider>
+     </AssetOpenProvider>
      </div>
     </DashboardContext.Provider>
   )
@@ -918,7 +1010,15 @@ function TemplateBlocked({ issues }: { issues: TemplateSecurityIssue[] }) {
   )
 }
 
-function FullscreenOverlay({ widget, onClose }: { widget: WidgetConfig; onClose: () => void }) {
+function FullscreenOverlay({
+  widget,
+  registry,
+  onClose,
+}: {
+  widget: WidgetConfig
+  registry?: WidgetRegistry
+  onClose: () => void
+}) {
   // Use ~85vh of viewport for the content area; rest goes to chrome.
   const contentHeight = typeof window !== 'undefined' ? Math.floor(window.innerHeight * 0.82) : 600
   return (
@@ -942,7 +1042,7 @@ function FullscreenOverlay({ widget, onClose }: { widget: WidgetConfig; onClose:
         </button>
       </div>
       <div onClick={e => e.stopPropagation()} className="flex-1 min-h-0">
-        <WidgetShell config={widget} contentHeight={contentHeight} />
+        <WidgetShell config={widget} contentHeight={contentHeight} registry={registry} />
       </div>
     </div>
   )

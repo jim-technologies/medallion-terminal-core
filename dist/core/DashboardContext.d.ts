@@ -1,4 +1,5 @@
 import type { Template, WidgetConfig } from '../types/template';
+import type { TerminalIntent } from './TerminalIntent';
 export type Severity = 'ok' | 'warn' | 'error' | 'info';
 export type DashboardEvent = {
     type: 'alert';
@@ -69,6 +70,7 @@ export interface DashboardContextValue {
     } | null;
     requestRefresh: (id: string) => void;
     emit: EmitEvent;
+    emitIntent?: (intent: TerminalIntent) => void;
     recentActions: ActionLogEntry[];
     clearRecentActions: () => void;
     recentAlerts: AlertLogEntry[];

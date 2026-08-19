@@ -1,22 +1,26 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ProductArchetypeShowcase } from '../shared/archetypes/ProductArchetypeShowcase'
+import { GitLabShowcase } from './GitLabShowcase'
 
 const meta = {
   title: 'Clones/GitLab',
-  component: ProductArchetypeShowcase,
+  component: GitLabShowcase,
   parameters: {
     layout: 'fullscreen',
     cloneVendor: 'GitLab',
     cloneProduct: 'GitLab',
     cloneNamespace: 'gitlab',
-    docs: { description: { component: 'A GitLab-style DevSecOps reference covering merge-request review, changed files, reviewer status, approval gates, and pipeline jobs.' } },
+    docs: {
+      description: {
+        component: 'A dedicated GitLab project reference with merge-request approvals, reviewer and assignee roles, changed-file review, pipeline stages, jobs, logs, and merge controls. Data and mutations remain host-owned.',
+      },
+    },
   },
-  args: { product: 'gitlab', initialView: 'merge-request' },
+  args: { initialView: 'merge-request' },
   argTypes: {
-    product: { control: false },
     initialView: { control: 'inline-radio', options: ['merge-request', 'changes', 'pipeline'] },
+    data: { control: false },
   },
-} satisfies Meta<typeof ProductArchetypeShowcase>
+} satisfies Meta<typeof GitLabShowcase>
 
 export default meta
 type Story = StoryObj<typeof meta>

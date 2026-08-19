@@ -1,12 +1,58 @@
 // Styles
 import './index.css'
 
+// Application UI toolkit
+export * from './foundations'
+export * from './components'
+export * from './workbench'
+
 // Core
 export { Dashboard } from './core/Dashboard'
-export type { DashboardTemplateTrust, DashboardTheme } from './core/Dashboard'
+export type { DashboardProps, DashboardTemplateTrust, DashboardTheme } from './core/Dashboard'
 export { MultiDashboard, useTabFromUrl } from './core/MultiDashboard'
 export { DashboardContext, useDashboard } from './core/DashboardContext'
-export { getWidget, registerWidget, BUILTIN_KEYS } from './core/WidgetRegistry'
+export {
+  AssetOpenProvider,
+  useAssetOpen,
+  assetMimeMatches,
+  assetKindMatches,
+  assetApplicationSupports,
+  normalizeAssetOpenResolution,
+  defaultAssetOpenDecision,
+} from './core/AssetOpen'
+export type {
+  AssetOpenIntent,
+  AssetReference,
+  AssetOpenRequest,
+  AssetApplication,
+  AssetOpenResolution,
+  ResolveAssetIntent,
+  AssetOpenFallbacks,
+  AssetAppRendererProps,
+  AssetAppRenderer,
+  AssetRendererRegistry,
+  AssetApplicationFrameProps,
+  AssetApplicationFrame,
+  AssetOpenPreferenceSelection,
+  AssetOpenPreferenceChange,
+  SaveAssetOpenPreference,
+  AssetOpenErrorHandler,
+  AssetOpenContextValue,
+  AssetOpenProviderProps,
+  AssetOpenDecision,
+} from './core/AssetOpen'
+export {
+  createWidgetRegistry,
+  getWidget,
+  registerWidget,
+  BUILTIN_KEYS,
+} from './core/WidgetRegistry'
+export type {
+  CreateWidgetRegistryOptions,
+  WidgetComponent,
+  WidgetRegistry,
+} from './core/WidgetRegistry'
+export type { TerminalIntent, TerminalIntentHandler } from './core/TerminalIntent'
 export { ErrorBoundary } from './core/ErrorBoundary'
 export { CommandPalette } from './core/CommandPalette'
 export type { PaletteSuggest, PaletteSuggestion } from './core/CommandPalette'
@@ -28,7 +74,11 @@ export { readCtxFromUrl, writeCtxToUrl } from './core/urlState'
 export { getNested } from './core/getNested'
 export { evaluateAlert, canParsePredicate } from './core/alerts'
 export { validateTemplate, BUILTIN_COMPONENTS } from './core/validateTemplate'
-export type { ValidationIssue, ValidationSeverity } from './core/validateTemplate'
+export type {
+  ValidateTemplateOptions,
+  ValidationIssue,
+  ValidationSeverity,
+} from './core/validateTemplate'
 export {
   validateTemplateTrust,
   DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
@@ -97,6 +147,13 @@ export { ActionLog } from './widgets/ActionLog'
 export { AlertLog } from './widgets/AlertLog'
 export { Tape } from './widgets/Tape'
 export { FileBrowser } from './widgets/FileBrowser'
+export {
+  fileEntryIdentity,
+  isFolder as isFileBrowserContainer,
+  isNativePreviewKind,
+  previewKind as filePreviewKind,
+} from './widgets/fileBrowserHelpers'
+export type { FileBrowserEntry, PreviewKind as FilePreviewKind } from './widgets/fileBrowserHelpers'
 export {
   normalizeAssetCatalog,
   normalizeObject,
@@ -226,7 +283,7 @@ export type {
 } from './widgets/platformShapes'
 export { WidgetShell } from './widgets/WidgetShell'
 export { Placeholder } from './widgets/Placeholder'
-export { Skeleton, ErrorState, Empty } from './widgets/states'
+export { Skeleton, Empty } from './widgets/states'
 export { SEMANTIC, PALETTE, resolveColor } from './widgets/colors'
 export { abbreviateAxis, formatCompact, formatStat, formatTimestamp, formatPercent, formatCurrency, formatBps } from './widgets/format'
 export { HoverContext, HoverProvider, useHover } from './core/HoverContext'

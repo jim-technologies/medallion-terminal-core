@@ -30,17 +30,20 @@ place**.
 
 ## Theme presets
 
-`Dashboard` and `MultiDashboard` expose three scoped themes:
+`Dashboard`, `MultiDashboard`, and `DesignSystemProvider` expose four scoped
+themes:
 
 | Theme | Intended use | Visual character |
 |---|---|---|
 | `dark` | Product default | Graphite surfaces, cobalt interaction, brass signal details |
 | `operator` | High-contrast operational rooms | Near-black surfaces with softened citrine interaction |
 | `light` | Bright offices, reports, and embedded BI | Cool white surfaces with restrained blue interaction |
+| `high-contrast` | Accessibility-focused work | Black canvas, explicit boundaries, strong focus and status hierarchy |
 
 ```tsx
 <Dashboard template={template} theme="dark" />
 <Dashboard template={template} theme="operator" />
+<DesignSystemProvider theme="high-contrast">...</DesignSystemProvider>
 ```
 
 Themes are scoped under `.mtc-root`; multiple differently themed dashboards
@@ -122,7 +125,7 @@ owners should see.
 
 ## Definition of done for UI changes
 
-- Works in `dark`, `operator`, and `light` themes.
+- Works in `dark`, `operator`, `light`, and `high-contrast` themes.
 - Uses semantic status colors and shared chart tokens.
 - Has a visible keyboard focus state.
 - Remains readable at mobile, tablet, and desktop breakpoints.

@@ -16,8 +16,6 @@ const EXPECTED_PRODUCTS: readonly ProductShowcaseId[] = [
   'atlassian-confluence',
   'linear',
   'atlassian-jira',
-  'github',
-  'gitlab',
   'binance',
   'coingecko',
   'polymarket',
@@ -76,8 +74,6 @@ describe('shared product archetype showcases', () => {
       'atlassian-confluence': 'knowledge hub',
       linear: 'My issues',
       'atlassian-jira': 'Platform delivery',
-      github: 'Pull requests 4',
-      gitlab: 'Merge requests 4',
       binance: 'Order book',
       coingecko: 'Cryptocurrency prices by market cap',
       polymarket: 'What will happen next?',
@@ -92,6 +88,51 @@ describe('shared product archetype showcases', () => {
       const html = renderToStaticMarkup(<ProductArchetypeShowcase product={id} />)
       expect(html, id).toContain(expectedCopy[id])
       expect(html, id).toContain('Jim Technologies')
+    }
+  })
+
+  it('keeps adjacent product references structurally distinct', () => {
+    const pairs = [
+      {
+        left: 'google-gmail',
+        leftLandmark: 'ar-mail-focus-tabs',
+        right: 'microsoft-outlook',
+        rightLandmark: 'ar-outlook-app-rail',
+      },
+      {
+        left: 'notion',
+        leftLandmark: 'ar-knowledge-sidebar',
+        right: 'atlassian-confluence',
+        rightLandmark: 'ar-confluence-sidebar',
+      },
+      {
+        left: 'linear',
+        leftLandmark: 'ar-work-sidebar',
+        right: 'atlassian-jira',
+        rightLandmark: 'ar-jira-backlog',
+      },
+      {
+        left: 'binance',
+        leftLandmark: 'ar-terminal-grid',
+        right: 'interactive-brokers-trader-workstation',
+        rightLandmark: 'ar-tws-mosaic',
+      },
+      {
+        left: 'grafana-labs-grafana',
+        leftLandmark: 'ar-analytics-sidebar',
+        right: 'apache-superset',
+        rightLandmark: 'ar-superset-dashboard',
+      },
+    ] as const
+
+    for (const pair of pairs) {
+      const left = renderToStaticMarkup(<ProductArchetypeShowcase product={pair.left} />)
+      const right = renderToStaticMarkup(<ProductArchetypeShowcase product={pair.right} />)
+
+      expect(left, pair.left).toContain(pair.leftLandmark)
+      expect(left, `${pair.left} must not render ${pair.right}'s shell`).not.toContain(pair.rightLandmark)
+      expect(right, pair.right).toContain(pair.rightLandmark)
+      expect(right, `${pair.right} must not render ${pair.left}'s shell`).not.toContain(pair.leftLandmark)
     }
   })
 })

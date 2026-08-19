@@ -2,24 +2,54 @@
 
 Notable changes to medallion-terminal-core. Versions follow semver.
 
-## [Unreleased]
+## [0.5.0] — 2026-08-18
 
 ### Changed
 
+- **The jim-technologies open-source Makefile contract is installed**
+  (`MAKEFILE-CONTRACT.md`). The gate verb `check` is renamed to `validate`
+  everywhere — Makefile, package scripts, CI, and docs — and `ci:verify`
+  folds into it, so `make validate` is the one gate and exactly what CI
+  runs. `validate` now also runs a public-surface guard
+  (`scripts/public-surface-check.mjs`) and `VERSION`↔`package.json` parity
+  (`scripts/check-version.mjs`). New `make fmt`, `make generate`, `make
+  test-*` sub-verbs, and a fail-closed `make release`
+  (`scripts/release.mjs`) that refuses a dirty or unpushed tree and only
+  publishes with `RELEASE_CONFIRM=yes`. A root `VERSION` file is the single
+  release version.
+- **CI is Flox-only and runs one command.** The `ci` workflow is a single
+  SHA-pinned job whose only step after checkout/Flox/cache is
+  `flox activate -- make validate`; the gate itself installs dependencies
+  (frozen lockfile) and Playwright's lockfile-pinned Chromium, so it cannot
+  drift from a local run. The failure-artifact upload is gone (workflows
+  never publish artifacts) and the Storybook Pages deployment is normalized
+  to the same secretless skeleton via `make build-storybook`. `actionlint`
+  joins the Flox manifest as the workflow linter.
+
+- **Terminal Core is now the shared Medallion application UI toolkit.** The
+  existing dashboard and widget SDK remains intact while public scoped
+  foundations add dark, operator, light, and high-contrast presentation,
+  compact/comfortable density, descriptive token aliases, reduced-motion
+  behavior, and an SSR-stable `DesignSystemProvider`. File browser entries
+  prefer stable object IDs, preserve path fallback, expose capabilities and
+  unresolved-link metadata, and treat semantic kind/content type as
+  authoritative over filename extensions.
 - **Clone showcase visual polish.** Google Docs now uses a page-aligned,
   responsive ruler with quiet margin zones, measured ticks, and distinct
   indent controls. Mobile Shopify retains its complete account toolbar without
   page overflow, and Databricks notebooks reclaim the hidden navigation column
   so cells, result tables, and charts remain readable on narrow screens.
 - **Vendor-first showcase catalog.** Storybook and `examples/clones` group
-  multi-product suites under Google and Palantir, then retain exact product
-  names such as Drive, Photos, Maps, Docs, Sheets, Slides, and Foundry.
-  Standalone products remain direct entries. Explicit vendor, product, and
-  namespace metadata is enforced by tests and the built Storybook check.
+  product suites under their provider—including Google, Palantir, Atlassian,
+  Meta, Microsoft, OpenAI, Apache, Grafana Labs, Interactive Brokers, and
+  Intuit—then retain exact product names such as Drive, Photos, Jira,
+  WhatsApp, Superset, Trader Workstation, and QuickBooks. Standalone products
+  remain direct entries. Explicit vendor, product, and namespace metadata is
+  enforced by tests and the built Storybook check.
 - **Current reproducible toolchain.** Flox now locks Node 24.16, pnpm 11.9,
   and Buf 1.71 across supported platforms. The application stack moves to
-  React 19.2, TypeScript 7.0, Vite 8.1, Tailwind 4.3, Recharts 3.9,
-  lightweight-charts 5.2, Vitest 4.1, and Storybook 10.5. Node typings remain
+  React 19.2, TypeScript 7.0, Vite 8.1, Tailwind 4.3, Recharts 3.10,
+  lightweight-charts 5.2, MapLibre 6.0, Vitest 4.1, and Storybook 10.5. Node typings remain
   on the Node 24 line to match the runtime. pnpm's build allowlist lives only
   in `pnpm-workspace.yaml`, as required by pnpm 11. CI moves to the Node
   24-based checkout/cache and Pages action majors.
@@ -31,15 +61,25 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - **Published-package contract is release-gated.** `pnpm check:package`
   imports the built entry, verifies the declared files and critical public
   exports/widget registrations, rejects accidental source/example
-  publication, and enforces 84 KiB JavaScript / 12 KiB CSS gzip ceilings.
+  publication, and enforces 96 KiB JavaScript / 18 KiB CSS gzip ceilings for
+  the combined widget SDK and application toolkit.
+- **Focused package entry points and enforced lazy isolation.** Toolkit,
+  Dashboard, and asset-open consumers can import dedicated subpaths. Consumer
+  bundle checks enforce static gzip budgets, retain lazy widget boundaries,
+  and prevent chart, map, FFmpeg, or HEIC runtimes from leaking into unrelated
+  applications. Chart and map engines are optional renderer peers. HEIC and
+  MKV now resolve through an installed application or backend rendition
+  instead of shipping browser transcoders in Terminal Core.
 - **Professional scoped themes for SDK embedding.** Dashboard styles live
   under `.mtc-root`; `Dashboard` accepts `theme="dark" | "operator" |
-  "light"`. Graphite/cobalt is the default, the optional operator preset
-  uses a near-black/citrine language, and public semantic/chart variables
-  let hosts tune the identity without styling `html`, `body`, or their root.
+  "light" | "high-contrast"`. Graphite/cobalt is the default, the optional
+  operator preset uses a near-black/citrine language, the accessibility
+  preset strengthens boundaries and focus, and public semantic/chart
+  variables let hosts tune the identity without styling `html`, `body`, or
+  their root.
 - **Theme contrast guardrails.** Action, status, and ordinary text colors now
   maintain AA contrast across canvas, widget, and selected-panel surfaces in
-  all three presets; non-essential metadata maintains at least 3:1. A focused
+  all four presets; non-essential metadata maintains at least 3:1. A focused
   test parses the public CSS tokens so future palette edits cannot silently
   weaken those guarantees.
 - **Public examples stay generic.** Clone/vendor-specific example names,
@@ -48,12 +88,31 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Added
 
+- **Focused Blueprint-category application primitives.** One dependency-free
+  public layer now covers icons, actions, form controls, tags/badges/callouts,
+  tooltips, popovers, menus/context menus, dialogs/drawers, tabs, and
+  breadcrumbs. Data-dense workbench composition adds `AppSurface`, `Toolbar`,
+  `Sidebar`, keyboard-resizable `SplitPane`, `Inspector`, `PropertyList`,
+  controlled `Tree`, and generalized empty/loading/error states. Storybook
+  includes light/dark and compact/comfortable states plus object and model
+  three-pane compositions.
+- **Backward-compatible host integration seams.** `Dashboard.onIntent` emits
+  generic object-open, object-select, and command-invoke messages without
+  authorizing host operations. `createWidgetRegistry()` provides isolated
+  built-in-aware registries while legacy `registerWidget()` remains global and
+  unchanged; supplied registries drive both rendering and template validation.
+- **Semantic asset applications and host-controlled placement.** Asset
+  references expose semantic kind, passive capabilities, and unresolved
+  symlink targets directly. Installed applications can match MIME, intent, and
+  semantic kind, while `assetApplicationFrame` lets a trusted host place the
+  selected renderer in a Compass pane, route, drawer, or portal. The default
+  remains an accessible fullscreen frame.
 - **Complete provider-grouped product showcase catalog.** Storybook now adds
   dedicated suites for Google Gmail, Microsoft Outlook, Notion, Atlassian
   Confluence and Jira, Linear, GitHub, GitLab, Binance, CoinGecko, Polymarket,
   Interactive Brokers Trader Workstation, Grafana Labs Grafana, Apache
-  Superset, Meta WhatsApp, and OpenAI ChatGPT. Forty-eight representative
-  states share seven neutral presentation archetypes so the examples remain
+  Superset, Meta WhatsApp, and OpenAI ChatGPT. Representative states share
+  neutral presentation contracts where appropriate so the examples remain
   maintainable and outside the published package while covering mail,
   knowledge, work tracking, code review, markets, analytics, and conversation.
 - **Netflix product showcase.** `Clones/Netflix` provides host-data-injectable
@@ -66,6 +125,13 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   detail, Now Playing, queue and Jam presentation, and a persistent responsive
   player. Original sample content keeps the example self-contained; audio
   delivery, recommendations, rights, and persistence remain host-owned.
+- **Spotify Backstage developer-portal showcase.**
+  `Clones/Spotify/Backstage` adds host-data-injectable Software Catalog,
+  entity/plugin views, ownership, CI/CD, API relationships, Kubernetes status,
+  system topology, Software Templates, and TechDocs compositions. Catalog
+  ingestion, indexed search, authorization, scaffolder execution, secrets,
+  infrastructure discovery, and documentation publication remain host-owned;
+  no Backstage runtime or dependency enters the published package.
 - **Google Calendar product showcase.** `Clones/Google/Calendar` provides
   host-data-injectable month, week, day, and schedule views plus multiple
   calendars, event details, guests, rooms, conferencing, tasks, appointment

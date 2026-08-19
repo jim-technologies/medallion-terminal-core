@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import {
+  useAssetOpen,
+  type AssetOpenFallbacks,
+  type AssetOpenRequest,
+} from '../core/AssetOpen'
+import {
   buildSubmitActionUrl,
   buildActionRequest,
   newClientRequestId,
@@ -8,6 +13,7 @@ import {
 import { Empty } from './states'
 import {
   isFolder,
+  fileEntryIdentity,
   normalizeEntries,
   sortEntries,
   splitPath,
@@ -17,6 +23,7 @@ import {
   parseConnectStream,
   readConnectErrorMessage,
   previewKind,
+  isNativePreviewKind,
   buildMediaUrl,
   playableQueue,
   navigableQueue,
@@ -28,14 +35,8 @@ import {
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
 import { isErrorStatus, isTerminalStatus } from '../hooks/useWatchAction'
-import {
-  decodeHeic,
-  remuxMkvToMp4,
-  fetchText,
-  prettyJSON,
-  parseCSV,
-  renderMarkdown,
-} from './fileBrowserDecoders'
+import { fetchText, prettyJSON, parseCSV, renderMarkdown } from './fileBrowserDecoders'
+import { handleModalKeyDown, useModalFocus } from '../components/utils'
 import type { WidgetProps } from '../types/template'
 
 // FileBrowser is a generic file-pane primitive: breadcrumb header +
@@ -44,12 +45,8 @@ import type { WidgetProps } from '../types/template'
 // any specific protocol or backend; it composes paths, fires
 // configured URLs, and surfaces the data the source returned.
 //
-// Entry shape: { kind, name, size_bytes?, content_type?, modified_at? }.
-// `kind` is "folder" | "file" (case-insensitive; "KIND_FOLDER" /
-// "KIND_FILE" enum strings also accepted). The widget identifies an
-// entry by its `name` within the current directory — backends must
-// guarantee unique names per directory (which any filesystem-shaped
-// store does).
+// Entry shape remains path-compatible while optionally accepting stable
+// object identity, semantic kind/capabilities, and unresolved link metadata.
 //
 // Backend contract:
 //   - Listing: returned via the dashboard source mechanism. Pagination
@@ -100,11 +97,30 @@ interface FileBrowserOptions {
   // preview. {namespace} (the bucket) and {path} are substituted (both
   // URL-encoded). Set to "" to disable preview entirely.
   media_url_template?: string
+  // Workspace application integration. Enabled automatically when the host
+  // provides Dashboard.resolveAssetIntent; set false for a native-only pane.
+  open_with?: boolean
+  // Optional intent override. By default video/audio use "play" and every
+  // other file uses "view".
+  open_intent?: string
 }
 
 export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const opts = (options ?? {}) as FileBrowserOptions
-  const { ctx, setCtx, backendUrl, backendHeaders, toast, requestRefresh } = useDashboard()
+  const {
+    ctx,
+    setCtx,
+    backendUrl,
+    backendHeaders,
+    toast,
+    requestRefresh,
+    emitIntent,
+  } = useDashboard()
+  const {
+    available: assetApplicationsAvailable,
+    openAsset,
+    openWith,
+  } = useAssetOpen()
 
   const pathKey = opts.path_ctx ?? 'path'
   const bucketKey = opts.bucket_ctx ?? 'org'
@@ -169,6 +185,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const hasNext = !searchHits && listing.length >= pageSize
 
   const mediaTemplate = opts.media_url_template ?? '/media?namespace={namespace}&path={path}'
+  const openWithEnabled = assetApplicationsAvailable && opts.open_with !== false
 
   // Reset to page 1 whenever the directory or namespace changes — the
   // current page number is meaningless against the new directory's
@@ -334,35 +351,95 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const entryFullPath = (e: FileBrowserEntry): string =>
     e.path && e.path !== '' ? e.path : joinPath(currentPath, e.name ?? '')
 
+  const mediaUrlFor = (e: FileBrowserEntry): string => (
+    mediaTemplate && e.name
+      ? resolveEndpointUrl(
+          backendUrl,
+          buildMediaUrl(mediaTemplate, bucket, entryFullPath(e)),
+        )
+      : ''
+  )
+
+  const assetRequestFor = (e: FileBrowserEntry): AssetOpenRequest => {
+    const kind = previewKind(e.content_type, e.name, e.kind)
+    const intent = opts.open_intent
+      ?? (kind === 'video' || kind === 'audio' || kind === 'mkv' ? 'play' : 'view')
+    return {
+      asset: {
+        id: e.id ?? e.object_id,
+        namespace: bucket,
+        path: entryFullPath(e),
+        name: e.name ?? (entryFullPath(e) || 'Untitled file'),
+        kind: e.kind,
+        contentType: e.content_type,
+        sizeBytes: e.size_bytes,
+        modifiedAt: e.modified_at,
+        capabilities: e.capabilities,
+        symlinkTargetId: e.symlink_target_id,
+        url: mediaUrlFor(e) || undefined,
+        metadata: {
+          ...e.metadata,
+        },
+      },
+      intent,
+      source: { component: 'file_browser', widgetId },
+    }
+  }
+
+  const fallbacksFor = (e: FileBrowserEntry): AssetOpenFallbacks => {
+    const kind = previewKind(e.content_type, e.name, e.kind)
+    const canPreview = !!mediaTemplate && isNativePreviewKind(kind)
+    return {
+      native: canPreview ? () => setPreview(e) : undefined,
+      nativeLabel: canPreview ? 'Native preview' : undefined,
+      download: opts.download_url ? () => downloadFile(e) : undefined,
+    }
+  }
+
+  const openWithApplications = (e: FileBrowserEntry) => {
+    void openWith(assetRequestFor(e), fallbacksFor(e))
+  }
+
+  const selectEntry = (e: FileBrowserEntry) => {
+    const objectId = e.id ?? e.object_id
+    if (objectId) emitIntent?.({ type: 'object.select', objectId })
+  }
+
   // Row activation is bound to double-click (not single) so a stray click never
-  // opens/downloads a file by accident. Folders navigate; previewable files open
-  // the overlay; everything else downloads.
+  // opens/downloads a file by accident. Folders navigate; files first resolve
+  // the workspace's preferred application and retain native preview/download as
+  // zero-configuration fallbacks.
   const onRowClick = (e: FileBrowserEntry) => {
+    const objectId = e.id ?? e.object_id
+    if (objectId) {
+      emitIntent?.({
+        type: 'object.open',
+        objectId,
+        mode: isFolder(e) ? 'browse' : (opts.open_intent ?? 'preview'),
+      })
+    }
     if (isFolder(e)) {
       // From a search result, jumping into a folder leaves search mode.
       if (searchHits) navigateAndClearSearch(entryFullPath(e))
       else navigateTo(entryFullPath(e))
       return
     }
+    if (assetApplicationsAvailable && opts.open_with !== false) {
+      void openAsset(assetRequestFor(e), fallbacksFor(e))
+      return
+    }
     // Previewable types open in the overlay; everything else downloads.
-    if (mediaTemplate && previewKind(e.content_type, e.name)) {
+    if (
+      mediaTemplate
+      && isNativePreviewKind(previewKind(e.content_type, e.name, e.kind))
+    ) {
       setPreview(e)
       return
     }
     void downloadFile(e)
   }
 
-  // Esc closes the preview overlay. Bound globally while open.
-  useEffect(() => {
-    if (!preview) return undefined
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setPreview(null)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [preview])
-
-  const downloadFile = async (e: FileBrowserEntry) => {
+  async function downloadFile(e: FileBrowserEntry) {
     const downloadURL = opts.download_url
     if (!downloadURL) {
       toast('Download not configured (set options.download_url)', 'error')
@@ -598,29 +675,46 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
           <GalleryGrid
             entries={sorted}
             onClick={onRowClick}
-            mediaUrlFor={(e) => (
-              e.name
-                ? resolveEndpointUrl(backendUrl, buildMediaUrl(mediaTemplate, bucket, entryFullPath(e)))
-                : ''
-            )}
+            onSelect={selectEntry}
+            onOpenWith={openWithEnabled ? openWithApplications : undefined}
+            mediaUrlFor={mediaUrlFor}
+            entryKey={entry => fileEntryIdentity(entry, currentPath)}
           />
         ) : (
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-zinc-900 z-[1]">
               <tr className="text-zinc-400 border-b border-zinc-800">
-                <th className="text-left px-3 py-2 w-8"></th>
+                <th className="text-left px-3 py-2 w-8">
+                  <span className="sr-only">Entry kind</span>
+                </th>
                 <th className="text-left px-3 py-2">Name</th>
                 <th className="text-right px-3 py-2 w-24">Size</th>
                 <th className="text-left px-3 py-2 w-40">Type</th>
                 <th className="text-left px-3 py-2 w-36">Modified</th>
+                {openWithEnabled && (
+                  <th className="w-10">
+                    <span className="sr-only">Actions</span>
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
               {sorted.map((e, i) => (
                 <tr
-                  key={`${e.kind ?? ''}:${e.name ?? i}`}
+                  key={fileEntryIdentity(e, currentPath) || String(i)}
+                  tabIndex={0}
+                  onClick={() => selectEntry(e)}
                   onDoubleClick={() => onRowClick(e)}
-                  className="border-b border-zinc-800/40 hover:bg-zinc-800/40 cursor-pointer select-none"
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault()
+                      onRowClick(e)
+                    } else if (event.key === ' ') {
+                      event.preventDefault()
+                      selectEntry(e)
+                    }
+                  }}
+                  className="group border-b border-zinc-800/40 hover:bg-zinc-800/40 cursor-pointer select-none"
                 >
                   <td className="px-3 py-1.5 select-none">{isFolder(e) ? '📁' : '📄'}</td>
                   <td className="px-3 py-1.5 text-zinc-100 truncate">{e.name}</td>
@@ -629,6 +723,25 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
                   </td>
                   <td className="px-3 py-1.5 text-zinc-500 truncate">{e.content_type ?? ''}</td>
                   <td className="px-3 py-1.5 text-zinc-500 truncate">{e.modified_at ?? ''}</td>
+                  {openWithEnabled && (
+                    <td className="pr-2 text-right">
+                      {!isFolder(e) && (
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            openWithApplications(e)
+                          }}
+                          onDoubleClick={event => event.stopPropagation()}
+                          className="size-7 rounded text-zinc-600 hover:text-zinc-100 hover:bg-zinc-700/70 opacity-60 group-hover:opacity-100 focus:opacity-100"
+                          aria-label={`Open ${e.name ?? 'file'} with another application`}
+                          title="Open with…"
+                        >
+                          ···
+                        </button>
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -645,15 +758,13 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       {preview && (
         <PreviewOverlay
           entry={preview}
-          mediaUrl={resolveEndpointUrl(
-            backendUrl,
-            buildMediaUrl(mediaTemplate, bucket, entryFullPath(preview)),
-          )}
+          mediaUrl={mediaUrlFor(preview)}
           autoAdvanceQueue={playableQueue(sorted)}
           navigableQueue={navigableQueue(sorted)}
           onSelect={(e) => setPreview(e)}
           onClose={() => setPreview(null)}
           onDownload={() => { void downloadFile(preview) }}
+          onOpenWith={openWithEnabled ? () => openWithApplications(preview) : undefined}
         />
       )}
 
@@ -769,41 +880,71 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
 function GalleryGrid({
   entries,
   onClick,
+  onSelect,
+  onOpenWith,
   mediaUrlFor,
+  entryKey,
 }: {
   entries: FileBrowserEntry[]
   onClick: (e: FileBrowserEntry) => void
+  onSelect?: (e: FileBrowserEntry) => void
+  onOpenWith?: (e: FileBrowserEntry) => void
   mediaUrlFor: (e: FileBrowserEntry) => string
+  entryKey: (e: FileBrowserEntry) => string
 }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 p-3">
       {entries.map((e, i) => {
-        const kind = previewKind(e.content_type, e.name)
-        const isImage = kind === 'image' || kind === 'heic'
+        const kind = previewKind(e.content_type, e.name, e.kind)
+        const isImage = kind === 'image'
         const folder = isFolder(e)
         return (
-          <button
-            key={`${e.kind ?? ''}:${e.name ?? i}`}
-            onDoubleClick={() => onClick(e)}
-            className="flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left select-none"
+          <div
+            key={entryKey(e) || String(i)}
+            className="group relative min-w-0"
           >
-            <div className="w-full aspect-square bg-zinc-950 rounded flex items-center justify-center overflow-hidden">
-              {folder ? (
-                <span className="text-4xl select-none">📁</span>
-              ) : isImage && e.name ? (
-                <img
-                  src={mediaUrlFor(e)}
-                  alt={e.name ?? ''}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="text-4xl select-none">📄</span>
-              )}
-            </div>
-            <span className="w-full text-xs text-zinc-200 truncate" title={e.name}>{e.name}</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => onSelect?.(e)}
+              onDoubleClick={() => onClick(e)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault()
+                  onClick(e)
+                }
+              }}
+              className="w-full flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left select-none"
+            >
+              <div className="w-full aspect-square bg-zinc-950 rounded flex items-center justify-center overflow-hidden">
+                {folder ? (
+                  <span className="text-4xl select-none">📁</span>
+                ) : isImage && e.name ? (
+                  <img
+                    src={mediaUrlFor(e)}
+                    alt={e.name ?? ''}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-4xl select-none">📄</span>
+                )}
+              </div>
+              <span className="w-full text-xs text-zinc-200 truncate" title={e.name}>{e.name}</span>
+            </button>
+            {onOpenWith && !folder && (
+              <button
+                type="button"
+                onClick={() => onOpenWith(e)}
+                onDoubleClick={event => event.stopPropagation()}
+                className="absolute top-3 right-3 size-7 rounded bg-zinc-950/85 border border-zinc-700 text-zinc-400 hover:text-white opacity-70 group-hover:opacity-100 focus:opacity-100 shadow"
+                aria-label={`Open ${e.name ?? 'file'} with another application`}
+                title="Open with…"
+              >
+                ···
+              </button>
+            )}
+          </div>
         )
       })}
     </div>
@@ -835,6 +976,7 @@ function PreviewOverlay({
   onSelect,
   onClose,
   onDownload,
+  onOpenWith,
 }: {
   entry: FileBrowserEntry
   mediaUrl: string
@@ -848,111 +990,54 @@ function PreviewOverlay({
   onSelect: (e: FileBrowserEntry) => void
   onClose: () => void
   onDownload: () => void
+  onOpenWith?: () => void
 }) {
-  const kind = previewKind(entry.content_type, entry.name)
+  const kind = previewKind(entry.content_type, entry.name, entry.kind)
   const isTextLike = kind === 'text' || kind === 'json' || kind === 'yaml' || kind === 'csv' || kind === 'markdown'
   // image/video/pdf show a loading sentinel until the element loads.
   // text-family previews fetch the bytes asynchronously.
   const [loading, setLoading] = useState(
-    kind === 'image' || kind === 'video' || kind === 'pdf' || kind === 'heic' || kind === 'mkv' || isTextLike,
+    kind === 'image' || kind === 'video' || kind === 'pdf' || isTextLike,
   )
   const [failed, setFailed] = useState(false)
   const [failedMsg, setFailedMsg] = useState<string | null>(null)
-  // For HEIC + MKV the inline element renders a transcoded Blob URL produced
-  // client-side. `transcoded` holds it once the WASM helper finishes.
-  const [transcoded, setTranscoded] = useState<string | null>(null)
-  // Coarse progress text shown for MKV remux (ffmpeg load → fetch → remux).
-  const [progress, setProgress] = useState<string>('Loading…')
   // Text-family preview state.
   const [textBody, setTextBody] = useState<string | null>(null)
   const [csvRows, setCsvRows] = useState<string[][] | null>(null)
   const [markdownHtml, setMarkdownHtml] = useState<string | null>(null)
 
   // Playlist controls (only meaningful when navQueue has > 1 entries
-  // and the current kind is part of it — image/audio/video/mkv/heic).
+  // and the current kind is part of it — image/audio/video).
   const queueVisible = navQueue.length > 1
-  const queueIndex = navQueue.findIndex((q) => q.name === entry.name)
+  const entryIdentity = fileEntryIdentity(entry)
+  const queueIndex = navQueue.findIndex((q) => fileEntryIdentity(q) === entryIdentity)
   const [shuffle, setShuffle] = useState(false)
   const [repeat, setRepeat] = useState(true) // sensible default for "play folder"
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+  useModalFocus(true, overlayRef, closeRef)
 
   // Toolbar prev/next + arrow keys walk navQueue. onEnded (audio/video)
   // uses autoAdvanceQueue so a music playlist doesn't jump to an image
   // at the end of a track.
   const advanceNext = () => {
-    const next = nextInQueue(navQueue, entry.name, shuffle, repeat)
+    const next = nextInQueue(navQueue, entryIdentity, shuffle, repeat)
     if (next) onSelect(next)
   }
   const advancePrev = () => {
-    const prev = prevInQueue(navQueue, entry.name, repeat)
+    const prev = prevInQueue(navQueue, entryIdentity, repeat)
     if (prev) onSelect(prev)
   }
   const autoAdvance = () => {
-    const next = nextInQueue(autoAdvanceQueue, entry.name, shuffle, repeat)
+    const next = nextInQueue(autoAdvanceQueue, entryIdentity, shuffle, repeat)
     if (next) onSelect(next)
   }
 
-  // Keyboard nav. ← prev, → next, Space toggles play (audio/video only;
-  // images shrug it off). Esc is handled by the parent's effect.
-  useEffect(() => {
-    const onKey = (ev: KeyboardEvent) => {
-      // Skip when focus is in an input/textarea so the user can type.
-      const t = ev.target as HTMLElement | null
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return
-      if (ev.key === 'ArrowRight') { ev.preventDefault(); advanceNext() }
-      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); advancePrev() }
-      else if (ev.key === ' ') {
-        const el = document.querySelector('video, audio') as HTMLMediaElement | null
-        if (el) {
-          ev.preventDefault()
-          if (el.paused) void el.play(); else el.pause()
-        }
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entry.name, navQueue.length, shuffle, repeat])
   const onMediaLoad = () => setLoading(false)
   const onMediaError = () => { setLoading(false); setFailed(true); setFailedMsg(null) }
   const backdropClose = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose()
   }
-
-  // Drive the HEIC decode / MKV remux off the same `mediaUrl`. Both helpers
-  // are dynamic-imported on first use so the WASM cost (~1.5 MB heic, ~30 MB
-  // ffmpeg) doesn't land in the FileBrowser's initial bundle. Cleanup
-  // revokes the object URL when the overlay closes or the file changes.
-  useEffect(() => {
-    if (kind !== 'heic' && kind !== 'mkv') return undefined
-    let cancelled = false
-    let url: string | null = null
-    void (async () => {
-      try {
-        let blob: Blob
-        if (kind === 'heic') {
-          setProgress('Decoding HEIC…')
-          const res = await fetch(mediaUrl)
-          if (!res.ok) throw new Error(`fetch failed: ${res.status}`)
-          blob = await decodeHeic(await res.blob())
-        } else {
-          blob = await remuxMkvToMp4(mediaUrl, (m) => { if (!cancelled) setProgress(m) })
-        }
-        if (cancelled) return
-        url = URL.createObjectURL(blob)
-        setTranscoded(url)
-        setLoading(false)
-      } catch (err) {
-        if (cancelled) return
-        setFailedMsg(errorMessage(err))
-        setFailed(true)
-        setLoading(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-      if (url) URL.revokeObjectURL(url)
-    }
-  }, [kind, mediaUrl])
 
   // Text-family previews: fetch + transform. CSV → table rows, JSON →
   // pretty-printed string, markdown → HTML (lazy-loaded `marked`),
@@ -986,8 +1071,41 @@ function PreviewOverlay({
 
   return (
     <div
+      ref={overlayRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Preview ${entry.name ?? 'file'}`}
+      tabIndex={-1}
       className="fixed inset-0 z-50 flex flex-col bg-zinc-950/95"
       onClick={backdropClose}
+      onKeyDown={(event) => {
+        handleModalKeyDown(event, overlayRef, true, onClose)
+        if (event.defaultPrevented) return
+        const target = event.target as HTMLElement
+        if (
+          target.tagName === 'INPUT'
+          || target.tagName === 'TEXTAREA'
+          || target.isContentEditable
+        ) {
+          return
+        }
+        if (event.key === 'ArrowRight') {
+          event.preventDefault()
+          advanceNext()
+        } else if (event.key === 'ArrowLeft') {
+          event.preventDefault()
+          advancePrev()
+        } else if (event.key === ' ') {
+          const media = overlayRef.current?.querySelector(
+            'video, audio',
+          ) as HTMLMediaElement | null
+          if (media) {
+            event.preventDefault()
+            if (media.paused) void media.play()
+            else media.pause()
+          }
+        }
+      }}
     >
       <div className="flex items-center gap-3 px-4 py-2 text-zinc-200 border-b border-zinc-800 bg-zinc-900">
         <span className="text-sm font-medium truncate flex-1">{entry.name}</span>
@@ -1034,6 +1152,15 @@ function PreviewOverlay({
             </span>
           </div>
         )}
+        {onOpenWith && (
+          <button
+            type="button"
+            onClick={onOpenWith}
+            className="text-xs text-zinc-400 hover:text-zinc-100"
+          >
+            Open with…
+          </button>
+        )}
         <button
           onClick={onDownload}
           className="text-xs text-sky-400 hover:underline"
@@ -1041,6 +1168,7 @@ function PreviewOverlay({
           Download
         </button>
         <button
+          ref={closeRef}
           onClick={onClose}
           className="text-zinc-400 hover:text-zinc-100 text-lg leading-none"
           aria-label="Close preview"
@@ -1054,7 +1182,7 @@ function PreviewOverlay({
       >
         {loading && !failed && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-zinc-500 text-xs uppercase tracking-wider">{progress}</div>
+            <div className="text-zinc-500 text-xs uppercase tracking-wider">Loading…</div>
           </div>
         )}
         {failed && (
@@ -1117,28 +1245,6 @@ function PreviewOverlay({
             className="w-full h-full bg-white rounded shadow-2xl border-0"
           />
         )}
-        {!failed && kind === 'heic' && transcoded && (
-          <img
-            src={transcoded}
-            alt={entry.name ?? ''}
-            decoding="async"
-            onError={onMediaError}
-            className="max-h-full max-w-full object-contain rounded shadow-2xl"
-          />
-        )}
-        {!failed && kind === 'mkv' && transcoded && (
-          <video
-            src={transcoded}
-            controls
-            autoPlay
-            playsInline
-            preload="metadata"
-            onLoadedMetadata={onMediaLoad}
-            onEnded={autoAdvance}
-            onError={onMediaError}
-            className="max-h-full max-w-full bg-black rounded shadow-2xl"
-          />
-        )}
         {!failed && (kind === 'text' || kind === 'json' || kind === 'yaml') && textBody !== null && (
           <pre className="w-full h-full overflow-auto bg-zinc-900 text-zinc-100 text-xs font-mono p-4 rounded shadow-2xl whitespace-pre-wrap break-words">
             {textBody}
@@ -1175,9 +1281,11 @@ function PreviewOverlay({
             </table>
           </div>
         )}
-        {kind === null && !failed && (
+        {(kind === null || kind === 'heic' || kind === 'mkv') && !failed && (
           <div className="flex flex-col items-center gap-3 text-zinc-300 text-sm">
-            <span className="text-zinc-500">No inline preview for {entry.content_type ?? 'this file type'}.</span>
+            <span className="text-zinc-500">
+              No native preview for {entry.content_type ?? 'this file type'}.
+            </span>
             <button onClick={onDownload} className="text-sky-400 hover:underline text-xs">
               Download instead
             </button>

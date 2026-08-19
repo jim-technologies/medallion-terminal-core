@@ -122,7 +122,6 @@
   letter-spacing: -.04em;
 }
 
-.ar-product-github .ar-product-mark,
 .ar-product-notion .ar-product-mark,
 .ar-product-openai-chatgpt .ar-product-mark {
   border-radius: 50%;
@@ -1044,98 +1043,6 @@
 .ar-work-detail > footer input { background: var(--ar-raised); border: 1px solid var(--ar-border); border-radius: 6px; flex: 1; min-height: 34px; padding: 0 9px; }
 .ar-work-detail > footer button { background: var(--ar-accent); border: 0; border-radius: 5px; color: #fff; min-height: 34px; padding: 0 11px; }
 
-/* Code collaboration ----------------------------------------------------- */
-
-.ar-code-shell { background: #0d1117; color: #e6edf3; min-height: 100vh; }
-.ar-product-gitlab .ar-code-shell { background: #171321; }
-.ar-code-global { align-items: center; background: #010409; border-bottom: 1px solid #30363d; display: grid; gap: 12px; grid-template-columns: 32px 34px minmax(260px, 480px) 1fr; height: 48px; padding: 0 16px; }
-.ar-product-gitlab .ar-code-global { background: #29233a; border-color: #453d58; }
-.ar-code-global label { align-items: center; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; display: flex; gap: 7px; height: 30px; padding: 0 9px; }
-.ar-code-global label input { background: transparent; border: 0; min-width: 0; outline: 0; width: 100%; }
-.ar-code-global .ar-icon-button:hover { background: #21262d; }
-.ar-repo-header { align-items: center; display: flex; justify-content: space-between; min-height: 64px; padding: 0 28px; }
-.ar-repo-title { align-items: center; display: flex; gap: 6px; font-size: 16px; }
-.ar-repo-title span,
-.ar-repo-title strong { color: #58a6ff; }
-.ar-repo-title em { border: 1px solid #3c4653; border-radius: 12px; color: #8b949e; font-size: 10px; font-style: normal; margin-left: 5px; padding: 2px 7px; }
-.ar-repo-header > div:last-child { display: flex; gap: 7px; }
-.ar-repo-header > div:last-child button { background: #21262d; border: 1px solid #3b434d; border-radius: 6px; color: #c9d1d9; min-height: 29px; padding: 0 9px; }
-.ar-repo-nav { border-bottom: 1px solid #30363d; display: flex; gap: 4px; padding: 0 23px; }
-.ar-repo-nav button { align-items: center; background: transparent; border: 0; border-bottom: 2px solid transparent; color: #c9d1d9; display: flex; gap: 7px; min-height: 41px; padding: 0 10px; }
-.ar-repo-nav button.is-active { border-color: #f78166; font-weight: 650; }
-.ar-code-main { margin: 0 auto; max-width: 1240px; padding: 24px 28px 50px; }
-.ar-code-heading { align-items: flex-start; display: flex; gap: 10px; }
-.ar-merge-state { background: #238636; border-radius: 18px; color: #fff; font-weight: 650; padding: 5px 12px; }
-.ar-code-heading h1 { font-size: 25px; font-weight: 450; letter-spacing: -.02em; }
-.ar-code-heading h1 small { color: #8b949e; font-weight: 350; }
-.ar-code-heading p { color: #8b949e; margin-top: 5px; }
-.ar-code-heading code,
-.ar-code-timeline code { background: #21262d; border-radius: 4px; color: #c9d1d9; padding: 2px 5px; }
-.ar-code-main > .ar-view-tabs { border: 1px solid #30363d; border-radius: 6px 6px 0 0; margin-top: 23px; padding: 0; }
-.ar-code-main > .ar-view-tabs button.is-active { border-bottom-color: #f78166; }
-.ar-code-columns { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr) 310px; padding-top: 20px; }
-.ar-code-timeline { display: flex; flex-direction: column; gap: 14px; }
-.ar-review-card,
-.ar-code-comment { border: 1px solid #30363d; border-radius: 7px; overflow: hidden; }
-.ar-review-card header { align-items: center; background: #161b22; border-bottom: 1px solid #30363d; display: flex; gap: 8px; min-height: 48px; padding: 0 12px; }
-.ar-review-card header span { color: #8b949e; font-size: 10px; margin-left: auto; }
-.ar-review-card > p { color: #c9d1d9; line-height: 1.6; padding: 14px; }
-.ar-review-card pre { background: #0d1117; border-top: 1px solid #30363d; overflow: auto; padding: 13px; }
-.ar-commit-row { align-items: center; border-left: 2px solid #30363d; display: flex; gap: 9px; margin-left: 18px; min-height: 43px; padding-left: 18px; }
-.ar-commit-row > span { align-items: center; background: #238636; border-radius: 50%; display: flex; height: 23px; justify-content: center; margin-left: -31px; width: 23px; }
-.ar-commit-row time { color: #8b949e; font-size: 10px; margin-left: auto; }
-.ar-code-comment { display: flex; flex-direction: column; }
-.ar-code-comment textarea { background: #0d1117; border: 0; color: #e6edf3; min-height: 105px; outline: 0; padding: 12px; resize: vertical; }
-.ar-code-comment footer { background: #161b22; border-top: 1px solid #30363d; display: flex; gap: 7px; justify-content: flex-end; padding: 8px; }
-.ar-code-comment footer button { background: #21262d; border: 1px solid #3b434d; border-radius: 6px; color: #e6edf3; min-height: 30px; padding: 0 10px; }
-.ar-code-sidebar section { border-bottom: 1px solid #30363d; padding: 15px 2px; }
-.ar-code-sidebar section > strong { color: #8b949e; display: block; font-size: 11px; margin-bottom: 9px; }
-.ar-code-sidebar section > span { align-items: center; display: flex; gap: 7px; }
-.ar-code-sidebar section > span b { color: #3fb950; margin-left: auto; }
-.ar-code-sidebar section em { border-radius: 10px; background: #1f6feb; font-size: 9px; font-style: normal; margin-right: 4px; padding: 3px 7px; }
-.ar-code-sidebar section em + em { background: #8957e5; }
-.ar-code-sidebar section p { color: #8b949e; font-size: 11px; }
-.ar-code-sidebar section a { color: #58a6ff; }
-.ar-merge-box { background: #161b22; border: 1px solid #30363d; border-radius: 7px; display: grid; gap: 2px 9px; grid-template-columns: 30px 1fr; margin-top: 16px; padding: 13px; }
-.ar-merge-box > span { align-items: center; background: #238636; border-radius: 50%; display: flex; grid-row: 1 / 3; height: 25px; justify-content: center; width: 25px; }
-.ar-merge-box small { color: #8b949e; }
-.ar-merge-box button { background: #238636; border: 1px solid #2ea043; border-radius: 6px; color: #fff; grid-column: 1 / 3; margin-top: 9px; min-height: 32px; }
-
-.ar-diff-layout { border: 1px solid #30363d; border-top: 0; display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 560px; }
-.ar-diff-layout > aside { border-right: 1px solid #30363d; padding: 8px; }
-.ar-diff-layout > aside button { background: transparent; border: 0; border-radius: 5px; color: #c9d1d9; display: flex; flex-direction: column; gap: 3px; margin-bottom: 3px; padding: 8px; text-align: left; width: 100%; }
-.ar-diff-layout > aside button:hover,
-.ar-diff-layout > aside button.is-active { background: #21262d; }
-.ar-diff-layout > aside button span { font-size: 11px; overflow-wrap: anywhere; }
-.ar-diff-layout > aside button em { color: #8b949e; font-size: 9px; font-style: normal; }
-.ar-diff-file > header { align-items: center; background: #161b22; border-bottom: 1px solid #30363d; display: flex; gap: 8px; min-height: 43px; padding: 0 12px; }
-.ar-diff-file > header span { color: #3fb950; margin-left: auto; }
-.ar-diff-file > header button { background: #21262d; border: 1px solid #3b434d; border-radius: 5px; }
-.ar-diff-file pre { overflow: auto; padding: 10px 0; }
-.ar-diff-file pre span { display: grid; grid-template-columns: 42px 18px minmax(600px, 1fr); min-height: 25px; }
-.ar-diff-file pre span.is-add { background: rgb(46 160 67 / 15%); }
-.ar-diff-file pre span.is-del { background: rgb(248 81 73 / 14%); }
-.ar-diff-file pre i { color: #6e7681; font-style: normal; padding-right: 9px; text-align: right; user-select: none; }
-.ar-diff-file pre b { color: #8b949e; font-weight: 400; }
-.ar-diff-file pre code { color: #c9d1d9; white-space: pre; }
-
-.ar-pipeline { border: 1px solid #30363d; border-top: 0; min-height: 520px; }
-.ar-pipeline > header { align-items: center; border-bottom: 1px solid #30363d; display: flex; gap: 12px; padding: 17px; }
-.ar-pipeline-status { align-items: center; background: #238636; border-radius: 50%; display: flex; font-size: 18px; height: 40px; justify-content: center; width: 40px; }
-.ar-pipeline > header span { flex: 1; }
-.ar-pipeline > header h2 { font-size: 17px; }
-.ar-pipeline > header p { color: #8b949e; }
-.ar-pipeline > header button { background: #21262d; border: 1px solid #3b434d; border-radius: 6px; min-height: 31px; }
-.ar-pipeline-graph { align-items: center; display: flex; justify-content: center; padding: 42px 20px; }
-.ar-pipeline-graph span { align-items: center; background: #21262d; border: 2px solid #3fb950; border-radius: 50%; display: flex; font-size: 10px; height: 72px; justify-content: center; width: 72px; }
-.ar-pipeline-graph i { background: #3fb950; height: 2px; width: 70px; }
-.ar-job-list { border: 1px solid #30363d; border-radius: 7px; margin: 0 auto 30px; max-width: 760px; }
-.ar-job-list button { align-items: center; background: transparent; border: 0; border-bottom: 1px solid #30363d; display: grid; gap: 9px; grid-template-columns: 25px 1fr 90px 70px 12px; min-height: 45px; padding: 0 12px; text-align: left; width: 100%; }
-.ar-job-list button:last-child { border-bottom: 0; }
-.ar-job-list button > span { color: #3fb950; }
-.ar-job-list em,
-.ar-job-list time { color: #8b949e; font-style: normal; }
-
 /* Market terminal -------------------------------------------------------- */
 
 .ar-terminal-shell { background: #101318; color: #e7eaee; min-height: 100vh; }
@@ -1257,10 +1164,21 @@
 .ar-market-table td:first-child { text-align: left; width: 64px; }
 .ar-market-table th:nth-child(2),
 .ar-market-table td:nth-child(2) { text-align: left; }
-.ar-market-table tbody tr { cursor: pointer; }
 .ar-market-table tbody tr:hover { background: #f8faf6; }
-.ar-market-table td:nth-child(2) { align-items: center; display: flex; gap: 8px; }
+.ar-market-table td:nth-child(2) { text-align: left; }
 .ar-market-table td:nth-child(2) small { color: #788273; }
+.ar-coin-link {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  display: flex;
+  gap: 8px;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+.ar-coin-link:hover strong { text-decoration: underline; }
 .ar-coin-mark { align-items: center; background: linear-gradient(145deg, #f7a928, #e88719); border-radius: 50%; color: #fff; display: inline-flex; flex: 0 0 28px; font-weight: 800; height: 28px; justify-content: center; }
 .ar-market-table tr:nth-child(2) .ar-coin-mark { background: #6877b9; }
 .ar-market-table tr:nth-child(3) .ar-coin-mark { background: #7852cf; }
@@ -1646,13 +1564,6 @@
   .ar-work-user > span:not(.ar-avatar) { display: none; }
   .ar-work-user { flex-direction: column; }
   .ar-work-board { grid-template-columns: repeat(4, 210px); }
-  .ar-code-global { grid-template-columns: 32px 34px 1fr; }
-  .ar-code-global > .ar-top-actions { display: none; }
-  .ar-code-columns { grid-template-columns: 1fr; }
-  .ar-code-sidebar { display: none; }
-  .ar-diff-layout { grid-template-columns: 1fr; }
-  .ar-diff-layout > aside { border-bottom: 1px solid #30363d; border-right: 0; display: flex; overflow: auto; }
-  .ar-diff-layout > aside button { min-width: 190px; }
   .ar-terminal-grid { grid-template-columns: 150px minmax(390px, 1fr); }
   .ar-terminal-book { display: none; }
   .ar-terminal-orders { grid-column: 2; }
@@ -1766,15 +1677,6 @@
 
   .ar-work-detail {
     width: calc(100vw - 52px);
-  }
-
-  .ar-code-repo-header > div:last-child {
-    display: none;
-  }
-
-  .ar-code-repo-nav,
-  .ar-diff-layout > aside {
-    scrollbar-width: thin;
   }
 
   .ar-terminal-topbar {
@@ -1976,4 +1878,3065 @@
     scroll-behavior: auto !important;
     transition-duration: .001ms !important;
   }
+}
+
+/* Product-specific fidelity --------------------------------------------- */
+
+/* Gmail keeps the familiar category-first inbox and switches to a full
+   conversation surface after a message is selected. */
+
+.ar-product-google-gmail .ar-mail-topbar {
+  background: #f6f8fc;
+  border-bottom: 0;
+  height: 64px;
+}
+
+.ar-product-google-gmail .ar-mail-body {
+  background: #f6f8fc;
+}
+
+.ar-product-google-gmail .ar-mail-sidebar {
+  background: #f6f8fc;
+}
+
+.ar-product-google-gmail .ar-mail-main {
+  background: #fff;
+  border-radius: 16px 0 0;
+  overflow: hidden;
+}
+
+.ar-product-google-gmail .ar-mail-focus-tabs {
+  border-bottom: 1px solid #e7e9ee;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(110px, 1fr));
+}
+
+.ar-product-google-gmail .ar-mail-focus-tabs button {
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  justify-content: flex-start;
+  min-height: 54px;
+  padding: 0 20px;
+}
+
+.ar-product-google-gmail .ar-mail-focus-tabs button.is-active {
+  background: transparent;
+  border-bottom-color: #0b57d0;
+  color: #0b57d0;
+}
+
+.ar-product-google-gmail .ar-mail-rows > button {
+  min-height: 40px;
+}
+
+.ar-product-google-gmail .ar-mail-copy {
+  align-items: baseline;
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ar-product-google-gmail .ar-mail-copy b {
+  flex: 0 0 auto;
+  max-width: 48%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ar-product-google-gmail .ar-mail-copy small {
+  color: #5f6368;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ar-product-google-gmail[data-view="reading-pane"] .ar-mail-main,
+.ar-product-google-gmail[data-view="compose"] .ar-mail-main {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ar-product-google-gmail[data-view="reading-pane"] .ar-mail-list,
+.ar-product-google-gmail[data-view="compose"] .ar-mail-list {
+  display: none;
+}
+
+/* Outlook follows the Microsoft 365 shell: suite bar, ribbon, application
+   rail, folders, message list, and persistent reading pane. */
+
+.ar-product-microsoft-outlook {
+  --ar-accent: #0f6cbd;
+  --ar-hover: #e9f2fb;
+  background: #f5f5f5;
+  color: #242424;
+  font-family: "Segoe UI Variable", "Segoe UI", ui-sans-serif, sans-serif;
+}
+
+.ar-outlook-shell {
+  background: #f5f5f5;
+  display: grid;
+  grid-template-rows: 48px 44px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.ar-outlook-suitebar {
+  align-items: center;
+  background: #0f6cbd;
+  color: #fff;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 36px 130px minmax(240px, 620px) 1fr;
+  padding: 0 12px;
+}
+
+.ar-outlook-suitebar .ar-brand {
+  color: #fff;
+}
+
+.ar-outlook-suitebar .ar-product-mark {
+  background: #fff;
+  color: #0f6cbd;
+  height: 27px;
+  width: 27px;
+}
+
+.ar-outlook-suitebar .ar-top-actions {
+  color: #fff;
+}
+
+.ar-outlook-suitebar .ar-icon-button:hover {
+  background: rgb(255 255 255 / 14%);
+}
+
+.ar-outlook-launcher {
+  background: transparent;
+  border: 0;
+  display: grid;
+  gap: 3px;
+  grid-template-columns: repeat(3, 3px);
+  height: 32px;
+  place-content: center;
+  width: 32px;
+}
+
+.ar-outlook-launcher span {
+  background: currentcolor;
+  height: 3px;
+  width: 3px;
+}
+
+.ar-outlook-search {
+  align-items: center;
+  background: #fff;
+  border-radius: 4px;
+  color: #616161;
+  display: flex;
+  gap: 7px;
+  height: 32px;
+  justify-self: center;
+  max-width: 620px;
+  padding: 0 11px;
+  width: 100%;
+}
+
+.ar-outlook-search input {
+  background: transparent;
+  border: 0;
+  color: #242424;
+  min-width: 0;
+  outline: 0;
+  width: 100%;
+}
+
+.ar-outlook-ribbon {
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #e1e1e1;
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  padding: 0 10px;
+}
+
+.ar-outlook-ribbon button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  display: flex;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+.ar-outlook-ribbon button:hover {
+  background: #f0f0f0;
+}
+
+.ar-outlook-ribbon button.is-active {
+  color: #0f6cbd;
+  font-weight: 650;
+}
+
+.ar-outlook-ribbon i {
+  border-left: 1px solid #ddd;
+  height: 24px;
+  margin: 0 3px;
+}
+
+.ar-outlook-workspace {
+  display: grid;
+  grid-template-columns: 48px 218px minmax(320px, 380px) minmax(390px, 1fr);
+  min-height: 0;
+}
+
+.ar-outlook-app-rail {
+  align-items: center;
+  background: #f0f0f0;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-top: 10px;
+}
+
+.ar-outlook-app-rail button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  color: #555;
+  display: flex;
+  height: 38px;
+  justify-content: center;
+  position: relative;
+  width: 38px;
+}
+
+.ar-outlook-app-rail button:hover,
+.ar-outlook-app-rail button.is-active {
+  background: #fff;
+  color: #0f6cbd;
+}
+
+.ar-outlook-app-rail button.is-active::before {
+  background: #0f6cbd;
+  border-radius: 2px;
+  content: "";
+  height: 22px;
+  left: -5px;
+  position: absolute;
+  width: 3px;
+}
+
+.ar-outlook-folders {
+  background: #fafafa;
+  border-right: 1px solid #e1e1e1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 12px 8px 8px;
+}
+
+.ar-outlook-new-mail {
+  align-items: center;
+  align-self: flex-start;
+  background: #0f6cbd;
+  border: 0;
+  border-radius: 4px;
+  color: #fff;
+  display: flex;
+  font-weight: 650;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 15px;
+}
+
+.ar-outlook-folder-title {
+  align-items: center;
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+  margin: 18px 7px 5px;
+}
+
+.ar-outlook-folder-title button {
+  background: transparent;
+  border: 0;
+}
+
+.ar-outlook-folders nav {
+  display: grid;
+  gap: 1px;
+}
+
+.ar-outlook-folders nav button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  min-height: 32px;
+  padding: 0 8px;
+  text-align: left;
+}
+
+.ar-outlook-folders nav button:hover {
+  background: #ededed;
+}
+
+.ar-outlook-folders nav button.is-active {
+  background: #dbeaf7;
+  color: #0f548c;
+  font-weight: 650;
+}
+
+.ar-outlook-folders nav button b {
+  font-size: 11px;
+}
+
+.ar-outlook-account {
+  align-items: center;
+  border-top: 1px solid #e2e2e2;
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding: 10px 7px 2px;
+}
+
+.ar-outlook-account > span:not(.ar-avatar) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ar-outlook-account strong,
+.ar-outlook-account small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ar-outlook-account small {
+  color: #6b6b6b;
+  font-size: 10px;
+}
+
+.ar-outlook-message-list {
+  background: #fff;
+  border-right: 1px solid #ddd;
+  min-width: 0;
+  overflow: auto;
+}
+
+.ar-outlook-message-list > header {
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 14px 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.ar-outlook-message-list > header > div:first-child,
+.ar-outlook-message-list > header > div:nth-child(2) {
+  align-items: center;
+  display: flex;
+}
+
+.ar-outlook-message-list > header h1 {
+  font-size: 20px;
+  font-weight: 650;
+}
+
+.ar-outlook-message-list > header button,
+.ar-outlook-list-actions button {
+  background: transparent;
+  border: 0;
+}
+
+.ar-outlook-message-list > header > div:nth-child(2) {
+  margin-top: 9px;
+}
+
+.ar-outlook-message-list > header > div:nth-child(2) span {
+  flex: 1;
+}
+
+.ar-outlook-message-list > header > div:nth-child(2) button {
+  border-bottom: 2px solid transparent;
+  min-height: 34px;
+  padding: 0 9px;
+}
+
+.ar-outlook-message-list > header > div:nth-child(2) button.is-active {
+  border-bottom-color: #0f6cbd;
+  color: #0f6cbd;
+  font-weight: 650;
+}
+
+.ar-outlook-list-actions {
+  align-items: center;
+  border-bottom: 1px solid #ededed;
+  display: flex;
+  gap: 5px;
+  min-height: 35px;
+  padding: 0 14px;
+}
+
+.ar-outlook-list-actions span {
+  flex: 1;
+}
+
+.ar-outlook-message-list > div[role="listbox"] > button {
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #ededed;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  min-height: 78px;
+  padding: 10px 12px;
+  position: relative;
+  text-align: left;
+  width: 100%;
+}
+
+.ar-outlook-message-list > div[role="listbox"] > button:hover {
+  background: #f5f5f5;
+}
+
+.ar-outlook-message-list > div[role="listbox"] > button.is-selected {
+  background: #eaf3fa;
+  box-shadow: inset 3px 0 #0f6cbd;
+}
+
+.ar-outlook-message-list > div[role="listbox"] > button > span:not(.ar-avatar) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ar-outlook-message-list > div[role="listbox"] b,
+.ar-outlook-message-list > div[role="listbox"] small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ar-outlook-message-list > div[role="listbox"] b {
+  font-weight: 450;
+}
+
+.ar-outlook-message-list > div[role="listbox"] small {
+  color: #6b6b6b;
+}
+
+.ar-outlook-message-list > div[role="listbox"] time {
+  color: #666;
+  font-size: 10px;
+}
+
+.ar-outlook-message-list > div[role="listbox"] em {
+  color: #e6a700;
+  font-style: normal;
+  position: absolute;
+  right: 12px;
+  top: 48px;
+}
+
+.ar-outlook-message-list > div[role="listbox"] > button.is-unread strong,
+.ar-outlook-message-list > div[role="listbox"] > button.is-unread b {
+  font-weight: 700;
+}
+
+.ar-outlook-reader {
+  background: #fff;
+  min-width: 0;
+  overflow: auto;
+}
+
+.ar-outlook-reader > header {
+  align-items: center;
+  border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  justify-content: space-between;
+  min-height: 47px;
+  padding: 0 17px;
+}
+
+.ar-outlook-reader > header > div {
+  display: flex;
+}
+
+.ar-outlook-reader > header button:not(.ar-icon-button) {
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  padding: 7px 10px;
+}
+
+.ar-outlook-reader > article {
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0 auto;
+  max-width: 900px;
+  padding: 30px clamp(24px, 5vw, 70px);
+}
+
+.ar-outlook-reader > article h1 {
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 550;
+  letter-spacing: -.025em;
+}
+
+.ar-outlook-sender {
+  align-items: center;
+  border-bottom: 1px solid #ededed;
+  display: grid;
+  gap: 11px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  margin: 20px 0 26px;
+  padding-bottom: 16px;
+}
+
+.ar-outlook-sender > span:not(.ar-avatar) {
+  display: flex;
+  flex-direction: column;
+}
+
+.ar-outlook-sender small,
+.ar-outlook-sender time {
+  color: #666;
+  font-size: 11px;
+}
+
+.ar-outlook-reader > article p {
+  margin: 0 0 17px;
+}
+
+.ar-outlook-reader .ar-compose-card {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  height: 100%;
+  margin: 0;
+}
+
+/* Notion is intentionally quieter than the Atlassian shell. */
+
+.ar-product-notion {
+  --ar-accent: #222;
+  --ar-bg: #fff;
+  --ar-border: #ededeb;
+  --ar-hover: #efefed;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.ar-product-notion .ar-knowledge-topbar {
+  display: none;
+}
+
+.ar-product-notion .ar-knowledge-body {
+  min-height: 100vh;
+}
+
+.ar-product-notion .ar-knowledge-sidebar {
+  background: #f7f7f5;
+  border-right: 0;
+}
+
+.ar-product-notion .ar-knowledge-main > .ar-view-tabs {
+  border: 0;
+  left: auto;
+  padding: 5px 10px;
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  z-index: 2;
+}
+
+.ar-product-notion .ar-knowledge-main > .ar-view-tabs button {
+  border: 0;
+  border-radius: 5px;
+  min-height: 28px;
+  padding: 0 9px;
+}
+
+.ar-product-notion .ar-breadcrumbs {
+  border-bottom: 0;
+  min-height: 45px;
+}
+
+.ar-product-notion .ar-document-page,
+.ar-product-notion .ar-database-page {
+  padding-top: 64px;
+}
+
+/* Confluence uses the Atlassian global shell and a persistent space tree. */
+
+.ar-product-atlassian-confluence {
+  --ar-accent: #0c66e4;
+  --ar-hover: #f1f2f4;
+  background: #fff;
+  color: #172b4d;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.ar-confluence-shell {
+  background: #fff;
+  display: grid;
+  grid-template-rows: 56px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.ar-confluence-global {
+  align-items: center;
+  border-bottom: 1px solid #dfe1e6;
+  box-shadow: 0 1px 2px rgb(9 30 66 / 8%);
+  display: grid;
+  gap: 6px;
+  grid-template-columns: 34px auto auto auto minmax(180px, 1fr) 32px 32px 32px;
+  padding: 0 12px;
+  position: relative;
+  z-index: 4;
+}
+
+.ar-confluence-global > button,
+.ar-confluence-global nav button {
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  min-height: 32px;
+  padding: 0 8px;
+}
+
+.ar-confluence-global > button:hover,
+.ar-confluence-global nav button:hover {
+  background: #f1f2f4;
+}
+
+.ar-confluence-global nav {
+  display: flex;
+  gap: 1px;
+}
+
+.ar-confluence-global .ar-confluence-create {
+  background: #0c66e4;
+  color: #fff;
+  font-weight: 650;
+  margin-left: 4px;
+}
+
+.ar-confluence-global .ar-confluence-create:hover {
+  background: #0055cc;
+}
+
+.ar-confluence-global > label {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #8590a2;
+  border-radius: 3px;
+  display: flex;
+  gap: 7px;
+  height: 32px;
+  justify-self: end;
+  max-width: 300px;
+  padding: 0 8px;
+  width: 100%;
+}
+
+.ar-confluence-global > label input {
+  border: 0;
+  min-width: 0;
+  outline: 0;
+  width: 100%;
+}
+
+.ar-confluence-global > label kbd {
+  color: #626f86;
+  font-size: 10px;
+}
+
+.ar-confluence-body {
+  display: grid;
+  grid-template-columns: 255px minmax(0, 1fr);
+  min-height: 0;
+}
+
+.ar-confluence-sidebar {
+  background: #f7f8f9;
+  border-right: 1px solid #dfe1e6;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: auto;
+  padding: 10px 8px;
+}
+
+.ar-confluence-sidebar > header {
+  align-items: center;
+  display: grid;
+  gap: 9px;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  min-height: 52px;
+  padding: 0 5px 8px;
+}
+
+.ar-confluence-sidebar > header > span:not(.ar-confluence-space-mark) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ar-confluence-sidebar > header small {
+  color: #626f86;
+  font-size: 10px;
+}
+
+.ar-confluence-sidebar button {
+  color: inherit;
+}
+
+.ar-confluence-sidebar > header button,
+.ar-confluence-sidebar-label button {
+  background: transparent;
+  border: 0;
+}
+
+.ar-confluence-space-mark {
+  align-items: center;
+  background: linear-gradient(145deg, #6554c0, #0c66e4);
+  border-radius: 3px;
+  color: #fff;
+  display: flex;
+  font-size: 11px;
+  font-weight: 750;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+}
+
+.ar-confluence-space-mark.is-large {
+  border-radius: 5px;
+  flex: 0 0 56px;
+  font-size: 18px;
+  height: 56px;
+  width: 56px;
+}
+
+.ar-confluence-sidebar nav,
+.ar-confluence-tree {
+  display: grid;
+  gap: 1px;
+}
+
+.ar-confluence-sidebar nav button,
+.ar-confluence-tree button,
+.ar-confluence-shortcuts {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  display: flex;
+  gap: 8px;
+  min-height: 32px;
+  overflow: hidden;
+  padding: 0 9px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ar-confluence-sidebar nav button:hover,
+.ar-confluence-tree button:hover,
+.ar-confluence-shortcuts:hover {
+  background: #ebecf0;
+}
+
+.ar-confluence-sidebar nav button.is-active,
+.ar-confluence-tree button.is-active {
+  background: #e9f2ff;
+  color: #0c66e4;
+  font-weight: 650;
+}
+
+.ar-confluence-sidebar-label {
+  align-items: center;
+  color: #44546f;
+  display: flex;
+  font-size: 11px;
+  font-weight: 650;
+  justify-content: space-between;
+  margin: 16px 8px 5px;
+}
+
+.ar-confluence-tree button span:first-child {
+  color: #626f86;
+  font-size: 17px;
+}
+
+.ar-confluence-main {
+  min-width: 0;
+  overflow: auto;
+}
+
+.ar-confluence-overview {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 28px clamp(24px, 4vw, 64px) 64px;
+}
+
+.ar-confluence-breadcrumbs {
+  color: #626f86;
+  font-size: 11px;
+  margin-bottom: 24px;
+}
+
+.ar-confluence-breadcrumbs span {
+  margin: 0 7px;
+}
+
+.ar-confluence-overview > header {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+}
+
+.ar-confluence-overview > header > div:nth-child(2) {
+  flex: 1;
+}
+
+.ar-confluence-overview h1 {
+  font-size: 27px;
+  letter-spacing: -.025em;
+}
+
+.ar-confluence-overview > header p {
+  color: #44546f;
+  margin-top: 4px;
+}
+
+.ar-confluence-overview > header button,
+.ar-confluence-overview-grid header button,
+.ar-confluence-page-actions button {
+  align-items: center;
+  background: #f1f2f4;
+  border: 0;
+  border-radius: 3px;
+  display: flex;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+}
+
+.ar-confluence-welcome {
+  align-items: center;
+  background: linear-gradient(110deg, #e9f2ff, #f3f0ff);
+  border: 1px solid #b8c7e0;
+  border-radius: 5px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  margin: 30px 0 24px;
+  padding: 18px;
+}
+
+.ar-confluence-welcome > span {
+  align-items: center;
+  background: #fff;
+  border-radius: 50%;
+  color: #6554c0;
+  display: flex;
+  height: 38px;
+  justify-content: center;
+}
+
+.ar-confluence-welcome p {
+  color: #44546f;
+  margin-top: 3px;
+}
+
+.ar-confluence-welcome button {
+  background: #0c66e4;
+  border: 0;
+  border-radius: 3px;
+  color: #fff;
+  min-height: 34px;
+  padding: 0 13px;
+}
+
+.ar-confluence-overview-grid {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: minmax(0, 1fr) 320px;
+}
+
+.ar-confluence-overview-grid > section,
+.ar-confluence-overview-grid > aside {
+  border: 1px solid #dfe1e6;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.ar-confluence-overview-grid header {
+  align-items: center;
+  border-bottom: 1px solid #dfe1e6;
+  display: flex;
+  justify-content: space-between;
+  min-height: 50px;
+  padding: 0 16px;
+}
+
+.ar-confluence-overview-grid h2 {
+  font-size: 15px;
+}
+
+.ar-confluence-recent,
+.ar-confluence-overview-grid > aside > button {
+  align-items: center;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #ebecf0;
+  display: grid;
+  gap: 11px;
+  grid-template-columns: 35px minmax(0, 1fr) auto;
+  min-height: 68px;
+  padding: 9px 15px;
+  text-align: left;
+  width: 100%;
+}
+
+.ar-confluence-recent:hover,
+.ar-confluence-overview-grid > aside > button:hover {
+  background: #f7f8f9;
+}
+
+.ar-confluence-recent > span {
+  align-items: center;
+  background: #e9f2ff;
+  border-radius: 3px;
+  color: #0c66e4;
+  display: flex;
+  height: 34px;
+  justify-content: center;
+}
+
+.ar-confluence-recent > div,
+.ar-confluence-overview-grid > aside > button > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ar-confluence-recent small,
+.ar-confluence-overview-grid > aside small {
+  color: #626f86;
+  font-size: 10px;
+}
+
+.ar-confluence-recent em {
+  color: #626f86;
+  font-size: 9px;
+  font-style: normal;
+}
+
+.ar-confluence-overview-grid > aside > button {
+  grid-template-columns: 32px minmax(0, 1fr);
+}
+
+.ar-confluence-overview-grid > aside > button > span {
+  font-size: 18px;
+  text-align: center;
+}
+
+.ar-confluence-page-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100%;
+}
+
+.ar-confluence-page-layout.has-activity {
+  grid-template-columns: minmax(0, 1fr) 330px;
+}
+
+.ar-confluence-page {
+  min-width: 0;
+  padding: 24px clamp(24px, 4vw, 58px) 70px;
+}
+
+.ar-confluence-page-actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.ar-confluence-page-actions > i {
+  flex: 1;
+}
+
+.ar-confluence-page-actions > span {
+  color: #626f86;
+  font-size: 10px;
+}
+
+.ar-confluence-page-actions .ar-primary {
+  background: #0c66e4;
+  color: #fff;
+}
+
+.ar-confluence-live {
+  background: #dffcf0;
+  border-radius: 10px;
+  color: #216e4e !important;
+  font-size: 9px !important;
+  font-weight: 750;
+  padding: 2px 7px;
+}
+
+.ar-confluence-page-content {
+  margin: 55px auto 0;
+  max-width: 780px;
+}
+
+.ar-confluence-page-content h1 {
+  font-size: clamp(30px, 4vw, 42px);
+  letter-spacing: -.035em;
+}
+
+.ar-confluence-byline {
+  align-items: center;
+  color: #626f86;
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 30px;
+}
+
+.ar-confluence-page-content .ar-lead {
+  color: #44546f;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.ar-confluence-page-content h2 {
+  font-size: 20px;
+  margin: 33px 0 9px;
+}
+
+.ar-confluence-page-content p {
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.ar-confluence-info {
+  align-items: flex-start;
+  background: #e9f2ff;
+  border-left: 4px solid #0c66e4;
+  border-radius: 3px;
+  display: flex;
+  gap: 12px;
+  margin: 25px 0;
+  padding: 15px;
+}
+
+.ar-confluence-page-content table {
+  border-collapse: collapse;
+  margin-top: 13px;
+  width: 100%;
+}
+
+.ar-confluence-page-content th,
+.ar-confluence-page-content td {
+  border: 1px solid #dfe1e6;
+  padding: 9px 10px;
+  text-align: left;
+}
+
+.ar-confluence-page-content th {
+  background: #f7f8f9;
+  font-size: 11px;
+}
+
+.ar-confluence-activity {
+  border-left: 1px solid #dfe1e6;
+  padding: 16px;
+}
+
+.ar-confluence-activity > header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.ar-confluence-activity > header button {
+  background: transparent;
+  border: 0;
+}
+
+.ar-confluence-activity > label {
+  display: flex;
+  gap: 5px;
+  margin-top: 18px;
+}
+
+.ar-confluence-activity > label input {
+  border: 1px solid #8590a2;
+  border-radius: 3px;
+  flex: 1;
+  min-width: 0;
+  padding: 8px;
+}
+
+.ar-confluence-activity > label button {
+  background: #0c66e4;
+  border: 0;
+  border-radius: 3px;
+  color: #fff;
+}
+
+/* Jira uses Atlassian chrome but a planning-specific project sidebar,
+   backlog, sprint summary, and issue rows. */
+
+.ar-product-atlassian-jira {
+  --ar-accent: #0c66e4;
+  --ar-hover: #f1f2f4;
+  background: #fff;
+  color: #172b4d;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.ar-jira-shell {
+  display: grid;
+  grid-template-rows: 56px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.ar-jira-global {
+  align-items: center;
+  border-bottom: 1px solid #dfe1e6;
+  box-shadow: 0 1px 2px rgb(9 30 66 / 8%);
+  display: grid;
+  gap: 5px;
+  grid-template-columns: 34px auto auto auto minmax(150px, 1fr) 32px 32px 32px 32px;
+  padding: 0 12px;
+  position: relative;
+  z-index: 5;
+}
+
+.ar-jira-global > button,
+.ar-jira-global nav button {
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  min-height: 32px;
+  padding: 0 8px;
+}
+
+.ar-jira-global nav {
+  display: flex;
+}
+
+.ar-jira-global .ar-jira-create {
+  background: #0c66e4;
+  color: #fff;
+  font-weight: 650;
+}
+
+.ar-jira-global > label {
+  align-items: center;
+  border: 1px solid #8590a2;
+  border-radius: 3px;
+  display: flex;
+  gap: 7px;
+  height: 32px;
+  justify-self: end;
+  max-width: 250px;
+  padding: 0 8px;
+  width: 100%;
+}
+
+.ar-jira-global > label input {
+  border: 0;
+  min-width: 0;
+  outline: 0;
+  width: 100%;
+}
+
+.ar-jira-body {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  min-height: 0;
+  position: relative;
+}
+
+.ar-jira-sidebar {
+  background: #f7f8f9;
+  border-right: 1px solid #dfe1e6;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: auto;
+  padding: 12px 8px 8px;
+}
+
+.ar-jira-sidebar > header {
+  align-items: center;
+  display: grid;
+  gap: 9px;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  margin-bottom: 12px;
+  padding: 0 6px;
+}
+
+.ar-jira-sidebar > header > span:not(.ar-jira-project-mark) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ar-jira-sidebar > header small {
+  color: #626f86;
+  font-size: 10px;
+}
+
+.ar-jira-sidebar > header button {
+  background: transparent;
+  border: 0;
+}
+
+.ar-jira-project-mark {
+  align-items: center;
+  background: linear-gradient(145deg, #6554c0, #0c66e4);
+  border-radius: 3px;
+  color: #fff;
+  display: flex;
+  font-size: 11px;
+  font-weight: 750;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+}
+
+.ar-jira-sidebar nav {
+  display: grid;
+  gap: 1px;
+}
+
+.ar-jira-sidebar nav button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  display: flex;
+  gap: 9px;
+  min-height: 34px;
+  padding: 0 10px;
+  text-align: left;
+}
+
+.ar-jira-sidebar nav button:hover {
+  background: #ebecf0;
+}
+
+.ar-jira-sidebar nav button.is-active {
+  background: #e9f2ff;
+  color: #0c66e4;
+  font-weight: 650;
+}
+
+.ar-jira-sidebar-label {
+  color: #626f86;
+  font-size: 10px;
+  font-weight: 650;
+  margin: 20px 10px 6px;
+  text-transform: uppercase;
+}
+
+.ar-jira-company {
+  align-items: center;
+  border-top: 1px solid #dfe1e6;
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding: 10px 7px 2px;
+}
+
+.ar-jira-company > span:not(.ar-avatar) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ar-jira-company small {
+  color: #626f86;
+  font-size: 9px;
+}
+
+.ar-jira-main {
+  min-width: 0;
+  overflow: auto;
+  padding: 26px clamp(22px, 3vw, 44px) 60px;
+}
+
+.ar-jira-breadcrumbs {
+  color: #626f86;
+  font-size: 11px;
+}
+
+.ar-jira-breadcrumbs span {
+  margin: 0 6px;
+}
+
+.ar-jira-heading {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  margin: 18px 0;
+}
+
+.ar-jira-heading h1 {
+  font-size: 26px;
+  letter-spacing: -.025em;
+}
+
+.ar-jira-heading p {
+  color: #44546f;
+  margin-top: 4px;
+}
+
+.ar-jira-heading > div:last-child,
+.ar-jira-tools {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+}
+
+.ar-jira-heading button,
+.ar-jira-tools button {
+  align-items: center;
+  background: #f1f2f4;
+  border: 0;
+  border-radius: 3px;
+  display: flex;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+}
+
+.ar-jira-tools {
+  border-bottom: 1px solid #dfe1e6;
+  padding-bottom: 16px;
+}
+
+.ar-jira-tools > label {
+  align-items: center;
+  border: 1px solid #8590a2;
+  border-radius: 3px;
+  display: flex;
+  gap: 7px;
+  height: 32px;
+  padding: 0 8px;
+}
+
+.ar-jira-tools > label input {
+  border: 0;
+  min-width: 0;
+  outline: 0;
+}
+
+.ar-jira-tools > span {
+  flex: 1;
+}
+
+.ar-jira-assignees {
+  display: flex;
+  padding-left: 7px;
+}
+
+.ar-jira-assignees .ar-avatar {
+  margin-left: -7px;
+}
+
+.ar-jira-backlog {
+  display: grid;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.ar-jira-backlog > section {
+  border: 1px solid #dfe1e6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ar-jira-backlog > section > header {
+  align-items: center;
+  background: #f7f8f9;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 24px minmax(210px, 1fr) minmax(170px, .7fr) auto auto;
+  min-height: 54px;
+  padding: 6px 10px;
+}
+
+.ar-jira-backlog > section > header button {
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  min-height: 30px;
+  padding: 0 8px;
+}
+
+.ar-jira-backlog > section > header > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.ar-jira-backlog > section > header small {
+  color: #626f86;
+  font-size: 10px;
+}
+
+.ar-jira-backlog > section > header > span {
+  align-items: center;
+  color: #626f86;
+  display: flex;
+  font-size: 10px;
+  gap: 8px;
+}
+
+.ar-jira-backlog > section > header > span > i {
+  background: #dfe1e6;
+  border-radius: 3px;
+  height: 5px;
+  overflow: hidden;
+  width: 100px;
+}
+
+.ar-jira-backlog > section > header > span b {
+  background: #22a06b;
+  display: block;
+  height: 100%;
+}
+
+.ar-jira-row {
+  align-items: center;
+  background: #fff;
+  border: 0;
+  border-top: 1px solid #ebecf0;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 18px 64px minmax(180px, 1fr) 88px 18px 25px 22px 28px;
+  min-height: 42px;
+  padding: 4px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.ar-jira-row:hover {
+  background: #f7f8f9;
+}
+
+.ar-jira-row code {
+  color: #626f86;
+  font-family: inherit;
+  font-size: 10px;
+}
+
+.ar-jira-row > strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ar-jira-type {
+  align-items: center;
+  background: #0c66e4;
+  border-radius: 2px;
+  color: #fff;
+  display: flex;
+  font-size: 9px;
+  height: 15px;
+  justify-content: center;
+  width: 15px;
+}
+
+.ar-jira-type.is-done {
+  background: #22a06b;
+}
+
+.ar-jira-type.is-backlog {
+  background: #626f86;
+}
+
+.ar-jira-epic {
+  color: #6e5dc6;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.ar-jira-row > em {
+  background: #f1f2f4;
+  border-radius: 50%;
+  font-size: 9px;
+  font-style: normal;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  width: 22px;
+}
+
+.ar-jira-add {
+  align-items: center;
+  background: #fff;
+  border: 0;
+  border-top: 1px solid #ebecf0;
+  color: #44546f;
+  display: flex;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 12px;
+  width: 100%;
+}
+
+.ar-jira-board .ar-work-board {
+  margin-top: 18px;
+}
+
+.ar-jira-shell .ar-work-detail {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 6;
+}
+
+/* Trader Workstation is a dense, multi-window Mosaic desktop—not a crypto
+   exchange skin. */
+
+.ar-product-ibkr-trader-workstation {
+  --ar-accent: #d74839;
+  background: #17191c;
+  color: #e6e8eb;
+  color-scheme: dark;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+
+.ar-tws-shell {
+  background: #17191c;
+  display: grid;
+  grid-template-rows: 38px 33px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.ar-tws-menubar {
+  align-items: center;
+  background: linear-gradient(#34373b, #26292d);
+  border-bottom: 1px solid #08090a;
+  display: flex;
+  gap: 2px;
+  padding: 0 8px;
+}
+
+.ar-tws-menubar > strong {
+  font-size: 13px;
+  margin-right: 12px;
+}
+
+.ar-tws-menubar > button,
+.ar-tws-menubar > nav button {
+  background: transparent;
+  border: 0;
+  color: #d7d9dc;
+  min-height: 27px;
+  padding: 0 7px;
+}
+
+.ar-tws-menubar > button:hover,
+.ar-tws-menubar > nav button:hover {
+  background: #45494f;
+}
+
+.ar-tws-menubar > nav {
+  flex: 1;
+}
+
+.ar-tws-menubar > nav {
+  display: flex;
+}
+
+.ar-tws-market-state {
+  align-items: center;
+  color: #aab0b6;
+  display: flex;
+  font-size: 9px;
+  gap: 6px;
+  margin-right: 10px;
+}
+
+.ar-tws-market-state i,
+.ar-tws-status i {
+  background: #58c776;
+  border-radius: 50%;
+  height: 7px;
+  width: 7px;
+}
+
+.ar-tws-layout-lock {
+  align-items: center;
+  border: 1px solid #555b62 !important;
+  border-radius: 2px;
+  display: flex;
+  gap: 5px;
+}
+
+.ar-tws-workspaces {
+  align-items: end;
+  background: #202327;
+  border-bottom: 1px solid #08090a;
+  display: flex;
+  gap: 1px;
+  padding: 0 8px;
+}
+
+.ar-tws-workspaces button {
+  background: #2c3035;
+  border: 1px solid #0f1113;
+  border-bottom: 0;
+  color: #b9bec4;
+  min-height: 27px;
+  padding: 0 14px;
+}
+
+.ar-tws-workspaces button.is-active {
+  background: #44484e;
+  color: #fff;
+}
+
+.ar-tws-workspaces span {
+  flex: 1;
+}
+
+.ar-tws-mosaic {
+  display: grid;
+  gap: 3px;
+  grid-template-columns: 260px minmax(420px, 1fr) minmax(330px, .74fr);
+  grid-template-rows: 248px 275px minmax(170px, 1fr) 25px;
+  min-height: 0;
+  padding: 3px;
+}
+
+.ar-tws-panel {
+  background: #202328;
+  border: 1px solid #070809;
+  box-shadow: inset 0 0 0 1px #3a3e44;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.ar-tws-panel > header {
+  align-items: center;
+  background: linear-gradient(#42464c, #30343a);
+  border-bottom: 1px solid #0b0c0d;
+  display: flex;
+  gap: 6px;
+  min-height: 24px;
+  padding: 0 5px;
+}
+
+.ar-tws-panel > header > i {
+  flex: 1;
+}
+
+.ar-tws-panel > header button {
+  background: transparent;
+  border: 0;
+  color: #c7cbd0;
+  height: 19px;
+  padding: 0 3px;
+}
+
+.ar-tws-group {
+  background: #5fc478;
+  border: 1px solid #111;
+  height: 10px;
+  width: 10px;
+}
+
+.ar-tws-group.is-blue {
+  background: #49a5e6;
+}
+
+.ar-tws-group.is-amber {
+  background: #e4aa49;
+}
+
+.ar-tws-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.ar-tws-order {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.ar-tws-quote {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.ar-tws-chart-panel {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.ar-tws-monitor {
+  grid-column: 3;
+  grid-row: 1 / 3;
+}
+
+.ar-tws-news {
+  grid-column: 1 / 2;
+  grid-row: 3;
+}
+
+.ar-tws-activity {
+  grid-column: 2 / 4;
+  grid-row: 3;
+}
+
+.ar-tws-status {
+  grid-column: 1 / 4;
+  grid-row: 4;
+}
+
+.ar-tws-contract {
+  border-bottom: 1px solid #3a3d42;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 12px 10px;
+}
+
+.ar-tws-contract strong {
+  font-size: 18px;
+}
+
+.ar-tws-contract span {
+  color: #969da5;
+  grid-column: 1;
+  font-size: 9px;
+}
+
+.ar-tws-contract b {
+  font-size: 17px;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.ar-tws-contract em {
+  color: #60d581;
+  font-style: normal;
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.ar-tws-side-toggle {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: 1fr 1fr;
+  padding: 10px;
+}
+
+.ar-tws-side-toggle button {
+  background: #5b2929;
+  border: 1px solid #783d3d;
+  color: #f3b4b4;
+  min-height: 30px;
+}
+
+.ar-tws-side-toggle button.is-buy {
+  background: #194c31;
+  border-color: #2e754e;
+  color: #9ce4b7;
+}
+
+.ar-tws-order-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  padding: 7px 10px;
+}
+
+.ar-tws-order-grid label {
+  color: #a7adb4;
+  display: grid;
+  gap: 3px;
+}
+
+.ar-tws-order-grid label:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+.ar-tws-order-grid input,
+.ar-tws-order-grid select {
+  background: #121417;
+  border: 1px solid #52575e;
+  border-radius: 0;
+  color: #fff;
+  height: 27px;
+  padding: 0 6px;
+}
+
+.ar-tws-estimate {
+  align-items: center;
+  border-top: 1px solid #383c41;
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 10px;
+  padding-top: 9px;
+}
+
+.ar-tws-estimate span {
+  color: #9da3aa;
+}
+
+.ar-tws-transmit {
+  background: #237347;
+  border: 1px solid #389760;
+  color: #fff;
+  font-weight: 700;
+  margin: 5px 10px;
+  min-height: 32px;
+  width: calc(100% - 20px);
+}
+
+.ar-tws-quote-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  min-width: 580px;
+}
+
+.ar-tws-quote-grid > div {
+  border-bottom: 1px solid #363a40;
+  border-right: 1px solid #363a40;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 73px;
+  padding: 10px;
+}
+
+.ar-tws-quote-grid span {
+  color: #969da5;
+  font-size: 9px;
+}
+
+.ar-tws-quote-grid b {
+  font-size: 15px;
+}
+
+.ar-tws-quote-grid em {
+  color: #60d581;
+  font-style: normal;
+}
+
+.ar-tws-quote dl {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(86px, 1fr));
+  min-width: 580px;
+}
+
+.ar-tws-quote dl > * {
+  border-bottom: 1px solid #363a40;
+  border-right: 1px solid #363a40;
+  margin: 0;
+  padding: 7px 9px;
+}
+
+.ar-tws-quote dt {
+  color: #969da5;
+  font-size: 9px;
+  grid-row: 1;
+}
+
+.ar-tws-quote dd {
+  font-size: 13px;
+  grid-row: 2;
+}
+
+.ar-tws-chart-toolbar,
+.ar-tws-monitor-tabs,
+.ar-tws-activity-tabs {
+  align-items: center;
+  background: #292d32;
+  border-bottom: 1px solid #0c0d0f;
+  display: flex;
+  gap: 2px;
+  min-height: 25px;
+  padding: 0 4px;
+}
+
+.ar-tws-chart-toolbar button,
+.ar-tws-monitor-tabs button,
+.ar-tws-activity-tabs button {
+  background: transparent;
+  border: 0;
+  color: #bdc2c8;
+  height: 21px;
+  padding: 0 6px;
+}
+
+.ar-tws-chart-toolbar span,
+.ar-tws-monitor-tabs span {
+  flex: 1;
+}
+
+.ar-tws-monitor-tabs button.is-active,
+.ar-tws-activity-tabs button.is-active {
+  background: #454a50;
+  color: #fff;
+}
+
+.ar-tws-chart {
+  background: #17191d;
+  display: block;
+  height: calc(100% - 46px);
+  width: 100%;
+}
+
+.ar-tws-gridline {
+  stroke: #2d3136;
+  stroke-width: 1;
+}
+
+.ar-tws-price-line {
+  fill: none;
+  stroke: #68c6ef;
+  stroke-width: 2;
+}
+
+.ar-tws-volume-line {
+  fill: none;
+  stroke: #6b7680;
+  stroke-width: 1;
+}
+
+.ar-tws-last-line {
+  stroke: #72cf8c;
+  stroke-dasharray: 4 3;
+}
+
+.ar-tws-chart text {
+  fill: #7de094;
+  font-size: 10px;
+}
+
+.ar-tws-chart-axis {
+  color: #80878f;
+  display: flex;
+  font-size: 9px;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.ar-tws-table,
+.ar-tws-monitor table,
+.ar-tws-activity table {
+  border-collapse: collapse;
+  font-size: 10px;
+  min-width: 560px;
+  width: 100%;
+}
+
+.ar-tws-table th,
+.ar-tws-table td,
+.ar-tws-monitor th,
+.ar-tws-monitor td,
+.ar-tws-activity th,
+.ar-tws-activity td {
+  border-bottom: 1px solid #35393f;
+  border-right: 1px solid #35393f;
+  height: 25px;
+  padding: 0 6px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ar-tws-table th:first-child,
+.ar-tws-table td:first-child,
+.ar-tws-table th:nth-child(2),
+.ar-tws-table td:nth-child(2),
+.ar-tws-monitor th:first-child,
+.ar-tws-monitor td:first-child,
+.ar-tws-activity th:first-child,
+.ar-tws-activity td:first-child {
+  text-align: left;
+}
+
+.ar-tws-table th,
+.ar-tws-monitor th,
+.ar-tws-activity th {
+  background: #292d32;
+  color: #aeb4bb;
+  font-weight: 500;
+}
+
+.ar-tws-monitor td:first-child small {
+  color: #9da3aa;
+  display: block;
+  font-size: 8px;
+}
+
+.ar-tws-table .is-positive,
+.ar-tws-activity .is-positive {
+  color: #6bda8a;
+}
+
+.ar-tws-news-list,
+.ar-tws-news .ar-tws-panel-body {
+  display: grid;
+}
+
+.ar-tws-news-list button,
+.ar-tws-news .ar-tws-panel-body > button {
+  background: #202328;
+  border: 0;
+  border-bottom: 1px solid #34383e;
+  color: #d9dce0;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: 42px minmax(0, 1fr);
+  min-height: 40px;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.ar-tws-news-list time,
+.ar-tws-news .ar-tws-panel-body > button time {
+  color: #8e959d;
+  font-size: 9px;
+}
+
+.ar-tws-news .ar-tws-panel-body > button span {
+  display: flex;
+  flex-direction: column;
+}
+
+.ar-tws-news .ar-tws-panel-body > button small {
+  color: #9299a1;
+  font-size: 8px;
+}
+
+.ar-tws-working {
+  background: #5b4927;
+  color: #f2cb7a;
+  padding: 2px 5px;
+}
+
+.ar-tws-status {
+  align-items: center;
+  background: #292d32;
+  border: 1px solid #090a0b;
+  color: #aeb4bb;
+  display: flex;
+  gap: 18px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 8px;
+}
+
+.ar-tws-status span:first-child {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 6px;
+}
+
+.ar-tws-status span {
+  white-space: nowrap;
+}
+
+.ar-tws-status b {
+  color: #e1e4e7;
+}
+
+/* Superset uses its own light analytics workspace and horizontal product
+   navigation; Grafana remains the dark observability shell. */
+
+.ar-product-apache-superset {
+  --ar-accent: #20a7c9;
+  --ar-bg: #f7f9fa;
+  --ar-border: #d9dde1;
+  --ar-hover: #eef7f9;
+  background: #f7f9fa;
+  color: #263238;
+  font-family: Inter, ui-sans-serif, sans-serif;
+}
+
+.ar-superset-shell {
+  background: #f7f9fa;
+  min-height: 100vh;
+}
+
+.ar-superset-topbar {
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #d8dde1;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 5%);
+  display: grid;
+  gap: 8px;
+  grid-template-columns: auto auto minmax(100px, 1fr) 34px 34px 34px 34px;
+  min-height: 54px;
+  padding: 0 20px;
+}
+
+.ar-superset-topbar .ar-product-mark {
+  background: #20a7c9;
+}
+
+.ar-superset-topbar nav {
+  display: flex;
+  height: 100%;
+}
+
+.ar-superset-topbar nav button,
+.ar-superset-topbar > button {
+  background: transparent;
+  border: 0;
+}
+
+.ar-superset-topbar nav button {
+  border-bottom: 3px solid transparent;
+  padding: 0 13px;
+}
+
+.ar-superset-topbar nav button:hover {
+  background: #f7f9fa;
+}
+
+.ar-superset-topbar nav button.is-active {
+  border-bottom-color: #20a7c9;
+  color: #1687a4;
+  font-weight: 650;
+}
+
+.ar-superset-topbar > button {
+  border-radius: 3px;
+  height: 32px;
+}
+
+.ar-superset-topbar > button:hover {
+  background: #edf1f3;
+}
+
+.ar-superset-dashboard {
+  margin: 0 auto;
+  max-width: 1500px;
+  padding: 24px clamp(18px, 3vw, 44px) 60px;
+}
+
+.ar-superset-breadcrumbs {
+  color: #879399;
+  font-size: 11px;
+  margin-bottom: 14px;
+}
+
+.ar-superset-breadcrumbs span {
+  margin: 0 7px;
+}
+
+.ar-superset-dashboard > header {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+}
+
+.ar-superset-dashboard > header > div {
+  flex: 1;
+}
+
+.ar-superset-dashboard > header h1 {
+  font-size: 25px;
+  letter-spacing: -.025em;
+}
+
+.ar-superset-dashboard > header p {
+  color: #6c7a80;
+  margin-top: 3px;
+}
+
+.ar-superset-dashboard > header button,
+.ar-superset-workbench-head button {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #cbd2d6;
+  border-radius: 3px;
+  display: flex;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+}
+
+.ar-superset-dashboard > header .ar-primary,
+.ar-superset-workbench-head .ar-primary {
+  background: #20a7c9;
+  border-color: #20a7c9;
+  color: #fff;
+}
+
+.ar-superset-filters {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d9dde1;
+  border-radius: 3px;
+  display: flex;
+  gap: 10px;
+  margin: 20px 0 14px;
+  min-height: 62px;
+  padding: 8px 12px;
+}
+
+.ar-superset-filters > strong {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  margin-right: 4px;
+}
+
+.ar-superset-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ar-superset-filters label > span {
+  color: #718087;
+  font-size: 9px;
+}
+
+.ar-superset-filters label button,
+.ar-superset-filters > button {
+  background: transparent;
+  border: 0;
+  min-height: 25px;
+  padding: 0;
+  text-align: left;
+}
+
+.ar-superset-filters label button {
+  border-bottom: 1px solid #aab4b9;
+  min-width: 125px;
+}
+
+.ar-superset-filters > span {
+  flex: 1;
+}
+
+.ar-superset-filters > button {
+  color: #1687a4;
+}
+
+.ar-superset-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ar-superset-kpi,
+.ar-superset-chart,
+.ar-superset-table {
+  background: #fff;
+  border: 1px solid #d9dde1;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 3%);
+  min-width: 0;
+}
+
+.ar-superset-kpi {
+  min-height: 145px;
+  padding: 13px 14px;
+  position: relative;
+}
+
+.ar-superset-kpi > header,
+.ar-superset-chart > header,
+.ar-superset-table > header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ar-superset-kpi header button,
+.ar-superset-chart header button,
+.ar-superset-table header button {
+  background: transparent;
+  border: 0;
+}
+
+.ar-superset-kpi > b {
+  display: block;
+  font-size: 28px;
+  letter-spacing: -.03em;
+  margin-top: 15px;
+}
+
+.ar-superset-kpi > em {
+  color: #20966a;
+  font-size: 10px;
+  font-style: normal;
+}
+
+.ar-superset-kpi .ar-tiny-line {
+  bottom: 10px;
+  height: 35px;
+  position: absolute;
+  right: 12px;
+  width: 94px;
+}
+
+.ar-superset-chart {
+  grid-column: span 2;
+  min-height: 310px;
+  padding: 14px;
+}
+
+.ar-superset-chart.is-wide {
+  grid-column: span 3;
+}
+
+.ar-superset-chart:not(.is-wide) {
+  grid-column: span 1;
+}
+
+.ar-superset-chart > header span,
+.ar-superset-table > header span {
+  color: #718087;
+  display: block;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.ar-superset-bars {
+  align-items: end;
+  border-bottom: 1px solid #d9dde1;
+  display: flex;
+  gap: clamp(5px, 1vw, 14px);
+  height: 215px;
+  margin: 18px 8px 0;
+  padding: 0 10px;
+}
+
+.ar-superset-bars > i {
+  background: #20a7c9;
+  display: block;
+  flex: 1;
+  max-width: 34px;
+  min-width: 8px;
+  position: relative;
+}
+
+.ar-superset-bars > i > b {
+  background: #6b5ca5;
+  bottom: 0;
+  display: block;
+  left: 50%;
+  position: absolute;
+  width: 50%;
+}
+
+.ar-superset-chart > footer {
+  color: #718087;
+  display: flex;
+  font-size: 9px;
+  justify-content: space-around;
+  margin-top: 7px;
+}
+
+.ar-superset-funnel {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 30px auto 0;
+}
+
+.ar-superset-funnel span {
+  background: linear-gradient(90deg, #20a7c9, #37b7d3);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  max-width: 340px;
+  padding: 9px 12px;
+}
+
+.ar-superset-table {
+  grid-column: 1 / -1;
+  padding: 14px;
+}
+
+.ar-superset-table table {
+  border-collapse: collapse;
+  margin-top: 14px;
+  width: 100%;
+}
+
+.ar-superset-table th,
+.ar-superset-table td {
+  border-bottom: 1px solid #e6eaec;
+  padding: 10px 8px;
+  text-align: left;
+}
+
+.ar-superset-table th {
+  background: #f7f9fa;
+  color: #64737a;
+  font-size: 10px;
+}
+
+.ar-superset-table .is-healthy,
+.ar-superset-table .is-review {
+  background: #def5e9;
+  border-radius: 10px;
+  color: #237b55;
+  padding: 3px 7px;
+}
+
+.ar-superset-table .is-review {
+  background: #fff0d9;
+  color: #956400;
+}
+
+.ar-superset-workbench {
+  display: grid;
+  grid-template-rows: 68px minmax(0, 1fr);
+  height: calc(100vh - 54px);
+}
+
+.ar-superset-workbench-head {
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #d9dde1;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 18px;
+}
+
+.ar-superset-workbench-head > div:first-child span {
+  color: #718087;
+  font-size: 10px;
+}
+
+.ar-superset-workbench-head h1 {
+  font-size: 18px;
+}
+
+.ar-superset-workbench-head > div:last-child {
+  display: flex;
+  gap: 6px;
+}
+
+.ar-superset-workbench .ar-explorer {
+  height: auto;
+  min-height: 0;
+}
+
+/* Product-specific responsive contracts. */
+
+@media (max-width: 1100px) {
+  .ar-outlook-workspace {
+    grid-template-columns: 48px 190px minmax(300px, 350px) minmax(360px, 1fr);
+  }
+
+  .ar-confluence-global nav button:nth-child(n + 3),
+  .ar-jira-global nav button:nth-child(n + 4) {
+    display: none;
+  }
+
+  .ar-confluence-overview-grid {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+
+  .ar-tws-mosaic {
+    grid-template-columns: 240px minmax(400px, 1fr);
+  }
+
+  .ar-tws-monitor {
+    display: none;
+  }
+
+  .ar-tws-activity {
+    grid-column: 2;
+  }
+
+  .ar-tws-status {
+    grid-column: 1 / 3;
+  }
+
+  .ar-superset-chart.is-wide {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 820px) {
+  .ar-outlook-suitebar {
+    grid-template-columns: 34px 110px minmax(170px, 1fr) auto;
+  }
+
+  .ar-outlook-workspace {
+    grid-template-columns: 48px minmax(290px, 340px) minmax(360px, 1fr);
+  }
+
+  .ar-outlook-folders {
+    display: none;
+  }
+
+  .ar-confluence-global,
+  .ar-jira-global {
+    grid-template-columns: 34px auto minmax(120px, 1fr) 32px 32px 32px;
+  }
+
+  .ar-confluence-global nav,
+  .ar-confluence-global .ar-confluence-create,
+  .ar-jira-global nav,
+  .ar-jira-global .ar-jira-create {
+    display: none;
+  }
+
+  .ar-confluence-body,
+  .ar-jira-body {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .ar-confluence-sidebar > header > span:not(.ar-confluence-space-mark),
+  .ar-confluence-sidebar > header button,
+  .ar-confluence-sidebar nav button:not(.is-active),
+  .ar-confluence-sidebar nav button.is-active,
+  .ar-confluence-sidebar-label,
+  .ar-confluence-tree,
+  .ar-confluence-shortcuts,
+  .ar-jira-sidebar > header > span:not(.ar-jira-project-mark),
+  .ar-jira-sidebar > header button,
+  .ar-jira-sidebar nav button,
+  .ar-jira-sidebar-label,
+  .ar-jira-company > span:not(.ar-avatar) {
+    font-size: 0;
+  }
+
+  .ar-confluence-sidebar nav button,
+  .ar-jira-sidebar nav button {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .ar-confluence-sidebar-label,
+  .ar-confluence-tree,
+  .ar-confluence-shortcuts {
+    display: none;
+  }
+
+  .ar-confluence-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ar-confluence-page-layout.has-activity {
+    grid-template-columns: 1fr;
+  }
+
+  .ar-confluence-activity {
+    border-left: 0;
+    border-top: 1px solid #dfe1e6;
+  }
+
+  .ar-jira-tools button:not(:last-child) {
+    display: none;
+  }
+
+  .ar-jira-backlog > section > header {
+    grid-template-columns: 24px minmax(180px, 1fr) auto;
+  }
+
+  .ar-jira-backlog > section > header > span,
+  .ar-jira-backlog > section > header button:last-child {
+    display: none;
+  }
+
+  .ar-jira-row {
+    grid-template-columns: 18px 58px minmax(150px, 1fr) 18px 25px;
+  }
+
+  .ar-jira-row .ar-jira-epic,
+  .ar-jira-row > em,
+  .ar-jira-row > span:last-child {
+    display: none;
+  }
+
+  .ar-tws-mosaic {
+    grid-template-columns: 220px minmax(360px, 1fr);
+    overflow: auto;
+  }
+
+  .ar-tws-news {
+    display: none;
+  }
+
+  .ar-tws-activity {
+    grid-column: 1 / 3;
+  }
+
+  .ar-superset-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ar-superset-chart,
+  .ar-superset-chart.is-wide {
+    grid-column: span 2;
+  }
+
+  .ar-superset-filters {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .ar-superset-filters > span {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .ar-product-google-gmail .ar-mail-focus-tabs {
+    grid-template-columns: repeat(4, minmax(95px, 1fr));
+    overflow-x: auto;
+  }
+
+  .ar-outlook-shell {
+    grid-template-rows: 48px 42px minmax(0, 1fr);
+  }
+
+  .ar-outlook-suitebar {
+    grid-template-columns: 30px minmax(100px, 1fr) auto;
+    padding: 0 8px;
+  }
+
+  .ar-outlook-suitebar .ar-brand {
+    display: none;
+  }
+
+  .ar-outlook-suitebar .ar-top-actions .ar-icon-button {
+    display: none;
+  }
+
+  .ar-outlook-ribbon button:nth-of-type(n + 4),
+  .ar-outlook-ribbon i {
+    display: none;
+  }
+
+  .ar-outlook-workspace {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .ar-outlook-app-rail {
+    grid-column: 1;
+  }
+
+  .ar-outlook-message-list {
+    border-right: 0;
+    grid-column: 2;
+  }
+
+  .ar-outlook-reader {
+    display: none;
+    grid-column: 2;
+  }
+
+  .ar-product-microsoft-outlook[data-view="reading-pane"] .ar-outlook-message-list,
+  .ar-product-microsoft-outlook[data-view="compose"] .ar-outlook-message-list {
+    display: none;
+  }
+
+  .ar-product-microsoft-outlook[data-view="reading-pane"] .ar-outlook-reader,
+  .ar-product-microsoft-outlook[data-view="compose"] .ar-outlook-reader {
+    display: block;
+  }
+
+  .ar-outlook-reader > article {
+    padding: 22px 17px;
+  }
+
+  .ar-confluence-global,
+  .ar-jira-global {
+    grid-template-columns: 34px minmax(120px, 1fr) 32px 32px;
+  }
+
+  .ar-confluence-global > label,
+  .ar-jira-global > label,
+  .ar-confluence-global > .ar-icon-button:nth-last-of-type(2),
+  .ar-jira-global > .ar-icon-button:nth-last-of-type(2),
+  .ar-jira-global > .ar-icon-button:nth-last-of-type(3) {
+    display: none;
+  }
+
+  .ar-confluence-body,
+  .ar-jira-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ar-confluence-sidebar,
+  .ar-jira-sidebar {
+    display: none;
+  }
+
+  .ar-confluence-overview,
+  .ar-jira-main {
+    padding: 20px 14px 50px;
+  }
+
+  .ar-confluence-overview > header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .ar-confluence-overview > header > div:nth-child(2) {
+    min-width: calc(100% - 76px);
+  }
+
+  .ar-confluence-overview > header > button {
+    margin-left: 72px;
+  }
+
+  .ar-confluence-welcome {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .ar-confluence-welcome button {
+    grid-column: 1 / -1;
+  }
+
+  .ar-confluence-page {
+    padding: 16px 14px 50px;
+  }
+
+  .ar-confluence-page-actions > span,
+  .ar-confluence-page-actions > button:first-of-type {
+    display: none;
+  }
+
+  .ar-confluence-page-content {
+    margin-top: 36px;
+  }
+
+  .ar-confluence-page-content table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .ar-jira-heading {
+    align-items: flex-start;
+  }
+
+  .ar-jira-heading p,
+  .ar-jira-heading > div:last-child button:first-child,
+  .ar-jira-assignees {
+    display: none;
+  }
+
+  .ar-jira-tools > label {
+    flex: 1;
+  }
+
+  .ar-jira-tools > label input {
+    width: 100%;
+  }
+
+  .ar-jira-row {
+    grid-template-columns: 17px 52px minmax(140px, 1fr) 23px;
+  }
+
+  .ar-jira-row .ar-priority {
+    display: none;
+  }
+
+  .ar-tws-shell {
+    display: block;
+    min-width: 0;
+  }
+
+  .ar-tws-menubar {
+    height: 38px;
+  }
+
+  .ar-tws-menubar > button:nth-of-type(n + 3),
+  .ar-tws-market-state,
+  .ar-tws-layout-lock {
+    display: none;
+  }
+
+  .ar-tws-workspaces {
+    height: 33px;
+    overflow-x: auto;
+  }
+
+  .ar-tws-mosaic {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    min-height: calc(100vh - 71px);
+    overflow: visible;
+  }
+
+  .ar-tws-order,
+  .ar-tws-quote,
+  .ar-tws-chart-panel,
+  .ar-tws-activity,
+  .ar-tws-status {
+    display: flex;
+    grid-column: 1;
+    grid-row: auto;
+    min-height: 240px;
+  }
+
+  .ar-tws-order {
+    min-height: 430px;
+  }
+
+  .ar-tws-quote {
+    min-height: 170px;
+  }
+
+  .ar-tws-status {
+    min-height: 28px;
+  }
+
+  .ar-tws-monitor,
+  .ar-tws-news {
+    display: none;
+  }
+
+  .ar-tws-quote-grid,
+  .ar-tws-table {
+    min-width: 520px;
+  }
+
+  .ar-superset-topbar {
+    grid-template-columns: auto minmax(0, 1fr) 32px 32px;
+    padding: 0 10px;
+  }
+
+  .ar-superset-topbar nav {
+    overflow-x: auto;
+  }
+
+  .ar-superset-topbar nav button {
+    padding: 0 8px;
+  }
+
+  .ar-superset-topbar > span,
+  .ar-superset-topbar > button:nth-last-of-type(2),
+  .ar-superset-topbar > button:nth-last-of-type(3) {
+    display: none;
+  }
+
+  .ar-superset-dashboard {
+    padding: 17px 10px 45px;
+  }
+
+  .ar-superset-dashboard > header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .ar-superset-dashboard > header > div {
+    flex-basis: 100%;
+  }
+
+  .ar-superset-dashboard > header button:first-of-type {
+    display: none;
+  }
+
+  .ar-superset-filters label {
+    flex: 1 1 120px;
+  }
+
+  .ar-superset-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ar-superset-chart,
+  .ar-superset-chart.is-wide,
+  .ar-superset-table {
+    grid-column: 1;
+  }
+
+  .ar-superset-table {
+    overflow-x: auto;
+  }
+
+  .ar-superset-table table {
+    min-width: 600px;
+  }
+
+  .ar-superset-workbench {
+    height: calc(100vh - 54px);
+  }
+}
+
+/* Clone accessibility guardrails --------------------------------------- */
+
+.ar-product-google-gmail .ar-global-search input {
+  color: #596475;
+}
+
+.ar-product-google-gmail .ar-mail-account small {
+  color: #596475;
+}
+
+.ar-product-google-gmail .ar-list-toolbar input,
+.ar-product-microsoft-outlook .ar-outlook-list-actions input {
+  height: 24px;
+  min-height: 24px;
+  min-width: 24px;
+  width: 24px;
+}
+
+.ar-product-binance .ar-terminal-watch > button small,
+.ar-product-binance .ar-terminal-chart > header span,
+.ar-product-binance .ar-terminal-ticket > header span,
+.ar-product-binance .ar-ticket-slider span,
+.ar-product-binance .ar-book-head,
+.ar-product-binance .ar-terminal-orders th {
+  color: #919ba8;
+}
+
+.ar-product-binance .ar-submit-buy {
+  background: #176c4e;
+  color: #fff;
+}
+
+.ar-product-coingecko .ar-product-mark,
+.ar-product-coingecko .ar-primary {
+  background: #4f7323 !important;
+  border-color: #3f5d1b !important;
+  color: #fff !important;
+}
+
+.ar-product-coingecko .ar-market-ticker em {
+  color: #217448;
+}
+
+.ar-product-coingecko .ar-market-table th,
+.ar-product-coingecko .ar-market-table td:nth-child(2) small {
+  color: #56614e;
+}
+
+.ar-product-grafana-labs-grafana .ar-product-mark,
+.ar-product-grafana-labs-grafana .ar-primary,
+.ar-product-grafana-labs-grafana .ar-analytics-org > span {
+  background: #a54800 !important;
+  border-color: #803700 !important;
+  color: #fff !important;
+}
+
+.ar-product-interactive-brokers-trader-workstation .ar-tws-chart-axis {
+  color: #939aa3;
+}
+
+.ar-product-interactive-brokers-trader-workstation .ar-tws-panel > header button {
+  height: 24px;
+  min-width: 24px;
+}
+
+.ar-product-meta-whatsapp .ar-view-tabs button,
+.ar-product-meta-whatsapp .ar-chat-list > button small,
+.ar-product-meta-whatsapp .ar-chat-list > button time,
+.ar-product-meta-whatsapp .ar-chat-thread > header small,
+.ar-product-meta-whatsapp .ar-bubble > time {
+  color: #4f5e66 !important;
+}
+
+.ar-product-meta-whatsapp .ar-message-wall > .is-system {
+  color: #48575f;
+}
+
+.ar-product-meta-whatsapp .ar-chat-file small {
+  color: #53606c;
+}
+
+.ar-product-microsoft-outlook .ar-outlook-new-mail {
+  color: #fff !important;
+}
+
+.ar-product-microsoft-outlook .ar-attachment small {
+  color: #53606c;
+}
+
+.ar-product-notion .ar-tree-heading {
+  color: #65645f;
+}
+
+.ar-product-notion .ar-inline-metrics small {
+  color: #596576;
+}
+
+.ar-product-openai-chatgpt .ar-product-mark,
+.ar-product-openai-chatgpt .ar-folder-mark {
+  background: #08765e;
+  color: #fff;
+}
+
+.ar-product-openai-chatgpt .ar-assistant-user small {
+  color: #64645f;
+}
+
+.ar-product-openai-chatgpt .ar-assistant-section button {
+  min-height: 24px;
+  min-width: 24px;
+}
+
+.ar-product-polymarket .ar-prediction-categories button.is-active {
+  color: #1b55be;
+}
+
+.ar-product-polymarket .ar-eyebrow,
+.ar-product-polymarket .ar-market-card > header em,
+.ar-product-polymarket .ar-market-card > header time,
+.ar-product-polymarket .ar-probability span,
+.ar-product-polymarket .ar-market-card > footer {
+  color: #566277;
+}
+
+.ar-product-apache-superset .ar-superset-topbar nav button.is-active,
+.ar-product-apache-superset .ar-superset-filters > button {
+  color: #0b6177;
+}
+
+.ar-product-apache-superset .ar-superset-breadcrumbs {
+  color: #59676e;
+}
+
+.ar-product-apache-superset .ar-superset-dashboard > header p,
+.ar-product-apache-superset .ar-superset-filters label > span,
+.ar-product-apache-superset .ar-superset-chart > header span,
+.ar-product-apache-superset .ar-superset-table > header span,
+.ar-product-apache-superset .ar-superset-chart > footer {
+  color: #59676e;
+}
+
+.ar-product-apache-superset .ar-superset-dashboard > header .ar-primary,
+.ar-product-apache-superset .ar-superset-workbench-head .ar-primary {
+  background: #08758f !important;
+  border-color: #075c70 !important;
+  color: #fff !important;
+}
+
+.ar-product-apache-superset .ar-superset-kpi > em {
+  color: #15734f;
 }
