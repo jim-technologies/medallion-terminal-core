@@ -9,14 +9,28 @@
       "buf": {
         "pkg-path": "buf"
       },
+      "dejavu_fonts": {
+        "pkg-path": "dejavu_fonts"
+      },
+      "inter": {
+        "pkg-path": "inter"
+      },
+      "lato": {
+        "pkg-path": "lato"
+      },
       "nodejs": {
         "pkg-path": "nodejs"
+      },
+      "noto-fonts-color-emoji": {
+        "pkg-path": "noto-fonts-color-emoji"
       },
       "pnpm": {
         "pkg-path": "pnpm"
       }
     },
-    "hook": {},
+    "hook": {
+      "on-activate": "  mkdir -p \"$FLOX_ENV_CACHE/fontconfig/cache\"\n  cat > \"$FLOX_ENV_CACHE/fontconfig/fonts.conf\" <<EOF\n<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n  <dir>$FLOX_ENV/share/fonts</dir>\n  <cachedir>$FLOX_ENV_CACHE/fontconfig/cache</cachedir>\n  <match target=\"font\">\n    <edit name=\"antialias\" mode=\"assign\"><bool>true</bool></edit>\n    <edit name=\"hinting\" mode=\"assign\"><bool>true</bool></edit>\n    <edit name=\"hintstyle\" mode=\"assign\"><const>hintslight</const></edit>\n    <edit name=\"rgba\" mode=\"assign\"><const>none</const></edit>\n    <edit name=\"embeddedbitmap\" mode=\"assign\"><bool>false</bool></edit>\n  </match>\n  <alias><family>sans-serif</family><prefer><family>DejaVu Sans</family></prefer></alias>\n  <alias><family>serif</family><prefer><family>DejaVu Serif</family></prefer></alias>\n  <alias><family>monospace</family><prefer><family>DejaVu Sans Mono</family></prefer></alias>\n  <alias><family>emoji</family><prefer><family>Noto Color Emoji</family></prefer></alias>\n</fontconfig>\nEOF\n  export FONTCONFIG_FILE=\"$FLOX_ENV_CACHE/fontconfig/fonts.conf\"\n"
+    },
     "profile": {},
     "options": {}
   },
@@ -262,6 +276,366 @@
       "priority": 5
     },
     {
+      "attr_path": "dejavu_fonts",
+      "broken": false,
+      "derivation": "/nix/store/l40j021lgdb91ibfsc9ggrz0jc3jwr82-dejavu-fonts-2.37.drv",
+      "description": "Typeface family based on the Bitstream Vera fonts",
+      "install_id": "dejavu_fonts",
+      "license": "Unspecified free software license",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "dejavu-fonts-2.37",
+      "pname": "dejavu_fonts",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T03:12:55.429418Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.37",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/4hy28cpxjkl0czyf5pk2vwbi4m8d555i-dejavu-fonts-2.37"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "dejavu_fonts",
+      "broken": false,
+      "derivation": "/nix/store/x8myk0qhj77g2qrr666i00s6lkhw5qms-dejavu-fonts-2.37.drv",
+      "description": "Typeface family based on the Bitstream Vera fonts",
+      "install_id": "dejavu_fonts",
+      "license": "Unspecified free software license",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "dejavu-fonts-2.37",
+      "pname": "dejavu_fonts",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T03:41:22.120169Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.37",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/spc75685f7229wh2sva3j4dn7vnr10r1-dejavu-fonts-2.37"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "dejavu_fonts",
+      "broken": false,
+      "derivation": "/nix/store/8cr43azl7kynm2bnk2sws8j42cldh8bc-dejavu-fonts-2.37.drv",
+      "description": "Typeface family based on the Bitstream Vera fonts",
+      "install_id": "dejavu_fonts",
+      "license": "Unspecified free software license",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "dejavu-fonts-2.37",
+      "pname": "dejavu_fonts",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T04:09:00.797713Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.37",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/498mb4dcz4dqm5fxirgfdphwndhndhk1-dejavu-fonts-2.37"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "dejavu_fonts",
+      "broken": false,
+      "derivation": "/nix/store/07h0sij88m20zsswa95swqzjr5jimd7i-dejavu-fonts-2.37.drv",
+      "description": "Typeface family based on the Bitstream Vera fonts",
+      "install_id": "dejavu_fonts",
+      "license": "Unspecified free software license",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "dejavu-fonts-2.37",
+      "pname": "dejavu_fonts",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T04:40:24.797902Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.37",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/8cs9jsy0bpajym7lf9qbps1h5snyjk9y-dejavu-fonts-2.37"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "inter",
+      "broken": false,
+      "derivation": "/nix/store/zy65m5q4cpy1izbda6m6fk5s1w642pjp-inter-4.1.drv",
+      "description": "Typeface specially designed for user interfaces",
+      "install_id": "inter",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "inter-4.1",
+      "pname": "inter",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T03:13:12.018009Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/hfh8x7br4p6703xa2s9123syi7mhjc38-inter-4.1"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "inter",
+      "broken": false,
+      "derivation": "/nix/store/kj7k8f4l1kdxhlv9ykl5ak15m010jmmb-inter-4.1.drv",
+      "description": "Typeface specially designed for user interfaces",
+      "install_id": "inter",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "inter-4.1",
+      "pname": "inter",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T03:41:43.478657Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/7p4k9in7fwchknx8idlca5d3njwsaas4-inter-4.1"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "inter",
+      "broken": false,
+      "derivation": "/nix/store/0y0hslbrj8qkahdblagqjsq3nx93g64s-inter-4.1.drv",
+      "description": "Typeface specially designed for user interfaces",
+      "install_id": "inter",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "inter-4.1",
+      "pname": "inter",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T04:09:21.466092Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/xji97vv89j6visv9vfr6f98fgg2mnrrz-inter-4.1"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "inter",
+      "broken": false,
+      "derivation": "/nix/store/nn6pcka9n3csqnwhjyiyhjsnbwms8b5x-inter-4.1.drv",
+      "description": "Typeface specially designed for user interfaces",
+      "install_id": "inter",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "inter-4.1",
+      "pname": "inter",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T04:40:46.936511Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/9r0bj3fadq927k9zzmasyr566s1bf2d4-inter-4.1"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "lato",
+      "broken": false,
+      "derivation": "/nix/store/5s2rs05jffvil9w64mll92ad6pky8c1z-lato-2.0.drv",
+      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
+      "install_id": "lato",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "lato-2.0",
+      "pname": "lato",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T03:13:13.441992Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/pkrvkb3gvr194wd5ghqqnfmpcv8h2a3c-lato-2.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "lato",
+      "broken": false,
+      "derivation": "/nix/store/lj8833dm8w5gnwjmp172y9fwig1qzsay-lato-2.0.drv",
+      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
+      "install_id": "lato",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "lato-2.0",
+      "pname": "lato",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T03:41:46.306184Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/l8bdx2rl544nzdf03as3kv5hr3hd502n-lato-2.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "lato",
+      "broken": false,
+      "derivation": "/nix/store/crhaqjq9isr7s0n45ssnh2kkva2z9mic-lato-2.0.drv",
+      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
+      "install_id": "lato",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "lato-2.0",
+      "pname": "lato",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T04:09:23.276742Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/g2rfqidkcyf7h15d0pg0b6h8q57lgf50-lato-2.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "lato",
+      "broken": false,
+      "derivation": "/nix/store/y8q1909zmicl096i4hk0nli4c083ybdk-lato-2.0.drv",
+      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
+      "install_id": "lato",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "lato-2.0",
+      "pname": "lato",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T04:40:49.873345Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/gvfvfx3s030x879va9rpym83y95id4ld-lato-2.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
       "attr_path": "nodejs",
       "broken": false,
       "derivation": "/nix/store/1a0cn85p1mwixhwy16db7v2652pz7l8g-nodejs-24.16.0.drv",
@@ -376,6 +750,126 @@
       ],
       "outputs": {
         "out": "/nix/store/zvj0hl7rhh0ccr5vkcg3ijs3xm3sgyac-nodejs-24.16.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "noto-fonts-color-emoji",
+      "broken": false,
+      "derivation": "/nix/store/krcag2inr6kmyvs8cyqd3si82plqq0iy-noto-fonts-color-emoji-2.051.drv",
+      "description": "Color emoji font",
+      "install_id": "noto-fonts-color-emoji",
+      "license": "[ OFL-1.1, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "noto-fonts-color-emoji-2.051",
+      "pname": "noto-fonts-color-emoji",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T03:13:20.609310Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.051",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/557hw66ma67d9csqbv7s8m593wzh3b01-noto-fonts-color-emoji-2.051"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "noto-fonts-color-emoji",
+      "broken": false,
+      "derivation": "/nix/store/a20x1bk7iwlri4lvi31ikavnn0ad2h54-noto-fonts-color-emoji-2.051.drv",
+      "description": "Color emoji font",
+      "install_id": "noto-fonts-color-emoji",
+      "license": "[ OFL-1.1, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "noto-fonts-color-emoji-2.051",
+      "pname": "noto-fonts-color-emoji",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T03:42:00.629098Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.051",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/jkcbhxmw2aiv2byjr5ga0jq9an3cif8v-noto-fonts-color-emoji-2.051"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "noto-fonts-color-emoji",
+      "broken": false,
+      "derivation": "/nix/store/8ww2h9gfp8rjsszkg5ilkmn3c74xbqxb-noto-fonts-color-emoji-2.051.drv",
+      "description": "Color emoji font",
+      "install_id": "noto-fonts-color-emoji",
+      "license": "[ OFL-1.1, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "noto-fonts-color-emoji-2.051",
+      "pname": "noto-fonts-color-emoji",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T04:09:32.373061Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.051",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/qk50nknyjxzlin9x2z8k6hcgqnwn13ab-noto-fonts-color-emoji-2.051"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "noto-fonts-color-emoji",
+      "broken": false,
+      "derivation": "/nix/store/ybsn4ih6ngqmxqbljsrm75c397fy61rq-noto-fonts-color-emoji-2.051.drv",
+      "description": "Color emoji font",
+      "install_id": "noto-fonts-color-emoji",
+      "license": "[ OFL-1.1, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "name": "noto-fonts-color-emoji-2.051",
+      "pname": "noto-fonts-color-emoji",
+      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
+      "rev_count": 1027867,
+      "rev_date": "2026-07-05T04:06:12Z",
+      "scrape_date": "2026-07-06T04:41:06.100665Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.051",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/phyz79jvvpqmhwyx5cryjkx31kpw77n3-noto-fonts-color-emoji-2.051"
       },
       "system": "x86_64-linux",
       "group": "toplevel",

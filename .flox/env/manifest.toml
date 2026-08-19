@@ -19,6 +19,10 @@ nodejs.pkg-path = "nodejs"
 pnpm.pkg-path = "pnpm"
 buf.pkg-path = "buf"
 actionlint.pkg-path = "actionlint"
+lato.pkg-path = "lato"
+dejavu_fonts.pkg-path = "dejavu_fonts"
+noto-fonts-color-emoji.pkg-path = "noto-fonts-color-emoji"
+inter.pkg-path = "inter"
 # gum.pkg-path = "gum"
 # gum.version = "^0.14.5"
 
@@ -35,14 +39,33 @@ actionlint.pkg-path = "actionlint"
 ##  ... run by _bash_ shell when you run 'flox activate'.
 ## -------------------------------------------------------------------
 [hook]
-# on-activate = '''
-#   # -> Set variables, create files and directories
-#   # -> Perform initialization steps, e.g. create a python venv
-#   # -> Useful environment variables:
-#   #      - FLOX_ENV_PROJECT=/home/user/example
-#   #      - FLOX_ENV=/home/user/example/.flox/run
-#   #      - FLOX_ENV_CACHE=/home/user/example/.flox/cache
-# '''
+# Pin font rendering to the fonts this environment provides so browser-test
+# screenshots rasterize identically on every machine, including CI. Without
+# this, chromium falls back to whatever the host has installed and the visual
+# baselines drift between machines.
+on-activate = '''
+  mkdir -p "$FLOX_ENV_CACHE/fontconfig/cache"
+  cat > "$FLOX_ENV_CACHE/fontconfig/fonts.conf" <<EOF
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <dir>$FLOX_ENV/share/fonts</dir>
+  <cachedir>$FLOX_ENV_CACHE/fontconfig/cache</cachedir>
+  <match target="font">
+    <edit name="antialias" mode="assign"><bool>true</bool></edit>
+    <edit name="hinting" mode="assign"><bool>true</bool></edit>
+    <edit name="hintstyle" mode="assign"><const>hintslight</const></edit>
+    <edit name="rgba" mode="assign"><const>none</const></edit>
+    <edit name="embeddedbitmap" mode="assign"><bool>false</bool></edit>
+  </match>
+  <alias><family>sans-serif</family><prefer><family>DejaVu Sans</family></prefer></alias>
+  <alias><family>serif</family><prefer><family>DejaVu Serif</family></prefer></alias>
+  <alias><family>monospace</family><prefer><family>DejaVu Sans Mono</family></prefer></alias>
+  <alias><family>emoji</family><prefer><family>Noto Color Emoji</family></prefer></alias>
+</fontconfig>
+EOF
+  export FONTCONFIG_FILE="$FLOX_ENV_CACHE/fontconfig/fonts.conf"
+'''
 
 
 ## Profile script ----------------------------------------------------
