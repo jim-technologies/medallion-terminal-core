@@ -21,6 +21,9 @@ import "medallion/terminal/v1/template.proto";
 // dashboards.
 // =============================================================
 
+// TerminalService is the single RPC surface a backend implements
+// to power a dashboard: read (Get / Stream), catalog (ListSources),
+// AI (Generate), and write (SubmitAction / WatchAction).
 service TerminalService {
   // One-shot fetch for a registered source.
   rpc Get(DataRequest) returns (DataResponse);
@@ -58,6 +61,8 @@ service TerminalService {
 
 // ----- Get / Stream -----
 
+// Request envelope shared by Get and Stream. Selects a source and
+// supplies its params.
 message DataRequest {
   // Catalog id (matches Source.id from ListSources).
   string source_id = 1;
@@ -70,37 +75,62 @@ message DataRequest {
 // DataResponse always carries exactly one payload. Which case is
 // set is determined by the source's declared Shape (see Source).
 message DataResponse {
+  // Exactly one case is set, matching the source's declared Shape.
   oneof payload {
+    // Line-chart data. See TimeseriesPayload.
     TimeseriesPayload timeseries = 1;
+    // OHLCV bars. See CandlePayload.
     CandlePayload candles = 2;
+    // Tabular rows. See TablePayload.
     TablePayload table = 3;
+    // Single headline number. See MetricPayload.
     MetricPayload metric = 4;
+    // Bounded scalar. See GaugePayload.
     GaugePayload gauge = 5;
+    // 2D matrix. See HeatmapPayload.
     HeatmapPayload heatmap = 6;
+    // Status timeline. See EventPayload.
     EventPayload events = 7;
+    // Categorical proportions. See DistributionPayload.
     DistributionPayload distribution = 8;
+    // News/summary items. See TextPayload.
     TextPayload text = 9;
+    // Bid/ask depth. See OrderBookPayload.
     OrderBookPayload orderbook = 10;
+    // Left/right lattice. See PairedGridPayload.
     PairedGridPayload paired_grid = 11;
+    // Context-driven image/iframe URL. See EmbedPayload.
     EmbedPayload embed = 12;
+    // Catalog of platform assets. See AssetCatalogPayload.
     AssetCatalogPayload assets = 13;
+    // Ontology object detail. See ObjectPayload.
     ObjectPayload object = 14;
+    // Directed graph. See GraphPayload.
     GraphPayload graph = 15;
+    // Source browsing. See RepositoryPayload.
     RepositoryPayload repository = 16;
+    // Mutable record set. See RecordSetPayload.
     RecordSetPayload records = 17;
+    // Geospatial features. See GeoPayload.
     GeoPayload geo = 18;
+    // Media library. See MediaPayload.
     MediaPayload media = 19;
+    // Message transcript. See ConversationPayload.
     ConversationPayload conversation = 20;
   }
 }
 
 // ----- ListSources -----
 
+// ListSourcesRequest carries no fields today; filtering may be
+// added later.
 message ListSourcesRequest {
   // Reserved for future filtering (by tag, by shape, by query).
 }
 
+// The backend's full source catalog.
 message ListSourcesResponse {
+  // Every source the backend can serve.
   repeated Source sources = 1;
 }
 
@@ -134,6 +164,7 @@ message Source {
   repeated string tags = 7;
 }
 
+// SourceParam declares one parameter a Source accepts.
 message SourceParam {
   // Param key (matches DataRequest.params keys).
   string key = 1;
@@ -170,10 +201,13 @@ message SourceParam {
 // substitutions correctly. Wire format is always a string in
 // DataRequest.params; the backend converts based on this type.
 enum ParamType {
+  // No type declared; treated as string.
   PARAM_TYPE_UNSPECIFIED = 0;
+  // Free-form string.
   PARAM_TYPE_STRING = 1;
   // Floating-point number.
   PARAM_TYPE_NUMBER = 2;
+  // "true" or "false".
   PARAM_TYPE_BOOLEAN = 3;
   // ISO 8601 timestamp with time component (e.g. "2026-04-01T00:00:00Z").
   PARAM_TYPE_TIMESTAMP = 4;
@@ -192,31 +226,53 @@ enum ParamType {
 // mirror the cases in DataResponse.payload — a backend should set
 // Source.shape to match what it actually emits.
 enum Shape {
+  // No shape declared.
   SHAPE_UNSPECIFIED = 0;
+  // TimeseriesPayload.
   SHAPE_TIMESERIES = 1;
+  // CandlePayload.
   SHAPE_CANDLES = 2;
+  // TablePayload.
   SHAPE_TABLE = 3;
+  // MetricPayload.
   SHAPE_METRIC = 4;
+  // GaugePayload.
   SHAPE_GAUGE = 5;
+  // HeatmapPayload.
   SHAPE_HEATMAP = 6;
+  // EventPayload.
   SHAPE_EVENTS = 7;
+  // DistributionPayload.
   SHAPE_DISTRIBUTION = 8;
+  // TextPayload.
   SHAPE_TEXT = 9;
+  // OrderBookPayload.
   SHAPE_ORDERBOOK = 10;
+  // PairedGridPayload.
   SHAPE_PAIRED_GRID = 11;
+  // EmbedPayload.
   SHAPE_EMBED = 12;
+  // AssetCatalogPayload.
   SHAPE_ASSET_CATALOG = 13;
+  // ObjectPayload.
   SHAPE_OBJECT = 14;
+  // GraphPayload.
   SHAPE_GRAPH = 15;
+  // RepositoryPayload.
   SHAPE_REPOSITORY = 16;
+  // RecordSetPayload.
   SHAPE_RECORD_SET = 17;
+  // GeoPayload.
   SHAPE_GEO = 18;
+  // MediaPayload.
   SHAPE_MEDIA = 19;
+  // ConversationPayload.
   SHAPE_CONVERSATION = 20;
 }
 
 // ----- Generate (AI) -----
 
+// Input to the AI Generate RPC.
 message GenerateRequest {
   // The user's natural-language prompt
   // (e.g. "how's bitcoin today?", "show me bot pnl this week").
@@ -231,6 +287,7 @@ message GenerateRequest {
   repeated Widget current_widgets = 3;
 }
 
+// Output of the AI Generate RPC: a reply plus dashboard mutations.
 message GenerateResponse {
   // Assistant reply shown to the user (a one-sentence summary or
   // explanation of what was wired up).
@@ -269,7 +326,9 @@ message GenerateResponse {
 // in the backend's documentation; widgets that submit actions know
 // the shape by convention.
 message ActionRequest {
+  // Selects the backend handler (e.g. "place_order").
   string action_id = 1;
+  // Action parameters. Schema is per-action by convention.
   google.protobuf.Struct params = 2;
 
   // Client-generated idempotency key. The backend MUST treat repeated
@@ -322,6 +381,7 @@ message ActionResponse {
 // Non-terminal status: ACCEPTED, PENDING — the action will reach a
 // terminal state later. Subscribe via WatchAction for updates.
 enum ActionStatus {
+  // No status declared. Treat as unknown.
   ACTION_STATUS_UNSPECIFIED = 0;
   // Terminal: synchronous success. Action took effect.
   ACTION_STATUS_OK = 1;

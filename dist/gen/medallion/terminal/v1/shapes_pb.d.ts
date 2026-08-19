@@ -99,6 +99,8 @@ export declare const TimeseriesPayloadSchema: GenMessage<TimeseriesPayload, {
     jsonType: TimeseriesPayloadJson;
 }>;
 /**
+ * One timestamped value in a timeseries.
+ *
  * @generated from message medallion.terminal.v1.TimeseriesPoint
  */
 export type TimeseriesPoint = Message<"medallion.terminal.v1.TimeseriesPoint"> & {
@@ -109,11 +111,15 @@ export type TimeseriesPoint = Message<"medallion.terminal.v1.TimeseriesPoint"> &
      */
     timestamp: string;
     /**
+     * The numeric value at this timestamp.
+     *
      * @generated from field: double value = 2;
      */
     value: number;
 };
 /**
+ * One timestamped value in a timeseries.
+ *
  * @generated from message medallion.terminal.v1.TimeseriesPoint
  */
 export type TimeseriesPointJson = {
@@ -124,6 +130,8 @@ export type TimeseriesPointJson = {
      */
     timestamp?: string;
     /**
+     * The numeric value at this timestamp.
+     *
      * @generated from field: double value = 2;
      */
     value?: number | "NaN" | "Infinity" | "-Infinity";
@@ -136,6 +144,8 @@ export declare const TimeseriesPointSchema: GenMessage<TimeseriesPoint, {
     jsonType: TimeseriesPointJson;
 }>;
 /**
+ * One named line in a multi-series chart.
+ *
  * @generated from message medallion.terminal.v1.TimeseriesSeries
  */
 export type TimeseriesSeries = Message<"medallion.terminal.v1.TimeseriesSeries"> & {
@@ -146,11 +156,15 @@ export type TimeseriesSeries = Message<"medallion.terminal.v1.TimeseriesSeries">
      */
     name: string;
     /**
+     * The ordered points of this series.
+     *
      * @generated from field: repeated medallion.terminal.v1.TimeseriesPoint points = 2;
      */
     points: TimeseriesPoint[];
 };
 /**
+ * One named line in a multi-series chart.
+ *
  * @generated from message medallion.terminal.v1.TimeseriesSeries
  */
 export type TimeseriesSeriesJson = {
@@ -161,6 +175,8 @@ export type TimeseriesSeriesJson = {
      */
     name?: string;
     /**
+     * The ordered points of this series.
+     *
      * @generated from field: repeated medallion.terminal.v1.TimeseriesPoint points = 2;
      */
     points?: TimeseriesPointJson[];
@@ -187,6 +203,8 @@ export declare const TimeseriesSeriesSchema: GenMessage<TimeseriesSeries, {
  */
 export type CandlePayload = Message<"medallion.terminal.v1.CandlePayload"> & {
     /**
+     * Ordered OHLCV bars.
+     *
      * @generated from field: repeated medallion.terminal.v1.Candle bars = 1;
      */
     bars: Candle[];
@@ -215,6 +233,8 @@ export type CandlePayload = Message<"medallion.terminal.v1.CandlePayload"> & {
  */
 export type CandlePayloadJson = {
     /**
+     * Ordered OHLCV bars.
+     *
      * @generated from field: repeated medallion.terminal.v1.Candle bars = 1;
      */
     bars?: CandleJson[];
@@ -236,26 +256,38 @@ export declare const CandlePayloadSchema: GenMessage<CandlePayload, {
     jsonType: CandlePayloadJson;
 }>;
 /**
+ * One OHLCV bar.
+ *
  * @generated from message medallion.terminal.v1.Candle
  */
 export type Candle = Message<"medallion.terminal.v1.Candle"> & {
     /**
+     * ISO 8601 timestamp or Unix epoch (seconds or ms).
+     *
      * @generated from field: string timestamp = 1;
      */
     timestamp: string;
     /**
+     * Opening price of the bar.
+     *
      * @generated from field: double open = 2;
      */
     open: number;
     /**
+     * Highest price of the bar.
+     *
      * @generated from field: double high = 3;
      */
     high: number;
     /**
+     * Lowest price of the bar.
+     *
      * @generated from field: double low = 4;
      */
     low: number;
     /**
+     * Closing price of the bar.
+     *
      * @generated from field: double close = 5;
      */
     close: number;
@@ -267,26 +299,38 @@ export type Candle = Message<"medallion.terminal.v1.Candle"> & {
     volume?: number | undefined;
 };
 /**
+ * One OHLCV bar.
+ *
  * @generated from message medallion.terminal.v1.Candle
  */
 export type CandleJson = {
     /**
+     * ISO 8601 timestamp or Unix epoch (seconds or ms).
+     *
      * @generated from field: string timestamp = 1;
      */
     timestamp?: string;
     /**
+     * Opening price of the bar.
+     *
      * @generated from field: double open = 2;
      */
     open?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * Highest price of the bar.
+     *
      * @generated from field: double high = 3;
      */
     high?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * Lowest price of the bar.
+     *
      * @generated from field: double low = 4;
      */
     low?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * Closing price of the bar.
+     *
      * @generated from field: double close = 5;
      */
     close?: number | "NaN" | "Infinity" | "-Infinity";
@@ -521,6 +565,8 @@ export declare const TablePayloadSchema: GenMessage<TablePayload, {
     jsonType: TablePayloadJson;
 }>;
 /**
+ * TableColumn declares one column's key, label, type, and format.
+ *
  * @generated from message medallion.terminal.v1.TableColumn
  */
 export type TableColumn = Message<"medallion.terminal.v1.TableColumn"> & {
@@ -552,6 +598,8 @@ export type TableColumn = Message<"medallion.terminal.v1.TableColumn"> & {
     format?: string | undefined;
 };
 /**
+ * TableColumn declares one column's key, label, type, and format.
+ *
  * @generated from message medallion.terminal.v1.TableColumn
  */
 export type TableColumnJson = {
@@ -608,6 +656,8 @@ export declare const TableColumnSchema: GenMessage<TableColumn, {
  */
 export type MetricPayload = Message<"medallion.terminal.v1.MetricPayload"> & {
     /**
+     * The headline number.
+     *
      * @generated from field: double value = 1;
      */
     value: number;
@@ -657,6 +707,8 @@ export type MetricPayload = Message<"medallion.terminal.v1.MetricPayload"> & {
  */
 export type MetricPayloadJson = {
     /**
+     * The headline number.
+     *
      * @generated from field: double value = 1;
      */
     value?: number | "NaN" | "Infinity" | "-Infinity";
@@ -717,6 +769,8 @@ export declare const MetricPayloadSchema: GenMessage<MetricPayload, {
  */
 export type GaugePayload = Message<"medallion.terminal.v1.GaugePayload"> & {
     /**
+     * Current position within [min, max].
+     *
      * @generated from field: double value = 1;
      */
     value: number;
@@ -727,10 +781,14 @@ export type GaugePayload = Message<"medallion.terminal.v1.GaugePayload"> & {
      */
     min?: number | undefined;
     /**
+     * Upper bound of the range. Default 1.
+     *
      * @generated from field: optional double max = 3;
      */
     max?: number | undefined;
     /**
+     * Caption below the gauge.
+     *
      * @generated from field: optional string label = 4;
      */
     label?: string | undefined;
@@ -764,6 +822,8 @@ export type GaugePayload = Message<"medallion.terminal.v1.GaugePayload"> & {
  */
 export type GaugePayloadJson = {
     /**
+     * Current position within [min, max].
+     *
      * @generated from field: double value = 1;
      */
     value?: number | "NaN" | "Infinity" | "-Infinity";
@@ -774,10 +834,14 @@ export type GaugePayloadJson = {
      */
     min?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * Upper bound of the range. Default 1.
+     *
      * @generated from field: optional double max = 3;
      */
     max?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * Caption below the gauge.
+     *
      * @generated from field: optional string label = 4;
      */
     label?: string;
@@ -796,14 +860,20 @@ export declare const GaugePayloadSchema: GenMessage<GaugePayload, {
     jsonType: GaugePayloadJson;
 }>;
 /**
+ * One colored zone along the gauge range.
+ *
  * @generated from message medallion.terminal.v1.GaugeBand
  */
 export type GaugeBand = Message<"medallion.terminal.v1.GaugeBand"> & {
     /**
+     * Band start (inclusive).
+     *
      * @generated from field: double from = 1;
      */
     from: number;
     /**
+     * Band end (inclusive).
+     *
      * @generated from field: double to = 2;
      */
     to: number;
@@ -815,19 +885,27 @@ export type GaugeBand = Message<"medallion.terminal.v1.GaugeBand"> & {
      */
     color: string;
     /**
+     * Optional band caption.
+     *
      * @generated from field: optional string label = 4;
      */
     label?: string | undefined;
 };
 /**
+ * One colored zone along the gauge range.
+ *
  * @generated from message medallion.terminal.v1.GaugeBand
  */
 export type GaugeBandJson = {
     /**
+     * Band start (inclusive).
+     *
      * @generated from field: double from = 1;
      */
     from?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * Band end (inclusive).
+     *
      * @generated from field: double to = 2;
      */
     to?: number | "NaN" | "Infinity" | "-Infinity";
@@ -839,6 +917,8 @@ export type GaugeBandJson = {
      */
     color?: string;
     /**
+     * Optional band caption.
+     *
      * @generated from field: optional string label = 4;
      */
     label?: string;
@@ -882,6 +962,8 @@ export type HeatmapPayload = Message<"medallion.terminal.v1.HeatmapPayload"> & {
      */
     columns: string[];
     /**
+     * The matrix cells. Sparse — missing cells render empty.
+     *
      * @generated from field: repeated medallion.terminal.v1.HeatmapCell cells = 3;
      */
     cells: HeatmapCell[];
@@ -892,6 +974,8 @@ export type HeatmapPayload = Message<"medallion.terminal.v1.HeatmapPayload"> & {
      */
     min?: number | undefined;
     /**
+     * Upper color scale bound. Auto-detected if unset.
+     *
      * @generated from field: optional double max = 5;
      */
     max?: number | undefined;
@@ -935,6 +1019,8 @@ export type HeatmapPayloadJson = {
      */
     columns?: string[];
     /**
+     * The matrix cells. Sparse — missing cells render empty.
+     *
      * @generated from field: repeated medallion.terminal.v1.HeatmapCell cells = 3;
      */
     cells?: HeatmapCellJson[];
@@ -945,6 +1031,8 @@ export type HeatmapPayloadJson = {
      */
     min?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * Upper color scale bound. Auto-detected if unset.
+     *
      * @generated from field: optional double max = 5;
      */
     max?: number | "NaN" | "Infinity" | "-Infinity";
@@ -964,18 +1052,26 @@ export declare const HeatmapPayloadSchema: GenMessage<HeatmapPayload, {
     jsonType: HeatmapPayloadJson;
 }>;
 /**
+ * One cell in the heatmap matrix.
+ *
  * @generated from message medallion.terminal.v1.HeatmapCell
  */
 export type HeatmapCell = Message<"medallion.terminal.v1.HeatmapCell"> & {
     /**
+     * Index into HeatmapPayload.rows.
+     *
      * @generated from field: int32 row = 1;
      */
     row: number;
     /**
+     * Index into HeatmapPayload.columns.
+     *
      * @generated from field: int32 col = 2;
      */
     col: number;
     /**
+     * The cell's numeric value; drives the color.
+     *
      * @generated from field: double value = 3;
      */
     value: number;
@@ -987,18 +1083,26 @@ export type HeatmapCell = Message<"medallion.terminal.v1.HeatmapCell"> & {
     label?: string | undefined;
 };
 /**
+ * One cell in the heatmap matrix.
+ *
  * @generated from message medallion.terminal.v1.HeatmapCell
  */
 export type HeatmapCellJson = {
     /**
+     * Index into HeatmapPayload.rows.
+     *
      * @generated from field: int32 row = 1;
      */
     row?: number;
     /**
+     * Index into HeatmapPayload.columns.
+     *
      * @generated from field: int32 col = 2;
      */
     col?: number;
     /**
+     * The cell's numeric value; drives the color.
+     *
      * @generated from field: double value = 3;
      */
     value?: number | "NaN" | "Infinity" | "-Infinity";
@@ -1038,6 +1142,8 @@ export declare const HeatmapCellSchema: GenMessage<HeatmapCell, {
  */
 export type EventPayload = Message<"medallion.terminal.v1.EventPayload"> & {
     /**
+     * The events to render, in display order.
+     *
      * @generated from field: repeated medallion.terminal.v1.Event events = 1;
      */
     events: Event[];
@@ -1064,6 +1170,8 @@ export type EventPayload = Message<"medallion.terminal.v1.EventPayload"> & {
  */
 export type EventPayloadJson = {
     /**
+     * The events to render, in display order.
+     *
      * @generated from field: repeated medallion.terminal.v1.Event events = 1;
      */
     events?: EventJson[];
@@ -1076,10 +1184,14 @@ export declare const EventPayloadSchema: GenMessage<EventPayload, {
     jsonType: EventPayloadJson;
 }>;
 /**
+ * One entry in an event timeline.
+ *
  * @generated from message medallion.terminal.v1.Event
  */
 export type Event = Message<"medallion.terminal.v1.Event"> & {
     /**
+     * ISO 8601 timestamp or Unix epoch (seconds or ms).
+     *
      * @generated from field: string timestamp = 1;
      */
     timestamp: string;
@@ -1090,6 +1202,8 @@ export type Event = Message<"medallion.terminal.v1.Event"> & {
      */
     label: string;
     /**
+     * Coarse status; drives the color of the entry.
+     *
      * @generated from field: medallion.terminal.v1.EventStatus status = 3;
      */
     status: EventStatus;
@@ -1106,15 +1220,21 @@ export type Event = Message<"medallion.terminal.v1.Event"> & {
      */
     source?: string | undefined;
     /**
+     * Free-form tags for filtering and grouping.
+     *
      * @generated from field: repeated string tags = 6;
      */
     tags: string[];
 };
 /**
+ * One entry in an event timeline.
+ *
  * @generated from message medallion.terminal.v1.Event
  */
 export type EventJson = {
     /**
+     * ISO 8601 timestamp or Unix epoch (seconds or ms).
+     *
      * @generated from field: string timestamp = 1;
      */
     timestamp?: string;
@@ -1125,6 +1245,8 @@ export type EventJson = {
      */
     label?: string;
     /**
+     * Coarse status; drives the color of the entry.
+     *
      * @generated from field: medallion.terminal.v1.EventStatus status = 3;
      */
     status?: EventStatusJson;
@@ -1141,6 +1263,8 @@ export type EventJson = {
      */
     source?: string;
     /**
+     * Free-form tags for filtering and grouping.
+     *
      * @generated from field: repeated string tags = 6;
      */
     tags?: string[];
@@ -1171,6 +1295,8 @@ export declare const EventSchema: GenMessage<Event, {
  */
 export type DistributionPayload = Message<"medallion.terminal.v1.DistributionPayload"> & {
     /**
+     * The labeled slices. Values may be raw counts or fractions.
+     *
      * @generated from field: repeated medallion.terminal.v1.DistributionSlice slices = 1;
      */
     slices: DistributionSlice[];
@@ -1201,6 +1327,8 @@ export type DistributionPayload = Message<"medallion.terminal.v1.DistributionPay
  */
 export type DistributionPayloadJson = {
     /**
+     * The labeled slices. Values may be raw counts or fractions.
+     *
      * @generated from field: repeated medallion.terminal.v1.DistributionSlice slices = 1;
      */
     slices?: DistributionSliceJson[];
@@ -1220,14 +1348,20 @@ export declare const DistributionPayloadSchema: GenMessage<DistributionPayload, 
     jsonType: DistributionPayloadJson;
 }>;
 /**
+ * One labeled slice of a distribution.
+ *
  * @generated from message medallion.terminal.v1.DistributionSlice
  */
 export type DistributionSlice = Message<"medallion.terminal.v1.DistributionSlice"> & {
     /**
+     * Slice name shown in the legend.
+     *
      * @generated from field: string label = 1;
      */
     label: string;
     /**
+     * Raw count or fraction; normalized by the widget.
+     *
      * @generated from field: double value = 2;
      */
     value: number;
@@ -1240,14 +1374,20 @@ export type DistributionSlice = Message<"medallion.terminal.v1.DistributionSlice
     color?: string | undefined;
 };
 /**
+ * One labeled slice of a distribution.
+ *
  * @generated from message medallion.terminal.v1.DistributionSlice
  */
 export type DistributionSliceJson = {
     /**
+     * Slice name shown in the legend.
+     *
      * @generated from field: string label = 1;
      */
     label?: string;
     /**
+     * Raw count or fraction; normalized by the widget.
+     *
      * @generated from field: double value = 2;
      */
     value?: number | "NaN" | "Infinity" | "-Infinity";
@@ -1291,10 +1431,14 @@ export declare const DistributionSliceSchema: GenMessage<DistributionSlice, {
  */
 export type OrderBookPayload = Message<"medallion.terminal.v1.OrderBookPayload"> & {
     /**
+     * Buy side, sorted high to low.
+     *
      * @generated from field: repeated medallion.terminal.v1.OrderLevel bids = 1;
      */
     bids: OrderLevel[];
     /**
+     * Sell side, sorted low to high.
+     *
      * @generated from field: repeated medallion.terminal.v1.OrderLevel asks = 2;
      */
     asks: OrderLevel[];
@@ -1342,10 +1486,14 @@ export type OrderBookPayload = Message<"medallion.terminal.v1.OrderBookPayload">
  */
 export type OrderBookPayloadJson = {
     /**
+     * Buy side, sorted high to low.
+     *
      * @generated from field: repeated medallion.terminal.v1.OrderLevel bids = 1;
      */
     bids?: OrderLevelJson[];
     /**
+     * Sell side, sorted low to high.
+     *
      * @generated from field: repeated medallion.terminal.v1.OrderLevel asks = 2;
      */
     asks?: OrderLevelJson[];
@@ -1376,14 +1524,20 @@ export declare const OrderBookPayloadSchema: GenMessage<OrderBookPayload, {
     jsonType: OrderBookPayloadJson;
 }>;
 /**
+ * One price level on either side of the book.
+ *
  * @generated from message medallion.terminal.v1.OrderLevel
  */
 export type OrderLevel = Message<"medallion.terminal.v1.OrderLevel"> & {
     /**
+     * Price of this level.
+     *
      * @generated from field: double price = 1;
      */
     price: number;
     /**
+     * Total quantity resting at this price.
+     *
      * @generated from field: double size = 2;
      */
     size: number;
@@ -1395,14 +1549,20 @@ export type OrderLevel = Message<"medallion.terminal.v1.OrderLevel"> & {
     orders?: number | undefined;
 };
 /**
+ * One price level on either side of the book.
+ *
  * @generated from message medallion.terminal.v1.OrderLevel
  */
 export type OrderLevelJson = {
     /**
+     * Price of this level.
+     *
      * @generated from field: double price = 1;
      */
     price?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * Total quantity resting at this price.
+     *
      * @generated from field: double size = 2;
      */
     size?: number | "NaN" | "Infinity" | "-Infinity";
@@ -1498,6 +1658,8 @@ export type PairedGridPayload = Message<"medallion.terminal.v1.PairedGridPayload
      */
     venue?: string | undefined;
     /**
+     * The lattice rows, one per key.
+     *
      * @generated from field: repeated medallion.terminal.v1.PairedRow rows = 5;
      */
     rows: PairedRow[];
@@ -1510,6 +1672,8 @@ export type PairedGridPayload = Message<"medallion.terminal.v1.PairedGridPayload
      */
     leftLabel?: string | undefined;
     /**
+     * Header label for the right column. Default: "Right".
+     *
      * @generated from field: optional string right_label = 7;
      */
     rightLabel?: string | undefined;
@@ -1607,6 +1771,8 @@ export type PairedGridPayloadJson = {
      */
     venue?: string;
     /**
+     * The lattice rows, one per key.
+     *
      * @generated from field: repeated medallion.terminal.v1.PairedRow rows = 5;
      */
     rows?: PairedRowJson[];
@@ -1619,6 +1785,8 @@ export type PairedGridPayloadJson = {
      */
     leftLabel?: string;
     /**
+     * Header label for the right column. Default: "Right".
+     *
      * @generated from field: optional string right_label = 7;
      */
     rightLabel?: string;
@@ -1646,6 +1814,8 @@ export declare const PairedGridPayloadSchema: GenMessage<PairedGridPayload, {
     jsonType: PairedGridPayloadJson;
 }>;
 /**
+ * One row of the paired grid, keyed by a numeric lattice value.
+ *
  * @generated from message medallion.terminal.v1.PairedRow
  */
 export type PairedRow = Message<"medallion.terminal.v1.PairedRow"> & {
@@ -1657,15 +1827,21 @@ export type PairedRow = Message<"medallion.terminal.v1.PairedRow"> & {
      */
     key: number;
     /**
+     * Left-side values. Absent = no data on this side at this key.
+     *
      * @generated from field: optional medallion.terminal.v1.PairedSide left = 2;
      */
     left?: PairedSide | undefined;
     /**
+     * Right-side values. Absent = no data on this side at this key.
+     *
      * @generated from field: optional medallion.terminal.v1.PairedSide right = 3;
      */
     right?: PairedSide | undefined;
 };
 /**
+ * One row of the paired grid, keyed by a numeric lattice value.
+ *
  * @generated from message medallion.terminal.v1.PairedRow
  */
 export type PairedRowJson = {
@@ -1677,10 +1853,14 @@ export type PairedRowJson = {
      */
     key?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * Left-side values. Absent = no data on this side at this key.
+     *
      * @generated from field: optional medallion.terminal.v1.PairedSide left = 2;
      */
     left?: PairedSideJson;
     /**
+     * Right-side values. Absent = no data on this side at this key.
+     *
      * @generated from field: optional medallion.terminal.v1.PairedSide right = 3;
      */
     right?: PairedSideJson;
@@ -1701,6 +1881,8 @@ export declare const PairedRowSchema: GenMessage<PairedRow, {
  */
 export type PairedSide = Message<"medallion.terminal.v1.PairedSide"> & {
     /**
+     * Measure values keyed by PairedMeasure.key.
+     *
      * @generated from field: map<string, double> values = 1;
      */
     values: {
@@ -1716,6 +1898,8 @@ export type PairedSide = Message<"medallion.terminal.v1.PairedSide"> & {
  */
 export type PairedSideJson = {
     /**
+     * Measure values keyed by PairedMeasure.key.
+     *
      * @generated from field: map<string, double> values = 1;
      */
     values?: {
@@ -1808,6 +1992,8 @@ export declare const PairedMeasureSchema: GenMessage<PairedMeasure, {
  */
 export type GeoPayload = Message<"medallion.terminal.v1.GeoPayload"> & {
     /**
+     * The features to render on the map.
+     *
      * @generated from field: repeated medallion.terminal.v1.GeoFeature features = 1;
      */
     features: GeoFeature[];
@@ -1830,6 +2016,8 @@ export type GeoPayload = Message<"medallion.terminal.v1.GeoPayload"> & {
  */
 export type GeoPayloadJson = {
     /**
+     * The features to render on the map.
+     *
      * @generated from field: repeated medallion.terminal.v1.GeoFeature features = 1;
      */
     features?: GeoFeatureJson[];
@@ -1842,18 +2030,26 @@ export declare const GeoPayloadSchema: GenMessage<GeoPayload, {
     jsonType: GeoPayloadJson;
 }>;
 /**
+ * One point/line/polygon feature on the map.
+ *
  * @generated from message medallion.terminal.v1.GeoFeature
  */
 export type GeoFeature = Message<"medallion.terminal.v1.GeoFeature"> & {
     /**
+     * Stable feature identifier.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * Display name shown on hover/selection.
+     *
      * @generated from field: optional string label = 2;
      */
     label?: string | undefined;
     /**
+     * GeoJSON Geometry object (Point, LineString, Polygon, ...).
+     *
      * @generated from field: google.protobuf.Struct geometry = 3;
      */
     geometry?: JsonObject | undefined;
@@ -1870,6 +2066,8 @@ export type GeoFeature = Message<"medallion.terminal.v1.GeoFeature"> & {
      */
     status?: string | undefined;
     /**
+     * Additional structured metadata shown in the detail panel.
+     *
      * @generated from field: optional google.protobuf.Struct metadata = 6;
      */
     metadata?: JsonObject | undefined;
@@ -1883,18 +2081,26 @@ export type GeoFeature = Message<"medallion.terminal.v1.GeoFeature"> & {
     };
 };
 /**
+ * One point/line/polygon feature on the map.
+ *
  * @generated from message medallion.terminal.v1.GeoFeature
  */
 export type GeoFeatureJson = {
     /**
+     * Stable feature identifier.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * Display name shown on hover/selection.
+     *
      * @generated from field: optional string label = 2;
      */
     label?: string;
     /**
+     * GeoJSON Geometry object (Point, LineString, Polygon, ...).
+     *
      * @generated from field: google.protobuf.Struct geometry = 3;
      */
     geometry?: StructJson;
@@ -1911,6 +2117,8 @@ export type GeoFeatureJson = {
      */
     status?: string;
     /**
+     * Additional structured metadata shown in the detail panel.
+     *
      * @generated from field: optional google.protobuf.Struct metadata = 6;
      */
     metadata?: StructJson;
@@ -1964,10 +2172,14 @@ export declare const GeoFeatureSchema: GenMessage<GeoFeature, {
  */
 export type MediaPayload = Message<"medallion.terminal.v1.MediaPayload"> & {
     /**
+     * The media items in display order.
+     *
      * @generated from field: repeated medallion.terminal.v1.MediaItem items = 1;
      */
     items: MediaItem[];
     /**
+     * Collection catalog referenced by MediaItem.collection_ids.
+     *
      * @generated from field: repeated medallion.terminal.v1.MediaCollection collections = 2;
      */
     collections: MediaCollection[];
@@ -2018,10 +2230,14 @@ export type MediaPayload = Message<"medallion.terminal.v1.MediaPayload"> & {
  */
 export type MediaPayloadJson = {
     /**
+     * The media items in display order.
+     *
      * @generated from field: repeated medallion.terminal.v1.MediaItem items = 1;
      */
     items?: MediaItemJson[];
     /**
+     * Collection catalog referenced by MediaItem.collection_ids.
+     *
      * @generated from field: repeated medallion.terminal.v1.MediaCollection collections = 2;
      */
     collections?: MediaCollectionJson[];
@@ -2046,18 +2262,26 @@ export declare const MediaPayloadSchema: GenMessage<MediaPayload, {
     jsonType: MediaPayloadJson;
 }>;
 /**
+ * One image or video in the library.
+ *
  * @generated from message medallion.terminal.v1.MediaItem
  */
 export type MediaItem = Message<"medallion.terminal.v1.MediaItem"> & {
     /**
+     * Stable item identifier.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * Display title.
+     *
      * @generated from field: string title = 2;
      */
     title: string;
     /**
+     * Image or video.
+     *
      * @generated from field: medallion.terminal.v1.MediaKind kind = 3;
      */
     kind: MediaKind;
@@ -2074,6 +2298,8 @@ export type MediaItem = Message<"medallion.terminal.v1.MediaItem"> & {
      */
     thumbnailUrl?: string | undefined;
     /**
+     * Optional longer description.
+     *
      * @generated from field: optional string description = 6;
      */
     description?: string | undefined;
@@ -2084,38 +2310,56 @@ export type MediaItem = Message<"medallion.terminal.v1.MediaItem"> & {
      */
     capturedAt?: string | undefined;
     /**
+     * ISO 8601 ingest timestamp.
+     *
      * @generated from field: optional string created_at = 8;
      */
     createdAt?: string | undefined;
     /**
+     * MIME type (e.g. "image/jpeg", "video/mp4").
+     *
      * @generated from field: optional string content_type = 9;
      */
     contentType?: string | undefined;
     /**
+     * Pixel width of the original, when known.
+     *
      * @generated from field: optional uint32 width = 10;
      */
     width?: number | undefined;
     /**
+     * Pixel height of the original, when known.
+     *
      * @generated from field: optional uint32 height = 11;
      */
     height?: number | undefined;
     /**
+     * Video duration in seconds.
+     *
      * @generated from field: optional double duration_seconds = 12;
      */
     durationSeconds?: number | undefined;
     /**
+     * True if the viewer favorited this item.
+     *
      * @generated from field: bool favorite = 13;
      */
     favorite: boolean;
     /**
+     * Free-form tags for filtering and search.
+     *
      * @generated from field: repeated string tags = 14;
      */
     tags: string[];
     /**
+     * Collections this item belongs to (MediaCollection.id).
+     *
      * @generated from field: repeated string collection_ids = 15;
      */
     collectionIds: string[];
     /**
+     * Additional structured metadata (camera, location, etc.).
+     *
      * @generated from field: optional google.protobuf.Struct metadata = 16;
      */
     metadata?: JsonObject | undefined;
@@ -2129,18 +2373,26 @@ export type MediaItem = Message<"medallion.terminal.v1.MediaItem"> & {
     };
 };
 /**
+ * One image or video in the library.
+ *
  * @generated from message medallion.terminal.v1.MediaItem
  */
 export type MediaItemJson = {
     /**
+     * Stable item identifier.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * Display title.
+     *
      * @generated from field: string title = 2;
      */
     title?: string;
     /**
+     * Image or video.
+     *
      * @generated from field: medallion.terminal.v1.MediaKind kind = 3;
      */
     kind?: MediaKindJson;
@@ -2157,6 +2409,8 @@ export type MediaItemJson = {
      */
     thumbnailUrl?: string;
     /**
+     * Optional longer description.
+     *
      * @generated from field: optional string description = 6;
      */
     description?: string;
@@ -2167,38 +2421,56 @@ export type MediaItemJson = {
      */
     capturedAt?: string;
     /**
+     * ISO 8601 ingest timestamp.
+     *
      * @generated from field: optional string created_at = 8;
      */
     createdAt?: string;
     /**
+     * MIME type (e.g. "image/jpeg", "video/mp4").
+     *
      * @generated from field: optional string content_type = 9;
      */
     contentType?: string;
     /**
+     * Pixel width of the original, when known.
+     *
      * @generated from field: optional uint32 width = 10;
      */
     width?: number;
     /**
+     * Pixel height of the original, when known.
+     *
      * @generated from field: optional uint32 height = 11;
      */
     height?: number;
     /**
+     * Video duration in seconds.
+     *
      * @generated from field: optional double duration_seconds = 12;
      */
     durationSeconds?: number | "NaN" | "Infinity" | "-Infinity";
     /**
+     * True if the viewer favorited this item.
+     *
      * @generated from field: bool favorite = 13;
      */
     favorite?: boolean;
     /**
+     * Free-form tags for filtering and search.
+     *
      * @generated from field: repeated string tags = 14;
      */
     tags?: string[];
     /**
+     * Collections this item belongs to (MediaCollection.id).
+     *
      * @generated from field: repeated string collection_ids = 15;
      */
     collectionIds?: string[];
     /**
+     * Additional structured metadata (camera, location, etc.).
+     *
      * @generated from field: optional google.protobuf.Struct metadata = 16;
      */
     metadata?: StructJson;
@@ -2219,26 +2491,38 @@ export declare const MediaItemSchema: GenMessage<MediaItem, {
     jsonType: MediaItemJson;
 }>;
 /**
+ * A named collection/album of media items.
+ *
  * @generated from message medallion.terminal.v1.MediaCollection
  */
 export type MediaCollection = Message<"medallion.terminal.v1.MediaCollection"> & {
     /**
+     * Stable collection identifier.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * Display name.
+     *
      * @generated from field: string name = 2;
      */
     name: string;
     /**
+     * Optional cover image URL.
+     *
      * @generated from field: optional string cover_url = 3;
      */
     coverUrl?: string | undefined;
     /**
+     * Number of items, when known.
+     *
      * @generated from field: optional int64 item_count = 4;
      */
     itemCount?: bigint | undefined;
     /**
+     * Applied when the collection is selected.
+     *
      * @generated from field: map<string, string> context = 5;
      */
     context: {
@@ -2246,26 +2530,38 @@ export type MediaCollection = Message<"medallion.terminal.v1.MediaCollection"> &
     };
 };
 /**
+ * A named collection/album of media items.
+ *
  * @generated from message medallion.terminal.v1.MediaCollection
  */
 export type MediaCollectionJson = {
     /**
+     * Stable collection identifier.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * Display name.
+     *
      * @generated from field: string name = 2;
      */
     name?: string;
     /**
+     * Optional cover image URL.
+     *
      * @generated from field: optional string cover_url = 3;
      */
     coverUrl?: string;
     /**
+     * Number of items, when known.
+     *
      * @generated from field: optional int64 item_count = 4;
      */
     itemCount?: string;
     /**
+     * Applied when the collection is selected.
+     *
      * @generated from field: map<string, string> context = 5;
      */
     context?: {
@@ -2376,6 +2672,8 @@ export declare const EmbedPayloadSchema: GenMessage<EmbedPayload, {
  */
 export type TextPayload = Message<"medallion.terminal.v1.TextPayload"> & {
     /**
+     * The text items in display order.
+     *
      * @generated from field: repeated medallion.terminal.v1.TextItem items = 1;
      */
     items: TextItem[];
@@ -2396,6 +2694,8 @@ export type TextPayload = Message<"medallion.terminal.v1.TextPayload"> & {
  */
 export type TextPayloadJson = {
     /**
+     * The text items in display order.
+     *
      * @generated from field: repeated medallion.terminal.v1.TextItem items = 1;
      */
     items?: TextItemJson[];
@@ -2408,14 +2708,20 @@ export declare const TextPayloadSchema: GenMessage<TextPayload, {
     jsonType: TextPayloadJson;
 }>;
 /**
+ * One article, headline, summary, or alert.
+ *
  * @generated from message medallion.terminal.v1.TextItem
  */
 export type TextItem = Message<"medallion.terminal.v1.TextItem"> & {
     /**
+     * Headline.
+     *
      * @generated from field: optional string title = 1;
      */
     title?: string | undefined;
     /**
+     * Body text.
+     *
      * @generated from field: optional string body = 2;
      */
     body?: string | undefined;
@@ -2432,10 +2738,14 @@ export type TextItem = Message<"medallion.terminal.v1.TextItem"> & {
      */
     date?: string | undefined;
     /**
+     * Author name or handle.
+     *
      * @generated from field: optional string author = 5;
      */
     author?: string | undefined;
     /**
+     * Free-form tags shown as chips.
+     *
      * @generated from field: repeated string tags = 6;
      */
     tags: string[];
@@ -2453,14 +2763,20 @@ export type TextItem = Message<"medallion.terminal.v1.TextItem"> & {
     sentiment?: number | undefined;
 };
 /**
+ * One article, headline, summary, or alert.
+ *
  * @generated from message medallion.terminal.v1.TextItem
  */
 export type TextItemJson = {
     /**
+     * Headline.
+     *
      * @generated from field: optional string title = 1;
      */
     title?: string;
     /**
+     * Body text.
+     *
      * @generated from field: optional string body = 2;
      */
     body?: string;
@@ -2477,10 +2793,14 @@ export type TextItemJson = {
      */
     date?: string;
     /**
+     * Author name or handle.
+     *
      * @generated from field: optional string author = 5;
      */
     author?: string;
     /**
+     * Free-form tags shown as chips.
+     *
      * @generated from field: repeated string tags = 6;
      */
     tags?: string[];
@@ -2539,14 +2859,20 @@ export declare const TextItemSchema: GenMessage<TextItem, {
  */
 export type ConversationPayload = Message<"medallion.terminal.v1.ConversationPayload"> & {
     /**
+     * Stable conversation identifier.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * Conversation title (channel name, counterparty, subject).
+     *
      * @generated from field: optional string title = 2;
      */
     title?: string | undefined;
     /**
+     * Secondary line under the title.
+     *
      * @generated from field: optional string subtitle = 3;
      */
     subtitle?: string | undefined;
@@ -2558,6 +2884,8 @@ export type ConversationPayload = Message<"medallion.terminal.v1.ConversationPay
      */
     viewerId?: string | undefined;
     /**
+     * Participant catalog referenced by ConversationMessage.sender_id.
+     *
      * @generated from field: repeated medallion.terminal.v1.ConversationParticipant participants = 5;
      */
     participants: ConversationParticipant[];
@@ -2569,10 +2897,14 @@ export type ConversationPayload = Message<"medallion.terminal.v1.ConversationPay
      */
     messages: ConversationMessage[];
     /**
+     * Unread messages for the viewer, when known.
+     *
      * @generated from field: optional uint32 unread_count = 7;
      */
     unreadCount?: number | undefined;
     /**
+     * Opaque cursor for older history.
+     *
      * @generated from field: optional string next_page_token = 8;
      */
     nextPageToken?: string | undefined;
@@ -2620,14 +2952,20 @@ export type ConversationPayload = Message<"medallion.terminal.v1.ConversationPay
  */
 export type ConversationPayloadJson = {
     /**
+     * Stable conversation identifier.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * Conversation title (channel name, counterparty, subject).
+     *
      * @generated from field: optional string title = 2;
      */
     title?: string;
     /**
+     * Secondary line under the title.
+     *
      * @generated from field: optional string subtitle = 3;
      */
     subtitle?: string;
@@ -2639,6 +2977,8 @@ export type ConversationPayloadJson = {
      */
     viewerId?: string;
     /**
+     * Participant catalog referenced by ConversationMessage.sender_id.
+     *
      * @generated from field: repeated medallion.terminal.v1.ConversationParticipant participants = 5;
      */
     participants?: ConversationParticipantJson[];
@@ -2650,10 +2990,14 @@ export type ConversationPayloadJson = {
      */
     messages?: ConversationMessageJson[];
     /**
+     * Unread messages for the viewer, when known.
+     *
      * @generated from field: optional uint32 unread_count = 7;
      */
     unreadCount?: number;
     /**
+     * Opaque cursor for older history.
+     *
      * @generated from field: optional string next_page_token = 8;
      */
     nextPageToken?: string;
@@ -2674,18 +3018,26 @@ export declare const ConversationPayloadSchema: GenMessage<ConversationPayload, 
     jsonType: ConversationPayloadJson;
 }>;
 /**
+ * One member of a conversation.
+ *
  * @generated from message medallion.terminal.v1.ConversationParticipant
  */
 export type ConversationParticipant = Message<"medallion.terminal.v1.ConversationParticipant"> & {
     /**
+     * Stable participant identifier.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * Display name.
+     *
      * @generated from field: string name = 2;
      */
     name: string;
     /**
+     * Optional avatar image URL.
+     *
      * @generated from field: optional string avatar_url = 3;
      */
     avatarUrl?: string | undefined;
@@ -2703,6 +3055,8 @@ export type ConversationParticipant = Message<"medallion.terminal.v1.Conversatio
      */
     status?: string | undefined;
     /**
+     * Applied when the participant is selected.
+     *
      * @generated from field: map<string, string> context = 6;
      */
     context: {
@@ -2710,18 +3064,26 @@ export type ConversationParticipant = Message<"medallion.terminal.v1.Conversatio
     };
 };
 /**
+ * One member of a conversation.
+ *
  * @generated from message medallion.terminal.v1.ConversationParticipant
  */
 export type ConversationParticipantJson = {
     /**
+     * Stable participant identifier.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * Display name.
+     *
      * @generated from field: string name = 2;
      */
     name?: string;
     /**
+     * Optional avatar image URL.
+     *
      * @generated from field: optional string avatar_url = 3;
      */
     avatarUrl?: string;
@@ -2739,6 +3101,8 @@ export type ConversationParticipantJson = {
      */
     status?: string;
     /**
+     * Applied when the participant is selected.
+     *
      * @generated from field: map<string, string> context = 6;
      */
     context?: {
@@ -2753,18 +3117,26 @@ export declare const ConversationParticipantSchema: GenMessage<ConversationParti
     jsonType: ConversationParticipantJson;
 }>;
 /**
+ * One message in a conversation transcript.
+ *
  * @generated from message medallion.terminal.v1.ConversationMessage
  */
 export type ConversationMessage = Message<"medallion.terminal.v1.ConversationMessage"> & {
     /**
+     * Stable message identifier.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * ISO 8601 send time.
+     *
      * @generated from field: optional string timestamp = 2;
      */
     timestamp?: string | undefined;
     /**
+     * Sender (ConversationParticipant.id).
+     *
      * @generated from field: optional string sender_id = 3;
      */
     senderId?: string | undefined;
@@ -2776,6 +3148,8 @@ export type ConversationMessage = Message<"medallion.terminal.v1.ConversationMes
      */
     senderName?: string | undefined;
     /**
+     * Fallback avatar URL when the sender is not in participants.
+     *
      * @generated from field: optional string sender_avatar_url = 5;
      */
     senderAvatarUrl?: string | undefined;
@@ -2787,14 +3161,20 @@ export type ConversationMessage = Message<"medallion.terminal.v1.ConversationMes
      */
     kind?: string | undefined;
     /**
+     * Message text.
+     *
      * @generated from field: optional string body = 7;
      */
     body?: string | undefined;
     /**
+     * Message this one replies to (ConversationMessage.id).
+     *
      * @generated from field: optional string reply_to_id = 8;
      */
     replyToId?: string | undefined;
     /**
+     * True if the message was edited after sending.
+     *
      * @generated from field: bool edited = 9;
      */
     edited: boolean;
@@ -2806,18 +3186,26 @@ export type ConversationMessage = Message<"medallion.terminal.v1.ConversationMes
      */
     status?: string | undefined;
     /**
+     * Files/media attached to the message.
+     *
      * @generated from field: repeated medallion.terminal.v1.ConversationAttachment attachments = 11;
      */
     attachments: ConversationAttachment[];
     /**
+     * Aggregated reactions.
+     *
      * @generated from field: repeated medallion.terminal.v1.ConversationReaction reactions = 12;
      */
     reactions: ConversationReaction[];
     /**
+     * Number of thread replies, when threading is supported.
+     *
      * @generated from field: optional uint32 thread_reply_count = 13;
      */
     threadReplyCount?: number | undefined;
     /**
+     * Additional structured metadata.
+     *
      * @generated from field: optional google.protobuf.Struct metadata = 14;
      */
     metadata?: JsonObject | undefined;
@@ -2831,18 +3219,26 @@ export type ConversationMessage = Message<"medallion.terminal.v1.ConversationMes
     };
 };
 /**
+ * One message in a conversation transcript.
+ *
  * @generated from message medallion.terminal.v1.ConversationMessage
  */
 export type ConversationMessageJson = {
     /**
+     * Stable message identifier.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * ISO 8601 send time.
+     *
      * @generated from field: optional string timestamp = 2;
      */
     timestamp?: string;
     /**
+     * Sender (ConversationParticipant.id).
+     *
      * @generated from field: optional string sender_id = 3;
      */
     senderId?: string;
@@ -2854,6 +3250,8 @@ export type ConversationMessageJson = {
      */
     senderName?: string;
     /**
+     * Fallback avatar URL when the sender is not in participants.
+     *
      * @generated from field: optional string sender_avatar_url = 5;
      */
     senderAvatarUrl?: string;
@@ -2865,14 +3263,20 @@ export type ConversationMessageJson = {
      */
     kind?: string;
     /**
+     * Message text.
+     *
      * @generated from field: optional string body = 7;
      */
     body?: string;
     /**
+     * Message this one replies to (ConversationMessage.id).
+     *
      * @generated from field: optional string reply_to_id = 8;
      */
     replyToId?: string;
     /**
+     * True if the message was edited after sending.
+     *
      * @generated from field: bool edited = 9;
      */
     edited?: boolean;
@@ -2884,18 +3288,26 @@ export type ConversationMessageJson = {
      */
     status?: string;
     /**
+     * Files/media attached to the message.
+     *
      * @generated from field: repeated medallion.terminal.v1.ConversationAttachment attachments = 11;
      */
     attachments?: ConversationAttachmentJson[];
     /**
+     * Aggregated reactions.
+     *
      * @generated from field: repeated medallion.terminal.v1.ConversationReaction reactions = 12;
      */
     reactions?: ConversationReactionJson[];
     /**
+     * Number of thread replies, when threading is supported.
+     *
      * @generated from field: optional uint32 thread_reply_count = 13;
      */
     threadReplyCount?: number;
     /**
+     * Additional structured metadata.
+     *
      * @generated from field: optional google.protobuf.Struct metadata = 14;
      */
     metadata?: StructJson;
@@ -2916,14 +3328,20 @@ export declare const ConversationMessageSchema: GenMessage<ConversationMessage, 
     jsonType: ConversationMessageJson;
 }>;
 /**
+ * One file/media attachment on a message.
+ *
  * @generated from message medallion.terminal.v1.ConversationAttachment
  */
 export type ConversationAttachment = Message<"medallion.terminal.v1.ConversationAttachment"> & {
     /**
+     * Stable attachment identifier.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * Display file name.
+     *
      * @generated from field: string name = 2;
      */
     name: string;
@@ -2935,31 +3353,45 @@ export type ConversationAttachment = Message<"medallion.terminal.v1.Conversation
      */
     kind?: string | undefined;
     /**
+     * Authorized download/view URL.
+     *
      * @generated from field: optional string url = 4;
      */
     url?: string | undefined;
     /**
+     * Small preview URL.
+     *
      * @generated from field: optional string thumbnail_url = 5;
      */
     thumbnailUrl?: string | undefined;
     /**
+     * MIME type.
+     *
      * @generated from field: optional string content_type = 6;
      */
     contentType?: string | undefined;
     /**
+     * File size in bytes, when known.
+     *
      * @generated from field: optional uint64 size_bytes = 7;
      */
     sizeBytes?: bigint | undefined;
 };
 /**
+ * One file/media attachment on a message.
+ *
  * @generated from message medallion.terminal.v1.ConversationAttachment
  */
 export type ConversationAttachmentJson = {
     /**
+     * Stable attachment identifier.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * Display file name.
+     *
      * @generated from field: string name = 2;
      */
     name?: string;
@@ -2971,18 +3403,26 @@ export type ConversationAttachmentJson = {
      */
     kind?: string;
     /**
+     * Authorized download/view URL.
+     *
      * @generated from field: optional string url = 4;
      */
     url?: string;
     /**
+     * Small preview URL.
+     *
      * @generated from field: optional string thumbnail_url = 5;
      */
     thumbnailUrl?: string;
     /**
+     * MIME type.
+     *
      * @generated from field: optional string content_type = 6;
      */
     contentType?: string;
     /**
+     * File size in bytes, when known.
+     *
      * @generated from field: optional uint64 size_bytes = 7;
      */
     sizeBytes?: string;
@@ -2995,6 +3435,8 @@ export declare const ConversationAttachmentSchema: GenMessage<ConversationAttach
     jsonType: ConversationAttachmentJson;
 }>;
 /**
+ * Aggregated reaction counts for one reaction key.
+ *
  * @generated from message medallion.terminal.v1.ConversationReaction
  */
 export type ConversationReaction = Message<"medallion.terminal.v1.ConversationReaction"> & {
@@ -3005,19 +3447,27 @@ export type ConversationReaction = Message<"medallion.terminal.v1.ConversationRe
      */
     key: string;
     /**
+     * Display glyph or short label.
+     *
      * @generated from field: string label = 2;
      */
     label: string;
     /**
+     * How many participants reacted.
+     *
      * @generated from field: uint32 count = 3;
      */
     count: number;
     /**
+     * True if the viewer is among the reactors.
+     *
      * @generated from field: bool viewer_reacted = 4;
      */
     viewerReacted: boolean;
 };
 /**
+ * Aggregated reaction counts for one reaction key.
+ *
  * @generated from message medallion.terminal.v1.ConversationReaction
  */
 export type ConversationReactionJson = {
@@ -3028,14 +3478,20 @@ export type ConversationReactionJson = {
      */
     key?: string;
     /**
+     * Display glyph or short label.
+     *
      * @generated from field: string label = 2;
      */
     label?: string;
     /**
+     * How many participants reacted.
+     *
      * @generated from field: uint32 count = 3;
      */
     count?: number;
     /**
+     * True if the viewer is among the reactors.
+     *
      * @generated from field: bool viewer_reacted = 4;
      */
     viewerReacted?: boolean;
@@ -3072,6 +3528,8 @@ export declare const ConversationReactionSchema: GenMessage<ConversationReaction
  */
 export type AssetCatalogPayload = Message<"medallion.terminal.v1.AssetCatalogPayload"> & {
     /**
+     * The catalog entries in display order.
+     *
      * @generated from field: repeated medallion.terminal.v1.AssetCatalogItem items = 1;
      */
     items: AssetCatalogItem[];
@@ -3114,6 +3572,8 @@ export type AssetCatalogPayload = Message<"medallion.terminal.v1.AssetCatalogPay
  */
 export type AssetCatalogPayloadJson = {
     /**
+     * The catalog entries in display order.
+     *
      * @generated from field: repeated medallion.terminal.v1.AssetCatalogItem items = 1;
      */
     items?: AssetCatalogItemJson[];
@@ -3139,6 +3599,8 @@ export declare const AssetCatalogPayloadSchema: GenMessage<AssetCatalogPayload, 
     jsonType: AssetCatalogPayloadJson;
 }>;
 /**
+ * One discoverable platform asset.
+ *
  * @generated from message medallion.terminal.v1.AssetCatalogItem
  */
 export type AssetCatalogItem = Message<"medallion.terminal.v1.AssetCatalogItem"> & {
@@ -3149,6 +3611,8 @@ export type AssetCatalogItem = Message<"medallion.terminal.v1.AssetCatalogItem">
      */
     id: string;
     /**
+     * Display name.
+     *
      * @generated from field: string name = 2;
      */
     name: string;
@@ -3160,10 +3624,14 @@ export type AssetCatalogItem = Message<"medallion.terminal.v1.AssetCatalogItem">
      */
     kind: string;
     /**
+     * What the asset is, in plain language.
+     *
      * @generated from field: optional string description = 4;
      */
     description?: string | undefined;
     /**
+     * Owning team or user.
+     *
      * @generated from field: optional string owner = 5;
      */
     owner?: string | undefined;
@@ -3181,6 +3649,8 @@ export type AssetCatalogItem = Message<"medallion.terminal.v1.AssetCatalogItem">
      */
     updatedAt?: string | undefined;
     /**
+     * Free-form tags for filtering and search.
+     *
      * @generated from field: repeated string tags = 8;
      */
     tags: string[];
@@ -3210,6 +3680,8 @@ export type AssetCatalogItem = Message<"medallion.terminal.v1.AssetCatalogItem">
     };
 };
 /**
+ * One discoverable platform asset.
+ *
  * @generated from message medallion.terminal.v1.AssetCatalogItem
  */
 export type AssetCatalogItemJson = {
@@ -3220,6 +3692,8 @@ export type AssetCatalogItemJson = {
      */
     id?: string;
     /**
+     * Display name.
+     *
      * @generated from field: string name = 2;
      */
     name?: string;
@@ -3231,10 +3705,14 @@ export type AssetCatalogItemJson = {
      */
     kind?: string;
     /**
+     * What the asset is, in plain language.
+     *
      * @generated from field: optional string description = 4;
      */
     description?: string;
     /**
+     * Owning team or user.
+     *
      * @generated from field: optional string owner = 5;
      */
     owner?: string;
@@ -3252,6 +3730,8 @@ export type AssetCatalogItemJson = {
      */
     updatedAt?: string;
     /**
+     * Free-form tags for filtering and search.
+     *
      * @generated from field: repeated string tags = 8;
      */
     tags?: string[];
@@ -3336,14 +3816,20 @@ export declare const AssetCatalogItemSchema: GenMessage<AssetCatalogItem, {
  */
 export type RecordSetPayload = Message<"medallion.terminal.v1.RecordSetPayload"> & {
     /**
+     * Workspace the table lives in.
+     *
      * @generated from field: string workspace_id = 1;
      */
     workspaceId: string;
     /**
+     * Stable table identifier. Echoed in record mutations.
+     *
      * @generated from field: string table_id = 2;
      */
     tableId: string;
     /**
+     * Display name of the table.
+     *
      * @generated from field: string table_name = 3;
      */
     tableName: string;
@@ -3354,14 +3840,20 @@ export type RecordSetPayload = Message<"medallion.terminal.v1.RecordSetPayload">
      */
     primaryField: string;
     /**
+     * Declared field schema.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordField fields = 5;
      */
     fields: RecordField[];
     /**
+     * The records in the current page/view.
+     *
      * @generated from field: repeated medallion.terminal.v1.WorkRecord records = 6;
      */
     records: WorkRecord[];
     /**
+     * Saved views over the same records.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordView views = 7;
      */
     views: RecordView[];
@@ -3378,10 +3870,14 @@ export type RecordSetPayload = Message<"medallion.terminal.v1.RecordSetPayload">
      */
     total?: bigint | undefined;
     /**
+     * Opaque cursor for a subsequent page.
+     *
      * @generated from field: optional string next_page_token = 10;
      */
     nextPageToken?: string | undefined;
     /**
+     * Which mutations the backend supports, and their action ids.
+     *
      * @generated from field: medallion.terminal.v1.RecordCapabilities capabilities = 11;
      */
     capabilities?: RecordCapabilities | undefined;
@@ -3435,14 +3931,20 @@ export type RecordSetPayload = Message<"medallion.terminal.v1.RecordSetPayload">
  */
 export type RecordSetPayloadJson = {
     /**
+     * Workspace the table lives in.
+     *
      * @generated from field: string workspace_id = 1;
      */
     workspaceId?: string;
     /**
+     * Stable table identifier. Echoed in record mutations.
+     *
      * @generated from field: string table_id = 2;
      */
     tableId?: string;
     /**
+     * Display name of the table.
+     *
      * @generated from field: string table_name = 3;
      */
     tableName?: string;
@@ -3453,14 +3955,20 @@ export type RecordSetPayloadJson = {
      */
     primaryField?: string;
     /**
+     * Declared field schema.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordField fields = 5;
      */
     fields?: RecordFieldJson[];
     /**
+     * The records in the current page/view.
+     *
      * @generated from field: repeated medallion.terminal.v1.WorkRecord records = 6;
      */
     records?: WorkRecordJson[];
     /**
+     * Saved views over the same records.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordView views = 7;
      */
     views?: RecordViewJson[];
@@ -3477,10 +3985,14 @@ export type RecordSetPayloadJson = {
      */
     total?: string;
     /**
+     * Opaque cursor for a subsequent page.
+     *
      * @generated from field: optional string next_page_token = 10;
      */
     nextPageToken?: string;
     /**
+     * Which mutations the backend supports, and their action ids.
+     *
      * @generated from field: medallion.terminal.v1.RecordCapabilities capabilities = 11;
      */
     capabilities?: RecordCapabilitiesJson;
@@ -3493,22 +4005,32 @@ export declare const RecordSetPayloadSchema: GenMessage<RecordSetPayload, {
     jsonType: RecordSetPayloadJson;
 }>;
 /**
+ * One mutable record in a record set.
+ *
  * @generated from message medallion.terminal.v1.WorkRecord
  */
 export type WorkRecord = Message<"medallion.terminal.v1.WorkRecord"> & {
     /**
+     * Stable record identifier.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * Field values keyed by RecordField.key.
+     *
      * @generated from field: google.protobuf.Struct values = 2;
      */
     values?: JsonObject | undefined;
     /**
+     * ISO 8601 creation time.
+     *
      * @generated from field: optional string created_at = 3;
      */
     createdAt?: string | undefined;
     /**
+     * ISO 8601 last-update time.
+     *
      * @generated from field: optional string updated_at = 4;
      */
     updatedAt?: string | undefined;
@@ -3530,22 +4052,32 @@ export type WorkRecord = Message<"medallion.terminal.v1.WorkRecord"> & {
     };
 };
 /**
+ * One mutable record in a record set.
+ *
  * @generated from message medallion.terminal.v1.WorkRecord
  */
 export type WorkRecordJson = {
     /**
+     * Stable record identifier.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * Field values keyed by RecordField.key.
+     *
      * @generated from field: google.protobuf.Struct values = 2;
      */
     values?: StructJson;
     /**
+     * ISO 8601 creation time.
+     *
      * @generated from field: optional string created_at = 3;
      */
     createdAt?: string;
     /**
+     * ISO 8601 last-update time.
+     *
      * @generated from field: optional string updated_at = 4;
      */
     updatedAt?: string;
@@ -3574,34 +4106,50 @@ export declare const WorkRecordSchema: GenMessage<WorkRecord, {
     jsonType: WorkRecordJson;
 }>;
 /**
+ * One column in a record set's declared schema.
+ *
  * @generated from message medallion.terminal.v1.RecordField
  */
 export type RecordField = Message<"medallion.terminal.v1.RecordField"> & {
     /**
+     * Field key matching WorkRecord.values keys.
+     *
      * @generated from field: string key = 1;
      */
     key: string;
     /**
+     * Display label.
+     *
      * @generated from field: string label = 2;
      */
     label: string;
     /**
+     * Value type; drives the input control and formatting.
+     *
      * @generated from field: medallion.terminal.v1.RecordFieldType type = 3;
      */
     type: RecordFieldType;
     /**
+     * Help text shown in editors.
+     *
      * @generated from field: optional string description = 4;
      */
     description?: string | undefined;
     /**
+     * True if records must carry a value.
+     *
      * @generated from field: bool required = 5;
      */
     required: boolean;
     /**
+     * True if the frontend must not edit the field.
+     *
      * @generated from field: bool read_only = 6;
      */
     readOnly: boolean;
     /**
+     * Options for single/multi select fields.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordChoice choices = 7;
      */
     choices: RecordChoice[];
@@ -3613,6 +4161,8 @@ export type RecordField = Message<"medallion.terminal.v1.RecordField"> & {
      */
     linkedTableId?: string | undefined;
     /**
+     * Linked fields: true if multiple links are allowed.
+     *
      * @generated from field: bool allow_multiple = 9;
      */
     allowMultiple: boolean;
@@ -3623,39 +4173,57 @@ export type RecordField = Message<"medallion.terminal.v1.RecordField"> & {
      */
     format?: string | undefined;
     /**
+     * Default applied to new records.
+     *
      * @generated from field: optional google.protobuf.Value default_value = 11;
      */
     defaultValue?: Value | undefined;
 };
 /**
+ * One column in a record set's declared schema.
+ *
  * @generated from message medallion.terminal.v1.RecordField
  */
 export type RecordFieldJson = {
     /**
+     * Field key matching WorkRecord.values keys.
+     *
      * @generated from field: string key = 1;
      */
     key?: string;
     /**
+     * Display label.
+     *
      * @generated from field: string label = 2;
      */
     label?: string;
     /**
+     * Value type; drives the input control and formatting.
+     *
      * @generated from field: medallion.terminal.v1.RecordFieldType type = 3;
      */
     type?: RecordFieldTypeJson;
     /**
+     * Help text shown in editors.
+     *
      * @generated from field: optional string description = 4;
      */
     description?: string;
     /**
+     * True if records must carry a value.
+     *
      * @generated from field: bool required = 5;
      */
     required?: boolean;
     /**
+     * True if the frontend must not edit the field.
+     *
      * @generated from field: bool read_only = 6;
      */
     readOnly?: boolean;
     /**
+     * Options for single/multi select fields.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordChoice choices = 7;
      */
     choices?: RecordChoiceJson[];
@@ -3667,6 +4235,8 @@ export type RecordFieldJson = {
      */
     linkedTableId?: string;
     /**
+     * Linked fields: true if multiple links are allowed.
+     *
      * @generated from field: bool allow_multiple = 9;
      */
     allowMultiple?: boolean;
@@ -3677,6 +4247,8 @@ export type RecordFieldJson = {
      */
     format?: string;
     /**
+     * Default applied to new records.
+     *
      * @generated from field: optional google.protobuf.Value default_value = 11;
      */
     defaultValue?: ValueJson;
@@ -3689,14 +4261,20 @@ export declare const RecordFieldSchema: GenMessage<RecordField, {
     jsonType: RecordFieldJson;
 }>;
 /**
+ * One selectable option for a select field.
+ *
  * @generated from message medallion.terminal.v1.RecordChoice
  */
 export type RecordChoice = Message<"medallion.terminal.v1.RecordChoice"> & {
     /**
+     * Stored value.
+     *
      * @generated from field: string value = 1;
      */
     value: string;
     /**
+     * Display label.
+     *
      * @generated from field: string label = 2;
      */
     label: string;
@@ -3708,14 +4286,20 @@ export type RecordChoice = Message<"medallion.terminal.v1.RecordChoice"> & {
     color?: string | undefined;
 };
 /**
+ * One selectable option for a select field.
+ *
  * @generated from message medallion.terminal.v1.RecordChoice
  */
 export type RecordChoiceJson = {
     /**
+     * Stored value.
+     *
      * @generated from field: string value = 1;
      */
     value?: string;
     /**
+     * Display label.
+     *
      * @generated from field: string label = 2;
      */
     label?: string;
@@ -3734,22 +4318,32 @@ export declare const RecordChoiceSchema: GenMessage<RecordChoice, {
     jsonType: RecordChoiceJson;
 }>;
 /**
+ * One saved view over a record set.
+ *
  * @generated from message medallion.terminal.v1.RecordView
  */
 export type RecordView = Message<"medallion.terminal.v1.RecordView"> & {
     /**
+     * Stable view identifier.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * Display name.
+     *
      * @generated from field: string name = 2;
      */
     name: string;
     /**
+     * How the view renders (grid, board, calendar, ...).
+     *
      * @generated from field: medallion.terminal.v1.RecordViewType type = 3;
      */
     type: RecordViewType;
     /**
+     * Field keys shown, in order. Empty = all fields.
+     *
      * @generated from field: repeated string visible_fields = 4;
      */
     visibleFields: string[];
@@ -3760,39 +4354,57 @@ export type RecordView = Message<"medallion.terminal.v1.RecordView"> & {
      */
     groupBy?: string | undefined;
     /**
+     * CALENDAR/TIMELINE: the field records are placed by.
+     *
      * @generated from field: optional string date_field = 6;
      */
     dateField?: string | undefined;
     /**
+     * GALLERY/BOARD: the field used as the card title.
+     *
      * @generated from field: optional string title_field = 7;
      */
     titleField?: string | undefined;
     /**
+     * Sort order applied to the records.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordSort sorts = 8;
      */
     sorts: RecordSort[];
     /**
+     * Filters applied to the records.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordFilter filters = 9;
      */
     filters: RecordFilter[];
 };
 /**
+ * One saved view over a record set.
+ *
  * @generated from message medallion.terminal.v1.RecordView
  */
 export type RecordViewJson = {
     /**
+     * Stable view identifier.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * Display name.
+     *
      * @generated from field: string name = 2;
      */
     name?: string;
     /**
+     * How the view renders (grid, board, calendar, ...).
+     *
      * @generated from field: medallion.terminal.v1.RecordViewType type = 3;
      */
     type?: RecordViewTypeJson;
     /**
+     * Field keys shown, in order. Empty = all fields.
+     *
      * @generated from field: repeated string visible_fields = 4;
      */
     visibleFields?: string[];
@@ -3803,18 +4415,26 @@ export type RecordViewJson = {
      */
     groupBy?: string;
     /**
+     * CALENDAR/TIMELINE: the field records are placed by.
+     *
      * @generated from field: optional string date_field = 6;
      */
     dateField?: string;
     /**
+     * GALLERY/BOARD: the field used as the card title.
+     *
      * @generated from field: optional string title_field = 7;
      */
     titleField?: string;
     /**
+     * Sort order applied to the records.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordSort sorts = 8;
      */
     sorts?: RecordSortJson[];
     /**
+     * Filters applied to the records.
+     *
      * @generated from field: repeated medallion.terminal.v1.RecordFilter filters = 9;
      */
     filters?: RecordFilterJson[];
@@ -3827,27 +4447,39 @@ export declare const RecordViewSchema: GenMessage<RecordView, {
     jsonType: RecordViewJson;
 }>;
 /**
+ * One sort key in a view.
+ *
  * @generated from message medallion.terminal.v1.RecordSort
  */
 export type RecordSort = Message<"medallion.terminal.v1.RecordSort"> & {
     /**
+     * Field key to sort by.
+     *
      * @generated from field: string field = 1;
      */
     field: string;
     /**
+     * True for descending order.
+     *
      * @generated from field: bool descending = 2;
      */
     descending: boolean;
 };
 /**
+ * One sort key in a view.
+ *
  * @generated from message medallion.terminal.v1.RecordSort
  */
 export type RecordSortJson = {
     /**
+     * Field key to sort by.
+     *
      * @generated from field: string field = 1;
      */
     field?: string;
     /**
+     * True for descending order.
+     *
      * @generated from field: bool descending = 2;
      */
     descending?: boolean;
@@ -3860,10 +4492,14 @@ export declare const RecordSortSchema: GenMessage<RecordSort, {
     jsonType: RecordSortJson;
 }>;
 /**
+ * One filter predicate in a view.
+ *
  * @generated from message medallion.terminal.v1.RecordFilter
  */
 export type RecordFilter = Message<"medallion.terminal.v1.RecordFilter"> & {
     /**
+     * Field key to filter on.
+     *
      * @generated from field: string field = 1;
      */
     field: string;
@@ -3875,15 +4511,21 @@ export type RecordFilter = Message<"medallion.terminal.v1.RecordFilter"> & {
      */
     operator: string;
     /**
+     * Comparison operand.
+     *
      * @generated from field: google.protobuf.Value value = 3;
      */
     value?: Value | undefined;
 };
 /**
+ * One filter predicate in a view.
+ *
  * @generated from message medallion.terminal.v1.RecordFilter
  */
 export type RecordFilterJson = {
     /**
+     * Field key to filter on.
+     *
      * @generated from field: string field = 1;
      */
     field?: string;
@@ -3895,6 +4537,8 @@ export type RecordFilterJson = {
      */
     operator?: string;
     /**
+     * Comparison operand.
+     *
      * @generated from field: google.protobuf.Value value = 3;
      */
     value?: ValueJson;
@@ -3907,59 +4551,89 @@ export declare const RecordFilterSchema: GenMessage<RecordFilter, {
     jsonType: RecordFilterJson;
 }>;
 /**
+ * Which record mutations the backend supports, and the
+ * SubmitAction action ids that perform them.
+ *
  * @generated from message medallion.terminal.v1.RecordCapabilities
  */
 export type RecordCapabilities = Message<"medallion.terminal.v1.RecordCapabilities"> & {
     /**
+     * True if records can be created.
+     *
      * @generated from field: bool create = 1;
      */
     create: boolean;
     /**
+     * True if records can be updated.
+     *
      * @generated from field: bool update = 2;
      */
     update: boolean;
     /**
+     * True if records can be deleted.
+     *
      * @generated from field: bool delete = 3;
      */
     delete: boolean;
     /**
+     * ActionRequest.action_id for creating a record.
+     *
      * @generated from field: string create_action_id = 4;
      */
     createActionId: string;
     /**
+     * ActionRequest.action_id for updating a record.
+     *
      * @generated from field: string update_action_id = 5;
      */
     updateActionId: string;
     /**
+     * ActionRequest.action_id for deleting a record.
+     *
      * @generated from field: string delete_action_id = 6;
      */
     deleteActionId: string;
 };
 /**
+ * Which record mutations the backend supports, and the
+ * SubmitAction action ids that perform them.
+ *
  * @generated from message medallion.terminal.v1.RecordCapabilities
  */
 export type RecordCapabilitiesJson = {
     /**
+     * True if records can be created.
+     *
      * @generated from field: bool create = 1;
      */
     create?: boolean;
     /**
+     * True if records can be updated.
+     *
      * @generated from field: bool update = 2;
      */
     update?: boolean;
     /**
+     * True if records can be deleted.
+     *
      * @generated from field: bool delete = 3;
      */
     delete?: boolean;
     /**
+     * ActionRequest.action_id for creating a record.
+     *
      * @generated from field: string create_action_id = 4;
      */
     createActionId?: string;
     /**
+     * ActionRequest.action_id for updating a record.
+     *
      * @generated from field: string update_action_id = 5;
      */
     updateActionId?: string;
     /**
+     * ActionRequest.action_id for deleting a record.
+     *
      * @generated from field: string delete_action_id = 6;
      */
     deleteActionId?: string;
@@ -3995,42 +4669,62 @@ export declare const RecordCapabilitiesSchema: GenMessage<RecordCapabilities, {
  */
 export type ObjectPayload = Message<"medallion.terminal.v1.ObjectPayload"> & {
     /**
+     * Ontology type name (e.g. "Customer").
+     *
      * @generated from field: string object_type = 1;
      */
     objectType: string;
     /**
+     * Stable instance identifier.
+     *
      * @generated from field: string object_id = 2;
      */
     objectId: string;
     /**
+     * Display title of the object.
+     *
      * @generated from field: string title = 3;
      */
     title: string;
     /**
+     * Longer description.
+     *
      * @generated from field: optional string description = 4;
      */
     description?: string | undefined;
     /**
+     * Free-form health/lifecycle state mapped to semantic colors.
+     *
      * @generated from field: optional string status = 5;
      */
     status?: string | undefined;
     /**
+     * ISO 8601 last-update time, when known.
+     *
      * @generated from field: optional string updated_at = 6;
      */
     updatedAt?: string | undefined;
     /**
+     * Free-form tags shown as chips.
+     *
      * @generated from field: repeated string tags = 7;
      */
     tags: string[];
     /**
+     * Typed display properties, grouped by ObjectProperty.group.
+     *
      * @generated from field: repeated medallion.terminal.v1.ObjectProperty properties = 8;
      */
     properties: ObjectProperty[];
     /**
+     * Related objects.
+     *
      * @generated from field: repeated medallion.terminal.v1.ObjectLink links = 9;
      */
     links: ObjectLink[];
     /**
+     * No-input actions offered on the object.
+     *
      * @generated from field: repeated medallion.terminal.v1.ObjectAction actions = 10;
      */
     actions: ObjectAction[];
@@ -4059,42 +4753,62 @@ export type ObjectPayload = Message<"medallion.terminal.v1.ObjectPayload"> & {
  */
 export type ObjectPayloadJson = {
     /**
+     * Ontology type name (e.g. "Customer").
+     *
      * @generated from field: string object_type = 1;
      */
     objectType?: string;
     /**
+     * Stable instance identifier.
+     *
      * @generated from field: string object_id = 2;
      */
     objectId?: string;
     /**
+     * Display title of the object.
+     *
      * @generated from field: string title = 3;
      */
     title?: string;
     /**
+     * Longer description.
+     *
      * @generated from field: optional string description = 4;
      */
     description?: string;
     /**
+     * Free-form health/lifecycle state mapped to semantic colors.
+     *
      * @generated from field: optional string status = 5;
      */
     status?: string;
     /**
+     * ISO 8601 last-update time, when known.
+     *
      * @generated from field: optional string updated_at = 6;
      */
     updatedAt?: string;
     /**
+     * Free-form tags shown as chips.
+     *
      * @generated from field: repeated string tags = 7;
      */
     tags?: string[];
     /**
+     * Typed display properties, grouped by ObjectProperty.group.
+     *
      * @generated from field: repeated medallion.terminal.v1.ObjectProperty properties = 8;
      */
     properties?: ObjectPropertyJson[];
     /**
+     * Related objects.
+     *
      * @generated from field: repeated medallion.terminal.v1.ObjectLink links = 9;
      */
     links?: ObjectLinkJson[];
     /**
+     * No-input actions offered on the object.
+     *
      * @generated from field: repeated medallion.terminal.v1.ObjectAction actions = 10;
      */
     actions?: ObjectActionJson[];
@@ -4107,14 +4821,20 @@ export declare const ObjectPayloadSchema: GenMessage<ObjectPayload, {
     jsonType: ObjectPayloadJson;
 }>;
 /**
+ * One displayed property of an object.
+ *
  * @generated from message medallion.terminal.v1.ObjectProperty
  */
 export type ObjectProperty = Message<"medallion.terminal.v1.ObjectProperty"> & {
     /**
+     * Stable property key.
+     *
      * @generated from field: string key = 1;
      */
     key: string;
     /**
+     * Display label.
+     *
      * @generated from field: string label = 2;
      */
     label: string;
@@ -4132,6 +4852,8 @@ export type ObjectProperty = Message<"medallion.terminal.v1.ObjectProperty"> & {
      */
     format?: string | undefined;
     /**
+     * Help text shown on hover.
+     *
      * @generated from field: optional string description = 5;
      */
     description?: string | undefined;
@@ -4143,14 +4865,20 @@ export type ObjectProperty = Message<"medallion.terminal.v1.ObjectProperty"> & {
     group?: string | undefined;
 };
 /**
+ * One displayed property of an object.
+ *
  * @generated from message medallion.terminal.v1.ObjectProperty
  */
 export type ObjectPropertyJson = {
     /**
+     * Stable property key.
+     *
      * @generated from field: string key = 1;
      */
     key?: string;
     /**
+     * Display label.
+     *
      * @generated from field: string label = 2;
      */
     label?: string;
@@ -4168,6 +4896,8 @@ export type ObjectPropertyJson = {
      */
     format?: string;
     /**
+     * Help text shown on hover.
+     *
      * @generated from field: optional string description = 5;
      */
     description?: string;
@@ -4186,26 +4916,38 @@ export declare const ObjectPropertySchema: GenMessage<ObjectProperty, {
     jsonType: ObjectPropertyJson;
 }>;
 /**
+ * One relation from this object to another.
+ *
  * @generated from message medallion.terminal.v1.ObjectLink
  */
 export type ObjectLink = Message<"medallion.terminal.v1.ObjectLink"> & {
     /**
+     * Relation name (e.g. "owns", "depends_on").
+     *
      * @generated from field: string relation = 1;
      */
     relation: string;
     /**
+     * Ontology type of the target object.
+     *
      * @generated from field: string target_type = 2;
      */
     targetType: string;
     /**
+     * Stable identifier of the target object.
+     *
      * @generated from field: string target_id = 3;
      */
     targetId: string;
     /**
+     * Display label for the link.
+     *
      * @generated from field: string label = 4;
      */
     label: string;
     /**
+     * Free-form state of the target, mapped to semantic colors.
+     *
      * @generated from field: optional string status = 5;
      */
     status?: string | undefined;
@@ -4220,26 +4962,38 @@ export type ObjectLink = Message<"medallion.terminal.v1.ObjectLink"> & {
     };
 };
 /**
+ * One relation from this object to another.
+ *
  * @generated from message medallion.terminal.v1.ObjectLink
  */
 export type ObjectLinkJson = {
     /**
+     * Relation name (e.g. "owns", "depends_on").
+     *
      * @generated from field: string relation = 1;
      */
     relation?: string;
     /**
+     * Ontology type of the target object.
+     *
      * @generated from field: string target_type = 2;
      */
     targetType?: string;
     /**
+     * Stable identifier of the target object.
+     *
      * @generated from field: string target_id = 3;
      */
     targetId?: string;
     /**
+     * Display label for the link.
+     *
      * @generated from field: string label = 4;
      */
     label?: string;
     /**
+     * Free-form state of the target, mapped to semantic colors.
+     *
      * @generated from field: optional string status = 5;
      */
     status?: string;
@@ -4261,6 +5015,8 @@ export declare const ObjectLinkSchema: GenMessage<ObjectLink, {
     jsonType: ObjectLinkJson;
 }>;
 /**
+ * One no-input action offered on an object.
+ *
  * @generated from message medallion.terminal.v1.ObjectAction
  */
 export type ObjectAction = Message<"medallion.terminal.v1.ObjectAction"> & {
@@ -4271,10 +5027,14 @@ export type ObjectAction = Message<"medallion.terminal.v1.ObjectAction"> & {
      */
     id: string;
     /**
+     * Button label.
+     *
      * @generated from field: string label = 2;
      */
     label: string;
     /**
+     * Help text shown on hover.
+     *
      * @generated from field: optional string description = 3;
      */
     description?: string | undefined;
@@ -4297,11 +5057,15 @@ export type ObjectAction = Message<"medallion.terminal.v1.ObjectAction"> & {
      */
     params?: JsonObject | undefined;
     /**
+     * True renders the action greyed out and unclickable.
+     *
      * @generated from field: bool disabled = 7;
      */
     disabled: boolean;
 };
 /**
+ * One no-input action offered on an object.
+ *
  * @generated from message medallion.terminal.v1.ObjectAction
  */
 export type ObjectActionJson = {
@@ -4312,10 +5076,14 @@ export type ObjectActionJson = {
      */
     id?: string;
     /**
+     * Button label.
+     *
      * @generated from field: string label = 2;
      */
     label?: string;
     /**
+     * Help text shown on hover.
+     *
      * @generated from field: optional string description = 3;
      */
     description?: string;
@@ -4338,6 +5106,8 @@ export type ObjectActionJson = {
      */
     params?: StructJson;
     /**
+     * True renders the action greyed out and unclickable.
+     *
      * @generated from field: bool disabled = 7;
      */
     disabled?: boolean;
@@ -4361,10 +5131,14 @@ export declare const ObjectActionSchema: GenMessage<ObjectAction, {
  */
 export type GraphPayload = Message<"medallion.terminal.v1.GraphPayload"> & {
     /**
+     * The graph nodes.
+     *
      * @generated from field: repeated medallion.terminal.v1.GraphNode nodes = 1;
      */
     nodes: GraphNode[];
     /**
+     * Directed edges between nodes.
+     *
      * @generated from field: repeated medallion.terminal.v1.GraphEdge edges = 2;
      */
     edges: GraphEdge[];
@@ -4381,10 +5155,14 @@ export type GraphPayload = Message<"medallion.terminal.v1.GraphPayload"> & {
  */
 export type GraphPayloadJson = {
     /**
+     * The graph nodes.
+     *
      * @generated from field: repeated medallion.terminal.v1.GraphNode nodes = 1;
      */
     nodes?: GraphNodeJson[];
     /**
+     * Directed edges between nodes.
+     *
      * @generated from field: repeated medallion.terminal.v1.GraphEdge edges = 2;
      */
     edges?: GraphEdgeJson[];
@@ -4397,38 +5175,56 @@ export declare const GraphPayloadSchema: GenMessage<GraphPayload, {
     jsonType: GraphPayloadJson;
 }>;
 /**
+ * One node in a directed graph.
+ *
  * @generated from message medallion.terminal.v1.GraphNode
  */
 export type GraphNode = Message<"medallion.terminal.v1.GraphNode"> & {
     /**
+     * Stable node identifier referenced by edges.
+     *
      * @generated from field: string id = 1;
      */
     id: string;
     /**
+     * Display label.
+     *
      * @generated from field: string label = 2;
      */
     label: string;
     /**
+     * Free-form node kind (e.g. "dataset", "job") shown as a badge.
+     *
      * @generated from field: optional string kind = 3;
      */
     kind?: string | undefined;
     /**
+     * Free-form health state mapped to semantic colors.
+     *
      * @generated from field: optional string status = 4;
      */
     status?: string | undefined;
     /**
+     * Secondary line under the label.
+     *
      * @generated from field: optional string subtitle = 5;
      */
     subtitle?: string | undefined;
     /**
+     * Free-form tags.
+     *
      * @generated from field: repeated string tags = 6;
      */
     tags: string[];
     /**
+     * Additional structured metadata shown on selection.
+     *
      * @generated from field: optional google.protobuf.Struct metadata = 7;
      */
     metadata?: JsonObject | undefined;
     /**
+     * Applied when the node is selected.
+     *
      * @generated from field: map<string, string> context = 8;
      */
     context: {
@@ -4436,38 +5232,56 @@ export type GraphNode = Message<"medallion.terminal.v1.GraphNode"> & {
     };
 };
 /**
+ * One node in a directed graph.
+ *
  * @generated from message medallion.terminal.v1.GraphNode
  */
 export type GraphNodeJson = {
     /**
+     * Stable node identifier referenced by edges.
+     *
      * @generated from field: string id = 1;
      */
     id?: string;
     /**
+     * Display label.
+     *
      * @generated from field: string label = 2;
      */
     label?: string;
     /**
+     * Free-form node kind (e.g. "dataset", "job") shown as a badge.
+     *
      * @generated from field: optional string kind = 3;
      */
     kind?: string;
     /**
+     * Free-form health state mapped to semantic colors.
+     *
      * @generated from field: optional string status = 4;
      */
     status?: string;
     /**
+     * Secondary line under the label.
+     *
      * @generated from field: optional string subtitle = 5;
      */
     subtitle?: string;
     /**
+     * Free-form tags.
+     *
      * @generated from field: repeated string tags = 6;
      */
     tags?: string[];
     /**
+     * Additional structured metadata shown on selection.
+     *
      * @generated from field: optional google.protobuf.Struct metadata = 7;
      */
     metadata?: StructJson;
     /**
+     * Applied when the node is selected.
+     *
      * @generated from field: map<string, string> context = 8;
      */
     context?: {
@@ -4482,51 +5296,75 @@ export declare const GraphNodeSchema: GenMessage<GraphNode, {
     jsonType: GraphNodeJson;
 }>;
 /**
+ * One directed edge between two graph nodes.
+ *
  * @generated from message medallion.terminal.v1.GraphEdge
  */
 export type GraphEdge = Message<"medallion.terminal.v1.GraphEdge"> & {
     /**
+     * Source node id.
+     *
      * @generated from field: string from = 1;
      */
     from: string;
     /**
+     * Target node id.
+     *
      * @generated from field: string to = 2;
      */
     to: string;
     /**
+     * Optional edge label.
+     *
      * @generated from field: optional string label = 3;
      */
     label?: string | undefined;
     /**
+     * Free-form edge kind.
+     *
      * @generated from field: optional string kind = 4;
      */
     kind?: string | undefined;
     /**
+     * Free-form state mapped to semantic colors.
+     *
      * @generated from field: optional string status = 5;
      */
     status?: string | undefined;
 };
 /**
+ * One directed edge between two graph nodes.
+ *
  * @generated from message medallion.terminal.v1.GraphEdge
  */
 export type GraphEdgeJson = {
     /**
+     * Source node id.
+     *
      * @generated from field: string from = 1;
      */
     from?: string;
     /**
+     * Target node id.
+     *
      * @generated from field: string to = 2;
      */
     to?: string;
     /**
+     * Optional edge label.
+     *
      * @generated from field: optional string label = 3;
      */
     label?: string;
     /**
+     * Free-form edge kind.
+     *
      * @generated from field: optional string kind = 4;
      */
     kind?: string;
     /**
+     * Free-form state mapped to semantic colors.
+     *
      * @generated from field: optional string status = 5;
      */
     status?: string;
@@ -4549,26 +5387,38 @@ export declare const GraphEdgeSchema: GenMessage<GraphEdge, {
  */
 export type RepositoryPayload = Message<"medallion.terminal.v1.RepositoryPayload"> & {
     /**
+     * Repository name/slug being browsed.
+     *
      * @generated from field: string repository = 1;
      */
     repository: string;
     /**
+     * The branch, tag, or commit this response reflects.
+     *
      * @generated from field: string ref = 2;
      */
     ref: string;
     /**
+     * Path this response describes ("" = repository root).
+     *
      * @generated from field: string path = 3;
      */
     path: string;
     /**
+     * Branches/tags available for switching.
+     *
      * @generated from field: repeated string refs = 4;
      */
     refs: string[];
     /**
+     * Directory listing at `path`.
+     *
      * @generated from field: repeated medallion.terminal.v1.RepositoryEntry entries = 5;
      */
     entries: RepositoryEntry[];
     /**
+     * File content when `path` points at a file.
+     *
      * @generated from field: optional medallion.terminal.v1.RepositoryFile file = 6;
      */
     file?: RepositoryFile | undefined;
@@ -4590,26 +5440,38 @@ export type RepositoryPayload = Message<"medallion.terminal.v1.RepositoryPayload
  */
 export type RepositoryPayloadJson = {
     /**
+     * Repository name/slug being browsed.
+     *
      * @generated from field: string repository = 1;
      */
     repository?: string;
     /**
+     * The branch, tag, or commit this response reflects.
+     *
      * @generated from field: string ref = 2;
      */
     ref?: string;
     /**
+     * Path this response describes ("" = repository root).
+     *
      * @generated from field: string path = 3;
      */
     path?: string;
     /**
+     * Branches/tags available for switching.
+     *
      * @generated from field: repeated string refs = 4;
      */
     refs?: string[];
     /**
+     * Directory listing at `path`.
+     *
      * @generated from field: repeated medallion.terminal.v1.RepositoryEntry entries = 5;
      */
     entries?: RepositoryEntryJson[];
     /**
+     * File content when `path` points at a file.
+     *
      * @generated from field: optional medallion.terminal.v1.RepositoryFile file = 6;
      */
     file?: RepositoryFileJson;
@@ -4628,59 +5490,87 @@ export declare const RepositoryPayloadSchema: GenMessage<RepositoryPayload, {
     jsonType: RepositoryPayloadJson;
 }>;
 /**
+ * One file/directory in a repository listing.
+ *
  * @generated from message medallion.terminal.v1.RepositoryEntry
  */
 export type RepositoryEntry = Message<"medallion.terminal.v1.RepositoryEntry"> & {
     /**
+     * Full path from the repository root.
+     *
      * @generated from field: string path = 1;
      */
     path: string;
     /**
+     * Base name of the entry.
+     *
      * @generated from field: string name = 2;
      */
     name: string;
     /**
+     * File, directory, or symlink.
+     *
      * @generated from field: medallion.terminal.v1.RepositoryEntryKind kind = 3;
      */
     kind: RepositoryEntryKind;
     /**
+     * Detected language for files, when known.
+     *
      * @generated from field: optional string language = 4;
      */
     language?: string | undefined;
     /**
+     * File size in bytes, when known.
+     *
      * @generated from field: optional int64 size_bytes = 5;
      */
     sizeBytes?: bigint | undefined;
     /**
+     * ISO 8601 last-modified time, when known.
+     *
      * @generated from field: optional string updated_at = 6;
      */
     updatedAt?: string | undefined;
 };
 /**
+ * One file/directory in a repository listing.
+ *
  * @generated from message medallion.terminal.v1.RepositoryEntry
  */
 export type RepositoryEntryJson = {
     /**
+     * Full path from the repository root.
+     *
      * @generated from field: string path = 1;
      */
     path?: string;
     /**
+     * Base name of the entry.
+     *
      * @generated from field: string name = 2;
      */
     name?: string;
     /**
+     * File, directory, or symlink.
+     *
      * @generated from field: medallion.terminal.v1.RepositoryEntryKind kind = 3;
      */
     kind?: RepositoryEntryKindJson;
     /**
+     * Detected language for files, when known.
+     *
      * @generated from field: optional string language = 4;
      */
     language?: string;
     /**
+     * File size in bytes, when known.
+     *
      * @generated from field: optional int64 size_bytes = 5;
      */
     sizeBytes?: string;
     /**
+     * ISO 8601 last-modified time, when known.
+     *
      * @generated from field: optional string updated_at = 6;
      */
     updatedAt?: string;
@@ -4693,26 +5583,38 @@ export declare const RepositoryEntrySchema: GenMessage<RepositoryEntry, {
     jsonType: RepositoryEntryJson;
 }>;
 /**
+ * Text content of one file in the repository.
+ *
  * @generated from message medallion.terminal.v1.RepositoryFile
  */
 export type RepositoryFile = Message<"medallion.terminal.v1.RepositoryFile"> & {
     /**
+     * Full path from the repository root.
+     *
      * @generated from field: string path = 1;
      */
     path: string;
     /**
+     * UTF-8 text content. Omitted for binary files.
+     *
      * @generated from field: string content = 2;
      */
     content: string;
     /**
+     * Detected language for syntax highlighting, when known.
+     *
      * @generated from field: optional string language = 3;
      */
     language?: string | undefined;
     /**
+     * Full file size in bytes, when known.
+     *
      * @generated from field: optional int64 size_bytes = 4;
      */
     sizeBytes?: bigint | undefined;
     /**
+     * True if `content` was cut short for size.
+     *
      * @generated from field: bool truncated = 5;
      */
     truncated: boolean;
@@ -4724,26 +5626,38 @@ export type RepositoryFile = Message<"medallion.terminal.v1.RepositoryFile"> & {
     url?: string | undefined;
 };
 /**
+ * Text content of one file in the repository.
+ *
  * @generated from message medallion.terminal.v1.RepositoryFile
  */
 export type RepositoryFileJson = {
     /**
+     * Full path from the repository root.
+     *
      * @generated from field: string path = 1;
      */
     path?: string;
     /**
+     * UTF-8 text content. Omitted for binary files.
+     *
      * @generated from field: string content = 2;
      */
     content?: string;
     /**
+     * Detected language for syntax highlighting, when known.
+     *
      * @generated from field: optional string language = 3;
      */
     language?: string;
     /**
+     * Full file size in bytes, when known.
+     *
      * @generated from field: optional int64 size_bytes = 4;
      */
     sizeBytes?: string;
     /**
+     * True if `content` was cut short for size.
+     *
      * @generated from field: bool truncated = 5;
      */
     truncated?: boolean;
@@ -4762,31 +5676,45 @@ export declare const RepositoryFileSchema: GenMessage<RepositoryFile, {
     jsonType: RepositoryFileJson;
 }>;
 /**
+ * ColumnType is the type hint for a table column.
+ *
  * @generated from enum medallion.terminal.v1.ColumnType
  */
 export declare enum ColumnType {
     /**
+     * No type declared; rendered as text.
+     *
      * @generated from enum value: COLUMN_TYPE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Free-form text.
+     *
      * @generated from enum value: COLUMN_TYPE_STRING = 1;
      */
     STRING = 1,
     /**
+     * Numeric; right-aligned and number-formatted.
+     *
      * @generated from enum value: COLUMN_TYPE_NUMBER = 2;
      */
     NUMBER = 2,
     /**
+     * True/false.
+     *
      * @generated from enum value: COLUMN_TYPE_BOOLEAN = 3;
      */
     BOOLEAN = 3,
     /**
+     * ISO 8601 timestamp or Unix epoch.
+     *
      * @generated from enum value: COLUMN_TYPE_TIMESTAMP = 4;
      */
     TIMESTAMP = 4
 }
 /**
+ * ColumnType is the type hint for a table column.
+ *
  * @generated from enum medallion.terminal.v1.ColumnType
  */
 export type ColumnTypeJson = "COLUMN_TYPE_UNSPECIFIED" | "COLUMN_TYPE_STRING" | "COLUMN_TYPE_NUMBER" | "COLUMN_TYPE_BOOLEAN" | "COLUMN_TYPE_TIMESTAMP";
@@ -4795,35 +5723,51 @@ export type ColumnTypeJson = "COLUMN_TYPE_UNSPECIFIED" | "COLUMN_TYPE_STRING" | 
  */
 export declare const ColumnTypeSchema: GenEnum<ColumnType, ColumnTypeJson>;
 /**
+ * EventStatus is the coarse severity/state of an event.
+ *
  * @generated from enum medallion.terminal.v1.EventStatus
  */
 export declare enum EventStatus {
     /**
+     * No status declared; rendered neutral.
+     *
      * @generated from enum value: EVENT_STATUS_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Success / healthy.
+     *
      * @generated from enum value: EVENT_STATUS_OK = 1;
      */
     OK = 1,
     /**
+     * Degraded or partial success.
+     *
      * @generated from enum value: EVENT_STATUS_WARN = 2;
      */
     WARN = 2,
     /**
+     * Failure.
+     *
      * @generated from enum value: EVENT_STATUS_ERROR = 3;
      */
     ERROR = 3,
     /**
+     * Informational, no health signal.
+     *
      * @generated from enum value: EVENT_STATUS_INFO = 4;
      */
     INFO = 4,
     /**
+     * Started but not finished.
+     *
      * @generated from enum value: EVENT_STATUS_PENDING = 5;
      */
     PENDING = 5
 }
 /**
+ * EventStatus is the coarse severity/state of an event.
+ *
  * @generated from enum medallion.terminal.v1.EventStatus
  */
 export type EventStatusJson = "EVENT_STATUS_UNSPECIFIED" | "EVENT_STATUS_OK" | "EVENT_STATUS_WARN" | "EVENT_STATUS_ERROR" | "EVENT_STATUS_INFO" | "EVENT_STATUS_PENDING";
@@ -4832,23 +5776,33 @@ export type EventStatusJson = "EVENT_STATUS_UNSPECIFIED" | "EVENT_STATUS_OK" | "
  */
 export declare const EventStatusSchema: GenEnum<EventStatus, EventStatusJson>;
 /**
+ * MediaKind distinguishes images from videos.
+ *
  * @generated from enum medallion.terminal.v1.MediaKind
  */
 export declare enum MediaKind {
     /**
+     * No kind declared; treated as image.
+     *
      * @generated from enum value: MEDIA_KIND_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Still image.
+     *
      * @generated from enum value: MEDIA_KIND_IMAGE = 1;
      */
     IMAGE = 1,
     /**
+     * Video with a playable URL.
+     *
      * @generated from enum value: MEDIA_KIND_VIDEO = 2;
      */
     VIDEO = 2
 }
 /**
+ * MediaKind distinguishes images from videos.
+ *
  * @generated from enum medallion.terminal.v1.MediaKind
  */
 export type MediaKindJson = "MEDIA_KIND_UNSPECIFIED" | "MEDIA_KIND_IMAGE" | "MEDIA_KIND_VIDEO";
@@ -4857,99 +5811,147 @@ export type MediaKindJson = "MEDIA_KIND_UNSPECIFIED" | "MEDIA_KIND_IMAGE" | "MED
  */
 export declare const MediaKindSchema: GenEnum<MediaKind, MediaKindJson>;
 /**
+ * RecordFieldType is the value type of a record field.
+ *
  * @generated from enum medallion.terminal.v1.RecordFieldType
  */
 export declare enum RecordFieldType {
     /**
+     * No type declared; treated as text.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Single-line text.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_TEXT = 1;
      */
     TEXT = 1,
     /**
+     * Multi-line text.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_LONG_TEXT = 2;
      */
     LONG_TEXT = 2,
     /**
+     * Floating-point number.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_NUMBER = 3;
      */
     NUMBER = 3,
     /**
+     * Monetary amount.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_CURRENCY = 4;
      */
     CURRENCY = 4,
     /**
+     * Fraction rendered as a percentage.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_PERCENT = 5;
      */
     PERCENT = 5,
     /**
+     * Checkbox.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_BOOLEAN = 6;
      */
     BOOLEAN = 6,
     /**
+     * Date without time.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_DATE = 7;
      */
     DATE = 7,
     /**
+     * Date and time.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_DATETIME = 8;
      */
     DATETIME = 8,
     /**
+     * One choice from `choices`.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_SINGLE_SELECT = 9;
      */
     SINGLE_SELECT = 9,
     /**
+     * Multiple choices from `choices`.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_MULTI_SELECT = 10;
      */
     MULTI_SELECT = 10,
     /**
+     * A user reference.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_USER = 11;
      */
     USER = 11,
     /**
+     * Link to records in another table (linked_table_id).
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_LINK = 12;
      */
     LINK = 12,
     /**
+     * File attachment(s).
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_ATTACHMENT = 13;
      */
     ATTACHMENT = 13,
     /**
+     * Web URL.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_URL = 14;
      */
     URL = 14,
     /**
+     * Email address.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_EMAIL = 15;
      */
     EMAIL = 15,
     /**
+     * Phone number.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_PHONE = 16;
      */
     PHONE = 16,
     /**
+     * Backend-computed formula. Read-only.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_FORMULA = 17;
      */
     FORMULA = 17,
     /**
+     * Backend-resolved lookup through a link. Read-only.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_LOOKUP = 18;
      */
     LOOKUP = 18,
     /**
+     * Backend-computed aggregate over linked records. Read-only.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_ROLLUP = 19;
      */
     ROLLUP = 19,
     /**
+     * System creation timestamp. Read-only.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_CREATED_AT = 20;
      */
     CREATED_AT = 20,
     /**
+     * System last-update timestamp. Read-only.
+     *
      * @generated from enum value: RECORD_FIELD_TYPE_UPDATED_AT = 21;
      */
     UPDATED_AT = 21
 }
 /**
+ * RecordFieldType is the value type of a record field.
+ *
  * @generated from enum medallion.terminal.v1.RecordFieldType
  */
 export type RecordFieldTypeJson = "RECORD_FIELD_TYPE_UNSPECIFIED" | "RECORD_FIELD_TYPE_TEXT" | "RECORD_FIELD_TYPE_LONG_TEXT" | "RECORD_FIELD_TYPE_NUMBER" | "RECORD_FIELD_TYPE_CURRENCY" | "RECORD_FIELD_TYPE_PERCENT" | "RECORD_FIELD_TYPE_BOOLEAN" | "RECORD_FIELD_TYPE_DATE" | "RECORD_FIELD_TYPE_DATETIME" | "RECORD_FIELD_TYPE_SINGLE_SELECT" | "RECORD_FIELD_TYPE_MULTI_SELECT" | "RECORD_FIELD_TYPE_USER" | "RECORD_FIELD_TYPE_LINK" | "RECORD_FIELD_TYPE_ATTACHMENT" | "RECORD_FIELD_TYPE_URL" | "RECORD_FIELD_TYPE_EMAIL" | "RECORD_FIELD_TYPE_PHONE" | "RECORD_FIELD_TYPE_FORMULA" | "RECORD_FIELD_TYPE_LOOKUP" | "RECORD_FIELD_TYPE_ROLLUP" | "RECORD_FIELD_TYPE_CREATED_AT" | "RECORD_FIELD_TYPE_UPDATED_AT";
@@ -4958,43 +5960,63 @@ export type RecordFieldTypeJson = "RECORD_FIELD_TYPE_UNSPECIFIED" | "RECORD_FIEL
  */
 export declare const RecordFieldTypeSchema: GenEnum<RecordFieldType, RecordFieldTypeJson>;
 /**
+ * RecordViewType is how a saved view renders.
+ *
  * @generated from enum medallion.terminal.v1.RecordViewType
  */
 export declare enum RecordViewType {
     /**
+     * No type declared; rendered as a grid.
+     *
      * @generated from enum value: RECORD_VIEW_TYPE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Spreadsheet-style rows and columns.
+     *
      * @generated from enum value: RECORD_VIEW_TYPE_GRID = 1;
      */
     GRID = 1,
     /**
+     * Kanban lanes grouped by group_by.
+     *
      * @generated from enum value: RECORD_VIEW_TYPE_BOARD = 2;
      */
     BOARD = 2,
     /**
+     * Records placed on a calendar by date_field.
+     *
      * @generated from enum value: RECORD_VIEW_TYPE_CALENDAR = 3;
      */
     CALENDAR = 3,
     /**
+     * Card gallery.
+     *
      * @generated from enum value: RECORD_VIEW_TYPE_GALLERY = 4;
      */
     GALLERY = 4,
     /**
+     * Compact single-column list.
+     *
      * @generated from enum value: RECORD_VIEW_TYPE_LIST = 5;
      */
     LIST = 5,
     /**
+     * Horizontal timeline by date_field.
+     *
      * @generated from enum value: RECORD_VIEW_TYPE_TIMELINE = 6;
      */
     TIMELINE = 6,
     /**
+     * Data-entry form for creating records.
+     *
      * @generated from enum value: RECORD_VIEW_TYPE_FORM = 7;
      */
     FORM = 7
 }
 /**
+ * RecordViewType is how a saved view renders.
+ *
  * @generated from enum medallion.terminal.v1.RecordViewType
  */
 export type RecordViewTypeJson = "RECORD_VIEW_TYPE_UNSPECIFIED" | "RECORD_VIEW_TYPE_GRID" | "RECORD_VIEW_TYPE_BOARD" | "RECORD_VIEW_TYPE_CALENDAR" | "RECORD_VIEW_TYPE_GALLERY" | "RECORD_VIEW_TYPE_LIST" | "RECORD_VIEW_TYPE_TIMELINE" | "RECORD_VIEW_TYPE_FORM";
@@ -5003,27 +6025,39 @@ export type RecordViewTypeJson = "RECORD_VIEW_TYPE_UNSPECIFIED" | "RECORD_VIEW_T
  */
 export declare const RecordViewTypeSchema: GenEnum<RecordViewType, RecordViewTypeJson>;
 /**
+ * RepositoryEntryKind is the file-system type of an entry.
+ *
  * @generated from enum medallion.terminal.v1.RepositoryEntryKind
  */
 export declare enum RepositoryEntryKind {
     /**
+     * No kind declared.
+     *
      * @generated from enum value: REPOSITORY_ENTRY_KIND_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Regular file.
+     *
      * @generated from enum value: REPOSITORY_ENTRY_KIND_FILE = 1;
      */
     FILE = 1,
     /**
+     * Directory.
+     *
      * @generated from enum value: REPOSITORY_ENTRY_KIND_DIRECTORY = 2;
      */
     DIRECTORY = 2,
     /**
+     * Symbolic link.
+     *
      * @generated from enum value: REPOSITORY_ENTRY_KIND_SYMLINK = 3;
      */
     SYMLINK = 3
 }
 /**
+ * RepositoryEntryKind is the file-system type of an entry.
+ *
  * @generated from enum medallion.terminal.v1.RepositoryEntryKind
  */
 export type RepositoryEntryKindJson = "REPOSITORY_ENTRY_KIND_UNSPECIFIED" | "REPOSITORY_ENTRY_KIND_FILE" | "REPOSITORY_ENTRY_KIND_DIRECTORY" | "REPOSITORY_ENTRY_KIND_SYMLINK";

@@ -8,6 +8,9 @@ import type { JsonObject, Message } from "@bufbuild/protobuf";
  */
 export declare const file_medallion_terminal_v1_terminal: GenFile;
 /**
+ * Request envelope shared by Get and Stream. Selects a source and
+ * supplies its params.
+ *
  * @generated from message medallion.terminal.v1.DataRequest
  */
 export type DataRequest = Message<"medallion.terminal.v1.DataRequest"> & {
@@ -28,6 +31,9 @@ export type DataRequest = Message<"medallion.terminal.v1.DataRequest"> & {
     };
 };
 /**
+ * Request envelope shared by Get and Stream. Selects a source and
+ * supplies its params.
+ *
  * @generated from message medallion.terminal.v1.DataRequest
  */
 export type DataRequestJson = {
@@ -62,124 +68,166 @@ export declare const DataRequestSchema: GenMessage<DataRequest, {
  */
 export type DataResponse = Message<"medallion.terminal.v1.DataResponse"> & {
     /**
+     * Exactly one case is set, matching the source's declared Shape.
+     *
      * @generated from oneof medallion.terminal.v1.DataResponse.payload
      */
     payload: {
         /**
+         * Line-chart data. See TimeseriesPayload.
+         *
          * @generated from field: medallion.terminal.v1.TimeseriesPayload timeseries = 1;
          */
         value: TimeseriesPayload;
         case: "timeseries";
     } | {
         /**
+         * OHLCV bars. See CandlePayload.
+         *
          * @generated from field: medallion.terminal.v1.CandlePayload candles = 2;
          */
         value: CandlePayload;
         case: "candles";
     } | {
         /**
+         * Tabular rows. See TablePayload.
+         *
          * @generated from field: medallion.terminal.v1.TablePayload table = 3;
          */
         value: TablePayload;
         case: "table";
     } | {
         /**
+         * Single headline number. See MetricPayload.
+         *
          * @generated from field: medallion.terminal.v1.MetricPayload metric = 4;
          */
         value: MetricPayload;
         case: "metric";
     } | {
         /**
+         * Bounded scalar. See GaugePayload.
+         *
          * @generated from field: medallion.terminal.v1.GaugePayload gauge = 5;
          */
         value: GaugePayload;
         case: "gauge";
     } | {
         /**
+         * 2D matrix. See HeatmapPayload.
+         *
          * @generated from field: medallion.terminal.v1.HeatmapPayload heatmap = 6;
          */
         value: HeatmapPayload;
         case: "heatmap";
     } | {
         /**
+         * Status timeline. See EventPayload.
+         *
          * @generated from field: medallion.terminal.v1.EventPayload events = 7;
          */
         value: EventPayload;
         case: "events";
     } | {
         /**
+         * Categorical proportions. See DistributionPayload.
+         *
          * @generated from field: medallion.terminal.v1.DistributionPayload distribution = 8;
          */
         value: DistributionPayload;
         case: "distribution";
     } | {
         /**
+         * News/summary items. See TextPayload.
+         *
          * @generated from field: medallion.terminal.v1.TextPayload text = 9;
          */
         value: TextPayload;
         case: "text";
     } | {
         /**
+         * Bid/ask depth. See OrderBookPayload.
+         *
          * @generated from field: medallion.terminal.v1.OrderBookPayload orderbook = 10;
          */
         value: OrderBookPayload;
         case: "orderbook";
     } | {
         /**
+         * Left/right lattice. See PairedGridPayload.
+         *
          * @generated from field: medallion.terminal.v1.PairedGridPayload paired_grid = 11;
          */
         value: PairedGridPayload;
         case: "pairedGrid";
     } | {
         /**
+         * Context-driven image/iframe URL. See EmbedPayload.
+         *
          * @generated from field: medallion.terminal.v1.EmbedPayload embed = 12;
          */
         value: EmbedPayload;
         case: "embed";
     } | {
         /**
+         * Catalog of platform assets. See AssetCatalogPayload.
+         *
          * @generated from field: medallion.terminal.v1.AssetCatalogPayload assets = 13;
          */
         value: AssetCatalogPayload;
         case: "assets";
     } | {
         /**
+         * Ontology object detail. See ObjectPayload.
+         *
          * @generated from field: medallion.terminal.v1.ObjectPayload object = 14;
          */
         value: ObjectPayload;
         case: "object";
     } | {
         /**
+         * Directed graph. See GraphPayload.
+         *
          * @generated from field: medallion.terminal.v1.GraphPayload graph = 15;
          */
         value: GraphPayload;
         case: "graph";
     } | {
         /**
+         * Source browsing. See RepositoryPayload.
+         *
          * @generated from field: medallion.terminal.v1.RepositoryPayload repository = 16;
          */
         value: RepositoryPayload;
         case: "repository";
     } | {
         /**
+         * Mutable record set. See RecordSetPayload.
+         *
          * @generated from field: medallion.terminal.v1.RecordSetPayload records = 17;
          */
         value: RecordSetPayload;
         case: "records";
     } | {
         /**
+         * Geospatial features. See GeoPayload.
+         *
          * @generated from field: medallion.terminal.v1.GeoPayload geo = 18;
          */
         value: GeoPayload;
         case: "geo";
     } | {
         /**
+         * Media library. See MediaPayload.
+         *
          * @generated from field: medallion.terminal.v1.MediaPayload media = 19;
          */
         value: MediaPayload;
         case: "media";
     } | {
         /**
+         * Message transcript. See ConversationPayload.
+         *
          * @generated from field: medallion.terminal.v1.ConversationPayload conversation = 20;
          */
         value: ConversationPayload;
@@ -197,82 +245,122 @@ export type DataResponse = Message<"medallion.terminal.v1.DataResponse"> & {
  */
 export type DataResponseJson = {
     /**
+     * Line-chart data. See TimeseriesPayload.
+     *
      * @generated from field: medallion.terminal.v1.TimeseriesPayload timeseries = 1;
      */
     timeseries?: TimeseriesPayloadJson;
     /**
+     * OHLCV bars. See CandlePayload.
+     *
      * @generated from field: medallion.terminal.v1.CandlePayload candles = 2;
      */
     candles?: CandlePayloadJson;
     /**
+     * Tabular rows. See TablePayload.
+     *
      * @generated from field: medallion.terminal.v1.TablePayload table = 3;
      */
     table?: TablePayloadJson;
     /**
+     * Single headline number. See MetricPayload.
+     *
      * @generated from field: medallion.terminal.v1.MetricPayload metric = 4;
      */
     metric?: MetricPayloadJson;
     /**
+     * Bounded scalar. See GaugePayload.
+     *
      * @generated from field: medallion.terminal.v1.GaugePayload gauge = 5;
      */
     gauge?: GaugePayloadJson;
     /**
+     * 2D matrix. See HeatmapPayload.
+     *
      * @generated from field: medallion.terminal.v1.HeatmapPayload heatmap = 6;
      */
     heatmap?: HeatmapPayloadJson;
     /**
+     * Status timeline. See EventPayload.
+     *
      * @generated from field: medallion.terminal.v1.EventPayload events = 7;
      */
     events?: EventPayloadJson;
     /**
+     * Categorical proportions. See DistributionPayload.
+     *
      * @generated from field: medallion.terminal.v1.DistributionPayload distribution = 8;
      */
     distribution?: DistributionPayloadJson;
     /**
+     * News/summary items. See TextPayload.
+     *
      * @generated from field: medallion.terminal.v1.TextPayload text = 9;
      */
     text?: TextPayloadJson;
     /**
+     * Bid/ask depth. See OrderBookPayload.
+     *
      * @generated from field: medallion.terminal.v1.OrderBookPayload orderbook = 10;
      */
     orderbook?: OrderBookPayloadJson;
     /**
+     * Left/right lattice. See PairedGridPayload.
+     *
      * @generated from field: medallion.terminal.v1.PairedGridPayload paired_grid = 11;
      */
     pairedGrid?: PairedGridPayloadJson;
     /**
+     * Context-driven image/iframe URL. See EmbedPayload.
+     *
      * @generated from field: medallion.terminal.v1.EmbedPayload embed = 12;
      */
     embed?: EmbedPayloadJson;
     /**
+     * Catalog of platform assets. See AssetCatalogPayload.
+     *
      * @generated from field: medallion.terminal.v1.AssetCatalogPayload assets = 13;
      */
     assets?: AssetCatalogPayloadJson;
     /**
+     * Ontology object detail. See ObjectPayload.
+     *
      * @generated from field: medallion.terminal.v1.ObjectPayload object = 14;
      */
     object?: ObjectPayloadJson;
     /**
+     * Directed graph. See GraphPayload.
+     *
      * @generated from field: medallion.terminal.v1.GraphPayload graph = 15;
      */
     graph?: GraphPayloadJson;
     /**
+     * Source browsing. See RepositoryPayload.
+     *
      * @generated from field: medallion.terminal.v1.RepositoryPayload repository = 16;
      */
     repository?: RepositoryPayloadJson;
     /**
+     * Mutable record set. See RecordSetPayload.
+     *
      * @generated from field: medallion.terminal.v1.RecordSetPayload records = 17;
      */
     records?: RecordSetPayloadJson;
     /**
+     * Geospatial features. See GeoPayload.
+     *
      * @generated from field: medallion.terminal.v1.GeoPayload geo = 18;
      */
     geo?: GeoPayloadJson;
     /**
+     * Media library. See MediaPayload.
+     *
      * @generated from field: medallion.terminal.v1.MediaPayload media = 19;
      */
     media?: MediaPayloadJson;
     /**
+     * Message transcript. See ConversationPayload.
+     *
      * @generated from field: medallion.terminal.v1.ConversationPayload conversation = 20;
      */
     conversation?: ConversationPayloadJson;
@@ -285,12 +373,18 @@ export declare const DataResponseSchema: GenMessage<DataResponse, {
     jsonType: DataResponseJson;
 }>;
 /**
+ * ListSourcesRequest carries no fields today; filtering may be
+ * added later.
+ *
  * Reserved for future filtering (by tag, by shape, by query).
  *
  * @generated from message medallion.terminal.v1.ListSourcesRequest
  */
 export type ListSourcesRequest = Message<"medallion.terminal.v1.ListSourcesRequest"> & {};
 /**
+ * ListSourcesRequest carries no fields today; filtering may be
+ * added later.
+ *
  * Reserved for future filtering (by tag, by shape, by query).
  *
  * @generated from message medallion.terminal.v1.ListSourcesRequest
@@ -304,19 +398,27 @@ export declare const ListSourcesRequestSchema: GenMessage<ListSourcesRequest, {
     jsonType: ListSourcesRequestJson;
 }>;
 /**
+ * The backend's full source catalog.
+ *
  * @generated from message medallion.terminal.v1.ListSourcesResponse
  */
 export type ListSourcesResponse = Message<"medallion.terminal.v1.ListSourcesResponse"> & {
     /**
+     * Every source the backend can serve.
+     *
      * @generated from field: repeated medallion.terminal.v1.Source sources = 1;
      */
     sources: Source[];
 };
 /**
+ * The backend's full source catalog.
+ *
  * @generated from message medallion.terminal.v1.ListSourcesResponse
  */
 export type ListSourcesResponseJson = {
     /**
+     * Every source the backend can serve.
+     *
      * @generated from field: repeated medallion.terminal.v1.Source sources = 1;
      */
     sources?: SourceJson[];
@@ -446,6 +548,8 @@ export declare const SourceSchema: GenMessage<Source, {
     jsonType: SourceJson;
 }>;
 /**
+ * SourceParam declares one parameter a Source accepts.
+ *
  * @generated from message medallion.terminal.v1.SourceParam
  */
 export type SourceParam = Message<"medallion.terminal.v1.SourceParam"> & {
@@ -501,6 +605,8 @@ export type SourceParam = Message<"medallion.terminal.v1.SourceParam"> & {
     repeated: boolean;
 };
 /**
+ * SourceParam declares one parameter a Source accepts.
+ *
  * @generated from message medallion.terminal.v1.SourceParam
  */
 export type SourceParamJson = {
@@ -563,6 +669,8 @@ export declare const SourceParamSchema: GenMessage<SourceParam, {
     jsonType: SourceParamJson;
 }>;
 /**
+ * Input to the AI Generate RPC.
+ *
  * @generated from message medallion.terminal.v1.GenerateRequest
  */
 export type GenerateRequest = Message<"medallion.terminal.v1.GenerateRequest"> & {
@@ -589,6 +697,8 @@ export type GenerateRequest = Message<"medallion.terminal.v1.GenerateRequest"> &
     currentWidgets: Widget[];
 };
 /**
+ * Input to the AI Generate RPC.
+ *
  * @generated from message medallion.terminal.v1.GenerateRequest
  */
 export type GenerateRequestJson = {
@@ -622,6 +732,8 @@ export declare const GenerateRequestSchema: GenMessage<GenerateRequest, {
     jsonType: GenerateRequestJson;
 }>;
 /**
+ * Output of the AI Generate RPC: a reply plus dashboard mutations.
+ *
  * @generated from message medallion.terminal.v1.GenerateResponse
  */
 export type GenerateResponse = Message<"medallion.terminal.v1.GenerateResponse"> & {
@@ -658,6 +770,8 @@ export type GenerateResponse = Message<"medallion.terminal.v1.GenerateResponse">
     context?: Context | undefined;
 };
 /**
+ * Output of the AI Generate RPC: a reply plus dashboard mutations.
+ *
  * @generated from message medallion.terminal.v1.GenerateResponse
  */
 export type GenerateResponseJson = {
@@ -720,10 +834,14 @@ export declare const GenerateResponseSchema: GenMessage<GenerateResponse, {
  */
 export type ActionRequest = Message<"medallion.terminal.v1.ActionRequest"> & {
     /**
+     * Selects the backend handler (e.g. "place_order").
+     *
      * @generated from field: string action_id = 1;
      */
     actionId: string;
     /**
+     * Action parameters. Schema is per-action by convention.
+     *
      * @generated from field: google.protobuf.Struct params = 2;
      */
     params?: JsonObject | undefined;
@@ -759,10 +877,14 @@ export type ActionRequest = Message<"medallion.terminal.v1.ActionRequest"> & {
  */
 export type ActionRequestJson = {
     /**
+     * Selects the backend handler (e.g. "place_order").
+     *
      * @generated from field: string action_id = 1;
      */
     actionId?: string;
     /**
+     * Action parameters. Schema is per-action by convention.
+     *
      * @generated from field: google.protobuf.Struct params = 2;
      */
     params?: StructJson;
@@ -1102,10 +1224,14 @@ export declare const ActionUpdateSchema: GenMessage<ActionUpdate, {
  */
 export declare enum ParamType {
     /**
+     * No type declared; treated as string.
+     *
      * @generated from enum value: PARAM_TYPE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * Free-form string.
+     *
      * @generated from enum value: PARAM_TYPE_STRING = 1;
      */
     STRING = 1,
@@ -1116,6 +1242,8 @@ export declare enum ParamType {
      */
     NUMBER = 2,
     /**
+     * "true" or "false".
+     *
      * @generated from enum value: PARAM_TYPE_BOOLEAN = 3;
      */
     BOOLEAN = 3,
@@ -1173,86 +1301,128 @@ export declare const ParamTypeSchema: GenEnum<ParamType, ParamTypeJson>;
  */
 export declare enum Shape {
     /**
+     * No shape declared.
+     *
      * @generated from enum value: SHAPE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
+     * TimeseriesPayload.
+     *
      * @generated from enum value: SHAPE_TIMESERIES = 1;
      */
     TIMESERIES = 1,
     /**
+     * CandlePayload.
+     *
      * @generated from enum value: SHAPE_CANDLES = 2;
      */
     CANDLES = 2,
     /**
+     * TablePayload.
+     *
      * @generated from enum value: SHAPE_TABLE = 3;
      */
     TABLE = 3,
     /**
+     * MetricPayload.
+     *
      * @generated from enum value: SHAPE_METRIC = 4;
      */
     METRIC = 4,
     /**
+     * GaugePayload.
+     *
      * @generated from enum value: SHAPE_GAUGE = 5;
      */
     GAUGE = 5,
     /**
+     * HeatmapPayload.
+     *
      * @generated from enum value: SHAPE_HEATMAP = 6;
      */
     HEATMAP = 6,
     /**
+     * EventPayload.
+     *
      * @generated from enum value: SHAPE_EVENTS = 7;
      */
     EVENTS = 7,
     /**
+     * DistributionPayload.
+     *
      * @generated from enum value: SHAPE_DISTRIBUTION = 8;
      */
     DISTRIBUTION = 8,
     /**
+     * TextPayload.
+     *
      * @generated from enum value: SHAPE_TEXT = 9;
      */
     TEXT = 9,
     /**
+     * OrderBookPayload.
+     *
      * @generated from enum value: SHAPE_ORDERBOOK = 10;
      */
     ORDERBOOK = 10,
     /**
+     * PairedGridPayload.
+     *
      * @generated from enum value: SHAPE_PAIRED_GRID = 11;
      */
     PAIRED_GRID = 11,
     /**
+     * EmbedPayload.
+     *
      * @generated from enum value: SHAPE_EMBED = 12;
      */
     EMBED = 12,
     /**
+     * AssetCatalogPayload.
+     *
      * @generated from enum value: SHAPE_ASSET_CATALOG = 13;
      */
     ASSET_CATALOG = 13,
     /**
+     * ObjectPayload.
+     *
      * @generated from enum value: SHAPE_OBJECT = 14;
      */
     OBJECT = 14,
     /**
+     * GraphPayload.
+     *
      * @generated from enum value: SHAPE_GRAPH = 15;
      */
     GRAPH = 15,
     /**
+     * RepositoryPayload.
+     *
      * @generated from enum value: SHAPE_REPOSITORY = 16;
      */
     REPOSITORY = 16,
     /**
+     * RecordSetPayload.
+     *
      * @generated from enum value: SHAPE_RECORD_SET = 17;
      */
     RECORD_SET = 17,
     /**
+     * GeoPayload.
+     *
      * @generated from enum value: SHAPE_GEO = 18;
      */
     GEO = 18,
     /**
+     * MediaPayload.
+     *
      * @generated from enum value: SHAPE_MEDIA = 19;
      */
     MEDIA = 19,
     /**
+     * ConversationPayload.
+     *
      * @generated from enum value: SHAPE_CONVERSATION = 20;
      */
     CONVERSATION = 20
@@ -1288,6 +1458,8 @@ export declare const ShapeSchema: GenEnum<Shape, ShapeJson>;
  */
 export declare enum ActionStatus {
     /**
+     * No status declared. Treat as unknown.
+     *
      * @generated from enum value: ACTION_STATUS_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
@@ -1353,6 +1525,10 @@ export type ActionStatusJson = "ACTION_STATUS_UNSPECIFIED" | "ACTION_STATUS_OK" 
  */
 export declare const ActionStatusSchema: GenEnum<ActionStatus, ActionStatusJson>;
 /**
+ * TerminalService is the single RPC surface a backend implements
+ * to power a dashboard: read (Get / Stream), catalog (ListSources),
+ * AI (Generate), and write (SubmitAction / WatchAction).
+ *
  * @generated from service medallion.terminal.v1.TerminalService
  */
 export declare const TerminalService: GenService<{

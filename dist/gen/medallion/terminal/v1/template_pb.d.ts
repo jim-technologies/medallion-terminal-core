@@ -29,6 +29,8 @@ export declare const file_medallion_terminal_v1_template: GenFile;
  */
 export type Template = Message<"medallion.terminal.v1.Template"> & {
     /**
+     * Dashboard title shown in the header.
+     *
      * @generated from field: string title = 1;
      */
     title: string;
@@ -76,6 +78,8 @@ export type Template = Message<"medallion.terminal.v1.Template"> & {
  */
 export type TemplateJson = {
     /**
+     * Dashboard title shown in the header.
+     *
      * @generated from field: string title = 1;
      */
     title?: string;
@@ -120,6 +124,8 @@ export declare const TemplateSchema: GenMessage<Template, {
  */
 export type Context = Message<"medallion.terminal.v1.Context"> & {
     /**
+     * The context values, keyed by user-defined names.
+     *
      * @generated from field: map<string, string> values = 1;
      */
     values: {
@@ -140,6 +146,8 @@ export type Context = Message<"medallion.terminal.v1.Context"> & {
  */
 export type ContextJson = {
     /**
+     * The context values, keyed by user-defined names.
+     *
      * @generated from field: map<string, string> values = 1;
      */
     values?: {
@@ -154,6 +162,9 @@ export declare const ContextSchema: GenMessage<Context, {
     jsonType: ContextJson;
 }>;
 /**
+ * Widget is one cell in the dashboard grid: a component, its size,
+ * and where its data comes from.
+ *
  * @generated from message medallion.terminal.v1.Widget
  */
 export type Widget = Message<"medallion.terminal.v1.Widget"> & {
@@ -208,6 +219,9 @@ export type Widget = Message<"medallion.terminal.v1.Widget"> & {
     options?: JsonObject | undefined;
 };
 /**
+ * Widget is one cell in the dashboard grid: a component, its size,
+ * and where its data comes from.
+ *
  * @generated from message medallion.terminal.v1.Widget
  */
 export type WidgetJson = {
@@ -485,26 +499,38 @@ export type WidgetAction = Message<"medallion.terminal.v1.WidgetAction"> & {
      */
     remove: boolean;
     /**
+     * New component name, when changing the renderer.
+     *
      * @generated from field: optional string component = 3;
      */
     component?: string | undefined;
     /**
+     * New header label.
+     *
      * @generated from field: optional string title = 4;
      */
     title?: string | undefined;
     /**
+     * New column span.
+     *
      * @generated from field: optional int32 span = 5;
      */
     span?: number | undefined;
     /**
+     * New content height in pixels.
+     *
      * @generated from field: optional int32 height = 6;
      */
     height?: number | undefined;
     /**
+     * New data source.
+     *
      * @generated from field: optional medallion.terminal.v1.DataSource source = 7;
      */
     source?: DataSource | undefined;
     /**
+     * New component-specific overrides.
+     *
      * @generated from field: optional google.protobuf.Struct options = 8;
      */
     options?: JsonObject | undefined;
@@ -537,26 +563,38 @@ export type WidgetActionJson = {
      */
     remove?: boolean;
     /**
+     * New component name, when changing the renderer.
+     *
      * @generated from field: optional string component = 3;
      */
     component?: string;
     /**
+     * New header label.
+     *
      * @generated from field: optional string title = 4;
      */
     title?: string;
     /**
+     * New column span.
+     *
      * @generated from field: optional int32 span = 5;
      */
     span?: number;
     /**
+     * New content height in pixels.
+     *
      * @generated from field: optional int32 height = 6;
      */
     height?: number;
     /**
+     * New data source.
+     *
      * @generated from field: optional medallion.terminal.v1.DataSource source = 7;
      */
     source?: DataSourceJson;
     /**
+     * New component-specific overrides.
+     *
      * @generated from field: optional google.protobuf.Struct options = 8;
      */
     options?: StructJson;

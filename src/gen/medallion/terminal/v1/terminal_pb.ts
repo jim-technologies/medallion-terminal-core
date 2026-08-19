@@ -19,6 +19,9 @@ export const file_medallion_terminal_v1_terminal: GenFile = /*@__PURE__*/
   fileDesc("CiRtZWRhbGxpb24vdGVybWluYWwvdjEvdGVybWluYWwucHJvdG8SFW1lZGFsbGlvbi50ZXJtaW5hbC52MSKPAQoLRGF0YVJlcXVlc3QSEQoJc291cmNlX2lkGAEgASgJEj4KBnBhcmFtcxgCIAMoCzIuLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5EYXRhUmVxdWVzdC5QYXJhbXNFbnRyeRotCgtQYXJhbXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIqgJCgxEYXRhUmVzcG9uc2USPgoKdGltZXNlcmllcxgBIAEoCzIoLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5UaW1lc2VyaWVzUGF5bG9hZEgAEjcKB2NhbmRsZXMYAiABKAsyJC5tZWRhbGxpb24udGVybWluYWwudjEuQ2FuZGxlUGF5bG9hZEgAEjQKBXRhYmxlGAMgASgLMiMubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlRhYmxlUGF5bG9hZEgAEjYKBm1ldHJpYxgEIAEoCzIkLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5NZXRyaWNQYXlsb2FkSAASNAoFZ2F1Z2UYBSABKAsyIy5tZWRhbGxpb24udGVybWluYWwudjEuR2F1Z2VQYXlsb2FkSAASOAoHaGVhdG1hcBgGIAEoCzIlLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5IZWF0bWFwUGF5bG9hZEgAEjUKBmV2ZW50cxgHIAEoCzIjLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5FdmVudFBheWxvYWRIABJCCgxkaXN0cmlidXRpb24YCCABKAsyKi5tZWRhbGxpb24udGVybWluYWwudjEuRGlzdHJpYnV0aW9uUGF5bG9hZEgAEjIKBHRleHQYCSABKAsyIi5tZWRhbGxpb24udGVybWluYWwudjEuVGV4dFBheWxvYWRIABI8CglvcmRlcmJvb2sYCiABKAsyJy5tZWRhbGxpb24udGVybWluYWwudjEuT3JkZXJCb29rUGF5bG9hZEgAEj8KC3BhaXJlZF9ncmlkGAsgASgLMigubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlBhaXJlZEdyaWRQYXlsb2FkSAASNAoFZW1iZWQYDCABKAsyIy5tZWRhbGxpb24udGVybWluYWwudjEuRW1iZWRQYXlsb2FkSAASPAoGYXNzZXRzGA0gASgLMioubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkFzc2V0Q2F0YWxvZ1BheWxvYWRIABI2CgZvYmplY3QYDiABKAsyJC5tZWRhbGxpb24udGVybWluYWwudjEuT2JqZWN0UGF5bG9hZEgAEjQKBWdyYXBoGA8gASgLMiMubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkdyYXBoUGF5bG9hZEgAEj4KCnJlcG9zaXRvcnkYECABKAsyKC5tZWRhbGxpb24udGVybWluYWwudjEuUmVwb3NpdG9yeVBheWxvYWRIABI6CgdyZWNvcmRzGBEgASgLMicubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlJlY29yZFNldFBheWxvYWRIABIwCgNnZW8YEiABKAsyIS5tZWRhbGxpb24udGVybWluYWwudjEuR2VvUGF5bG9hZEgAEjQKBW1lZGlhGBMgASgLMiMubWVkYWxsaW9uLnRlcm1pbmFsLnYxLk1lZGlhUGF5bG9hZEgAEkIKDGNvbnZlcnNhdGlvbhgUIAEoCzIqLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5Db252ZXJzYXRpb25QYXlsb2FkSABCCQoHcGF5bG9hZCIUChJMaXN0U291cmNlc1JlcXVlc3QiRQoTTGlzdFNvdXJjZXNSZXNwb25zZRIuCgdzb3VyY2VzGAEgAygLMh0ubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlNvdXJjZSK6AQoGU291cmNlEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkSKwoFc2hhcGUYBCABKA4yHC5tZWRhbGxpb24udGVybWluYWwudjEuU2hhcGUSMgoGcGFyYW1zGAUgAygLMiIubWVkYWxsaW9uLnRlcm1pbmFsLnYxLlNvdXJjZVBhcmFtEhIKCnN0cmVhbWFibGUYBiABKAgSDAoEdGFncxgHIAMoCSKvAQoLU291cmNlUGFyYW0SCwoDa2V5GAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEhAKCHJlcXVpcmVkGAMgASgIEhUKDWRlZmF1bHRfdmFsdWUYBCABKAkSEwoLZW51bV92YWx1ZXMYBSADKAkSLgoEdHlwZRgGIAEoDjIgLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5QYXJhbVR5cGUSEAoIcmVwZWF0ZWQYByABKAgiigEKD0dlbmVyYXRlUmVxdWVzdBIOCgZwcm9tcHQYASABKAkSLwoHY29udGV4dBgCIAEoCzIeLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5Db250ZXh0EjYKD2N1cnJlbnRfd2lkZ2V0cxgDIAMoCzIdLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5XaWRnZXQinAEKEEdlbmVyYXRlUmVzcG9uc2USDAoEdGV4dBgBIAEoCRI0CgdhY3Rpb25zGAIgAygLMiMubWVkYWxsaW9uLnRlcm1pbmFsLnYxLldpZGdldEFjdGlvbhITCgtyZXBsYWNlX2FsbBgDIAEoCBIvCgdjb250ZXh0GAQgASgLMh4ubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkNvbnRleHQiZgoNQWN0aW9uUmVxdWVzdBIRCglhY3Rpb25faWQYASABKAkSJwoGcGFyYW1zGAIgASgLMhcuZ29vZ2xlLnByb3RvYnVmLlN0cnVjdBIZChFjbGllbnRfcmVxdWVzdF9pZBgDIAEoCSLWAQoOQWN0aW9uUmVzcG9uc2USCgoCaWQYASABKAkSMwoGc3RhdHVzGAIgASgOMiMubWVkYWxsaW9uLnRlcm1pbmFsLnYxLkFjdGlvblN0YXR1cxIUCgdtZXNzYWdlGAMgASgJSACIAQESKgoEZGF0YRgEIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3RIAYgBARIaCg1zdGF0dXNfZGV0YWlsGAUgASgJSAKIAQFCCgoIX21lc3NhZ2VCBwoFX2RhdGFCEAoOX3N0YXR1c19kZXRhaWwiTgoSQWN0aW9uV2F0Y2hSZXF1ZXN0EhEKCWFjdGlvbl9pZBgBIAEoCRIKCgJpZBgCIAEoCRIZChFjbGllbnRfcmVxdWVzdF9pZBgDIAEoCSKnAgoMQWN0aW9uVXBkYXRlEgoKAmlkGAEgASgJEhEKCWFjdGlvbl9pZBgCIAEoCRIZChFjbGllbnRfcmVxdWVzdF9pZBgDIAEoCRIzCgZzdGF0dXMYBCABKA4yIy5tZWRhbGxpb24udGVybWluYWwudjEuQWN0aW9uU3RhdHVzEhoKDXN0YXR1c19kZXRhaWwYBSABKAlIAIgBARIUCgdtZXNzYWdlGAYgASgJSAGIAQESKgoEZGF0YRgHIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3RIAogBARIRCgl0aW1lc3RhbXAYCCABKAkSEAoIc2VxdWVuY2UYCSABKARCEAoOX3N0YXR1c19kZXRhaWxCCgoIX21lc3NhZ2VCBwoFX2RhdGEq4gEKCVBhcmFtVHlwZRIaChZQQVJBTV9UWVBFX1VOU1BFQ0lGSUVEEAASFQoRUEFSQU1fVFlQRV9TVFJJTkcQARIVChFQQVJBTV9UWVBFX05VTUJFUhACEhYKElBBUkFNX1RZUEVfQk9PTEVBThADEhgKFFBBUkFNX1RZUEVfVElNRVNUQU1QEAQSFwoTUEFSQU1fVFlQRV9EVVJBVElPThAFEhMKD1BBUkFNX1RZUEVfRU5VTRAGEhYKElBBUkFNX1RZUEVfSU5URUdFUhAHEhMKD1BBUkFNX1RZUEVfREFURRAIKqUDCgVTaGFwZRIVChFTSEFQRV9VTlNQRUNJRklFRBAAEhQKEFNIQVBFX1RJTUVTRVJJRVMQARIRCg1TSEFQRV9DQU5ETEVTEAISDwoLU0hBUEVfVEFCTEUQAxIQCgxTSEFQRV9NRVRSSUMQBBIPCgtTSEFQRV9HQVVHRRAFEhEKDVNIQVBFX0hFQVRNQVAQBhIQCgxTSEFQRV9FVkVOVFMQBxIWChJTSEFQRV9ESVNUUklCVVRJT04QCBIOCgpTSEFQRV9URVhUEAkSEwoPU0hBUEVfT1JERVJCT09LEAoSFQoRU0hBUEVfUEFJUkVEX0dSSUQQCxIPCgtTSEFQRV9FTUJFRBAMEhcKE1NIQVBFX0FTU0VUX0NBVEFMT0cQDRIQCgxTSEFQRV9PQkpFQ1QQDhIPCgtTSEFQRV9HUkFQSBAPEhQKEFNIQVBFX1JFUE9TSVRPUlkQEBIUChBTSEFQRV9SRUNPUkRfU0VUEBESDQoJU0hBUEVfR0VPEBISDwoLU0hBUEVfTUVESUEQExIWChJTSEFQRV9DT05WRVJTQVRJT04QFCrNAQoMQWN0aW9uU3RhdHVzEh0KGUFDVElPTl9TVEFUVVNfVU5TUEVDSUZJRUQQABIUChBBQ1RJT05fU1RBVFVTX09LEAESGgoWQUNUSU9OX1NUQVRVU19BQ0NFUFRFRBACEhkKFUFDVElPTl9TVEFUVVNfUEVORElORxADEhoKFkFDVElPTl9TVEFUVVNfUkVKRUNURUQQBBIYChRBQ1RJT05fU1RBVFVTX0ZBSUxFRBAFEhsKF0FDVElPTl9TVEFUVVNfQ0FOQ0VMTEVEEAYytwQKD1Rlcm1pbmFsU2VydmljZRJOCgNHZXQSIi5tZWRhbGxpb24udGVybWluYWwudjEuRGF0YVJlcXVlc3QaIy5tZWRhbGxpb24udGVybWluYWwudjEuRGF0YVJlc3BvbnNlElMKBlN0cmVhbRIiLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5EYXRhUmVxdWVzdBojLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5EYXRhUmVzcG9uc2UwARJkCgtMaXN0U291cmNlcxIpLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5MaXN0U291cmNlc1JlcXVlc3QaKi5tZWRhbGxpb24udGVybWluYWwudjEuTGlzdFNvdXJjZXNSZXNwb25zZRJbCghHZW5lcmF0ZRImLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5HZW5lcmF0ZVJlcXVlc3QaJy5tZWRhbGxpb24udGVybWluYWwudjEuR2VuZXJhdGVSZXNwb25zZRJbCgxTdWJtaXRBY3Rpb24SJC5tZWRhbGxpb24udGVybWluYWwudjEuQWN0aW9uUmVxdWVzdBolLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5BY3Rpb25SZXNwb25zZRJfCgtXYXRjaEFjdGlvbhIpLm1lZGFsbGlvbi50ZXJtaW5hbC52MS5BY3Rpb25XYXRjaFJlcXVlc3QaIy5tZWRhbGxpb24udGVybWluYWwudjEuQWN0aW9uVXBkYXRlMAFiBnByb3RvMw", [file_google_protobuf_struct, file_medallion_terminal_v1_shapes, file_medallion_terminal_v1_template]);
 
 /**
+ * Request envelope shared by Get and Stream. Selects a source and
+ * supplies its params.
+ *
  * @generated from message medallion.terminal.v1.DataRequest
  */
 export type DataRequest = Message<"medallion.terminal.v1.DataRequest"> & {
@@ -39,6 +42,9 @@ export type DataRequest = Message<"medallion.terminal.v1.DataRequest"> & {
 };
 
 /**
+ * Request envelope shared by Get and Stream. Selects a source and
+ * supplies its params.
+ *
  * @generated from message medallion.terminal.v1.DataRequest
  */
 export type DataRequestJson = {
@@ -73,124 +79,166 @@ export const DataRequestSchema: GenMessage<DataRequest, {jsonType: DataRequestJs
  */
 export type DataResponse = Message<"medallion.terminal.v1.DataResponse"> & {
   /**
+   * Exactly one case is set, matching the source's declared Shape.
+   *
    * @generated from oneof medallion.terminal.v1.DataResponse.payload
    */
   payload: {
     /**
+     * Line-chart data. See TimeseriesPayload.
+     *
      * @generated from field: medallion.terminal.v1.TimeseriesPayload timeseries = 1;
      */
     value: TimeseriesPayload;
     case: "timeseries";
   } | {
     /**
+     * OHLCV bars. See CandlePayload.
+     *
      * @generated from field: medallion.terminal.v1.CandlePayload candles = 2;
      */
     value: CandlePayload;
     case: "candles";
   } | {
     /**
+     * Tabular rows. See TablePayload.
+     *
      * @generated from field: medallion.terminal.v1.TablePayload table = 3;
      */
     value: TablePayload;
     case: "table";
   } | {
     /**
+     * Single headline number. See MetricPayload.
+     *
      * @generated from field: medallion.terminal.v1.MetricPayload metric = 4;
      */
     value: MetricPayload;
     case: "metric";
   } | {
     /**
+     * Bounded scalar. See GaugePayload.
+     *
      * @generated from field: medallion.terminal.v1.GaugePayload gauge = 5;
      */
     value: GaugePayload;
     case: "gauge";
   } | {
     /**
+     * 2D matrix. See HeatmapPayload.
+     *
      * @generated from field: medallion.terminal.v1.HeatmapPayload heatmap = 6;
      */
     value: HeatmapPayload;
     case: "heatmap";
   } | {
     /**
+     * Status timeline. See EventPayload.
+     *
      * @generated from field: medallion.terminal.v1.EventPayload events = 7;
      */
     value: EventPayload;
     case: "events";
   } | {
     /**
+     * Categorical proportions. See DistributionPayload.
+     *
      * @generated from field: medallion.terminal.v1.DistributionPayload distribution = 8;
      */
     value: DistributionPayload;
     case: "distribution";
   } | {
     /**
+     * News/summary items. See TextPayload.
+     *
      * @generated from field: medallion.terminal.v1.TextPayload text = 9;
      */
     value: TextPayload;
     case: "text";
   } | {
     /**
+     * Bid/ask depth. See OrderBookPayload.
+     *
      * @generated from field: medallion.terminal.v1.OrderBookPayload orderbook = 10;
      */
     value: OrderBookPayload;
     case: "orderbook";
   } | {
     /**
+     * Left/right lattice. See PairedGridPayload.
+     *
      * @generated from field: medallion.terminal.v1.PairedGridPayload paired_grid = 11;
      */
     value: PairedGridPayload;
     case: "pairedGrid";
   } | {
     /**
+     * Context-driven image/iframe URL. See EmbedPayload.
+     *
      * @generated from field: medallion.terminal.v1.EmbedPayload embed = 12;
      */
     value: EmbedPayload;
     case: "embed";
   } | {
     /**
+     * Catalog of platform assets. See AssetCatalogPayload.
+     *
      * @generated from field: medallion.terminal.v1.AssetCatalogPayload assets = 13;
      */
     value: AssetCatalogPayload;
     case: "assets";
   } | {
     /**
+     * Ontology object detail. See ObjectPayload.
+     *
      * @generated from field: medallion.terminal.v1.ObjectPayload object = 14;
      */
     value: ObjectPayload;
     case: "object";
   } | {
     /**
+     * Directed graph. See GraphPayload.
+     *
      * @generated from field: medallion.terminal.v1.GraphPayload graph = 15;
      */
     value: GraphPayload;
     case: "graph";
   } | {
     /**
+     * Source browsing. See RepositoryPayload.
+     *
      * @generated from field: medallion.terminal.v1.RepositoryPayload repository = 16;
      */
     value: RepositoryPayload;
     case: "repository";
   } | {
     /**
+     * Mutable record set. See RecordSetPayload.
+     *
      * @generated from field: medallion.terminal.v1.RecordSetPayload records = 17;
      */
     value: RecordSetPayload;
     case: "records";
   } | {
     /**
+     * Geospatial features. See GeoPayload.
+     *
      * @generated from field: medallion.terminal.v1.GeoPayload geo = 18;
      */
     value: GeoPayload;
     case: "geo";
   } | {
     /**
+     * Media library. See MediaPayload.
+     *
      * @generated from field: medallion.terminal.v1.MediaPayload media = 19;
      */
     value: MediaPayload;
     case: "media";
   } | {
     /**
+     * Message transcript. See ConversationPayload.
+     *
      * @generated from field: medallion.terminal.v1.ConversationPayload conversation = 20;
      */
     value: ConversationPayload;
@@ -206,101 +254,141 @@ export type DataResponse = Message<"medallion.terminal.v1.DataResponse"> & {
  */
 export type DataResponseJson = {
   /**
+   * Line-chart data. See TimeseriesPayload.
+   *
    * @generated from field: medallion.terminal.v1.TimeseriesPayload timeseries = 1;
    */
   timeseries?: TimeseriesPayloadJson;
 
   /**
+   * OHLCV bars. See CandlePayload.
+   *
    * @generated from field: medallion.terminal.v1.CandlePayload candles = 2;
    */
   candles?: CandlePayloadJson;
 
   /**
+   * Tabular rows. See TablePayload.
+   *
    * @generated from field: medallion.terminal.v1.TablePayload table = 3;
    */
   table?: TablePayloadJson;
 
   /**
+   * Single headline number. See MetricPayload.
+   *
    * @generated from field: medallion.terminal.v1.MetricPayload metric = 4;
    */
   metric?: MetricPayloadJson;
 
   /**
+   * Bounded scalar. See GaugePayload.
+   *
    * @generated from field: medallion.terminal.v1.GaugePayload gauge = 5;
    */
   gauge?: GaugePayloadJson;
 
   /**
+   * 2D matrix. See HeatmapPayload.
+   *
    * @generated from field: medallion.terminal.v1.HeatmapPayload heatmap = 6;
    */
   heatmap?: HeatmapPayloadJson;
 
   /**
+   * Status timeline. See EventPayload.
+   *
    * @generated from field: medallion.terminal.v1.EventPayload events = 7;
    */
   events?: EventPayloadJson;
 
   /**
+   * Categorical proportions. See DistributionPayload.
+   *
    * @generated from field: medallion.terminal.v1.DistributionPayload distribution = 8;
    */
   distribution?: DistributionPayloadJson;
 
   /**
+   * News/summary items. See TextPayload.
+   *
    * @generated from field: medallion.terminal.v1.TextPayload text = 9;
    */
   text?: TextPayloadJson;
 
   /**
+   * Bid/ask depth. See OrderBookPayload.
+   *
    * @generated from field: medallion.terminal.v1.OrderBookPayload orderbook = 10;
    */
   orderbook?: OrderBookPayloadJson;
 
   /**
+   * Left/right lattice. See PairedGridPayload.
+   *
    * @generated from field: medallion.terminal.v1.PairedGridPayload paired_grid = 11;
    */
   pairedGrid?: PairedGridPayloadJson;
 
   /**
+   * Context-driven image/iframe URL. See EmbedPayload.
+   *
    * @generated from field: medallion.terminal.v1.EmbedPayload embed = 12;
    */
   embed?: EmbedPayloadJson;
 
   /**
+   * Catalog of platform assets. See AssetCatalogPayload.
+   *
    * @generated from field: medallion.terminal.v1.AssetCatalogPayload assets = 13;
    */
   assets?: AssetCatalogPayloadJson;
 
   /**
+   * Ontology object detail. See ObjectPayload.
+   *
    * @generated from field: medallion.terminal.v1.ObjectPayload object = 14;
    */
   object?: ObjectPayloadJson;
 
   /**
+   * Directed graph. See GraphPayload.
+   *
    * @generated from field: medallion.terminal.v1.GraphPayload graph = 15;
    */
   graph?: GraphPayloadJson;
 
   /**
+   * Source browsing. See RepositoryPayload.
+   *
    * @generated from field: medallion.terminal.v1.RepositoryPayload repository = 16;
    */
   repository?: RepositoryPayloadJson;
 
   /**
+   * Mutable record set. See RecordSetPayload.
+   *
    * @generated from field: medallion.terminal.v1.RecordSetPayload records = 17;
    */
   records?: RecordSetPayloadJson;
 
   /**
+   * Geospatial features. See GeoPayload.
+   *
    * @generated from field: medallion.terminal.v1.GeoPayload geo = 18;
    */
   geo?: GeoPayloadJson;
 
   /**
+   * Media library. See MediaPayload.
+   *
    * @generated from field: medallion.terminal.v1.MediaPayload media = 19;
    */
   media?: MediaPayloadJson;
 
   /**
+   * Message transcript. See ConversationPayload.
+   *
    * @generated from field: medallion.terminal.v1.ConversationPayload conversation = 20;
    */
   conversation?: ConversationPayloadJson;
@@ -314,6 +402,9 @@ export const DataResponseSchema: GenMessage<DataResponse, {jsonType: DataRespons
   messageDesc(file_medallion_terminal_v1_terminal, 1);
 
 /**
+ * ListSourcesRequest carries no fields today; filtering may be
+ * added later.
+ *
  * Reserved for future filtering (by tag, by shape, by query).
  *
  * @generated from message medallion.terminal.v1.ListSourcesRequest
@@ -322,6 +413,9 @@ export type ListSourcesRequest = Message<"medallion.terminal.v1.ListSourcesReque
 };
 
 /**
+ * ListSourcesRequest carries no fields today; filtering may be
+ * added later.
+ *
  * Reserved for future filtering (by tag, by shape, by query).
  *
  * @generated from message medallion.terminal.v1.ListSourcesRequest
@@ -337,20 +431,28 @@ export const ListSourcesRequestSchema: GenMessage<ListSourcesRequest, {jsonType:
   messageDesc(file_medallion_terminal_v1_terminal, 2);
 
 /**
+ * The backend's full source catalog.
+ *
  * @generated from message medallion.terminal.v1.ListSourcesResponse
  */
 export type ListSourcesResponse = Message<"medallion.terminal.v1.ListSourcesResponse"> & {
   /**
+   * Every source the backend can serve.
+   *
    * @generated from field: repeated medallion.terminal.v1.Source sources = 1;
    */
   sources: Source[];
 };
 
 /**
+ * The backend's full source catalog.
+ *
  * @generated from message medallion.terminal.v1.ListSourcesResponse
  */
 export type ListSourcesResponseJson = {
   /**
+   * Every source the backend can serve.
+   *
    * @generated from field: repeated medallion.terminal.v1.Source sources = 1;
    */
   sources?: SourceJson[];
@@ -495,6 +597,8 @@ export const SourceSchema: GenMessage<Source, {jsonType: SourceJson}> = /*@__PUR
   messageDesc(file_medallion_terminal_v1_terminal, 4);
 
 /**
+ * SourceParam declares one parameter a Source accepts.
+ *
  * @generated from message medallion.terminal.v1.SourceParam
  */
 export type SourceParam = Message<"medallion.terminal.v1.SourceParam"> & {
@@ -557,6 +661,8 @@ export type SourceParam = Message<"medallion.terminal.v1.SourceParam"> & {
 };
 
 /**
+ * SourceParam declares one parameter a Source accepts.
+ *
  * @generated from message medallion.terminal.v1.SourceParam
  */
 export type SourceParamJson = {
@@ -626,6 +732,8 @@ export const SourceParamSchema: GenMessage<SourceParam, {jsonType: SourceParamJs
   messageDesc(file_medallion_terminal_v1_terminal, 5);
 
 /**
+ * Input to the AI Generate RPC.
+ *
  * @generated from message medallion.terminal.v1.GenerateRequest
  */
 export type GenerateRequest = Message<"medallion.terminal.v1.GenerateRequest"> & {
@@ -655,6 +763,8 @@ export type GenerateRequest = Message<"medallion.terminal.v1.GenerateRequest"> &
 };
 
 /**
+ * Input to the AI Generate RPC.
+ *
  * @generated from message medallion.terminal.v1.GenerateRequest
  */
 export type GenerateRequestJson = {
@@ -691,6 +801,8 @@ export const GenerateRequestSchema: GenMessage<GenerateRequest, {jsonType: Gener
   messageDesc(file_medallion_terminal_v1_terminal, 6);
 
 /**
+ * Output of the AI Generate RPC: a reply plus dashboard mutations.
+ *
  * @generated from message medallion.terminal.v1.GenerateResponse
  */
 export type GenerateResponse = Message<"medallion.terminal.v1.GenerateResponse"> & {
@@ -731,6 +843,8 @@ export type GenerateResponse = Message<"medallion.terminal.v1.GenerateResponse">
 };
 
 /**
+ * Output of the AI Generate RPC: a reply plus dashboard mutations.
+ *
  * @generated from message medallion.terminal.v1.GenerateResponse
  */
 export type GenerateResponseJson = {
@@ -797,11 +911,15 @@ export const GenerateResponseSchema: GenMessage<GenerateResponse, {jsonType: Gen
  */
 export type ActionRequest = Message<"medallion.terminal.v1.ActionRequest"> & {
   /**
+   * Selects the backend handler (e.g. "place_order").
+   *
    * @generated from field: string action_id = 1;
    */
   actionId: string;
 
   /**
+   * Action parameters. Schema is per-action by convention.
+   *
    * @generated from field: google.protobuf.Struct params = 2;
    */
   params?: JsonObject | undefined;
@@ -839,11 +957,15 @@ export type ActionRequest = Message<"medallion.terminal.v1.ActionRequest"> & {
  */
 export type ActionRequestJson = {
   /**
+   * Selects the backend handler (e.g. "place_order").
+   *
    * @generated from field: string action_id = 1;
    */
   actionId?: string;
 
   /**
+   * Action parameters. Schema is per-action by convention.
+   *
    * @generated from field: google.protobuf.Struct params = 2;
    */
   params?: StructJson;
@@ -1219,11 +1341,15 @@ export const ActionUpdateSchema: GenMessage<ActionUpdate, {jsonType: ActionUpdat
  */
 export enum ParamType {
   /**
+   * No type declared; treated as string.
+   *
    * @generated from enum value: PARAM_TYPE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * Free-form string.
+   *
    * @generated from enum value: PARAM_TYPE_STRING = 1;
    */
   STRING = 1,
@@ -1236,6 +1362,8 @@ export enum ParamType {
   NUMBER = 2,
 
   /**
+   * "true" or "false".
+   *
    * @generated from enum value: PARAM_TYPE_BOOLEAN = 3;
    */
   BOOLEAN = 3,
@@ -1302,106 +1430,148 @@ export const ParamTypeSchema: GenEnum<ParamType, ParamTypeJson> = /*@__PURE__*/
  */
 export enum Shape {
   /**
+   * No shape declared.
+   *
    * @generated from enum value: SHAPE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * TimeseriesPayload.
+   *
    * @generated from enum value: SHAPE_TIMESERIES = 1;
    */
   TIMESERIES = 1,
 
   /**
+   * CandlePayload.
+   *
    * @generated from enum value: SHAPE_CANDLES = 2;
    */
   CANDLES = 2,
 
   /**
+   * TablePayload.
+   *
    * @generated from enum value: SHAPE_TABLE = 3;
    */
   TABLE = 3,
 
   /**
+   * MetricPayload.
+   *
    * @generated from enum value: SHAPE_METRIC = 4;
    */
   METRIC = 4,
 
   /**
+   * GaugePayload.
+   *
    * @generated from enum value: SHAPE_GAUGE = 5;
    */
   GAUGE = 5,
 
   /**
+   * HeatmapPayload.
+   *
    * @generated from enum value: SHAPE_HEATMAP = 6;
    */
   HEATMAP = 6,
 
   /**
+   * EventPayload.
+   *
    * @generated from enum value: SHAPE_EVENTS = 7;
    */
   EVENTS = 7,
 
   /**
+   * DistributionPayload.
+   *
    * @generated from enum value: SHAPE_DISTRIBUTION = 8;
    */
   DISTRIBUTION = 8,
 
   /**
+   * TextPayload.
+   *
    * @generated from enum value: SHAPE_TEXT = 9;
    */
   TEXT = 9,
 
   /**
+   * OrderBookPayload.
+   *
    * @generated from enum value: SHAPE_ORDERBOOK = 10;
    */
   ORDERBOOK = 10,
 
   /**
+   * PairedGridPayload.
+   *
    * @generated from enum value: SHAPE_PAIRED_GRID = 11;
    */
   PAIRED_GRID = 11,
 
   /**
+   * EmbedPayload.
+   *
    * @generated from enum value: SHAPE_EMBED = 12;
    */
   EMBED = 12,
 
   /**
+   * AssetCatalogPayload.
+   *
    * @generated from enum value: SHAPE_ASSET_CATALOG = 13;
    */
   ASSET_CATALOG = 13,
 
   /**
+   * ObjectPayload.
+   *
    * @generated from enum value: SHAPE_OBJECT = 14;
    */
   OBJECT = 14,
 
   /**
+   * GraphPayload.
+   *
    * @generated from enum value: SHAPE_GRAPH = 15;
    */
   GRAPH = 15,
 
   /**
+   * RepositoryPayload.
+   *
    * @generated from enum value: SHAPE_REPOSITORY = 16;
    */
   REPOSITORY = 16,
 
   /**
+   * RecordSetPayload.
+   *
    * @generated from enum value: SHAPE_RECORD_SET = 17;
    */
   RECORD_SET = 17,
 
   /**
+   * GeoPayload.
+   *
    * @generated from enum value: SHAPE_GEO = 18;
    */
   GEO = 18,
 
   /**
+   * MediaPayload.
+   *
    * @generated from enum value: SHAPE_MEDIA = 19;
    */
   MEDIA = 19,
 
   /**
+   * ConversationPayload.
+   *
    * @generated from enum value: SHAPE_CONVERSATION = 20;
    */
   CONVERSATION = 20,
@@ -1441,6 +1611,8 @@ export const ShapeSchema: GenEnum<Shape, ShapeJson> = /*@__PURE__*/
  */
 export enum ActionStatus {
   /**
+   * No status declared. Treat as unknown.
+   *
    * @generated from enum value: ACTION_STATUS_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
@@ -1516,6 +1688,10 @@ export const ActionStatusSchema: GenEnum<ActionStatus, ActionStatusJson> = /*@__
   enumDesc(file_medallion_terminal_v1_terminal, 2);
 
 /**
+ * TerminalService is the single RPC surface a backend implements
+ * to power a dashboard: read (Get / Stream), catalog (ListSources),
+ * AI (Generate), and write (SubmitAction / WatchAction).
+ *
  * @generated from service medallion.terminal.v1.TerminalService
  */
 export const TerminalService: GenService<{

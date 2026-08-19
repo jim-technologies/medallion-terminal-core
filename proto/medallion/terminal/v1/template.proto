@@ -32,6 +32,7 @@ import "google/protobuf/struct.proto";
 //     ]
 //   }
 message Template {
+  // Dashboard title shown in the header.
   string title = 1;
 
   // Grid column count. Default: 12.
@@ -54,9 +55,12 @@ message Template {
 // "event", "range", "from", "to". The framework does not interpret
 // them — they are pure substitution tokens.
 message Context {
+  // The context values, keyed by user-defined names.
   map<string, string> values = 1;
 }
 
+// Widget is one cell in the dashboard grid: a component, its size,
+// and where its data comes from.
 message Widget {
   // Stable identifier; required if the widget is mutable via
   // WidgetAction. Auto-assigned if omitted.
@@ -160,10 +164,16 @@ message WidgetAction {
   // If true, remove the widget. Other fields are ignored.
   bool remove = 2;
 
+  // New component name, when changing the renderer.
   optional string component = 3;
+  // New header label.
   optional string title = 4;
+  // New column span.
   optional int32 span = 5;
+  // New content height in pixels.
   optional int32 height = 6;
+  // New data source.
   optional DataSource source = 7;
+  // New component-specific overrides.
   optional google.protobuf.Struct options = 8;
 }
