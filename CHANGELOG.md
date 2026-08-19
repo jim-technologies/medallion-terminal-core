@@ -2,6 +2,16 @@
 
 Notable changes to medallion-terminal-core. Versions follow semver.
 
+## [Unreleased]
+
+### Changed
+
+- **The public proto surface is fully documented and comment-linted.**
+  `buf lint` now enforces the `COMMENTS` rules, every service, RPC, message,
+  field, enum, and oneof in `proto/medallion/terminal/v1` carries doc
+  comments, and the regenerated `src/gen` and `dist/gen` bindings are
+  committed.
+
 ## [0.5.0] — 2026-08-18
 
 ### Changed
