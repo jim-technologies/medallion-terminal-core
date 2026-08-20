@@ -115,7 +115,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   references expose semantic kind, passive capabilities, and unresolved
   symlink targets directly. Installed applications can match MIME, intent, and
   semantic kind, while `assetApplicationFrame` lets a trusted host place the
-  selected renderer in a Compass pane, route, drawer, or portal. The default
+  selected renderer in a host pane, route, drawer, or portal. The default
   remains an accessible fullscreen frame.
 - **Complete provider-grouped product showcase catalog.** Storybook now adds
   dedicated suites for Google Gmail, Microsoft Outlook, Notion, Atlassian

@@ -9,7 +9,7 @@ Medallion Terminal Core is one npm package with two complementary layers:
 
 The toolkit is in the same package so a workbench, embedded dashboard, and
 custom application share one visual and interaction contract. It is a
-rendering toolkit, not the Compass application runtime. Authentication,
+rendering toolkit, not an application runtime. Authentication,
 authorization, tenant policy, storage, indexing, link resolution, ontology
 semantics, routing, and application sandboxing remain outside this repository.
 
@@ -150,14 +150,14 @@ IDs and keeps expansion and selection controlled by the host.
 
 Storybook includes:
 
-- `Toolkit/Compositions/Workbenches/Compass Like Object Workbench`
-- `Toolkit/Compositions/Workbenches/Ontology Like Model Workbench`
+- `Toolkit/Compositions/Workbenches/Object Workbench`
+- `Toolkit/Compositions/Workbenches/Model Workbench`
 - `Toolkit/Compositions/Workbenches/Database Explorer`
 - `Toolkit/Compositions/Workbenches/View Table`
 
-They demonstrate three-pane composition only; they contain no Compass,
-Ontology, connector, credential, or SQL-execution semantics. The database
-explorer composes the generic tree, panes, table presentation, tabs, inspector,
+They demonstrate three-pane composition only; they contain no
+application-specific, connector, credential, or SQL-execution semantics. The
+database explorer composes the generic tree, panes, table presentation, tabs, inspector,
 schema metadata, indexes, and query text surface around host-owned data. The
 focused table viewer additionally demonstrates sorting, filtering, bounded
 paging, column visibility, and row inspection without the surrounding explorer.

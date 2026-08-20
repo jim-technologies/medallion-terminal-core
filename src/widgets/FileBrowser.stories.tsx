@@ -41,7 +41,7 @@ function ReviewRoomPlayer({ asset }: AssetAppRendererProps) {
   )
 }
 
-function CompassApplicationPane({
+function WorkspaceApplicationPane({
   request,
   application,
   Renderer,
@@ -247,7 +247,7 @@ export const HostControlledApplicationPane: Story = {
           'jim-video-player': JimVideoPlayer,
           'review-room-player': ReviewRoomPlayer,
         }}
-        applicationFrame={CompassApplicationPane}
+        applicationFrame={WorkspaceApplicationPane}
       >
         <Story />
       </AssetOpenProvider>

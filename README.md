@@ -29,10 +29,9 @@ For the typed record workspace, open
 
 ## Building applications with Terminal Core
 
-Terminal Core is also Medallion's shared React UI and workbench toolkit.
-Compass, Ontology, Terminal, Connect, and trusted custom applications can
-compose the same controls and data-dense layout patterns without rendering a
-`Dashboard`:
+Terminal Core is also Medallion's shared React UI and workbench toolkit. Host
+applications and trusted custom surfaces can compose the same controls and
+data-dense layout patterns without rendering a `Dashboard`:
 
 ```tsx
 import {
@@ -415,8 +414,8 @@ renderer may internally open a vetted dashboard template, but that template
 remains presentation data and should still use the normal untrusted-template
 policy.
 
-The default application frame is a fullscreen dialog. A Compass host can pass
-`assetApplicationFrame` to place the resolved renderer in its own route,
+The default application frame is a fullscreen dialog. A host application can
+pass `assetApplicationFrame` to place the resolved renderer in its own route,
 workspace pane, drawer, or portal. The frame receives the trusted renderer,
 request, close action, and “Open with…” action; templates and resolver JSON
 still cannot register UI code.

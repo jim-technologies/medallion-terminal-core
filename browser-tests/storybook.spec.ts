@@ -70,8 +70,8 @@ const toolkitStories = {
   toolkitPropertyList: 'toolkit-workbench-primitives--property-list-arbitrary-data',
   toolkitStates: 'toolkit-workbench-primitives--empty-loading-and-error-states',
   toolkitNarrowPane: 'toolkit-workbench-primitives--narrow-stacked-pane',
-  toolkitCompass: 'toolkit-compositions-workbenches--compass-like-object-workbench',
-  toolkitOntology: 'toolkit-compositions-workbenches--ontology-like-model-workbench',
+  toolkitObjectWorkbench: 'toolkit-compositions-workbenches--object-workbench-composition',
+  toolkitModelWorkbench: 'toolkit-compositions-workbenches--model-workbench-composition',
   toolkitDatabase: 'toolkit-compositions-workbenches--database-like-data-workbench',
   toolkitTableViewer: 'toolkit-compositions-workbenches--database-table-viewer',
   toolkitScopedRegistry: 'toolkit-integration-hostbridge--scoped-widget-registry',
@@ -329,7 +329,7 @@ for (const viewport of [
 
 test('Workbench composition stacks without horizontal viewport overflow on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
-  const root = await openStory(page, stories.toolkitCompass)
+  const root = await openStory(page, stories.toolkitObjectWorkbench)
   const dimensions = await root.evaluate(element => ({
     clientWidth: element.clientWidth,
     scrollWidth: element.scrollWidth,
@@ -419,7 +419,7 @@ for (const [name, id] of Object.entries({
   toolkitButtons: stories.toolkitButtons,
   toolkitTabs: stories.toolkitTabs,
   toolkitAppSurface: stories.toolkitAppSurface,
-  toolkitCompass: stories.toolkitCompass,
+  toolkitObjectWorkbench: stories.toolkitObjectWorkbench,
   toolkitDatabase: stories.toolkitDatabase,
   toolkitTableViewer: stories.toolkitTableViewer,
   readiness: stories.readiness,

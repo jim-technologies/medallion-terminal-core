@@ -36,11 +36,13 @@ const meta = {
 export default meta
 type Story = StoryObj
 
-export const CompassLikeObjectWorkbench: Story = {
+export const ObjectWorkbenchComposition: Story = {
+  name: 'Object workbench',
   render: () => <ObjectWorkbench />,
 }
 
-export const OntologyLikeModelWorkbench: Story = {
+export const ModelWorkbenchComposition: Story = {
+  name: 'Model workbench',
   render: () => <ModelWorkbench />,
 }
 
