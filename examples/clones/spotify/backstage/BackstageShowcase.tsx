@@ -841,7 +841,7 @@ function EntityOverview({
         <header><h2>Quick links</h2></header>
         <div>
           {[
-            ['Production', 'https://app.jimtech.xyz', 'globe'],
+            ['Production', 'https://app.example.com', 'globe'],
             ['Service dashboard', 'Healthy · 99.98%', 'activity'],
             ['API definition', `${entity.providesApis?.length ?? 0} provided`, 'code'],
             ['On-call schedule', 'Platform Experience', 'calendar'],

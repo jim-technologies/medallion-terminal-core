@@ -6,6 +6,11 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- **The demo persona address and the sample production host are fictional.**
+  The clone demo identity and the backend examples now use `jun@example.test`
+  alongside the existing `maya@example.test`, and the CORS integration test
+  and the Backstage clone's Production quick link point at
+  `https://app.example.com`. Affected visual baselines are regenerated.
 - **The public proto surface is fully documented and comment-linted.**
   `buf lint` now enforces the `COMMENTS` rules, every service, RPC, message,
   field, enum, and oneof in `proto/medallion/terminal/v1` carries doc

@@ -305,14 +305,14 @@ describe('reference backend ↔ client', () => {
     const readToken = 'read-token-for-tests-0001'
     const operatorToken = 'operator-token-tests-0002'
     const secure = createTerminalServer({
-      allowedOrigins: ['https://app.jimtech.xyz'],
+      allowedOrigins: ['https://app.example.com'],
       maxBodyBytes: 1024,
       authorize: createBearerAuthorizer({
         tokens: [
           { token: readToken, subject: 'reader@jimtech.xyz', scopes: ['terminal:read'] },
           {
             token: operatorToken,
-            subject: 'jun@jimtech.xyz',
+            subject: 'jun@example.test',
             tenant: 'jim-technologies',
             scopes: ['terminal:read', 'terminal:write', 'terminal:media'],
           },
@@ -329,7 +329,7 @@ describe('reference backend ↔ client', () => {
     const address = secure.address()
     if (!address || typeof address === 'string') throw new Error('secure server has no address')
     const url = `http://127.0.0.1:${address.port}/${SERVICE}`
-    const call = (method: string, token?: string, origin = 'https://app.jimtech.xyz') => fetch(`${url}/${method}`, {
+    const call = (method: string, token?: string, origin = 'https://app.example.com') => fetch(`${url}/${method}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -354,7 +354,7 @@ describe('reference backend ↔ client', () => {
 
       const read = await call('ListSources', readToken)
       expect(read.status).toBe(200)
-      expect(read.headers.get('access-control-allow-origin')).toBe('https://app.jimtech.xyz')
+      expect(read.headers.get('access-control-allow-origin')).toBe('https://app.example.com')
       expect(read.headers.get('x-request-id')).toBe('test-listsources')
 
       expect((await call('SubmitAction', readToken)).status).toBe(403)
@@ -362,7 +362,7 @@ describe('reference backend ↔ client', () => {
 
       const preflight = await fetch(`${url}/Get`, {
         method: 'OPTIONS',
-        headers: { Origin: 'https://app.jimtech.xyz' },
+        headers: { Origin: 'https://app.example.com' },
       })
       expect(preflight.status).toBe(204)
       expect(preflight.headers.get('access-control-allow-headers')).toContain('Authorization')
@@ -371,7 +371,7 @@ describe('reference backend ↔ client', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Origin: 'https://app.jimtech.xyz',
+          Origin: 'https://app.example.com',
           Authorization: `Bearer ${operatorToken}`,
         },
         body: JSON.stringify({ source_id: 'btc_spot', padding: 'x'.repeat(2048) }),
@@ -381,7 +381,7 @@ describe('reference backend ↔ client', () => {
       expect(audit).toEqual(expect.arrayContaining([
         expect.objectContaining({ operation: 'ListSources', subject: 'reader@jimtech.xyz', outcome: 'allowed', status: 200 }),
         expect.objectContaining({ operation: 'SubmitAction', subject: 'reader@jimtech.xyz', outcome: 'denied', status: 403 }),
-        expect.objectContaining({ operation: 'SubmitAction', subject: 'jun@jimtech.xyz', outcome: 'allowed', status: 200 }),
+        expect.objectContaining({ operation: 'SubmitAction', subject: 'jun@example.test', outcome: 'allowed', status: 200 }),
       ]))
       expect(audit.every(event => !('body' in event) && !('token' in event))).toBe(true)
     } finally {

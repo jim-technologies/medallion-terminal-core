@@ -13,7 +13,7 @@ export const AUTHORIZED_WORKSPACE_TEMPLATE: Template = {
   context: {
     values: {
       tenant: 'jim-technologies',
-      user: 'jun@jimtech.xyz',
+      user: 'jun@example.test',
       asset_id: 'customer-360',
       asset_kind: 'dataset',
     },

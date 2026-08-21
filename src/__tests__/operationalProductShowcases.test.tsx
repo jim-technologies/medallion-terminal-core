@@ -59,7 +59,7 @@ describe('operational product showcase primitives', () => {
       company: 'Jim Technologies',
       user: 'Jun',
       website: 'jimtech.xyz',
-      email: 'jun@jimtech.xyz',
+      email: 'jun@example.test',
     })
     expect(operationalShowcaseInitials(CLONE_DEMO_IDENTITY.company)).toBe('JT')
     expect(formatOperationalCurrency(48_621, { cents: true })).toBe('$48,621.00')

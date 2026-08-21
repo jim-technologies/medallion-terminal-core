@@ -19,7 +19,7 @@ new URL(allowedOrigin)
 const authorize = createBearerAuthorizer({
   tokens: [{
     token,
-    subject: 'jun@jimtech.xyz',
+    subject: 'jun@example.test',
     tenant: 'jim-technologies',
     scopes: ['terminal:read', 'terminal:write', 'terminal:media'],
   }],
