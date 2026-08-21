@@ -21,6 +21,18 @@ router: targets delegate to native tooling or guard; logic lives in scripts.
 infrastructure names, or references to private repositories appear anywhere
 in code, docs, examples, or the Makefile itself.
 
+`scripts/public-surface-check` enforces that, over three streams: the content
+of every tracked file, every tracked path, and the commit messages a push
+would publish. A finding against a commit message means the message must be
+rewritten before the branch is pushed; fixing the file is not enough.
+
+Exceptions live in `.public-surface-allow` at the repository root, one line
+each, and every one carries the reason it is justified. The guard re-runs
+every category probe after loading those rules, so a rule broad enough to
+switch a category off is rejected rather than obeyed, and
+`scripts/public-surface-check-test` runs alongside the guard so the gate goes
+red if the guard itself stops working.
+
 ## Explicitly FORBIDDEN
 
 - `make deploy` — libraries deploy nowhere.

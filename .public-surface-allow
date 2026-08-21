@@ -1,0 +1,48 @@
+# .public-surface-allow - justified exceptions to scripts/public-surface-check.
+#
+# One rule per line, four fields:
+#
+#     category | path-glob | reason | pattern
+#
+# A rule masks exactly the text its pattern matches, only under the paths its
+# glob matches, only for its category. Everything else on the same line is
+# still checked, so an exception can never quietly widen into a hole, and a
+# rule broad enough to switch a category off is rejected rather than obeyed.
+#
+# Patterns use %HH hex escapes where spelling a term in full would otherwise
+# trip the guard's own scan of this file.
+#
+# Run `scripts/public-surface-check --help` for the full syntax.
+
+# ---------------------------------------------------------------------------
+# The public API and product this repository exists to publish.
+#
+# The schema, the package on npm, the product it is published under and the
+# key prefix it writes in a browser are all names a stranger has to be able to
+# read, type and search for. Each spelling gets its own rule: the separator
+# class covers the dotted schema package, the underscored generated
+# identifiers, the hyphenated package and the spaced brand, and nothing else.
+# ---------------------------------------------------------------------------
+codename | * | the schema package this repository is published to distribute, in every spelling the generated bindings use | %6dedallion[ ._-]terminal
+private-repo | * | the published npm package name, the browser storage key prefix it owns and the example dashboard named after it are public identifiers a host has to be able to find | %6dedallion-terminal(:|'|"|\.json)
+
+# ---------------------------------------------------------------------------
+# Third-party product vocabulary. These clones reproduce other companies' user
+# interfaces so this toolkit can be judged against them, so they carry those
+# companies' product names. The names are theirs, not ours.
+# ---------------------------------------------------------------------------
+codename | examples/clones/palantir/* | a clone of the Palantir product of that name, down to its CSS class names; the product is theirs | com%70ass
+codename | src/__tests__/operationalProductShowcases.test.tsx | this suite drives the Palantir clone above and names the surface it is asserting on | com%70ass
+codename | examples/clones/* | Palantir's object-model product is called this; the clone reproduces its navigation labels | Onto%6cogy
+
+# ---------------------------------------------------------------------------
+# The generic word for an object model. This toolkit renders object types,
+# properties, links and actions, and that data model is what the industry
+# calls an ontology; the word is capitalised here only because it opens a
+# sentence, a table cell or a UI label. The lower-case deny patterns still
+# run, so a product-qualified name such as the service form is still caught.
+# ---------------------------------------------------------------------------
+codename | *.md | the generic term for the object model this toolkit renders, capitalised at the head of a sentence or a table cell | Onto%6cogy
+codename | proto/* | the generic term for the object model, capitalised at the head of a schema comment | Onto%6cogy
+codename | */gen/* | generated bindings carry the schema comments through verbatim | Onto%6cogy
+codename | src/*.tsx | the generic term for the object model, as a gallery title and as test fixture data | Onto%6cogy

@@ -337,7 +337,8 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
 - `pnpm build:lib` — npm library (JS + CSS + .d.ts)
 - `pnpm storybook` — storybook (http://localhost:6006)
 - `make validate` — the single gate verb (see `MAKEFILE-CONTRACT.md`):
-  frozen-lockfile install + pinned Chromium + public-surface guard +
+  frozen-lockfile install + pinned Chromium + public-surface guard
+  (`scripts/public-surface-check`, exceptions in `.public-surface-allow`) +
   `VERSION` parity + lint + all test suites + builds + artifact checks;
   CI runs exactly `flox activate -- make validate` and nothing else
 

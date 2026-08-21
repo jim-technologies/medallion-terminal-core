@@ -6,6 +6,17 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- **The public-surface guard is the shared fleet implementation.**
+  `scripts/public-surface-check` replaces the repository-local
+  `scripts/public-surface-check.mjs` and is byte-identical in every public
+  jim-technologies repository. It scans tracked file content, tracked paths,
+  and the commit messages a push would publish, refuses to run if any deny
+  category stops matching its own probes, and ships with
+  `scripts/public-surface-check-test`, which `validate` runs so the gate goes
+  red if the guard itself stops working. Justified exceptions — this
+  repository's own schema package, product name and browser storage key
+  prefix, and the third-party product vocabulary the `examples/clones`
+  reproduce — are one reasoned line each in `.public-surface-allow`.
 - **The demo persona address and the sample production host are fictional.**
   The clone demo identity and the backend examples now use `jun@example.test`
   alongside the existing `maya@example.test`, and the CORS integration test

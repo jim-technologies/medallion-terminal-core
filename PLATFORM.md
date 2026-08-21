@@ -221,7 +221,7 @@ compose any internal architecture behind it:
    authorization, classifications, and entitlements.
 2. Metadata and search service for assets, schemas, tags, ownership,
    documentation, quality, and freshness.
-3. Ontology service for object types, object instances, links, derived
+3. Object-model service for object types, object instances, links, derived
    properties, and action definitions.
 4. Data plane for SQL/query execution, object storage, streaming, datasets,
    and binary media.

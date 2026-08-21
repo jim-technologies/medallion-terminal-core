@@ -2,7 +2,7 @@
 # (pnpm) or guard; logic lives in scripts/.
 .DEFAULT_GOAL := help
 
-.PHONY: help fmt test test-unit test-storybook test-browser validate build build-storybook generate release check-dist run
+.PHONY: help fmt test test-unit test-storybook test-browser validate public-surface build build-storybook generate release check-dist run
 
 help: ## Show available make targets.
 	@awk 'BEGIN {FS = ":.*##"; print "Available targets:"} /^[a-zA-Z0-9_.-]+:.*##/ { printf "  %-16s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -25,6 +25,9 @@ validate: ## The gate — exactly what CI runs: deps, surface guard, version par
 	pnpm install --frozen-lockfile
 	pnpm exec playwright install chromium
 	pnpm validate
+
+public-surface: ## Guard the public surface: tracked content, paths, and unpushed commit messages (the first step of validate).
+	pnpm check:surface
 
 build: ## Build the app and library bundles.
 	pnpm build && pnpm build:lib

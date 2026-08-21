@@ -52,7 +52,7 @@
     "check:package": "node scripts/check-package.mjs",
     "check:bundles": "node scripts/check-bundle-isolation.mjs",
     "check:breaking": "buf breaking --against '.git#branch=origin/main'",
-    "check:surface": "node scripts/public-surface-check.mjs",
+    "check:surface": "scripts/public-surface-check && scripts/public-surface-check-test",
     "check:version": "node scripts/check-version.mjs",
     "backend": "node examples/backend/server.mjs",
     "backend:secure": "node examples/backend/secure-server.mjs",

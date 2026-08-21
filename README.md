@@ -919,8 +919,11 @@ make validate
 
 `make validate` is the single gate verb (see
 [`MAKEFILE-CONTRACT.md`](MAKEFILE-CONTRACT.md)) and is exactly what CI runs.
-It gates the public surface (no private hostnames, repository references,
-registries, or credentials), `VERSION`/`package.json` parity, TypeScript and
+It gates the public surface — no private hostnames, repository references,
+registries, credentials, or internal codenames, checked in tracked content,
+in tracked paths, and in the commit messages a push would publish, with every
+justified exception listed and reasoned in `.public-surface-allow` —
+`VERSION`/`package.json` parity, TypeScript and
 proto generation, Buf lint/build and compatibility against `origin/main`, the
 reusable TerminalService conformance suite, unit/integration tests, every
 Storybook story in real Chromium, both application and library builds,
