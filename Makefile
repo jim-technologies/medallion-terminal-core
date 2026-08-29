@@ -2,10 +2,20 @@
 # (pnpm) or guard; logic lives in scripts/.
 .DEFAULT_GOAL := help
 
-.PHONY: help fmt test test-unit test-storybook test-browser validate public-surface build build-storybook generate release check-dist run
+.PHONY: help help-all fmt test test-unit test-storybook test-browser validate public-surface build build-storybook generate release check-dist run
 
-help: ## Show available make targets.
-	@awk 'BEGIN {FS = ":.*##"; print "Available targets:"} /^[a-zA-Z0-9_.-]+:.*##/ { printf "  %-16s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+help: ## One-screen help (make help-all for every target)
+	@echo "Daily:"
+	@echo "  make fmt        rewrite formatting in place"
+	@echo "  make test       full test suite (unit + storybook + browser)"
+	@echo "  make validate   the gate — exactly what CI runs"
+	@echo "  make run        start the Vite dev server"
+	@echo "  make generate   regenerate proto-derived types"
+	@echo ""
+	@echo "Everything else: make help-all"
+
+help-all: ## Every target with its description
+	@grep -hE '^[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | sed -E 's/:.*## /\t/'
 
 fmt: ## Rewrite formatting in place (buf format; TypeScript is gated by tsc, not a rewriter).
 	pnpm format
