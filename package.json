@@ -81,14 +81,14 @@
     }
   },
   "dependencies": {
-    "dompurify": "^3.4.12",
-    "hyparquet-writer": "^0.16.1",
-    "marked": "^18.0.7"
+    "dompurify": "^3.4.14",
+    "hyparquet-writer": "^0.16.8",
+    "marked": "^18.0.11"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
-    "@bufbuild/protobuf": "^2.13.0",
-    "@bufbuild/protoc-gen-es": "^2.13.0",
+    "@bufbuild/protobuf": "^2.14.0",
+    "@bufbuild/protoc-gen-es": "^2.14.0",
     "@playwright/test": "1.62.1",
     "@storybook/addon-a11y": "10.5.10",
     "@storybook/addon-vitest": "10.5.10",
@@ -98,9 +98,9 @@
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
-    "@vitejs/plugin-react": "^6.0.4",
+    "@vitejs/plugin-react": "^6.1.1",
     "@vitest/browser-playwright": "4.1.11",
-    "esbuild": "^0.28.1",
+    "esbuild": "^0.28.2",
     "hyparquet": "^1.29.2",
     "lightweight-charts": "^5.2.1",
     "maplibre-gl": "^6.6.0",
@@ -110,7 +110,7 @@
     "storybook": "^10.5.10",
     "tailwindcss": "^4.3.3",
     "typescript": "~7.0.2",
-    "vite": "^8.1.5",
+    "vite": "^8.2.2",
     "vitest": "^4.1.11"
   }
 }
