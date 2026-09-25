@@ -89,6 +89,9 @@ const requiredExports = [
   'normalizeAssetOpenResolution',
   'DesignSystemProvider',
   'Icon',
+  'ICON_NAMES',
+  'TypeGlyph',
+  'typeColorFor',
   'Button',
   'IconButton',
   'Input',
@@ -126,7 +129,7 @@ for (const name of requiredExports) {
   if (!(name in library)) throw new Error(`Published entry is missing export ${JSON.stringify(name)}`)
 }
 for (const [entry, module, names] of [
-  ['./toolkit', toolkit, ['DesignSystemProvider', 'Button', 'Dialog', 'AppSurface', 'Tree']],
+  ['./toolkit', toolkit, ['DesignSystemProvider', 'Button', 'Dialog', 'AppSurface', 'Tree', 'TypeGlyph']],
   ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
   [
     './asset-open',

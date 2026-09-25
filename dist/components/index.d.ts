@@ -1,5 +1,7 @@
-export { Icon } from './Icon';
+export { ICON_NAMES, Icon } from './Icon';
 export type { IconName, IconProps } from './Icon';
+export { TYPE_COLORS, TypeGlyph, typeColorFor } from './TypeGlyph';
+export type { TypeColor, TypeGlyphProps, TypeGlyphSize } from './TypeGlyph';
 export { Button, IconButton, ButtonGroup } from './Button';
 export type { ButtonGroupProps, ButtonProps, ButtonVariant, IconButtonProps, } from './Button';
 export { Checkbox, Combobox, FormField, Input, Radio, Switch, TextArea, } from './FormControls';

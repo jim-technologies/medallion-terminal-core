@@ -134,7 +134,8 @@ retains a label, icon, or structural cue in addition to color.
 
 ### Controls
 
-- `Icon`, `Button`, `IconButton`, `ButtonGroup`
+- `Icon` (`ICON_NAMES` lists the set), `TypeGlyph` (with `TYPE_COLORS` and
+  `typeColorFor`), `Button`, `IconButton`, `ButtonGroup`
 - `Input`, `TextArea`, `FormField`
 - `Checkbox`, `Radio`, `Switch`, `Combobox`
 - `Tag`, `Badge`, `Callout`

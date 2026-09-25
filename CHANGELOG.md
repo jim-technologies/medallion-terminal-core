@@ -29,6 +29,23 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   per-size `--mtc-line-height-{xs…3xl}`, `--mtc-space-12|16`,
   `--mtc-radius-xs`, and `--mtc-elevation-0|3`. Every existing `--mtc-*`
   name is kept.
+- **Icon set v2 and `TypeGlyph`.** `Icon` grows from 22 to 93 first-party
+  glyphs (`ICON_NAMES`): object nouns for type icons (`object`, `person`,
+  `people`, `organization`, `building`, `contract`, `document`, `dataset`,
+  `table`, `column`, `bucket`, `link`, `graph`, `event`, `calendar`,
+  `clock`, `currency`, `order`, `package`, `truck`, `location`, `tag`,
+  `flag`, `alert`, `shield`, `key`, `lock`, `server`, `cloud`, `branch`,
+  `commit`, `workflow`, `play`, `pause`, `film`, `music`, `image`,
+  `chart-line`, `chart-bar`, `globe`, `mail`, `phone`, `ticket`, `tool`,
+  `badge`) and verbs and places (`copy`, `filter`, `columns`, `sort-asc`,
+  `sort-desc`, `arrow-left`, `arrow-right`, `bolt`, `history`, `terminal`,
+  `plug`, `topology`, `home`, `explore`, `ontology`, `activity`, `refresh`,
+  `sign-in`, `sign-out`, `hourglass`, `eye`, `download`, `upload`, `edit`,
+  `trash`, `star`). `IconName` only gains members. `TypeGlyph` renders a type
+  icon on one of the twelve identity slots at 16/20/24/40 px;
+  `TYPE_COLORS` lists the slots and `typeColorFor(typeId)` picks a stable
+  fallback slot from a type id. Storybook adds Toolkit/Components/Iconography
+  with dark and light baselines.
 - **`scripts/check-style-tokens.mjs`**, run by `pnpm lint`, fails when
   production source adds a colour literal outside a token declaration, a
   Tailwind arbitrary colour, a `text-[Npx]` below 11 px or off the scale, or
@@ -57,6 +74,9 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   does not cover; `.public-surface-allow` gains a `COMMIT` exception pinned
   to that one exact subject line instead of a rewrite of published history.
 
+- **Icons draw 1.75-unit strokes** (was 1.8) and every glyph is one path;
+  `Icon` accepts a `strokeWidth` override (TypeGlyph uses 2 at 16 and
+  20 px).
 - **Density `standard` is the default.** `Density` gains `'standard'`
   (additive): 24/28/32 px controls and 32 px rows, between `compact`
   (20/24/28, 28) and `comfortable` (28/32/36, 40, which also loses 2 px per

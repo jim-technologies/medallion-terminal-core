@@ -48,6 +48,8 @@ const toolkitStories = {
   toolkitThemes: 'toolkit-foundations-designsystemprovider--themes',
   toolkitDensity: 'toolkit-foundations-designsystemprovider--density-modes',
   toolkitButtons: 'toolkit-components-controls--icon-and-buttons',
+  toolkitIcons: 'toolkit-components-iconography--icon-set',
+  toolkitTypeGlyphs: 'toolkit-components-iconography--type-glyphs',
   toolkitForms: 'toolkit-components-controls--input-text-area-and-form-field',
   toolkitChoices: 'toolkit-components-controls--checkbox-radio-and-switch',
   toolkitCombobox: 'toolkit-components-controls--combobox-control',

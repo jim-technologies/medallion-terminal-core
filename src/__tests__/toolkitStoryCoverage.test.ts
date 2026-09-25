@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 const storyFiles = [
   '../foundations/DesignSystemProvider.stories.tsx',
   '../components/Controls.stories.tsx',
+  '../components/Iconography.stories.tsx',
   '../components/Overlays.stories.tsx',
   '../components/Navigation.stories.tsx',
   '../workbench/Workbench.stories.tsx',
@@ -13,6 +14,7 @@ const storyFiles = [
 const publicComponents = [
   'DesignSystemProvider',
   'Icon',
+  'TypeGlyph',
   'Button',
   'IconButton',
   'ButtonGroup',

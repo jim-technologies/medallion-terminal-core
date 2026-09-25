@@ -161,6 +161,21 @@ for status.
 - **Motion.** 0 / 120 / 180 / 260 ms with the standard easing. Hover never
   moves an element. Reduced-motion preferences zero every duration.
 
+## Iconography
+
+- One first-party set, owned by `Icon`: a 24-unit grid, 1.75-unit strokes,
+  round caps and joins, `currentColor`, 16 px in UI chrome. `ICON_NAMES`
+  lists every glyph. Nouns (`person`, `organization`, `contract`, `order`,
+  `dataset`, `truck`, …) double as object type icons; verbs (`filter`,
+  `sort-asc`, `copy`, `refresh`, …) label actions.
+- `TypeGlyph` puts a type icon on its identity slot at 16, 20, 24 or 40 px
+  (radius 2, 3, 4, 4; icon 11, 12, 14, 22 px). It is the only place type
+  colour appears in chrome. Beside a visible type name it is decorative;
+  standalone it takes a `label`. `typeColorFor(typeId)` is the deterministic
+  fallback slot.
+- Products never ship a second icon system, and no glyph reproduces another
+  product's icons or logo.
+
 ## Surface hierarchy
 
 1. Workspace canvas.
