@@ -6,6 +6,15 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- **Dependency currency, round 2.** dompurify 3.4.14, marked 18.0.11,
+  hyparquet-writer 0.16.8, protobuf-es 2.14 (`@bufbuild/protobuf` and
+  `protoc-gen-es`), Vite 8.2, `@vitejs/plugin-react` 6.1, and esbuild
+  0.28.2. `src/gen` and `dist/` are regenerated under the new protobuf-es.
+
+## [0.5.1] — 2026-08-29
+
+### Changed
+
 - **The public-surface guard is the shared fleet implementation.**
   `scripts/public-surface-check` replaces the repository-local
   `scripts/public-surface-check.mjs` and is byte-identical in every public
@@ -27,6 +36,21 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   field, enum, and oneof in `proto/medallion/terminal/v1` carries doc
   comments, and the regenerated `src/gen` and `dist/gen` bindings are
   committed.
+- **Browser-test screenshots rasterize identically on every machine.** The
+  Flox manifest pins the fonts the visual baselines depend on (Lato, DejaVu,
+  Inter, Noto Color Emoji) and the activation hook points fontconfig at
+  them, so Chromium no longer falls back to whatever the host has installed.
+  The visual baselines are regenerated under the pinned fonts.
+- **`make help` is one screen.** The default target lists the daily verbs;
+  `make help-all` keeps the full self-documenting listing.
+- **The Makefile contract is the fleet-canonical text.**
+  `MAKEFILE-CONTRACT.md` is rewritten to the version every public
+  jim-technologies repository shares byte-for-byte, including the statement
+  of the gate's floor.
+- **Dependency currency.** MapLibre GL JS 6.6, Storybook 10.5.10, Playwright
+  1.62, hyparquet 1.29, and `@axe-core/playwright` 4.13, plus patch bumps to
+  the React typings, Recharts 3.10.1, lightweight-charts 5.2.1, and Vitest
+  4.1.11.
 
 ## [0.5.0] — 2026-08-18
 
