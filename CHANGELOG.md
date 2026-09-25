@@ -4,6 +4,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.5.2] — 2026-09-25
+
 ### Changed
 
 - **Dependency currency, round 3.** React 19.3 (and its typings), MapLibre
@@ -31,7 +33,6 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - **CI.** `actions/checkout` v7.0.1, `actions/cache` v6.1.0,
   `actions/deploy-pages` v5.0.1, and the gate's Chromium is cached between
   runs keyed on the lockfile.
-
 - **Releases are Git tags only.** `make release` runs the version gate in
   release mode, then creates and pushes the annotated `vVERSION` tag and
   nothing else: the registry publish step and the `prepack` hook are gone,
