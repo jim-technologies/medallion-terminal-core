@@ -6,7 +6,7 @@ const meta: Meta<typeof Sparkline> = {
   component: Sparkline,
   decorators: [
     (Story) => (
-      <div style={{ height: 40, width: 160, background: '#18181b', padding: 4, borderRadius: 6 }}>
+      <div style={{ height: 40, width: 160, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 4, borderRadius: 'var(--mtc-radius-md)' }}>
         <Story />
       </div>
     ),

@@ -114,7 +114,7 @@ const meta: Meta<typeof FileBrowser> = {
       <DashboardContext.Provider
         value={{ ...DEFAULT_DASHBOARD_CONTEXT, ctx: { namespace: 'photos', path: '2024' } }}
       >
-        <div style={{ height: 420, width: 720, background: '#18181b', borderRadius: 8 }}>
+        <div style={{ height: 420, width: 720, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', borderRadius: 'var(--mtc-radius-md)' }}>
           <Story />
         </div>
       </DashboardContext.Provider>

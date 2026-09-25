@@ -6,6 +6,7 @@ import {
   type DashboardTheme,
 } from './Dashboard'
 import type { TemplateTrustPolicy } from './templateSecurity'
+import { DesignSystemScope, useDesignSystem } from '../foundations/DesignSystemProvider'
 import type { Template } from '../types/template'
 
 // Cmd+1..9 / Ctrl+1..9 selects tab N. Common browser
@@ -44,7 +45,7 @@ export function MultiDashboard({
   onSelect,
   backendUrl,
   backendHeaders,
-  theme = 'dark',
+  theme: themeProp,
   templateTrust,
   templateTrustPolicy,
   resolveAssetIntent,
@@ -71,6 +72,8 @@ export function MultiDashboard({
   onIntent?: DashboardProps['onIntent']
   registry?: DashboardProps['registry']
 }) {
+  const inherited = useDesignSystem()
+  const theme = themeProp ?? inherited?.theme ?? 'dark'
   const safeIndex = Math.max(0, Math.min(activeIndex, tabs.length - 1))
   useTabHotkeys(tabs.length, onSelect)
   // Track which tabs have ever been activated. Once activated, stay
@@ -84,6 +87,7 @@ export function MultiDashboard({
 
   return (
     <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
+      <DesignSystemScope theme={theme} density={inherited?.density ?? 'comfortable'}>
       <div className="mtc-workspace min-h-full">
         <TabStrip tabs={tabs} activeIndex={safeIndex} onSelect={onSelect} />
         {tabs.map((tab, i) => (
@@ -108,6 +112,7 @@ export function MultiDashboard({
           </div>
         ))}
       </div>
+      </DesignSystemScope>
     </div>
   )
 }

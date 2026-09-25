@@ -6,7 +6,7 @@ const meta: Meta<typeof Skeleton> = {
   component: Skeleton,
   decorators: [
     (Story) => (
-      <div style={{ height: 320, width: 460, background: '#18181b', padding: 16, borderRadius: 8 }}>
+      <div style={{ height: 320, width: 460, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 16, borderRadius: 'var(--mtc-radius-md)' }}>
         <Story />
       </div>
     ),

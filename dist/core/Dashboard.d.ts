@@ -40,7 +40,10 @@ export interface DashboardProps {
      * Dashboard downloads the snapshot JSON.
      */
     onShare?: (snapshot: Template) => void | Promise<void>;
-    /** Scoped visual theme; defaults to `dark`. */
+    /**
+     * Scoped visual theme. Defaults to the enclosing `DesignSystemProvider`'s
+     * theme, or `dark` outside one.
+     */
     theme?: DashboardTheme;
     /**
      * Template trust boundary. `untrusted` applies the SDK policy before any
@@ -68,4 +71,4 @@ export interface DashboardProps {
      */
     registry?: WidgetRegistry;
 }
-export declare function Dashboard({ template, backendUrl, backendHeaders, onEvent, onIntent, onCtxChange, paletteSuggest, chrome, onShare, theme, templateTrust, templateTrustPolicy, resolveAssetIntent, assetRenderers, assetApplicationFrame, saveAssetOpenPreference, onAssetOpenError, registry, }: DashboardProps): import("react").JSX.Element;
+export declare function Dashboard({ template, backendUrl, backendHeaders, onEvent, onIntent, onCtxChange, paletteSuggest, chrome, onShare, theme: themeProp, templateTrust, templateTrustPolicy, resolveAssetIntent, assetRenderers, assetApplicationFrame, saveAssetOpenPreference, onAssetOpenError, registry, }: DashboardProps): import("react").JSX.Element;

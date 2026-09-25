@@ -845,7 +845,9 @@ For wiring this into a real product, in order:
    ```
    Styles are scoped under `.mtc-root`; the package does not style
    `html`, `body`, or your host app root. Dashboard renders that root
-   automatically.
+   automatically. The stylesheet also declares the vendored Inter and
+   JetBrains Mono faces (SIL OFL 1.1), which load from `dist/fonts/` next to
+   it, so a CSP of `font-src 'self'` is enough once your bundler emits them.
 
 2. **Implement `TerminalService`.** `buf generate` from `proto/medallion/terminal/v1/`. Required RPCs: `Get`, `Stream`, `ListSources`, `SubmitAction`, `WatchAction`. `Generate` is optional. Wire shapes from `shapes.proto`; backends do not invent shapes. Reference: `examples/backend/server.mjs` (one file, every RPC, fork-friendly).
 
@@ -1016,4 +1018,6 @@ Run `pnpm storybook` for local component examples.
 
 ## License
 
-MIT
+Apache-2.0 (see [LICENSE](LICENSE)). The vendored Inter and JetBrains Mono
+fonts are under the SIL Open Font License 1.1 (`src/fonts/OFL-*.txt`, shipped
+in `dist/fonts/`).

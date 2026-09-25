@@ -6,7 +6,7 @@ const meta: Meta<typeof Radar> = {
   component: Radar,
   decorators: [
     (Story) => (
-      <div style={{ height: 380, width: 480, background: '#18181b', padding: 12, borderRadius: 8 }}>
+      <div style={{ height: 380, width: 480, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 12, borderRadius: 'var(--mtc-radius-md)' }}>
         <Story />
       </div>
     ),

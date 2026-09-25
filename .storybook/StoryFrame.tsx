@@ -41,7 +41,7 @@ export function StoryFrame({
       </header>
 
       <section
-        className={`relative overflow-visible rounded-[var(--mtc-radius-lg)] border border-[var(--mtc-border)] bg-[var(--mtc-surface)] p-5 shadow-[var(--mtc-elevation-1)] sm:p-7 ${
+        className={`relative min-w-0 overflow-visible rounded-[var(--mtc-radius-lg)] border border-[var(--mtc-border)] bg-[var(--mtc-surface)] p-5 shadow-[var(--mtc-elevation-1)] sm:p-7 ${
           spacious ? 'min-h-[24rem]' : ''
         }`}
         aria-label={`${title} component example`}

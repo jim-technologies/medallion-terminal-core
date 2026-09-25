@@ -4,6 +4,30 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Added
+
+- **Vendored fonts.** Inter 4.1 and JetBrains Mono 2.304 ship as Latin and
+  Latin Extended variable subsets (weights 400–600, 208 KB together) in
+  `src/fonts/`, with their SIL OFL 1.1 texts and a provenance note. The
+  library build prepends the `@font-face` rules to `dist/styles.css` and
+  emits the files to `dist/fonts/`, so hosts resolve them as ordinary
+  relative stylesheet assets (no `data:` fonts, CSP `font-src 'self'`
+  suffices). `--mtc-font-sans` is Latin-first
+  (`Inter, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", system-ui`)
+  and `--mtc-font-mono` starts with `"JetBrains Mono"`.
+- **`useDesignSystem()`** reads the nearest scoped root's theme and density.
+  `Dashboard` and `MultiDashboard` now inherit the enclosing
+  `DesignSystemProvider` theme when their own `theme` prop is omitted
+  (outside a provider the default is still `dark`), and publish their own
+  scope to descendants.
+- **Light visual baselines.** The Playwright gate renders every themed
+  toolkit story and the production-readiness workspace in dark and light
+  (`browser-tests/__screenshots__/${story}-${theme}.png`) and runs axe on
+  the toolkit stories in light as well. `openStory(page, id, {theme,
+  density})` sets the Storybook globals and waits for `document.fonts`;
+  the browser project emulates `prefers-reduced-motion` so axe never samples
+  a control mid-transition.
+
 ### Changed
 
 - **`package.json` is `private` and declares `Apache-2.0`.** Distribution
@@ -17,8 +41,26 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   does not cover; `.public-surface-allow` gains a `COMMIT` exception pinned
   to that one exact subject line instead of a rewrite of published history.
 
+- **Storybook renders every story inside `DesignSystemProvider` on a
+  full-bleed canvas** (`layout: 'fullscreen'`), so the theme and density
+  toolbar globals reach toolkit components and Dashboards alike. Visual
+  baselines were regenerated as a pure font and harness change; the toolkit
+  ones moved from `${story}.png` to `${story}-dark.png` beside the new
+  `-light` files.
+
+### Fixed
+
+- **README named the wrong license.** Its License section said MIT; it now
+  names Apache-2.0 (the `LICENSE` file and `package.json`) and the fonts'
+  OFL.
+
 ### Removed
 
+- **Hard-coded Storybook canvas colours.** The 44 widget stories that framed
+  themselves in `background: '#18181b'` use `--mtc-surface` and
+  `--mtc-border` instead, so light and high-contrast themes preview
+  correctly; the preview's fixed `backgrounds` swatches are disabled because
+  the themed root paints the canvas.
 - **The `minimumReleaseAgeExclude` entries for MapLibre GL JS 6.11.2 and
   Vite 8.3.1** in `pnpm-workspace.yaml`, and their comment. Both releases
   passed pnpm 11's one-day release age at 2026-09-25T12:46:30Z, after which

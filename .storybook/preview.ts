@@ -1,17 +1,27 @@
 import type { Preview } from '@storybook/react'
 import { createElement } from 'react'
+import '../src/fonts/fonts.css'
 import '../src/index.css'
+import { DesignSystemProvider } from '../src/foundations'
+import type { Density, PresentationTheme } from '../src/foundations'
 
 const preview: Preview = {
   decorators: [
+    // Every story renders inside the public provider, so the theme and
+    // density toolbar globals reach toolkit components and Dashboards alike
+    // (a Dashboard inherits the provider's theme). The canvas is the
+    // workspace background token, never a hard-coded story colour.
     (Story, context) => createElement(
-      'div',
+      DesignSystemProvider,
       {
-        className: `mtc-root mtc-theme-${context.globals.theme}`,
-        'data-theme': context.globals.theme,
-        'data-density': context.globals.density,
+        theme: context.globals.theme as PresentationTheme,
+        density: context.globals.density as Density,
+        children: createElement(
+          'div',
+          { className: 'mtc-workspace min-h-screen' },
+          createElement(Story),
+        ),
       },
-      createElement('div', { className: 'mtc-workspace min-h-screen text-zinc-100' }, createElement(Story)),
     ),
   ],
   initialGlobals: {
@@ -35,6 +45,12 @@ const preview: Preview = {
     },
   },
   parameters: {
+    // Full-bleed canvas: the themed root owns the whole iframe, so no padded
+    // white strip surrounds dark stories and screenshots are edge to edge.
+    layout: 'fullscreen',
+    // The themed root paints the canvas; the addon's fixed swatches would
+    // only disagree with the active theme.
+    backgrounds: { disable: true },
     a11y: {
       // Keep the full audit visible in Storybook while the curated Playwright
       // gate blocks automated regressions on representative product
@@ -44,15 +60,6 @@ const preview: Preview = {
       options: {
         runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'],
       },
-    },
-    backgrounds: {
-      default: 'graphite',
-      values: [
-        { name: 'graphite', value: '#0a0d10' },
-        { name: 'operator', value: '#080a09' },
-        { name: 'light', value: '#f3f5f6' },
-        { name: 'high contrast', value: '#000000' },
-      ],
     },
   },
 }

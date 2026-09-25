@@ -6,7 +6,7 @@ const meta: Meta<typeof Distribution> = {
   component: Distribution,
   decorators: [
     (Story) => (
-      <div style={{ height: 280, width: 320, background: '#18181b', padding: 16, borderRadius: 8 }}>
+      <div style={{ height: 280, width: 320, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 16, borderRadius: 'var(--mtc-radius-md)' }}>
         <Story />
       </div>
     ),

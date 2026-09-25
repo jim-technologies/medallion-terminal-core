@@ -17,7 +17,7 @@ const meta: Meta<typeof ActionLog> = {
   decorators: [
     (Story) => (
       <DashboardContext.Provider value={{ ...DEFAULT_DASHBOARD_CONTEXT, recentActions: sample }}>
-        <div style={{ height: 320, width: 520, background: '#18181b', padding: 12, borderRadius: 8 }}>
+        <div style={{ height: 320, width: 520, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 12, borderRadius: 'var(--mtc-radius-md)' }}>
           <Story />
         </div>
       </DashboardContext.Provider>
@@ -34,7 +34,7 @@ export const Empty_: Story = {
   decorators: [
     (Story) => (
       <DashboardContext.Provider value={DEFAULT_DASHBOARD_CONTEXT}>
-        <div style={{ height: 320, width: 520, background: '#18181b', padding: 12, borderRadius: 8 }}>
+        <div style={{ height: 320, width: 520, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 12, borderRadius: 'var(--mtc-radius-md)' }}>
           <Story />
         </div>
       </DashboardContext.Provider>

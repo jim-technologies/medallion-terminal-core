@@ -29,6 +29,7 @@ import {
   type SaveAssetOpenPreference,
 } from './AssetOpen'
 import type { PresentationTheme } from '../foundations/types'
+import { DesignSystemScope, useDesignSystem } from '../foundations/DesignSystemProvider'
 import type { WidgetRegistry } from './WidgetRegistry'
 import type { TerminalIntentHandler } from './TerminalIntent'
 
@@ -129,7 +130,10 @@ export interface DashboardProps {
    * Dashboard downloads the snapshot JSON.
    */
   onShare?: (snapshot: Template) => void | Promise<void>
-  /** Scoped visual theme; defaults to `dark`. */
+  /**
+   * Scoped visual theme. Defaults to the enclosing `DesignSystemProvider`'s
+   * theme, or `dark` outside one.
+   */
   theme?: DashboardTheme
   /**
    * Template trust boundary. `untrusted` applies the SDK policy before any
@@ -454,7 +458,7 @@ export function Dashboard({
   paletteSuggest,
   chrome = 'full',
   onShare,
-  theme = 'dark',
+  theme: themeProp,
   templateTrust = 'untrusted',
   templateTrustPolicy = DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
   resolveAssetIntent,
@@ -464,6 +468,8 @@ export function Dashboard({
   onAssetOpenError,
   registry,
 }: DashboardProps) {
+  const inherited = useDesignSystem()
+  const theme = themeProp ?? inherited?.theme ?? 'dark'
   const breakpoint = useBreakpoint()
   const columns = template.columns || 12
   const [widgets, setWidgets] = useState<WidgetConfig[]>(template.widgets)
@@ -825,6 +831,7 @@ export function Dashboard({
        data-theme={theme}
        data-density={compact ? 'compact' : 'comfortable'}
      >
+     <DesignSystemScope theme={theme} density={compact ? 'compact' : 'comfortable'}>
      <AssetOpenProvider
        resolveAssetIntent={resolveAssetIntent}
        renderers={assetRenderers}
@@ -937,6 +944,7 @@ export function Dashboard({
      </HoverProvider>
      </NowProvider>
      </AssetOpenProvider>
+     </DesignSystemScope>
      </div>
     </DashboardContext.Provider>
   )

@@ -150,7 +150,6 @@ export const TagBadgeAndCallout: Story = {
 
 export const LightComfortable: Story = {
   name: 'Light · Comfortable',
-  parameters: { backgrounds: { default: 'light' } },
   render: () => (
     <DesignSystemProvider theme="light" density="comfortable">
       <div className="grid gap-4 bg-[var(--mtc-bg)] p-6">

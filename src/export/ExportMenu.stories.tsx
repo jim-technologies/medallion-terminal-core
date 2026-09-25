@@ -9,7 +9,7 @@ const meta: Meta<typeof ExportMenu> = {
   component: ExportMenu,
   decorators: [
     (Story) => (
-      <div style={{ height: 220, width: 280, background: '#18181b', padding: 16, borderRadius: 8 }}>
+      <div style={{ height: 220, width: 280, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 16, borderRadius: 'var(--mtc-radius-md)' }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Story />
         </div>

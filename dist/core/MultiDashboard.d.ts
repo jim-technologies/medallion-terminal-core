@@ -5,7 +5,7 @@ interface Tab {
     label: string;
     template: Template;
 }
-export declare function MultiDashboard({ tabs, activeIndex, onSelect, backendUrl, backendHeaders, theme, templateTrust, templateTrustPolicy, resolveAssetIntent, assetRenderers, assetApplicationFrame, saveAssetOpenPreference, onAssetOpenError, onIntent, registry, }: {
+export declare function MultiDashboard({ tabs, activeIndex, onSelect, backendUrl, backendHeaders, theme: themeProp, templateTrust, templateTrustPolicy, resolveAssetIntent, assetRenderers, assetApplicationFrame, saveAssetOpenPreference, onAssetOpenError, onIntent, registry, }: {
     tabs: Tab[];
     activeIndex: number;
     onSelect: (index: number) => void;

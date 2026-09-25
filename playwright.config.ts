@@ -23,6 +23,9 @@ export default defineConfig({
     colorScheme: 'dark',
     locale: 'en-US',
     timezoneId: 'America/Los_Angeles',
+    // Toolkit transitions (opacity, colour) collapse to zero under reduced
+    // motion, so axe never samples a control mid-transition after load.
+    reducedMotion: 'reduce',
     viewport: { width: 1440, height: 1000 },
     trace: 'retain-on-failure',
   },

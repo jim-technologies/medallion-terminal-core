@@ -97,24 +97,70 @@ const stories = {
   workflow: 'examples-production-readiness--governed-workflow',
 } as const
 
-async function openStory(page: Page, id: string) {
+type StoryTheme = 'dark' | 'operator' | 'light' | 'high-contrast'
+type StoryDensity = 'compact' | 'comfortable'
+
+interface StoryOptions {
+  /** Storybook `theme` global; the preview decorator scopes it. */
+  theme?: StoryTheme
+  /** Storybook `density` global; omitted keeps the preview default. */
+  density?: StoryDensity
+}
+
+async function openStory(page: Page, id: string, { theme = 'dark', density }: StoryOptions = {}) {
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
-  await page.goto(`/iframe.html?id=${id}&viewMode=story`)
-  await page.locator('#storybook-root').waitFor({ state: 'visible' })
-  await page.waitForLoadState('networkidle')
+  const globals = [`theme:${theme}`, density && `density:${density}`].filter(Boolean).join(';')
+  await page.goto(`/iframe.html?id=${id}&viewMode=story&globals=${globals}`)
+  // The vendored fonts load asynchronously (font-display: swap); settle them
+  // before any assertion or screenshot so glyph metrics are final. A cold
+  // Storybook dev server can reload the iframe once while Vite optimizes a
+  // late dependency, so a destroyed context is waited out and retried.
+  for (let attempt = 1; ; attempt++) {
+    await page.locator('#storybook-root').waitFor({ state: 'visible' })
+    await page.waitForLoadState('networkidle')
+    try {
+      await page.evaluate(async () => { await document.fonts.ready })
+      break
+    } catch (error) {
+      if (attempt >= 3 || !String(error).includes('Execution context was destroyed')) throw error
+    }
+  }
   expect(errors, `browser errors in ${id}`).toEqual([])
   return page.locator('#storybook-root')
+}
+
+async function expectNoAxeViolations(page: Page) {
+  const results = await new AxeBuilder({ page })
+    .include('#storybook-root')
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
+    .analyze()
+  expect(results.violations).toEqual([])
 }
 
 for (const [name, id] of Object.entries(stories)) {
   test(`${name} has no automated accessibility violations`, async ({ page }) => {
     await openStory(page, id)
-    const results = await new AxeBuilder({ page })
-      .include('#storybook-root')
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
-      .analyze()
-    expect(results.violations).toEqual([])
+    await expectNoAxeViolations(page)
+  })
+}
+
+// Toolkit stories that follow the theme global. Stories that pin their own
+// provider (the theme and density specimens) render identically under every
+// global, so they keep one baseline.
+const themeInvariantToolkitStories = new Set<keyof typeof toolkitStories>([
+  'toolkitThemes',
+  'toolkitDensity',
+  'toolkitLight',
+  'toolkitCompact',
+])
+const themedToolkitStories = Object.entries(toolkitStories)
+  .filter(([name]) => !themeInvariantToolkitStories.has(name as keyof typeof toolkitStories))
+
+for (const [name, id] of themedToolkitStories) {
+  test(`${name} has no automated accessibility violations in the light theme`, async ({ page }) => {
+    await openStory(page, id, { theme: 'light' })
+    await expectNoAxeViolations(page)
   })
 }
 
@@ -409,23 +455,34 @@ for (const [name, id] of Object.entries(cloneStories)) {
   })
 }
 
+// Product-faithful clones carry their own authored styles and ignore the
+// theme global: one dark baseline each, named after the story.
 for (const [name, id] of Object.entries({
   ...cloneStories,
   githubFiles: stories.githubFiles,
   githubChecks: stories.githubChecks,
   gitlabChanges: stories.gitlabChanges,
   gitlabPipeline: stories.gitlabPipeline,
-  toolkitThemes: stories.toolkitThemes,
-  toolkitButtons: stories.toolkitButtons,
-  toolkitTabs: stories.toolkitTabs,
-  toolkitAppSurface: stories.toolkitAppSurface,
-  toolkitObjectWorkbench: stories.toolkitObjectWorkbench,
-  toolkitDatabase: stories.toolkitDatabase,
-  toolkitTableViewer: stories.toolkitTableViewer,
-  readiness: stories.readiness,
 })) {
   test(`${name} visual baseline`, async ({ page }) => {
     const root = await openStory(page, id)
     await expect(root).toHaveScreenshot(`${name}.png`)
   })
+}
+
+for (const name of themeInvariantToolkitStories) {
+  test(`${name} visual baseline`, async ({ page }) => {
+    const root = await openStory(page, toolkitStories[name])
+    await expect(root).toHaveScreenshot(`${name}.png`)
+  })
+}
+
+// Themed surfaces: `${story}-${theme}.png` in dark and light.
+for (const theme of ['dark', 'light'] as const) {
+  for (const [name, id] of [...themedToolkitStories, ['readiness', stories.readiness] as const]) {
+    test(`${name} ${theme} visual baseline`, async ({ page }) => {
+      const root = await openStory(page, id, { theme })
+      await expect(root).toHaveScreenshot(`${name}-${theme}.png`)
+    })
+  }
 }
