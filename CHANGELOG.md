@@ -20,6 +20,22 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   `DesignSystemProvider` theme when their own `theme` prop is omitted
   (outside a provider the default is still `dark`), and publish their own
   scope to descendants.
+- **Tokens v2 roles** (additive): `--mtc-border-control` (input and
+  checkbox boundaries at 3:1), `--mtc-selection` / `--mtc-selection-hover`,
+  `--mtc-link`, `--mtc-on-accent`, status tints `--mtc-{ok,warning,danger,
+  info}-bg`, `--mtc-graph-edge` / `--mtc-graph-edge-active`, twelve object
+  type identity slots `--mtc-type-{azure,cyan,teal,green,lime,olive,amber,
+  orange,red,rose,magenta,violet}-{fg,bg}`, `--mtc-font-size-2xl|3xl`,
+  per-size `--mtc-line-height-{xs…3xl}`, `--mtc-space-12|16`,
+  `--mtc-radius-xs`, and `--mtc-elevation-0|3`. Every existing `--mtc-*`
+  name is kept.
+- **`scripts/check-style-tokens.mjs`**, run by `pnpm lint`, fails when
+  production source adds a colour literal outside a token declaration, a
+  Tailwind arbitrary colour, a `text-[Npx]` below 11 px or off the scale, or
+  an arbitrary `tracking-[…]`. Existing debt (documented canvas fallbacks and
+  the widget type sizes the next release sweeps) is a ratchet in
+  `scripts/style-token-budget.json`: a file can never exceed its budget, and a
+  stale budget fails until it is lowered.
 - **Light visual baselines.** The Playwright gate renders every themed
   toolkit story and the production-readiness workspace in dark and light
   (`browser-tests/__screenshots__/${story}-${theme}.png`) and runs axe on
@@ -41,6 +57,29 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   does not cover; `.public-surface-allow` gains a `COMMIT` exception pinned
   to that one exact subject line instead of a rewrite of published history.
 
+- **Tokens v2: slate neutrals and a single azure accent.** The four themes
+  are re-derived in OKLCH at hue 255 (`operator` keeps its citrine accent on a
+  one-step-darker slate; `high-contrast` keeps its black canvas). Solid
+  primary actions and checked controls fill with `--mtc-accent-strong` and
+  carry `--mtc-on-accent`; inputs, checkboxes and switches draw
+  `--mtc-border-control`. Chart, code and signal colours are retuned to the
+  same family. The type scale is 11/12/13/14/16/20/24 px with a 13 px base
+  (`--mtc-font-size-md`, `-lg` and `-xl` move to 13, 14 and 16 px); radii are
+  2/3/4/6 px (`--mtc-radius-lg` 10 → 6 px, `--mtc-radius` 6 → 4 px).
+  Elevation is reserved for overlays: tooltips, menus and popovers use
+  level 2, dialogs and drawers level 3. `WidgetShell` headers are 36 px with
+  14/600 titles.
+- **`themeColors.test.ts` covers every role in every theme**: text roles on
+  the canvas, surfaces, quiet fill and selection; status text on its tint;
+  `--mtc-on-accent` on `--mtc-accent-strong`; each type slot on its chip; code
+  tokens; control boundaries, graph edges, the primary fill and chart
+  colours at 3:1. The Candlestick and GeoMap canvas fallbacks are pinned to
+  the dark token values (they had drifted).
+- **`DESIGN.md` is rewritten** for the ontology-first language: principles,
+  the role table, object type identity, the type scale, space, shape and
+  elevation, and a product hierarchy in which the ontology language is the
+  visual system everywhere while Home stays first. It states the originality
+  rule (inspired by, never a copied name, logo, palette or layout).
 - **Storybook renders every story inside `DesignSystemProvider` on a
   full-bleed canvas** (`layout: 'fullscreen'`), so the theme and density
   toolbar globals reach toolkit components and Dashboards alike. Visual
@@ -56,6 +95,12 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Removed
 
+- **Decorative surface effects**: the workspace radial and linear gradients,
+  inset highlights on toolbars, controls, widgets, buttons and inputs, the
+  widget drop shadow, the overlay `backdrop-filter` blur, the dashboard
+  title's signal bar, the button press translation, the landing-card hover
+  lift, and the media thumbnail placeholder gradient. `--mtc-highlight` stays
+  defined as `transparent` so host overrides remain valid.
 - **Hard-coded Storybook canvas colours.** The 44 widget stories that framed
   themselves in `background: '#18181b'` use `--mtc-surface` and
   `--mtc-border` instead, so light and high-contrast themes preview

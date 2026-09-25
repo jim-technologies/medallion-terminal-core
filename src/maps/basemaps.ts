@@ -217,7 +217,7 @@ export function basemapNetworkUrls(basemap: NormalizedBasemap): string[] {
 
 export function basemapStyle(
   basemap: NormalizedBasemap,
-  backgroundColor = '#0a0d10',
+  backgroundColor = '#0b0f13',
 ): MapLibreBasemapStyle {
   if (basemap.kind === 'style') return basemap.style_url
   if (basemap.kind === 'raster') return rasterStyle(basemap, backgroundColor)

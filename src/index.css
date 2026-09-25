@@ -56,53 +56,93 @@
 }
 
 .mtc-root {
-  /* Graphite + cobalt is the default operating theme: neutral enough for a
-     business workspace, with color reserved for state and action. */
-  --mtc-bg: #0a0d10;
-  --mtc-surface: #11151a;
-  --mtc-surface-raised: #151a20;
-  --mtc-panel: #1b2128;
-  --mtc-panel-hover: #222a33;
-  --mtc-border: #28313a;
-  --mtc-border-strong: #3a4652;
-  --mtc-highlight: rgb(255 255 255 / 0.045);
-  --mtc-fg: #f1f4f6;
-  --mtc-fg-soft: #c8cfd6;
-  --mtc-muted: #87929e;
-  --mtc-muted-strong: #aab3bd;
-  --mtc-muted-subtle: #5f6c79;
-  --mtc-accent: #5a8dee;
-  --mtc-accent-strong: #3f70cf;
-  --mtc-accent-soft: #8eb1f5;
-  --mtc-signal: #c6a45f;
-  --mtc-danger: #df6972;
-  --mtc-danger-soft: #f1a0a6;
-  --mtc-ok: #4fb184;
-  --mtc-ok-soft: #8bd0ae;
-  --mtc-warning: #d6a354;
-  --mtc-warning-soft: #edc98c;
-  --mtc-info: #5a8dee;
-  --mtc-info-soft: #8eb1f5;
-  --mtc-on-solid: #071018;
-  --mtc-grid: #20272e;
-  --mtc-overlay: rgb(3 6 8 / 0.76);
-  --mtc-focus: rgb(90 141 238 / 0.42);
-  --mtc-shadow: 0 12px 32px rgb(0 0 0 / 0.18);
-  --mtc-shadow-raised: 0 18px 48px rgb(0 0 0 / 0.34);
-  --mtc-radius: 6px;
+  /* Tokens v2: a slate neutral scale (OKLCH hue 255, chroma ~0.01) and one
+     azure accent. Colour has three jobs only: the accent (selection, focus,
+     primary action, links), status (ok, warning, danger, info), and object
+     type identity (TypeGlyph chips and graph nodes only). Every value is
+     original and contrast-checked by themeColors.test.ts. */
+  --mtc-bg: #0b0f13;
+  --mtc-surface: #12151a;
+  --mtc-surface-raised: #171b21;
+  --mtc-panel: #1d2228;
+  --mtc-panel-hover: #242930;
+  --mtc-border: #2b2f36;
+  --mtc-border-strong: #43484f;
+  --mtc-border-control: #5e646b;
+  /* Retired: surfaces are flat. Kept so host overrides stay valid. */
+  --mtc-highlight: transparent;
+  --mtc-fg: #eef0f3;
+  --mtc-fg-soft: #d0d5da;
+  --mtc-muted: #969ca4;
+  --mtc-muted-strong: #b2b8bf;
+  --mtc-muted-subtle: #7b8189;
+  --mtc-accent: #61a1f0;
+  --mtc-accent-strong: #2971c6;
+  --mtc-accent-soft: #97c1f7;
+  --mtc-on-accent: #ffffff;
+  --mtc-link: var(--mtc-accent-soft);
+  --mtc-selection: #1a283b;
+  --mtc-selection-hover: #1e2f44;
+  --mtc-signal: #cfab6d;
+  --mtc-danger: #e97170;
+  --mtc-danger-soft: #f2a7a4;
+  --mtc-danger-bg: #361919;
+  --mtc-ok: #57bc80;
+  --mtc-ok-soft: #95d6ab;
+  --mtc-ok-bg: #14281b;
+  --mtc-warning: #ebae51;
+  --mtc-warning-soft: #f4c98e;
+  --mtc-warning-bg: #31220d;
+  --mtc-info: var(--mtc-accent);
+  --mtc-info-soft: var(--mtc-accent-soft);
+  --mtc-info-bg: #162537;
+  --mtc-on-solid: #080e16;
+  --mtc-graph-edge: #636a72;
+  --mtc-graph-edge-active: var(--mtc-accent);
+  --mtc-grid: #1c2024;
+  --mtc-overlay: rgb(2 3 6 / 0.72);
+  --mtc-focus: rgb(97 161 240 / 0.45);
 
-  --mtc-chart-1: #5a8dee;
-  --mtc-chart-2: #4fb184;
-  --mtc-chart-3: #d6a354;
-  --mtc-chart-4: #df6972;
-  --mtc-chart-5: #9382d8;
-  --mtc-chart-6: #53a9b8;
-  --mtc-chart-7: #bc7fa1;
-  --mtc-chart-8: #87929e;
-  --mtc-code-key: #b5bec8;
-  --mtc-code-string: #72bd98;
-  --mtc-code-number: #dfb267;
-  --mtc-code-literal: #7fa5ef;
+  /* Object type identity: twelve muted slots (OKLCH L 0.74 / C 0.085 in
+     dark, L 0.49 / C 0.11 in light) for TypeGlyph chips, facet dots, and
+     graph nodes. Never for surfaces larger than 40 x 40 px. */
+  --mtc-type-azure-fg: #86aee0;
+  --mtc-type-azure-bg: #1b2737;
+  --mtc-type-cyan-fg: #66b9cc;
+  --mtc-type-cyan-bg: #0f2b31;
+  --mtc-type-teal-fg: #67bdb2;
+  --mtc-type-teal-bg: #102c29;
+  --mtc-type-green-fg: #7fbb93;
+  --mtc-type-green-bg: #182c1f;
+  --mtc-type-lime-fg: #9eb579;
+  --mtc-type-lime-bg: #222916;
+  --mtc-type-olive-fg: #bbab6b;
+  --mtc-type-olive-bg: #2c2612;
+  --mtc-type-amber-fg: #cea26f;
+  --mtc-type-amber-bg: #312313;
+  --mtc-type-orange-fg: #d99a7e;
+  --mtc-type-orange-bg: #352118;
+  --mtc-type-red-fg: #db9595;
+  --mtc-type-red-bg: #361f1f;
+  --mtc-type-rose-fg: #d495b2;
+  --mtc-type-rose-bg: #341f29;
+  --mtc-type-magenta-fg: #c39acc;
+  --mtc-type-magenta-bg: #2e2131;
+  --mtc-type-violet-fg: #aaa2dd;
+  --mtc-type-violet-bg: #262336;
+
+  --mtc-chart-1: #5e9ae7;
+  --mtc-chart-2: #51b48d;
+  --mtc-chart-3: #e4ac59;
+  --mtc-chart-4: #e27170;
+  --mtc-chart-5: #9e88da;
+  --mtc-chart-6: #57b5bf;
+  --mtc-chart-7: #cf82ae;
+  --mtc-chart-8: #7e8792;
+  --mtc-code-key: #b2b8bf;
+  --mtc-code-string: #7bc495;
+  --mtc-code-number: #e4b572;
+  --mtc-code-literal: #7aaeef;
   /* Inter and JetBrains Mono are vendored (src/fonts, shipped in
      dist/fonts). CJK fallbacks follow the Latin face so mixed text keeps
      Latin glyphs in Inter. */
@@ -128,17 +168,29 @@
   --mtc-intent-danger: var(--mtc-danger);
   --mtc-intent-info: var(--mtc-info);
 
+  /* Type scale: the only sizes. 13 px is the base; nothing is smaller than
+     11 px. Weights are 400, 500 and 600. */
   --mtc-font-size-xs: 0.6875rem;
   --mtc-font-size-sm: 0.75rem;
-  --mtc-font-size-md: 0.875rem;
-  --mtc-font-size-lg: 1rem;
-  --mtc-font-size-xl: 1.25rem;
+  --mtc-font-size-md: 0.8125rem;
+  --mtc-font-size-lg: 0.875rem;
+  --mtc-font-size-xl: 1rem;
+  --mtc-font-size-2xl: 1.25rem;
+  --mtc-font-size-3xl: 1.5rem;
+  --mtc-line-height-xs: 1rem;
+  --mtc-line-height-sm: 1rem;
+  --mtc-line-height-md: 1.25rem;
+  --mtc-line-height-lg: 1.25rem;
+  --mtc-line-height-xl: 1.5rem;
+  --mtc-line-height-2xl: 1.75rem;
+  --mtc-line-height-3xl: 2rem;
   --mtc-font-weight-normal: 400;
   --mtc-font-weight-medium: 500;
   --mtc-font-weight-semibold: 600;
   --mtc-line-height-tight: 1.25;
   --mtc-line-height-normal: 1.5;
 
+  /* 4 px grid. */
   --mtc-space-0: 0;
   --mtc-space-1: 0.25rem;
   --mtc-space-2: 0.5rem;
@@ -148,13 +200,25 @@
   --mtc-space-6: 1.5rem;
   --mtc-space-8: 2rem;
   --mtc-space-10: 2.5rem;
+  --mtc-space-12: 3rem;
+  --mtc-space-16: 4rem;
 
+  /* xs: checkboxes, chips, badges. sm: buttons, inputs, rows. md: panels,
+     cards, popovers, type glyphs. lg: dialogs. round: avatars and dots. */
+  --mtc-radius-xs: 2px;
   --mtc-radius-sm: 3px;
-  --mtc-radius-md: var(--mtc-radius);
-  --mtc-radius-lg: 10px;
+  --mtc-radius-md: 4px;
+  --mtc-radius-lg: 6px;
   --mtc-radius-round: 999px;
-  --mtc-elevation-1: var(--mtc-shadow);
-  --mtc-elevation-2: var(--mtc-shadow-raised);
+  --mtc-radius: var(--mtc-radius-md);
+
+  /* Flat surfaces: elevation belongs to overlays only. */
+  --mtc-elevation-0: none;
+  --mtc-elevation-1: 0 1px 2px rgb(0 0 0 / 0.24);
+  --mtc-elevation-2: 0 0 0 1px var(--mtc-border-strong), 0 8px 24px rgb(0 0 0 / 0.4);
+  --mtc-elevation-3: 0 0 0 1px var(--mtc-border-strong), 0 16px 48px rgb(0 0 0 / 0.5);
+  --mtc-shadow: var(--mtc-elevation-1);
+  --mtc-shadow-raised: var(--mtc-elevation-2);
   --mtc-duration-instant: 0ms;
   --mtc-duration-fast: 120ms;
   --mtc-duration-normal: 180ms;
@@ -176,8 +240,8 @@
   color: var(--mtc-fg);
   color-scheme: dark;
   font-family: var(--mtc-font-sans);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--mtc-font-size-md);
+  line-height: var(--mtc-line-height-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
@@ -189,37 +253,39 @@
   color-scheme: dark;
 }
 
-/* An optional operational preset. It takes the black + signal
-   language associated with modern industrial systems, but uses an original,
-   softened citrine instead of reproducing another company's brand palette. */
+/* The operational preset: the same slate one step darker (OKLCH L - 0.02)
+   with an original, softened citrine as its single accent. Solid accent
+   fills carry dark text. */
 .mtc-root[data-theme="operator"],
 .mtc-root.mtc-theme-operator {
-  --mtc-bg: #080a09;
-  --mtc-surface: #101310;
-  --mtc-surface-raised: #151915;
-  --mtc-panel: #1b211b;
-  --mtc-panel-hover: #252d24;
-  --mtc-border: #2b342b;
-  --mtc-border-strong: #465245;
-  --mtc-highlight: rgb(242 246 225 / 0.05);
-  --mtc-fg: #f2f4eb;
-  --mtc-fg-soft: #ccd1c4;
-  --mtc-muted: #8f978a;
-  --mtc-muted-strong: #b0b7aa;
-  --mtc-muted-subtle: #656d62;
-  --mtc-accent: #c8d765;
-  --mtc-accent-strong: #9eaf3f;
-  --mtc-accent-soft: #e0e9a1;
-  --mtc-signal: #c8d765;
-  --mtc-danger: #e36d69;
-  --mtc-danger-soft: #f0a5a2;
-  --mtc-ok: #64b88a;
-  --mtc-ok-soft: #9bd3b2;
-  --mtc-warning: #dda858;
-  --mtc-warning-soft: #edca91;
-  --mtc-grid: #202620;
+  --mtc-bg: #080a0e;
+  --mtc-surface: #0d1115;
+  --mtc-surface-raised: #13171c;
+  --mtc-panel: #191d23;
+  --mtc-panel-hover: #20242b;
+  --mtc-border: #262b31;
+  --mtc-border-strong: #3d434a;
+  --mtc-border-control: #5e646b;
+  --mtc-fg: #e7eaed;
+  --mtc-fg-soft: #caced4;
+  --mtc-muted: #90969e;
+  --mtc-muted-strong: #acb2b9;
+  --mtc-muted-subtle: #757b83;
+  --mtc-accent: #ccdc6a;
+  --mtc-accent-strong: #b9c94b;
+  --mtc-accent-soft: #dee9a4;
+  --mtc-on-accent: #0d0e05;
+  --mtc-selection: #222514;
+  --mtc-selection-hover: #282b17;
+  --mtc-signal: #ccdc6a;
+  --mtc-ok-bg: #102317;
+  --mtc-warning-bg: #2c1d08;
+  --mtc-danger-bg: #301514;
+  --mtc-info-bg: #1e2110;
+  --mtc-graph-edge: #60676f;
+  --mtc-grid: #181b1f;
   --mtc-overlay: rgb(0 0 0 / 0.8);
-  --mtc-focus: rgb(200 215 101 / 0.38);
+  --mtc-focus: rgb(204 220 106 / 0.4);
   --mtc-chart-1: #c8d765;
   --mtc-chart-2: #64b88a;
   --mtc-chart-3: #dda858;
@@ -228,94 +294,132 @@
   --mtc-chart-6: #60a9b0;
   --mtc-chart-7: #c27f99;
   --mtc-chart-8: #8f978a;
-  --mtc-code-key: #c6ccbd;
-  --mtc-code-string: #86c6a2;
-  --mtc-code-number: #e3b86f;
-  --mtc-code-literal: #c8d765;
+  --mtc-code-literal: #ccdc6a;
   color-scheme: dark;
 }
 
 .mtc-root[data-theme="light"],
 .mtc-root.mtc-theme-light {
-  --mtc-bg: #f3f5f6;
+  --mtc-bg: #f4f6f8;
   --mtc-surface: #ffffff;
-  --mtc-surface-raised: #fbfcfc;
-  --mtc-panel: #e8ecef;
-  --mtc-panel-hover: #dde3e7;
-  --mtc-border: #d2d9de;
-  --mtc-border-strong: #aeb8c1;
-  --mtc-highlight: rgb(255 255 255 / 0.7);
-  --mtc-fg: #18212a;
-  --mtc-fg-soft: #35414c;
-  --mtc-muted: #5b6671;
-  --mtc-muted-strong: #4d5964;
-  --mtc-muted-subtle: #78838d;
-  --mtc-accent: #2f65b5;
-  --mtc-accent-strong: #285ba5;
-  --mtc-accent-soft: #3569b5;
-  --mtc-signal: #9a712d;
-  --mtc-danger: #ad3740;
-  --mtc-danger-soft: #8f2e35;
-  --mtc-ok: #246d4c;
-  --mtc-ok-soft: #216847;
-  --mtc-warning: #87591c;
-  --mtc-warning-soft: #754b16;
-  --mtc-info: #2f65b5;
-  --mtc-info-soft: #285ba5;
+  --mtc-surface-raised: #fbfcfd;
+  --mtc-panel: #ebeef2;
+  --mtc-panel-hover: #e3e7ec;
+  --mtc-border: #d8dde2;
+  --mtc-border-strong: #b9bec6;
+  --mtc-border-control: #81878f;
+  --mtc-fg: #1a1e25;
+  --mtc-fg-soft: #333840;
+  --mtc-muted: #636a72;
+  --mtc-muted-strong: #4d535b;
+  --mtc-muted-subtle: #7a8189;
+  --mtc-accent: #1d60bc;
+  --mtc-accent-strong: #0850ab;
+  --mtc-accent-soft: #1a57ad;
+  --mtc-on-accent: #ffffff;
+  --mtc-link: var(--mtc-accent);
+  --mtc-selection: #ddebfe;
+  --mtc-selection-hover: #d3e5fb;
+  --mtc-signal: #936823;
+  --mtc-danger: #b63132;
+  --mtc-danger-soft: #9a2929;
+  --mtc-danger-bg: #ffeae9;
+  --mtc-ok: #1e7546;
+  --mtc-ok-soft: #17653c;
+  --mtc-ok-bg: #e1f7e7;
+  --mtc-warning: #915c08;
+  --mtc-warning-soft: #7e4f04;
+  --mtc-warning-bg: #ffefd8;
+  --mtc-info-bg: #e7f1ff;
   --mtc-on-solid: #ffffff;
-  --mtc-grid: #dce2e6;
-  --mtc-overlay: rgb(15 23 42 / 0.46);
-  --mtc-focus: rgb(53 111 196 / 0.32);
-  --mtc-shadow: 0 10px 30px rgb(23 32 42 / 0.08);
-  --mtc-shadow-raised: 0 18px 44px rgb(23 32 42 / 0.14);
-  --mtc-chart-1: #356fc4;
-  --mtc-chart-2: #287a55;
-  --mtc-chart-3: #a36c22;
-  --mtc-chart-4: #bd4049;
-  --mtc-chart-5: #6957aa;
-  --mtc-chart-6: #267c8c;
-  --mtc-chart-7: #915474;
-  --mtc-chart-8: #65717c;
-  --mtc-code-key: #47535e;
-  --mtc-code-string: #287a55;
-  --mtc-code-number: #94621f;
-  --mtc-code-literal: #356fc4;
+  --mtc-graph-edge: #878d94;
+  --mtc-grid: #e5e8ec;
+  --mtc-overlay: rgb(16 22 30 / 0.4);
+  --mtc-focus: rgb(29 96 188 / 0.35);
+  --mtc-elevation-1: 0 1px 2px rgb(16 22 30 / 0.06);
+  --mtc-elevation-2: 0 0 0 1px var(--mtc-border-strong), 0 8px 24px rgb(16 22 30 / 0.12);
+  --mtc-elevation-3: 0 0 0 1px var(--mtc-border-strong), 0 16px 48px rgb(16 22 30 / 0.16);
+  --mtc-type-azure-fg: #31619d;
+  --mtc-type-azure-bg: #e4f0ff;
+  --mtc-type-cyan-fg: #006f87;
+  --mtc-type-cyan-bg: #ddf3f9;
+  --mtc-type-teal-fg: #007469;
+  --mtc-type-teal-bg: #ddf4f1;
+  --mtc-type-green-fg: #1a7244;
+  --mtc-type-green-bg: #e2f4e7;
+  --mtc-type-lime-fg: #526b19;
+  --mtc-type-lime-bg: #eaf2e0;
+  --mtc-type-olive-fg: #745f00;
+  --mtc-type-olive-bg: #f3efdc;
+  --mtc-type-amber-fg: #875300;
+  --mtc-type-amber-bg: #faecdd;
+  --mtc-type-orange-fg: #924925;
+  --mtc-type-orange-bg: #feeae1;
+  --mtc-type-red-fg: #954346;
+  --mtc-type-red-bg: #ffe8e8;
+  --mtc-type-rose-fg: #8d4369;
+  --mtc-type-rose-bg: #fde8f1;
+  --mtc-type-magenta-fg: #7b4a87;
+  --mtc-type-magenta-bg: #f6e9f9;
+  --mtc-type-violet-fg: #60549a;
+  --mtc-type-violet-bg: #eeecff;
+  --mtc-chart-1: #2a67bd;
+  --mtc-chart-2: #1c7b5a;
+  --mtc-chart-3: #a06604;
+  --mtc-chart-4: #ba3e3c;
+  --mtc-chart-5: #6a51a4;
+  --mtc-chart-6: #007781;
+  --mtc-chart-7: #9b467a;
+  --mtc-chart-8: #6a727d;
+  --mtc-code-key: #4d535b;
+  --mtc-code-string: #1e7546;
+  --mtc-code-number: #945f0e;
+  --mtc-code-literal: #1d60bc;
   color-scheme: light;
 }
 
+/* Accessibility preset: black canvas, explicit boundaries, strong focus and
+   status hierarchy. Solid accent fills carry black text. */
 .mtc-root[data-theme="high-contrast"],
 .mtc-root.mtc-theme-high-contrast {
   --mtc-bg: #000000;
-  --mtc-surface: #070a0d;
-  --mtc-surface-raised: #0c1116;
-  --mtc-panel: #121820;
-  --mtc-panel-hover: #1b2530;
-  --mtc-border: #71808e;
-  --mtc-border-strong: #b9c4ce;
-  --mtc-highlight: rgb(255 255 255 / 0.12);
+  --mtc-surface: #06070a;
+  --mtc-surface-raised: #0b0f13;
+  --mtc-panel: #12161b;
+  --mtc-panel-hover: #1c2127;
+  --mtc-border: #78818c;
+  --mtc-border-strong: #bec5ce;
+  --mtc-border-control: #9da5b0;
   --mtc-fg: #ffffff;
-  --mtc-fg-soft: #e5edf5;
-  --mtc-muted: #b6c2cc;
-  --mtc-muted-strong: #d0d8df;
-  --mtc-muted-subtle: #8997a3;
-  --mtc-accent: #78a9ff;
-  --mtc-accent-strong: #9bc0ff;
-  --mtc-accent-soft: #bad2ff;
-  --mtc-signal: #ffe17d;
-  --mtc-danger: #ff8a93;
-  --mtc-danger-soft: #ffb7bd;
-  --mtc-ok: #73dba8;
-  --mtc-ok-soft: #a4ebc8;
-  --mtc-warning: #ffd166;
-  --mtc-warning-soft: #ffe39b;
-  --mtc-info: #78a9ff;
-  --mtc-info-soft: #bad2ff;
+  --mtc-fg-soft: #e8ebef;
+  --mtc-muted: #bfc5cc;
+  --mtc-muted-strong: #d3d8de;
+  --mtc-muted-subtle: #989fa8;
+  --mtc-accent: #83b0ff;
+  --mtc-accent-strong: #a1c5ff;
+  --mtc-accent-soft: #bbd5ff;
+  --mtc-on-accent: #000000;
+  --mtc-selection: #162e50;
+  --mtc-selection-hover: #1e385e;
+  --mtc-signal: #ffd363;
+  --mtc-danger: #ff9498;
+  --mtc-danger-soft: #ffbcbd;
+  --mtc-danger-bg: #3c1616;
+  --mtc-ok: #76e5ad;
+  --mtc-ok-soft: #a9f1ca;
+  --mtc-ok-bg: #0c2b19;
+  --mtc-warning: #ffd363;
+  --mtc-warning-soft: #ffe399;
+  --mtc-warning-bg: #352206;
+  --mtc-info-bg: #132643;
   --mtc-on-solid: #000000;
-  --mtc-grid: #34414d;
+  --mtc-graph-edge: #80878f;
+  --mtc-grid: #25292f;
   --mtc-overlay: rgb(0 0 0 / 0.9);
-  --mtc-focus: rgb(120 169 255 / 0.62);
-  --mtc-shadow: 0 0 0 1px #71808e;
-  --mtc-shadow-raised: 0 0 0 2px #b9c4ce, 0 18px 48px rgb(0 0 0 / 0.7);
+  --mtc-focus: rgb(131 176 255 / 0.62);
+  --mtc-elevation-1: 0 0 0 1px var(--mtc-border);
+  --mtc-elevation-2: 0 0 0 2px var(--mtc-border-strong), 0 8px 24px rgb(0 0 0 / 0.7);
+  --mtc-elevation-3: 0 0 0 2px var(--mtc-border-strong), 0 16px 48px rgb(0 0 0 / 0.7);
   --mtc-chart-1: #78a9ff;
   --mtc-chart-2: #73dba8;
   --mtc-chart-3: #ffd166;
@@ -324,10 +428,10 @@
   --mtc-chart-6: #72d9e7;
   --mtc-chart-7: #f0a9d0;
   --mtc-chart-8: #b6c2cc;
-  --mtc-code-key: #e5edf5;
-  --mtc-code-string: #a4ebc8;
-  --mtc-code-number: #ffe39b;
-  --mtc-code-literal: #bad2ff;
+  --mtc-code-key: #e8ebef;
+  --mtc-code-string: #a9f1ca;
+  --mtc-code-number: #ffe399;
+  --mtc-code-literal: #bbd5ff;
   color-scheme: dark;
 }
 
@@ -534,7 +638,7 @@
   border-radius: 3px 0 0;
   background: color-mix(in oklab, var(--mtc-bg) 82%, transparent);
   color: var(--mtc-muted);
-  font-size: 9px;
+  font-size: var(--mtc-font-size-xs);
   line-height: 1.35;
 }
 
@@ -591,41 +695,25 @@
    utility colors continue to make every existing widget theme-aware. */
 .mtc-workspace {
   background-color: var(--mtc-bg);
-  background-image:
-    radial-gradient(circle at 82% -10%, color-mix(in oklab, var(--mtc-accent) 5%, transparent), transparent 28rem),
-    linear-gradient(180deg, color-mix(in oklab, var(--mtc-surface) 28%, var(--mtc-bg)) 0, var(--mtc-bg) 15rem);
 }
 
 .mtc-toolbar {
   position: relative;
   border-bottom: 1px solid var(--mtc-border);
-  background: color-mix(in oklab, var(--mtc-surface) 76%, var(--mtc-bg));
-  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+  background: var(--mtc-surface);
 }
 
 .mtc-dashboard-title {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  letter-spacing: -0.012em;
-}
-
-.mtc-dashboard-title::before {
-  width: 3px;
-  height: 1.15rem;
-  border-radius: 999px;
-  background: var(--mtc-signal);
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--mtc-signal) 22%, transparent);
-  content: "";
-  flex: 0 0 auto;
+  gap: var(--mtc-space-2);
 }
 
 .mtc-control,
 .mtc-context-chip {
   border: 1px solid var(--mtc-border);
-  border-radius: 4px;
+  border-radius: var(--mtc-radius-sm);
   background: var(--mtc-surface);
-  box-shadow: inset 0 1px 0 var(--mtc-highlight);
 }
 
 .mtc-control:hover {
@@ -635,17 +723,17 @@
 
 .mtc-segmented {
   border: 1px solid var(--mtc-border);
-  border-radius: 5px;
-  background: color-mix(in oklab, var(--mtc-bg) 62%, var(--mtc-surface));
-  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+  border-radius: var(--mtc-radius-sm);
+  background: var(--mtc-bg);
 }
 
 .mtc-widget {
   border: 1px solid var(--mtc-border);
-  border-radius: var(--mtc-radius);
+  border-radius: var(--mtc-radius-md);
   background: var(--mtc-surface);
-  box-shadow: inset 0 1px 0 var(--mtc-highlight), var(--mtc-shadow);
-  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+  transition:
+    border-color var(--mtc-duration-fast) var(--mtc-easing-standard),
+    box-shadow var(--mtc-duration-fast) var(--mtc-easing-standard);
 }
 
 .mtc-widget:hover {
@@ -653,33 +741,30 @@
 }
 
 .mtc-widget[data-focused="true"] {
-  border-color: color-mix(in oklab, var(--mtc-accent) 72%, var(--mtc-border));
-  box-shadow: inset 0 1px 0 var(--mtc-highlight), 0 0 0 2px var(--mtc-focus), var(--mtc-shadow-raised);
+  border-color: var(--mtc-accent);
+  box-shadow: 0 0 0 2px var(--mtc-focus);
 }
 
 .mtc-widget-header {
-  min-height: 2.5rem;
+  min-height: 2.25rem;
   border-bottom: 1px solid var(--mtc-border);
-  background: color-mix(in oklab, var(--mtc-surface-raised) 76%, var(--mtc-surface));
-  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+  background: var(--mtc-surface);
 }
 
 .mtc-popover {
   border: 1px solid var(--mtc-border-strong);
-  border-radius: var(--mtc-radius);
+  border-radius: var(--mtc-radius-md);
   background: var(--mtc-surface-raised);
-  box-shadow: var(--mtc-shadow-raised);
+  box-shadow: var(--mtc-elevation-2);
 }
 
 .mtc-overlay {
   background: var(--mtc-overlay);
-  backdrop-filter: blur(6px);
 }
 
 .mtc-tabstrip {
   border-bottom: 1px solid var(--mtc-border);
-  background: color-mix(in oklab, var(--mtc-surface) 58%, var(--mtc-bg));
-  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+  background: var(--mtc-surface);
 }
 
 .mtc-tab-active {
@@ -690,21 +775,18 @@
 
 .mtc-statusbar {
   border-top: 1px solid var(--mtc-border);
-  background: color-mix(in oklab, var(--mtc-surface) 72%, var(--mtc-bg));
-  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+  background: var(--mtc-surface);
 }
 
 .mtc-landing-card {
   border: 1px solid var(--mtc-border);
-  border-radius: var(--mtc-radius);
-  background: color-mix(in oklab, var(--mtc-surface) 94%, transparent);
-  box-shadow: inset 0 1px 0 var(--mtc-highlight), var(--mtc-shadow);
+  border-radius: var(--mtc-radius-md);
+  background: var(--mtc-surface);
 }
 
 .mtc-landing-card:hover {
   border-color: var(--mtc-border-strong);
   background: var(--mtc-surface-raised);
-  transform: translateY(-1px);
 }
 
 /* Shared application toolkit ------------------------------------------------
@@ -744,7 +826,6 @@
   border-radius: var(--mtc-radius-sm);
   background: var(--mtc-button-fill);
   color: var(--mtc-button-color);
-  box-shadow: inset 0 1px 0 var(--mtc-highlight);
   font-size: var(--mtc-font-size-sm);
   font-weight: var(--mtc-font-weight-medium);
   line-height: 1;
@@ -754,15 +835,15 @@
 
 .mtc-root .mtc-button[data-size="small"] { height: var(--mtc-control-height-sm); font-size: var(--mtc-font-size-xs); }
 .mtc-root .mtc-button[data-size="large"] { height: var(--mtc-control-height-lg); font-size: var(--mtc-font-size-md); }
-.mtc-root .mtc-button[data-intent="primary"] { --mtc-action: var(--mtc-accent); --mtc-action-soft: var(--mtc-accent-soft); }
+.mtc-root .mtc-button[data-intent="primary"] { --mtc-action: var(--mtc-accent-strong); --mtc-action-soft: var(--mtc-accent-soft); --mtc-action-on: var(--mtc-on-accent); }
 .mtc-root .mtc-button[data-intent="success"] { --mtc-action: var(--mtc-ok); --mtc-action-soft: var(--mtc-ok-soft); }
 .mtc-root .mtc-button[data-intent="warning"] { --mtc-action: var(--mtc-warning); --mtc-action-soft: var(--mtc-warning-soft); }
 .mtc-root .mtc-button[data-intent="danger"] { --mtc-action: var(--mtc-danger); --mtc-action-soft: var(--mtc-danger-soft); }
 .mtc-root .mtc-button[data-intent="info"] { --mtc-action: var(--mtc-info); --mtc-action-soft: var(--mtc-info-soft); }
 
 .mtc-root .mtc-button[data-intent]:not([data-intent="neutral"])[data-variant="solid"] {
-  --mtc-button-color: var(--mtc-on-solid);
-  --mtc-button-border: color-mix(in oklab, var(--mtc-action) 78%, var(--mtc-border-strong));
+  --mtc-button-color: var(--mtc-action-on, var(--mtc-on-solid));
+  --mtc-button-border: var(--mtc-action);
   --mtc-button-fill: var(--mtc-action);
 }
 
@@ -775,7 +856,6 @@
 .mtc-root .mtc-button[data-variant="ghost"] {
   --mtc-button-border: transparent;
   --mtc-button-fill: transparent;
-  box-shadow: none;
 }
 
 .mtc-root .mtc-button:hover:not(:disabled) {
@@ -784,7 +864,6 @@
   color: var(--mtc-fg);
 }
 
-.mtc-root .mtc-button:active:not(:disabled) { transform: translateY(1px); }
 .mtc-root .mtc-button:disabled { opacity: 0.48; }
 .mtc-root .mtc-button-label { overflow: hidden; text-overflow: ellipsis; }
 .mtc-root .mtc-button-spinner,
@@ -808,11 +887,10 @@
   width: 100%;
   height: var(--mtc-control-height-md);
   padding: 0 var(--mtc-density-padding-x);
-  border: 1px solid var(--mtc-border-strong);
+  border: 1px solid var(--mtc-border-control);
   border-radius: var(--mtc-radius-sm);
-  background: color-mix(in oklab, var(--mtc-bg) 48%, var(--mtc-surface));
+  background: var(--mtc-surface);
   color: var(--mtc-fg);
-  box-shadow: inset 0 1px 2px color-mix(in oklab, var(--mtc-bg) 72%, transparent);
   font-size: var(--mtc-font-size-sm);
   line-height: var(--mtc-line-height-normal);
   transition: border-color var(--mtc-duration-fast), box-shadow var(--mtc-duration-fast);
@@ -822,7 +900,7 @@
 .mtc-root [data-size="small"] > .mtc-input { height: var(--mtc-control-height-sm); font-size: var(--mtc-font-size-xs); }
 .mtc-root .mtc-input[data-size="large"],
 .mtc-root [data-size="large"] > .mtc-input { height: var(--mtc-control-height-lg); font-size: var(--mtc-font-size-md); }
-.mtc-root .mtc-input:hover:not(:disabled) { border-color: color-mix(in oklab, var(--mtc-border-strong) 68%, var(--mtc-fg)); }
+.mtc-root .mtc-input:hover:not(:disabled) { border-color: color-mix(in oklab, var(--mtc-border-control) 72%, var(--mtc-fg)); }
 .mtc-root .mtc-input:focus { border-color: var(--mtc-accent); box-shadow: 0 0 0 2px var(--mtc-focus); outline: none; }
 .mtc-root .mtc-input:disabled { background: var(--mtc-panel); color: var(--mtc-muted); opacity: 0.7; }
 .mtc-root .mtc-input[aria-invalid="true"] { border-color: var(--mtc-danger); box-shadow: 0 0 0 2px color-mix(in oklab, var(--mtc-danger) 26%, transparent); }
@@ -864,15 +942,15 @@
   align-items: center;
   justify-content: center;
   margin-top: 0.125rem;
-  border: 1px solid var(--mtc-border-strong);
-  border-radius: var(--mtc-radius-sm);
+  border: 1px solid var(--mtc-border-control);
+  border-radius: var(--mtc-radius-xs);
   background: var(--mtc-surface);
   color: transparent;
 }
 
 .mtc-root .mtc-choice-box .mtc-icon { width: 0.75rem; height: 0.75rem; }
 .mtc-root .mtc-radio-box { border-radius: var(--mtc-radius-round); }
-.mtc-root .mtc-choice-input:checked + .mtc-choice-box { border-color: var(--mtc-accent); background: var(--mtc-accent); color: var(--mtc-on-solid); }
+.mtc-root .mtc-choice-input:checked + .mtc-choice-box { border-color: var(--mtc-accent-strong); background: var(--mtc-accent-strong); color: var(--mtc-on-accent); }
 .mtc-root .mtc-choice-input:checked + .mtc-radio-box { box-shadow: inset 0 0 0 3px var(--mtc-surface); }
 .mtc-root .mtc-choice-input:focus-visible + .mtc-choice-box,
 .mtc-root .mtc-switch-input:focus-visible + .mtc-switch-track { outline: 2px solid var(--mtc-accent); outline-offset: 2px; }
@@ -888,7 +966,7 @@
   height: 1.125rem;
   flex: 0 0 auto;
   margin-top: 0.0625rem;
-  border: 1px solid var(--mtc-border-strong);
+  border: 1px solid var(--mtc-border-control);
   border-radius: var(--mtc-radius-round);
   background: var(--mtc-panel);
   transition: background var(--mtc-duration-fast);
@@ -905,8 +983,8 @@
   transition: transform var(--mtc-duration-fast), background var(--mtc-duration-fast);
 }
 
-.mtc-root .mtc-switch-input:checked + .mtc-switch-track { border-color: var(--mtc-accent); background: var(--mtc-accent); }
-.mtc-root .mtc-switch-input:checked + .mtc-switch-track > span { transform: translateX(0.875rem); background: var(--mtc-on-solid); }
+.mtc-root .mtc-switch-input:checked + .mtc-switch-track { border-color: var(--mtc-accent-strong); background: var(--mtc-accent-strong); }
+.mtc-root .mtc-switch-input:checked + .mtc-switch-track > span { transform: translateX(0.875rem); background: var(--mtc-on-accent); }
 
 .mtc-root .mtc-combobox { position: relative; min-width: 10rem; }
 .mtc-root .mtc-combobox-input { padding-right: 2rem; }
@@ -991,7 +1069,7 @@
   background: var(--mtc-fg);
   color: var(--mtc-bg);
   box-shadow: var(--mtc-elevation-2);
-  font-size: var(--mtc-font-size-xs);
+  font-size: var(--mtc-font-size-sm);
   line-height: 1.35;
   pointer-events: none;
   white-space: normal;
@@ -1032,7 +1110,7 @@
 .mtc-root .mtc-menu-item:disabled { opacity: 0.42; }
 .mtc-root .mtc-menu-icon { display: inline-flex; width: 1rem; justify-content: center; color: var(--mtc-muted-strong); }
 .mtc-root .mtc-menu-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mtc-root .mtc-menu-shortcut { margin-left: var(--mtc-space-4); color: var(--mtc-muted); font-family: var(--mtc-font-mono); font-size: 0.625rem; }
+.mtc-root .mtc-menu-shortcut { margin-left: var(--mtc-space-4); color: var(--mtc-muted); font-size: var(--mtc-font-size-xs); }
 .mtc-root .mtc-menu-separator { height: 1px; margin: var(--mtc-space-1); background: var(--mtc-border); }
 .mtc-root .mtc-context-menu-region { min-width: 0; }
 .mtc-root .mtc-context-menu-region > .mtc-menu { top: auto; }
@@ -1054,7 +1132,7 @@
   border: 1px solid var(--mtc-border-strong);
   background: var(--mtc-surface-raised);
   color: var(--mtc-fg);
-  box-shadow: var(--mtc-elevation-2);
+  box-shadow: var(--mtc-elevation-3);
   flex-direction: column;
 }
 .mtc-root .mtc-dialog { width: min(34rem, 100%); border-radius: var(--mtc-radius-lg); }
@@ -1127,8 +1205,7 @@
   padding: var(--mtc-space-2) var(--mtc-space-3);
   overflow-x: auto;
   border-bottom: 1px solid var(--mtc-border);
-  background: color-mix(in oklab, var(--mtc-surface) 86%, var(--mtc-bg));
-  box-shadow: inset 0 1px 0 var(--mtc-highlight);
+  background: var(--mtc-surface);
 }
 .mtc-root .mtc-app-toolbar[data-sticky="true"] { position: sticky; z-index: 20; top: 0; }
 .mtc-root .mtc-toolbar-region { display: flex; flex: 0 0 auto; align-items: center; gap: var(--mtc-space-2); }

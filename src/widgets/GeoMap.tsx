@@ -420,15 +420,15 @@ function readThemeColors(element: HTMLElement): ThemeColors {
   const value = (name: string, fallback: string) =>
     style.getPropertyValue(name).trim() || fallback
   return {
-    bg: value('--mtc-bg', '#0a0d10'),
-    surface: value('--mtc-surface', '#11151a'),
-    grid: value('--mtc-grid', '#20272e'),
-    border: value('--mtc-border', '#28313a'),
-    accent: value('--mtc-accent', '#5a8dee'),
-    ok: value('--mtc-ok', '#4fb184'),
-    warning: value('--mtc-warning', '#d6a354'),
-    danger: value('--mtc-danger', '#df6972'),
-    muted: value('--mtc-muted', '#87929e'),
-    fg: value('--mtc-fg', '#f1f4f6'),
+    bg: value('--mtc-bg', '#0b0f13'),
+    surface: value('--mtc-surface', '#12151a'),
+    grid: value('--mtc-grid', '#1c2024'),
+    border: value('--mtc-border', '#2b2f36'),
+    accent: value('--mtc-accent', '#61a1f0'),
+    ok: value('--mtc-ok', '#57bc80'),
+    warning: value('--mtc-warning', '#ebae51'),
+    danger: value('--mtc-danger', '#e97170'),
+    muted: value('--mtc-muted', '#969ca4'),
+    fg: value('--mtc-fg', '#eef0f3'),
   }
 }

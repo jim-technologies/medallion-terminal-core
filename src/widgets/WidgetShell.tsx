@@ -352,16 +352,16 @@ export function WidgetShell({ config, contentHeight, snapshotKey, registry }: Wi
       data-focused={isFocused ? 'true' : 'false'}
     >
       {title && (
-        <div className={`mtc-widget-header ${compact ? 'px-2.5 py-1.5' : 'px-4 py-2.5'} flex items-center justify-between`}>
-          <h2 className={`${compact ? 'text-[11px]' : 'text-xs'} font-semibold tracking-[0.01em] text-zinc-100 truncate`}>{title}</h2>
+        <div className={`mtc-widget-header ${compact ? 'px-2 py-1' : 'px-3 py-1.5'} flex items-center justify-between`}>
+          <h2 className={`${compact ? 'text-[length:var(--mtc-font-size-md)]' : 'text-[length:var(--mtc-font-size-lg)]'} font-semibold text-zinc-100 truncate`}>{title}</h2>
           <div className="flex items-center gap-2 shrink-0 ml-2">
             {isLive && lastUpdated && (
-              <span className={`text-[10px] ${isStale ? 'text-amber-400/80' : 'text-zinc-600'}`}>
+              <span className={`text-[11px] ${isStale ? 'text-amber-400/80' : 'text-zinc-600'}`}>
                 {isStale ? 'stale · ' : ''}{formatAge(now, lastUpdated)}
               </span>
             )}
             {config.source?.stream && !connected && nextRetryAt != null && (
-              <span className="text-[10px] text-amber-400/80 tabular-nums" title="Reconnecting">
+              <span className="text-[11px] text-amber-400/80 tabular-nums" title="Reconnecting">
                 retry {Math.max(0, Math.ceil((nextRetryAt - now) / 1000))}s
               </span>
             )}

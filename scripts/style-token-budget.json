@@ -1,0 +1,131 @@
+{
+  "src/ExamplesIndex.tsx": {
+    "font-size": 8,
+    "tracking": 6
+  },
+  "src/core/AssetOpen.tsx": {
+    "font-size": 13,
+    "tracking": 4
+  },
+  "src/core/CommandPalette.tsx": {
+    "font-size": 9
+  },
+  "src/core/Dashboard.tsx": {
+    "font-size": 17,
+    "tracking": 1
+  },
+  "src/core/MultiDashboard.tsx": {
+    "font-size": 1
+  },
+  "src/core/ShortcutsOverlay.tsx": {
+    "font-size": 4
+  },
+  "src/export/ExportMenu.tsx": {
+    "font-size": 2
+  },
+  "src/maps/basemaps.ts": {
+    "color-literal": 1
+  },
+  "src/widgets/ActionForm.tsx": {
+    "font-size": 6
+  },
+  "src/widgets/ActionLog.tsx": {
+    "font-size": 4
+  },
+  "src/widgets/AlertLog.tsx": {
+    "font-size": 4
+  },
+  "src/widgets/AssetCatalog.tsx": {
+    "font-size": 6
+  },
+  "src/widgets/Candlestick.tsx": {
+    "color-literal": 10
+  },
+  "src/widgets/Catalog.tsx": {
+    "font-size": 4
+  },
+  "src/widgets/Clock.tsx": {
+    "font-size": 2
+  },
+  "src/widgets/CodeBrowser.tsx": {
+    "font-size": 2
+  },
+  "src/widgets/ConversationImpl.tsx": {
+    "font-size": 12
+  },
+  "src/widgets/DataTable.tsx": {
+    "font-size": 1
+  },
+  "src/widgets/DepthChart.tsx": {
+    "font-size": 1
+  },
+  "src/widgets/Distribution.tsx": {
+    "font-size": 1
+  },
+  "src/widgets/Events.tsx": {
+    "font-size": 1
+  },
+  "src/widgets/GeoMap.tsx": {
+    "color-literal": 10,
+    "font-size": 3
+  },
+  "src/widgets/Heatmap.tsx": {
+    "font-size": 3
+  },
+  "src/widgets/MediaGalleryImpl.tsx": {
+    "font-size": 9,
+    "tracking": 2
+  },
+  "src/widgets/MultiSelect.tsx": {
+    "font-size": 2
+  },
+  "src/widgets/ObjectView.tsx": {
+    "font-size": 11
+  },
+  "src/widgets/OrderBook.tsx": {
+    "font-size": 3
+  },
+  "src/widgets/PairedGrid.tsx": {
+    "font-size": 3
+  },
+  "src/widgets/RecordBoard.tsx": {
+    "font-size": 8
+  },
+  "src/widgets/RecordCalendar.tsx": {
+    "font-size": 5
+  },
+  "src/widgets/RecordFields.tsx": {
+    "font-size": 2
+  },
+  "src/widgets/RecordForm.tsx": {
+    "font-size": 8
+  },
+  "src/widgets/RecordGrid.tsx": {
+    "font-size": 4
+  },
+  "src/widgets/Section.tsx": {
+    "font-size": 1,
+    "tracking": 1
+  },
+  "src/widgets/Select.tsx": {
+    "font-size": 1
+  },
+  "src/widgets/Slider.tsx": {
+    "font-size": 2
+  },
+  "src/widgets/StatStrip.tsx": {
+    "font-size": 3
+  },
+  "src/widgets/Ticker.tsx": {
+    "font-size": 1
+  },
+  "src/widgets/Trade.tsx": {
+    "font-size": 4
+  },
+  "src/widgets/VolumeProfile.tsx": {
+    "font-size": 1
+  },
+  "src/widgets/states.tsx": {
+    "tracking": 1
+  }
+}

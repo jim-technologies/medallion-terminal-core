@@ -58,15 +58,17 @@ interface ThemeColors {
   grid: string
 }
 
+// Canvas fallback for hosts without the stylesheet: the tokens v2 dark
+// values of the matching --mtc-* roles (themeColors.test.ts keeps them equal).
 const FALLBACK_THEME_COLORS: ThemeColors = {
-  accent: '#5a8dee',
-  danger: '#df6972',
-  ok: '#4fb184',
-  warning: '#d6a354',
-  muted: '#87929e',
-  mutedSubtle: '#596571',
-  border: '#28313a',
-  grid: '#20272e',
+  accent: '#61a1f0',
+  danger: '#e97170',
+  ok: '#57bc80',
+  warning: '#ebae51',
+  muted: '#969ca4',
+  mutedSubtle: '#7b8189',
+  border: '#2b2f36',
+  grid: '#1c2024',
 }
 
 export function Candlestick({ data }: WidgetProps) {

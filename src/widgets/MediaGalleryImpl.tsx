@@ -333,7 +333,7 @@ function MediaThumbnail({ item }: { item: MediaItemData }) {
 
   if (!src || failed) {
     return (
-      <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_30%_20%,rgb(63_63_70/0.55),transparent_45%),linear-gradient(135deg,rgb(24_24_27),rgb(9_9_11))]">
+      <div className="absolute inset-0 flex items-center justify-center bg-[var(--mtc-panel)]">
         <span className="text-xl text-zinc-600" aria-hidden="true">
           {item.kind === 'video' ? '▶' : '▧'}
         </span>

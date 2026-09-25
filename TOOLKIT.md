@@ -50,10 +50,11 @@ persisted personal preferences only after hydration.
 
 `PresentationTheme` supports:
 
-- `dark`: graphite and cobalt default.
-- `operator`: near-black and softened citrine for operational rooms.
-- `light`: cool neutral office/reporting presentation.
-- `high-contrast`: stronger boundaries, text hierarchy, and focus treatment.
+- `dark`: slate neutrals with one azure accent; the default.
+- `light`: the same roles on a cool white canvas.
+- `operator`: the slate one step darker with a softened citrine accent.
+- `high-contrast`: black canvas, stronger boundaries, text hierarchy, and
+  focus treatment.
 
 Themes are scoped to `.mtc-root`; no toolkit stylesheet targets `html`, `body`,
 or a host application root. Multiple themes may coexist on one page.
@@ -85,13 +86,30 @@ The original variables remain supported. Descriptive aliases are additive:
 | Danger | `--mtc-danger` | `--mtc-intent-danger` |
 | Information | `--mtc-info` | `--mtc-intent-info` |
 
+Roles added by tokens v2 (no descriptive alias):
+
+| Role | Tokens |
+|---|---|
+| Control boundary (inputs, checkboxes) | `--mtc-border-control` |
+| Selected row or navigation item | `--mtc-selection`, `--mtc-selection-hover` |
+| Link text | `--mtc-link` |
+| Text on a solid accent fill | `--mtc-on-accent` |
+| Status tints | `--mtc-ok-bg`, `--mtc-warning-bg`, `--mtc-danger-bg`, `--mtc-info-bg` |
+| Graph edges | `--mtc-graph-edge`, `--mtc-graph-edge-active` |
+| Object type identity | `--mtc-type-{azure,cyan,teal,green,lime,olive,amber,orange,red,rose,magenta,violet}-{fg,bg}` |
+
 Additional public groups:
 
-- Typography: `--mtc-font-*`, `--mtc-font-size-*`,
-  `--mtc-font-weight-*`, `--mtc-line-height-*`.
-- Spacing: `--mtc-space-0` through `--mtc-space-10`.
-- Radius: `--mtc-radius-sm|md|lg|round`.
-- Elevation: `--mtc-elevation-1|2`.
+- Typography: `--mtc-font-sans|mono`, `--mtc-font-size-xs|sm|md|lg|xl|2xl|3xl`
+  (11/12/13/14/16/20/24 px), matching `--mtc-line-height-*`,
+  `--mtc-font-weight-normal|medium|semibold`, and the unitless
+  `--mtc-line-height-tight|normal`.
+- Spacing: `--mtc-space-0` through `--mtc-space-16` (4 px grid).
+- Radius: `--mtc-radius-xs|sm|md|lg|round` (2/3/4/6 px); `--mtc-radius` is
+  the medium radius.
+- Elevation: `--mtc-elevation-0|1|2|3` (none, sticky headers, menus and
+  popovers, dialogs). `--mtc-shadow` and `--mtc-shadow-raised` alias levels 1
+  and 2; `--mtc-highlight` is retained as `transparent`.
 - Motion: `--mtc-duration-instant|fast|normal|slow` and
   `--mtc-easing-standard`.
 - Density: `--mtc-control-height-*`, `--mtc-row-height`,

@@ -42,7 +42,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "lint": "tsc --noEmit && buf format --diff --exit-code && buf lint && buf build && node scripts/check-generated.mjs",
+    "lint": "tsc --noEmit && node scripts/check-style-tokens.mjs && buf format --diff --exit-code && buf lint && buf build && node scripts/check-generated.mjs",
     "gen:proto": "PATH=\"$PWD/node_modules/.bin:$PATH\" buf generate",
     "format": "buf format --write",
     "test": "vitest run --project=unit",

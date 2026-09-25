@@ -980,9 +980,9 @@ operational testing in the consuming product.
 
 ## Styling and themes
 
-`Dashboard` defaults to a professional graphite-and-cobalt workspace and
-accepts `theme="dark"`, `theme="operator"`, `theme="light"`, or
-`theme="high-contrast"`:
+`Dashboard` defaults to a slate workspace with a single azure accent (or the
+theme of an enclosing `DesignSystemProvider`) and accepts `theme="dark"`,
+`theme="operator"`, `theme="light"`, or `theme="high-contrast"`:
 
 ```tsx
 <Dashboard template={template} backendUrl={api} theme="dark" />
@@ -1004,10 +1004,12 @@ Host apps can override the public variables after importing the styles:
 ```
 
 Public variables include `--mtc-bg`, `--mtc-surface`,
-`--mtc-surface-raised`, `--mtc-panel`, `--mtc-border`, `--mtc-fg`,
-`--mtc-muted`, `--mtc-accent`, `--mtc-signal`, `--mtc-danger`, `--mtc-ok`,
-`--mtc-warning`, `--mtc-chart-1` through `--mtc-chart-8`,
-`--mtc-font-sans`, and `--mtc-font-mono`. Descriptive aliases, spacing,
+`--mtc-surface-raised`, `--mtc-panel`, `--mtc-border`,
+`--mtc-border-control`, `--mtc-selection`, `--mtc-fg`, `--mtc-muted`,
+`--mtc-accent`, `--mtc-on-accent`, `--mtc-link`, `--mtc-danger`, `--mtc-ok`,
+`--mtc-warning` (each status with `-soft` and `-bg`), the twelve
+`--mtc-type-{slot}-fg|bg` identity slots, `--mtc-chart-1` through
+`--mtc-chart-8`, `--mtc-font-sans`, and `--mtc-font-mono`. Descriptive aliases, spacing,
 typography, radius, elevation, duration, density, and intent tokens are
 documented in [TOOLKIT.md](TOOLKIT.md); the product usage rules and
 accessibility checklist live in [DESIGN.md](DESIGN.md).
