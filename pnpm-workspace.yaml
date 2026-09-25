@@ -4,3 +4,10 @@
 # its dist/ bundle.
 allowBuilds:
   esbuild: true
+# These exact releases were selected by the 2026-09-25 currency round before
+# pnpm's release-age window had elapsed (both published 2026-09-24); the
+# gate installs from the frozen lockfile, so the entries only matter to a
+# non-frozen install and are inert once the window has passed.
+minimumReleaseAgeExclude:
+  - maplibre-gl@6.11.2
+  - vite@8.3.1

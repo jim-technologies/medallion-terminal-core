@@ -245,13 +245,18 @@ proto/medallion/terminal/v1/
   template.proto         — dashboard config contract
   terminal.proto         — TerminalService RPCs + ActionRequest/Update
 src/
-  index.ts                — Library barrel
+  index.ts                — Library barrel (root entry: everything below)
+  toolkit.ts              — `/toolkit` entry: foundations + components + workbench, no dashboard
+  dashboard.ts            — `/dashboard` entry: Dashboard, MultiDashboard, registry, context
+  asset-open.ts           — `/asset-open` entry: workspace asset-application bridge
   index.css               — Scoped theme tokens + shared product chrome
   foundations/            — Public tokens, presentation/density types, scoped provider
   components/             — Accessible reusable application controls
   workbench/              — Panes, toolbars, inspectors, trees, and shared states
   types/template.ts       — Hand-rolled framework types (mirror proto)
-  proto.ts                — Proto-derived JSON types (generated)
+  proto.ts                — `/proto` entry: re-exports the generated JSON types below
+  gen/medallion/terminal/v1/
+    *_pb.ts               — protobuf-es output (`pnpm gen:proto`); committed, staleness-gated
   core/
     Dashboard.tsx         — Grid layout, toolbar, status bar, keybindings
     MultiDashboard.tsx    — Multi-tab wrapper with Cmd-1..9 hotkeys
@@ -336,6 +341,12 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
 - `pnpm build` — standalone app
 - `pnpm build:lib` — library bundle (JS + CSS + .d.ts), committed under `dist/`
 - `pnpm storybook` — storybook (http://localhost:6006)
+- `pnpm check:breaking` — `buf breaking` against the newest reachable `v*` tag
+  (`scripts/check-breaking.mjs`)
+- `pnpm check:conformance` — reference-clone conformance (`scripts/check-reference-conformance.mjs`)
+- `pnpm check:dist` — rebuild `dist/` and fail if the committed bundle is stale
+- `pnpm check:package` — published-package contract: only `dist` + `proto`, renderer peers optional
+- `pnpm check:bundles` — per-entry gzip budgets (`scripts/check-bundle-isolation.mjs`)
 - `make validate` — the single gate verb (see `MAKEFILE-CONTRACT.md`):
   frozen-lockfile install + pinned Chromium + public-surface guard
   (`scripts/public-surface-check`, exceptions in `.public-surface-allow`) +
@@ -354,10 +365,10 @@ is no `prepack` hook because nothing packs.
 
 ## Tech stack
 
-React 19.2 + TypeScript 7.0. Vite 8, Tailwind 4.3, Recharts 3.10,
-lightweight-charts 5.2 (for `candlestick`), MapLibre GL JS 6.0 (for
-`geo_map`), Vitest 4.1, Storybook 10.5,
-Protobuf + Buf 1.71, Node 24 LTS, pnpm 11, Flox.
+React 19.3 + TypeScript 7.0. Vite 8, Tailwind 4.3, Recharts 3.10,
+lightweight-charts 5.2 (for `candlestick`), MapLibre GL JS 6.11 (for
+`geo_map`), Vitest 4.1, Storybook 10.6, Playwright 1.63,
+Protobuf + Buf 1.72, Node 24 / pnpm 11.27 (both pinned by Flox), Flox.
 
 ## Design principles
 

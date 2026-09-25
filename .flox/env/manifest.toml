@@ -5,8 +5,7 @@
 ##   https://flox.dev/docs/reference/command-reference/manifest.toml/
 ##
 ## -------------------------------------------------------------------
-# Flox manifest version managed by Flox CLI
-version = 1
+schema-version = "1.12.0"
 
 
 ## Install Packages --------------------------------------------------
@@ -15,9 +14,19 @@ version = 1
 ##  $ flox show gum     <- show all versions of a package
 ## -------------------------------------------------------------------
 [install]
-nodejs.pkg-path = "nodejs"
+# Node sits in its own package group so its pin resolves independently of
+# the fonts and linters below, which stay on whatever nixpkgs revision the
+# default group lands on.
+nodejs.pkg-path = "nodejs_24"
+nodejs.version = "24.20.0"
+nodejs.pkg-group = "node"
+# pnpm must equal package.json `packageManager` (scripts/check-version.mjs
+# asserts it): pnpm 11 otherwise downloads the declared version behind
+# Flox's back and Flox stops being the sole toolchain provider.
 pnpm.pkg-path = "pnpm"
+pnpm.version = "11.27.0"
 buf.pkg-path = "buf"
+buf.version = "1.72.0"
 actionlint.pkg-path = "actionlint"
 lato.pkg-path = "lato"
 dejavu_fonts.pkg-path = "dejavu_fonts"
@@ -119,12 +128,12 @@ EOF
 
 ## Other Environment Options -----------------------------------------
 [options]
-# Systems that environment is compatible with
-# systems = [
-#   "aarch64-darwin",
-#   "aarch64-linux",
-#   "x86_64-darwin",
-#   "x86_64-linux",
-# ]
+# The catalog publishes no nodejs_24 >= 24.18, pnpm 11.27 or buf 1.72 for
+# x86_64-darwin; keep one current lock across the systems that have them.
+systems = [
+  "aarch64-darwin",
+  "aarch64-linux",
+  "x86_64-linux",
+]
 # Uncomment to disable CUDA detection.
 # cuda-detection = false

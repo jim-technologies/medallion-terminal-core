@@ -1,66 +1,66 @@
-import { C as e, E as t, S as n, T as r, _ as i, a, b as o, c as s, d as c, f as l, g as u, h as d, i as f, l as p, m, n as h, o as ee, p as te, r as ne, s as re, t as ie, u as ae, v as oe, w as se, x as ce, y as le } from "./workbench-BZEi1jbp.js";
-import { a as ue, i as de, n as g, o as _, r as v, s as y, t as b } from "./States-BSRKPrE1.js";
-import { $ as x, A as S, At as C, B as w, C as T, Ct as E, D, Dt as O, E as k, Et as A, F as j, Ft as M, G as N, H as P, Ht as F, I, It as L, J as R, K as z, L as B, Lt as V, M as H, Mt as fe, N as pe, Nt as me, O as he, Ot as ge, P as _e, Pt as ve, Q as ye, R as be, Rt as xe, S as Se, St as Ce, T as we, Tt as Te, U as Ee, V as De, W as Oe, X as ke, Y as Ae, Z as je, _ as Me, _t as Ne, a as Pe, at as Fe, b as Ie, bt as Le, c as Re, ct as ze, d as Be, dt as Ve, et as He, f as Ue, ft as We, g as Ge, gt as Ke, h as qe, ht as Je, i as Ye, it as Xe, j as Ze, jt as Qe, k as $e, kt as et, l as tt, lt as nt, m as rt, mt as it, n as at, nt as ot, o as st, ot as ct, p as lt, pt as ut, q as dt, r as U, rt as ft, s as pt, st as mt, t as ht, tt as gt, u as _t, ut as vt, v as yt, vt as bt, w as xt, wt as St, x as Ct, xt as wt, y as Tt, yt as Et, z as Dt, zt as Ot } from "./MultiDashboard-B8rxYV_S.js";
-import { a as kt, c as At, i as jt, n as Mt, o as Nt, r as Pt, s as Ft, t as It } from "./AssetOpen-miowZkWQ.js";
+import { C as e, E as t, S as n, T as r, _ as i, a, b as o, c as s, d as c, f as l, g as u, h as d, i as f, l as p, m, n as h, o as ee, p as te, r as ne, s as re, t as ie, u as ae, v as oe, w as se, x as ce, y as le } from "./workbench-CBYGWw5O.js";
+import { a as ue, i as de, n as g, o as _, r as v, s as y, t as b } from "./States-b5C4ZxnV.js";
+import { $ as x, A as S, At as C, B as w, C as T, Ct as E, D, Dt as O, E as k, Et as A, F as j, Ft as M, G as N, H as P, Ht as F, I, It as L, J as R, K as z, L as B, Lt as V, M as H, Mt as fe, N as pe, Nt as me, O as he, Ot as ge, P as _e, Pt as ve, Q as ye, R as be, Rt as xe, S as Se, St as Ce, T as we, Tt as Te, U as Ee, V as De, W as Oe, X as ke, Y as Ae, Z as je, _ as Me, _t as Ne, a as Pe, at as Fe, b as Ie, bt as Le, c as Re, ct as ze, d as Be, dt as Ve, et as He, f as Ue, ft as We, g as Ge, gt as Ke, h as qe, ht as Je, i as Ye, it as Xe, j as Ze, jt as Qe, k as $e, kt as et, l as tt, lt as nt, m as rt, mt as it, n as at, nt as ot, o as st, ot as ct, p as lt, pt as ut, q as dt, r as U, rt as ft, s as pt, st as mt, t as ht, tt as gt, u as _t, ut as vt, v as yt, vt as bt, w as xt, wt as St, x as Ct, xt as wt, y as Tt, yt as Et, z as Dt, zt as Ot } from "./MultiDashboard-CvoqgUsx.js";
+import { a as kt, c as At, i as jt, n as Mt, o as Nt, r as Pt, s as Ft, t as It } from "./AssetOpen-CjGLA-3L.js";
 import { a as Lt, i as Rt, n as zt, o as Bt, r as Vt, t as Ht } from "./basemaps-DoOvxEpO.js";
 import { c as Ut, i as Wt, n as Gt, o as Kt, r as qt, s as Jt, t as Yt } from "./format-V6rpoQ-_.js";
 import { a as Xt, n as Zt, t as Qt } from "./colors-DjPEDFCT.js";
-import { t as $t } from "./Timeseries-BPGs5YHw.js";
-import { t as en } from "./Candlestick-DjBhds-_.js";
-import { t as tn } from "./DataTable-CGla16Qg.js";
+import { t as $t } from "./Timeseries-CewK8HpO.js";
+import { t as en } from "./Candlestick-D2u1sJCv.js";
+import { t as tn } from "./DataTable-PqjqMHEb.js";
 import { t as nn } from "./useAnimatedNumber-R8_seRAC.js";
 import { t as rn } from "./Metric-CsN3_xvB.js";
-import { t as an } from "./Text-DCJedTZ_.js";
-import { t as on } from "./Prompt-D3HoDyHZ.js";
-import { t as sn } from "./Gauge-CXMQTxUr.js";
-import { t as cn } from "./Distribution-CPoGUOQv.js";
-import { t as ln } from "./Heatmap-BQHsSOUq.js";
-import { t as un } from "./Events-BQAYoRg7.js";
-import { t as dn } from "./Catalog-DCjLeXWe.js";
-import { t as fn } from "./AssetCatalog-BFucmzZG.js";
-import { i as pn, n as mn, r as hn } from "./useWatchAction-B2925xXY.js";
-import { t as gn } from "./useSubmitAction-vimZgsDR.js";
-import { t as _n } from "./ObjectView-FLpkSe3i.js";
-import { a as vn, c as yn, g as bn, s as xn } from "./fileBrowserHelpers-C6N7d9Ga.js";
-import { t as Sn } from "./CodeBrowser-BUVLjsWa.js";
-import { t as Cn } from "./RecordGrid-tjrGtFDR.js";
-import { t as wn } from "./RecordBoard-BtDEHvHZ.js";
-import { t as Tn } from "./RecordCalendar-CH-Q_ykX.js";
-import { t as En } from "./RecordForm--Eur_kDg.js";
-import { a as Dn, i as On, o as kn, r as An, t as jn } from "./ActionForm-BXZS8xXh.js";
-import { t as Mn } from "./OrderBook-XdEesLmI.js";
-import { t as Nn } from "./DepthChart-gNxepP0x.js";
-import { t as Pn } from "./PairedGrid-DvUui-uR.js";
-import { t as Fn } from "./Trade-CUZiT94O.js";
-import { t as In } from "./Ticker-DRCT2HBL.js";
-import { t as Ln } from "./VolumeProfile-CMBdj7FN.js";
-import { t as Rn } from "./StatStrip-grhdVPic.js";
-import { t as zn } from "./BarChart-CgGJSxnD.js";
-import { t as Bn } from "./Scatter-B_sSCVfX.js";
+import { t as an } from "./Text-n1MAw-F8.js";
+import { t as on } from "./Prompt-DJKNtXne.js";
+import { t as sn } from "./Gauge-CflwE-2p.js";
+import { t as cn } from "./Distribution-CTafVlWL.js";
+import { t as ln } from "./Heatmap-B63ViYd4.js";
+import { t as un } from "./Events-BX7tTV-E.js";
+import { t as dn } from "./Catalog-CHr5vra1.js";
+import { t as fn } from "./AssetCatalog-DKxYfl_-.js";
+import { i as pn, n as mn, r as hn } from "./useWatchAction-3q6fWDgY.js";
+import { t as gn } from "./useSubmitAction-BHzDdFq6.js";
+import { t as _n } from "./ObjectView-B6nTN-CT.js";
+import { a as vn, c as yn, g as bn, s as xn } from "./fileBrowserHelpers-CYaMSXSc.js";
+import { t as Sn } from "./CodeBrowser-D71-OxdE.js";
+import { t as Cn } from "./RecordGrid-Ck2dKmzA.js";
+import { t as wn } from "./RecordBoard-m_LnRtnX.js";
+import { t as Tn } from "./RecordCalendar-Bxvv3Ooj.js";
+import { t as En } from "./RecordForm-D-c5lxpZ.js";
+import { a as Dn, i as On, o as kn, r as An, t as jn } from "./ActionForm-lAqHV9UA.js";
+import { t as Mn } from "./OrderBook-vLropUQo.js";
+import { t as Nn } from "./DepthChart-pHpydx5x.js";
+import { t as Pn } from "./PairedGrid-B-tLyCkI.js";
+import { t as Fn } from "./Trade-BTMUy3nv.js";
+import { t as In } from "./Ticker-B-_G_RsZ.js";
+import { t as Ln } from "./VolumeProfile-BLxr-dJh.js";
+import { t as Rn } from "./StatStrip-Bl3qMmn0.js";
+import { t as zn } from "./BarChart-dHqWjO_5.js";
+import { t as Bn } from "./Scatter-DIeHDNAQ.js";
 import { t as Vn } from "./Clock-Cc9ABoWJ.js";
-import { t as Hn } from "./Treemap-BUYBUQcL.js";
-import { t as Un } from "./Image-TVBY27Mv.js";
-import { t as Wn } from "./Iframe-B_h9l6Nw.js";
-import { t as Gn } from "./Histogram-C1-R4opU.js";
+import { t as Hn } from "./Treemap-bDif64Fo.js";
+import { t as Un } from "./Image-CEtHu2oJ.js";
+import { t as Wn } from "./Iframe-9tO9A16R.js";
+import { t as Gn } from "./Histogram-DxJ-YVLK.js";
 import { t as Kn } from "./Section-Cpjr_7EV.js";
-import { t as qn } from "./AreaChart-BCUxtNj1.js";
-import { t as Jn } from "./Slider-9NsItA39.js";
-import { t as Yn } from "./Select-Dj7u5tw4.js";
-import { t as Xn } from "./Boxplot-Be67M0Xp.js";
-import { t as Zn } from "./Radar-C4sR-5ja.js";
-import { t as Qn } from "./Dag-DIPZ7FVb.js";
-import { t as $n } from "./GeoMap-DCmdmF-a.js";
-import { t as er } from "./MultiSelect-DRiu2Vy3.js";
-import { t as tr } from "./Json-BOKJr9mK.js";
-import { t as nr } from "./Sparkline-BcaMfy7S.js";
-import { t as rr } from "./ActionLog-C_wbqUk7.js";
-import { t as ir } from "./AlertLog-Ddj9J8is.js";
-import { t as ar } from "./Tape-Bo2QkTzd.js";
-import { t as or } from "./FileBrowser-FWnjEtBG.js";
+import { t as qn } from "./AreaChart-tLAtefj-.js";
+import { t as Jn } from "./Slider-DqwWMI8C.js";
+import { t as Yn } from "./Select-Clz9CEcD.js";
+import { t as Xn } from "./Boxplot-AI7R1oke.js";
+import { t as Zn } from "./Radar-Cb0-2ADc.js";
+import { t as Qn } from "./Dag-BGwxC6yP.js";
+import { t as $n } from "./GeoMap-3hs9Rrc3.js";
+import { t as er } from "./MultiSelect-COMNLbzW.js";
+import { t as tr } from "./Json-DDofpUIB.js";
+import { t as nr } from "./Sparkline-J2sx035O.js";
+import { t as rr } from "./ActionLog-DrNqPcVk.js";
+import { t as ir } from "./AlertLog-CsqQX9sx.js";
+import { t as ar } from "./Tape-CVwRPwxX.js";
+import { t as or } from "./FileBrowser-PW7d2Txw.js";
 import { Suspense as W, lazy as G, useEffect as K, useMemo as q, useRef as sr, useState as J } from "react";
 import { jsx as Y, jsxs as X } from "react/jsx-runtime";
 //#region src/widgets/Conversation.tsx
-var cr = G(() => import("./ConversationImpl-DK80_SKC.js").then((e) => ({ default: e.ConversationImpl })));
+var cr = G(() => import("./ConversationImpl-DEOHgW_C.js").then((e) => ({ default: e.ConversationImpl })));
 function lr(e) {
 	return /* @__PURE__ */ Y(W, {
 		fallback: /* @__PURE__ */ Y(V, { component: "conversation" }),
@@ -69,7 +69,7 @@ function lr(e) {
 }
 //#endregion
 //#region src/widgets/MediaGallery.tsx
-var ur = G(() => import("./MediaGalleryImpl-DNwYXBnE.js").then((e) => ({ default: e.MediaGalleryImpl })));
+var ur = G(() => import("./MediaGalleryImpl-BulCy6Wd.js").then((e) => ({ default: e.MediaGalleryImpl })));
 function dr(e) {
 	return /* @__PURE__ */ Y(W, {
 		fallback: /* @__PURE__ */ Y(V, { component: "media_gallery" }),

@@ -1,13 +1,14 @@
 {
   "lockfile-version": 1,
   "manifest": {
-    "version": 1,
+    "schema-version": "1.12.0",
     "install": {
       "actionlint": {
         "pkg-path": "actionlint"
       },
       "buf": {
-        "pkg-path": "buf"
+        "pkg-path": "buf",
+        "version": "1.72.0"
       },
       "dejavu_fonts": {
         "pkg-path": "dejavu_fonts"
@@ -19,36 +20,135 @@
         "pkg-path": "lato"
       },
       "nodejs": {
-        "pkg-path": "nodejs"
+        "pkg-path": "nodejs_24",
+        "pkg-group": "node",
+        "version": "24.20.0"
       },
       "noto-fonts-color-emoji": {
         "pkg-path": "noto-fonts-color-emoji"
       },
       "pnpm": {
-        "pkg-path": "pnpm"
+        "pkg-path": "pnpm",
+        "version": "11.27.0"
       }
     },
     "hook": {
       "on-activate": "  mkdir -p \"$FLOX_ENV_CACHE/fontconfig/cache\"\n  cat > \"$FLOX_ENV_CACHE/fontconfig/fonts.conf\" <<EOF\n<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n  <dir>$FLOX_ENV/share/fonts</dir>\n  <cachedir>$FLOX_ENV_CACHE/fontconfig/cache</cachedir>\n  <match target=\"font\">\n    <edit name=\"antialias\" mode=\"assign\"><bool>true</bool></edit>\n    <edit name=\"hinting\" mode=\"assign\"><bool>true</bool></edit>\n    <edit name=\"hintstyle\" mode=\"assign\"><const>hintslight</const></edit>\n    <edit name=\"rgba\" mode=\"assign\"><const>none</const></edit>\n    <edit name=\"embeddedbitmap\" mode=\"assign\"><bool>false</bool></edit>\n  </match>\n  <alias><family>sans-serif</family><prefer><family>DejaVu Sans</family></prefer></alias>\n  <alias><family>serif</family><prefer><family>DejaVu Serif</family></prefer></alias>\n  <alias><family>monospace</family><prefer><family>DejaVu Sans Mono</family></prefer></alias>\n  <alias><family>emoji</family><prefer><family>Noto Color Emoji</family></prefer></alias>\n</fontconfig>\nEOF\n  export FONTCONFIG_FILE=\"$FLOX_ENV_CACHE/fontconfig/fonts.conf\"\n"
     },
     "profile": {},
-    "options": {}
+    "options": {
+      "systems": [
+        "aarch64-darwin",
+        "aarch64-linux",
+        "x86_64-linux"
+      ]
+    }
   },
   "packages": [
     {
+      "attr_path": "nodejs_24",
+      "broken": false,
+      "derivation": "/nix/store/j062ph4sqspapzz4bz4knx0icy2kfgjy-nodejs-24.20.0.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=6774f7bc253789b113a4f39285dc0fa100abeacc",
+      "name": "nodejs-24.20.0",
+      "pname": "nodejs_24",
+      "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
+      "rev_count": 1077996,
+      "rev_date": "2026-09-22T03:11:10Z",
+      "scrape_date": "2026-09-23T04:58:30.111494Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "24.20.0",
+      "outputs_to_install": [
+        "out",
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/7pn7zw2sciv3fih9l4xpyvx0q8hlrr0w-nodejs-24.20.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "node",
+      "priority": 5
+    },
+    {
+      "attr_path": "nodejs_24",
+      "broken": false,
+      "derivation": "/nix/store/z4ixg7wqqz4wvlvb3ava11m1khid3a1g-nodejs-24.20.0.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=6774f7bc253789b113a4f39285dc0fa100abeacc",
+      "name": "nodejs-24.20.0",
+      "pname": "nodejs_24",
+      "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
+      "rev_count": 1077996,
+      "rev_date": "2026-09-22T03:11:10Z",
+      "scrape_date": "2026-09-23T05:30:18.311666Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "24.20.0",
+      "outputs_to_install": [
+        "out",
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/hnizp3p9k7gix8iqlip1pai9fy417ygy-nodejs-24.20.0"
+      },
+      "system": "aarch64-linux",
+      "group": "node",
+      "priority": 5
+    },
+    {
+      "attr_path": "nodejs_24",
+      "broken": false,
+      "derivation": "/nix/store/0z73lh3jfj7hpng8kiinipj94wrwa0j9-nodejs-24.20.0.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=6774f7bc253789b113a4f39285dc0fa100abeacc",
+      "name": "nodejs-24.20.0",
+      "pname": "nodejs_24",
+      "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
+      "rev_count": 1077996,
+      "rev_date": "2026-09-22T03:11:10Z",
+      "scrape_date": "2026-09-23T06:06:59.669824Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "24.20.0",
+      "outputs_to_install": [
+        "out",
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/v6wsd9nyglmwh32yn7w8z11dq9cksg4m-nodejs-24.20.0"
+      },
+      "system": "x86_64-linux",
+      "group": "node",
+      "priority": 5
+    },
+    {
       "attr_path": "actionlint",
       "broken": false,
-      "derivation": "/nix/store/f6xz9pw6zvga7r04isc4xf54y8g4sq5z-actionlint-1.7.12.drv",
+      "derivation": "/nix/store/6gf2fkfinlp1laxa6fwcnabskf3bmppf-actionlint-1.7.12.drv",
       "description": "Static checker for GitHub Actions workflow files",
       "install_id": "actionlint",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "actionlint-1.7.12",
       "pname": "actionlint",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:12:54.694474Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:03:18.671817Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -59,7 +159,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/9qj0ikkqv66k52xs8fywmnzyg8zn2svm-actionlint-1.7.12"
+        "out": "/nix/store/vzlnbs651kcf8i0jz8j0md4gj0hl12ia-actionlint-1.7.12"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -68,17 +168,17 @@
     {
       "attr_path": "actionlint",
       "broken": false,
-      "derivation": "/nix/store/pih7r5p4pify73ap7r0g4s7aqv5q01d2-actionlint-1.7.12.drv",
+      "derivation": "/nix/store/nd9vgj4n0583vbba3h25hl61fqsfn4m1-actionlint-1.7.12.drv",
       "description": "Static checker for GitHub Actions workflow files",
       "install_id": "actionlint",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "actionlint-1.7.12",
       "pname": "actionlint",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:41:21.154073Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:40:22.685942Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -89,7 +189,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/31js4yryr1yjq4waygdlv2k5w5ks0s0n-actionlint-1.7.12"
+        "out": "/nix/store/8nwbx3mnrmm8j4h8wf7gw0ll05rs19vp-actionlint-1.7.12"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -98,17 +198,17 @@
     {
       "attr_path": "actionlint",
       "broken": false,
-      "derivation": "/nix/store/63nf20xl5rcbm5mxf2pbfkdk90lcc4qi-actionlint-1.7.12.drv",
+      "derivation": "/nix/store/3vb09dcndsjans9k753q7vvis3q7vxyr-actionlint-1.7.12.drv",
       "description": "Static checker for GitHub Actions workflow files",
       "install_id": "actionlint",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "actionlint-1.7.12",
       "pname": "actionlint",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:08:59.948591Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T06:22:00.947439Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -119,37 +219,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/w4rjv0ikr5r5x54w758c8ck2016nmzsx-actionlint-1.7.12"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "actionlint",
-      "broken": false,
-      "derivation": "/nix/store/mk996amm0g9pssw96f0nh4460x97p890-actionlint-1.7.12.drv",
-      "description": "Static checker for GitHub Actions workflow files",
-      "install_id": "actionlint",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "actionlint-1.7.12",
-      "pname": "actionlint",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:40:23.770360Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "1.7.12",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/20imjbvi2q6z691fd5acg20mfx3aqvkj-actionlint-1.7.12"
+        "out": "/nix/store/l1mk756h2hqw22g5ba6ppipar40ivij7-actionlint-1.7.12"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -158,28 +228,28 @@
     {
       "attr_path": "buf",
       "broken": false,
-      "derivation": "/nix/store/fa39cn51c0hl6qx49w746xmrs879qjjs-buf-1.71.0.drv",
+      "derivation": "/nix/store/wqd1i949wb88wv9rifz1jfdjvqwgz9b5-buf-1.72.0.drv",
       "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
       "install_id": "buf",
       "license": "Apache-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "buf-1.71.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "name": "buf-1.72.0",
       "pname": "buf",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:12:54.943500Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:03:18.932112Z",
       "stabilities": [
         "staging",
         "unstable"
       ],
       "unfree": false,
-      "version": "1.71.0",
+      "version": "1.72.0",
       "outputs_to_install": [
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/ky7qnn9sb2sqyq7b4j4wr7059njqlm6z-buf-1.71.0"
+        "out": "/nix/store/4hb0kxvyaxnz8agf26vv25j7f9kg9wjw-buf-1.72.0"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -188,28 +258,28 @@
     {
       "attr_path": "buf",
       "broken": false,
-      "derivation": "/nix/store/awlzrq2w2fr4ldwnw0yxsmzazdbj33d9-buf-1.71.0.drv",
+      "derivation": "/nix/store/cfs0slg3g15f2pq9fkijb6p5m3708y17-buf-1.72.0.drv",
       "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
       "install_id": "buf",
       "license": "Apache-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "buf-1.71.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "name": "buf-1.72.0",
       "pname": "buf",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:41:21.505988Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:40:22.989213Z",
       "stabilities": [
         "staging",
         "unstable"
       ],
       "unfree": false,
-      "version": "1.71.0",
+      "version": "1.72.0",
       "outputs_to_install": [
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/271wrlc88gsqm1bgm0frvad5ass1in93-buf-1.71.0"
+        "out": "/nix/store/rnj28cal3w4g3w1n05479rqyhdq54p2g-buf-1.72.0"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -218,58 +288,28 @@
     {
       "attr_path": "buf",
       "broken": false,
-      "derivation": "/nix/store/rn4p61bb1b3phmcd93z43xaapblhph8n-buf-1.71.0.drv",
+      "derivation": "/nix/store/prxldl2wq6yg00h2zvn7rw6kklvj8hdw-buf-1.72.0.drv",
       "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
       "install_id": "buf",
       "license": "Apache-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "buf-1.71.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "name": "buf-1.72.0",
       "pname": "buf",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:09:00.257573Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T06:22:01.287994Z",
       "stabilities": [
         "staging",
         "unstable"
       ],
       "unfree": false,
-      "version": "1.71.0",
+      "version": "1.72.0",
       "outputs_to_install": [
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/6iipkkpyxq356qc5gx4zwhswdqxa6yw1-buf-1.71.0"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "buf",
-      "broken": false,
-      "derivation": "/nix/store/68rb3l3ligb59dghmlmxmmws24mw12sv-buf-1.71.0.drv",
-      "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
-      "install_id": "buf",
-      "license": "Apache-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "buf-1.71.0",
-      "pname": "buf",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:40:24.129426Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "1.71.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/21lh9zagq5sllazmlzi2yhfw78scjs8x-buf-1.71.0"
+        "out": "/nix/store/0d21d3022nnzpyy58qpdfqdh16f21yz4-buf-1.72.0"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -278,17 +318,17 @@
     {
       "attr_path": "dejavu_fonts",
       "broken": false,
-      "derivation": "/nix/store/l40j021lgdb91ibfsc9ggrz0jc3jwr82-dejavu-fonts-2.37.drv",
+      "derivation": "/nix/store/kli0yd2chfhh9lkznsc3d2inzkl829j2-dejavu-fonts-2.37.drv",
       "description": "Typeface family based on the Bitstream Vera fonts",
       "install_id": "dejavu_fonts",
       "license": "Unspecified free software license",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "dejavu-fonts-2.37",
       "pname": "dejavu_fonts",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:12:55.429418Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:03:20.062041Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -299,7 +339,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/4hy28cpxjkl0czyf5pk2vwbi4m8d555i-dejavu-fonts-2.37"
+        "out": "/nix/store/yvp1jb81xwrhm4cs1c4flg50m2jv1pl3-dejavu-fonts-2.37"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -308,17 +348,17 @@
     {
       "attr_path": "dejavu_fonts",
       "broken": false,
-      "derivation": "/nix/store/x8myk0qhj77g2qrr666i00s6lkhw5qms-dejavu-fonts-2.37.drv",
+      "derivation": "/nix/store/d686krg2bf2d2kv3cp4671321q6lawh4-dejavu-fonts-2.37.drv",
       "description": "Typeface family based on the Bitstream Vera fonts",
       "install_id": "dejavu_fonts",
       "license": "Unspecified free software license",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "dejavu-fonts-2.37",
       "pname": "dejavu_fonts",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:41:22.120169Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:40:23.664524Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -329,7 +369,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/spc75685f7229wh2sva3j4dn7vnr10r1-dejavu-fonts-2.37"
+        "out": "/nix/store/b888pffg007fsp3aivl4i1acv70v75an-dejavu-fonts-2.37"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -338,17 +378,17 @@
     {
       "attr_path": "dejavu_fonts",
       "broken": false,
-      "derivation": "/nix/store/8cr43azl7kynm2bnk2sws8j42cldh8bc-dejavu-fonts-2.37.drv",
+      "derivation": "/nix/store/bkzxfgc9xbl1qk3zx7bbq0mwbj9jqmq8-dejavu-fonts-2.37.drv",
       "description": "Typeface family based on the Bitstream Vera fonts",
       "install_id": "dejavu_fonts",
       "license": "Unspecified free software license",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "dejavu-fonts-2.37",
       "pname": "dejavu_fonts",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:09:00.797713Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T06:22:02.030637Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -359,37 +399,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/498mb4dcz4dqm5fxirgfdphwndhndhk1-dejavu-fonts-2.37"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "dejavu_fonts",
-      "broken": false,
-      "derivation": "/nix/store/07h0sij88m20zsswa95swqzjr5jimd7i-dejavu-fonts-2.37.drv",
-      "description": "Typeface family based on the Bitstream Vera fonts",
-      "install_id": "dejavu_fonts",
-      "license": "Unspecified free software license",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "dejavu-fonts-2.37",
-      "pname": "dejavu_fonts",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:40:24.797902Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.37",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/8cs9jsy0bpajym7lf9qbps1h5snyjk9y-dejavu-fonts-2.37"
+        "out": "/nix/store/71mxn2pyq807r32qsd2mdszkajhlb39q-dejavu-fonts-2.37"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -398,17 +408,17 @@
     {
       "attr_path": "inter",
       "broken": false,
-      "derivation": "/nix/store/zy65m5q4cpy1izbda6m6fk5s1w642pjp-inter-4.1.drv",
+      "derivation": "/nix/store/s632infkasy1dxsvg2shql1gbavvxyqv-inter-4.1.drv",
       "description": "Typeface specially designed for user interfaces",
       "install_id": "inter",
       "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "inter-4.1",
       "pname": "inter",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:13:12.018009Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:03:37.140406Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -419,7 +429,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/hfh8x7br4p6703xa2s9123syi7mhjc38-inter-4.1"
+        "out": "/nix/store/gscn9lnfhmsid2vxcbkfm8g3bcwp4s39-inter-4.1"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -428,17 +438,17 @@
     {
       "attr_path": "inter",
       "broken": false,
-      "derivation": "/nix/store/kj7k8f4l1kdxhlv9ykl5ak15m010jmmb-inter-4.1.drv",
+      "derivation": "/nix/store/yy8ss3i0rdi5fyr887y9j2l27wqnbbaa-inter-4.1.drv",
       "description": "Typeface specially designed for user interfaces",
       "install_id": "inter",
       "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "inter-4.1",
       "pname": "inter",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:41:43.478657Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:40:45.029471Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -449,7 +459,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/7p4k9in7fwchknx8idlca5d3njwsaas4-inter-4.1"
+        "out": "/nix/store/9hj8g92p0m46q6px8kidjpw18hhkp1ff-inter-4.1"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -458,17 +468,17 @@
     {
       "attr_path": "inter",
       "broken": false,
-      "derivation": "/nix/store/0y0hslbrj8qkahdblagqjsq3nx93g64s-inter-4.1.drv",
+      "derivation": "/nix/store/dhj64p3ipyi1419rniqf9dxj29rnjmma-inter-4.1.drv",
       "description": "Typeface specially designed for user interfaces",
       "install_id": "inter",
       "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "inter-4.1",
       "pname": "inter",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:09:21.466092Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T06:22:24.367672Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -479,37 +489,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/xji97vv89j6visv9vfr6f98fgg2mnrrz-inter-4.1"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "inter",
-      "broken": false,
-      "derivation": "/nix/store/nn6pcka9n3csqnwhjyiyhjsnbwms8b5x-inter-4.1.drv",
-      "description": "Typeface specially designed for user interfaces",
-      "install_id": "inter",
-      "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "inter-4.1",
-      "pname": "inter",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:40:46.936511Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "4.1",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/9r0bj3fadq927k9zzmasyr566s1bf2d4-inter-4.1"
+        "out": "/nix/store/shisxgcl8mqahsi4wxr67s44pdwxkjgp-inter-4.1"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -518,17 +498,17 @@
     {
       "attr_path": "lato",
       "broken": false,
-      "derivation": "/nix/store/5s2rs05jffvil9w64mll92ad6pky8c1z-lato-2.0.drv",
+      "derivation": "/nix/store/9mfrf8byfxv48mfw6wlf5449h9dg4cz2-lato-2.0.drv",
       "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
       "install_id": "lato",
       "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "lato-2.0",
       "pname": "lato",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:13:13.441992Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:03:38.652313Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -539,7 +519,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/pkrvkb3gvr194wd5ghqqnfmpcv8h2a3c-lato-2.0"
+        "out": "/nix/store/z7qmjp06jgkc6m7k0yzsgxbz4p67s9if-lato-2.0"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -548,17 +528,17 @@
     {
       "attr_path": "lato",
       "broken": false,
-      "derivation": "/nix/store/lj8833dm8w5gnwjmp172y9fwig1qzsay-lato-2.0.drv",
+      "derivation": "/nix/store/v8789bi0g8px78y560zcli3jf04dl7dy-lato-2.0.drv",
       "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
       "install_id": "lato",
       "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "lato-2.0",
       "pname": "lato",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:41:46.306184Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:40:47.887873Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -569,7 +549,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/l8bdx2rl544nzdf03as3kv5hr3hd502n-lato-2.0"
+        "out": "/nix/store/c3wdg3gzdkf0zls7fgg7sad73yxarp0a-lato-2.0"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -578,17 +558,17 @@
     {
       "attr_path": "lato",
       "broken": false,
-      "derivation": "/nix/store/crhaqjq9isr7s0n45ssnh2kkva2z9mic-lato-2.0.drv",
+      "derivation": "/nix/store/nd60axpv7zy3a4qrcl2x1ssaqmj2drpl-lato-2.0.drv",
       "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
       "install_id": "lato",
       "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "lato-2.0",
       "pname": "lato",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:09:23.276742Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T06:22:27.343509Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -599,157 +579,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/g2rfqidkcyf7h15d0pg0b6h8q57lgf50-lato-2.0"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "lato",
-      "broken": false,
-      "derivation": "/nix/store/y8q1909zmicl096i4hk0nli4c083ybdk-lato-2.0.drv",
-      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
-      "install_id": "lato",
-      "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "lato-2.0",
-      "pname": "lato",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:40:49.873345Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/gvfvfx3s030x879va9rpym83y95id4ld-lato-2.0"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "nodejs",
-      "broken": false,
-      "derivation": "/nix/store/1a0cn85p1mwixhwy16db7v2652pz7l8g-nodejs-24.16.0.drv",
-      "description": "Event-driven I/O framework for the V8 JavaScript engine",
-      "install_id": "nodejs",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "nodejs-24.16.0",
-      "pname": "nodejs",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:13:20.493760Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "24.16.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/1zm1xb652wk1kscxbcvbryq8y45b0gy5-nodejs-24.16.0"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "nodejs",
-      "broken": false,
-      "derivation": "/nix/store/aay2n9r5ljwfvlva807p9f0p1vpwg7mb-nodejs-24.16.0.drv",
-      "description": "Event-driven I/O framework for the V8 JavaScript engine",
-      "install_id": "nodejs",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "nodejs-24.16.0",
-      "pname": "nodejs",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:42:00.460042Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "24.16.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/60vys190zxlx4k1jz0kyvk4vydzr7qml-nodejs-24.16.0"
-      },
-      "system": "aarch64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "nodejs",
-      "broken": false,
-      "derivation": "/nix/store/yc1bpd21mkkawwxkq2zskmkqjmzwgv54-nodejs-24.16.0.drv",
-      "description": "Event-driven I/O framework for the V8 JavaScript engine",
-      "install_id": "nodejs",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "nodejs-24.16.0",
-      "pname": "nodejs",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:09:32.244433Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "24.16.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/v04l0kjhdvbzkzrnw6ryf43dp8v0qapv-nodejs-24.16.0"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "nodejs",
-      "broken": false,
-      "derivation": "/nix/store/k9jn43g1p70zs7l9vgxh57aarg2s2jkv-nodejs-24.16.0.drv",
-      "description": "Event-driven I/O framework for the V8 JavaScript engine",
-      "install_id": "nodejs",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "nodejs-24.16.0",
-      "pname": "nodejs",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:41:05.911622Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "24.16.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/zvj0hl7rhh0ccr5vkcg3ijs3xm3sgyac-nodejs-24.16.0"
+        "out": "/nix/store/ypjv8d9r0sndlcsgm0gdq8qrjfjzvcf3-lato-2.0"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -758,17 +588,17 @@
     {
       "attr_path": "noto-fonts-color-emoji",
       "broken": false,
-      "derivation": "/nix/store/krcag2inr6kmyvs8cyqd3si82plqq0iy-noto-fonts-color-emoji-2.051.drv",
+      "derivation": "/nix/store/jjbgglnlwx6r1qh6mnm23bykjdnr5ch1-noto-fonts-color-emoji-2.051.drv",
       "description": "Color emoji font",
       "install_id": "noto-fonts-color-emoji",
       "license": "[ OFL-1.1, Apache-2.0 ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "noto-fonts-color-emoji-2.051",
       "pname": "noto-fonts-color-emoji",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:13:20.609310Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:03:46.197880Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -779,7 +609,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/557hw66ma67d9csqbv7s8m593wzh3b01-noto-fonts-color-emoji-2.051"
+        "out": "/nix/store/0wf7vmd8zaq8zf8icssgkr22amb40igz-noto-fonts-color-emoji-2.051"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -788,17 +618,17 @@
     {
       "attr_path": "noto-fonts-color-emoji",
       "broken": false,
-      "derivation": "/nix/store/a20x1bk7iwlri4lvi31ikavnn0ad2h54-noto-fonts-color-emoji-2.051.drv",
+      "derivation": "/nix/store/xqzp382wb68ggaa7jsrfizfyhimi3661-noto-fonts-color-emoji-2.051.drv",
       "description": "Color emoji font",
       "install_id": "noto-fonts-color-emoji",
       "license": "[ OFL-1.1, Apache-2.0 ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "noto-fonts-color-emoji-2.051",
       "pname": "noto-fonts-color-emoji",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:42:00.629098Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:41:02.385056Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -809,7 +639,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/jkcbhxmw2aiv2byjr5ga0jq9an3cif8v-noto-fonts-color-emoji-2.051"
+        "out": "/nix/store/db8y6cqgk11pqlv2gkaf71s3iybqala6-noto-fonts-color-emoji-2.051"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -818,17 +648,17 @@
     {
       "attr_path": "noto-fonts-color-emoji",
       "broken": false,
-      "derivation": "/nix/store/8ww2h9gfp8rjsszkg5ilkmn3c74xbqxb-noto-fonts-color-emoji-2.051.drv",
+      "derivation": "/nix/store/b3k663kg4zl50ndinx0ywm2ciqaw69i2-noto-fonts-color-emoji-2.051.drv",
       "description": "Color emoji font",
       "install_id": "noto-fonts-color-emoji",
       "license": "[ OFL-1.1, Apache-2.0 ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
       "name": "noto-fonts-color-emoji-2.051",
       "pname": "noto-fonts-color-emoji",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:09:32.373061Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T06:22:43.383263Z",
       "stabilities": [
         "staging",
         "unstable"
@@ -839,37 +669,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/qk50nknyjxzlin9x2z8k6hcgqnwn13ab-noto-fonts-color-emoji-2.051"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "noto-fonts-color-emoji",
-      "broken": false,
-      "derivation": "/nix/store/ybsn4ih6ngqmxqbljsrm75c397fy61rq-noto-fonts-color-emoji-2.051.drv",
-      "description": "Color emoji font",
-      "install_id": "noto-fonts-color-emoji",
-      "license": "[ OFL-1.1, Apache-2.0 ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "noto-fonts-color-emoji-2.051",
-      "pname": "noto-fonts-color-emoji",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:41:06.100665Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.051",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/phyz79jvvpqmhwyx5cryjkx31kpw77n3-noto-fonts-color-emoji-2.051"
+        "out": "/nix/store/wcd6d7sc56phxg84skxms1lfx63ymzdw-noto-fonts-color-emoji-2.051"
       },
       "system": "x86_64-linux",
       "group": "toplevel",
@@ -878,28 +678,28 @@
     {
       "attr_path": "pnpm",
       "broken": false,
-      "derivation": "/nix/store/pg4zfpv2lj28srsy5hdhwgqyxx2g99wi-pnpm-11.9.0.drv",
+      "derivation": "/nix/store/hnj2qqbda4qmzc1hsdn2nq40mwiz83p5-pnpm-11.27.0.drv",
       "description": "Fast, disk space efficient package manager for JavaScript",
       "install_id": "pnpm",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "pnpm-11.9.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "name": "pnpm-11.27.0",
       "pname": "pnpm",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:13:35.120272Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:04:00.917415Z",
       "stabilities": [
         "staging",
         "unstable"
       ],
       "unfree": false,
-      "version": "11.9.0",
+      "version": "11.27.0",
       "outputs_to_install": [
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/smxi4h44j1hj557lr4wjvdi5rdlarxw3-pnpm-11.9.0"
+        "out": "/nix/store/gjkd8wjh079v7i5j2rb8y0b5r19addpa-pnpm-11.27.0"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -908,28 +708,29 @@
     {
       "attr_path": "pnpm",
       "broken": false,
-      "derivation": "/nix/store/qqsvzmdcfic0hacrr89hdfm91fbcc45x-pnpm-11.9.0.drv",
+      "derivation": "/nix/store/ydxv6p16k0909nk1f00blyx5sd59wlv8-pnpm-11.27.0.drv",
       "description": "Fast, disk space efficient package manager for JavaScript",
       "install_id": "pnpm",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "pnpm-11.9.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "name": "pnpm-11.27.0",
       "pname": "pnpm",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T03:42:20.022466Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T05:41:21.652185Z",
       "stabilities": [
         "staging",
         "unstable"
       ],
       "unfree": false,
-      "version": "11.9.0",
+      "version": "11.27.0",
       "outputs_to_install": [
+        "out",
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/d0gyd6l4g7yi7nd7ddgliv8alcqiya20-pnpm-11.9.0"
+        "out": "/nix/store/1hd83n1x3yh0jvh5p8n8b7x64zsj6pi9-pnpm-11.27.0"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -938,58 +739,29 @@
     {
       "attr_path": "pnpm",
       "broken": false,
-      "derivation": "/nix/store/v9g8yn4ghl0h1fcmkalnad0p04pzv234-pnpm-11.9.0.drv",
+      "derivation": "/nix/store/arlkvr6xrs2k69agbjqainjrq652ljnj-pnpm-11.27.0.drv",
       "description": "Fast, disk space efficient package manager for JavaScript",
       "install_id": "pnpm",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "pnpm-11.9.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "name": "pnpm-11.27.0",
       "pname": "pnpm",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:09:50.442301Z",
+      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "rev_count": 1074753,
+      "rev_date": "2026-09-16T08:07:56Z",
+      "scrape_date": "2026-09-17T06:23:03.100354Z",
       "stabilities": [
         "staging",
         "unstable"
       ],
       "unfree": false,
-      "version": "11.9.0",
+      "version": "11.27.0",
       "outputs_to_install": [
+        "out",
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/l5kand3q10lq1fzpj11wzvhjkxclrxix-pnpm-11.9.0"
-      },
-      "system": "x86_64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "pnpm",
-      "broken": false,
-      "derivation": "/nix/store/jrca3py2k0fg36w9bjwrz6drng9zm2nf-pnpm-11.9.0.drv",
-      "description": "Fast, disk space efficient package manager for JavaScript",
-      "install_id": "pnpm",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=d407951447dcd00442e97087bf374aad70c04cea",
-      "name": "pnpm-11.9.0",
-      "pname": "pnpm",
-      "rev": "d407951447dcd00442e97087bf374aad70c04cea",
-      "rev_count": 1027867,
-      "rev_date": "2026-07-05T04:06:12Z",
-      "scrape_date": "2026-07-06T04:41:26.519698Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "11.9.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/gfrj5gwr59daw5qi72phra770mi0xvh1-pnpm-11.9.0"
+        "out": "/nix/store/f6wrd19wh402lz5dqzg7y1m6kwnz554m-pnpm-11.27.0"
       },
       "system": "x86_64-linux",
       "group": "toplevel",

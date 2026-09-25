@@ -6,6 +6,29 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- **Dependency currency, round 3.** React 19.3 (and its typings), MapLibre
+  GL JS 6.11.2, Vite 8.3.1, Storybook 10.6.0 (`storybook`, `@storybook/react`,
+  `@storybook/react-vite`, `addon-a11y`, `addon-vitest`), protobuf-es 2.15
+  (`@bufbuild/protobuf` and `protoc-gen-es`), Playwright 1.63.0, dompurify
+  3.4.16, marked 18.0.14, hyparquet 1.31.1, hyparquet-writer 0.16.10, and
+  `@types/node` 24.13.6. Vitest and `@vitest/browser-playwright` stay at
+  4.1.11 because `@storybook/addon-vitest` 10.6 peers on Vitest 3 or 4;
+  `@types/node` stays on the 24 line to match the runtime. `src/gen` and
+  `dist/` are regenerated; the visual baselines hold unchanged under
+  Playwright 1.63's Chromium 153.
+- **The toolchain is pinned, not inherited.** The Flox manifest moves to
+  schema 1.12 and pins Node 24.20 (`nodejs_24`, in its own package group),
+  pnpm 11.27.0 (equal to `packageManager`) and Buf 1.72.0, locked for the
+  three systems the catalog serves them on (aarch64-darwin, aarch64-linux,
+  x86_64-linux). `engines.node` is `>=24.18.0`, the fleet floor.
+- **`buf breaking` compares against the newest reachable release tag**
+  (`scripts/check-breaking.mjs`) instead of `origin/main`, which on main
+  after a push compared HEAD to itself and could never fail; on the release
+  commit the preceding release is the baseline.
+- **CI.** `actions/checkout` v7.0.1, `actions/cache` v6.1.0,
+  `actions/deploy-pages` v5.0.1, and the gate's Chromium is cached between
+  runs keyed on the lockfile.
+
 - **Releases are Git tags only.** `make release` runs the version gate in
   release mode, then creates and pushes the annotated `vVERSION` tag and
   nothing else: the registry publish step and the `prepack` hook are gone,
