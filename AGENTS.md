@@ -334,13 +334,23 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
 - `pnpm lint` — `tsc --noEmit` + buf format/lint/build + regen proto types and check
 - `pnpm test` — vitest
 - `pnpm build` — standalone app
-- `pnpm build:lib` — npm library (JS + CSS + .d.ts)
+- `pnpm build:lib` — library bundle (JS + CSS + .d.ts), committed under `dist/`
 - `pnpm storybook` — storybook (http://localhost:6006)
 - `make validate` — the single gate verb (see `MAKEFILE-CONTRACT.md`):
   frozen-lockfile install + pinned Chromium + public-surface guard
   (`scripts/public-surface-check`, exceptions in `.public-surface-allow`) +
   `VERSION` parity + lint + all test suites + builds + artifact checks;
   CI runs exactly `flox activate -- make validate` and nothing else
+
+## Distribution
+
+Git-only. Consumers pin
+`github:jim-technologies/medallion-terminal-core#<sha of a vX.Y.Z tag>`;
+`dist/` and `src/gen` are committed and staleness-gated so an install runs
+no build. `make release` (`scripts/release.mjs`) runs the version gate in
+release mode, then creates and pushes the annotated `vVERSION` tag from a
+clean, pushed tree — nothing is published to a package registry, and there
+is no `prepack` hook because nothing packs.
 
 ## Tech stack
 

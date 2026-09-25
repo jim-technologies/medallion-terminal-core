@@ -27,6 +27,22 @@ For the data-platform foundation demo, open
 For the typed record workspace, open
 `http://localhost:5173/?template=/examples/work-management.json&backend=http://localhost:3001`.
 
+## Installing
+
+Distribution is Git-only; nothing is published to a package registry. Pin
+the commit of a `vX.Y.Z` tag, never a branch tip, so an upgrade is a
+deliberate edit:
+
+```bash
+pnpm add github:jim-technologies/medallion-terminal-core#<sha of a vX.Y.Z tag>
+```
+
+`dist/` and `src/gen` are committed and staleness-gated (`pnpm check:dist`,
+`pnpm lint`), so installing from Git runs no build step. `make release`
+prints the sha to pin. React 19 is a required peer; Recharts,
+lightweight-charts, and MapLibre GL are optional renderer peers that only
+the widgets using them need.
+
 ## Building applications with Terminal Core
 
 Terminal Core is also Medallion's shared React UI and workbench toolkit. Host
@@ -902,11 +918,11 @@ For wiring this into a real product, in order:
 
 9. **Types.** Generated proto-derived JSON types are available at `medallion-terminal-core/proto`. Friendlier framework types (`Template`, `WidgetProps`, `DataSource`) are at the package root. Run `pnpm gen:proto` after editing protos; the lint step refuses stale generated types.
 
-10. **Release artifacts.** This package commits `dist/` as the npm
-    release artifact because `package.json` publishes only `dist` and
-    `proto`. Rebuild with `pnpm build:lib`; CI/release checks can run
-    `pnpm check:dist` or `make check-dist` from a clean checkout to fail
-    when committed dist files are stale.
+10. **Release artifacts.** This package commits `dist/` and `src/gen` so
+    consumers install it straight from a Git tag with no build step (see
+    [Installing](#installing)). Rebuild with `pnpm build:lib` and
+    `pnpm gen:proto`; the gate runs `pnpm check:dist` (or `make check-dist`)
+    and the generated-type check so committed artifacts cannot go stale.
 
 ## Production verification
 

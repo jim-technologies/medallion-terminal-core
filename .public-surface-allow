@@ -17,14 +17,15 @@
 # ---------------------------------------------------------------------------
 # The public API and product this repository exists to publish.
 #
-# The schema, the package on npm, the product it is published under and the
-# key prefix it writes in a browser are all names a stranger has to be able to
-# read, type and search for. Each spelling gets its own rule: the separator
-# class covers the dotted schema package, the underscored generated
-# identifiers, the hyphenated package and the spaced brand, and nothing else.
+# The schema, the package consumers install from Git, the product it ships
+# under and the key prefix it writes in a browser are all names a stranger
+# has to be able to read, type and search for. Each spelling gets its own
+# rule: the separator class covers the dotted schema package, the underscored
+# generated identifiers, the hyphenated package and the spaced brand, and
+# nothing else.
 # ---------------------------------------------------------------------------
 codename | * | the schema package this repository is published to distribute, in every spelling the generated bindings use | %6dedallion[ ._-]terminal
-private-repo | * | the published npm package name, the browser storage key prefix it owns and the example dashboard named after it are public identifiers a host has to be able to find | %6dedallion-terminal(:|'|"|\.json)
+private-repo | * | the package name consumers install from Git, the browser storage key prefix it owns and the example dashboard named after it are public identifiers a host has to be able to find | %6dedallion-terminal(:|'|"|\.json)
 
 # ---------------------------------------------------------------------------
 # Third-party product vocabulary. These clones reproduce other companies' user

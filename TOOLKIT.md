@@ -1,6 +1,6 @@
 # Application UI Toolkit
 
-Medallion Terminal Core is one npm package with two complementary layers:
+Medallion Terminal Core is one package with two complementary layers:
 
 1. The existing proto-driven `Dashboard`, widget registry, data-source,
    action, export, and embed SDK.

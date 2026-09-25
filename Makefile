@@ -52,7 +52,7 @@ generate: ## Regenerate proto-derived types (validate fails if committed output 
 check-dist: ## Rebuild library dist and fail if committed artifacts are stale.
 	pnpm check:dist
 
-release: ## Tag and publish to npm from a clean, pushed tree (maintainer machine only).
+release: ## Tag and push vVERSION from a clean, pushed tree (Git-only distribution; no registry publish).
 	node scripts/release.mjs
 
 run: ## Start the Vite dev server.

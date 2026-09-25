@@ -147,7 +147,7 @@ vendor before product:
 | Stripe | Stripe | `Clones/Stripe` | Payments, subscriptions, payouts, disputes, analytics |
 
 The showcases accept host-provided records/content and demonstrate application
-anatomy; they are not added to the npm barrel as vendor-specific framework
+anatomy; they are not added to the library barrel as vendor-specific framework
 APIs. `storybookCoverage.test.ts` and `check-storybook.mjs` enforce the
 vendor-first title and filesystem contract, unique namespaces,
 discoverability, and coverage of every built-in and public dashboard example.

@@ -6,6 +6,17 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- **Releases are Git tags only.** `make release` runs the version gate in
+  release mode, then creates and pushes the annotated `vVERSION` tag and
+  nothing else: the registry publish step and the `prepack` hook are gone,
+  because consumers install
+  `github:jim-technologies/medallion-terminal-core#<sha of a vX.Y.Z tag>`
+  and `dist/` and `src/gen` are committed for exactly that. The gate
+  (`scripts/check-version.mjs`) now also checks that `CHANGELOG.md` opens
+  with `[Unreleased]` and that its first release heading is `VERSION`
+  (with an empty `[Unreleased]` at release time), that `packageManager`
+  names the pnpm Flox locks, and that `engines.node` declares the runtime
+  floor (`>=24.18.0`). README gains an Installing section.
 - **Dependency currency, round 2.** dompurify 3.4.14, marked 18.0.11,
   hyparquet-writer 0.16.8, protobuf-es 2.14 (`@bufbuild/protobuf` and
   `protoc-gen-es`), Vite 8.2, `@vitejs/plugin-react` 6.1, and esbuild
