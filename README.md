@@ -29,9 +29,10 @@ For the typed record workspace, open
 
 ## Installing
 
-Distribution is Git-only; nothing is published to a package registry. Pin
-the commit of a `vX.Y.Z` tag, never a branch tip, so an upgrade is a
-deliberate edit:
+Distribution is Git-only; nothing is published to a package registry, and
+`package.json` is `private` so a stray `pnpm publish` refuses. Pin the
+commit of a `vX.Y.Z` tag, never a branch tip, so an upgrade is a deliberate
+edit:
 
 ```bash
 pnpm add github:jim-technologies/medallion-terminal-core#<sha of a vX.Y.Z tag>

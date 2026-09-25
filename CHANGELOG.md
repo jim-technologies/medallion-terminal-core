@@ -4,6 +4,26 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Changed
+
+- **`package.json` is `private` and declares `Apache-2.0`.** Distribution
+  has been Git-only since 0.5.2, but nothing stopped a habitual
+  `pnpm publish` from claiming the unscoped name on the public registry, and
+  license scanners read the missing field as UNKNOWN. `pnpm check:package`
+  now asserts both, matching Invariant Protocol and temporaless. Installing
+  from Git is unaffected.
+- **`scripts/public-surface-check --full-history` is clean.** A May 2026
+  commit subject names the example dashboard in a spelling the content rule
+  does not cover; `.public-surface-allow` gains a `COMMIT` exception pinned
+  to that one exact subject line instead of a rewrite of published history.
+
+### Removed
+
+- **The `minimumReleaseAgeExclude` entries for MapLibre GL JS 6.11.2 and
+  Vite 8.3.1** in `pnpm-workspace.yaml`, and their comment. Both releases
+  passed pnpm 11's one-day release age at 2026-09-25T12:46:30Z, after which
+  the entries excused nothing.
+
 ## [0.5.2] — 2026-09-25
 
 ### Changed

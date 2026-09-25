@@ -9,6 +9,16 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const packageJson = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'))
 const optionalRendererPeers = ['lightweight-charts', 'maplibre-gl', 'recharts']
 
+// Distribution is Git-only: `private` makes a stray `pnpm publish` refuse
+// instead of claiming the unscoped name on the public registry, and the
+// declared license is the LICENSE file's, so scanners do not report UNKNOWN.
+if (packageJson.private !== true) {
+  throw new Error('package.json must set "private": true; distribution is Git-only')
+}
+if (packageJson.license !== 'Apache-2.0') {
+  throw new Error('package.json license must be "Apache-2.0", matching LICENSE')
+}
+
 for (const packageName of optionalRendererPeers) {
   if (packageJson.dependencies?.[packageName]) {
     throw new Error(`${packageName} must not be an eager runtime dependency`)

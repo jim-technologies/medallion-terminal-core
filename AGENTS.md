@@ -345,7 +345,8 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
   (`scripts/check-breaking.mjs`)
 - `pnpm check:conformance` — reference-clone conformance (`scripts/check-reference-conformance.mjs`)
 - `pnpm check:dist` — rebuild `dist/` and fail if the committed bundle is stale
-- `pnpm check:package` — published-package contract: only `dist` + `proto`, renderer peers optional
+- `pnpm check:package` — published-package contract: `private` + Apache-2.0, only `dist` + `proto`,
+  renderer peers optional
 - `pnpm check:bundles` — per-entry gzip budgets (`scripts/check-bundle-isolation.mjs`)
 - `make validate` — the single gate verb (see `MAKEFILE-CONTRACT.md`):
   frozen-lockfile install + pinned Chromium + public-surface guard
@@ -360,8 +361,9 @@ Git-only. Consumers pin
 `dist/` and `src/gen` are committed and staleness-gated so an install runs
 no build. `make release` (`scripts/release.mjs`) runs the version gate in
 release mode, then creates and pushes the annotated `vVERSION` tag from a
-clean, pushed tree — nothing is published to a package registry, and there
-is no `prepack` hook because nothing packs.
+clean, pushed tree — nothing is published to a package registry (`package.json`
+is `private`, so a stray `pnpm publish` refuses), and there is no `prepack`
+hook because nothing packs.
 
 ## Tech stack
 

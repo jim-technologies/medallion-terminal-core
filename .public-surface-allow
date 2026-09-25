@@ -47,3 +47,12 @@ codename | *.md | the generic term for the object model this toolkit renders, ca
 codename | proto/* | the generic term for the object model, capitalised at the head of a schema comment | Onto%6cogy
 codename | */gen/* | generated bindings carry the schema comments through verbatim | Onto%6cogy
 codename | src/*.tsx | the generic term for the object model, as a gallery title and as test fixture data | Onto%6cogy
+
+# ---------------------------------------------------------------------------
+# Published history. A May 2026 commit subject names the example dashboard
+# (public/examples/, allowed above) in a spelling the content rule does not
+# cover. It has been on the public remote since then and rewriting published
+# history is disproportionate, so the exception is pinned to that one exact
+# subject line and `--full-history` stays usable as a standing audit.
+# ---------------------------------------------------------------------------
+private-repo | COMMIT | a May 2026 subject naming the example dashboard, already public in history | ^examples: %6dedallion-terminal showcase template$
