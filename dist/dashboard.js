@@ -1,2 +1,2 @@
-import { At as e, Mt as t, Nt as n, Pt as r, jt as i, kt as a, n as o, r as s, t as c } from "./MultiDashboard-DPT9-Z9X.js";
+import { At as e, Mt as t, Nt as n, Pt as r, jt as i, kt as a, n as o, r as s, t as c } from "./MultiDashboard-Dphw3SaX.js";
 export { i as BUILTIN_KEYS, s as Dashboard, a as DashboardContext, c as MultiDashboard, t as createWidgetRegistry, n as getWidget, r as registerWidget, e as useDashboard, o as useTabFromUrl };

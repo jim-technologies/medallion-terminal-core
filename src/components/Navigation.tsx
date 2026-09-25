@@ -16,6 +16,8 @@ export interface TabItem {
   id: string
   /** Visible tab label. */
   label: ReactNode
+  /** Optional count shown after the label, such as the number of links. */
+  count?: ReactNode
   /** Content associated with this tab. */
   panel: ReactNode
   /** Removes the tab from keyboard and pointer interaction. */
@@ -128,7 +130,8 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
               onClick={() => onValueChange(item.id)}
               onKeyDown={event => onKeyDown(event, item)}
             >
-              {item.label}
+              <span>{item.label}</span>
+              {item.count != null && <span className="mtc-tab-count">{item.count}</span>}
             </button>
           )
         })}

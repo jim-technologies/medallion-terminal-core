@@ -98,7 +98,7 @@ const stories = {
 } as const
 
 type StoryTheme = 'dark' | 'operator' | 'light' | 'high-contrast'
-type StoryDensity = 'compact' | 'comfortable'
+type StoryDensity = 'compact' | 'standard' | 'comfortable'
 
 interface StoryOptions {
   /** Storybook `theme` global; the preview decorator scopes it. */

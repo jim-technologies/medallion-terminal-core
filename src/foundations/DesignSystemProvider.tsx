@@ -55,7 +55,7 @@ export const DesignSystemProvider = forwardRef<HTMLDivElement, DesignSystemProvi
   function DesignSystemProvider(
     {
       theme = 'dark',
-      density = 'comfortable',
+      density = 'standard',
       className,
       children,
       ...rest

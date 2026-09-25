@@ -57,6 +57,25 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   does not cover; `.public-surface-allow` gains a `COMMIT` exception pinned
   to that one exact subject line instead of a rewrite of published history.
 
+- **Density `standard` is the default.** `Density` gains `'standard'`
+  (additive): 24/28/32 px controls and 32 px rows, between `compact`
+  (20/24/28, 28) and `comfortable` (28/32/36, 40, which also loses 2 px per
+  control). `DesignSystemProvider`, Storybook and a non-compact `Dashboard`
+  now render `standard`; the dashboard toggle reads Compact / Standard.
+- **Control restyle on the density model.** Buttons are 13/500 with 6 px
+  icon gaps and never shrink inside a flex row, which fixes truncated toolbar
+  actions ("Fil…"); inputs use 13 px text and the canvas fill inside
+  toolbars; tabs are 32 px, 13/500, with an optional `TabItem.count`; tree
+  rows sit one step below the row height with a 12 px indent and mark
+  selection with `--mtc-selection` plus a 2 px accent bar; breadcrumbs keep
+  12 px with a regular-weight current crumb; tags and badges are 20 px,
+  11/500, 2 px radius on the status tints (badges are no longer pills);
+  callouts are a tinted fill with a 2 px leading tone bar; the split-pane
+  separator is a 1 px line with an 8 px hit area; menu items use 13 px.
+- **`PropertyList` values read as text.** Values use the sans face at 13 px
+  under 12 px labels in a 160–200 px column; arrays of plain values render
+  as a comma-separated list. Only structured values fall back to monospace
+  JSON (in a `code` element).
 - **Tokens v2: slate neutrals and a single azure accent.** The four themes
   are re-derived in OKLCH at hue 255 (`operator` keeps its citrine accent on a
   one-step-darker slate; `high-contrast` keeps its black canvas). Solid

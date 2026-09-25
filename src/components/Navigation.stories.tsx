@@ -25,8 +25,8 @@ type Story = StoryObj
 
 const tabs: TabItem[] = [
   { id: 'overview', label: 'Overview', panel: <Panel title="Overview" /> },
-  { id: 'properties', label: 'Properties', panel: <Panel title="Properties" /> },
-  { id: 'activity', label: 'Activity', panel: <Panel title="Activity" /> },
+  { id: 'properties', label: 'Properties', count: 11, panel: <Panel title="Properties" /> },
+  { id: 'activity', label: 'Activity', count: 4, panel: <Panel title="Activity" /> },
   { id: 'disabled', label: 'Restricted', panel: null, disabled: true },
 ]
 
@@ -38,10 +38,10 @@ export const TabsControl: Story = {
     const overview = canvas.getByRole('tab', { name: 'Overview' })
     overview.focus()
     await userEvent.keyboard('{ArrowRight}')
-    await expect(canvas.getByRole('tab', { name: 'Properties' })).toHaveAttribute('aria-selected', 'true')
+    await expect(canvas.getByRole('tab', { name: /^Properties/ })).toHaveAttribute('aria-selected', 'true')
     await expect(canvas.getByRole('tabpanel')).toHaveTextContent('Properties')
     await userEvent.keyboard('{End}')
-    await expect(canvas.getByRole('tab', { name: 'Activity' })).toHaveAttribute('aria-selected', 'true')
+    await expect(canvas.getByRole('tab', { name: /^Activity/ })).toHaveAttribute('aria-selected', 'true')
   },
 }
 

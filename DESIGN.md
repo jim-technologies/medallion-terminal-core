@@ -21,8 +21,8 @@ document is original.
    action, links), status (ok, warning, danger, info), and type identity
    (the small `TypeGlyph` chip, facet dots and graph nodes). Surfaces are
    neutral slate; colour is never ambient decoration.
-3. **Density is a feature.** Base text is 13 px on a 4 px grid; compact
-   density is available wherever tables and trees get long.
+3. **Density is a feature.** Base text is 13 px, controls 28 px, rows
+   32 px, on a 4 px grid.
 4. **Typed rendering.** A value's type decides its font, alignment, format
    and affordance. Monospace is for identifiers, code, hashes, paths and raw
    JSON only.
@@ -75,7 +75,7 @@ the semantic roles below. The standalone embed accepts the same presets with
 | Dividers | `--mtc-border`, `--mtc-border-strong` | Hierarchy, never decoration |
 | Control boundary | `--mtc-border-control` | Inputs, checkboxes, switches (3:1 against the surface) |
 | Text | `--mtc-fg`, `--mtc-fg-soft`, `--mtc-muted-strong`, `--mtc-muted` | Text hierarchy |
-| Metadata | `--mtc-muted-subtle` | Non-essential metadata only (3:1) |
+| Metadata | `--mtc-muted-subtle` | Non-essential metadata only (3:1): placeholders, separators, disabled hints. Readable labels, counts and captions use `--mtc-muted` so they pass the 4.5:1 text check in every theme |
 | Accent | `--mtc-accent`, `--mtc-accent-strong`, `--mtc-accent-soft`, `--mtc-focus` | Focus, selection bar, icons; primary fills; soft emphasis; focus rings |
 | On accent | `--mtc-on-accent` | Text and icons on `--mtc-accent-strong` fills |
 | Links | `--mtc-link` | Link text |
@@ -140,9 +140,15 @@ for status.
 
 - **Grid.** `--mtc-space-{0,1,2,3,4,5,6,8,10,12,16}` = 0–64 px on a 4 px
   grid; only icon-to-text optical adjustments use 2 or 6 px.
-- **Density.** `compact` and `comfortable` (the default) set control
-  heights, row height, cell padding and gaps without changing colour or
-  type.
+- **Density.** `compact`, `standard` (the default for every product) and
+  `comfortable` set control heights, row height, cell padding and gaps
+  without changing colour or type.
+
+| Density | Controls sm / md / lg | Row | Cell padding x / y | Gap |
+|---|---|---|---|---|
+| `compact` | 20 / 24 / 28 | 28 | 8 / 4 | 4 |
+| `standard` | 24 / 28 / 32 | 32 | 12 / 6 | 8 |
+| `comfortable` | 28 / 32 / 36 | 40 | 12 / 8 | 8 |
 
 - **Radii.** `--mtc-radius-xs` 2 px (checkboxes, chips, badges), `-sm` 3 px
   (buttons, inputs, rows), `-md` 4 px (panels, cards, popovers, type glyphs),

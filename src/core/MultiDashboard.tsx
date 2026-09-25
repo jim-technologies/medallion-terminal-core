@@ -87,7 +87,7 @@ export function MultiDashboard({
 
   return (
     <div className={`mtc-root mtc-theme-${theme}`} data-theme={theme}>
-      <DesignSystemScope theme={theme} density={inherited?.density ?? 'comfortable'}>
+      <DesignSystemScope theme={theme} density={inherited?.density ?? 'standard'}>
       <div className="mtc-workspace min-h-full">
         <TabStrip tabs={tabs} activeIndex={safeIndex} onSelect={onSelect} />
         {tabs.map((tab, i) => (

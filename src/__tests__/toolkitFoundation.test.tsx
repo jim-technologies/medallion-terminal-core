@@ -124,6 +124,33 @@ describe('design-system foundations', () => {
     expect(html).toContain('Symbol(private)')
   })
 
+  it('renders property values as text, keeping JSON for structured values only', () => {
+    const html = renderToStaticMarkup(
+      <DesignSystemProvider>
+        <PropertyList
+          properties={{
+            regions: ['US-West', 'EU-Central'],
+            flags: [true, false],
+            tags: [],
+            owner: { id: 'u_7', name: 'Ada' },
+            segment: 'Enterprise',
+          }}
+        />
+      </DesignSystemProvider>,
+    )
+
+    expect(html).toContain('<dd>US-West, EU-Central</dd>')
+    expect(html).toContain('<dd>Yes, No</dd>')
+    expect(html).toContain('<dd>—</dd>')
+    expect(html).toContain('<dd><code>{&quot;id&quot;:&quot;u_7&quot;,&quot;name&quot;:&quot;Ada&quot;}</code></dd>')
+    expect(html).toContain('<dd>Enterprise</dd>')
+  })
+
+  it('defaults the provider to standard density', () => {
+    const html = renderToStaticMarkup(<DesignSystemProvider>content</DesignSystemProvider>)
+    expect(html).toContain('data-density="standard"')
+  })
+
   it('keeps skeleton loading output bounded for malformed host input', () => {
     const html = renderToStaticMarkup(
       <DesignSystemProvider>

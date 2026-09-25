@@ -26,7 +26,7 @@ const preview: Preview = {
   ],
   initialGlobals: {
     theme: 'dark',
-    density: 'comfortable',
+    density: 'standard',
   },
   globalTypes: {
     theme: {
@@ -40,7 +40,7 @@ const preview: Preview = {
       description: 'Scoped Terminal Core density',
       toolbar: {
         icon: 'outline',
-        items: ['comfortable', 'compact'],
+        items: ['compact', 'standard', 'comfortable'],
       },
     },
   },

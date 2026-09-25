@@ -367,9 +367,9 @@ function DensityToggle({ compact, onToggle }: { compact: boolean; onToggle: () =
     <button
       onClick={onToggle}
       className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
-      title={compact ? 'Switch to comfortable density' : 'Switch to compact density'}
+      title={compact ? 'Switch to standard density' : 'Switch to compact density'}
     >
-      {compact ? 'Cozy' : 'Compact'}
+      {compact ? 'Standard' : 'Compact'}
     </button>
   )
 }
@@ -829,9 +829,9 @@ export function Dashboard({
      <div
        className={`mtc-root mtc-theme-${theme}`}
        data-theme={theme}
-       data-density={compact ? 'compact' : 'comfortable'}
+       data-density={compact ? 'compact' : 'standard'}
      >
-     <DesignSystemScope theme={theme} density={compact ? 'compact' : 'comfortable'}>
+     <DesignSystemScope theme={theme} density={compact ? 'compact' : 'standard'}>
      <AssetOpenProvider
        resolveAssetIntent={resolveAssetIntent}
        renderers={assetRenderers}

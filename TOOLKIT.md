@@ -31,7 +31,7 @@ import {
   Input,
 } from 'medallion-terminal-core/toolkit'
 
-<DesignSystemProvider theme="dark" density="comfortable">
+<DesignSystemProvider theme="dark" density="standard">
   <FormField label="Name">
     <Input value={name} onChange={onNameChange} />
   </FormField>
@@ -61,8 +61,10 @@ or a host application root. Multiple themes may coexist on one page.
 
 ### Density
 
-`Density` is `compact | comfortable`. Density adjusts control height, row
-height, gaps, and padding without changing semantic color or typography.
+`Density` is `compact | standard | comfortable`, and `standard` is the
+default everywhere (28 px controls, 32 px rows; compact is 24/28 px,
+comfortable 32/40 px). Density adjusts control height, row height, gaps, and
+padding without changing semantic color or typography.
 Components inherit density and selected controls also accept a local
 `density` override.
 

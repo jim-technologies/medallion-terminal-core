@@ -6,6 +6,8 @@ export interface TabItem {
     id: string;
     /** Visible tab label. */
     label: ReactNode;
+    /** Optional count shown after the label, such as the number of links. */
+    count?: ReactNode;
     /** Content associated with this tab. */
     panel: ReactNode;
     /** Removes the tab from keyboard and pointer interaction. */

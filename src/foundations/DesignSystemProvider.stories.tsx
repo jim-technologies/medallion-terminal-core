@@ -19,8 +19,8 @@ export const Themes: Story = {
   render: () => (
     <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
       {themes.map(theme => (
-        <DesignSystemProvider key={theme} theme={theme} density="comfortable">
-          <FoundationSample theme={theme} density="comfortable" />
+        <DesignSystemProvider key={theme} theme={theme}>
+          <FoundationSample theme={theme} density="standard" />
         </DesignSystemProvider>
       ))}
     </div>
@@ -29,8 +29,8 @@ export const Themes: Story = {
 
 export const DensityModes: Story = {
   render: () => (
-    <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
-      {(['compact', 'comfortable'] as DensityValue[]).map(density => (
+    <div className="grid min-h-screen grid-cols-1 md:grid-cols-3">
+      {(['compact', 'standard', 'comfortable'] as DensityValue[]).map(density => (
         <DesignSystemProvider key={density} density={density}>
           <FoundationSample theme="dark" density={density} />
         </DesignSystemProvider>

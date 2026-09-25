@@ -22,5 +22,10 @@ export interface PropertyListProps extends HTMLAttributes<HTMLDListElement> {
     /** Content used for null, undefined, and empty-string values. */
     emptyValue?: ReactNode;
 }
-/** Generic definition list for arbitrary host-owned metadata. */
+/**
+ * Generic definition list for arbitrary host-owned metadata. Values render in
+ * the sans face at the base size; lists of plain values read as a
+ * comma-separated list, and only structured values fall back to monospace
+ * JSON.
+ */
 export declare const PropertyList: import("react").ForwardRefExoticComponent<PropertyListProps & import("react").RefAttributes<HTMLDListElement>>;

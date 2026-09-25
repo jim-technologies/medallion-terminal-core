@@ -31,7 +31,12 @@ export interface PropertyListProps extends HTMLAttributes<HTMLDListElement> {
   emptyValue?: ReactNode
 }
 
-/** Generic definition list for arbitrary host-owned metadata. */
+/**
+ * Generic definition list for arbitrary host-owned metadata. Values render in
+ * the sans face at the base size; lists of plain values read as a
+ * comma-separated list, and only structured values fall back to monospace
+ * JSON.
+ */
 export const PropertyList = forwardRef<HTMLDListElement, PropertyListProps>(function PropertyList(
   {
     items,
@@ -64,17 +69,37 @@ export const PropertyList = forwardRef<HTMLDListElement, PropertyListProps>(func
   )
 })
 
+const MAX_SERIALIZED_LENGTH = 5000
+
+function isPlainValue(value: unknown): value is string | number | bigint | boolean {
+  return typeof value === 'string' || typeof value === 'number'
+    || typeof value === 'bigint' || typeof value === 'boolean'
+}
+
+function plainText(value: string | number | bigint | boolean): string {
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No'
+  return String(value)
+}
+
 function formatPropertyValue(value: unknown, emptyValue: ReactNode): ReactNode {
   if (value == null || value === '') return emptyValue
   if (isValidElement(value)) return value
-  if (typeof value === 'boolean') return value ? 'Yes' : 'No'
-  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'bigint') {
-    return String(value)
+  if (isPlainValue(value)) return plainText(value)
+  if (Array.isArray(value) && value.every(isPlainValue)) {
+    if (value.length === 0) return emptyValue
+    const joined = value.map(plainText).join(', ')
+    return joined.length > MAX_SERIALIZED_LENGTH ? `${joined.slice(0, MAX_SERIALIZED_LENGTH)}…` : joined
   }
   try {
     const serialized = JSON.stringify(value)
     if (typeof serialized !== 'string') return String(value)
-    return serialized.length > 5000 ? `${serialized.slice(0, 5000)}…` : serialized
+    return (
+      <code>
+        {serialized.length > MAX_SERIALIZED_LENGTH
+          ? `${serialized.slice(0, MAX_SERIALIZED_LENGTH)}…`
+          : serialized}
+      </code>
+    )
   } catch {
     return String(value)
   }
