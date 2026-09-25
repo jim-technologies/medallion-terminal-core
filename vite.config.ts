@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { resolve } from 'path'
 
 // Demo-app build. Lib build uses vite.config.lib.ts and writes to
-// dist/ (the published package). Outputs must not collide, so this
+// dist/ (the committed package bundle). Outputs must not collide, so this
 // app build goes to dist-app/.
 //
 // Two HTML entries: the demo app (index.html) and the standalone embed
@@ -22,8 +22,8 @@ export default defineConfig({
     outDir: 'dist-app',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        embed: resolve(__dirname, 'embed.html'),
+        main: resolve(import.meta.dirname, 'index.html'),
+        embed: resolve(import.meta.dirname, 'embed.html'),
       },
     },
   },

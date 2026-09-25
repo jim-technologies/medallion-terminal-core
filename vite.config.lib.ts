@@ -9,10 +9,10 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        'medallion-terminal-core': resolve(__dirname, 'src/index.ts'),
-        toolkit: resolve(__dirname, 'src/toolkit.ts'),
-        dashboard: resolve(__dirname, 'src/dashboard.ts'),
-        'asset-open': resolve(__dirname, 'src/asset-open.ts'),
+        'medallion-terminal-core': resolve(import.meta.dirname, 'src/index.ts'),
+        toolkit: resolve(import.meta.dirname, 'src/toolkit.ts'),
+        dashboard: resolve(import.meta.dirname, 'src/dashboard.ts'),
+        'asset-open': resolve(import.meta.dirname, 'src/asset-open.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,

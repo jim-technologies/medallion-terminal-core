@@ -15,7 +15,10 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   4.1.11 because `@storybook/addon-vitest` 10.6 peers on Vitest 3 or 4;
   `@types/node` stays on the 24 line to match the runtime. `src/gen` and
   `dist/` are regenerated; the visual baselines hold unchanged under
-  Playwright 1.63's Chromium 153.
+  Playwright 1.63's Chromium 153. MapLibre 6.11.2 and Vite 8.3.1 are named
+  in `pnpm-workspace.yaml`'s `minimumReleaseAgeExclude`, because pnpm 11
+  enforces its one-day release age even on the gate's frozen install; the
+  entries are dead config after 2026-09-25T12:46:30Z.
 - **The toolchain is pinned, not inherited.** The Flox manifest moves to
   schema 1.12 and pins Node 24.20 (`nodejs_24`, in its own package group),
   pnpm 11.27.0 (equal to `packageManager`) and Buf 1.72.0, locked for the

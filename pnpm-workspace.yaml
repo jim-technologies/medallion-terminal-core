@@ -4,10 +4,12 @@
 # its dist/ bundle.
 allowBuilds:
   esbuild: true
-# These exact releases were selected by the 2026-09-25 currency round before
-# pnpm's release-age window had elapsed (both published 2026-09-24); the
-# gate installs from the frozen lockfile, so the entries only matter to a
-# non-frozen install and are inert once the window has passed.
+# pnpm 11 enforces its one-day minimumReleaseAge on every install, the
+# gate's `--frozen-lockfile` install included: it re-verifies each lockfile
+# entry's publish time. The 2026-09-25 currency round selected these two
+# releases (published 2026-09-24), so until 2026-09-25T12:46:30Z the gate's
+# install fails without them. After that they are dead config; the next
+# currency round deletes them.
 minimumReleaseAgeExclude:
   - maplibre-gl@6.11.2
   - vite@8.3.1

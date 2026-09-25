@@ -939,12 +939,14 @@ It gates the public surface — no private hostnames, repository references,
 registries, credentials, or internal codenames, checked in tracked content,
 in tracked paths, and in the commit messages a push would publish, with every
 justified exception listed and reasoned in `.public-surface-allow` —
-`VERSION`/`package.json` parity, TypeScript and
-proto generation, Buf lint/build and compatibility against `origin/main`, the
-reusable TerminalService conformance suite, unit/integration tests, every
-Storybook story in real Chromium, both application and library builds,
-committed package artifacts, the static Storybook catalog, curated
-accessibility checks, interaction flows, and visual snapshots.
+the version gate (`VERSION` against `package.json` and the changelog's first
+release heading, `packageManager` against the Flox-locked pnpm, a declared
+`engines.node` floor), TypeScript and proto generation, Buf lint/build and
+compatibility against the newest reachable release tag, the reusable
+TerminalService conformance suite, unit/integration tests, every Storybook
+story in real Chromium, both application and library builds, committed
+package artifacts, the static Storybook catalog, curated accessibility
+checks, interaction flows, and visual snapshots.
 
 Storybook's `Examples/Production Readiness` suite adds a connected proof for
 host-owned authorization, safe policy denial, failure/recovery states, opaque
