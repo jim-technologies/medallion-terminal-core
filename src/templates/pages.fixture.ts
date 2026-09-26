@@ -8,7 +8,6 @@ import type {
   CommandGroup,
   FacetGroup,
   LinkGroup,
-  NavRailSection,
   ObjectRef,
   ObjectTypeRef,
   PropertyDefinition,
@@ -42,38 +41,6 @@ export const PEOPLE = {
   naomie: { id: 'per-naomie-park', title: 'Naomie Park', type: TYPES.person, href: '#/objects/per-naomie-park' },
   jamie: { id: 'per-jamie-kim', title: 'Jamie Kim', type: TYPES.person, href: '#/objects/per-jamie-kim' },
 } satisfies Record<string, ObjectRef>
-
-/** The workspace navigation, shared by every template. */
-export const NAV: NavRailSection[] = [
-  {
-    id: 'main',
-    items: [
-      { id: 'home', label: 'Home', icon: 'home', href: '#/' },
-      { id: 'explore', label: 'Explore', icon: 'explore', href: '#/explore' },
-      { id: 'ontology', label: 'Ontology', icon: 'ontology', href: '#/ontology' },
-      { id: 'files', label: 'Files', icon: 'folder', href: '#/files' },
-      { id: 'activity', label: 'Activity', icon: 'activity', href: '#/activity' },
-    ],
-  },
-  {
-    id: 'types',
-    label: 'Object types',
-    items: [
-      { id: 'customer', label: 'Customer', type: TYPES.customer, count: 71, href: '#/explore?type=customer' },
-      { id: 'person', label: 'Person', type: TYPES.person, count: 212, href: '#/explore?type=person' },
-      { id: 'order', label: 'Order', type: TYPES.order, count: '3.1K', href: '#/explore?type=order' },
-    ],
-  },
-  {
-    id: 'platform',
-    label: 'Platform',
-    items: [
-      { id: 'storage', label: 'Storage', icon: 'bucket', href: '#/storage' },
-      { id: 'connect', label: 'Connect', icon: 'plug', href: '#/connect' },
-      { id: 'operations', label: 'Operations', icon: 'server', href: '#/operations' },
-    ],
-  },
-]
 
 /** Quick-search results for the top bar palette. */
 export function searchGroups(query: string): CommandGroup[] {

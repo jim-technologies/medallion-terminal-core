@@ -45,6 +45,7 @@ import {
   typeColorFor,
   type DataGridColumn,
   type FacetGroup,
+  type NavRailSection,
 } from '../toolkit'
 import {
   BUCKETS,
@@ -67,7 +68,6 @@ import {
   FILE_TYPE,
   FOLDERS,
   INCIDENTS,
-  NAV,
   NOW,
   OBJECT_TYPE,
   RELEASES,
@@ -98,6 +98,38 @@ const meta = {
 
 export default meta
 type Story = StoryObj
+
+/** The workspace navigation, shared by every template. */
+const NAV: NavRailSection[] = [
+  {
+    id: 'main',
+    items: [
+      { id: 'home', label: 'Home', icon: 'home', href: '#/' },
+      { id: 'explore', label: 'Explore', icon: 'explore', href: '#/explore' },
+      { id: 'ontology', label: 'Ontology', icon: 'ontology', href: '#/ontology' },
+      { id: 'files', label: 'Files', icon: 'folder', href: '#/files' },
+      { id: 'activity', label: 'Activity', icon: 'activity', href: '#/activity' },
+    ],
+  },
+  {
+    id: 'types',
+    label: 'Object types',
+    items: [
+      { id: 'customer', label: 'Customer', type: TYPES.customer, count: 71, href: '#/explore?type=customer' },
+      { id: 'person', label: 'Person', type: TYPES.person, count: 212, href: '#/explore?type=person' },
+      { id: 'order', label: 'Order', type: TYPES.order, count: '3.1K', href: '#/explore?type=order' },
+    ],
+  },
+  {
+    id: 'platform',
+    label: 'Platform',
+    items: [
+      { id: 'storage', label: 'Storage', icon: 'bucket', href: '#/storage' },
+      { id: 'connect', label: 'Connect', icon: 'plug', href: '#/connect' },
+      { id: 'operations', label: 'Operations', icon: 'server', href: '#/operations' },
+    ],
+  },
+]
 
 // ---------------------------------------------------------------------------
 // The workspace frame: top bar, navigation rail (a drawer on phones), page,
