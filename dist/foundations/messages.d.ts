@@ -67,6 +67,7 @@ export declare const EN_MESSAGES: {
     readonly 'dataGrid.loading': 'Loading rows';
     readonly 'dataGrid.loadingMore': 'Loading more rows';
     readonly 'dataGrid.rowActions': 'Actions for {label}';
+    readonly 'dataGrid.editCell': 'Edit {column}';
     readonly 'linkPanel.title': 'Links';
     readonly 'linkPanel.summary': '{types} link types · {objects} objects';
     readonly 'linkPanel.viewAll': 'View all {count}';

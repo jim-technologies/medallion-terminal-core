@@ -128,6 +128,7 @@ const widgetStories = {
   widgetFileBrowser: 'widgets-filebrowser--host-extensions',
   widgetRecordGrid: 'widgets-records-recordgrid--default',
   widgetRecordGridEditing: 'widgets-records-recordgrid--inline-editing',
+  widgetRecordGridOverlayEditor: 'widgets-records-recordgrid--editor-over-the-cell',
   widgetRecordGridLists: 'widgets-records-recordgrid--lists-and-chips',
   widgetTable: 'widgets-datatable--watchlist-fit',
   widgetObjectView: 'widgets-objectview--customer-object',
@@ -872,91 +873,225 @@ test('RecordGrid keeps list and choice chips whole on one line at every width', 
   await expect(beacon.locator('.mtc-value-more').last()).toHaveAttribute('title', '1 more: Noah Williams')
 })
 
-// The inline editor fills the cell it edits, and every focus ring in it is
-// drawn where the cell's clip leaves it visible, in each row density. Its
-// controls are the grid's tab stop while it is open, keep their own keys,
-// and hand focus back to the cell when it closes.
-for (const density of ['standard', 'compact'] as const) {
-  test(`RecordGrid's inline editor fills its cell and keeps its focus rings in view (${density})`, async ({ page }) => {
-    const root = await openStory(page, stories.widgetRecordGridEditing, { density })
-    const grid = root.getByRole('grid', { name: 'Work items' })
-    const input = grid.getByRole('textbox', { name: 'Work item' })
-    await expect(input).toBeFocused()
-    await expect(grid.locator('[tabindex="0"]')).toHaveCount(0)
-    const measure = () => page.evaluate(() => {
-      const focused = document.activeElement as HTMLElement
-      const editor = focused.closest<HTMLElement>('.mtc-data-grid-editor')!
-      const cell = editor.closest<HTMLElement>('[role="gridcell"]')!
-      // An element's clip edge is its padding box.
-      const paddingBox = (element: Element) => {
-        const rect = element.getBoundingClientRect()
-        const left = rect.left + element.clientLeft
-        const top = rect.top + element.clientTop
-        return { left, top, right: left + element.clientWidth, bottom: top + element.clientHeight }
+// Every editor the record grid opens, in each row density. One-line
+// controls (text, a choice, a user, a number, a date, a date and time,
+// Yes/No) edit in their cell; a list of choices and long text are taller
+// than a row and open in a dialog over the cell. The whole control and
+// every focus ring in the editor must be inside the visible area (the
+// window, cut by every clipping box above it), the editor's controls hold
+// the tab stop and their own keys, Escape cancels, and focus returns to the
+// cell. While a save is pending (the story's backend never answers) each
+// editor shows the value, read-only, in place of its field, and that fits
+// too.
+const RECORD_EDITORS = [
+  { column: 'name', label: 'Work item', layout: 'inline' },
+  { column: 'stage', label: 'Stage', layout: 'inline' },
+  { column: 'owner', label: 'Owner', layout: 'inline' },
+  { column: 'value', label: 'Value', layout: 'inline' },
+  { column: 'due_date', label: 'Due', layout: 'inline' },
+  { column: 'review_at', label: 'Review', layout: 'inline' },
+  { column: 'completed', label: 'Complete', layout: 'inline' },
+  { column: 'tags', label: 'Tags', layout: 'overlay' },
+  { column: 'reviewers', label: 'Reviewers', layout: 'overlay' },
+  { column: 'notes', label: 'Notes', layout: 'overlay' },
+] as const
+
+async function recordEditorFit(page: Page, column: string) {
+  return page.evaluate(column => {
+    const cell = document.querySelector<HTMLElement>(`#storybook-root [data-row-index="1"] [data-column-id="${column}"]`)!
+    const dialog = document.querySelector<HTMLElement>('.mtc-data-grid-overlay-editor')
+    const editor = (dialog ?? cell).querySelector<HTMLElement>('.mtc-data-grid-editor')!
+    // The field, the Yes/No box, or the value shown while a save is pending.
+    const control = editor.firstElementChild as HTMLElement
+    const active = document.activeElement
+    const focused = active instanceof HTMLElement && editor.contains(active) ? active : null
+    type Box = { left: number; top: number; right: number; bottom: number }
+    // An element's clip edge is its padding box.
+    const paddingBox = (element: Element): Box => {
+      const rect = element.getBoundingClientRect()
+      const left = rect.left + element.clientLeft
+      const top = rect.top + element.clientTop
+      return { left, top, right: left + element.clientWidth, bottom: top + element.clientHeight }
+    }
+    const windowBox = (): Box => ({
+      left: 0, top: 0, right: document.documentElement.clientWidth, bottom: document.documentElement.clientHeight,
+    })
+    const visibleArea = (element: Element): Box => {
+      const view = windowBox()
+      for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+        const style = getComputedStyle(parent)
+        if (style.overflowX === 'visible' && style.overflowY === 'visible') continue
+        const edge = paddingBox(parent)
+        view.left = Math.max(view.left, edge.left)
+        view.top = Math.max(view.top, edge.top)
+        view.right = Math.min(view.right, edge.right)
+        view.bottom = Math.min(view.bottom, edge.bottom)
       }
-      const cellStyle = getComputedStyle(cell)
-      const cellBox = paddingBox(cell)
-      const content = {
-        left: cellBox.left + parseFloat(cellStyle.paddingLeft),
-        right: cellBox.right - parseFloat(cellStyle.paddingRight),
-      }
-      const editorBox = editor.getBoundingClientRect()
-      const control = editor.firstElementChild!.getBoundingClientRect()
-      const buttons = [...editor.querySelectorAll(':scope > button')].map(button => button.getBoundingClientRect())
+      return view
+    }
+    // Layout positions are exact to 1/64 px, so half a pixel outside (a
+    // control 1 px taller than its row, centred) is outside.
+    const inside = (box: Box, view: Box) => box.left >= view.left - 0.1 && box.top >= view.top - 0.1
+      && box.right <= view.right + 0.1 && box.bottom <= view.bottom + 0.1
+    let ringInView: boolean | null = null
+    let outline: string | null = null
+    if (focused) {
       // The ring's outer edge: its width plus its offset from the border box
       // (a negative offset draws it inside the control).
       const style = getComputedStyle(focused)
+      outline = style.outlineStyle
       const reach = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset)
       const box = focused.getBoundingClientRect()
-      const ring = { left: box.left - reach, top: box.top - reach, right: box.right + reach, bottom: box.bottom + reach }
-      // What shows: every clipping box from the control up to the grid.
-      const view = { left: -Infinity, top: -Infinity, right: Infinity, bottom: Infinity }
-      for (let element = focused.parentElement; element; element = element.parentElement) {
-        const clip = getComputedStyle(element)
-        if (clip.overflowX !== 'visible' || clip.overflowY !== 'visible') {
-          const edge = paddingBox(element)
-          view.left = Math.max(view.left, edge.left)
-          view.top = Math.max(view.top, edge.top)
-          view.right = Math.min(view.right, edge.right)
-          view.bottom = Math.min(view.bottom, edge.bottom)
-        }
-        if (element.getAttribute('role') === 'grid') break
-      }
-      return {
-        outline: style.outlineStyle,
-        editorFillsCell: Math.abs(editorBox.left - content.left) <= 1 && Math.abs(editorBox.right - content.right) <= 1,
-        controlTakesTheRest: Math.abs(control.right + parseFloat(getComputedStyle(editor).columnGap) - buttons[0]!.left) <= 1,
-        buttonsAtTheEnd: Math.abs(buttons.at(-1)!.right - content.right) <= 1,
-        ringInView: ring.left >= view.left - 0.5 && ring.top >= view.top - 0.5
-          && ring.right <= view.right + 0.5 && ring.bottom <= view.bottom + 0.5,
-        widths: { cell: content.right - content.left, editor: editorBox.width, control: control.width },
-        ring,
-        view,
-      }
-    })
-    const editing = await measure()
-    expect(editing, JSON.stringify(editing)).toMatchObject({
-      outline: 'solid', editorFillsCell: true, controlTakesTheRest: true, buttonsAtTheEnd: true, ringInView: true,
-    })
-    // Save and Cancel, reached with the keyboard, show their rings whole too.
-    for (const name of ['Save Work item', 'Cancel edit']) {
-      await page.keyboard.press('Tab')
-      await expect(root.getByRole('button', { name })).toBeFocused()
-      const button = await measure()
-      expect(button, `${name}: ${JSON.stringify(button)}`).toMatchObject({ outline: 'solid', ringInView: true })
+      ringInView = inside({ left: box.left - reach, top: box.top - reach, right: box.right + reach, bottom: box.bottom + reach }, visibleArea(focused))
     }
-    // Enter presses Cancel (the grid leaves the editor's keys to it), and
-    // focus returns to the cell, as it does after Escape in the field.
-    const cell = grid.locator('[data-cell="0:0"]')
-    await page.keyboard.press('Enter')
-    await expect(input).toHaveCount(0)
-    await expect(cell).toBeFocused()
-    await cell.dblclick()
-    await expect(input).toBeFocused()
+    // The pending value is whole: nothing in it is cut or outside the view.
+    const valueWhole = control.tagName === 'DIV'
+      ? control.scrollHeight <= control.clientHeight + 1 && control.scrollWidth <= control.clientWidth + 1
+        && [...control.querySelectorAll('*')].every(element => inside(element.getBoundingClientRect(), visibleArea(element)))
+      : null
+    const cellRect = cell.getBoundingClientRect()
+    const editorBox = editor.getBoundingClientRect()
+    const controlBox = control.getBoundingClientRect()
+    const fit = {
+      layout: dialog ? 'overlay' : 'inline',
+      focused: focused?.getAttribute('aria-label') ?? focused?.tagName.toLowerCase() ?? null,
+      outline,
+      controlHeight: Math.round(controlBox.height),
+      controlInView: inside(controlBox, visibleArea(control)),
+      ringInView,
+      valueWhole,
+    }
+    if (dialog) {
+      // Anchored over the cell: at its top, covering it (moved left only as
+      // far as the window's edge asks), inside the window.
+      const box = dialog.getBoundingClientRect()
+      return {
+        ...fit,
+        overCell: Math.abs(box.top - cellRect.top) <= 1 && box.left <= cellRect.left + 1
+          && box.right >= Math.min(cellRect.right, windowBox().right - 8) - 1,
+        inWindow: inside(box, windowBox()),
+      }
+    }
+    const cellStyle = getComputedStyle(cell)
+    const cellBox = paddingBox(cell)
+    const content = {
+      left: cellBox.left + parseFloat(cellStyle.paddingLeft),
+      right: cellBox.right - parseFloat(cellStyle.paddingRight),
+    }
+    const buttons = [...editor.querySelectorAll(':scope > button')].map(button => button.getBoundingClientRect())
+    return {
+      ...fit,
+      editorFillsCell: Math.abs(editorBox.left - content.left) <= 1 && Math.abs(editorBox.right - content.right) <= 1,
+      controlTakesTheRest: Math.abs(controlBox.right + parseFloat(getComputedStyle(editor).columnGap) - buttons[0]!.left) <= 1,
+      buttonsAtTheEnd: Math.abs(buttons.at(-1)!.right - content.right) <= 1,
+    }
+  }, column)
+}
+
+for (const density of ['standard', 'compact'] as const) {
+  test(`RecordGrid shows every editor whole with its focus rings in view (${density})`, async ({ page }) => {
+    test.slow()
+    const root = await openStory(page, stories.widgetRecordGridEditing, { density })
+    const grid = root.getByRole('grid', { name: 'Work items' })
+    const cellOf = (column: string) => grid.locator(`[data-row-index="1"] [data-column-id="${column}"]`)
+    const dialog = page.getByRole('dialog')
+    // The story opened the first record's title; Escape closes it and
+    // focus returns to its cell.
+    await expect(grid.getByRole('textbox', { name: 'Work item' })).toBeFocused()
     await page.keyboard.press('Escape')
-    await expect(input).toHaveCount(0)
-    await expect(cell).toBeFocused()
-    await expect(grid.locator('[tabindex="0"]')).toHaveCount(1)
+    await expect(grid.getByRole('textbox')).toHaveCount(0)
+    await expect(grid.locator('[data-cell="0:0"]')).toBeFocused()
+
+    for (const { column, label, layout } of RECORD_EDITORS) {
+      // F2 from the keyboard, so every focus ring shows.
+      const cell = cellOf(column)
+      await cell.focus()
+      await page.keyboard.press('F2')
+      const saveName = `Save ${label}`
+      if (layout === 'overlay') await expect(dialog).toHaveAccessibleName(`Edit ${label}`)
+      else await expect(dialog).toHaveCount(0)
+      const field = await recordEditorFit(page, column)
+      expect(field, `${label}: ${JSON.stringify(field)}`).toMatchObject({
+        layout, focused: label, controlInView: true, ringInView: true,
+        ...(layout === 'overlay'
+          ? { overCell: true, inWindow: true }
+          : { editorFillsCell: true, controlTakesTheRest: true, buttonsAtTheEnd: true }),
+      })
+      expect(field.outline, label).not.toBe('none')
+      if (layout === 'inline') {
+        // The editor's controls are the grid's tab stop while it is open.
+        await expect(grid.locator('[tabindex="0"]')).toHaveCount(0)
+        for (const name of [saveName, 'Cancel edit']) {
+          // Tab in a date field first steps through its parts.
+          await expect(async () => {
+            await page.keyboard.press('Tab')
+            await expect(root.getByRole('button', { name })).toBeFocused({ timeout: 100 })
+          }).toPass({ timeout: 5_000 })
+          const button = await recordEditorFit(page, column)
+          expect(button, `${label}, ${name}: ${JSON.stringify(button)}`).toMatchObject({ outline: 'solid', ringInView: true })
+        }
+        // Enter presses Cancel (the grid leaves the editor's keys to it),
+        // and Escape on a button closes the editor too.
+        await page.keyboard.press(column === 'name' ? 'Enter' : 'Escape')
+      } else {
+        // Tab stays inside the dialog: Cancel, Save, then the field again.
+        for (const name of ['Cancel edit', saveName]) {
+          await page.keyboard.press('Tab')
+          await expect(dialog.getByRole('button', { name })).toBeFocused()
+          const button = await recordEditorFit(page, column)
+          expect(button, `${label}, ${name}: ${JSON.stringify(button)}`).toMatchObject({ outline: 'solid', ringInView: true })
+        }
+        await page.keyboard.press('Tab')
+        await expect(page.getByLabel(label, { exact: true })).toBeFocused()
+        await page.keyboard.press('Shift+Tab')
+        await expect(dialog.getByRole('button', { name: saveName })).toBeFocused()
+        await page.keyboard.press('Escape')
+        await expect(dialog).toHaveCount(0)
+      }
+      await expect(cell).toBeFocused()
+      await expect(grid.locator('[tabindex="0"]')).toHaveCount(1)
+    }
+
+    // A press outside the dialog cancels it.
+    await cellOf('tags').focus()
+    await page.keyboard.press('F2')
+    await expect(dialog).toHaveCount(1)
+    await root.getByRole('searchbox').click()
+    await expect(dialog).toHaveCount(0)
+    await expect(root.getByRole('searchbox')).toBeFocused()
+
+    // Long text: Shift+Enter adds a line, Enter saves. The save stays
+    // pending, and the dialog shows the value in place of the field.
+    await cellOf('notes').focus()
+    await page.keyboard.press('F2')
+    const notes = dialog.getByRole('textbox', { name: 'Notes' })
+    await expect(notes).toBeFocused()
+    await expect(notes).toHaveAccessibleDescription('Shift+Enter adds a line')
+    await page.keyboard.press('Control+End')
+    await page.keyboard.press('Shift+Enter')
+    await page.keyboard.type('Owner signed off.')
+    await expect(notes).toHaveValue('Kickoff done. Waiting on the product feed export.\nOwner signed off.')
+    await page.keyboard.press('Enter')
+    await expect(notes).toHaveCount(0)
+    await expect(dialog.getByRole('button', { name: 'Save Notes' })).toBeDisabled()
+    const pendingNotes = await recordEditorFit(page, 'notes')
+    expect(pendingNotes, JSON.stringify(pendingNotes)).toMatchObject({ controlInView: true, valueWhole: true, overCell: true })
+    await dialog.getByRole('button', { name: 'Cancel edit' }).click()
+    await expect(dialog).toHaveCount(0)
+    await expect(cellOf('notes')).toBeFocused()
+
+    // Every editor while that save is pending: the value fits the row, or
+    // the dialog.
+    for (const { column, label, layout } of RECORD_EDITORS) {
+      await cellOf(column).focus()
+      await page.keyboard.press('F2')
+      await expect(page.getByRole('button', { name: `Save ${label}` })).toBeDisabled()
+      const pending = await recordEditorFit(page, column)
+      expect(pending, `${label} pending: ${JSON.stringify(pending)}`).toMatchObject({ layout, controlInView: true, valueWhole: true })
+      await page.getByRole('button', { name: 'Cancel edit' }).click()
+      await expect(page.getByRole('button', { name: 'Cancel edit' })).toHaveCount(0)
+      await expect(cellOf(column)).toBeFocused()
+    }
   })
 }
 

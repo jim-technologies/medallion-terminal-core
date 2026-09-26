@@ -141,13 +141,32 @@
   font-size: var(--mtc-font-size-sm);
 }
 /* An inline editor (the content of the grid's `editingCell`, outside the
-   one-line box) fills its cell. A one-line control takes the row's height
-   less 2 px on each side, and focus rings inside the editor are drawn
-   within each control, so the cell's clip never cuts them. */
+   one-line box) fills its cell with one-line controls: its first control
+   (a field, a Yes/No box, or the read-only value shown while a save is in
+   flight) takes the row's height less 2 px on each side in every density,
+   and focus rings inside it are drawn within each control. Editors taller
+   than a row open in the overlay below instead. */
 .mtc-root .mtc-data-grid-editor { display: flex; min-width: 0; flex: 1 1 auto; align-items: center; gap: var(--mtc-space-1); }
 .mtc-root .mtc-data-grid-editor > :first-child { min-width: 0; flex: 1 1 auto; }
-.mtc-root .mtc-data-grid-editor > :is(input, select:not([multiple])) { box-sizing: border-box; height: calc(var(--mtc-grid-row-height) - 4px); padding-block: 0; }
+.mtc-root .mtc-data-grid-cell > .mtc-data-grid-editor > :first-child { box-sizing: border-box; height: calc(var(--mtc-grid-row-height) - 4px); min-height: 0; padding-block: 0; }
 .mtc-root .mtc-data-grid-editor :focus-visible { outline-offset: -2px; }
+/* An overlay editor: a dialog anchored over its cell (positioned by the
+   grid), the field above its actions. */
+.mtc-root .mtc-data-grid-overlay-editor {
+  position: fixed;
+  z-index: 83;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  padding: var(--mtc-space-2);
+  color: var(--mtc-fg);
+  font-size: var(--mtc-font-size-md);
+  line-height: var(--mtc-line-height-md);
+}
+.mtc-root .mtc-data-grid-overlay-editor:focus { outline: none; }
+.mtc-root .mtc-data-grid-overlay-editor > .mtc-data-grid-editor { flex-direction: column; align-items: stretch; gap: var(--mtc-space-2); }
+.mtc-root .mtc-data-grid-editor-actions { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: var(--mtc-space-2); }
+.mtc-root .mtc-data-grid-editor-hint { min-width: 0; margin-right: auto; color: var(--mtc-muted); font-size: var(--mtc-font-size-sm); line-height: var(--mtc-line-height-sm); }
 .mtc-root .mtc-data-grid-menu-layer { position: fixed; z-index: 85; top: 0; left: 0; }
 
 /* The `table` widget on DataGrid: heat cells, signed values and the tick

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { Button, IconButton } from '../components/Button'
 import { Input } from '../components/FormControls'
 import { Icon } from '../components/Icon'
@@ -9,7 +9,7 @@ import { useDashboard } from '../core/DashboardContext'
 import { useSubmitAction } from '../hooks/useSubmitAction'
 import { isErrorStatus } from '../hooks/useWatchAction'
 import type { WidgetProps } from '../types/template'
-import { RecordFieldInput, RecordValue } from './RecordFields'
+import { RecordFieldInput, RecordValue, recordEditorLayout } from './RecordFields'
 import {
   applyRecordView,
   isRecordFieldEditable,
@@ -61,9 +61,11 @@ function compareValues(left: unknown, right: unknown): number {
 
 // Mutable, schema-driven record grid on the toolkit DataGrid: one tab stop,
 // arrow keys, Enter selects the record, F2 or a double-click edits a cell
-// (Enter saves, Escape cancels). Table remains the lightweight read-only
-// analytical surface; record_grid adds identity, field types, saved views,
-// linked values, revisions, selection, and governed writes.
+// (Enter or Save saves, Escape or Cancel cancels). One-line fields edit in
+// their cell; lists of choices and long text open over it (Shift+Enter
+// adds a line). Table remains the lightweight read-only analytical surface;
+// record_grid adds identity, field types, saved views, linked values,
+// revisions, selection, and governed writes.
 export function RecordGrid({ data, options, widgetId }: WidgetProps) {
   const set = useMemo(() => normalizeRecordSet(data), [data])
   const opts = (options ?? {}) as RecordGridOptions
@@ -74,6 +76,7 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
   const [sort, setSort] = useState<{ field: string; descending: boolean } | null>(null)
   const [edit, setEdit] = useState<EditCell | null>(null)
   const [viewId, setViewId] = useState(opts.view_id ?? '')
+  const hintId = useId()
 
   useEffect(() => {
     setViewId(opts.view_id ?? '')
@@ -164,25 +167,40 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
     primary: field.key === set.primaryField,
     accessor: record => record.values[field.key],
     align: field.type === 'number' || field.type === 'currency' || field.type === 'percent' ? 'end' : 'start',
-    cell: record => {
-      const editing = edit?.record.id === record.id && edit.field.key === field.key
-      if (!editing) return <RecordValue field={field} value={record.values[field.key]} context="grid" />
+    cell: (record, { editing }) => {
+      if (!editing || !edit) return <RecordValue field={field} value={record.values[field.key]} context="grid" />
+      const overlay = recordEditorLayout(field) === 'overlay'
+      const input = (
+        <RecordFieldInput
+          field={field}
+          value={edit.value}
+          onChange={value => setEdit(current => current ? { ...current, value } : current)}
+          label={field.label}
+          describedBy={overlay && field.type === 'long_text' ? hintId : undefined}
+          autoFocus
+          disabled={mutation.submitting}
+          onCommit={() => void saveEdit()}
+          onCancel={() => setEdit(null)}
+        />
+      )
+      if (!overlay) {
+        return (
+          <div className="mtc-data-grid-editor">
+            {input}
+            <IconButton icon={<Icon name="check" />} size="small" variant="ghost" aria-label={`Save ${field.label}`} disabled={mutation.submitting} onClick={() => void saveEdit()} />
+            <IconButton icon={<Icon name="close" />} size="small" variant="ghost" aria-label="Cancel edit" onClick={() => setEdit(null)} />
+          </div>
+        )
+      }
       return (
-        <span className="mtc-data-grid-editor">
-          <RecordFieldInput
-            field={field}
-            value={edit.value}
-            onChange={value => setEdit(current => current ? { ...current, value } : current)}
-            label={field.label}
-            compact
-            autoFocus
-            disabled={mutation.submitting}
-            onCommit={() => void saveEdit()}
-            onCancel={() => setEdit(null)}
-          />
-          <IconButton icon={<Icon name="check" />} size="small" variant="ghost" aria-label={`Save ${field.label}`} disabled={mutation.submitting} onClick={() => void saveEdit()} />
-          <IconButton icon={<Icon name="close" />} size="small" variant="ghost" aria-label="Cancel edit" onClick={() => setEdit(null)} />
-        </span>
+        <div className="mtc-data-grid-editor">
+          {input}
+          <div className="mtc-data-grid-editor-actions">
+            {field.type === 'long_text' && <span id={hintId} className="mtc-data-grid-editor-hint">Shift+Enter adds a line</span>}
+            <Button size="small" variant="ghost" aria-label="Cancel edit" onClick={() => setEdit(null)}>Cancel</Button>
+            <Button size="small" intent="primary" variant="solid" aria-label={`Save ${field.label}`} disabled={mutation.submitting} onClick={() => void saveEdit()}>Save</Button>
+          </div>
+        </div>
       )
     },
   }))
@@ -249,7 +267,8 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
         }}
         onRowActivate={selectRecord}
         onCellEdit={canInlineEdit ? startEdit : undefined}
-        editingCell={edit ? { rowKey: edit.record.id, columnId: edit.field.key } : null}
+        editingCell={edit ? { rowKey: edit.record.id, columnId: edit.field.key, layout: recordEditorLayout(edit.field) } : null}
+        onEditCancel={() => setEdit(null)}
         sort={sort ? { columnId: sort.field, direction: sort.descending ? 'descending' : 'ascending' } : null}
         onSortChange={next => {
           setSort(next ? { field: next.columnId, descending: next.direction === 'descending' } : null)

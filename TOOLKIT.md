@@ -358,12 +358,21 @@ items accept `kind` and `format`.
   A cell cut short gives a pointer its text as the cell's title and shows
   its content unclipped over the cell on keyboard focus (Escape hides it).
   The cell's accessible name is its text: the whole value, except for the
-  items behind a "+N". `editingCell` names the cell whose inline editor is
-  open: its content fills the cell outside the one-line box (lay the field
-  and its actions out in `.mtc-data-grid-editor`, where a one-line field
-  takes the row's height less 4 px and focus rings stay inside each
-  control), its controls hold the tab stop and their own keys, and focus
-  returns to the cell when it closes. `rowHref` puts one link per row on
+  items behind a "+N". `editingCell` names the cell whose editor is open;
+  the column's `cell` renders it with `editing: true`. With the default
+  `layout: "inline"` it replaces the cell's content, outside the one-line
+  box: lay one-line controls and their actions out in
+  `.mtc-data-grid-editor`, where the first control takes the row's height
+  less 4 px and focus rings are drawn inside each control. An editor taller
+  than a row (a list box, a text area) takes `layout: "overlay"`: the cell
+  keeps its value and the editor opens in a dialog anchored over the cell,
+  at least 320 px wide, inside the window and portalled into the scope,
+  with `.mtc-data-grid-editor` stacking the field over
+  `.mtc-data-grid-editor-actions`; Tab stays inside it, and Escape or a
+  press outside it calls `onEditCancel`. Either way the editor's controls
+  hold the tab stop and their own keys (Escape on one that does not handle
+  it calls `onEditCancel` too), and focus returns to the cell when the
+  editor closes. `rowHref` puts one link per row on
   the primary column; `onNavigate` routes a plain click. Rows have one
   fixed height, so above 200 rows (`virtualize="auto"`) only the rows in
   view render: ten thousand rows stay under 1,500 DOM nodes.

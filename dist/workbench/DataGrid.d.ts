@@ -12,6 +12,23 @@ export interface DataGridCellContext {
     rowIndex: number;
     /** Whether the row is selected. */
     selected: boolean;
+    /**
+     * True when the content is the open editor of `editingCell` (in its cell
+     * or in the layer over it); false for the cell's value.
+     */
+    editing: boolean;
+}
+/** The cell whose editor is open. */
+export interface DataGridEditingCell {
+    rowKey: string;
+    columnId: string;
+    /**
+     * `inline` (the default): the editor replaces the cell's content. Use it
+     * for one-line controls. `overlay`: the cell keeps its value and the
+     * editor opens in a layer anchored over the cell, for editors taller than
+     * a row (a list box, a text area).
+     */
+    layout?: 'inline' | 'overlay';
 }
 /** One grid column. */
 export interface DataGridColumn<Row> {
@@ -104,17 +121,21 @@ export interface DataGridProps<Row> {
     /** F2 on a cell, or a double-click on it: rename or edit it. */
     onCellEdit?: (row: Row, columnId: string) => void;
     /**
-     * The cell whose inline editor is open (by row key and column id). Its
-     * custom content fills the cell instead of sitting in the one-line box
-     * (or the row link); wrap the editor in `.mtc-data-grid-editor` to lay
-     * its field and actions out in a row that fits the row height. The
-     * controls in it hold the tab stop and their own keys, and focus returns
-     * to the cell when the editor closes.
+     * The cell whose editor is open; the column's `cell` renders it with
+     * `editing: true`. Inline, it fills the cell instead of sitting in the
+     * one-line box (or the row link): wrap it in `.mtc-data-grid-editor` to
+     * lay its field and actions out in a row, each control the row's height
+     * less 2 px on each side. In an overlay it opens in a dialog anchored over
+     * the cell and portalled into the scope, where `.mtc-data-grid-editor`
+     * stacks the field over its actions (`.mtc-data-grid-editor-actions`):
+     * Tab stays inside it, and Escape or a press outside it calls
+     * `onEditCancel`. Either way the editor's controls hold the tab stop and
+     * their own keys (Escape on a control that does not handle it also calls
+     * `onEditCancel`), and focus returns to the cell when it closes.
      */
-    editingCell?: {
-        rowKey: string;
-        columnId: string;
-    } | null;
+    editingCell?: DataGridEditingCell | null;
+    /** Closes the open editor without saving. */
+    onEditCancel?: () => void;
     /** Called once per page when the last rows come into view. */
     onEndReached?: () => void;
     /** Known total, when larger than the rows loaded so far. */
@@ -149,4 +170,4 @@ export interface DataGridProps<Row> {
  * stay under 1,500 DOM nodes. Cells render typed values with
  * `PropertyValue` unless a column supplies its own content.
  */
-export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, editingCell, onEndReached, totalRows, loading, empty, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;
+export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, editingCell, onEditCancel, onEndReached, totalRows, loading, empty, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;

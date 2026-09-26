@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Decorator, Meta, StoryObj } from '@storybook/react'
 import { expect, userEvent, within } from 'storybook/test'
 import { DashboardContext, DEFAULT_DASHBOARD_CONTEXT } from '../core/DashboardContext'
 import { RecordGrid } from './RecordGrid'
@@ -22,24 +22,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
-
-// A backend enables inline editing; the story opens the first record's
-// title for editing and sends nothing (Save is never pressed).
-export const InlineEditing: Story = {
-  name: 'Inline editing',
-  decorators: [
-    Story => (
-      <DashboardContext.Provider value={{ ...DEFAULT_DASHBOARD_CONTEXT, backendUrl: 'https://backend.invalid' }}>
-        <Story />
-      </DashboardContext.Provider>
-    ),
-  ],
-  play: async ({ canvasElement }) => {
-    const grid = within(canvasElement).getByRole('grid', { name: 'Work items' })
-    await userEvent.dblClick(within(grid).getAllByRole('gridcell')[0]!)
-    await expect(await within(grid).findByRole('textbox', { name: 'Work item' })).toHaveFocus()
-  },
-}
 
 // Multi-select and multi-user fields: chips on one line in each row, the
 // first two and then "+N", whose title names the rest.
@@ -85,4 +67,74 @@ const LIST_STORY_DATA = {
 export const ListsAndChips: Story = {
   name: 'Lists and chips',
   args: { data: LIST_STORY_DATA, options: { view_id: 'all_work', search: true } },
+}
+
+// Every kind of editor the grid opens, on one row each: text, a choice, a
+// user, a number, a date, a date and time and Yes/No edit in their cell;
+// lists and long text open over it.
+const EDITING_VALUES: Record<string, { review_at: string; notes: string }> = {
+  'work-101': { review_at: '2026-07-17T16:00:00Z', notes: 'Kickoff done. Waiting on the product feed export.' },
+  'work-102': { review_at: '2026-07-20T17:30:00Z', notes: 'Renewal terms agreed in principle.\nLegal to confirm the notice period.' },
+  'work-103': { review_at: '2026-07-28T15:00:00Z', notes: 'Pilot stores picked; hardware ships next week.' },
+  'work-104': { review_at: '2026-07-14T18:00:00Z', notes: '' },
+  'work-105': { review_at: '2026-07-21T16:15:00Z', notes: 'Blocked on access to the finance system.' },
+}
+const EDITING_STORY_DATA = {
+  ...LIST_STORY_DATA,
+  fields: [
+    ...LIST_STORY_DATA.fields,
+    { key: 'review_at', label: 'Review', type: 'RECORD_FIELD_TYPE_DATETIME' },
+    { key: 'notes', label: 'Notes', type: 'RECORD_FIELD_TYPE_LONG_TEXT' },
+  ],
+  records: LIST_STORY_DATA.records.map(record => ({
+    ...record,
+    values: { ...record.values, ...EDITING_VALUES[record.id] },
+  })),
+  views: LIST_STORY_DATA.views.map(view => view.id === 'all_work'
+    ? { ...view, visible_fields: ['name', 'stage', 'owner', 'value', 'due_date', 'review_at', 'completed', 'tags', 'reviewers', 'notes'] }
+    : view),
+}
+
+// The story's backend never answers: a save stays pending, so the grid
+// shows its saving state and nothing leaves the page.
+const pendingBackend: Decorator[] = [
+  Story => (
+    <DashboardContext.Provider
+      value={{
+        ...DEFAULT_DASHBOARD_CONTEXT,
+        backendUrl: 'https://backend.invalid',
+        fetch: () => new Promise<Response>(() => {}),
+      }}
+    >
+      <Story />
+    </DashboardContext.Provider>
+  ),
+]
+
+// F2 or a double-click edits a cell; the story opens the first record's
+// title, which edits in its cell.
+export const InlineEditing: Story = {
+  name: 'Inline editing',
+  args: { data: EDITING_STORY_DATA },
+  decorators: pendingBackend,
+  play: async ({ canvasElement }) => {
+    const grid = within(canvasElement).getByRole('grid', { name: 'Work items' })
+    await userEvent.dblClick(within(grid).getAllByRole('gridcell')[0]!)
+    await expect(await within(grid).findByRole('textbox', { name: 'Work item' })).toHaveFocus()
+  },
+}
+
+// Long text (like a list of choices) is taller than a row, so its editor
+// opens over the cell instead of inside it; the story opens the second
+// record's notes.
+export const EditorOverTheCell: Story = {
+  name: 'Editor over the cell',
+  args: { data: EDITING_STORY_DATA },
+  decorators: pendingBackend,
+  play: async ({ canvasElement }) => {
+    const grid = within(canvasElement).getByRole('grid', { name: 'Work items' })
+    const notes = grid.querySelector<HTMLElement>('[data-row-index="1"] [data-column-id="notes"]')!
+    await userEvent.dblClick(notes)
+    await expect(await within(document.body).findByRole('textbox', { name: 'Notes' })).toHaveFocus()
+  },
 }

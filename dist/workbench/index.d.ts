@@ -5,7 +5,7 @@ export type { SplitPaneProps } from './SplitPane';
 export { Tree } from './Tree';
 export type { TreeItem, TreeProps } from './Tree';
 export { DataGrid } from './DataGrid';
-export type { DataGridCellContext, DataGridColumn, DataGridProps, DataGridSort } from './DataGrid';
+export type { DataGridCellContext, DataGridColumn, DataGridEditingCell, DataGridProps, DataGridSort } from './DataGrid';
 export { NavRail } from './NavRail';
 export type { NavRailItem, NavRailProps, NavRailSection } from './NavRail';
 export { PageHeader } from './PageHeader';

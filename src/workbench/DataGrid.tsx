@@ -17,7 +17,7 @@ import { Skeleton } from '../components/Display'
 import { Icon } from '../components/Icon'
 import { navigateOnPlainClick } from '../components/navigation'
 import { MenuPopup, useDismissableLayer, type MenuItem } from '../components/Overlays'
-import { cx } from '../components/utils'
+import { cx, focusableElements, handleModalKeyDown } from '../components/utils'
 import {
   useDesignSystem,
   useLocale,
@@ -56,6 +56,24 @@ export interface DataGridCellContext {
   rowIndex: number
   /** Whether the row is selected. */
   selected: boolean
+  /**
+   * True when the content is the open editor of `editingCell` (in its cell
+   * or in the layer over it); false for the cell's value.
+   */
+  editing: boolean
+}
+
+/** The cell whose editor is open. */
+export interface DataGridEditingCell {
+  rowKey: string
+  columnId: string
+  /**
+   * `inline` (the default): the editor replaces the cell's content. Use it
+   * for one-line controls. `overlay`: the cell keeps its value and the
+   * editor opens in a layer anchored over the cell, for editors taller than
+   * a row (a list box, a text area).
+   */
+  layout?: 'inline' | 'overlay'
 }
 
 /** One grid column. */
@@ -150,14 +168,21 @@ export interface DataGridProps<Row> {
   /** F2 on a cell, or a double-click on it: rename or edit it. */
   onCellEdit?: (row: Row, columnId: string) => void
   /**
-   * The cell whose inline editor is open (by row key and column id). Its
-   * custom content fills the cell instead of sitting in the one-line box
-   * (or the row link); wrap the editor in `.mtc-data-grid-editor` to lay
-   * its field and actions out in a row that fits the row height. The
-   * controls in it hold the tab stop and their own keys, and focus returns
-   * to the cell when the editor closes.
+   * The cell whose editor is open; the column's `cell` renders it with
+   * `editing: true`. Inline, it fills the cell instead of sitting in the
+   * one-line box (or the row link): wrap it in `.mtc-data-grid-editor` to
+   * lay its field and actions out in a row, each control the row's height
+   * less 2 px on each side. In an overlay it opens in a dialog anchored over
+   * the cell and portalled into the scope, where `.mtc-data-grid-editor`
+   * stacks the field over its actions (`.mtc-data-grid-editor-actions`):
+   * Tab stays inside it, and Escape or a press outside it calls
+   * `onEditCancel`. Either way the editor's controls hold the tab stop and
+   * their own keys (Escape on a control that does not handle it also calls
+   * `onEditCancel`), and focus returns to the cell when it closes.
    */
-  editingCell?: { rowKey: string; columnId: string } | null
+  editingCell?: DataGridEditingCell | null
+  /** Closes the open editor without saving. */
+  onEditCancel?: () => void
   /** Called once per page when the last rows come into view. */
   onEndReached?: () => void
   /** Known total, when larger than the rows loaded so far. */
@@ -198,6 +223,10 @@ const RESIZE_MIN_WIDTH = 48
 const SORT_ICON_ROOM = 20
 const SELECTION_WIDTH = 40
 const RESIZE_STEP = 16
+// An overlay editor is at least this wide and stays this far inside the
+// window.
+const OVERLAY_EDITOR_MIN_WIDTH = 320
+const OVERLAY_EDITOR_MARGIN = 8
 const SKELETON_ROWS = 8
 const EMPTY_HEIGHT = 160
 
@@ -287,6 +316,7 @@ export function DataGrid<Row>({
   contextActions,
   onCellEdit,
   editingCell,
+  onEditCancel,
   onEndReached,
   totalRows,
   loading = false,
@@ -335,6 +365,9 @@ export function DataGrid<Row>({
   // The full value of the keyboard-focused cell when the cell cuts it short.
   const [valueTip, setValueTip] = useState<{ row: number; column: number; left: number; top: number; width: number; height: number } | null>(null)
   const tipRef = useRef<HTMLDivElement>(null)
+  const editorRef = useRef<HTMLDivElement>(null)
+  const onEditCancelRef = useRef(onEditCancel)
+  onEditCancelRef.current = onEditCancel
 
   const displayRows = useMemo(() => {
     if (sortMode !== 'client' || !activeSort) return rows
@@ -535,6 +568,58 @@ export function DataGrid<Row>({
       ?.focus({ preventScroll: true })
   }, [editingKey, active.row, active.column])
 
+  // An overlay editor: the column's editor in a layer over its cell.
+  const overlayCell = editingCell?.layout === 'overlay' ? editingCell : null
+  const overlayRow = overlayCell ? keys.indexOf(overlayCell.rowKey) : -1
+  const overlayColumn = overlayCell
+    ? renderedColumns.findIndex(entry => entry.kind === 'data' && entry.column.id === overlayCell.columnId)
+    : -1
+  const overlayEntry = renderedColumns[overlayColumn]
+  const overlayOpen = overlayRow >= 0 && overlayEntry?.kind === 'data' && overlayEntry.column.cell !== undefined
+
+  // Over the cell, from its top-left corner, at least as wide as the cell;
+  // moved left or up where it would pass the window's edge.
+  const placeEditor = () => {
+    const layer = editorRef.current
+    if (!overlayOpen || !layer) return
+    const cell = viewportRef.current?.querySelector<HTMLElement>(`[data-cell="${overlayRow}:${overlayColumn}"]`)
+    if (!cell) return
+    const rect = cell.getBoundingClientRect()
+    const right = document.documentElement.clientWidth - OVERLAY_EDITOR_MARGIN
+    const bottom = document.documentElement.clientHeight - OVERLAY_EDITOR_MARGIN
+    const width = Math.min(Math.max(rect.width, OVERLAY_EDITOR_MIN_WIDTH), right - OVERLAY_EDITOR_MARGIN)
+    layer.style.width = `${width}px`
+    layer.style.left = `${Math.max(OVERLAY_EDITOR_MARGIN, Math.min(rect.left, right - width))}px`
+    layer.style.top = `${Math.max(OVERLAY_EDITOR_MARGIN, Math.min(rect.top, bottom - layer.offsetHeight))}px`
+  }
+  const placeEditorRef = useRef(placeEditor)
+  placeEditorRef.current = placeEditor
+  useLayoutEffect(() => placeEditorRef.current())
+
+  // It follows its cell as the page scrolls or resizes and as it grows (a
+  // text area resized), takes focus if its field did not, and a press
+  // outside it cancels.
+  useEffect(() => {
+    const layer = editorRef.current
+    if (!overlayOpen || !layer) return
+    if (!layer.contains(document.activeElement)) (focusableElements(layer)[0] ?? layer).focus()
+    const place = () => placeEditorRef.current()
+    const onPointerDown = (event: globalThis.PointerEvent) => {
+      if (!layer.contains(event.target as Node)) onEditCancelRef.current?.()
+    }
+    window.addEventListener('resize', place)
+    document.addEventListener('scroll', place, true)
+    document.addEventListener('pointerdown', onPointerDown)
+    const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(place)
+    observer?.observe(layer)
+    return () => {
+      window.removeEventListener('resize', place)
+      document.removeEventListener('scroll', place, true)
+      document.removeEventListener('pointerdown', onPointerDown)
+      observer?.disconnect()
+    }
+  }, [overlayOpen, overlayRow, overlayColumn, portal])
+
   // Ask for the next page once per page when its last rows are in view.
   useEffect(() => {
     if (!onEndReached || loading || displayRows.length === 0) return
@@ -603,8 +688,16 @@ export function DataGrid<Row>({
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    // An open editor's controls (its field, Save, Cancel) keep their keys.
-    if (isEditableTarget(event.target) || menu || isInEditingCell(event.target)) return
+    // An open editor's controls (its field, Save, Cancel) keep their keys;
+    // Escape on one that does not handle it closes the editor.
+    if (isInEditingCell(event.target)) {
+      if (event.key === 'Escape' && !event.defaultPrevented) {
+        event.preventDefault()
+        onEditCancel?.()
+      }
+      return
+    }
+    if (isEditableTarget(event.target) || menu) return
     if (event.key === 'Escape' && valueTip) {
       event.stopPropagation()
       setValueTip(null)
@@ -745,13 +838,13 @@ export function DataGrid<Row>({
   }, [valueTip])
 
   const cellContent = (column: DataGridColumn<Row>, row: Row, rowIndex: number, selected: boolean, editing = false): ReactNode => {
-    const value = cellValue(column, row)
-    if (column.cell && editing) return column.cell(row, { value, rowIndex, selected })
+    const context = { value: cellValue(column, row), rowIndex, selected, editing }
+    if (column.cell && editing) return column.cell(row, context)
     return column.cell
-      ? <span className="mtc-data-grid-cell-text">{column.cell(row, { value, rowIndex, selected })}</span>
+      ? <span className="mtc-data-grid-cell-text">{column.cell(row, { ...context, editing: false })}</span>
       : (
         <PropertyValue
-          value={value}
+          value={context.value}
           kind={column.kind}
           format={column.format}
           tones={column.tones}
@@ -900,7 +993,7 @@ export function DataGrid<Row>({
                   const { column } = entry
                   const resolved = resolvePropertyKind(cellValue(column, row), column.kind, column.format)
                   const numeric = column.align === 'end' || (!column.align && !column.cell && isNumericKind(resolved.kind))
-                  const editing = editingCell?.rowKey === key && editingCell.columnId === column.id
+                  const editing = editingCell?.rowKey === key && editingCell.columnId === column.id && editingCell.layout !== 'overlay'
                   const content = cellContent(column, row, rowIndex, selected, editing)
                   const props = cellProps(rowIndex, columnIndex)
                   return (
@@ -988,6 +1081,29 @@ export function DataGrid<Row>({
           </div>
         )
         return portal ? createPortal(tip, portal) : tip
+      })()}
+      {overlayOpen && overlayEntry.kind === 'data' && (() => {
+        const row = displayRows[overlayRow]!
+        const layer = (
+          <div
+            ref={editorRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('dataGrid.editCell', { column: overlayEntry.column.header })}
+            tabIndex={-1}
+            className={cx('mtc-popover mtc-data-grid-overlay-editor', density && `mtc-density-${density}`)}
+            onKeyDown={event => {
+              // Its own keys: Escape closes it, Tab stays inside it, and
+              // neither reaches a dialog the grid sits in.
+              if (event.key !== 'Escape' && event.key !== 'Tab') return
+              event.stopPropagation()
+              handleModalKeyDown(event, editorRef, true, () => onEditCancelRef.current?.())
+            }}
+          >
+            {cellContent(overlayEntry.column, row, overlayRow, selectedSet.has(keys[overlayRow] ?? ''), true)}
+          </div>
+        )
+        return portal ? createPortal(layer, portal) : layer
       })()}
       {menu && menuRow !== undefined && contextActions && (() => {
         const layer = (

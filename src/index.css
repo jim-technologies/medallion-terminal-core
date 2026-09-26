@@ -768,6 +768,16 @@
   background: var(--mtc-surface-raised);
 }
 
+/* A list box's chosen options take the accent in every theme, instead of
+   the browser's system selection colours. */
+.mtc-control[multiple] option:checked {
+  /* An image and a text fill, which the engine's own selection colours
+     do not override. */
+  background: linear-gradient(var(--mtc-accent-strong), var(--mtc-accent-strong));
+  color: var(--mtc-on-accent);
+  -webkit-text-fill-color: var(--mtc-on-accent);
+}
+
 .mtc-segmented {
   border: 1px solid var(--mtc-border);
   border-radius: var(--mtc-radius-sm);

@@ -159,9 +159,14 @@ export interface RecordFieldInputProps {
   onChange: (value: unknown) => void
   /** Accessible name when no visible label wraps the control (a grid cell). */
   label?: string
+  /** Id of text that describes the control, such as a key hint. */
+  describedBy?: string
   disabled?: boolean
-  compact?: boolean
   autoFocus?: boolean
+  /**
+   * Enter commits (Shift+Enter still adds a line to long text); without it,
+   * Enter adds a line to long text and does nothing in other fields.
+   */
   onCommit?: () => void
   onCancel?: () => void
 }
@@ -189,10 +194,34 @@ function keyHandler(
   if (event.key === 'Escape') {
     event.preventDefault()
     onCancel?.()
-  } else if (event.key === 'Enter' && !event.shiftKey && event.currentTarget.tagName !== 'TEXTAREA') {
+  } else if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
+    if (event.currentTarget.tagName === 'TEXTAREA' && !onCommit) return
     event.preventDefault()
     onCommit?.()
   }
+}
+
+type RecordInputKind = 'boolean' | 'choice' | 'choices' | 'long_text' | 'field'
+
+// Which control edits a field. Users and links with choices pick from
+// them, one or several as the field allows.
+function recordInputKind(field: RecordFieldData): RecordInputKind {
+  if (field.type === 'boolean') return 'boolean'
+  const listed = (field.type === 'user' || field.type === 'link') && field.choices.length > 0
+  if (field.type === 'single_select' || (listed && !field.allowMultiple)) return 'choice'
+  if (field.type === 'multi_select' || (listed && field.allowMultiple)) return 'choices'
+  if (field.type === 'long_text') return 'long_text'
+  return 'field'
+}
+
+/**
+ * Where a grid opens a field's editor: one-line controls (text, numbers,
+ * dates, a single choice, Yes/No) edit in their cell; a list of choices and
+ * long text are taller than a row, so they open over it.
+ */
+export function recordEditorLayout(field: RecordFieldData): 'inline' | 'overlay' {
+  const kind = recordInputKind(field)
+  return kind === 'choices' || kind === 'long_text' ? 'overlay' : 'inline'
 }
 
 // Shared input renderer. Computed and attachment fields deliberately stay
@@ -203,23 +232,24 @@ export function RecordFieldInput({
   value,
   onChange,
   label,
+  describedBy,
   disabled,
-  compact,
   autoFocus,
   onCommit,
   onCancel,
 }: RecordFieldInputProps) {
   const blocked = disabled || !isRecordFieldEditable(field)
+  const kind = recordInputKind(field)
 
   if (blocked) {
     return (
-      <div className="min-h-7 px-2 py-1.5 border border-zinc-800 rounded bg-zinc-950/30 text-xs text-zinc-400">
+      <div className="flex items-center min-h-7 px-2 py-1.5 border border-zinc-800 rounded bg-zinc-950/30 text-xs text-zinc-400">
         <RecordValue field={field} value={value} />
       </div>
     )
   }
 
-  if (field.type === 'boolean') {
+  if (kind === 'boolean') {
     return (
       <label className="flex items-center gap-2 min-h-7 text-xs text-zinc-300">
         <input
@@ -229,6 +259,7 @@ export function RecordFieldInput({
           disabled={disabled}
           autoFocus={autoFocus}
           aria-label={label}
+          aria-describedby={describedBy}
           onKeyDown={event => keyHandler(event, onCommit, onCancel)}
           className="w-4 h-4"
         />
@@ -237,8 +268,7 @@ export function RecordFieldInput({
     )
   }
 
-  if (field.type === 'single_select' ||
-      ((field.type === 'user' || field.type === 'link') && field.choices.length > 0 && !field.allowMultiple)) {
+  if (kind === 'choice') {
     return (
       <select
         value={choiceValue(value)}
@@ -246,6 +276,7 @@ export function RecordFieldInput({
         disabled={disabled}
         autoFocus={autoFocus}
         aria-label={label}
+        aria-describedby={describedBy}
         onKeyDown={event => keyHandler(event, onCommit, onCancel)}
         className={INPUT_CLASS}
       >
@@ -257,8 +288,7 @@ export function RecordFieldInput({
     )
   }
 
-  if (field.type === 'multi_select' ||
-      ((field.type === 'user' || field.type === 'link') && field.choices.length > 0 && field.allowMultiple)) {
+  if (kind === 'choices') {
     const selected = Array.isArray(value) ? value.map(choiceValue) : []
     return (
       <select
@@ -268,8 +298,9 @@ export function RecordFieldInput({
         disabled={disabled}
         autoFocus={autoFocus}
         aria-label={label}
+        aria-describedby={describedBy}
         onKeyDown={event => keyHandler(event, onCommit, onCancel)}
-        className={`${INPUT_CLASS} ${compact ? 'min-h-16' : 'min-h-24'}`}
+        className={`${INPUT_CLASS} min-h-24`}
       >
         {field.choices.map(choice => (
           <option key={choice.value} value={choice.value}>{choice.label}</option>
@@ -278,7 +309,7 @@ export function RecordFieldInput({
     )
   }
 
-  if (field.type === 'long_text') {
+  if (kind === 'long_text') {
     return (
       <textarea
         value={inputValue(value)}
@@ -286,8 +317,9 @@ export function RecordFieldInput({
         disabled={disabled}
         autoFocus={autoFocus}
         aria-label={label}
+        aria-describedby={describedBy}
         onKeyDown={event => keyHandler(event, onCommit, onCancel)}
-        rows={compact ? 2 : 4}
+        rows={4}
         className={`${INPUT_CLASS} resize-y`}
       />
     )
@@ -323,6 +355,7 @@ export function RecordFieldInput({
       disabled={disabled}
       autoFocus={autoFocus}
       aria-label={label}
+      aria-describedby={describedBy}
       onKeyDown={event => keyHandler(event, onCommit, onCancel)}
       className={INPUT_CLASS}
     />

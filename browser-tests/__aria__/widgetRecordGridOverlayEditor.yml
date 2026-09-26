@@ -1,0 +1,82 @@
+- searchbox "Search Work items"
+- button "New"
+- grid "Work items":
+  - rowgroup:
+    - row "Work item Stage Owner Value Due Review Complete Tags Reviewers Notes":
+      - columnheader "Work item"
+      - columnheader "Stage"
+      - columnheader "Owner"
+      - columnheader "Value"
+      - columnheader "Due"
+      - columnheader "Review"
+      - columnheader "Complete"
+      - columnheader "Tags"
+      - columnheader "Reviewers"
+      - columnheader "Notes"
+  - rowgroup:
+    - row "Alder website launch Done Mina Patel $19,000 Jul 15, 2026 Jul 14, 2026, 11:00 AM Yes — — —":
+      - gridcell "Alder website launch"
+      - gridcell "Done"
+      - gridcell "Mina Patel"
+      - gridcell "$19,000"
+      - gridcell "Jul 15, 2026":
+        - time: Jul 15, 2026
+      - gridcell "Jul 14, 2026, 11:00 AM":
+        - time: Jul 14, 2026, 11:00 AM
+      - gridcell "Yes"
+      - gridcell "—"
+      - gridcell "—"
+      - gridcell "—"
+    - row "Northstar onboarding Delivery Mina Patel $48,000 Jul 18, 2026 Jul 17, 2026, 9:00 AM No Finance Board review +1 Jules Chen Noah Williams Kickoff done. Waiting on the product feed export.":
+      - gridcell "Northstar onboarding"
+      - gridcell "Delivery"
+      - gridcell "Mina Patel"
+      - gridcell "$48,000"
+      - gridcell "Jul 18, 2026":
+        - time: Jul 18, 2026
+      - gridcell "Jul 17, 2026, 9:00 AM":
+        - time: Jul 17, 2026, 9:00 AM
+      - gridcell "No"
+      - gridcell "Finance Board review +1"
+      - gridcell "Jules Chen Noah Williams"
+      - gridcell "Kickoff done. Waiting on the product feed export."
+    - row "Summit process audit Blocked Jules Chen $28,500 Jul 20, 2026 Jul 21, 2026, 9:15 AM No Legal hold Finance Noah Williams Blocked on access to the finance system.":
+      - gridcell "Summit process audit"
+      - gridcell "Blocked"
+      - gridcell "Jules Chen"
+      - gridcell "$28,500"
+      - gridcell "Jul 20, 2026":
+        - time: Jul 20, 2026
+      - gridcell "Jul 21, 2026, 9:15 AM":
+        - time: Jul 21, 2026, 9:15 AM
+      - gridcell "No"
+      - gridcell "Legal hold Finance"
+      - gridcell "Noah Williams"
+      - gridcell "Blocked on access to the finance system."
+    - row "Harbor annual renewal Review Jules Chen $36,000 Jul 21, 2026 Jul 20, 2026, 10:30 AM No Renewal Mina Patel Renewal terms agreed in principle. Legal to confirm the notice period.":
+      - gridcell "Harbor annual renewal"
+      - gridcell "Review"
+      - gridcell "Jules Chen"
+      - gridcell "$36,000"
+      - gridcell "Jul 21, 2026":
+        - time: Jul 21, 2026
+      - gridcell "Jul 20, 2026, 10:30 AM":
+        - time: Jul 20, 2026, 10:30 AM
+      - gridcell "No"
+      - gridcell "Renewal"
+      - gridcell "Mina Patel"
+      - gridcell "Renewal terms agreed in principle. Legal to confirm the notice period."
+    - row "Beacon inventory rollout Pipeline Noah Williams $72,000 Aug 4, 2026 Jul 28, 2026, 8:00 AM No Finance Board review +2 Mina Patel Jules Chen +1 Pilot stores picked; hardware ships next week.":
+      - gridcell "Beacon inventory rollout"
+      - gridcell "Pipeline"
+      - gridcell "Noah Williams"
+      - gridcell "$72,000"
+      - gridcell "Aug 4, 2026":
+        - time: Aug 4, 2026
+      - gridcell "Jul 28, 2026, 8:00 AM":
+        - time: Jul 28, 2026, 8:00 AM
+      - gridcell "No"
+      - gridcell "Finance Board review +2"
+      - gridcell "Mina Patel Jules Chen +1"
+      - gridcell "Pilot stores picked; hardware ships next week."
+- text: 5 shown · All work

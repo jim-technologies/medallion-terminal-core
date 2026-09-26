@@ -36,7 +36,8 @@ from toolkit exports are the reference for product pages.
 - **`record_grid`, `table` and `object_view`** render through `DataGrid`,
   `ObjectHeader`, `PropertyPanel` and `LinkPanel`: payloads and options are
   unchanged, but tests that found cells as `<td>` or buttons should query
-  `role="gridcell"` and `role="row"`.
+  `role="gridcell"` and `role="row"`. A click on a `record_grid` cell no
+  longer starts an edit; F2 or a double-click does.
 - **`PropertyList` values are typed.** Numbers group, booleans read Yes/No,
   lists are chips and nested objects are disclosures; pass `kind` or
   `format` on an item to choose the rendering.
@@ -45,18 +46,10 @@ from toolkit exports are the reference for product pages.
 - **The `./app` entry is React.** It now exports `ProductShell` and its
   ports beside `createProductFetch`; it has `react` and `react-dom` as peer
   dependencies like the other entries.
-- **`DataGrid` columns without a `width` are sized to their content**
-  (header and rows in view, at most 360 px) and fitted to the grid, instead
-  of 160 px each. Pass `width` for a fixed column; `minWidth` is now also
-  how far a content-sized text column gives way.
-- **Cell and chip markup gained one wrapper each.** Custom `cell` content
-  renders inside `span.mtc-data-grid-cell-text` (except in the cell named
-  by `editingCell`), `Badge` children inside `span.mtc-badge-label` and
-  `Tag` children inside `span.mtc-tag-label`, so each can end in an
-  ellipsis. A host selector that expected the content as
-  a direct child of the cell or chip needs the wrapper in its path.
-- **`OperationsTray` starts collapsed on phones** (720 px and narrower)
-  unless `defaultOpen` is given.
+- **`Badge` and `Tag` wrap their children** in `span.mtc-badge-label` and
+  `span.mtc-tag-label`, so a label can end in an ellipsis. A host selector
+  that expected the text as a direct child of the chip needs the wrapper in
+  its path.
 
 ### Added
 
@@ -66,11 +59,12 @@ from toolkit exports are the reference for product pages.
   polite "Copied" status), `MetaRow`, `Panel` (the flat 36 px-header frame)
   and `HoverCard` (hover and focus, Escape, portalled into the scope).
 - **Object components**: `PropertyValue` renders a value by kind or format
-  (ids and code in monospace with copy, grouped tabular numbers, currency
-  with its code, 0–1 ratios as percentages, dates with relative time and no
-  time-zone day shift, Yes/No with an icon, enum chips and tone badges,
-  lists as chips with "+N", object references as chips, `http(s)` links
-  only, nested objects in a disclosure); `PropertyPanel` (grouped,
+  (ids and code in monospace with copy, grouped tabular numbers, byte sizes
+  such as `48.2 kB`, currency with its code as a separate word for
+  assistive technology, 0–1 ratios as percentages, dates with relative time
+  and no time-zone day shift, Yes/No with an icon, enum chips and tone
+  badges, lists as chips with "+N", object references as chips, `http(s)`
+  links only, nested objects in a disclosure); `PropertyPanel` (grouped,
   filterable, "n of m"); `ObjectHeader` (40 px glyph, type eyebrow in the
   type colour, monospace id with copy, title, status, metadata, actions;
   `compact` for inspectors); `ObjectChip` (link, button or text, optional
@@ -79,22 +73,57 @@ from toolkit exports are the reference for product pages.
   `formatPropertyText`, `propertySortKey`, `compareSortKeys`.
 - **`DataGrid`**, the toolkit table and the resource table the product UIs
   build on: a windowed WAI-ARIA grid with one tab stop and roving cell
-  focus, typed cells, client or server sort, drag and Alt+arrow column
-  resize, pinned leading columns, single or multi selection with ranges,
-  row links (`rowHref`, `onNavigate`), row activation, context actions
-  (right-click, Menu key, Shift+F10), F2 editing (`editingCell` names the
-  open editor: it fills its cell, its controls hold the tab stop and their
-  own keys, and focus returns to the cell when it closes), `onEndReached` paging
-  with `totalRows`, skeleton, loading-more and empty rows, and `rowProps`
-  data hooks. Above 200 rows only the rows in view render; a browser test
-  holds ten thousand rows under 1,500 DOM nodes at every scroll offset and
+  focus, typed cells, client or server sort (text compares with one shared
+  `Intl.Collator`: ten thousand rows in about 30 ms), drag and Alt+arrow
+  column resize, pinned leading columns, single or multi selection with
+  ranges, row links (`rowHref`, `onNavigate`), row activation, context
+  actions (right-click, Menu key, Shift+F10), `onEndReached` paging with
+  `totalRows`, skeleton, loading-more and empty rows, and `rowProps` data
+  hooks. Above 200 rows only the rows in view render; a browser test holds
+  ten thousand rows under 1,500 DOM nodes at every scroll offset and
   `perf.bench.ts` times the window and the sorts.
+  - *Column fit.* A column without a `width` is sized to its content (its
+    header and the rows in view, at most 360 px) and fitted to the grid,
+    spare width going to the `grow` column. Text columns (plain text, ids
+    and code, URL and email links, and custom `cell` content unless the
+    column declares a `kind`) give way, the primary column last and none
+    below its `minWidth` (72 px, 96 for the primary column), but only when
+    every column then fits; otherwise every column keeps its width and the
+    grid scrolls sideways. Numbers, dates, Yes/No and chips (the `enum`,
+    `list` and `link` kinds) never give way.
+  - *Values cut short.* Whatever is still narrower than its content ends in
+    an ellipsis: typed values (chip and badge labels too, a status dot
+    keeping its size), and custom content, which sits in a one-line box
+    (`span.mtc-data-grid-cell-text`), when it is inline; a block or flex
+    layout inside that box is cut without one unless it truncates its own
+    label. A list shows its first two chips and a "+N" chip whose title
+    names the rest. A cell cut short gives a pointer its text as the cell's
+    title and shows its content unclipped over the cell on keyboard focus
+    (Escape hides it); its accessible name is its text.
+  - *Editing.* F2 or a double-click calls `onCellEdit`, and `editingCell`
+    names the open editor, which the column's `cell` renders with
+    `editing: true`. An inline editor (the default) replaces the cell's
+    content with one-line controls in `.mtc-data-grid-editor`, each the
+    row's height less 2 px on each side, focus rings drawn inside them. An
+    editor taller than a row (a list box, a text area) takes
+    `layout: "overlay"`: the cell keeps its value and the editor opens in a
+    dialog anchored over the cell (at least 320 px wide, inside the window,
+    portalled into the scope), where Tab stays inside it and Escape or a
+    press outside it calls `onEditCancel`. Either way the editor's controls
+    hold the tab stop and their own keys, and focus returns to the cell
+    when it closes.
 - **Links**: `LinkPanel` (link groups by link type with direction, target
   type, count, previews with detail, "View all"), `LinkGraph` (a
   deterministic one-hop radial ego graph, one sector per link type, at most
   40 nodes with "+N", keyboard-focusable node links, pan and zoom) and
   `SchemaGraph` (object types and link types on the layered layout, with
-  counts, selection and routed back edges). Plain SVG, no dependency.
+  counts, selection and routed back edges). Plain SVG, no dependency. The
+  graphs scale their geometry (fitted to at least 80%) but not their
+  labels, which never render under 11 px, are truncated to the room they
+  have and hide in a zoomed-out overview; a graph larger than its frame
+  opens with the selected type (or the centre object) in view, zoom keeps
+  the frame's centre, and a schema edge that skips ranks is routed through
+  the gaps between the nodes it passes, its label on that straight run.
 - **Navigation and search**: `NavRail` (sections, icons or type glyphs,
   counts, `aria-current`, 48 px collapsed mode), `PageHeader` (breadcrumbs,
   title or custom heading, actions, tab slot, sticky), `SearchField`
@@ -112,7 +141,9 @@ from toolkit exports are the reference for product pages.
   blobs, native audio and video, HTML, SVG and XML as source only,
   sanitised Markdown with typography, typed errors, too-large and blocked
   states with a download action) and `CodeView` (line numbers that are not
-  copied, wrap, copy, highlighted lines, bounded lines). The policy is
+  copied, wrap, copy, highlighted lines, bounded lines; JSON, YAML and SQL
+  coloured line by line with the `--mtc-code-*` tokens, while lines over
+  2,000 characters and other languages stay plain). The policy is
   exported: `planPreview`, `DEFAULT_PREVIEW_LIMITS`, `readBounded`,
   `parseDelimited`, `hasRasterSignature`, `hasPdfSignature`.
 - **Product shell** (`medallion-terminal-core/app`): `ProductShell` (top
@@ -120,15 +151,21 @@ from toolkit exports are the reference for product pages.
   phone drawer; page; inspector; status bar; toasts; operations tray; skip
   link) over four ports: a `Router` (`createHistoryRouter`,
   `createMemoryRouter`, `matchPath`, `buildPath`, `matchRoutes`, typed
-  `RouteParams`, `useRoute`, `useLocation`, `RouterLink`), a `SessionPort`
-  (`createHttpSessionPort`, `renewViaFrame` through the Terminal launch URL,
-  renewal a minute before expiry and after a 401, no polling and no timers
-  while hidden, an expired-session dialog that keeps the page, a signed-out
-  state), a `TelemetryPort` (`requestTelemetry` for the product fetch;
-  navigation and session summaries) and the embed handshake
-  (`mode="embed"`, `createEmbedChannel`: versioned `mtc:*` messages with an
-  origin allow-list, resize, navigate, init). `useProductShell` exposes
-  them to pages.
+  `RouteParams`, `useRoute`, `useLocation`, `RouterLink`; a malformed
+  percent escape is no match), a `SessionPort` (`createHttpSessionPort`,
+  `renewViaFrame` through the Terminal launch URL, renewal a minute before
+  expiry and after a 401, far expiries waited in steps, no polling and no
+  timers while hidden, an expired-session dialog that keeps the page, a
+  signed-out state; `SessionEnvironment` takes injectable `setTimeout` and
+  `clearTimeout` with the `VisibilitySource` type, so hosts and tests drive
+  the schedule without patching globals), a `TelemetryPort`
+  (`requestTelemetry` for the product fetch; navigation and session
+  summaries) and the embed handshake (`mode="embed"`,
+  `createEmbedChannel`: versioned `mtc:*` messages with an origin
+  allow-list, resize, navigate (never to `//host` or `/\host`), init).
+  `useProductShell` exposes them to pages. On phones the operations tray is
+  a summary bar above the status bar and the inspector sheet sits above
+  it, so neither covers the other until the tray is opened.
 - **`ObjectPage`**: breadcrumbs, `ObjectHeader` and section tabs
   (Overview, Properties, Links, History) composing the object components.
   The product plans' object anatomy maps onto one component per role: the
@@ -136,20 +173,19 @@ from toolkit exports are the reference for product pages.
   `ActivityFeed variant="timeline"`, the facet rail is `FacetList`, and the
   resource table is `DataGrid`.
 - **`OperationsTray`**: long-running operations with status, progress,
-  Cancel, Retry, Dismiss, polite announcements, floating or inline.
+  Cancel, Retry, Dismiss, polite announcements, floating or inline; it
+  starts collapsed on phones (720 px and narrower) unless `defaultOpen` is
+  given.
 - **Page templates** (`Templates/Pages`): Object explorer, Object view,
   Object type, Schema graph, Files, Operations, Storage and Connect, built
   only from toolkit exports inside one workspace frame, with dark and light
   baselines at 1440 px and 390 px, interaction tests (facets, selection
   preview, palette, phone drawers, file preview) and a unit test that
-  rejects imports from anywhere but the toolkit entry. `DESIGN.md` documents
-  each layout; products copy structure from these rather than the clones.
-- `StatusTone` type; message keys for copy, values, property panels, the
-  grid, links, graphs, navigation, search, paging, toasts and activity (en
-  and zh-CN).
-- Baselines (dark, light, and compact for the property panel) and exact
-  text snapshots for every new story.
-
+  rejects imports from anywhere but the toolkit entry. At 1440 px every
+  template value is whole (the Object explorer scrolls its last column
+  beside the inspector); at 390 px their grids scroll sideways with whole
+  values. `DESIGN.md` documents each layout; products copy structure from
+  these rather than the clones.
 - **`useResource`** (`medallion-terminal-core/app`), the cached read
   product pages build on without a query library: one request per key
   however many components read it, a read nobody waits for is aborted,
@@ -160,36 +196,47 @@ from toolkit exports are the reference for product pages.
   that wait, and `createResourceCache`, `ResourceCacheProvider`,
   `useResourceCache().invalidate` and `resourceKey`. Unread entries are
   dropped oldest first past `maxEntries` (100).
-- A `bytes` property kind (`48.2 kB`, numeric, end-aligned) for
-  `PropertyValue`, `PropertyList` and `DataGrid` columns.
-- `CodeView` colours JSON, YAML and SQL (keys, strings, numbers, literals,
-  keywords, comments) line by line with the `--mtc-code-*` tokens; lines
-  over 2,000 characters and other languages stay plain.
-- `SessionEnvironment` takes injectable `setTimeout` and `clearTimeout`
-  (with the `VisibilitySource` type), so hosts and tests drive the renewal
-  schedule without patching globals.
+- `StatusTone` type; message keys for copy, values, property panels, the
+  grid and its editor, links, graphs, navigation, search, paging, toasts
+  and activity (en and zh-CN).
 - Tests that measure layout, not only pixels: the table widget and the
   flagship watchlist must show every column with no sideways overflow and
-  no cut number, graph text must land at 11 px or more on screen (fitted and
-  zoomed out, desktop and phone), the schema graph must open with the
-  selected type in view on a phone; unit tests for the column fit, rank
-  skipping routes, session renewal timing and hidden-page timers, the
-  resource cache, the code tokenizer and button hover contrast in every
-  theme. New baselines: the table, `object_view`, `text` and `trade`
-  widgets, CodeView highlighting and `useResource`.
+  no cut number; graph text must land at 11 px or more on screen (fitted
+  and zoomed out, desktop and phone); the schema graph must open with the
+  selected type in view on a phone; every template grid at 1440 px and
+  390 px, the `Narrow columns` DataGrid story and the `record_grid` stories
+  at seven widths from 1440 px to 390 px fail on a box that clips a value
+  unless it is a block container ending in `text-overflow: ellipsis`, on a
+  value cut at its cell's top or bottom, on a chip label cut short and on a
+  status dot or icon squeezed to nothing; and every `record_grid` editor
+  (text, a choice, a user, a number, a date, a date and time, Yes/No, a
+  multi-select, several users, long text, and each while a save is
+  pending) must show its whole control and every focus ring inside the
+  visible area in the standard and compact densities. Unit tests for the
+  column fit, rank-skipping routes, session renewal timing and hidden-page
+  timers, the resource cache, the code tokenizer, button hover contrast in
+  every theme, the style guard's rules and where a record field's editor
+  opens.
+- Baselines (dark, light, and compact for the property panel and the
+  DataGrid) and exact text snapshots for every new story, among them the
+  table, `object_view`, `text` and `trade` widgets, `record_grid` lists and
+  both of its editor layouts, CodeView highlighting and `useResource`.
 
 ### Changed
 
 - `PropertyList` renders values through `PropertyValue`: numbers are
   grouped, booleans read Yes/No with an icon, lists are chips and nested
   objects open in a disclosure instead of printing JSON. Items accept
-  `kind` and `format`.
+  `kind` and `format`. In the stacked phone layout its values no longer
+  inherit the browser's 40 px definition indent, so they line up with
+  their labels and use the full width.
 - The root entry's archetype placeholder for loading widgets is now
   `WidgetSkeleton`; `Skeleton` is the toolkit placeholder.
 - Declarations exclude every `*.fixture.ts`.
 - **`file_browser` on the toolkit.** The list is a `DataGrid` (one tab stop,
-  keyboard selection, sortable columns, formatted sizes and dates instead of
-  raw ISO), the toolbar uses `Breadcrumbs`, `SearchField`, `Button` and
+  keyboard selection, sortable columns, typed and content-sized name, type,
+  size and modified columns with formatted sizes and dates instead of raw
+  ISO), the toolbar uses `Breadcrumbs`, `SearchField`, `Button` and
   `Pagination`, the upload dialog is the toolkit `Dialog` (focus trapped
   and restored), icons replace emoji, and the preview overlay renders
   through `FilePreview` (bounded, signature-checked). New extension points
@@ -198,14 +245,29 @@ from toolkit exports are the reference for product pages.
   stable `data-mtc-*` hooks replace host DOM surgery. Payloads and options
   are unchanged.
 - **`record_grid` on `DataGrid`**: one tab stop instead of a button per
-  cell, `aria-sort` headers, Enter selects the record, F2 or a double-click
-  edits a cell in place (Enter saves, Escape cancels; the editor fills the
-  cell, its field is named after the column, and focus returns to the cell
-  when it closes), toolkit search, view and New controls, and `Pagination`
-  for client pages.
+  cell, `aria-sort` headers, Enter selects the record, toolkit search, view
+  and New controls, and `Pagination` for client pages. F2 or a
+  double-click edits a cell instead of a click: text, numbers, dates, a
+  single choice and Yes/No edit in the cell at the row's height, while a
+  multi-select, several users or links, and long text open in a dialog
+  over the cell (Shift+Enter adds a line to long text). Enter or Save
+  saves, Escape or Cancel cancels, the field is named after its column,
+  and focus returns to the cell.
+- `record_grid`, `record_board`, `record_calendar` and `record_form`
+  values render through `PropertyValue`: dates and times are Intl-formatted
+  in the scope's locale and time zone (a bare date no longer shows as ISO),
+  choices are filled chips or status badges like every other enum, Yes/No
+  carry an icon, and links use the toolkit link style. A list in a grid row
+  stays on one line: two chips and a "+N" chip whose title names the rest,
+  instead of up to four chips wrapping in the cell, and choice and list
+  columns keep their width instead of giving way like text. Board cards
+  and forms still show up to four, with the same titled "+N" instead of an
+  untitled 10 px one.
+- A list box's chosen options (a `record_form` or `record_grid`
+  multi-select) take the accent colours in every theme instead of the
+  browser's system selection colours.
 - The widgets' `CursorPager` renders the toolkit `Pagination` in cursor
   mode.
-- `DataGrid` double-click edits the cell when `onCellEdit` is set.
 - The Dashboard's Ctrl/⌘ K palette is rebuilt on the toolkit
   `CommandPalette`: typed commands still apply on Enter, and suggestions,
   saved views and recent commands are keyboard-reachable options. Its
@@ -214,17 +276,12 @@ from toolkit exports are the reference for product pages.
   cycles where they block the traversal (the node with the fewest unmet
   incoming edges is released), so a cyclic graph lays out in layers instead
   of stacking its cycle in one final rank.
-- Text sort keys compare with one shared `Intl.Collator` (a 10,000-row text
-  sort went from ~500 ms to ~30 ms).
 - **Widgets follow the v2 type scale.** No widget, dashboard chrome or
   toolkit-built example renders text under 11 px (the `--mtc-font-size-xs`
   step; the clone showcases are fidelity references with their own type,
-  see `DESIGN.md`, Typography); SVG
-  and chart axis labels are 11 px; small labels are sentence case without
-  letter spacing instead of uppercase micro-caps (the catalog's "live"
-  badge reads "Live"). The style guard's legacy budget for sizes and
-  tracking is now zero, so any new sub-11 px size fails lint, in
-  `examples/` too.
+  see `DESIGN.md`, Typography); SVG and chart axis labels are 11 px; small
+  labels are sentence case without letter spacing instead of uppercase
+  micro-caps (the catalog's "live" badge reads "Live").
 - **`object_view` on the object components**: `ObjectHeader` (compact),
   `PropertyPanel` (typed values, filter) and `LinkPanel` (links grouped by
   link type) replace the bespoke header, key-value list and link list;
@@ -232,156 +289,46 @@ from toolkit exports are the reference for product pages.
 - **`table` on `DataGrid`**: one tab stop and keyboard navigation, windowed
   rows, `aria-sort` headers, typed number cells; heat shading, signed
   colours, row flashes, search, CSV export and paging keep their options.
+  Its columns are sized to their content (only a sparkline column is
+  fixed), the label column takes the spare width and gives way first, and
+  text ends in an ellipsis, so the flagship dashboard's watchlist still
+  shows Sym, Last, Chg%, Vol and Trend at 1440 px. Heat tints are at most
+  25% (they were 35%), and a signed value on a tint uses its soft tone, so
+  it keeps 4.5:1.
 - **`text` bodies are Markdown** (sanitised with DOMPurify, loaded lazily,
   plain text until it loads); `options.markdown: false` keeps raw text.
 - `trade` resolves `${ctx.*}` placeholders in `options.symbol` and
   `options.quote_unit`, like every other template string (the example
   ticket no longer shows a literal `${ctx.symbol}`); the amount and price
   inputs are labelled and shrink so a narrow ticket keeps its unit.
-- A currency value's code is its own word for assistive technology
-  ("$284,000.00 USD", not "$284,000.00USD").
-- In the stacked phone layout, property values (`PropertyList`,
-  `PropertyPanel`) no longer inherit the browser's 40 px definition indent,
-  so they line up with their labels and use the full width.
-- The browser suite waits for a story's play function to finish and the
-  preview's loading overlay to clear before it compares or interacts, so no
-  baseline captures a half-played story or a spinner, and it re-reads an
-  empty accessibility tree for a few seconds before failing.
-- Regenerated for the widget alignment: `dashboard-{mobile,tablet}`,
-  `readiness-{dark,light}`, `toolkitDatabase-*`, `toolkitTableViewer-*`,
-  `toolkitHostIntent-*` and `toolkitObjectPage-*-mobile` screenshots, and
-  the `dashboard-*`, `readiness`, `toolkitObjectPage*`,
-  `toolkitPropertyPanel` and `toolkitPropertyValues` text snapshots.
 - Text that was drawn in the border colour (code browser line numbers,
   days outside the month, empty board lanes, path separators) uses the
   muted text colours, and decorative separators are hidden from assistive
   technology.
-
-- **The `table` widget fits its width again.** Its columns are sized to
-  their content (only a sparkline column is fixed), the label column takes
-  the spare width and gives way first, and text truncates with an ellipsis,
-  so the flagship dashboard's watchlist shows Sym, Last, Chg%, Vol and
-  Trend at 1440 px as it did in 0.6.0. Heat tints are at most 25%, and a
-  signed value on a tint uses its soft tone, so it keeps 4.5:1.
-- **Graphs keep their text at its type size.** `LinkGraph` and
-  `SchemaGraph` scale their geometry (still fitted to at least 80%) but not
-  their labels, which never render under 11 px, are truncated to the room
-  they have, and are hidden in a zoomed-out overview. A graph larger than
-  its frame opens with the selected type (or the centre object) in view,
-  zoom keeps the frame's centre, and a schema edge that skips ranks is
-  routed through the gaps between the nodes it passes, with its label on
-  that straight run.
-- `record_grid`, `record_board`, `record_calendar` and `record_form`
-  values render through `PropertyValue`: dates and times are Intl-formatted
-  in the scope's locale and time zone (a bare date no longer shows as ISO),
-  choices are filled chips or status badges like every other enum, Yes/No
-  carry an icon, and links use the toolkit link style.
-- `file_browser` sizes, modified times, types and names are typed,
-  content-sized columns; the page templates, previews and stories drop
-  their fixed column widths, and the product shell's phone layout keeps its
-  numbers whole.
-- On phones the product shell's operations tray is a summary bar above the
-  status bar and the inspector sheet sits above it, so neither covers the
-  other until the tray is opened.
 - The Kelly example widget is built on toolkit controls (`FormField`,
   `Input`, `ButtonGroup`, `StatTile`) with sentence-case labels and no text
-  under 11 px, and the style guard now scans `examples/` (the clone
-  showcases, with their own authored stylesheets, keep only the story-frame
-  rule) and rejects uppercase and letter-spaced labels as well.
-- The browser suite addresses the page templates by their exact story ids.
-
-- **`DataGrid` text gives way only when every column then fits;
-  otherwise the grid scrolls.** When even the text columns' minimums leave
-  the grid too wide (a phone, a pane beside an inspector), every column
-  keeps its content width and the grid scrolls sideways, so a grid never
-  both shortens text and scrolls. Text columns are plain text, ids, code,
-  URL and email links, and custom `cell` content unless its column
-  declares a `kind`; columns of numbers, dates, Yes/No and chips (the
-  `enum`, `list` and `link` kinds) keep their width. What is still
-  narrower than its content (a text column that gave way, a set or resized
-  width, content past 360 px) is shortened like this: typed values end in
-  an ellipsis (chip and badge labels too, the status dot keeping its size,
-  and list chips before the "+N" chip); custom `cell` content ends in one
-  when it is inline in its one-line box (text, chips), while a block or
-  flex layout inside that box is cut without one unless it truncates its
-  own label. A list shows its first items (two in a grid) and a "+N" chip
-  whose title names the rest; those items are not in the cell's text. A
-  cell cut short gives a pointer its text as the cell's title and shows
-  its content unclipped over the cell on keyboard focus (Escape hides it);
-  the cell's accessible name is its text, the whole value except for the
-  items behind a "+N".
-- The Storage template's Buckets grid drops its Usage column, which
-  repeated Used as a percentage, and the Files template collapses the rail
-  (its folder tree navigates) and drops the Kind column (the icon carries
-  the kind; the inspector still lists it), so both show every value whole
-  at 1440 px. The Object explorer keeps every value whole and scrolls its
-  last column beside the inspector, as the explorer reference layout does.
-  At 390 px every template grid scrolls sideways with whole values.
-- Layout-measuring tests: every template grid at 1440 px and 390 px, and a
-  new `Narrow columns` DataGrid story (dark and light baselines), fail on a
-  box that clips a value unless it is a block container ending in
-  `text-overflow: ellipsis`, and on a status dot or icon squeezed to
-  nothing; at 1440 px no template value may be cut short at all. The
-  column-fit unit test now holds the scroll-instead case.
-- **`record_grid` chips stay whole on one line.** Choice columns (single
-  select, users and links with choices) declare the `enum` kind and list
-  columns (multi-select, or any field that allows several values) the
-  `list` kind, so they keep their width instead of giving way like text
-  (Stage and Priority no longer read "Deli…" and "Urg…" beside a wide
-  title column). A list in a grid row shows two chips and a "+N" chip
-  whose title names the rest, on one line: it used to show up to four
-  chips that wrapped onto a second line inside the 32 px row, cut at its
-  top and bottom with no ellipsis or title. Board cards and forms still
-  show up to four, now also with a titled "+N" chip. Several users or
-  links are one chip each, by their choice labels, instead of one chip of
-  the joined ids ("jules, noah").
-- **The `record_grid` inline editor fills its cell again.** The 0.7.0 grid
-  put it in the one-line ellipsis box, where it shrank to its content (210
-  of 780 px) and the box clipped its focus ring. `DataGrid`'s new
-  `editingCell` renders the open editor outside that box, one-line fields
-  take the row height less 2 px on each side in every density, and focus
-  rings inside the editor are drawn within each control. While it is open
-  the editor's controls are the grid's tab stop, Enter and Space on Save or
-  Cancel press them instead of activating or selecting the row, and when
-  it closes (Enter, Escape, Save or Cancel) focus returns to the cell. The
-  editor's field is named after its column for assistive technology.
-- The Files template names a folder's kind to assistive technology ("Folder
-  2026") through its icon, now that the grid has no Kind column; files
-  keep their extension.
-- The style guard holds the page templates (`src/templates/`, stories
-  included) to every production rule, the 11 px floor and sentence-case
-  labels among them, as `DESIGN.md` says; other stories still get only the
-  story-frame rule.
-- The browser suite's grid layout check also fails on a value cut at its
-  cell's top or bottom (chips wrapped onto a second line, content taller
-  than the row) and ignores visually hidden text; it now covers the
-  `record_grid` stories at seven widths from 1440 px to 390 px, with no
-  chip label cut short. A new test measures the inline editor against its
-  cell and its focus rings against the visible area in the standard and
-  compact densities. New baselines: `widgetRecordGridEditing` and
-  `widgetRecordGridLists` (dark and light).
-- The style guard catches CSS `font-size` and `font` declarations and
-  inline or SVG `fontSize` values under 11 px, and Tailwind `text-[Nrem]`
-  sizes; its rules live in `scripts/style-token-rules.mjs` with unit tests.
-  The clone showcases stay outside the type rules on purpose (`DESIGN.md`,
-  Typography, and `examples/clones/README.md`): they reproduce another
-  product's density from their own stylesheets as fidelity references.
-- Re-recorded baselines. Changed by the grid fix: the Object explorer,
-  Files and Storage templates at both widths and the Connect, Operations
-  and Object type phone templates; new: `toolkitDataGridNarrow`. Stale
-  (their render had changed since they were recorded but stayed inside the
-  0.3% pixel tolerance; found by re-recording every baseline twice and
-  keeping the differences that repeat): the desktop Schema graph template
-  and `toolkitSchemaGraph` (11 px graph text, edges routed around nodes),
-  `toolkitLinkGraph`, `toolkitTextPreview` (JSON colours),
-  `toolkitPropertyList`, `toolkitPropertyPanel` (and compact),
-  `toolkitPropertyValues`, `toolkitSkeletonCopy`, `toolkitPageHeader`,
-  `toolkitScopedRegistry`, `toolkitHostIntent`, `toolkitModelWorkbench`,
-  `toolkitObjectWorkbench`, `toolkitAppSurface`, the four `toolkitShell*`
-  stories (formatted sizes), `toolkitDataGridActions`,
-  `toolkitDataGridEmpty`, `widgetFileBrowser`, `readiness`, and the Object
-  view and `toolkitObjectPage` phone baselines. Differences of a few
-  anti-aliased pixels that vary from run to run were left as they are.
+  under 11 px.
+- **The style guard is stricter.** Its legacy budget for sizes and
+  tracking is zero, so any new sub-11 px size fails lint; it catches CSS
+  `font-size` and `font` declarations, inline and SVG `fontSize` values
+  under 11 px and Tailwind `text-[Nrem]` sizes, and rejects uppercase and
+  letter-spaced labels; it scans `examples/` and holds the page templates
+  (`src/templates/`, stories included) to every production rule, while
+  other stories and the clone showcases (fidelity references with their own
+  stylesheets; `DESIGN.md`, Typography, and `examples/clones/README.md`)
+  keep only the story-frame rule. Its rules live in
+  `scripts/style-token-rules.mjs` with unit tests.
+- The browser suite waits for a story's play function to finish and the
+  preview's loading overlay to clear before it compares or interacts, so no
+  baseline captures a half-played story or a spinner, and it re-reads an
+  empty accessibility tree for a few seconds before failing.
+- Re-recorded baselines: the `dashboard-{mobile,tablet}`,
+  `readiness-{dark,light}`, `toolkitAppSurface-*`, `toolkitDatabase-*`,
+  `toolkitHostIntent-*`, `toolkitModelWorkbench-*`,
+  `toolkitObjectWorkbench-*`, `toolkitPropertyList-*`,
+  `toolkitScopedRegistry-*` and `toolkitTableViewer-*` screenshots, and
+  the `dashboard-*`, `readiness`, `toolkitHostIntent` and
+  `toolkitPropertyList` text snapshots.
 
 ### Fixed
 
@@ -391,11 +338,8 @@ from toolkit exports are the reference for product pages.
   turning to the foreground colour, 1.96:1 in light and 3.49:1 in dark);
   hover moves the fill away from the text colour instead, and a unit test
   holds 4.5:1 in every theme.
-- A malformed percent escape in a deep link is no route match instead of a
-  `URIError` thrown during render.
-- A session that expires more than about 24.8 days out no longer renews at
-  once (the timer delay overflowed); long waits are taken in steps.
-- Embed navigation refuses `/\host` paths as it refuses `//host`.
+- Several users or links in a record value are one chip each, by their
+  choice labels, instead of one chip of the joined ids ("jules, noah").
 
 ### Removed
 

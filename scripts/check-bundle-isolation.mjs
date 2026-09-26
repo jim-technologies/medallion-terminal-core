@@ -28,12 +28,12 @@ const checks = [
     // layer (~20 KiB): object components, the windowed data grid, link
     // panels and SVG graphs, navigation, search, the palette, toasts, file
     // previews and the code view, plus (~3 KiB) content-fitted grid
-    // columns, graph routing and the text floor, and the JSON/YAML/SQL
-    // highlighter. Still no chart, map, media or dashboard code, and
-    // consumers tree-shake what they do not import.
+    // columns, graph routing and the text floor, the JSON/YAML/SQL
+    // highlighter and the grid's overlay editor. Still no chart, map, media
+    // or dashboard code, and consumers tree-shake what they do not import.
     label: 'toolkit',
     entry: path.join(root, 'dist/toolkit.js'),
-    maxStaticGzipBytes: 46 * 1024,
+    maxStaticGzipBytes: 47 * 1024,
     requireDynamicImport: false,
   },
   {
