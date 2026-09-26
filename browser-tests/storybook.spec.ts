@@ -108,17 +108,21 @@ interface StoryOptions {
   theme?: StoryTheme
   /** Storybook `density` global; omitted keeps the preview default. */
   density?: StoryDensity
+  /** Render at FIXED_NOW (baseline tests). */
+  pinClock?: boolean
 }
 
-// Every story renders at one wall-clock instant, so live clocks, relative
-// times ("3 min ago") and "today" markers are identical on every run and
-// every day. Timers still run in real time; only `Date` is pinned.
+// Baseline stories render at one wall-clock instant, so live clocks,
+// relative times ("3 min ago") and "today" markers are identical on every
+// run and every day. Timers still run in real time; only `Date` is pinned.
+// Behaviour and axe tests keep the real clock: the pinned one delays the
+// Storybook a11y addon's own axe run until it overlaps the gate's.
 const FIXED_NOW = new Date('2026-07-22T18:45:00Z')
 
-async function openStory(page: Page, id: string, { theme = 'dark', density }: StoryOptions = {}) {
+async function openStory(page: Page, id: string, { theme = 'dark', density, pinClock = false }: StoryOptions = {}) {
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
-  await page.clock.setFixedTime(FIXED_NOW)
+  if (pinClock) await page.clock.setFixedTime(FIXED_NOW)
   const globals = [`theme:${theme}`, density && `density:${density}`].filter(Boolean).join(';')
   await page.goto(`/iframe.html?id=${id}&viewMode=story&globals=${globals}`)
   // The vendored fonts load asynchronously (font-display: swap); settle them
@@ -151,7 +155,10 @@ async function openStory(page: Page, id: string, { theme = 'dark', density }: St
 // change fails the gate until the snapshot is regenerated on purpose. It is
 // taken after the screenshot, which waits for the page to settle.
 async function expectAriaBaseline(root: Locator, name: string) {
-  expect(await root.ariaSnapshot()).toMatchSnapshot(`${name}.yml`)
+  const snapshot = await root.ariaSnapshot()
+  // Never compare, or record, a story that has not rendered.
+  expect(snapshot.trim(), `accessibility tree of ${name}`).not.toBe('')
+  expect(snapshot).toMatchSnapshot(`${name}.yml`)
 }
 
 async function expectBaseline(root: Locator, name: string) {
@@ -396,7 +403,7 @@ for (const viewport of [
 ]) {
   test(`Dashboard ${viewport.name} layout stays within the viewport`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
-    const root = await openStory(page, stories.dashboard)
+    const root = await openStory(page, stories.dashboard, { pinClock: true })
     const dimensions = await root.evaluate(element => ({
       clientWidth: element.clientWidth,
       scrollWidth: element.scrollWidth,
@@ -498,14 +505,14 @@ for (const [name, id] of Object.entries({
   gitlabPipeline: stories.gitlabPipeline,
 })) {
   test(`${name} visual baseline`, async ({ page }) => {
-    const root = await openStory(page, id)
+    const root = await openStory(page, id, { pinClock: true })
     await expectBaseline(root, name)
   })
 }
 
 for (const name of themeInvariantToolkitStories) {
   test(`${name} visual baseline`, async ({ page }) => {
-    const root = await openStory(page, toolkitStories[name])
+    const root = await openStory(page, toolkitStories[name], { pinClock: true })
     await expectBaseline(root, name)
   })
 }
@@ -516,7 +523,7 @@ for (const name of themeInvariantToolkitStories) {
 for (const theme of ['dark', 'light'] as const) {
   for (const [name, id] of [...themedToolkitStories, ['readiness', stories.readiness] as const]) {
     test(`${name} ${theme} visual baseline`, async ({ page }) => {
-      const root = await openStory(page, id, { theme })
+      const root = await openStory(page, id, { theme, pinClock: true })
       await expect(root).toHaveScreenshot(`${name}-${theme}.png`)
       if (theme === 'dark') await expectAriaBaseline(root, name)
     })

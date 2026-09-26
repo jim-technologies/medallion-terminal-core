@@ -172,11 +172,12 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   anti-aliasing tolerance. (A local revert of the typed-error rendering,
   which brings back "Unable to load · HTTP 403 · Retry" in the payroll
   widget, differs from the readiness baseline by 0.12% of its pixels and
-  passes the pixel check; the text check fails it.) Stories render at one
-  pinned wall-clock instant (`page.clock.setFixedTime`), so live clocks and
-  relative times are identical on every run and every day, and a Storybook
-  "failed to load the preview" page fails the test instead of being compared
-  or recorded as a baseline.
+  passes the pixel check; the text check fails it.) Baseline stories render
+  at one pinned wall-clock instant (`page.clock.setFixedTime`), so live
+  clocks and relative times are identical on every run and every day, while
+  behaviour and axe tests keep the real clock. A Storybook "failed to load
+  the preview" page, or a story with an empty accessibility tree, fails the
+  test instead of being compared or recorded as a baseline.
 - **Light visual baselines.** The Playwright gate renders every themed
   toolkit story and the production-readiness workspace in dark and light
   (`browser-tests/__screenshots__/${story}-${theme}.png`) and runs axe on
