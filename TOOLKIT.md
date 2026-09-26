@@ -247,6 +247,22 @@ items accept `kind` and `format`.
 - `SplitPane`: pointer and keyboard resizing with narrow-screen stacking.
 - `Inspector`: arbitrary selection details.
 - `PropertyList`: safe presentation of arbitrary values.
+- `DataGrid`: the toolkit's one table (it is also the "resource table" the
+  product UIs list files, records and trees in). A WAI-ARIA grid with a
+  single tab stop and roving cell focus: arrows, Home/End (Ctrl for the
+  corners), PageUp/PageDown, Enter to activate a row (or follow its link),
+  Space to select, Shift+arrows and Shift+click for ranges, Ctrl+A,
+  the Menu key or Shift+F10 for `contextActions`, F2 for `onCellEdit`.
+  Columns (`DataGridColumn`) sort (client, or `sortMode="server"`), resize
+  by drag or Alt+arrows, pin to the start and render typed values through
+  `PropertyValue` unless they supply `cell`. `rowHref` puts one link per row
+  on the primary column; `onNavigate` routes a plain click. Rows have one
+  fixed height, so above 200 rows (`virtualize="auto"`) only the rows in
+  view render: ten thousand rows stay under 1,500 DOM nodes.
+  `onEndReached` fires once per page as the last rows scroll into view
+  (with `totalRows` when known); `loading` shows skeleton rows or a
+  loading-more row; `empty` replaces the default empty state; `rowProps`
+  adds stable `data-*` hooks.
 - `Tree`: stable IDs, selection, expansion, and keyboard navigation.
 - `EmptyState`, `LoadingState`, `ErrorState`: shared bounded states.
   `ErrorState` also takes `error`, a typed `SourceError`, and then leads with

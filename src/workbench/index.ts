@@ -9,6 +9,8 @@ export { SplitPane } from './SplitPane'
 export type { SplitPaneProps } from './SplitPane'
 export { Tree } from './Tree'
 export type { TreeItem, TreeProps } from './Tree'
+export { DataGrid } from './DataGrid'
+export type { DataGridCellContext, DataGridColumn, DataGridProps, DataGridSort } from './DataGrid'
 export { PropertyList } from './PropertyList'
 export type { PropertyListItem, PropertyListProps } from './PropertyList'
 export {

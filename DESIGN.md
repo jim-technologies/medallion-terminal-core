@@ -200,6 +200,7 @@ snapshots.
 | `PropertyPanel` | An object's properties | Grouped rows with 11 px muted group labels, a 160 px label column, "n of m" with a filter |
 | `ObjectHeader` | An object's identity | 40 px `TypeGlyph`, type eyebrow in the type colour, mono id with copy, 20/600 title, status and metadata; `compact` for inspectors and hover cards |
 | `ObjectChip` | Inline object references | 16 px glyph plus title; a link in the link colour when it has an `href` |
+| `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
 
 **Typed values.** `PropertyValue` decides presentation from `kind` or
 `format`: strings clamp to two lines in panels and one in grids; `id` and

@@ -61,6 +61,12 @@ export declare const EN_MESSAGES: {
     readonly 'propertyPanel.filter': 'Filter properties';
     readonly 'propertyPanel.noMatch': 'No properties match “{query}”';
     readonly 'objectHeader.copyId': 'Copy ID';
+    readonly 'dataGrid.selectAll': 'Select all rows';
+    readonly 'dataGrid.selectRow': 'Select {label}';
+    readonly 'dataGrid.empty': 'No rows';
+    readonly 'dataGrid.loading': 'Loading rows';
+    readonly 'dataGrid.loadingMore': 'Loading more rows';
+    readonly 'dataGrid.rowActions': 'Actions for {label}';
 };
 /** A key in the toolkit message catalog. */
 export type MessageKey = keyof typeof EN_MESSAGES;

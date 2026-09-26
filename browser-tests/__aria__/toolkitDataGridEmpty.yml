@@ -1,0 +1,26 @@
+- main:
+  - text: Toolkit · Workbench
+  - heading "Empty and loading" [level=1]
+  - paragraph: "A dense ARIA grid: one tab stop, arrow keys, Space to select, Shift for ranges, Enter to open, the Menu key for row actions. Headers sort and resize; above 200 rows only the rows in view render."
+  - region "Empty and loading component example":
+    - grid "Loading orders":
+      - rowgroup:
+        - row "Event Kind Amount Recorded":
+          - columnheader "Event"
+          - columnheader "Kind"
+          - columnheader "Amount"
+          - columnheader "Recorded"
+      - rowgroup:
+        - row "Loading rows":
+          - gridcell "Loading rows"
+    - grid "Filtered orders":
+      - rowgroup:
+        - row "Event Kind Amount Recorded":
+          - columnheader "Event"
+          - columnheader "Kind"
+          - columnheader "Amount"
+          - columnheader "Recorded"
+      - rowgroup:
+        - row "No rows":
+          - gridcell "No rows"
+  - text: Theme and density inherit from the scoped toolkit root.

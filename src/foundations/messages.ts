@@ -61,6 +61,12 @@ export const EN_MESSAGES = {
   'propertyPanel.filter': 'Filter properties',
   'propertyPanel.noMatch': 'No properties match “{query}”',
   'objectHeader.copyId': 'Copy ID',
+  'dataGrid.selectAll': 'Select all rows',
+  'dataGrid.selectRow': 'Select {label}',
+  'dataGrid.empty': 'No rows',
+  'dataGrid.loading': 'Loading rows',
+  'dataGrid.loadingMore': 'Loading more rows',
+  'dataGrid.rowActions': 'Actions for {label}',
 } as const
 
 /** A key in the toolkit message catalog. */
@@ -128,6 +134,12 @@ export const ZH_CN_MESSAGES: MessageCatalog = {
   'propertyPanel.filter': '筛选属性',
   'propertyPanel.noMatch': '没有与“{query}”匹配的属性',
   'objectHeader.copyId': '复制 ID',
+  'dataGrid.selectAll': '选择所有行',
+  'dataGrid.selectRow': '选择 {label}',
+  'dataGrid.empty': '没有行',
+  'dataGrid.loading': '正在加载行',
+  'dataGrid.loadingMore': '正在加载更多行',
+  'dataGrid.rowActions': '{label} 的操作',
 }
 
 const BUILT_IN_CATALOGS: Readonly<Record<string, MessageCatalog>> = {

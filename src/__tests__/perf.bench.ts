@@ -264,3 +264,28 @@ describe('evaluateAlert', () => {
     for (const a of alerts) evaluateAlert(metricData, a)
   })
 })
+
+// DataGrid windowing and client sort over ten thousand rows. The window is
+// computed on every scroll frame; sorting runs when a header is activated.
+// Targets: rowWindow ≥ 1,000,000 ops/sec; a 10k-row numeric sort under
+// 20 ms and a text sort (one shared collator) under 50 ms.
+describe('DataGrid model (10,000 rows)', async () => {
+  const { rowWindow, sortRows } = await import('../workbench/dataGridModel')
+  const rows = Array.from({ length: 10_000 }, (_, index) => ({
+    id: index,
+    amount: (index * 7919) % 100_000,
+    name: `report-${(index * 31) % 10_000}`,
+  }))
+
+  bench('rowWindow at an arbitrary scroll offset', () => {
+    rowWindow(rows.length, 123_456, 480, 32, 8, true)
+  })
+
+  bench('sortRows by a numeric column', () => {
+    sortRows(rows, { id: 'amount' }, 'descending')
+  })
+
+  bench('sortRows by a text column', () => {
+    sortRows(rows, { id: 'name' }, 'ascending')
+  })
+})

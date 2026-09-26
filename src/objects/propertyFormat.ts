@@ -228,11 +228,15 @@ export function propertySortKey(value: unknown, resolved: ResolvedKind, options:
   return formatPropertyText(value, resolved, options)
 }
 
+// One collator for every comparison: constructing one per `localeCompare`
+// call made a 10,000-row text sort take half a second.
+const COLLATOR = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+
 /** Compares two sort keys; empty values sort last in both directions. */
 export function compareSortKeys(left: number | string | null, right: number | string | null): number {
   if (left == null && right == null) return 0
   if (left == null) return 1
   if (right == null) return -1
   if (typeof left === 'number' && typeof right === 'number') return left - right
-  return String(left).localeCompare(String(right), undefined, { numeric: true, sensitivity: 'base' })
+  return COLLATOR.compare(String(left), String(right))
 }

@@ -1,0 +1,396 @@
+- main:
+  - text: Toolkit · Workbench
+  - heading "Typed object table" [level=1]
+  - paragraph: "A dense ARIA grid: one tab stop, arrow keys, Space to select, Shift for ranges, Enter to open, the Menu key for row actions. Headers sort and resize; above 200 rows only the rows in view render."
+  - region "Typed object table component example":
+    - grid "Customers":
+      - rowgroup:
+        - row "Select all rows Customer Customer ID Segment Annual contract value Health Renewal Status Account owner":
+          - columnheader "Select all rows":
+            - checkbox "Select all rows" [checked=mixed]
+          - columnheader "Customer"
+          - columnheader "Customer ID"
+          - columnheader "Segment"
+          - columnheader "Annual contract value"
+          - columnheader "Health"
+          - columnheader "Renewal"
+          - columnheader "Status"
+          - columnheader "Account owner"
+      - rowgroup:
+        - row "Select Northstar Labs Northstar Labs CUS-01842 Enterprise $284,000.00 92 Oct 3, 2026 Active Ada Morgan" [selected]:
+          - gridcell "Select Northstar Labs":
+            - checkbox "Select Northstar Labs" [checked]
+          - gridcell "Northstar Labs"
+          - gridcell "CUS-01842":
+            - code: CUS-01842
+          - gridcell "Enterprise"
+          - gridcell "$284,000.00"
+          - gridcell "92"
+          - gridcell "Oct 3, 2026":
+            - time: Oct 3, 2026
+          - gridcell "Active"
+          - gridcell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+        - row "Select Northwind Health Northwind Health CUS-01805 Mid-market $276,060.00 85 Nov 8, 2026 Active Daniel Reyes" [selected]:
+          - gridcell "Select Northwind Health":
+            - checkbox "Select Northwind Health" [checked]
+          - gridcell "Northwind Health"
+          - gridcell "CUS-01805":
+            - code: CUS-01805
+          - gridcell "Mid-market"
+          - gridcell "$276,060.00"
+          - gridcell "85"
+          - gridcell "Nov 8, 2026":
+            - time: Nov 8, 2026
+          - gridcell "Active"
+          - gridcell "Daniel Reyes":
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+        - row "Select North Harbor Freight North Harbor Freight CUS-01768 Startup $268,120.00 78 Dec 13, 2026 Active Naomie Park" [selected]:
+          - gridcell "Select North Harbor Freight":
+            - checkbox "Select North Harbor Freight" [checked]
+          - gridcell "North Harbor Freight"
+          - gridcell "CUS-01768":
+            - code: CUS-01768
+          - gridcell "Startup"
+          - gridcell "$268,120.00"
+          - gridcell "78"
+          - gridcell "Dec 13, 2026":
+            - time: Dec 13, 2026
+          - gridcell "Active"
+          - gridcell "Naomie Park":
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+        - row "Select Northgate Retail Northgate Retail CUS-01731 Enterprise $260,180.00 71 Oct 18, 2026 Active Ada Morgan" [selected]:
+          - gridcell "Select Northgate Retail":
+            - checkbox "Select Northgate Retail" [checked]
+          - gridcell "Northgate Retail"
+          - gridcell "CUS-01731":
+            - code: CUS-01731
+          - gridcell "Enterprise"
+          - gridcell "$260,180.00"
+          - gridcell "71"
+          - gridcell "Oct 18, 2026":
+            - time: Oct 18, 2026
+          - gridcell "Active"
+          - gridcell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+        - row "Select Cobalt Logistics Cobalt Logistics CUS-01694 Mid-market $247,400.00 64 Nov 23, 2026 Active Daniel Reyes":
+          - gridcell "Select Cobalt Logistics":
+            - checkbox "Select Cobalt Logistics"
+          - gridcell "Cobalt Logistics"
+          - gridcell "CUS-01694":
+            - code: CUS-01694
+          - gridcell "Mid-market"
+          - gridcell "$247,400.00"
+          - gridcell "64"
+          - gridcell "Nov 23, 2026":
+            - time: Nov 23, 2026
+          - gridcell "Active"
+          - gridcell "Daniel Reyes":
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+        - row "Select Juniper Analytics Juniper Analytics CUS-01657 Startup $239,460.00 88 Dec 3, 2026 Churned Naomie Park":
+          - gridcell "Select Juniper Analytics":
+            - checkbox "Select Juniper Analytics"
+          - gridcell "Juniper Analytics"
+          - gridcell "CUS-01657":
+            - code: CUS-01657
+          - gridcell "Startup"
+          - gridcell "$239,460.00"
+          - gridcell "88"
+          - gridcell "Dec 3, 2026":
+            - time: Dec 3, 2026
+          - gridcell "Churned"
+          - gridcell "Naomie Park":
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+        - row "Select Harbor & Pine Harbor & Pine CUS-01620 Enterprise $231,520.00 81 Oct 8, 2026 Active Ada Morgan":
+          - gridcell "Select Harbor & Pine":
+            - checkbox "Select Harbor & Pine"
+          - gridcell "Harbor & Pine"
+          - gridcell "CUS-01620":
+            - code: CUS-01620
+          - gridcell "Enterprise"
+          - gridcell "$231,520.00"
+          - gridcell "81"
+          - gridcell "Oct 8, 2026":
+            - time: Oct 8, 2026
+          - gridcell "Active"
+          - gridcell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+        - row "Select Meridian Foods Meridian Foods CUS-01583 Mid-market $223,580.00 74 Nov 13, 2026 Active Daniel Reyes":
+          - gridcell "Select Meridian Foods":
+            - checkbox "Select Meridian Foods"
+          - gridcell "Meridian Foods"
+          - gridcell "CUS-01583":
+            - code: CUS-01583
+          - gridcell "Mid-market"
+          - gridcell "$223,580.00"
+          - gridcell "74"
+          - gridcell "Nov 13, 2026":
+            - time: Nov 13, 2026
+          - gridcell "Active"
+          - gridcell "Daniel Reyes":
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+        - row "Select Quartz Mobility Quartz Mobility CUS-01546 Startup $210,800.00 67 Dec 18, 2026 Active Naomie Park":
+          - gridcell "Select Quartz Mobility":
+            - checkbox "Select Quartz Mobility"
+          - gridcell "Quartz Mobility"
+          - gridcell "CUS-01546":
+            - code: CUS-01546
+          - gridcell "Startup"
+          - gridcell "$210,800.00"
+          - gridcell "67"
+          - gridcell "Dec 18, 2026":
+            - time: Dec 18, 2026
+          - gridcell "Active"
+          - gridcell "Naomie Park":
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+        - row "Select Alder Street Clinics Alder Street Clinics CUS-01509 Enterprise $202,860.00 91 Oct 23, 2026 Active Ada Morgan":
+          - gridcell "Select Alder Street Clinics":
+            - checkbox "Select Alder Street Clinics"
+          - gridcell "Alder Street Clinics"
+          - gridcell "CUS-01509":
+            - code: CUS-01509
+          - gridcell "Enterprise"
+          - gridcell "$202,860.00"
+          - gridcell "91"
+          - gridcell "Oct 23, 2026":
+            - time: Oct 23, 2026
+          - gridcell "Active"
+          - gridcell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+        - row "Select Beacon Payroll Beacon Payroll CUS-01472 Mid-market $194,920.00 84 Nov 3, 2026 Active Daniel Reyes":
+          - gridcell "Select Beacon Payroll":
+            - checkbox "Select Beacon Payroll"
+          - gridcell "Beacon Payroll"
+          - gridcell "CUS-01472":
+            - code: CUS-01472
+          - gridcell "Mid-market"
+          - gridcell "$194,920.00"
+          - gridcell "84"
+          - gridcell "Nov 3, 2026":
+            - time: Nov 3, 2026
+          - gridcell "Active"
+          - gridcell "Daniel Reyes":
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+        - row "Select Cinder Robotics Cinder Robotics CUS-01435 Startup $186,980.00 77 Dec 8, 2026 Churned Naomie Park":
+          - gridcell "Select Cinder Robotics":
+            - checkbox "Select Cinder Robotics"
+          - gridcell "Cinder Robotics"
+          - gridcell "CUS-01435":
+            - code: CUS-01435
+          - gridcell "Startup"
+          - gridcell "$186,980.00"
+          - gridcell "77"
+          - gridcell "Dec 8, 2026":
+            - time: Dec 8, 2026
+          - gridcell "Churned"
+          - gridcell "Naomie Park":
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+        - row "Select Delta Orchard Delta Orchard CUS-01398 Enterprise $174,200.00 70 Oct 13, 2026 Active Ada Morgan":
+          - gridcell "Select Delta Orchard":
+            - checkbox "Select Delta Orchard"
+          - gridcell "Delta Orchard"
+          - gridcell "CUS-01398":
+            - code: CUS-01398
+          - gridcell "Enterprise"
+          - gridcell "$174,200.00"
+          - gridcell "70"
+          - gridcell "Oct 13, 2026":
+            - time: Oct 13, 2026
+          - gridcell "Active"
+          - gridcell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+        - row "Select Evergreen Tiles Evergreen Tiles CUS-01361 Mid-market $166,260.00 63 Nov 18, 2026 Active Daniel Reyes":
+          - gridcell "Select Evergreen Tiles":
+            - checkbox "Select Evergreen Tiles"
+          - gridcell "Evergreen Tiles"
+          - gridcell "CUS-01361":
+            - code: CUS-01361
+          - gridcell "Mid-market"
+          - gridcell "$166,260.00"
+          - gridcell "63"
+          - gridcell "Nov 18, 2026":
+            - time: Nov 18, 2026
+          - gridcell "Active"
+          - gridcell "Daniel Reyes":
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+        - row "Select Fjord Outfitters Fjord Outfitters CUS-01324 Startup $158,320.00 87 Dec 23, 2026 Active Naomie Park":
+          - gridcell "Select Fjord Outfitters":
+            - checkbox "Select Fjord Outfitters"
+          - gridcell "Fjord Outfitters"
+          - gridcell "CUS-01324":
+            - code: CUS-01324
+          - gridcell "Startup"
+          - gridcell "$158,320.00"
+          - gridcell "87"
+          - gridcell "Dec 23, 2026":
+            - time: Dec 23, 2026
+          - gridcell "Active"
+          - gridcell "Naomie Park":
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+        - row "Select Granite Ledger Granite Ledger CUS-01287 Enterprise $150,380.00 80 Oct 3, 2026 Active Ada Morgan":
+          - gridcell "Select Granite Ledger":
+            - checkbox "Select Granite Ledger"
+          - gridcell "Granite Ledger"
+          - gridcell "CUS-01287":
+            - code: CUS-01287
+          - gridcell "Enterprise"
+          - gridcell "$150,380.00"
+          - gridcell "80"
+          - gridcell "Oct 3, 2026":
+            - time: Oct 3, 2026
+          - gridcell "Active"
+          - gridcell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+        - row "Select Hollow Creek Farms Hollow Creek Farms CUS-01250 Mid-market $137,600.00 73 Nov 8, 2026 Active Daniel Reyes":
+          - gridcell "Select Hollow Creek Farms":
+            - checkbox "Select Hollow Creek Farms"
+          - gridcell "Hollow Creek Farms"
+          - gridcell "CUS-01250":
+            - code: CUS-01250
+          - gridcell "Mid-market"
+          - gridcell "$137,600.00"
+          - gridcell "73"
+          - gridcell "Nov 8, 2026":
+            - time: Nov 8, 2026
+          - gridcell "Active"
+          - gridcell "Daniel Reyes":
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+        - row "Select Ironbridge Works Ironbridge Works CUS-01213 Startup $129,660.00 66 Dec 13, 2026 Churned Naomie Park":
+          - gridcell "Select Ironbridge Works":
+            - checkbox "Select Ironbridge Works"
+          - gridcell "Ironbridge Works"
+          - gridcell "CUS-01213":
+            - code: CUS-01213
+          - gridcell "Startup"
+          - gridcell "$129,660.00"
+          - gridcell "66"
+          - gridcell "Dec 13, 2026":
+            - time: Dec 13, 2026
+          - gridcell "Churned"
+          - gridcell "Naomie Park":
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+        - row "Select Kestrel Aviation Kestrel Aviation CUS-01176 Enterprise $121,720.00 90 Oct 18, 2026 Active Ada Morgan":
+          - gridcell "Select Kestrel Aviation":
+            - checkbox "Select Kestrel Aviation"
+          - gridcell "Kestrel Aviation"
+          - gridcell "CUS-01176":
+            - code: CUS-01176
+          - gridcell "Enterprise"
+          - gridcell "$121,720.00"
+          - gridcell "90"
+          - gridcell "Oct 18, 2026":
+            - time: Oct 18, 2026
+          - gridcell "Active"
+          - gridcell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+        - row "Select Lumen Dental Lumen Dental CUS-01139 Mid-market $113,780.00 83 Nov 23, 2026 Active Daniel Reyes":
+          - gridcell "Select Lumen Dental":
+            - checkbox "Select Lumen Dental"
+          - gridcell "Lumen Dental"
+          - gridcell "CUS-01139":
+            - code: CUS-01139
+          - gridcell "Mid-market"
+          - gridcell "$113,780.00"
+          - gridcell "83"
+          - gridcell "Nov 23, 2026":
+            - time: Nov 23, 2026
+          - gridcell "Active"
+          - gridcell "Daniel Reyes":
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+        - row "Select Maple & Main Maple & Main CUS-01102 Startup $101,000.00 76 Dec 3, 2026 Active Naomie Park":
+          - gridcell "Select Maple & Main":
+            - checkbox "Select Maple & Main"
+          - gridcell "Maple & Main"
+          - gridcell "CUS-01102":
+            - code: CUS-01102
+          - gridcell "Startup"
+          - gridcell "$101,000.00"
+          - gridcell "76"
+          - gridcell "Dec 3, 2026":
+            - time: Dec 3, 2026
+          - gridcell "Active"
+          - gridcell "Naomie Park":
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+        - row "Select Nimbus Studios Nimbus Studios CUS-01065 Enterprise $93,060.00 69 Oct 8, 2026 Active Ada Morgan":
+          - gridcell "Select Nimbus Studios":
+            - checkbox "Select Nimbus Studios"
+          - gridcell "Nimbus Studios"
+          - gridcell "CUS-01065":
+            - code: CUS-01065
+          - gridcell "Enterprise"
+          - gridcell "$93,060.00"
+          - gridcell "69"
+          - gridcell "Oct 8, 2026":
+            - time: Oct 8, 2026
+          - gridcell "Active"
+          - gridcell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+        - row "Select Orchid Pharmacy Orchid Pharmacy CUS-01028 Mid-market $85,120.00 62 Nov 13, 2026 Active Daniel Reyes":
+          - gridcell "Select Orchid Pharmacy":
+            - checkbox "Select Orchid Pharmacy"
+          - gridcell "Orchid Pharmacy"
+          - gridcell "CUS-01028":
+            - code: CUS-01028
+          - gridcell "Mid-market"
+          - gridcell "$85,120.00"
+          - gridcell "62"
+          - gridcell "Nov 13, 2026":
+            - time: Nov 13, 2026
+          - gridcell "Active"
+          - gridcell "Daniel Reyes":
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+        - row "Select Prairie Solar Prairie Solar CUS-00991 Startup $77,180.00 86 Dec 18, 2026 Churned Naomie Park":
+          - gridcell "Select Prairie Solar":
+            - checkbox "Select Prairie Solar"
+          - gridcell "Prairie Solar"
+          - gridcell "CUS-00991":
+            - code: CUS-00991
+          - gridcell "Startup"
+          - gridcell "$77,180.00"
+          - gridcell "86"
+          - gridcell "Dec 18, 2026":
+            - time: Dec 18, 2026
+          - gridcell "Churned"
+          - gridcell "Naomie Park":
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+        - row "Select Riverbend Schools Riverbend Schools CUS-00954 Enterprise $64,400.00 79 Oct 23, 2026 Active Ada Morgan":
+          - gridcell "Select Riverbend Schools":
+            - checkbox "Select Riverbend Schools"
+          - gridcell "Riverbend Schools"
+          - gridcell "CUS-00954":
+            - code: CUS-00954
+          - gridcell "Enterprise"
+          - gridcell "$64,400.00"
+          - gridcell "79"
+          - gridcell "Oct 23, 2026":
+            - time: Oct 23, 2026
+          - gridcell "Active"
+          - gridcell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+    - text: 4 of 25 selected
+  - text: Theme and density inherit from the scoped toolkit root.

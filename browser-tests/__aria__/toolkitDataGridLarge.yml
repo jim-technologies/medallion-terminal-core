@@ -1,0 +1,175 @@
+- main:
+  - text: Toolkit · Workbench
+  - heading "Ten thousand rows" [level=1]
+  - paragraph: "A dense ARIA grid: one tab stop, arrow keys, Space to select, Shift for ranges, Enter to open, the Menu key for row actions. Headers sort and resize; above 200 rows only the rows in view render."
+  - region "Ten thousand rows component example":
+    - grid "Event log":
+      - rowgroup:
+        - row "Event Kind Amount Recorded":
+          - columnheader "Event"
+          - columnheader "Kind"
+          - columnheader "Amount"
+          - columnheader "Recorded"
+      - rowgroup:
+        - row "EVT-00001 Order placed $0.00 Aug 31, 2026, 5:00 PM":
+          - gridcell "EVT-00001":
+            - code: EVT-00001
+          - gridcell "Order placed"
+          - gridcell "$0.00"
+          - gridcell "Aug 31, 2026, 5:00 PM":
+            - time: Aug 31, 2026, 5:00 PM
+        - row "EVT-00002 Invoice sent $79.19 Aug 31, 2026, 5:01 PM":
+          - gridcell "EVT-00002":
+            - code: EVT-00002
+          - gridcell "Invoice sent"
+          - gridcell "$79.19"
+          - gridcell "Aug 31, 2026, 5:01 PM":
+            - time: Aug 31, 2026, 5:01 PM
+        - row "EVT-00003 Payment received $158.38 Aug 31, 2026, 5:02 PM":
+          - gridcell "EVT-00003":
+            - code: EVT-00003
+          - gridcell "Payment received"
+          - gridcell "$158.38"
+          - gridcell "Aug 31, 2026, 5:02 PM":
+            - time: Aug 31, 2026, 5:02 PM
+        - row "EVT-00004 Refund issued $237.57 Aug 31, 2026, 5:03 PM":
+          - gridcell "EVT-00004":
+            - code: EVT-00004
+          - gridcell "Refund issued"
+          - gridcell "$237.57"
+          - gridcell "Aug 31, 2026, 5:03 PM":
+            - time: Aug 31, 2026, 5:03 PM
+        - row "EVT-00005 Shipment delivered $316.76 Aug 31, 2026, 5:04 PM":
+          - gridcell "EVT-00005":
+            - code: EVT-00005
+          - gridcell "Shipment delivered"
+          - gridcell "$316.76"
+          - gridcell "Aug 31, 2026, 5:04 PM":
+            - time: Aug 31, 2026, 5:04 PM
+        - row "EVT-00006 Order placed $395.95 Aug 31, 2026, 5:05 PM":
+          - gridcell "EVT-00006":
+            - code: EVT-00006
+          - gridcell "Order placed"
+          - gridcell "$395.95"
+          - gridcell "Aug 31, 2026, 5:05 PM":
+            - time: Aug 31, 2026, 5:05 PM
+        - row "EVT-00007 Invoice sent $475.14 Aug 31, 2026, 5:06 PM":
+          - gridcell "EVT-00007":
+            - code: EVT-00007
+          - gridcell "Invoice sent"
+          - gridcell "$475.14"
+          - gridcell "Aug 31, 2026, 5:06 PM":
+            - time: Aug 31, 2026, 5:06 PM
+        - row "EVT-00008 Payment received $554.33 Aug 31, 2026, 5:07 PM":
+          - gridcell "EVT-00008":
+            - code: EVT-00008
+          - gridcell "Payment received"
+          - gridcell "$554.33"
+          - gridcell "Aug 31, 2026, 5:07 PM":
+            - time: Aug 31, 2026, 5:07 PM
+        - row "EVT-00009 Refund issued $633.52 Aug 31, 2026, 5:08 PM":
+          - gridcell "EVT-00009":
+            - code: EVT-00009
+          - gridcell "Refund issued"
+          - gridcell "$633.52"
+          - gridcell "Aug 31, 2026, 5:08 PM":
+            - time: Aug 31, 2026, 5:08 PM
+        - row "EVT-00010 Shipment delivered $712.71 Aug 31, 2026, 5:09 PM":
+          - gridcell "EVT-00010":
+            - code: EVT-00010
+          - gridcell "Shipment delivered"
+          - gridcell "$712.71"
+          - gridcell "Aug 31, 2026, 5:09 PM":
+            - time: Aug 31, 2026, 5:09 PM
+        - row "EVT-00011 Order placed $791.90 Aug 31, 2026, 5:10 PM":
+          - gridcell "EVT-00011":
+            - code: EVT-00011
+          - gridcell "Order placed"
+          - gridcell "$791.90"
+          - gridcell "Aug 31, 2026, 5:10 PM":
+            - time: Aug 31, 2026, 5:10 PM
+        - row "EVT-00012 Invoice sent $871.09 Aug 31, 2026, 5:11 PM":
+          - gridcell "EVT-00012":
+            - code: EVT-00012
+          - gridcell "Invoice sent"
+          - gridcell "$871.09"
+          - gridcell "Aug 31, 2026, 5:11 PM":
+            - time: Aug 31, 2026, 5:11 PM
+        - row "EVT-00013 Payment received $950.28 Aug 31, 2026, 5:12 PM":
+          - gridcell "EVT-00013":
+            - code: EVT-00013
+          - gridcell "Payment received"
+          - gridcell "$950.28"
+          - gridcell "Aug 31, 2026, 5:12 PM":
+            - time: Aug 31, 2026, 5:12 PM
+        - row "EVT-00014 Refund issued $29.47 Aug 31, 2026, 5:13 PM":
+          - gridcell "EVT-00014":
+            - code: EVT-00014
+          - gridcell "Refund issued"
+          - gridcell "$29.47"
+          - gridcell "Aug 31, 2026, 5:13 PM":
+            - time: Aug 31, 2026, 5:13 PM
+        - row "EVT-00015 Shipment delivered $108.66 Aug 31, 2026, 5:14 PM":
+          - gridcell "EVT-00015":
+            - code: EVT-00015
+          - gridcell "Shipment delivered"
+          - gridcell "$108.66"
+          - gridcell "Aug 31, 2026, 5:14 PM":
+            - time: Aug 31, 2026, 5:14 PM
+        - row "EVT-00016 Order placed $187.85 Aug 31, 2026, 5:15 PM":
+          - gridcell "EVT-00016":
+            - code: EVT-00016
+          - gridcell "Order placed"
+          - gridcell "$187.85"
+          - gridcell "Aug 31, 2026, 5:15 PM":
+            - time: Aug 31, 2026, 5:15 PM
+        - row "EVT-00017 Invoice sent $267.04 Aug 31, 2026, 5:16 PM":
+          - gridcell "EVT-00017":
+            - code: EVT-00017
+          - gridcell "Invoice sent"
+          - gridcell "$267.04"
+          - gridcell "Aug 31, 2026, 5:16 PM":
+            - time: Aug 31, 2026, 5:16 PM
+        - row "EVT-00018 Payment received $346.23 Aug 31, 2026, 5:17 PM":
+          - gridcell "EVT-00018":
+            - code: EVT-00018
+          - gridcell "Payment received"
+          - gridcell "$346.23"
+          - gridcell "Aug 31, 2026, 5:17 PM":
+            - time: Aug 31, 2026, 5:17 PM
+        - row "EVT-00019 Refund issued $425.42 Aug 31, 2026, 5:18 PM":
+          - gridcell "EVT-00019":
+            - code: EVT-00019
+          - gridcell "Refund issued"
+          - gridcell "$425.42"
+          - gridcell "Aug 31, 2026, 5:18 PM":
+            - time: Aug 31, 2026, 5:18 PM
+        - row "EVT-00020 Shipment delivered $504.61 Aug 31, 2026, 5:19 PM":
+          - gridcell "EVT-00020":
+            - code: EVT-00020
+          - gridcell "Shipment delivered"
+          - gridcell "$504.61"
+          - gridcell "Aug 31, 2026, 5:19 PM":
+            - time: Aug 31, 2026, 5:19 PM
+        - row "EVT-00021 Order placed $583.80 Aug 31, 2026, 5:20 PM":
+          - gridcell "EVT-00021":
+            - code: EVT-00021
+          - gridcell "Order placed"
+          - gridcell "$583.80"
+          - gridcell "Aug 31, 2026, 5:20 PM":
+            - time: Aug 31, 2026, 5:20 PM
+        - row "EVT-00022 Invoice sent $662.99 Aug 31, 2026, 5:21 PM":
+          - gridcell "EVT-00022":
+            - code: EVT-00022
+          - gridcell "Invoice sent"
+          - gridcell "$662.99"
+          - gridcell "Aug 31, 2026, 5:21 PM":
+            - time: Aug 31, 2026, 5:21 PM
+        - row "EVT-00023 Payment received $742.18 Aug 31, 2026, 5:22 PM":
+          - gridcell "EVT-00023":
+            - code: EVT-00023
+          - gridcell "Payment received"
+          - gridcell "$742.18"
+          - gridcell "Aug 31, 2026, 5:22 PM":
+            - time: Aug 31, 2026, 5:22 PM
+  - text: Theme and density inherit from the scoped toolkit root.

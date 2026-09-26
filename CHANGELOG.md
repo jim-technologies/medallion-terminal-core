@@ -23,8 +23,18 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   hover card). Shared types `ObjectRef`, `ObjectTypeRef`, `PropertyKind`
   and helpers `typePresentation`, `isObjectRef`, `resolvePropertyKind`,
   `formatPropertyText`, `propertySortKey`, `compareSortKeys`.
-- `StatusTone` type; message keys for copy, values and property panels (en
-  and zh-CN).
+- **`DataGrid`**, the toolkit table and the resource table the product UIs
+  build on: a windowed WAI-ARIA grid with one tab stop and roving cell
+  focus, typed cells, client or server sort, drag and Alt+arrow column
+  resize, pinned leading columns, single or multi selection with ranges,
+  row links (`rowHref`, `onNavigate`), row activation, context actions
+  (right-click, Menu key, Shift+F10), F2 editing, `onEndReached` paging
+  with `totalRows`, skeleton, loading-more and empty rows, and `rowProps`
+  data hooks. Above 200 rows only the rows in view render; a browser test
+  holds ten thousand rows under 1,500 DOM nodes at every scroll offset and
+  `perf.bench.ts` times the window and the sorts.
+- `StatusTone` type; message keys for copy, values, property panels and
+  the grid (en and zh-CN).
 - Baselines (dark, light, and compact for the property panel) and exact
   text snapshots for every new story.
 
@@ -37,6 +47,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - The root entry's archetype placeholder for loading widgets is now
   `WidgetSkeleton`; `Skeleton` is the toolkit placeholder.
 - Declarations exclude every `*.fixture.ts`.
+- Text sort keys compare with one shared `Intl.Collator` (a 10,000-row text
+  sort went from ~500 ms to ~30 ms).
 
 ## [0.6.0] — 2026-09-25
 

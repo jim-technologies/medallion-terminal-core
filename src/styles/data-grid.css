@@ -1,0 +1,107 @@
+/* DataGrid (0.7.0): a windowed ARIA grid. Rows have one fixed height (the
+   density's row height), so the body can be positioned without measuring
+   and ten thousand rows render as the few dozen in view. */
+
+.mtc-root .mtc-data-grid {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--mtc-border);
+  border-radius: var(--mtc-radius-md);
+  background: var(--mtc-surface);
+  color: var(--mtc-fg);
+  font-size: var(--mtc-font-size-md);
+  line-height: var(--mtc-line-height-md);
+}
+.mtc-root .mtc-data-grid-viewport { position: relative; min-height: 0; flex: 1 1 auto; overflow: auto; overscroll-behavior: contain; }
+.mtc-root .mtc-data-grid-head { position: sticky; z-index: 3; top: 0; min-width: var(--mtc-grid-min-width); }
+.mtc-root .mtc-data-grid-body { position: relative; min-width: var(--mtc-grid-min-width); }
+.mtc-root .mtc-data-grid-row {
+  display: grid;
+  min-width: var(--mtc-grid-min-width);
+  height: var(--mtc-grid-row-height);
+  grid-template-columns: var(--mtc-grid-template);
+  background: var(--mtc-surface);
+}
+.mtc-root .mtc-data-grid-body > .mtc-data-grid-row {
+  position: absolute;
+  right: 0;
+  left: 0;
+  border-bottom: 1px solid var(--mtc-border);
+}
+.mtc-root .mtc-data-grid-body > .mtc-data-grid-row:hover { background: var(--mtc-panel-hover); }
+.mtc-root .mtc-data-grid-body > .mtc-data-grid-row[data-selected="true"] { background: var(--mtc-selection); }
+.mtc-root .mtc-data-grid-body > .mtc-data-grid-row[data-selected="true"] > .mtc-data-grid-cell:first-child { box-shadow: inset 2px 0 0 var(--mtc-accent); }
+.mtc-root .mtc-data-grid-body > .mtc-data-grid-row[data-selected="true"]:hover { background: var(--mtc-selection-hover); }
+.mtc-root .mtc-data-grid-body > .mtc-data-grid-row[data-skeleton="true"] { pointer-events: none; }
+.mtc-root .mtc-data-grid-header-row { border-bottom: 1px solid var(--mtc-border-strong); box-shadow: var(--mtc-elevation-0); }
+
+.mtc-root .mtc-data-grid-cell {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--mtc-space-2);
+  padding: 0 var(--mtc-density-padding-x);
+  overflow: hidden;
+  background: inherit;
+  white-space: nowrap;
+}
+.mtc-root .mtc-data-grid-cell > * { min-width: 0; max-width: 100%; }
+.mtc-root .mtc-data-grid-cell[data-align="end"] { justify-content: flex-end; font-variant-numeric: tabular-nums; text-align: end; }
+.mtc-root .mtc-data-grid-cell[data-pinned="true"] { position: sticky; z-index: 1; }
+.mtc-root .mtc-data-grid-cell:focus-visible { z-index: 2; outline: 2px solid var(--mtc-accent); outline-offset: -2px; }
+.mtc-root .mtc-data-grid-header-cell {
+  color: var(--mtc-muted);
+  font-size: var(--mtc-font-size-sm);
+  font-weight: var(--mtc-font-weight-medium);
+  line-height: var(--mtc-line-height-sm);
+  user-select: none;
+}
+.mtc-root .mtc-data-grid-header-cell + .mtc-data-grid-header-cell { box-shadow: inset 1px 0 0 var(--mtc-border); }
+.mtc-root .mtc-data-grid-header-cell[data-sortable="true"] { cursor: pointer; }
+.mtc-root .mtc-data-grid-header-cell[data-sortable="true"]:hover { color: var(--mtc-fg); }
+.mtc-root .mtc-data-grid-header-cell[aria-sort="ascending"],
+.mtc-root .mtc-data-grid-header-cell[aria-sort="descending"] { color: var(--mtc-fg-soft); }
+.mtc-root .mtc-data-grid-header-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.mtc-root .mtc-data-grid-sort-icon { flex: 0 0 auto; width: 0.75rem; height: 0.75rem; }
+.mtc-root .mtc-data-grid-resize {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 0.5rem;
+  cursor: col-resize;
+  touch-action: none;
+}
+.mtc-root .mtc-data-grid-resize:hover { box-shadow: inset -2px 0 0 var(--mtc-accent); }
+.mtc-root .mtc-data-grid-select { justify-content: center; padding: 0; }
+.mtc-root .mtc-data-grid-select input { width: 0.875rem; height: 0.875rem; margin: 0; accent-color: var(--mtc-accent-strong); cursor: pointer; }
+.mtc-root .mtc-data-grid-row-link { display: flex; min-width: 0; max-width: 100%; align-items: center; gap: var(--mtc-space-2); color: inherit; }
+.mtc-root .mtc-data-grid-row-link:hover { text-decoration: underline; text-underline-offset: 2px; }
+.mtc-root .mtc-data-grid-status-row .mtc-data-grid-cell,
+.mtc-root .mtc-data-grid-empty-row .mtc-data-grid-cell { grid-column: 1 / -1; color: var(--mtc-muted); font-size: var(--mtc-font-size-sm); }
+.mtc-root .mtc-data-grid-body > .mtc-data-grid-empty-row { border-bottom: 0; }
+.mtc-root .mtc-data-grid-empty-row .mtc-data-grid-cell {
+  position: sticky;
+  left: 0;
+  width: var(--mtc-grid-viewport-width);
+  justify-content: center;
+  white-space: normal;
+}
+.mtc-root .mtc-data-grid-empty-row .mtc-state { width: 100%; }
+.mtc-root .mtc-data-grid-footer {
+  display: flex;
+  min-height: 2.25rem;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--mtc-space-2);
+  padding: 0 var(--mtc-space-3);
+  border-top: 1px solid var(--mtc-border);
+  color: var(--mtc-muted);
+  font-size: var(--mtc-font-size-sm);
+}
+.mtc-root .mtc-data-grid-menu-layer { position: fixed; z-index: 85; top: 0; left: 0; }

@@ -87,6 +87,10 @@ const toolkitStories = {
   toolkitObjectHeader: 'toolkit-objects-objectheader--object-page-header',
   toolkitInspectorHeader: 'toolkit-objects-objectheader--inspector-header',
   toolkitObjectChips: 'toolkit-objects-objectheader--chips-and-hover-cards',
+  toolkitDataGrid: 'toolkit-workbench-datagrid--typed-object-table',
+  toolkitDataGridLarge: 'toolkit-workbench-datagrid--ten-thousand-rows',
+  toolkitDataGridActions: 'toolkit-workbench-datagrid--context-actions-and-paging',
+  toolkitDataGridEmpty: 'toolkit-workbench-datagrid--empty-and-loading',
 } as const
 
 const stories = {
@@ -482,6 +486,36 @@ test('Database explorer filters, inspects, and presents schema and query workflo
   await expect(root.getByRole('status')).toContainText('execution remains host-owned')
 })
 
+test('DataGrid keeps ten thousand rows under 1,500 DOM nodes at every scroll offset', async ({ page }) => {
+  const root = await openStory(page, stories.toolkitDataGridLarge)
+  const grid = root.getByRole('grid', { name: 'Event log' })
+  await expect(grid).toHaveAttribute('aria-rowcount', '10001')
+  for (const fraction of [0, 0.25, 0.5, 0.75, 1]) {
+    await grid.evaluate((element, share) => {
+      element.scrollTop = (element.scrollHeight - element.clientHeight) * share
+    }, fraction)
+    await expect.poll(() => grid.evaluate(element => element.querySelectorAll('*').length)).toBeLessThan(1500)
+  }
+  await expect(grid.locator('[aria-rowindex="10001"]')).toBeVisible()
+})
+
+test('DataGrid moves one tab stop with the arrow keys and selects with Space', async ({ page }) => {
+  const root = await openStory(page, stories.toolkitDataGridLarge)
+  const grid = root.getByRole('grid', { name: 'Event log' })
+  // The story's own play ends back on the first cell with Ctrl+Home.
+  await expect(grid.locator('[data-cell="0:0"]')).toBeFocused()
+  await grid.locator('[data-cell="2:1"]').click()
+  await expect(grid.locator('[data-cell="2:1"]')).toBeFocused()
+  await expect(grid.locator('[tabindex="0"]')).toHaveCount(1)
+  await page.keyboard.press('PageDown')
+  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('Space')
+  await expect(grid.locator(':focus')).toHaveAttribute('data-cell', /^(?:[1-9]\d+):2$/)
+  await expect(grid.locator('[role="row"][aria-selected="true"]')).toHaveCount(1)
+  await page.keyboard.press('Tab')
+  await expect(grid.locator(':focus')).toHaveCount(0)
+})
+
 test('Database table viewer controls visible columns, sorting, paging, and row inspection', async ({ page }) => {
   const root = await openStory(page, stories.toolkitTableViewer)
 
@@ -559,6 +593,7 @@ for (const name of themeInvariantToolkitStories) {
 // compact text must equal the standard text snapshot.
 const compactToolkitStories = [
   'toolkitPropertyPanel',
+  'toolkitDataGrid',
 ] as const satisfies readonly (keyof typeof toolkitStories)[]
 
 for (const theme of ['dark', 'light'] as const) {
