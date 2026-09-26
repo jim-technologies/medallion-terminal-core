@@ -55,3 +55,22 @@ export declare function moveFocus(position: GridPosition, key: string, { rowCoun
     pageRows: number;
     ctrl: boolean;
 }): GridPosition | null;
+/** A column as the width fit sees it. */
+export interface FitColumn {
+    /** Its natural width: set, resized, or measured from its content. */
+    width: number;
+    /** The narrowest it may give way to. */
+    min: number;
+    /** Whether it gives way when the grid is too narrow (content-sized text). */
+    shrink: boolean;
+    /** Columns of a higher tier give way only once lower tiers are at their minimum. */
+    tier?: number;
+}
+/**
+ * Column widths that fit the available width. Columns keep their natural
+ * width when they all fit; otherwise the columns that may shrink give way,
+ * lowest tier first, each in proportion to how far it can (never below its
+ * minimum), and whatever still does not fit scrolls. Numbers, dates and set
+ * widths never shrink, so a value is never cut mid-number.
+ */
+export declare function fitColumnWidths(columns: readonly FitColumn[], available: number): number[];

@@ -273,8 +273,9 @@ colour slot, with `typePresentation` resolving the fallbacks) and is
 referenced by an `ObjectRef` (id, title, type, `href`).
 
 - `PropertyValue`: one value rendered by its kind (`string`, `id`, `code`,
-  `number`, `integer`, `currency`, `percent`, `date`, `datetime`, `boolean`,
-  `enum`, `list`, `object`, `link`, `url`, `email`); `context="grid"` keeps
+  `number`, `integer`, `currency`, `percent`, `bytes` (`48.2 kB`), `date`,
+  `datetime`, `boolean`, `enum`, `list`, `object`, `link`, `url`, `email`);
+  `context="grid"` keeps
   one compact line. `formatPropertyText`, `propertySortKey` and
   `compareSortKeys` give the same value as text and as a sort key.
 - `PropertyPanel`: grouped `PropertyDefinition`s in a `Panel` with a
@@ -305,6 +306,12 @@ referenced by an `ObjectRef` (id, title, type, `href`).
 
 Both graphs are plain SVG with no dependency: drag the background to pan,
 zoom with the buttons (or Ctrl/⌘ and the wheel), reset to the fitted view.
+Geometry scales and text does not: labels keep their type size (never under
+11 px) at every scale, are truncated to the room they have, and are hidden
+when zoomed out to an overview (the names stay in each node's accessible
+name). A graph larger than its frame opens with the selected type (or the
+centre object) in view, and a `SchemaGraph` edge that skips ranks runs
+through the gaps between the nodes it passes, never through one.
 
 `PropertyList` renders its values through `PropertyValue` as well, and its
 items accept `kind` and `format`.
@@ -325,7 +332,12 @@ items accept `kind` and `format`.
   the Menu key or Shift+F10 for `contextActions`, F2 for `onCellEdit`.
   Columns (`DataGridColumn`) sort (client, or `sortMode="server"`), resize
   by drag or Alt+arrows, pin to the start and render typed values through
-  `PropertyValue` unless they supply `cell`. `rowHref` puts one link per row
+  `PropertyValue` unless they supply `cell`. A column without a `width` is
+  sized to its content (its header and the rows in view, up to 360 px) and
+  fitted to the grid: spare width goes to the `grow` column, and when the
+  grid is too narrow its text columns give way (the primary column last,
+  down to `minWidth`) while numbers, dates and Yes/No keep their width, so
+  the grid scrolls sideways rather than cut a value. `rowHref` puts one link per row
   on the primary column; `onNavigate` routes a plain click. Rows have one
   fixed height, so above 200 rows (`virtualize="auto"`) only the rows in
   view render: ten thousand rows stay under 1,500 DOM nodes.
@@ -481,7 +493,32 @@ const productFetch = createProductFetch({ onRequest: requestTelemetry(telemetry)
 - **`OperationsTray`**: long-running `Operation`s (uploads, ingests,
   transactions, workflow runs) with status, progress, Cancel, Retry and
   Dismiss, a summary header, polite announcements of finished work, and a
-  bottom sheet on phones; `placement="inline"` renders it in a page.
+  bottom sheet on phones that starts collapsed to its summary bar (under the
+  inspector sheet, above the status bar); `placement="inline"` renders it in
+  a page.
+- **`useResource`**: the cached read product pages build on, instead of a
+  query library (no peer dependency):
+
+  ```tsx
+  const { data, error, status, validating, refresh, mutate } =
+    useResource(['objects', bucket, prefix], signal =>
+      productFetch(`/api/objects?${query}`, { signal }).then(ensureOk).then(r => r.json()),
+      { staleTimeMs: 30_000 })
+  ```
+
+  Every component that asks for a key (a string, or parts serialised in
+  order) shares its data and one request; a read nobody waits for any more
+  is aborted; failures are typed `SourceError`s (render them with
+  `SourceErrorState`); cached data shows at once and is revalidated in the
+  background when older than `staleTimeMs` (`status` stays `success`,
+  `validating` is true); `refreshIntervalMs` polls only while the page is
+  visible, and stale data reloads when the page comes back
+  (`revalidateOnVisible`). `mutate` sets data after a write (a response to
+  an older read is then ignored), `useResourceCache().invalidate(match)`
+  reloads the matching keys on screen, and `null` as the key waits. One
+  cache serves the page unless `ResourceCacheProvider` scopes one
+  (`createResourceCache({ maxEntries })`; unread entries beyond the bound
+  are dropped oldest first).
 
 ## Host integration
 

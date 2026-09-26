@@ -91,13 +91,17 @@ the semantic roles below. The standalone embed accepts the same presets with
 Production code uses these variables or the shared `widgets/colors.ts`
 exports. Hard-coded colours belong only in a canvas library's documented
 fallback or a Storybook fixture; `scripts/check-style-tokens.mjs` (run by
-`pnpm lint`) enforces this with a ratcheting budget for the remaining
-legacy sites.
+`pnpm lint`) enforces this, the 11 px floor and sentence-case labels across
+`src/` and the examples (the clone showcases keep their own authored
+stylesheets), with a ratcheting budget for the remaining legacy sites.
 
 **Contrast.** `themeColors.test.ts` checks every theme: text roles at 4.5:1
 on the canvas, surfaces, quiet fill and selection; `--mtc-muted-subtle` at
 3:1; status soft text on its tint, `--mtc-on-accent` on
-`--mtc-accent-strong`, `--mtc-on-scrim` on a 70% black scrim over a white
+`--mtc-accent-strong` at rest and on hover (a solid button keeps its
+on-colour on hover and its fill moves away from it, toward
+`--mtc-accent-hover-mix` or `--mtc-solid-hover-mix`, so hover never lowers
+contrast), `--mtc-on-scrim` on a 70% black scrim over a white
 image, every type slot on its chip, and code tokens at 4.5:1;
 control boundaries, graph edges, the primary fill and chart colours at 3:1.
 State must also carry a label, icon, shape or position cue; colour alone is
@@ -119,7 +123,9 @@ for status.
   `Noto Sans CJK SC`, `Microsoft YaHei`), then `system-ui`. Mono is
   JetBrains Mono. Both are vendored (SIL OFL 1.1) so every host renders the
   same glyphs.
-- **Scale.** These are the only sizes; nothing is smaller than 11 px.
+- **Scale.** These are the only sizes; nothing is smaller than 11 px, in
+  scaled drawings too: graph text keeps its size when a graph is fitted or
+  zoomed out, and is hidden rather than shrunk in an overview.
 
 | Token | Size / line | Weight | Use |
 |---|---|---|---|
@@ -202,8 +208,8 @@ snapshots.
 | `ObjectChip` | Inline object references | 16 px glyph plus title; a link in the link colour when it has an `href` |
 | `ObjectPage` | An object's page | Breadcrumbs, the `ObjectHeader`, section tabs (Overview, Properties, Links, History) on the page gutter; Overview is a two-column grid of property, link, graph and activity panels |
 | `LinkPanel` | An object's relationships | One group per link type: relation, arrow (← for incoming), target type glyph and name, count; the first three objects with their detail; "View all" |
-| `LinkGraph` | The object's one-hop neighbourhood | Deterministic radial sectors per link type, relation on the middle edge, at most 40 nodes with "+N", dashed incoming edges, labels radial when the ring is dense; 1:1 scale fitted to at least 80%, pan and zoom |
-| `SchemaGraph` | The ontology's types and link types | Layered left to right, type glyph, name and count per node, curved directed edges with labels, back edges routed around nodes, the selected type highlighted |
+| `LinkGraph` | The object's one-hop neighbourhood | Deterministic radial sectors per link type, relation on the middle edge, at most 40 nodes with "+N", dashed incoming edges, labels radial when the ring is dense; 1:1 scale fitted to at least 80% with text at its type size, the object kept in view, pan and zoom |
+| `SchemaGraph` | The ontology's types and link types | Layered left to right, type glyph, name and count per node, curved directed edges with labels, back edges and rank-skipping edges routed through the gaps between nodes (a skipping edge's label on its straight run), the selected type highlighted and kept in view |
 | `NavRail` | The shell's left navigation | 232 px (48 collapsed), sections with 11 px labels, 28 px items with an icon or type glyph and a count, the current item on `--mtc-selection` with a 2 px accent bar |
 | `PageHeader` | The top of every page | Breadcrumbs, a 16/600 title (or an `ObjectHeader`), description, actions, an optional tab strip; flat, optionally sticky |
 | `SearchField` | Search boxes | 32 px, control boundary, search icon, type-pill tokens, clear, a `/` focus hint |
@@ -217,7 +223,7 @@ snapshots.
 | `CodeView` | Source, logs and raw JSON | Monospace 12 px on a 20 px line, muted line numbers that are never copied, wrap with a hanging indent, highlighted lines as selection plus accent bar |
 | `ProductShell` | The frame of every product UI | 44 px top bar (product mark, scope, centred search with `Ctrl K`, account), 232 px rail (48 collapsed, a drawer on phones), page, optional 360 px inspector, 24 px status bar; flat, one border between regions |
 | `OperationsTray` | Uploads, ingests and other long work | A raised tray at the bottom end (a sheet on phones), summary header, status icon per row, a 4 px accent progress bar, Cancel, Retry and Dismiss |
-| `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
+| `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, columns sized to their content and fitted to the width (text gives way, numbers and dates never cut; the grid scrolls instead), selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
 
 **Typed values.** `PropertyValue` decides presentation from `kind` or
 `format`: strings clamp to two lines in panels and one in grids; `id` and

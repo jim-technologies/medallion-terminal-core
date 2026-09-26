@@ -1,0 +1,7 @@
+- button "Buy"
+- button "Sell"
+- text: BTCUSDTavail 0.842BTC Amount
+- spinbutton "Amount"
+- text: BTC Price
+- spinbutton "Price"
+- button "Buy BTC" [disabled]

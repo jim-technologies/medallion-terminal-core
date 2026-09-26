@@ -28,6 +28,11 @@ export interface OperationsTrayProps {
     onClearFinished?: () => void;
     /** Controlled expansion. */
     open?: boolean;
+    /**
+     * Initial expansion when uncontrolled: open on larger screens, collapsed
+     * to its summary on phones (720 px and narrower), where the sheet would
+     * cover the page.
+     */
     defaultOpen?: boolean;
     onOpenChange?: (open: boolean) => void;
     /**
@@ -38,7 +43,8 @@ export interface OperationsTrayProps {
 }
 /**
  * Long-running operations in a tray at the bottom end of the screen (a
- * bottom sheet on phones): a summary header that expands to the list, with
+ * bottom sheet on phones, collapsed to its summary until opened): a summary
+ * header that expands to the list, with
  * progress, Cancel and Retry. Status changes are announced politely. The
  * tray only renders while there are operations, and it never polls: the
  * host feeds it.

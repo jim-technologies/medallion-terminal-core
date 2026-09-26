@@ -5,7 +5,10 @@ export interface CodeViewProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
     code: string;
     /** Accessible name of the code region, such as the file path. */
     label: string;
-    /** Language name shown in the toolbar. */
+    /**
+     * Language name shown in the toolbar. JSON, YAML and SQL (and their usual
+     * aliases and extensions) are also highlighted.
+     */
     language?: string;
     /** Lines rendered at most; the rest is summarised (5,000 when unset). */
     maxLines?: number;
@@ -28,7 +31,8 @@ export interface CodeViewProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
 /**
  * Read-only source with line numbers (CSS counters, so selecting and copying
  * text never picks them up), a wrap toggle with a hanging indent, a copy
- * action for the whole source, and a bounded line count. Text renders as
- * React text nodes; nothing is interpreted.
+ * action for the whole source, a bounded line count, and token colours for
+ * JSON, YAML and SQL (line by line, long lines plain). Text renders as React
+ * text nodes; nothing is interpreted.
  */
 export declare const CodeView: import("react").ForwardRefExoticComponent<CodeViewProps & import("react").RefAttributes<HTMLDivElement>>;

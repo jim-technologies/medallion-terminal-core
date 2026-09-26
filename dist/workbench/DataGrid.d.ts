@@ -29,9 +29,18 @@ export interface DataGridColumn<Row> {
     tones?: Readonly<Record<string, StatusTone>>;
     /** Custom cell content. Keep it one line; rows have a fixed height. */
     cell?: (row: Row, context: DataGridCellContext) => ReactNode;
-    /** Initial width in pixels (160 when unset). */
+    /**
+     * Width in pixels. Unset, the column is sized to its content (its header
+     * and the rows in view, at most 360 px), and a text column gives way when
+     * the grid is narrower than its columns; numbers, dates and Yes/No never
+     * do, so the grid scrolls rather than cut a value.
+     */
     width?: number;
-    /** Narrowest width a resize may reach (48 when unset). */
+    /**
+     * Narrowest width: a resize stops here (48 when unset), and a
+     * content-sized text column never gives way below it (72 when unset, 96
+     * for the primary column, which gives way last).
+     */
     minWidth?: number;
     /** Takes the remaining width; the last column grows when none does. */
     grow?: boolean;

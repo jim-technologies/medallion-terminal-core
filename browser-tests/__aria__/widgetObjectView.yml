@@ -1,0 +1,45 @@
+- text: Customer
+- code: cust-1042
+- button "Copy ID"
+- status
+- heading "Acme Corp" [level=3]
+- text: Active
+- paragraph: Enterprise customer assembled from CRM, billing, product, and support systems.
+- list:
+  - listitem: enterprise
+  - listitem: west
+  - listitem: Updated Jul 16, 7:30 AM
+- region "Properties":
+  - heading "Properties" [level=4]
+  - text: 6 of 6
+  - group "Commercial":
+    - term: Tier
+    - definition: Enterprise
+    - term: ARR
+    - definition: $1,250,000.00 USD
+    - term: Renewal
+    - definition: 2026-11-30
+  - group "Signals":
+    - term: Churn risk
+    - definition: 18.0%
+    - term: Health score
+    - definition: "87"
+  - group "Operations":
+    - term: Regions
+    - definition: US-West EU-Central
+- region "Relationships":
+  - heading "Relationships" [level=4]
+  - text: 2 link types · 2 objects
+  - region "Owns Account":
+    - text: Owns Account 1
+    - list:
+      - listitem:
+        - button "Primary account"
+  - region "Has contact Person":
+    - text: Has contact Person 1
+    - list:
+      - listitem:
+        - button "Taylor Morgan"
+- region "Actions":
+  - button "Open case"
+  - button "Archive"

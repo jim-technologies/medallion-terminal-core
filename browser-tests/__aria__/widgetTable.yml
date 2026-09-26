@@ -1,0 +1,44 @@
+- grid "Table data":
+  - rowgroup:
+    - row "Sym Last Chg% Vol Trend":
+      - columnheader "Sym"
+      - columnheader "Last"
+      - columnheader "Chg%"
+      - columnheader "Vol"
+      - columnheader "Trend"
+  - rowgroup:
+    - row "BTC $67,842.5 +1.84% 4,823":
+      - gridcell "BTC"
+      - gridcell "$67,842.5"
+      - gridcell "+1.84%"
+      - gridcell "4,823"
+      - gridcell:
+        - img
+    - row "ETH $3,456.1 +0.81% 2,410":
+      - gridcell "ETH"
+      - gridcell "$3,456.1"
+      - gridcell "+0.81%"
+      - gridcell "2,410"
+      - gridcell:
+        - img
+    - row "SOL $168.2 +3.92% 980.0":
+      - gridcell "SOL"
+      - gridcell "$168.2"
+      - gridcell "+3.92%"
+      - gridcell "980.0"
+      - gridcell:
+        - img
+    - row "LINK $14.62 -0.42% 180.0":
+      - gridcell "LINK"
+      - gridcell "$14.62"
+      - gridcell "-0.42%"
+      - gridcell "180.0"
+      - gridcell:
+        - img
+    - row "DOGE $0.156 +4.30% 6,500":
+      - gridcell "DOGE"
+      - gridcell "$0.156"
+      - gridcell "+4.30%"
+      - gridcell "6,500"
+      - gridcell:
+        - img

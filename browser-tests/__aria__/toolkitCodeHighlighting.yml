@@ -1,0 +1,14 @@
+- main:
+  - text: Toolkit · Files
+  - heading "CodeView highlighting" [level=1]
+  - paragraph: "Bounded, safe previews: text read at most 1 MB, CSV at most 1,000 × 100 into a windowed grid, images and PDFs only with a valid signature, HTML and SVG never rendered, Markdown sanitised."
+  - region "CodeView highlighting component example":
+    - text: SQL 8 lines
+    - checkbox "Wrap lines"
+    - text: Wrap lines
+    - code: "-- Renewals due this quarter SELECT c.name, c.segment, SUM(o.amount) AS booked FROM customers AS c JOIN orders o ON o.customer_id = c.\"id\" WHERE o.status = 'open' AND o.amount > 1000.50 AND c.churned IS NOT NULL GROUP BY c.name, c.segment ORDER BY booked DESC LIMIT 20;"
+    - text: YAML 9 lines
+    - checkbox "Wrap lines"
+    - text: Wrap lines
+    - code: "# Pipeline settings name: nightly-ingest schedule: \"0 4 * * *\" retries: 3 enabled: true owner: ~ targets: - warehouse: lake tables: [orders, customers]"
+  - text: Theme and density inherit from the scoped toolkit root.

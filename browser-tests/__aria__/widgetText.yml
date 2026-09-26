@@ -1,0 +1,16 @@
+- article:
+  - heading "Morning brief" [level=3]
+  - paragraph:
+    - text: Rates held;
+    - strong: the curve steepened
+    - text: by 6 bp.
+  - list:
+    - listitem:
+      - text: Watch
+      - code: 2s10s
+      - text: into the auction
+    - listitem:
+      - text: Funding stayed
+      - link "calm":
+        - /url: https://example.com/funding
+  - paragraph: Inline HTML keeps its text, not its handlers. unsafe

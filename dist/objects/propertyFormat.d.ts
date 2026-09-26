@@ -1,8 +1,9 @@
 /**
  * How a property value is presented. Formats refine kinds: `currency:EUR`,
- * `percent` (a 0-1 ratio), `date`, `datetime`, `id`, `code`, `url`, `email`.
+ * `percent` (a 0-1 ratio), `bytes` (a byte count, `48.2 kB`), `date`,
+ * `datetime`, `id`, `code`, `url`, `email`.
  */
-export type PropertyKind = 'string' | 'id' | 'code' | 'number' | 'integer' | 'currency' | 'percent' | 'date' | 'datetime' | 'boolean' | 'enum' | 'list' | 'object' | 'link' | 'url' | 'email';
+export type PropertyKind = 'string' | 'id' | 'code' | 'number' | 'integer' | 'currency' | 'percent' | 'bytes' | 'date' | 'datetime' | 'boolean' | 'enum' | 'list' | 'object' | 'link' | 'url' | 'email';
 /** A kind with its format arguments resolved. */
 export interface ResolvedKind {
     kind: PropertyKind;
@@ -39,7 +40,7 @@ export interface PropertyTextOptions {
     /** Word for `false`; defaults to "No". */
     no?: string;
 }
-/** A number in the kind's format (grouped, currency, percent). */
+/** A number in the kind's format (grouped, currency, percent, bytes). */
 export declare function formatNumericValue(amount: number, resolved: ResolvedKind, locale?: string): string;
 /** A date in the kind's format: `Oct 18, 2026`, or with the time. */
 export declare function formatDateValue(parsed: {

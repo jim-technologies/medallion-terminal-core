@@ -110,12 +110,14 @@ const toolkitStories = {
   toolkitImagePreview: 'toolkit-files--signature-checks',
   toolkitTextPreview: 'toolkit-files--source-and-text',
   toolkitCodeView: 'toolkit-files--code-view-controls',
+  toolkitCodeHighlighting: 'toolkit-files--code-view-highlighting',
   toolkitShell: 'toolkit-app-productshell--standalone-shell',
   toolkitShellExpired: 'toolkit-app-productshell--session-expired',
   toolkitShellSignedOut: 'toolkit-app-productshell--signed-out',
   toolkitShellEmbedded: 'toolkit-app-productshell--embedded-page',
   toolkitShellMinimal: 'toolkit-app-productshell--without-session',
   toolkitOperationsTray: 'toolkit-app-productshell--operations-tray-states',
+  toolkitResource: 'toolkit-app-useresource--cached-and-deduplicated',
   toolkitObjectPage: 'toolkit-objects-objectpage--customer-object-page',
 } as const
 
@@ -124,19 +126,23 @@ const toolkitStories = {
 const widgetStories = {
   widgetFileBrowser: 'widgets-filebrowser--host-extensions',
   widgetRecordGrid: 'widgets-records-recordgrid--default',
+  widgetTable: 'widgets-datatable--watchlist-fit',
+  widgetObjectView: 'widgets-objectview--customer-object',
+  widgetText: 'widgets-text--markdown-body',
+  widgetTrade: 'widgets-trade--spot-trade',
 } as const
 
 // Page templates are whole pages composed only from the toolkit entry:
 // themed baselines at 1440 and phone baselines at 390, in both themes.
 const templateStories = {
-  templateObjectExplorer: 'templates-pages--object-explorer',
-  templateObjectView: 'templates-pages--object-view',
-  templateObjectType: 'templates-pages--object-type',
-  templateSchemaGraph: 'templates-pages--schema-graph',
-  templateFiles: 'templates-pages--files',
-  templateOperations: 'templates-pages--operations',
-  templateStorage: 'templates-pages--storage',
-  templateConnect: 'templates-pages--connect',
+  templateObjectExplorer: 'templates-pages--object-explorer-page',
+  templateObjectView: 'templates-pages--object-view-page',
+  templateObjectType: 'templates-pages--object-type-page',
+  templateSchemaGraph: 'templates-pages--schema-graph-page',
+  templateFiles: 'templates-pages--files-page',
+  templateOperations: 'templates-pages--operations-page',
+  templateStorage: 'templates-pages--storage-page',
+  templateConnect: 'templates-pages--connect-page',
 } as const
 
 const stories = {
@@ -669,6 +675,56 @@ test('Files template previews the selected file in the inspector', async ({ page
   await expect(inspector.getByRole('grid')).toHaveCount(0)
 })
 
+// The smallest graph text as it lands on screen: its font size times the
+// scale of the drawing it sits in. Hidden (overview) labels do not count.
+async function smallestGraphText(page: Page): Promise<{ size: number; text: string | null }> {
+  return page.evaluate(() => {
+    let smallest = { size: Infinity, text: null as string | null }
+    for (const text of document.querySelectorAll<SVGTextElement>('#storybook-root svg text')) {
+      const style = getComputedStyle(text)
+      if (style.display === 'none' || text.getBBox().width === 0) continue
+      const matrix = text.getScreenCTM()
+      if (!matrix) continue
+      const size = parseFloat(style.fontSize) * Math.hypot(matrix.a, matrix.b)
+      if (size < smallest.size) smallest = { size: Math.round(size * 100) / 100, text: text.textContent }
+    }
+    return smallest
+  })
+}
+
+for (const width of [1440, 390]) {
+  test(`Graph labels never render under 11 px at ${width} px, fitted or zoomed out`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    for (const id of [
+      templateStories.templateSchemaGraph,
+      templateStories.templateObjectType,
+      templateStories.templateObjectView,
+      toolkitStories.toolkitLinkGraph,
+      toolkitStories.toolkitLinkGraphCapped,
+      toolkitStories.toolkitSchemaGraph,
+    ]) {
+      const root = await openStory(page, id)
+      const fitted = await smallestGraphText(page)
+      expect(fitted.size, `${id} fitted: ${fitted.text}`).toBeGreaterThanOrEqual(11)
+      await root.getByRole('button', { name: 'Zoom out' }).first().click()
+      const zoomed = await smallestGraphText(page)
+      expect(zoomed.size, `${id} zoomed out: ${zoomed.text}`).toBeGreaterThanOrEqual(11)
+    }
+  })
+}
+
+test('Schema graph on a phone opens with the selected type in view', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  const root = await openStory(page, templateStories.templateSchemaGraph)
+  const graph = root.getByRole('group', { name: /graph/i }).first()
+  const frame = (await graph.boundingBox())!
+  const selected = (await graph.locator('[aria-current="true"]').boundingBox())!
+  expect(selected.x).toBeGreaterThanOrEqual(frame.x)
+  expect(selected.x + selected.width).toBeLessThanOrEqual(frame.x + frame.width)
+  expect(selected.y).toBeGreaterThanOrEqual(frame.y)
+  expect(selected.y + selected.height).toBeLessThanOrEqual(frame.y + frame.height)
+})
+
 test('CopyButton confirms a copy with a polite status', async ({ page }) => {
   const root = await openStory(page, stories.toolkitSkeletonCopy)
   const actions = root.getByRole('region', { name: 'Copy actions' })
@@ -676,6 +732,28 @@ test('CopyButton confirms a copy with a polite status', async ({ page }) => {
   await expect(actions.getByRole('status').first()).toHaveText('Copied')
   await expect(actions.getByRole('button', { name: 'Copy hash' }).locator('path')).toHaveAttribute('d', 'm5 12 4 4L19 6')
   await expect(actions.getByRole('status').first()).toHaveText('', { timeout: 3000 })
+})
+
+// Column fit is measured from layout, not pixels: a column pushed behind a
+// horizontal scroll looks tidy in a screenshot and still fails here.
+test('The flagship watchlist shows every column whole at 1440 px', async ({ page }) => {
+  const root = await openStory(page, 'examples-complete-dashboards--medallion-terminal')
+  const grid = root.locator('.mtc-widget').filter({ hasText: 'Watchlist' }).getByRole('grid')
+  await expect(grid.getByRole('columnheader')).toHaveText(['Sym', 'Last', 'Chg%', 'Vol', 'Trend'])
+  const fit = await grid.evaluate(element => {
+    const edge = element.getBoundingClientRect().right
+    const cut = (node: Element) => node instanceof HTMLElement && node.scrollWidth > node.clientWidth + 1
+    return {
+      overflow: element.scrollWidth - element.clientWidth,
+      hiddenHeaders: [...element.querySelectorAll('[role="columnheader"]')]
+        .filter(header => header.getBoundingClientRect().right > edge + 1)
+        .map(header => header.textContent),
+      clipped: [...element.querySelectorAll('[role="gridcell"]')]
+        .filter(cell => cut(cell) || [...cell.querySelectorAll('*')].some(cut))
+        .map(cell => cell.textContent),
+    }
+  })
+  expect(fit).toEqual({ overflow: 0, hiddenHeaders: [], clipped: [] })
 })
 
 test('DataGrid keeps ten thousand rows under 1,500 DOM nodes at every scroll offset', async ({ page }) => {

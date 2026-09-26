@@ -1,3 +1,3 @@
 import { c as e, i as t, l as n, n as r, o as i, r as a, s as o, t as s, u as c } from "./sourceError-BwpI_4dr.js";
-import { At as l, Mt as u, Nt as d, Ot as f, jt as p, kt as m, n as h, r as g, t as _ } from "./MultiDashboard-_VMaZFFO.js";
+import { At as l, Mt as u, Nt as d, Ot as f, jt as p, kt as m, n as h, r as g, t as _ } from "./MultiDashboard-Byp4f_rB.js";
 export { l as BUILTIN_KEYS, g as Dashboard, f as DashboardContext, _ as MultiDashboard, s as SourceError, p as createWidgetRegistry, r as describeSourceError, u as getWidget, a as isSourceError, t as parseRetryAfter, d as registerWidget, i as responseRequestId, o as sourceErrorFromResponse, e as sourceErrorKindForCode, n as sourceErrorKindForStatus, c as toSourceError, m as useDashboard, h as useTabFromUrl };

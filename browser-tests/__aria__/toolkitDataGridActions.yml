@@ -10,564 +10,564 @@
           - columnheader "Size"
           - columnheader "Modified"
       - rowgroup:
-        - row "report-001.csv 12,733 Sep 2, 2026":
+        - row "report-001.csv 12.7 kB Sep 2, 2026":
           - gridcell "report-001.csv":
             - link "report-001.csv":
               - /url: "#/files/f-1"
-          - gridcell "12,733"
+          - gridcell "12.7 kB"
           - gridcell "Sep 2, 2026":
             - time: Sep 2, 2026
-        - row "report-002.csv 13,466 Sep 3, 2026":
+        - row "report-002.csv 13.5 kB Sep 3, 2026":
           - gridcell "report-002.csv":
             - link "report-002.csv":
               - /url: "#/files/f-2"
-          - gridcell "13,466"
+          - gridcell "13.5 kB"
           - gridcell "Sep 3, 2026":
             - time: Sep 3, 2026
-        - row "report-003.csv 14,199 Sep 4, 2026":
+        - row "report-003.csv 14.2 kB Sep 4, 2026":
           - gridcell "report-003.csv":
             - link "report-003.csv":
               - /url: "#/files/f-3"
-          - gridcell "14,199"
+          - gridcell "14.2 kB"
           - gridcell "Sep 4, 2026":
             - time: Sep 4, 2026
-        - row "report-004.csv 14,932 Sep 5, 2026":
+        - row "report-004.csv 14.9 kB Sep 5, 2026":
           - gridcell "report-004.csv":
             - link "report-004.csv":
               - /url: "#/files/f-4"
-          - gridcell "14,932"
+          - gridcell "14.9 kB"
           - gridcell "Sep 5, 2026":
             - time: Sep 5, 2026
-        - row "report-005.csv 15,665 Sep 6, 2026":
+        - row "report-005.csv 15.7 kB Sep 6, 2026":
           - gridcell "report-005.csv":
             - link "report-005.csv":
               - /url: "#/files/f-5"
-          - gridcell "15,665"
+          - gridcell "15.7 kB"
           - gridcell "Sep 6, 2026":
             - time: Sep 6, 2026
-        - row "report-006.csv 16,398 Sep 7, 2026":
+        - row "report-006.csv 16.4 kB Sep 7, 2026":
           - gridcell "report-006.csv":
             - link "report-006.csv":
               - /url: "#/files/f-6"
-          - gridcell "16,398"
+          - gridcell "16.4 kB"
           - gridcell "Sep 7, 2026":
             - time: Sep 7, 2026
-        - row "report-007.csv 17,131 Sep 8, 2026":
+        - row "report-007.csv 17.1 kB Sep 8, 2026":
           - gridcell "report-007.csv":
             - link "report-007.csv":
               - /url: "#/files/f-7"
-          - gridcell "17,131"
+          - gridcell "17.1 kB"
           - gridcell "Sep 8, 2026":
             - time: Sep 8, 2026
-        - row "report-008.csv 17,864 Sep 9, 2026":
+        - row "report-008.csv 17.9 kB Sep 9, 2026":
           - gridcell "report-008.csv":
             - link "report-008.csv":
               - /url: "#/files/f-8"
-          - gridcell "17,864"
+          - gridcell "17.9 kB"
           - gridcell "Sep 9, 2026":
             - time: Sep 9, 2026
-        - row "report-009.csv 18,597 Sep 10, 2026":
+        - row "report-009.csv 18.6 kB Sep 10, 2026":
           - gridcell "report-009.csv":
             - link "report-009.csv":
               - /url: "#/files/f-9"
-          - gridcell "18,597"
+          - gridcell "18.6 kB"
           - gridcell "Sep 10, 2026":
             - time: Sep 10, 2026
-        - row "report-010.csv 19,330 Sep 11, 2026":
+        - row "report-010.csv 19.3 kB Sep 11, 2026":
           - gridcell "report-010.csv":
             - link "report-010.csv":
               - /url: "#/files/f-10"
-          - gridcell "19,330"
+          - gridcell "19.3 kB"
           - gridcell "Sep 11, 2026":
             - time: Sep 11, 2026
-        - row "report-011.csv 20,063 Sep 12, 2026":
+        - row "report-011.csv 20.1 kB Sep 12, 2026":
           - gridcell "report-011.csv":
             - link "report-011.csv":
               - /url: "#/files/f-11"
-          - gridcell "20,063"
+          - gridcell "20.1 kB"
           - gridcell "Sep 12, 2026":
             - time: Sep 12, 2026
-        - row "report-012.csv 20,796 Sep 13, 2026":
+        - row "report-012.csv 20.8 kB Sep 13, 2026":
           - gridcell "report-012.csv":
             - link "report-012.csv":
               - /url: "#/files/f-12"
-          - gridcell "20,796"
+          - gridcell "20.8 kB"
           - gridcell "Sep 13, 2026":
             - time: Sep 13, 2026
-        - row "report-013.csv 21,529 Sep 14, 2026":
+        - row "report-013.csv 21.5 kB Sep 14, 2026":
           - gridcell "report-013.csv":
             - link "report-013.csv":
               - /url: "#/files/f-13"
-          - gridcell "21,529"
+          - gridcell "21.5 kB"
           - gridcell "Sep 14, 2026":
             - time: Sep 14, 2026
-        - row "report-014.csv 22,262 Sep 15, 2026":
+        - row "report-014.csv 22.3 kB Sep 15, 2026":
           - gridcell "report-014.csv":
             - link "report-014.csv":
               - /url: "#/files/f-14"
-          - gridcell "22,262"
+          - gridcell "22.3 kB"
           - gridcell "Sep 15, 2026":
             - time: Sep 15, 2026
-        - row "report-015.csv 22,995 Sep 16, 2026":
+        - row "report-015.csv 23 kB Sep 16, 2026":
           - gridcell "report-015.csv":
             - link "report-015.csv":
               - /url: "#/files/f-15"
-          - gridcell "22,995"
+          - gridcell "23 kB"
           - gridcell "Sep 16, 2026":
             - time: Sep 16, 2026
-        - row "report-016.csv 23,728 Sep 17, 2026":
+        - row "report-016.csv 23.7 kB Sep 17, 2026":
           - gridcell "report-016.csv":
             - link "report-016.csv":
               - /url: "#/files/f-16"
-          - gridcell "23,728"
+          - gridcell "23.7 kB"
           - gridcell "Sep 17, 2026":
             - time: Sep 17, 2026
-        - row "report-017.csv 24,461 Sep 18, 2026":
+        - row "report-017.csv 24.5 kB Sep 18, 2026":
           - gridcell "report-017.csv":
             - link "report-017.csv":
               - /url: "#/files/f-17"
-          - gridcell "24,461"
+          - gridcell "24.5 kB"
           - gridcell "Sep 18, 2026":
             - time: Sep 18, 2026
-        - row "report-018.csv 25,194 Sep 19, 2026":
+        - row "report-018.csv 25.2 kB Sep 19, 2026":
           - gridcell "report-018.csv":
             - link "report-018.csv":
               - /url: "#/files/f-18"
-          - gridcell "25,194"
+          - gridcell "25.2 kB"
           - gridcell "Sep 19, 2026":
             - time: Sep 19, 2026
-        - row "report-019.csv 25,927 Sep 20, 2026":
+        - row "report-019.csv 25.9 kB Sep 20, 2026":
           - gridcell "report-019.csv":
             - link "report-019.csv":
               - /url: "#/files/f-19"
-          - gridcell "25,927"
+          - gridcell "25.9 kB"
           - gridcell "Sep 20, 2026":
             - time: Sep 20, 2026
-        - row "report-020.csv 26,660 Sep 21, 2026":
+        - row "report-020.csv 26.7 kB Sep 21, 2026":
           - gridcell "report-020.csv":
             - link "report-020.csv":
               - /url: "#/files/f-20"
-          - gridcell "26,660"
+          - gridcell "26.7 kB"
           - gridcell "Sep 21, 2026":
             - time: Sep 21, 2026
-        - row "report-021.csv 27,393 Sep 22, 2026":
+        - row "report-021.csv 27.4 kB Sep 22, 2026":
           - gridcell "report-021.csv":
             - link "report-021.csv":
               - /url: "#/files/f-21"
-          - gridcell "27,393"
+          - gridcell "27.4 kB"
           - gridcell "Sep 22, 2026":
             - time: Sep 22, 2026
-        - row "report-022.csv 28,126 Sep 23, 2026":
+        - row "report-022.csv 28.1 kB Sep 23, 2026":
           - gridcell "report-022.csv":
             - link "report-022.csv":
               - /url: "#/files/f-22"
-          - gridcell "28,126"
+          - gridcell "28.1 kB"
           - gridcell "Sep 23, 2026":
             - time: Sep 23, 2026
-        - row "report-023.csv 28,859 Sep 24, 2026":
+        - row "report-023.csv 28.9 kB Sep 24, 2026":
           - gridcell "report-023.csv":
             - link "report-023.csv":
               - /url: "#/files/f-23"
-          - gridcell "28,859"
+          - gridcell "28.9 kB"
           - gridcell "Sep 24, 2026":
             - time: Sep 24, 2026
-        - row "report-024.csv 29,592 Sep 1, 2026":
+        - row "report-024.csv 29.6 kB Sep 1, 2026":
           - gridcell "report-024.csv":
             - link "report-024.csv":
               - /url: "#/files/f-24"
-          - gridcell "29,592"
+          - gridcell "29.6 kB"
           - gridcell "Sep 1, 2026":
             - time: Sep 1, 2026
-        - row "report-025.csv 30,325 Sep 2, 2026":
+        - row "report-025.csv 30.3 kB Sep 2, 2026":
           - gridcell "report-025.csv":
             - link "report-025.csv":
               - /url: "#/files/f-25"
-          - gridcell "30,325"
+          - gridcell "30.3 kB"
           - gridcell "Sep 2, 2026":
             - time: Sep 2, 2026
-        - row "report-026.csv 31,058 Sep 3, 2026":
+        - row "report-026.csv 31.1 kB Sep 3, 2026":
           - gridcell "report-026.csv":
             - link "report-026.csv":
               - /url: "#/files/f-26"
-          - gridcell "31,058"
+          - gridcell "31.1 kB"
           - gridcell "Sep 3, 2026":
             - time: Sep 3, 2026
-        - row "report-027.csv 31,791 Sep 4, 2026":
+        - row "report-027.csv 31.8 kB Sep 4, 2026":
           - gridcell "report-027.csv":
             - link "report-027.csv":
               - /url: "#/files/f-27"
-          - gridcell "31,791"
+          - gridcell "31.8 kB"
           - gridcell "Sep 4, 2026":
             - time: Sep 4, 2026
-        - row "report-028.csv 32,524 Sep 5, 2026":
+        - row "report-028.csv 32.5 kB Sep 5, 2026":
           - gridcell "report-028.csv":
             - link "report-028.csv":
               - /url: "#/files/f-28"
-          - gridcell "32,524"
+          - gridcell "32.5 kB"
           - gridcell "Sep 5, 2026":
             - time: Sep 5, 2026
-        - row "report-029.csv 33,257 Sep 6, 2026":
+        - row "report-029.csv 33.3 kB Sep 6, 2026":
           - gridcell "report-029.csv":
             - link "report-029.csv":
               - /url: "#/files/f-29"
-          - gridcell "33,257"
+          - gridcell "33.3 kB"
           - gridcell "Sep 6, 2026":
             - time: Sep 6, 2026
-        - row "report-030.csv 33,990 Sep 7, 2026":
+        - row "report-030.csv 34 kB Sep 7, 2026":
           - gridcell "report-030.csv":
             - link "report-030.csv":
               - /url: "#/files/f-30"
-          - gridcell "33,990"
+          - gridcell "34 kB"
           - gridcell "Sep 7, 2026":
             - time: Sep 7, 2026
-        - row "report-031.csv 34,723 Sep 8, 2026":
+        - row "report-031.csv 34.7 kB Sep 8, 2026":
           - gridcell "report-031.csv":
             - link "report-031.csv":
               - /url: "#/files/f-31"
-          - gridcell "34,723"
+          - gridcell "34.7 kB"
           - gridcell "Sep 8, 2026":
             - time: Sep 8, 2026
-        - row "report-032.csv 35,456 Sep 9, 2026":
+        - row "report-032.csv 35.5 kB Sep 9, 2026":
           - gridcell "report-032.csv":
             - link "report-032.csv":
               - /url: "#/files/f-32"
-          - gridcell "35,456"
+          - gridcell "35.5 kB"
           - gridcell "Sep 9, 2026":
             - time: Sep 9, 2026
-        - row "report-033.csv 36,189 Sep 10, 2026":
+        - row "report-033.csv 36.2 kB Sep 10, 2026":
           - gridcell "report-033.csv":
             - link "report-033.csv":
               - /url: "#/files/f-33"
-          - gridcell "36,189"
+          - gridcell "36.2 kB"
           - gridcell "Sep 10, 2026":
             - time: Sep 10, 2026
-        - row "report-034.csv 36,922 Sep 11, 2026":
+        - row "report-034.csv 36.9 kB Sep 11, 2026":
           - gridcell "report-034.csv":
             - link "report-034.csv":
               - /url: "#/files/f-34"
-          - gridcell "36,922"
+          - gridcell "36.9 kB"
           - gridcell "Sep 11, 2026":
             - time: Sep 11, 2026
-        - row "report-035.csv 37,655 Sep 12, 2026":
+        - row "report-035.csv 37.7 kB Sep 12, 2026":
           - gridcell "report-035.csv":
             - link "report-035.csv":
               - /url: "#/files/f-35"
-          - gridcell "37,655"
+          - gridcell "37.7 kB"
           - gridcell "Sep 12, 2026":
             - time: Sep 12, 2026
-        - row "report-036.csv 38,388 Sep 13, 2026":
+        - row "report-036.csv 38.4 kB Sep 13, 2026":
           - gridcell "report-036.csv":
             - link "report-036.csv":
               - /url: "#/files/f-36"
-          - gridcell "38,388"
+          - gridcell "38.4 kB"
           - gridcell "Sep 13, 2026":
             - time: Sep 13, 2026
-        - row "report-037.csv 39,121 Sep 14, 2026":
+        - row "report-037.csv 39.1 kB Sep 14, 2026":
           - gridcell "report-037.csv":
             - link "report-037.csv":
               - /url: "#/files/f-37"
-          - gridcell "39,121"
+          - gridcell "39.1 kB"
           - gridcell "Sep 14, 2026":
             - time: Sep 14, 2026
-        - row "report-038.csv 39,854 Sep 15, 2026":
+        - row "report-038.csv 39.9 kB Sep 15, 2026":
           - gridcell "report-038.csv":
             - link "report-038.csv":
               - /url: "#/files/f-38"
-          - gridcell "39,854"
+          - gridcell "39.9 kB"
           - gridcell "Sep 15, 2026":
             - time: Sep 15, 2026
-        - row "report-039.csv 40,587 Sep 16, 2026":
+        - row "report-039.csv 40.6 kB Sep 16, 2026":
           - gridcell "report-039.csv":
             - link "report-039.csv":
               - /url: "#/files/f-39"
-          - gridcell "40,587"
+          - gridcell "40.6 kB"
           - gridcell "Sep 16, 2026":
             - time: Sep 16, 2026
-        - row "report-040.csv 41,320 Sep 17, 2026":
+        - row "report-040.csv 41.3 kB Sep 17, 2026":
           - gridcell "report-040.csv":
             - link "report-040.csv":
               - /url: "#/files/f-40"
-          - gridcell "41,320"
+          - gridcell "41.3 kB"
           - gridcell "Sep 17, 2026":
             - time: Sep 17, 2026
-        - row "report-041.csv 42,053 Sep 18, 2026":
+        - row "report-041.csv 42.1 kB Sep 18, 2026":
           - gridcell "report-041.csv":
             - link "report-041.csv":
               - /url: "#/files/f-41"
-          - gridcell "42,053"
+          - gridcell "42.1 kB"
           - gridcell "Sep 18, 2026":
             - time: Sep 18, 2026
-        - row "report-042.csv 42,786 Sep 19, 2026":
+        - row "report-042.csv 42.8 kB Sep 19, 2026":
           - gridcell "report-042.csv":
             - link "report-042.csv":
               - /url: "#/files/f-42"
-          - gridcell "42,786"
+          - gridcell "42.8 kB"
           - gridcell "Sep 19, 2026":
             - time: Sep 19, 2026
-        - row "report-043.csv 43,519 Sep 20, 2026":
+        - row "report-043.csv 43.5 kB Sep 20, 2026":
           - gridcell "report-043.csv":
             - link "report-043.csv":
               - /url: "#/files/f-43"
-          - gridcell "43,519"
+          - gridcell "43.5 kB"
           - gridcell "Sep 20, 2026":
             - time: Sep 20, 2026
-        - row "report-044.csv 44,252 Sep 21, 2026":
+        - row "report-044.csv 44.3 kB Sep 21, 2026":
           - gridcell "report-044.csv":
             - link "report-044.csv":
               - /url: "#/files/f-44"
-          - gridcell "44,252"
+          - gridcell "44.3 kB"
           - gridcell "Sep 21, 2026":
             - time: Sep 21, 2026
-        - row "report-045.csv 44,985 Sep 22, 2026":
+        - row "report-045.csv 45 kB Sep 22, 2026":
           - gridcell "report-045.csv":
             - link "report-045.csv":
               - /url: "#/files/f-45"
-          - gridcell "44,985"
+          - gridcell "45 kB"
           - gridcell "Sep 22, 2026":
             - time: Sep 22, 2026
-        - row "report-046.csv 45,718 Sep 23, 2026":
+        - row "report-046.csv 45.7 kB Sep 23, 2026":
           - gridcell "report-046.csv":
             - link "report-046.csv":
               - /url: "#/files/f-46"
-          - gridcell "45,718"
+          - gridcell "45.7 kB"
           - gridcell "Sep 23, 2026":
             - time: Sep 23, 2026
-        - row "report-047.csv 46,451 Sep 24, 2026":
+        - row "report-047.csv 46.5 kB Sep 24, 2026":
           - gridcell "report-047.csv":
             - link "report-047.csv":
               - /url: "#/files/f-47"
-          - gridcell "46,451"
+          - gridcell "46.5 kB"
           - gridcell "Sep 24, 2026":
             - time: Sep 24, 2026
-        - row "report-048.csv 47,184 Sep 1, 2026":
+        - row "report-048.csv 47.2 kB Sep 1, 2026":
           - gridcell "report-048.csv":
             - link "report-048.csv":
               - /url: "#/files/f-48"
-          - gridcell "47,184"
+          - gridcell "47.2 kB"
           - gridcell "Sep 1, 2026":
             - time: Sep 1, 2026
-        - row "report-049.csv 47,917 Sep 2, 2026":
+        - row "report-049.csv 47.9 kB Sep 2, 2026":
           - gridcell "report-049.csv":
             - link "report-049.csv":
               - /url: "#/files/f-49"
-          - gridcell "47,917"
+          - gridcell "47.9 kB"
           - gridcell "Sep 2, 2026":
             - time: Sep 2, 2026
-        - row "report-050.csv 48,650 Sep 3, 2026":
+        - row "report-050.csv 48.7 kB Sep 3, 2026":
           - gridcell "report-050.csv":
             - link "report-050.csv":
               - /url: "#/files/f-50"
-          - gridcell "48,650"
+          - gridcell "48.7 kB"
           - gridcell "Sep 3, 2026":
             - time: Sep 3, 2026
-        - row "report-051.csv 49,383 Sep 4, 2026":
+        - row "report-051.csv 49.4 kB Sep 4, 2026":
           - gridcell "report-051.csv":
             - link "report-051.csv":
               - /url: "#/files/f-51"
-          - gridcell "49,383"
+          - gridcell "49.4 kB"
           - gridcell "Sep 4, 2026":
             - time: Sep 4, 2026
-        - row "report-052.csv 50,116 Sep 5, 2026":
+        - row "report-052.csv 50.1 kB Sep 5, 2026":
           - gridcell "report-052.csv":
             - link "report-052.csv":
               - /url: "#/files/f-52"
-          - gridcell "50,116"
+          - gridcell "50.1 kB"
           - gridcell "Sep 5, 2026":
             - time: Sep 5, 2026
-        - row "report-053.csv 50,849 Sep 6, 2026":
+        - row "report-053.csv 50.8 kB Sep 6, 2026":
           - gridcell "report-053.csv":
             - link "report-053.csv":
               - /url: "#/files/f-53"
-          - gridcell "50,849"
+          - gridcell "50.8 kB"
           - gridcell "Sep 6, 2026":
             - time: Sep 6, 2026
-        - row "report-054.csv 51,582 Sep 7, 2026":
+        - row "report-054.csv 51.6 kB Sep 7, 2026":
           - gridcell "report-054.csv":
             - link "report-054.csv":
               - /url: "#/files/f-54"
-          - gridcell "51,582"
+          - gridcell "51.6 kB"
           - gridcell "Sep 7, 2026":
             - time: Sep 7, 2026
-        - row "report-055.csv 52,315 Sep 8, 2026":
+        - row "report-055.csv 52.3 kB Sep 8, 2026":
           - gridcell "report-055.csv":
             - link "report-055.csv":
               - /url: "#/files/f-55"
-          - gridcell "52,315"
+          - gridcell "52.3 kB"
           - gridcell "Sep 8, 2026":
             - time: Sep 8, 2026
-        - row "report-056.csv 53,048 Sep 9, 2026":
+        - row "report-056.csv 53 kB Sep 9, 2026":
           - gridcell "report-056.csv":
             - link "report-056.csv":
               - /url: "#/files/f-56"
-          - gridcell "53,048"
+          - gridcell "53 kB"
           - gridcell "Sep 9, 2026":
             - time: Sep 9, 2026
-        - row "report-057.csv 53,781 Sep 10, 2026":
+        - row "report-057.csv 53.8 kB Sep 10, 2026":
           - gridcell "report-057.csv":
             - link "report-057.csv":
               - /url: "#/files/f-57"
-          - gridcell "53,781"
+          - gridcell "53.8 kB"
           - gridcell "Sep 10, 2026":
             - time: Sep 10, 2026
-        - row "report-058.csv 54,514 Sep 11, 2026":
+        - row "report-058.csv 54.5 kB Sep 11, 2026":
           - gridcell "report-058.csv":
             - link "report-058.csv":
               - /url: "#/files/f-58"
-          - gridcell "54,514"
+          - gridcell "54.5 kB"
           - gridcell "Sep 11, 2026":
             - time: Sep 11, 2026
-        - row "report-059.csv 55,247 Sep 12, 2026":
+        - row "report-059.csv 55.2 kB Sep 12, 2026":
           - gridcell "report-059.csv":
             - link "report-059.csv":
               - /url: "#/files/f-59"
-          - gridcell "55,247"
+          - gridcell "55.2 kB"
           - gridcell "Sep 12, 2026":
             - time: Sep 12, 2026
-        - row "report-060.csv 55,980 Sep 13, 2026":
+        - row "report-060.csv 56 kB Sep 13, 2026":
           - gridcell "report-060.csv":
             - link "report-060.csv":
               - /url: "#/files/f-60"
-          - gridcell "55,980"
+          - gridcell "56 kB"
           - gridcell "Sep 13, 2026":
             - time: Sep 13, 2026
-        - row "report-061.csv 56,713 Sep 14, 2026":
+        - row "report-061.csv 56.7 kB Sep 14, 2026":
           - gridcell "report-061.csv":
             - link "report-061.csv":
               - /url: "#/files/f-61"
-          - gridcell "56,713"
+          - gridcell "56.7 kB"
           - gridcell "Sep 14, 2026":
             - time: Sep 14, 2026
-        - row "report-062.csv 57,446 Sep 15, 2026":
+        - row "report-062.csv 57.4 kB Sep 15, 2026":
           - gridcell "report-062.csv":
             - link "report-062.csv":
               - /url: "#/files/f-62"
-          - gridcell "57,446"
+          - gridcell "57.4 kB"
           - gridcell "Sep 15, 2026":
             - time: Sep 15, 2026
-        - row "report-063.csv 58,179 Sep 16, 2026":
+        - row "report-063.csv 58.2 kB Sep 16, 2026":
           - gridcell "report-063.csv":
             - link "report-063.csv":
               - /url: "#/files/f-63"
-          - gridcell "58,179"
+          - gridcell "58.2 kB"
           - gridcell "Sep 16, 2026":
             - time: Sep 16, 2026
-        - row "report-064.csv 58,912 Sep 17, 2026":
+        - row "report-064.csv 58.9 kB Sep 17, 2026":
           - gridcell "report-064.csv":
             - link "report-064.csv":
               - /url: "#/files/f-64"
-          - gridcell "58,912"
+          - gridcell "58.9 kB"
           - gridcell "Sep 17, 2026":
             - time: Sep 17, 2026
-        - row "report-065.csv 59,645 Sep 18, 2026":
+        - row "report-065.csv 59.6 kB Sep 18, 2026":
           - gridcell "report-065.csv":
             - link "report-065.csv":
               - /url: "#/files/f-65"
-          - gridcell "59,645"
+          - gridcell "59.6 kB"
           - gridcell "Sep 18, 2026":
             - time: Sep 18, 2026
-        - row "report-066.csv 60,378 Sep 19, 2026":
+        - row "report-066.csv 60.4 kB Sep 19, 2026":
           - gridcell "report-066.csv":
             - link "report-066.csv":
               - /url: "#/files/f-66"
-          - gridcell "60,378"
+          - gridcell "60.4 kB"
           - gridcell "Sep 19, 2026":
             - time: Sep 19, 2026
-        - row "report-067.csv 61,111 Sep 20, 2026":
+        - row "report-067.csv 61.1 kB Sep 20, 2026":
           - gridcell "report-067.csv":
             - link "report-067.csv":
               - /url: "#/files/f-67"
-          - gridcell "61,111"
+          - gridcell "61.1 kB"
           - gridcell "Sep 20, 2026":
             - time: Sep 20, 2026
-        - row "report-068.csv 61,844 Sep 21, 2026":
+        - row "report-068.csv 61.8 kB Sep 21, 2026":
           - gridcell "report-068.csv":
             - link "report-068.csv":
               - /url: "#/files/f-68"
-          - gridcell "61,844"
+          - gridcell "61.8 kB"
           - gridcell "Sep 21, 2026":
             - time: Sep 21, 2026
-        - row "report-069.csv 62,577 Sep 22, 2026":
+        - row "report-069.csv 62.6 kB Sep 22, 2026":
           - gridcell "report-069.csv":
             - link "report-069.csv":
               - /url: "#/files/f-69"
-          - gridcell "62,577"
+          - gridcell "62.6 kB"
           - gridcell "Sep 22, 2026":
             - time: Sep 22, 2026
-        - row "report-070.csv 63,310 Sep 23, 2026":
+        - row "report-070.csv 63.3 kB Sep 23, 2026":
           - gridcell "report-070.csv":
             - link "report-070.csv":
               - /url: "#/files/f-70"
-          - gridcell "63,310"
+          - gridcell "63.3 kB"
           - gridcell "Sep 23, 2026":
             - time: Sep 23, 2026
-        - row "report-071.csv 64,043 Sep 24, 2026":
+        - row "report-071.csv 64 kB Sep 24, 2026":
           - gridcell "report-071.csv":
             - link "report-071.csv":
               - /url: "#/files/f-71"
-          - gridcell "64,043"
+          - gridcell "64 kB"
           - gridcell "Sep 24, 2026":
             - time: Sep 24, 2026
-        - row "report-072.csv 64,776 Sep 1, 2026":
+        - row "report-072.csv 64.8 kB Sep 1, 2026":
           - gridcell "report-072.csv":
             - link "report-072.csv":
               - /url: "#/files/f-72"
-          - gridcell "64,776"
+          - gridcell "64.8 kB"
           - gridcell "Sep 1, 2026":
             - time: Sep 1, 2026
-        - row "report-073.csv 65,509 Sep 2, 2026":
+        - row "report-073.csv 65.5 kB Sep 2, 2026":
           - gridcell "report-073.csv":
             - link "report-073.csv":
               - /url: "#/files/f-73"
-          - gridcell "65,509"
+          - gridcell "65.5 kB"
           - gridcell "Sep 2, 2026":
             - time: Sep 2, 2026
-        - row "report-074.csv 66,242 Sep 3, 2026":
+        - row "report-074.csv 66.2 kB Sep 3, 2026":
           - gridcell "report-074.csv":
             - link "report-074.csv":
               - /url: "#/files/f-74"
-          - gridcell "66,242"
+          - gridcell "66.2 kB"
           - gridcell "Sep 3, 2026":
             - time: Sep 3, 2026
-        - row "report-075.csv 66,975 Sep 4, 2026":
+        - row "report-075.csv 67 kB Sep 4, 2026":
           - gridcell "report-075.csv":
             - link "report-075.csv":
               - /url: "#/files/f-75"
-          - gridcell "66,975"
+          - gridcell "67 kB"
           - gridcell "Sep 4, 2026":
             - time: Sep 4, 2026
-        - row "report-076.csv 67,708 Sep 5, 2026":
+        - row "report-076.csv 67.7 kB Sep 5, 2026":
           - gridcell "report-076.csv":
             - link "report-076.csv":
               - /url: "#/files/f-76"
-          - gridcell "67,708"
+          - gridcell "67.7 kB"
           - gridcell "Sep 5, 2026":
             - time: Sep 5, 2026
-        - row "report-077.csv 68,441 Sep 6, 2026":
+        - row "report-077.csv 68.4 kB Sep 6, 2026":
           - gridcell "report-077.csv":
             - link "report-077.csv":
               - /url: "#/files/f-77"
-          - gridcell "68,441"
+          - gridcell "68.4 kB"
           - gridcell "Sep 6, 2026":
             - time: Sep 6, 2026
-        - row "report-078.csv 69,174 Sep 7, 2026":
+        - row "report-078.csv 69.2 kB Sep 7, 2026":
           - gridcell "report-078.csv":
             - link "report-078.csv":
               - /url: "#/files/f-78"
-          - gridcell "69,174"
+          - gridcell "69.2 kB"
           - gridcell "Sep 7, 2026":
             - time: Sep 7, 2026
-        - row "report-079.csv 69,907 Sep 8, 2026":
+        - row "report-079.csv 69.9 kB Sep 8, 2026":
           - gridcell "report-079.csv":
             - link "report-079.csv":
               - /url: "#/files/f-79"
-          - gridcell "69,907"
+          - gridcell "69.9 kB"
           - gridcell "Sep 8, 2026":
             - time: Sep 8, 2026
-        - row "report-080.csv 70,640 Sep 9, 2026":
+        - row "report-080.csv 70.6 kB Sep 9, 2026":
           - gridcell "report-080.csv":
             - link "report-080.csv":
               - /url: "#/files/f-80"
-          - gridcell "70,640"
+          - gridcell "70.6 kB"
           - gridcell "Sep 9, 2026":
             - time: Sep 9, 2026
     - text: 80 of 160 loaded

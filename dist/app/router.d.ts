@@ -53,7 +53,8 @@ export type RouteParams<P extends string> = {
 /**
  * Matches a pattern against a pathname. `:name` matches one segment, `*name`
  * the rest (possibly empty). Parameters are URL-decoded. Returns null when
- * the path does not match.
+ * the path does not match, including a parameter with a malformed percent
+ * escape (a bad deep link is "not found", never a thrown error).
  */
 export declare function matchPath<P extends string>(pattern: P, pathname: string): RouteParams<P> | null;
 /** Builds a path from a pattern and its parameters, URL-encoding each segment. */

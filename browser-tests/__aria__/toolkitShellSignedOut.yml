@@ -31,7 +31,7 @@
   - status
   - heading "q3-forecast.csv" [level=2]
   - term: Size
-  - definition: 48,200
+  - definition: 48.2 kB
   - term: Type
   - definition: text/csv
   - term: Modified

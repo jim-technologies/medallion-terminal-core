@@ -1,0 +1,39 @@
+- region "Storage":
+  - heading "Storage" [level=2]
+  - text: 2 buckets
+  - button "Refresh"
+  - grid "Storage buckets":
+    - rowgroup:
+      - row "Bucket Objects Used":
+        - columnheader "Bucket"
+        - columnheader "Objects"
+        - columnheader "Used"
+    - rowgroup:
+      - row "finance 1,285 412 GB":
+        - gridcell "finance"
+        - gridcell "1,285"
+        - gridcell "412 GB"
+      - row "media 58,211 1.9 TB":
+        - gridcell "media"
+        - gridcell "58,211"
+        - gridcell "1.9 TB"
+- region "Quota":
+  - heading "Quota" [level=2]
+  - text: 2 buckets
+  - button "Refresh"
+  - grid "Quota buckets":
+    - rowgroup:
+      - row "Bucket Objects Used":
+        - columnheader "Bucket"
+        - columnheader "Objects"
+        - columnheader "Used"
+    - rowgroup:
+      - row "finance 1,285 412 GB":
+        - gridcell "finance"
+        - gridcell "1,285"
+        - gridcell "412 GB"
+      - row "media 58,211 1.9 TB":
+        - gridcell "media"
+        - gridcell "58,211"
+        - gridcell "1.9 TB"
+- status "Requests": 2 requests

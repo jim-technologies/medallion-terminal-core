@@ -45,6 +45,12 @@ from toolkit exports are the reference for product pages.
 - **The `./app` entry is React.** It now exports `ProductShell` and its
   ports beside `createProductFetch`; it has `react` and `react-dom` as peer
   dependencies like the other entries.
+- **`DataGrid` columns without a `width` are sized to their content**
+  (header and rows in view, at most 360 px) and fitted to the grid, instead
+  of 160 px each. Pass `width` for a fixed column; `minWidth` is now also
+  how far a content-sized text column gives way.
+- **`OperationsTray` starts collapsed on phones** (720 px and narrower)
+  unless `defaultOpen` is given.
 
 ### Added
 
@@ -136,6 +142,34 @@ from toolkit exports are the reference for product pages.
 - Baselines (dark, light, and compact for the property panel) and exact
   text snapshots for every new story.
 
+- **`useResource`** (`medallion-terminal-core/app`), the cached read
+  product pages build on without a query library: one request per key
+  however many components read it, a read nobody waits for is aborted,
+  typed `SourceError` failures, stale-while-revalidate (`staleTimeMs`,
+  `validating`), polling only while the page is visible
+  (`refreshIntervalMs`) and a reload of stale data when it comes back,
+  `mutate` after a write (older in-flight answers are ignored), `null` keys
+  that wait, and `createResourceCache`, `ResourceCacheProvider`,
+  `useResourceCache().invalidate` and `resourceKey`. Unread entries are
+  dropped oldest first past `maxEntries` (100).
+- A `bytes` property kind (`48.2 kB`, numeric, end-aligned) for
+  `PropertyValue`, `PropertyList` and `DataGrid` columns.
+- `CodeView` colours JSON, YAML and SQL (keys, strings, numbers, literals,
+  keywords, comments) line by line with the `--mtc-code-*` tokens; lines
+  over 2,000 characters and other languages stay plain.
+- `SessionEnvironment` takes injectable `setTimeout` and `clearTimeout`
+  (with the `VisibilitySource` type), so hosts and tests drive the renewal
+  schedule without patching globals.
+- Tests that measure layout, not only pixels: the table widget and the
+  flagship watchlist must show every column with no sideways overflow and
+  no cut number, graph text must land at 11 px or more on screen (fitted and
+  zoomed out, desktop and phone), the schema graph must open with the
+  selected type in view on a phone; unit tests for the column fit, rank
+  skipping routes, session renewal timing and hidden-page timers, the
+  resource cache, the code tokenizer and button hover contrast in every
+  theme. New baselines: the table, `object_view`, `text` and `trade`
+  widgets, CodeView highlighting and `useResource`.
+
 ### Changed
 
 - `PropertyList` renders values through `PropertyValue`: numbers are
@@ -177,7 +211,8 @@ from toolkit exports are the reference for product pages.
   and chart axis labels are 11 px; small labels are sentence case without
   letter spacing instead of uppercase micro-caps (the catalog's "live"
   badge reads "Live"). The style guard's legacy budget for sizes and
-  tracking is now zero, so any new sub-11 px size fails lint.
+  tracking is now zero, so any new sub-11 px size fails lint, in
+  `examples/` too.
 - **`object_view` on the object components**: `ObjectHeader` (compact),
   `PropertyPanel` (typed values, filter) and `LinkPanel` (links grouped by
   link type) replace the bespoke header, key-value list and link list;
@@ -209,6 +244,54 @@ from toolkit exports are the reference for product pages.
   days outside the month, empty board lanes, path separators) uses the
   muted text colours, and decorative separators are hidden from assistive
   technology.
+
+- **The `table` widget fits its width again.** Its columns are sized to
+  their content (only a sparkline column is fixed), the label column takes
+  the spare width and gives way first, and text truncates with an ellipsis,
+  so the flagship dashboard's watchlist shows Sym, Last, Chg%, Vol and
+  Trend at 1440 px as it did in 0.6.0. Heat tints are at most 25%, and a
+  signed value on a tint uses its soft tone, so it keeps 4.5:1.
+- **Graphs keep their text at its type size.** `LinkGraph` and
+  `SchemaGraph` scale their geometry (still fitted to at least 80%) but not
+  their labels, which never render under 11 px, are truncated to the room
+  they have, and are hidden in a zoomed-out overview. A graph larger than
+  its frame opens with the selected type (or the centre object) in view,
+  zoom keeps the frame's centre, and a schema edge that skips ranks is
+  routed through the gaps between the nodes it passes, with its label on
+  that straight run.
+- `record_grid`, `record_board`, `record_calendar` and `record_form`
+  values render through `PropertyValue`: dates and times are Intl-formatted
+  in the scope's locale and time zone (a bare date no longer shows as ISO),
+  choices are filled chips or status badges like every other enum, Yes/No
+  carry an icon, and links use the toolkit link style.
+- `file_browser` sizes, modified times, types and names are typed,
+  content-sized columns; the page templates, previews and stories drop
+  their fixed column widths, so the Operations and Storage templates show
+  every column at 1440 px and the product shell's phone layout keeps its
+  numbers whole.
+- On phones the product shell's operations tray is a summary bar above the
+  status bar and the inspector sheet sits above it, so neither covers the
+  other until the tray is opened.
+- The Kelly example widget is built on toolkit controls (`FormField`,
+  `Input`, `ButtonGroup`, `StatTile`) with sentence-case labels and no text
+  under 11 px, and the style guard now scans `examples/` (the clone
+  showcases, with their own authored stylesheets, keep only the story-frame
+  rule) and rejects uppercase and letter-spaced labels as well.
+- The browser suite addresses the page templates by their exact story ids.
+
+### Fixed
+
+- `source_id` sources keep `staleAfterMs` and `throttleMs`, so a backend
+  panel goes stale (and a backend stream throttles) like a URL source.
+- A hovered solid button keeps its on-colour (white on the primary blue was
+  turning to the foreground colour, 1.96:1 in light and 3.49:1 in dark);
+  hover moves the fill away from the text colour instead, and a unit test
+  holds 4.5:1 in every theme.
+- A malformed percent escape in a deep link is no route match instead of a
+  `URIError` thrown during render.
+- A session that expires more than about 24.8 days out no longer renews at
+  once (the timer delay overflowed); long waits are taken in steps.
+- Embed navigation refuses `/\host` paths as it refuses `//host`.
 
 ### Removed
 
