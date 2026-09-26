@@ -1,0 +1,13 @@
+- main:
+  - text: Toolkit · Status
+  - heading "StatTile" [level=1]
+  - paragraph: "Headline numbers, notifications and paging: the toolkit counterparts of the dashboard's metric, toaster and cursor pager, usable without a Dashboard."
+  - region "StatTile component example":
+    - text: Orders today 1,284
+    - img "Increase"
+    - text: +4.2% vs. last Friday p95 latency Degraded 182 ms
+    - img "Increase"
+    - text: +38 ms Storage Healthy 2.3 TB Of 5 TB · 46%
+    - link "Placed 12 Orders linked":
+      - /url: "#/explore?type=order"
+  - text: Theme and density inherit from the scoped toolkit root.

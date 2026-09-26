@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
+import { fn } from 'storybook/test'
 import { StoryFrame } from '../../.storybook/StoryFrame'
 import {
   Avatar,
@@ -75,12 +75,11 @@ export const StatusKeysAndAvatars: Story = {
   ),
 }
 
-const clipboardWrites: string[] = []
+// A fake clipboard keeps the story independent of browser permissions; the
+// browser suite checks the confirmation.
 const copied = fn()
 const fakeClipboard = {
-  async writeText(text: string) {
-    clipboardWrites.push(text)
-  },
+  async writeText() {},
 }
 
 export const SkeletonsAndCopy: Story = {
@@ -107,13 +106,6 @@ export const SkeletonsAndCopy: Story = {
       </section>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    await userEvent.click(canvas.getByRole('button', { name: 'Copy hash' }))
-    await expect(copied).toHaveBeenCalledWith('sha256:9f2c41e0a7')
-    await expect(clipboardWrites).toContain('sha256:9f2c41e0a7')
-    await waitFor(() => expect(canvas.getAllByRole('status').some(node => node.textContent === 'Copied')).toBe(true))
-  },
 }
 
 export const PanelFrame: Story = {

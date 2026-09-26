@@ -8,7 +8,6 @@ import type { WidgetRegistry } from './WidgetRegistry';
 import type { TerminalIntentHandler } from './TerminalIntent';
 export type DashboardTheme = PresentationTheme;
 export type DashboardTemplateTrust = 'untrusted' | 'trusted';
-/** Public configuration for the dashboard renderer and its host bridges. */
 export interface DashboardProps {
     /** Template rendered by this Dashboard instance. */
     template: Template;

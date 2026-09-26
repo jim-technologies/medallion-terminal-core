@@ -39,8 +39,20 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   40 nodes with "+N", keyboard-focusable node links, pan and zoom) and
   `SchemaGraph` (object types and link types on the layered layout, with
   counts, selection and routed back edges). Plain SVG, no dependency.
+- **Navigation and search**: `NavRail` (sections, icons or type glyphs,
+  counts, `aria-current`, 48 px collapsed mode), `PageHeader` (breadcrumbs,
+  title or custom heading, actions, tab slot, sticky), `SearchField`
+  (search landmark with removable scope tokens, clear, a `/` focus key),
+  the toolkit `CommandPalette` (modal combobox over grouped results,
+  keyboard highlight, Ctrl/⌘ K) and `FacetList` (single-select type facet
+  with glyphs, checkbox value facets, counts, "Show more", clear).
+- **Status and feedback**: `ActivityFeed` (feed and `timeline` variants),
+  `StatTile` (value, unit, delta, status, link), `Toaster`,
+  `ToastProvider` and `useToast` (intents, one action, pause on hover or
+  focus, polite or assertive), and `Pagination` (numbered or cursor).
 - `StatusTone` type; message keys for copy, values, property panels, the
-  grid, links and graphs (en and zh-CN).
+  grid, links, graphs, navigation, search, paging, toasts and activity (en
+  and zh-CN).
 - Baselines (dark, light, and compact for the property panel) and exact
   text snapshots for every new story.
 
@@ -53,12 +65,24 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - The root entry's archetype placeholder for loading widgets is now
   `WidgetSkeleton`; `Skeleton` is the toolkit placeholder.
 - Declarations exclude every `*.fixture.ts`.
+- The Dashboard's Ctrl/⌘ K palette is rebuilt on the toolkit
+  `CommandPalette`: typed commands still apply on Enter, and suggestions,
+  saved views and recent commands are keyboard-reachable options. Its
+  toasts render through the toolkit `Toaster`.
 - The `dag` widget's layered layout moved to a shared module and now breaks
   cycles where they block the traversal (the node with the fewest unmet
   incoming edges is released), so a cyclic graph lays out in layers instead
   of stacking its cycle in one final rank.
 - Text sort keys compare with one shared `Intl.Collator` (a 10,000-row text
   sort went from ~500 ms to ~30 ms).
+
+### Removed
+
+- The root entry's `CommandPalette` export was the Dashboard-internal
+  palette, which only worked inside a `Dashboard`; the root and toolkit
+  `CommandPalette` is now the host-driven palette. `PaletteSuggest` and
+  `PaletteSuggestion` (the `Dashboard.paletteSuggest` types) remain.
+- `src/core/Toaster.tsx`, replaced by the toolkit `Toaster`.
 
 ## [0.6.0] — 2026-09-25
 

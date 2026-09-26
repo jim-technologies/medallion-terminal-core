@@ -52,6 +52,16 @@ export type {
 } from './Display'
 export { HoverCard } from './HoverCard'
 export type { HoverCardProps } from './HoverCard'
+export { CommandPalette } from './CommandPalette'
+export type { CommandGroup, CommandItem, CommandPaletteProps } from './CommandPalette'
+export { Pagination } from './Pagination'
+export type { PaginationProps } from './Pagination'
+export { SearchField } from './SearchField'
+export type { SearchFieldProps, SearchToken } from './SearchField'
+export { StatTile } from './StatTile'
+export type { StatDelta, StatTileProps } from './StatTile'
+export { ToastProvider, Toaster, useToast } from './Toast'
+export type { ToastApi, ToastData, ToastIntent, ToastProviderProps, ToasterProps } from './Toast'
 export type { BadgeProps, CalloutProps, TagProps } from './Feedback'
 export {
   ContextMenu,

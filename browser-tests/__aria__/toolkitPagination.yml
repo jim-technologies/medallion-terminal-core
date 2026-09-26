@@ -1,0 +1,15 @@
+- main:
+  - text: Toolkit · Status
+  - heading "Pagination" [level=1]
+  - paragraph: "Headline numbers, notifications and paging: the toolkit counterparts of the dashboard's metric, toaster and cursor pager, usable without a Dashboard."
+  - region "Pagination component example":
+    - navigation "Record pages":
+      - text: 51–75 of 118
+      - button "Previous"
+      - text: Page 3 of 5
+      - button "Next"
+    - navigation "Object pages":
+      - text: Page 2 · opaque cursors
+      - button "Previous"
+      - button "Next"
+  - text: Theme and density inherit from the scoped toolkit root.

@@ -163,6 +163,17 @@ for (const [entry, module, names] of [
       'LinkPanel',
       'LinkGraph',
       'SchemaGraph',
+      'NavRail',
+      'PageHeader',
+      'FacetList',
+      'SearchField',
+      'CommandPalette',
+      'ActivityFeed',
+      'StatTile',
+      'Toaster',
+      'ToastProvider',
+      'useToast',
+      'Pagination',
     ],
   ],
   ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
@@ -217,6 +228,11 @@ for (const name of [
   'DataGridColumn',
   'LinkGroup',
   'SchemaGraphProps',
+  'NavRailProps',
+  'CommandPaletteProps',
+  'FacetGroup',
+  'ActivityItem',
+  'ToastData',
 ]) {
   if (!new RegExp(`\\b${name}\\b`).test(declarations)) {
     throw new Error(`Published declarations are missing ${JSON.stringify(name)}`)
@@ -274,12 +290,13 @@ const budgets = [
   {
     // 0.6.0 spent the old 18 KiB on tokens v2 (twelve type slots, status
     // tints, four themes) and the vendored @font-face rules; typed error
-    // states add their disclosure styles on top. 0.7.0 adds the display
-    // primitives, the object components (typed values, panels, headers) and
-    // the data grid.
+    // states add their disclosure styles on top. 0.7.0 adds the component
+    // layer (~7 KiB): display primitives, object components, the data grid,
+    // links and graphs, navigation, search, feedback, file previews and the
+    // product shell.
     label: 'library styles',
     path: path.resolve(root, packageJson.exports['./styles']),
-    maxGzipBytes: 21 * 1024,
+    maxGzipBytes: 26 * 1024,
   },
 ]
 

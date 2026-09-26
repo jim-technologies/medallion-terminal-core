@@ -1,0 +1,47 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "ActivityFeed" [level=1]
+  - paragraph: "Search-first exploration: facets with counts narrow an object set, and activity shows who did what to which object."
+  - region "ActivityFeed component example":
+    - region "Activity":
+      - heading "Activity" [level=2]
+      - list "Object activity":
+        - listitem:
+          - paragraph:
+            - text: Jamie Kim updated
+            - link "Northstar Labs":
+              - /url: "#/objects/res-customer-northstar"
+            - text: Churn risk Healthy → Watch
+          - time: 18 minutes ago
+        - listitem:
+          - paragraph:
+            - text: Morgan Lee linked
+            - link "Northstar master agreement":
+              - /url: "#/objects/ctr-msa"
+          - time: 2 months ago
+        - listitem:
+          - paragraph:
+            - text: Sync CRM created
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+          - time: 3 months ago
+    - region "Run history":
+      - heading "Run history" [level=2]
+      - text: orders-sync
+      - list "Run events":
+        - listitem:
+          - paragraph: Run started orders-sync · attempt 1
+          - time: Sep 25, 2026, 8:02 AM
+        - listitem:
+          - paragraph: Step completed fetch-orders · 1,284 rows
+          - time: Sep 25, 2026, 8:02 AM
+        - listitem:
+          - paragraph: Step failed load-warehouse · connection reset
+          - time: Sep 25, 2026, 8:03 AM
+        - listitem:
+          - paragraph: Retry scheduled backoff 30 s
+          - time: Sep 25, 2026, 8:03 AM
+        - listitem:
+          - paragraph: Run completed
+          - time: Sep 25, 2026, 8:04 AM
+  - text: Theme and density inherit from the scoped toolkit root.

@@ -1,0 +1,11 @@
+- main:
+  - text: Toolkit · Search
+  - heading "SearchField" [level=1]
+  - paragraph: "Search is the front door: a search field with scope tokens and a focus shortcut, and a global palette of results grouped by type."
+  - region "SearchField component example":
+    - search "Search customers":
+      - searchbox "Search customers": harbor
+      - button "Clear search"
+    - search "Search files":
+      - searchbox "Search files"
+  - text: Theme and density inherit from the scoped toolkit root.

@@ -55,7 +55,6 @@ export type {
 } from './core/WidgetRegistry'
 export type { TerminalIntent, TerminalIntentHandler } from './core/TerminalIntent'
 export { ErrorBoundary } from './core/ErrorBoundary'
-export { CommandPalette } from './core/CommandPalette'
 export type { PaletteSuggest, PaletteSuggestion } from './core/CommandPalette'
 export { ShortcutsOverlay } from './core/ShortcutsOverlay'
 export { saveView, loadView, listViews, deleteView } from './core/savedViews'

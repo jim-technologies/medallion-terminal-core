@@ -1,4 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  CommandPalette as ToolkitCommandPalette,
+  type CommandGroup,
+  type CommandItem,
+} from '../components/CommandPalette'
+import { Kbd } from '../components/Display'
 import { useDashboard } from './DashboardContext'
 import { saveView, loadView, listViews, deleteView } from './savedViews'
 
@@ -64,35 +70,27 @@ function parseCommand(input: string, dominantKey: string): Cmd | null {
   return { kind: 'set', key: dominantKey, value: s }
 }
 
-export function CommandPalette({ suggest }: { suggest?: PaletteSuggest } = {}) {
+/**
+ * The Dashboard's Ctrl/⌘ K palette on the toolkit `CommandPalette`: typing
+ * a command and pressing Enter applies it (`symbol:BTC range:1d`,
+ * `/save name`, `/load name`, `/delete name`); arrow keys pick a backend
+ * suggestion, a saved view or a recent command instead.
+ */
+export function DashboardCommandPalette({ suggest }: { suggest?: PaletteSuggest } = {}) {
   const { ctx, setCtx, toast } = useDashboard()
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<string[]>([])
-  // -1 = "live" input, 0..N-1 = navigating into history.
-  const [historyCursor, setHistoryCursor] = useState(-1)
-  const inputRef = useRef<HTMLInputElement>(null)
   const [suggestions, setSuggestions] = useState<PaletteSuggestion[]>([])
   // Generation token so a slow earlier fetch doesn't overwrite a fast
   // later one with stale results.
   const suggestGen = useRef(0)
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault()
-        setOpen(o => !o)
-      } else if (e.key === 'Escape') {
-        setOpen(false)
-      }
+    if (!open) {
+      setInput('')
+      setSuggestions([])
     }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [])
-
-  useEffect(() => {
-    if (open) inputRef.current?.focus()
-    else { setInput(''); setHistoryCursor(-1); setSuggestions([]) }
   }, [open])
 
   // Debounced suggestion fetch. Token-guarded to avoid out-of-order
@@ -114,21 +112,14 @@ export function CommandPalette({ suggest }: { suggest?: PaletteSuggest } = {}) {
     return () => clearTimeout(handle)
   }, [input, open, suggest])
 
-  // Hooks must run unconditionally; bail on render output instead.
   const dominantKey = useMemo(() => Object.keys(ctx)[0] ?? 'symbol', [ctx])
   // listViews() walks the entire localStorage keyspace; only re-scan when
-  // the palette opens or after the user issues a /save or /delete (driven
-  // by `history` changes since those commands push into history too).
+  // the palette opens or after a /save or /delete (both push history).
   const views = useMemo(() => (open ? listViews() : []), [open, history])
 
-  if (!open) return null
-
-  const apply = () => {
-    const parsed = parseCommand(input, dominantKey)
-    if (!parsed || parsed.kind === 'noop') {
-      setOpen(false)
-      return
-    }
+  const apply = (command: string) => {
+    const parsed = parseCommand(command, dominantKey)
+    if (!parsed || parsed.kind === 'noop') return
     if (parsed.kind === 'save') {
       saveView(parsed.name, ctx)
       toast(`Saved "${parsed.name}"`, 'ok')
@@ -148,115 +139,62 @@ export function CommandPalette({ suggest }: { suggest?: PaletteSuggest } = {}) {
     } else if (parsed.kind === 'set_many') {
       for (const [k, v] of parsed.pairs) setCtx(k, v)
     }
-    setHistory(h => [input, ...h.filter(x => x !== input)].slice(0, 5))
-    setOpen(false)
+    setHistory(h => [command, ...h.filter(x => x !== command)].slice(0, 5))
   }
 
-  const navigateHistory = (direction: 1 | -1) => {
-    if (history.length === 0) return
-    const next = Math.max(-1, Math.min(history.length - 1, historyCursor + direction))
-    setHistoryCursor(next)
-    setInput(next === -1 ? '' : history[next])
+  const groups = useMemo<CommandGroup[]>(() => [
+    {
+      id: 'suggestions',
+      label: 'Suggestions',
+      items: suggestions.map((s, i) => ({
+        id: `suggestion:${i}`,
+        label: s.label,
+        description: s.hint ?? Object.entries(s.ctx).map(([k, v]) => `${k}=${v}`).join(' · '),
+      })),
+    },
+    { id: 'views', label: 'Saved views', items: views.map((v: string) => ({ id: `view:${v}`, label: v, description: `/load ${v}` })) },
+    { id: 'recent', label: 'Recent', items: history.map(h => ({ id: `recent:${h}`, label: h })) },
+  ], [suggestions, views, history])
+
+  const select = (item: CommandItem) => {
+    const [kind, ...rest] = item.id.split(':')
+    const value = rest.join(':')
+    if (kind === 'suggestion') {
+      const s = suggestions[Number(value)]
+      if (s) for (const [k, v] of Object.entries(s.ctx)) setCtx(k, v)
+    } else if (kind === 'view') {
+      apply(`/load ${value}`)
+    } else if (kind === 'recent') {
+      apply(value)
+    }
   }
 
-  const applySuggestion = (s: PaletteSuggestion) => {
-    for (const [k, v] of Object.entries(s.ctx)) setCtx(k, v)
-    setOpen(false)
-  }
-
+  const context = Object.entries(ctx)
   return (
-    <div
-      className="mtc-overlay fixed inset-0 z-50 flex items-start justify-center pt-[20vh] px-4"
-      onClick={() => setOpen(false)}
-    >
-      <div
-        className="mtc-popover w-full max-w-lg overflow-hidden"
-        onClick={e => e.stopPropagation()}
-      >
-        <input
-          ref={inputRef}
-          type="text"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              apply()
-            } else if (e.key === 'ArrowUp') {
-              e.preventDefault()
-              navigateHistory(1)
-            } else if (e.key === 'ArrowDown') {
-              e.preventDefault()
-              navigateHistory(-1)
-            }
-          }}
-          placeholder="symbol:BTC range:1d  ·  /save view  ·  /load view"
-          className="w-full bg-transparent text-zinc-100 px-4 py-3 text-sm outline-none placeholder-zinc-500 border-b border-zinc-800"
-        />
-        {suggestions.length > 0 && (
-          <div className="border-b border-zinc-800 max-h-72 overflow-auto">
-            {suggestions.map((s, i) => (
-              <button
-                key={`${s.label}-${i}`}
-                onClick={() => applySuggestion(s)}
-                className="block w-full text-left px-4 py-1.5 text-sm hover:bg-zinc-800/60 group"
-              >
-                <span className="text-zinc-100">{s.label}</span>
-                {s.hint && (
-                  <span className="ml-2 text-[10px] text-zinc-500 font-mono">{s.hint}</span>
-                )}
-                <span className="ml-2 text-[10px] text-zinc-700 font-mono opacity-0 group-hover:opacity-100">
-                  {Object.entries(s.ctx).map(([k, v]) => `${k}=${v}`).join(' · ')}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-        {Object.entries(ctx).length > 0 && (
-          <div className="px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-600 self-center">current</span>
-            {Object.entries(ctx).map(([k, v]) => (
-              <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-mono">
-                {k}={v}
-              </span>
-            ))}
-          </div>
-        )}
-        {views.length > 0 && (
-          <div className="px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-600 self-center">views</span>
-            {views.map((v: string) => (
-              <button
-                key={v}
-                onClick={() => setInput(`/load ${v}`)}
-                className="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 font-mono"
-                title={`Load view "${v}"`}
-              >
-                {v}
-              </button>
-            ))}
-          </div>
-        )}
-        {history.length > 0 && (
-          <div className="px-4 py-2 border-b border-zinc-800 flex gap-1.5 flex-wrap">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-600 self-center">recent</span>
-            {history.map((h, i) => (
-              <button
-                key={i}
-                onClick={() => setInput(h)}
-                className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 font-mono"
-              >
-                {h}
-              </button>
-            ))}
-          </div>
-        )}
-        <div className="px-4 py-2 text-[10px] text-zinc-600 flex justify-between">
-          <span>↵ apply  ·  ↑↓ recall</span>
-          <span>esc close</span>
-        </div>
-      </div>
-    </div>
+    <ToolkitCommandPalette
+      open={open}
+      onOpenChange={setOpen}
+      query={input}
+      onQueryChange={setInput}
+      groups={groups}
+      onSelect={select}
+      onSubmit={apply}
+      autoHighlight={false}
+      label="Dashboard commands"
+      placeholder="symbol:BTC range:1d  ·  /save view  ·  /load view"
+      footer={(
+        <>
+          <span><Kbd>↵</Kbd> apply</span>
+          <span><Kbd>↑</Kbd> <Kbd>↓</Kbd> pick</span>
+          <span><Kbd>Esc</Kbd> close</span>
+          {context.length > 0 && (
+            <span className="mtc-command-context">
+              {context.map(([k, v]) => `${k}=${v}`).join(' · ')}
+            </span>
+          )}
+        </>
+      )}
+    />
   )
 }
 

@@ -95,6 +95,16 @@ const toolkitStories = {
   toolkitLinkGraph: 'toolkit-objects-links--one-hop-graph',
   toolkitLinkGraphCapped: 'toolkit-objects-links--capped-graph',
   toolkitSchemaGraph: 'toolkit-objects-links--schema-graph-types',
+  toolkitSearchField: 'toolkit-components-search--search-field-with-tokens',
+  toolkitCommandPalette: 'toolkit-components-search--command-palette-grouped',
+  toolkitCommandPaletteOpen: 'toolkit-components-search--command-palette-open',
+  toolkitStatTiles: 'toolkit-components-status--stat-tiles',
+  toolkitToasts: 'toolkit-components-status--toast-stack',
+  toolkitPagination: 'toolkit-components-status--pagination-modes',
+  toolkitNavRail: 'toolkit-workbench-navigation--nav-rail-sections',
+  toolkitPageHeader: 'toolkit-workbench-navigation--page-header-with-tabs',
+  toolkitFacets: 'toolkit-objects-explore--facet-rail',
+  toolkitActivity: 'toolkit-objects-explore--activity-feed-and-timeline',
 } as const
 
 const stories = {
@@ -488,6 +498,15 @@ test('Database explorer filters, inspects, and presents schema and query workflo
   await expect(editor).toHaveValue(/FROM analytics\.public\.customers/)
   await root.getByRole('button', { name: 'Run preview' }).click()
   await expect(root.getByRole('status')).toContainText('execution remains host-owned')
+})
+
+test('CopyButton confirms a copy with a polite status', async ({ page }) => {
+  const root = await openStory(page, stories.toolkitSkeletonCopy)
+  const actions = root.getByRole('region', { name: 'Copy actions' })
+  await actions.getByRole('button', { name: 'Copy hash' }).click()
+  await expect(actions.getByRole('status').first()).toHaveText('Copied')
+  await expect(actions.getByRole('button', { name: 'Copy hash' }).locator('path')).toHaveAttribute('d', 'm5 12 4 4L19 6')
+  await expect(actions.getByRole('status').first()).toHaveText('', { timeout: 3000 })
 })
 
 test('DataGrid keeps ten thousand rows under 1,500 DOM nodes at every scroll offset', async ({ page }) => {

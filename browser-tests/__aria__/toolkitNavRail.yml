@@ -1,0 +1,78 @@
+- navigation "Workspace":
+  - list:
+    - listitem:
+      - link "Home":
+        - /url: "#/"
+    - listitem:
+      - link "Explore":
+        - /url: "#/explore"
+    - listitem:
+      - link "Ontology":
+        - /url: "#/ontology"
+    - listitem:
+      - link "Files":
+        - /url: "#/files"
+    - listitem:
+      - link "Activity":
+        - /url: "#/activity"
+  - text: Object types
+  - list "Object types":
+    - listitem:
+      - link "Customer 71":
+        - /url: "#/explore?type=customer"
+    - listitem:
+      - link "Person 212":
+        - /url: "#/explore?type=person"
+    - listitem:
+      - link "Order 3.1K":
+        - /url: "#/explore?type=order"
+  - text: Platform
+  - list "Platform":
+    - listitem:
+      - link "Storage":
+        - /url: "#/storage"
+    - listitem:
+      - link "Connect":
+        - /url: "#/connect"
+    - listitem:
+      - link "System topology":
+        - /url: "#/topology"
+  - button "Collapse navigation" [expanded]
+- navigation "Workspace (collapsed)":
+  - list:
+    - listitem:
+      - link "Home":
+        - /url: "#/"
+    - listitem:
+      - link "Explore":
+        - /url: "#/explore"
+    - listitem:
+      - link "Ontology":
+        - /url: "#/ontology"
+    - listitem:
+      - link "Files":
+        - /url: "#/files"
+    - listitem:
+      - link "Activity":
+        - /url: "#/activity"
+  - list "Object types":
+    - listitem:
+      - link "Customer 71":
+        - /url: "#/explore?type=customer"
+    - listitem:
+      - link "Person 212":
+        - /url: "#/explore?type=person"
+    - listitem:
+      - link "Order 3.1K":
+        - /url: "#/explore?type=order"
+  - list "Platform":
+    - listitem:
+      - link "Storage":
+        - /url: "#/storage"
+    - listitem:
+      - link "Connect":
+        - /url: "#/connect"
+    - listitem:
+      - link "System topology":
+        - /url: "#/topology"
+- main: Page content

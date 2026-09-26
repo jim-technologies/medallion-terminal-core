@@ -7,9 +7,6 @@
     "font-size": 13,
     "tracking": 4
   },
-  "src/core/CommandPalette.tsx": {
-    "font-size": 9
-  },
   "src/core/Dashboard.tsx": {
     "font-size": 17,
     "tracking": 1

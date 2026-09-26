@@ -1,0 +1,37 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "FacetList" [level=1]
+  - paragraph: "Search-first exploration: facets with counts narrow an object set, and activity shows who did what to which object."
+  - region "FacetList component example":
+    - group "Filters":
+      - button "Clear"
+      - group "Object type":
+        - text: Object type
+        - radio "All objects 71"
+        - text: All objects 71
+        - radio "Customer 5" [checked]
+        - text: Customer 5
+        - radio "Person 12"
+        - text: Person 12
+        - radio "Contract 4"
+        - text: Contract 4
+        - radio "Order 48"
+        - text: Order 48
+        - radio "Employment 2"
+        - text: Employment 2
+      - group "Segment":
+        - text: Segment
+        - checkbox "Enterprise 3"
+        - text: Enterprise 3
+        - checkbox "Mid-market 2" [checked]
+        - text: Mid-market 2
+        - checkbox "Startup 0"
+        - text: Startup 0
+        - button "Show 2 more"
+      - group "Status":
+        - text: Status
+        - checkbox "Active 4" [checked]
+        - text: Active 4
+        - checkbox "Churned 1"
+        - text: Churned 1
+  - text: Theme and density inherit from the scoped toolkit root.

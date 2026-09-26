@@ -218,6 +218,32 @@ Popover and menu document listeners exist only while their layer is open.
 - `HoverCard`: a non-modal preview on hover and focus, portalled into the
   scope so it keeps the theme and escapes clipping ancestors.
 
+### Navigation, search and notifications
+
+- `NavRail`: the shell's navigation rail (`NavRailSection`s of
+  `NavRailItem`s with an icon or type glyph and a count), `activeId` for
+  `aria-current`, a collapse toggle (`onCollapsedChange`), links with an
+  optional `onNavigate`.
+- `PageHeader`: breadcrumbs, title (or custom heading children such as an
+  `ObjectHeader`), description, actions and a `tabs` slot; `sticky`.
+- `SearchField`: a search landmark with scope `tokens` (removable, Backspace
+  removes the last), clear, Enter to submit, and a `shortcut` key (`/`)
+  that focuses it from anywhere outside another input.
+- `CommandPalette`: the global palette. The host searches and returns
+  `CommandGroup`s; the palette is a modal combobox with grouped options,
+  arrow-key highlight, Enter to choose (or `onSubmit` the query when
+  `autoHighlight` is off and nothing is highlighted), Escape to close, and
+  Ctrl/⌘ K to toggle (`hotkey`). The Dashboard's palette is built on it.
+- `Toaster` (controlled), `ToastProvider` and `useToast()` (a queue):
+  notifications with an intent, description, one action and a duration
+  (0 keeps it), announced politely (`danger` assertively), pausing while
+  hovered or focused, portalled into the scope. The Dashboard's toasts use
+  it.
+- `Pagination`: numbered (`page`, `pageCount`, `onPageChange`) or cursor
+  (`hasPrevious`, `hasNext`, `onPrevious`, `onNext`) paging with a summary.
+- `StatTile`: a headline number with unit, `delta`, status, description,
+  icon and an optional link.
+
 ### Object components
 
 The ontology anatomy: an object has a type (`ObjectTypeRef`: label, icon,
@@ -235,6 +261,12 @@ referenced by an `ObjectRef` (id, title, type, `href`).
   metadata and actions; `compact` for inspectors and hover cards.
 - `ObjectChip`: an inline object reference (link, button or text), with an
   optional `hoverCard`.
+- `FacetList`: the explorer's facet rail (`FacetGroup`s of `FacetOption`s
+  with counts; `single` groups are radio buttons with type glyphs, `multi`
+  groups checkboxes; "Show more"; `onClear`).
+- `ActivityFeed`: `ActivityItem`s (actor, verb, object, summary, time,
+  tone) as a feed with avatars and relative times, or as a `timeline`
+  with toned dots and absolute times for run and event histories.
 
 - `LinkPanel`: an object's `LinkGroup`s (relation, direction, target type,
   count, the first `LinkItem`s with their detail, and a "View all" link or

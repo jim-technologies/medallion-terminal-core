@@ -203,6 +203,15 @@ snapshots.
 | `LinkPanel` | An object's relationships | One group per link type: relation, arrow (← for incoming), target type glyph and name, count; the first three objects with their detail; "View all" |
 | `LinkGraph` | The object's one-hop neighbourhood | Deterministic radial sectors per link type, relation on the middle edge, at most 40 nodes with "+N", dashed incoming edges, labels radial when the ring is dense; 1:1 scale fitted to at least 80%, pan and zoom |
 | `SchemaGraph` | The ontology's types and link types | Layered left to right, type glyph, name and count per node, curved directed edges with labels, back edges routed around nodes, the selected type highlighted |
+| `NavRail` | The shell's left navigation | 232 px (48 collapsed), sections with 11 px labels, 28 px items with an icon or type glyph and a count, the current item on `--mtc-selection` with a 2 px accent bar |
+| `PageHeader` | The top of every page | Breadcrumbs, a 16/600 title (or an `ObjectHeader`), description, actions, an optional tab strip; flat, optionally sticky |
+| `SearchField` | Search boxes | 32 px, control boundary, search icon, type-pill tokens, clear, a `/` focus hint |
+| `CommandPalette` | Global search and commands (Ctrl/⌘ K) | Results grouped by type with glyphs, the highlight as selection plus accent bar, keyboard hints in the footer |
+| `FacetList` | Explorer filters | Object type as a single-select list with glyphs and counts, value facets as checkboxes, "Show more" past eight |
+| `ActivityFeed` | Who did what to which object | Avatar, bold actor, verb, `ObjectChip`, summary, relative time; the `timeline` variant draws toned dots on a line with absolute times |
+| `StatTile` | Headline numbers | 20/600 tabular value with unit, change with a direction arrow (ok or danger tone), optional status and link |
+| `Toaster` | Notifications | Bottom-end stack, a 2 px tone bar, polite status (`danger` assertive), pauses on hover or focus |
+| `Pagination` | Page and cursor paging | Summary, Previous and Next, "Page n of m" when the count is known |
 | `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
 
 **Typed values.** `PropertyValue` decides presentation from `kind` or

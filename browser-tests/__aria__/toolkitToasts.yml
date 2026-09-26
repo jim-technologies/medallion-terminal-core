@@ -1,0 +1,9 @@
+- main:
+  - text: Toolkit · Status
+  - heading "Toast" [level=1]
+  - paragraph: "Headline numbers, notifications and paging: the toolkit counterparts of the dashboard's metric, toaster and cursor pager, usable without a Dashboard."
+  - region "Toast component example":
+    - button "Save view"
+    - button "Fail an upload"
+    - button "Move files"
+  - text: Theme and density inherit from the scoped toolkit root.

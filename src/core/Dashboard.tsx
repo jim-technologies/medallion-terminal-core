@@ -8,9 +8,9 @@ import { NowProvider } from './NowContext'
 import { applyActions } from './applyActions'
 import { readCtxFromUrl, writeCtxToUrl } from './urlState'
 import { interpolate } from './resolveSource'
-import { CommandPalette, type PaletteSuggest } from './CommandPalette'
+import { DashboardCommandPalette, type PaletteSuggest } from './CommandPalette'
 import { ShortcutsOverlay } from './ShortcutsOverlay'
-import { Toaster, type Toast } from './Toaster'
+import { Toaster, type ToastData } from '../components/Toast'
 import { validateTemplate, type ValidationIssue } from './validateTemplate'
 import {
   DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
@@ -99,6 +99,17 @@ export type DashboardTemplateTrust = 'untrusted' | 'trusted'
 type DashboardIssue = ValidationIssue | TemplateSecurityIssue
 
 /** Public configuration for the dashboard renderer and its host bridges. */
+// Dashboard toasts are short confirmations and failures ("Saved view",
+// "Snapshot failed: …"); every one dismisses after 3.5 s, as before.
+const TOAST_DURATION_MS = 3500
+const TOAST_LIMIT = 4
+const TOAST_INTENT: Record<Severity, ToastData['intent']> = {
+  ok: 'success',
+  warn: 'warning',
+  error: 'danger',
+  info: 'info',
+}
+
 export interface DashboardProps {
   /** Template rendered by this Dashboard instance. */
   template: Template
@@ -545,7 +556,7 @@ export function Dashboard({
   const [fullscreenId, setFullscreenId] = useState<string | null>(null)
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const [refreshPulse, setRefreshPulse] = useState<{ id: string; n: number } | null>(null)
-  const [toasts, setToasts] = useState<Toast[]>([])
+  const [toasts, setToasts] = useState<ToastData[]>([])
   const [sharing, setSharing] = useState(false)
   const toastIdRef = useRef(0)
   const sharingRef = useRef(false)
@@ -664,7 +675,12 @@ export function Dashboard({
   const toast = useCallback((message: string, severity: Severity = 'info') => {
     toastIdRef.current += 1
     const id = toastIdRef.current
-    setToasts(prev => [...prev, { id, message, severity }])
+    setToasts(prev => [...prev, {
+      id,
+      title: message,
+      intent: TOAST_INTENT[severity],
+      duration: TOAST_DURATION_MS,
+    }].slice(-TOAST_LIMIT))
   }, [])
 
   const shareSnapshot = useCallback(async () => {
@@ -685,7 +701,7 @@ export function Dashboard({
     }
   }, [onShare, snapshot, toast])
 
-  const dismissToast = useCallback((id: number) => {
+  const dismissToast = useCallback((id: ToastData['id']) => {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
@@ -851,9 +867,9 @@ export function Dashboard({
      >
      <NowProvider>
      <HoverProvider>
-      <CommandPalette suggest={paletteSuggest} />
+      <DashboardCommandPalette suggest={paletteSuggest} />
       <ShortcutsOverlay templateShortcuts={template.shortcuts} />
-      <Toaster toasts={toasts} dismiss={dismissToast} />
+      <Toaster toasts={toasts} onDismiss={dismissToast} />
       {issues.length > 0 && (!bannerDismissed || hasErrors) && (
         <ValidationBanner
           issues={issues}

@@ -16,3 +16,7 @@ export { LinkPanel } from './LinkPanel';
 export type { LinkGroup, LinkItem, LinkPanelProps } from './LinkPanel';
 export { SchemaGraph } from './SchemaGraph';
 export type { SchemaGraphProps, SchemaGraphRelation, SchemaGraphType } from './SchemaGraph';
+export { ActivityFeed } from './ActivityFeed';
+export type { ActivityFeedProps, ActivityItem } from './ActivityFeed';
+export { FacetList } from './FacetList';
+export type { FacetGroup, FacetListProps, FacetOption } from './FacetList';

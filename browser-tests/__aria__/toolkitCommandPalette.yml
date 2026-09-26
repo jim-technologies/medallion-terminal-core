@@ -1,0 +1,7 @@
+- main:
+  - text: Toolkit · Search
+  - heading "CommandPalette" [level=1]
+  - paragraph: "Search is the front door: a search field with scope tokens and a focus shortcut, and a global palette of results grouped by type."
+  - region "CommandPalette component example":
+    - button "Search objects, types, and resources Ctrl K"
+  - text: Theme and density inherit from the scoped toolkit root.

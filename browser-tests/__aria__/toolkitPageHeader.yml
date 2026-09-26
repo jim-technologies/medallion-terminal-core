@@ -1,0 +1,17 @@
+- navigation "Breadcrumbs":
+  - list:
+    - listitem:
+      - link "Workspace":
+        - /url: "#/"
+    - listitem: Ontology
+- heading "Ontology" [level=1]
+- paragraph: Object types, link types and how they connect.
+- button "Export"
+- button "New object type"
+- tablist "Ontology sections":
+  - tab "Object types 7" [selected]
+  - tab "Link types 8"
+  - tab "Graph"
+- tabpanel "Object types 7"
+- heading "Operations" [level=1]
+- paragraph: Service health, releases and freshness.
