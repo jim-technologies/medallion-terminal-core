@@ -68,19 +68,24 @@
   paint-order: stroke;
   stroke: var(--mtc-surface);
   stroke-linejoin: round;
-  stroke-width: 4px;
+  stroke-width: calc(4px * var(--mtc-graph-text-scale, 1));
 }
-.mtc-root .mtc-graph-edge-label { fill: var(--mtc-muted); font-size: var(--mtc-font-size-xs); }
-.mtc-root .mtc-graph-node-label { fill: var(--mtc-fg-soft); font-size: var(--mtc-font-size-sm); }
+/* Graph text sits in the canvas's scaled group: --mtc-graph-text-scale
+   (1 / scale when the drawing is scaled down) keeps it at its type size on
+   screen, so no label renders under 11 px. */
+.mtc-root .mtc-graph-edge-label { fill: var(--mtc-muted); font-size: calc(var(--mtc-font-size-xs) * var(--mtc-graph-text-scale, 1)); }
+.mtc-root .mtc-graph-node-label { fill: var(--mtc-fg-soft); font-size: calc(var(--mtc-font-size-sm) * var(--mtc-graph-text-scale, 1)); }
 .mtc-root .mtc-graph-node-label[data-emphasis="true"] { fill: var(--mtc-fg); font-weight: var(--mtc-font-weight-medium); }
-.mtc-root .mtc-graph-node-meta { fill: var(--mtc-muted); font-size: var(--mtc-font-size-xs); }
+.mtc-root .mtc-graph-node-meta { fill: var(--mtc-muted); font-size: calc(var(--mtc-font-size-xs) * var(--mtc-graph-text-scale, 1)); }
+/* Zoomed out to an overview: labels are hidden rather than overlapping. */
+.mtc-root .mtc-graph-svg[data-labels="hidden"] :is(.mtc-graph-edge-label, .mtc-graph-node-label, .mtc-graph-node-meta, .mtc-graph-more text) { display: none; }
 .mtc-root .mtc-graph-node { cursor: pointer; outline: none; }
 .mtc-root .mtc-graph-node:focus-visible { outline: none; }
 .mtc-root .mtc-graph-node[data-center="true"] { cursor: default; }
 .mtc-root .mtc-graph-glyph rect { stroke: transparent; stroke-width: 2; }
 .mtc-root .mtc-graph-glyph[data-center="true"] rect { stroke: var(--mtc-accent); }
 .mtc-root .mtc-graph-more rect { fill: var(--mtc-panel); stroke: var(--mtc-border-strong); stroke-width: 1; }
-.mtc-root .mtc-graph-more text { fill: var(--mtc-fg-soft); font-size: var(--mtc-font-size-xs); font-weight: var(--mtc-font-weight-medium); stroke: var(--mtc-panel); stroke-width: 0; }
+.mtc-root .mtc-graph-more text { fill: var(--mtc-fg-soft); font-size: calc(var(--mtc-font-size-xs) * var(--mtc-graph-text-scale, 1)); font-weight: var(--mtc-font-weight-medium); stroke: var(--mtc-panel); stroke-width: 0; }
 .mtc-root .mtc-graph-node:hover .mtc-graph-node-label { fill: var(--mtc-fg); }
 .mtc-root .mtc-graph-node:focus-visible .mtc-graph-glyph rect,
 .mtc-root .mtc-graph-node:focus-visible .mtc-graph-more rect,

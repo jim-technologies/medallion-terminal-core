@@ -5,7 +5,9 @@
  * cycle is broken where it blocks the traversal: the waiting node with the
  * fewest unmet incoming edges (input order on ties) is released as if it
  * were a source, and edges back into processed nodes do not raise ranks, so
- * ontologies with mutual links still lay out in layers.
+ * ontologies with mutual links still lay out in layers. An edge that skips
+ * ranks gets a route through the gaps between the nodes of each rank it
+ * crosses, so it never runs through a node.
  */
 
 export interface LayeredNodeInput {
@@ -37,12 +39,23 @@ export interface LaidOutNode<N> {
   rank: number
 }
 
+export interface LayoutPoint {
+  x: number
+  y: number
+}
+
 export interface LaidOutEdge<E> {
   edge: E
   x1: number
   y1: number
   x2: number
   y2: number
+  /**
+   * For an edge that skips ranks (either way): where it enters and leaves
+   * each rank in between, in order, through a gap between that rank's nodes.
+   * Absent for edges between neighbouring ranks.
+   */
+  route?: LayoutPoint[]
 }
 
 export interface LayeredLayout<N, E> {
@@ -129,14 +142,51 @@ export function layeredLayout<N extends LayeredNodeInput, E extends LayeredEdgeI
   }
 
   const laidNodes = nodes.map(node => ({ node, ...positions.get(node.id)! }))
+
+  // Where each rank's nodes start across the rank axis, in order, for
+  // routing edges through the gaps between them.
+  const acrossStarts = new Map<number, number[]>()
+  for (const { rank: value, x, y } of positions.values()) {
+    acrossStarts.set(value, [...(acrossStarts.get(value) ?? []), direction === 'down' ? x : y])
+  }
+  for (const starts of acrossStarts.values()) starts.sort((left, right) => left - right)
+  // The gap centre (or the space just outside the rank) nearest `target`.
+  const channel = (value: number, target: number): number => {
+    const starts = acrossStarts.get(value)
+    if (!starts || starts.length === 0) return target
+    const candidates = [starts[0]! - nodeGap / 2]
+    starts.forEach((start, index) => {
+      const next = starts[index + 1]
+      candidates.push(next === undefined ? start + across + nodeGap / 2 : (start + across + next) / 2)
+    })
+    return candidates.reduce((best, candidate) => (Math.abs(candidate - target) < Math.abs(best - target) ? candidate : best))
+  }
+
   const laidEdges: LaidOutEdge<E>[] = []
   for (const edge of validEdges) {
     const a = positions.get(edge.from)
     const b = positions.get(edge.to)
     if (!a || !b) continue
-    laidEdges.push(direction === 'down'
+    const laid: LaidOutEdge<E> = direction === 'down'
       ? { edge, x1: a.x + nodeWidth / 2, y1: a.y + nodeHeight, x2: b.x + nodeWidth / 2, y2: b.y }
-      : { edge, x1: a.x + nodeWidth, y1: a.y + nodeHeight / 2, x2: b.x, y2: b.y + nodeHeight / 2 })
+      : { edge, x1: a.x + nodeWidth, y1: a.y + nodeHeight / 2, x2: b.x, y2: b.y + nodeHeight / 2 }
+    const span = b.rank - a.rank
+    if (Math.abs(span) >= 2) {
+      const step = Math.sign(span)
+      const from = direction === 'down' ? laid.x1 : laid.y1
+      const to = direction === 'down' ? laid.x2 : laid.y2
+      const route: LayoutPoint[] = []
+      for (let value = a.rank + step; value !== b.rank; value += step) {
+        const lane = channel(value, from + ((to - from) * (value - a.rank)) / span)
+        const level = padding + value * rankGap
+        // Enter on the side facing the source, leave on the far side.
+        for (const offset of step > 0 ? [level, level + along] : [level + along, level]) {
+          route.push(direction === 'down' ? { x: lane, y: offset } : { x: offset, y: lane })
+        }
+      }
+      laid.route = route
+    }
+    laidEdges.push(laid)
   }
   return direction === 'down'
     ? { nodes: laidNodes, edges: laidEdges, width: breadth, height: depth }

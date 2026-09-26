@@ -3,8 +3,8 @@ import { Icon } from '../components/Icon'
 import { isPlainClick } from '../components/navigation'
 import { useLocale } from '../foundations/DesignSystemProvider'
 import { formatNumber } from '../foundations/intl'
-import { layeredLayout } from '../graph/layeredLayout'
-import { GraphCanvas } from './GraphCanvas'
+import { layeredLayout, type LayoutPoint } from '../graph/layeredLayout'
+import { GraphCanvas, labelChars } from './GraphCanvas'
 import { typePresentation, type ObjectTypeRef } from './types'
 
 /** An object type drawn as a schema node. */
@@ -45,7 +45,13 @@ export interface SchemaGraphProps {
 
 const NODE_WIDTH = 176
 const NODE_HEIGHT = 44
-const MAX_NAME = 20
+// Room for the name beside the glyph, and the widest character it is
+// truncated for (12 px medium text).
+const NAME_ROOM = NODE_WIDTH - 52
+const NAME_CHAR = 7
+// Edge labels live in the gap between ranks (11 px text).
+const EDGE_LABEL_ROOM = 88
+const EDGE_LABEL_CHAR = 6.2
 const BACK_BEND = 56
 
 /**
@@ -70,6 +76,35 @@ function edgePath(direction: 'right' | 'down', x1: number, y1: number, x2: numbe
   const sy = y1 - NODE_HEIGHT
   const ty = y2 + NODE_HEIGHT
   return `M${x1} ${sy} C${x1} ${sy - BACK_BEND} ${x2} ${ty + BACK_BEND} ${x2} ${ty + 2}`
+}
+
+/**
+ * A routed edge: curves through the gaps between ranks and straight runs
+ * across each rank it skips, entering and leaving through a gap between
+ * nodes. `points` are the start, the route's pairs and the end.
+ */
+function routedPath(direction: 'right' | 'down', points: readonly LayoutPoint[]): string {
+  const [start, ...rest] = points
+  if (!start) return ''
+  let path = `M${start.x} ${start.y}`
+  let from = start
+  rest.forEach((to, index) => {
+    const last = index === rest.length - 1
+    if (index % 2 === 1 && !last) {
+      // Across a rank: a straight run through its gap.
+      path += ` L${to.x} ${to.y}`
+    } else if (direction === 'right') {
+      const bend = (to.x - from.x) / 2
+      const end = last ? to.x - Math.sign(to.x - from.x) * 2 : to.x
+      path += ` C${from.x + bend} ${from.y} ${to.x - bend} ${to.y} ${end} ${to.y}`
+    } else {
+      const bend = (to.y - from.y) / 2
+      const end = last ? to.y - Math.sign(to.y - from.y) * 2 : to.y
+      path += ` C${from.x} ${from.y + bend} ${to.x} ${to.y - bend} ${to.x} ${end}`
+    }
+    from = to
+  })
+  return path
 }
 
 function truncate(text: string, length: number): string {
@@ -109,70 +144,96 @@ export function SchemaGraph({
     onSelect(type, event)
   }
 
+  const selected = layout.nodes.find(({ node }) => node.id === selectedId)
+  const focus = selected ? { x: selected.x, y: selected.y, width: NODE_WIDTH, height: NODE_HEIGHT } : undefined
+
   return (
-    <GraphCanvas label={label} width={layout.width} height={layout.height} viewHeight={height}>
-      <defs>
-        <marker id={markerId} markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse">
-          <path d="M0,0 L0,8 L8,4 z" className="mtc-graph-arrow" />
-        </marker>
-      </defs>
-      <g className="mtc-graph-edges">
-        {layout.edges.map(({ edge, x1, y1, x2, y2 }, index) => {
-          const path = edgePath(direction, x1, y1, x2, y2)
-          const active = selectedId !== undefined && (edge.from === selectedId || edge.to === selectedId)
-          return (
-            <g key={edge.id ?? `${edge.from}:${edge.to}:${index}`}>
-              <path d={path} className="mtc-graph-edge" data-active={active || undefined} markerEnd={`url(#${markerId})`} />
-              <text x={(x1 + x2) / 2} y={(y1 + y2) / 2 - 6} textAnchor="middle" className="mtc-graph-edge-label">
-                {truncate(edge.label, 18)}
-              </text>
-            </g>
-          )
-        })}
-      </g>
-      {layout.nodes.map(({ node: type, x, y }) => {
-        const { icon, color } = typePresentation(type)
-        const selected = type.id === selectedId
-        const interactive = Boolean(type.href || onSelect)
-        const name = type.count === undefined
-          ? type.label
-          : `${type.label}, ${formatNumber(type.count, { locale })}`
-        return (
-          <a
-            key={type.id}
-            href={type.href}
-            role={type.href ? undefined : interactive ? 'button' : 'img'}
-            tabIndex={type.href ? undefined : interactive ? 0 : undefined}
-            aria-label={name}
-            aria-current={selected || undefined}
-            data-graph-node={interactive || undefined}
-            data-selected={selected || undefined}
-            className="mtc-graph-node mtc-schema-node"
-            onClick={choose(type)}
-            onKeyDown={interactive ? event => {
-              // SVG links do not activate on Enter by themselves.
-              if (event.key !== 'Enter' && !(event.key === ' ' && !type.href)) return
-              event.preventDefault()
-              if (onSelect) onSelect(type, event)
-              else event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
-            } : undefined}
-          >
-            <rect x={x} y={y} width={NODE_WIDTH} height={NODE_HEIGHT} rx={4} className="mtc-schema-node-box" />
-            <g style={{ color: `var(--mtc-type-${color}-fg)` }}>
-              <rect x={x + 10} y={y + 10} width={24} height={24} rx={4} fill={`var(--mtc-type-${color}-bg)`} />
-              <Icon name={icon} x={x + 15} y={y + 15} width={14} height={14} size={14} strokeWidth={2} />
-            </g>
-            <text x={x + 44} y={type.count === undefined ? y + NODE_HEIGHT / 2 : y + 18} dominantBaseline="middle" className="mtc-graph-node-label" data-emphasis="true">
-              {truncate(type.label, MAX_NAME)}
-            </text>
-            {type.count !== undefined && (
-              <text x={x + 44} y={y + 32} dominantBaseline="middle" className="mtc-graph-node-meta">
-                {formatNumber(type.count, { locale })}
-              </text>
-            )}
-          </a>
-        )
-      })}
+    <GraphCanvas label={label} width={layout.width} height={layout.height} viewHeight={height} focus={focus}>
+      {({ scale }) => (
+        <>
+          <defs>
+            <marker id={markerId} markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M0,0 L0,8 L8,4 z" className="mtc-graph-arrow" />
+            </marker>
+          </defs>
+          <g className="mtc-graph-edges">
+            {layout.edges.map(({ edge, x1, y1, x2, y2, route }, index) => {
+              const active = selectedId !== undefined && (edge.from === selectedId || edge.to === selectedId)
+              let path = edgePath(direction, x1, y1, x2, y2)
+              let labelAt = { x: (x1 + x2) / 2, y: (y1 + y2) / 2 - 6 }
+              let onLane = false
+              if (route && route.length > 0) {
+                // An edge back into an earlier rank leaves from the source's
+                // leading side and enters the target's trailing side.
+                const back = direction === 'right' ? route[0]!.x < x1 : route[0]!.y < y1
+                const start = back
+                  ? (direction === 'right' ? { x: x1 - NODE_WIDTH, y: y1 } : { x: x1, y: y1 - NODE_HEIGHT })
+                  : { x: x1, y: y1 }
+                const end = back
+                  ? (direction === 'right' ? { x: x2 + NODE_WIDTH, y: y2 } : { x: x2, y: y2 + NODE_HEIGHT })
+                  : { x: x2, y: y2 }
+                path = routedPath(direction, [start, ...route, end])
+                // The label sits on the straight run through the first rank
+                // it skips: in a gap between nodes, clear of the fan of
+                // labels at the source.
+                labelAt = { x: (route[0]!.x + route[1]!.x) / 2, y: (route[0]!.y + route[1]!.y) / 2 }
+                onLane = true
+              }
+              return (
+                <g key={edge.id ?? `${edge.from}:${edge.to}:${index}`}>
+                  <path d={path} className="mtc-graph-edge" data-active={active || undefined} markerEnd={`url(#${markerId})`} />
+                  <text x={labelAt.x} y={labelAt.y} textAnchor="middle" dominantBaseline={onLane ? 'middle' : undefined} className="mtc-graph-edge-label">
+                    {truncate(edge.label, labelChars(EDGE_LABEL_ROOM, scale, EDGE_LABEL_CHAR))}
+                  </text>
+                </g>
+              )
+            })}
+          </g>
+          {layout.nodes.map(({ node: type, x, y }) => {
+            const { icon, color } = typePresentation(type)
+            const isSelected = type.id === selectedId
+            const interactive = Boolean(type.href || onSelect)
+            const name = type.count === undefined
+              ? type.label
+              : `${type.label}, ${formatNumber(type.count, { locale })}`
+            return (
+              <a
+                key={type.id}
+                href={type.href}
+                role={type.href ? undefined : interactive ? 'button' : 'img'}
+                tabIndex={type.href ? undefined : interactive ? 0 : undefined}
+                aria-label={name}
+                aria-current={isSelected || undefined}
+                data-graph-node={interactive || undefined}
+                data-selected={isSelected || undefined}
+                className="mtc-graph-node mtc-schema-node"
+                onClick={choose(type)}
+                onKeyDown={interactive ? event => {
+                  // SVG links do not activate on Enter by themselves.
+                  if (event.key !== 'Enter' && !(event.key === ' ' && !type.href)) return
+                  event.preventDefault()
+                  if (onSelect) onSelect(type, event)
+                  else event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+                } : undefined}
+              >
+                <rect x={x} y={y} width={NODE_WIDTH} height={NODE_HEIGHT} rx={4} className="mtc-schema-node-box" />
+                <g style={{ color: `var(--mtc-type-${color}-fg)` }}>
+                  <rect x={x + 10} y={y + 10} width={24} height={24} rx={4} fill={`var(--mtc-type-${color}-bg)`} />
+                  <Icon name={icon} x={x + 15} y={y + 15} width={14} height={14} size={14} strokeWidth={2} />
+                </g>
+                <text x={x + 44} y={type.count === undefined ? y + NODE_HEIGHT / 2 : y + 16} dominantBaseline="middle" className="mtc-graph-node-label" data-emphasis="true">
+                  {truncate(type.label, labelChars(NAME_ROOM, scale, NAME_CHAR))}
+                </text>
+                {type.count !== undefined && (
+                  <text x={x + 44} y={y + 32} dominantBaseline="middle" className="mtc-graph-node-meta">
+                    {formatNumber(type.count, { locale })}
+                  </text>
+                )}
+              </a>
+            )
+          })}
+        </>
+      )}
     </GraphCanvas>
   )
 }

@@ -37,6 +37,41 @@ describe('layeredLayout', () => {
     expect(layout.edges[0]).toMatchObject({ x1: a!.x + 100, x2: b!.x })
     expect(layeredLayout([], [], box)).toBeNull()
   })
+
+  it('routes an edge that skips ranks through gaps, never through a node', () => {
+    // customer -> contract -> order, plus customer -> order skipping the
+    // contract rank, which also holds person and ticket: the straight line
+    // would run through contract.
+    const nodes = [{ id: 'customer' }, { id: 'person' }, { id: 'contract' }, { id: 'ticket' }, { id: 'order' }]
+    const edges = [
+      { from: 'customer', to: 'person' },
+      { from: 'customer', to: 'contract' },
+      { from: 'customer', to: 'ticket' },
+      { from: 'contract', to: 'order' },
+      { from: 'customer', to: 'order' },
+      { from: 'order', to: 'customer' },
+    ]
+    for (const direction of ['right', 'down'] as const) {
+      const layout = layeredLayout(nodes, edges, { ...box, direction })!
+      const inside = (point: { x: number; y: number }) => layout.nodes.some(({ x, y }) => (
+        point.x > x && point.x < x + box.nodeWidth && point.y > y && point.y < y + box.nodeHeight
+      ))
+      const skip = layout.edges.find(({ edge }) => edge.from === 'customer' && edge.to === 'order')!
+      const back = layout.edges.find(({ edge }) => edge.from === 'order' && edge.to === 'customer')!
+      for (const route of [skip.route!, back.route!]) {
+        expect(route).toHaveLength(2)
+        const [enter, exit] = route as [{ x: number; y: number }, { x: number; y: number }]
+        // The straight run across the skipped rank stays clear of its nodes.
+        for (let step = 0; step <= 10; step++) {
+          const point = { x: enter.x + ((exit.x - enter.x) * step) / 10, y: enter.y + ((exit.y - enter.y) * step) / 10 }
+          expect(inside(point), `${direction} ${JSON.stringify(point)}`).toBe(false)
+        }
+      }
+      // A back edge crosses the rank the other way.
+      expect(direction === 'right' ? back.route![0]!.x > back.route![1]!.x : back.route![0]!.y > back.route![1]!.y).toBe(true)
+      expect(layout.edges.find(({ edge }) => edge.from === 'contract')!.route).toBeUndefined()
+    }
+  })
 })
 
 function group(id: string, count: number, items: number): LinkGroup {
