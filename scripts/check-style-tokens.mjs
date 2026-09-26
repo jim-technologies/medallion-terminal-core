@@ -13,9 +13,11 @@
 //   tracking        an arbitrary tracking-[…] letter-spacing
 //   blur            a backdrop-filter blur (surfaces are flat; overlays
 //                   carry elevation, not frosted glass)
-//   story-frame     in a story, a frame `background` given as a colour
-//                   literal: frames use --mtc-surface / --mtc-border so every
-//                   theme previews on its own canvas
+//   story-frame     in a story (src/ or examples/), a frame `background`
+//                   string that is not a --mtc-* token: a hex, rgb()/hsl(),
+//                   a named colour such as 'black' or 'white', a gradient.
+//                   Frames use --mtc-surface / --mtc-border so every theme
+//                   previews on its own canvas
 //
 // Existing debt is a ratchet, not a pass: scripts/style-token-budget.json
 // records the violations each file had when the guard landed (documented
@@ -43,8 +45,9 @@ const rules = {
   blur: /\bbackdrop-blur\b|\bbackdrop-filter\s*:|\bbackdropFilter\b/g,
 }
 
+// Any quoted background except one --mtc-* token or a colourless keyword.
 const storyRules = {
-  'story-frame': /\bbackground(?:Color)?:\s*['"](?:#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\()/g,
+  'story-frame': /\bbackground(?:Color)?:\s*(['"`])(?!(?:var\(--mtc-[\w-]+\)|transparent|none|inherit)\1)[^'"`]*\1/g,
 }
 
 const isStory = relative => /\.stories\.[cm]?[jt]sx?$/.test(relative)
@@ -92,9 +95,16 @@ function violations(relative, text) {
   return found
 }
 
+// Production source, plus the stories under examples/ for the story-frame
+// rule (their other files are showcase fixtures with authored styles).
+const scanned = [
+  ...sourceFiles(path.join(root, 'src')),
+  ...[...sourceFiles(path.join(root, 'examples'))].filter(file => isStory(file)),
+]
+
 const counts = {}
 const details = {}
-for (const absolute of sourceFiles(path.join(root, 'src'))) {
+for (const absolute of scanned) {
   const relative = path.relative(root, absolute).split(path.sep).join('/')
   if (exempt(relative) && !isStory(relative)) continue
   const found = violations(relative, readFileSync(absolute, 'utf8'))

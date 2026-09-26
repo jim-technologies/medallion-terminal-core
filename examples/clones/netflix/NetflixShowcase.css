@@ -1,7 +1,9 @@
 .nfx-shell,
 .nfx-profile-gate,
 .nfx-player {
-  --nfx-red: #e50914;
+  /* The toolkit's azure accent, not the reference product's signature
+     colour: badges and progress bars are trade dress. */
+  --nfx-accent: #2971c6;
   --nfx-black: #141414;
   --nfx-panel: #181818;
   --nfx-panel-raised: #2f2f2f;
@@ -302,7 +304,7 @@
 }
 
 .nfx-artwork > small {
-  background: var(--nfx-red);
+  background: var(--nfx-accent);
   bottom: 0;
   font-size: 9px;
   font-weight: 700;
@@ -592,7 +594,7 @@
 }
 
 .nfx-progress > span {
-  background: var(--nfx-red);
+  background: var(--nfx-accent);
   display: block;
   height: 100%;
 }
@@ -965,7 +967,7 @@
 }
 
 .nfx-episode__art > small span {
-  background: var(--nfx-red);
+  background: var(--nfx-accent);
   display: block;
   height: 100%;
 }
@@ -1093,14 +1095,14 @@
 }
 
 .nfx-player__elapsed > span {
-  background: var(--nfx-red);
+  background: var(--nfx-accent);
   display: block;
   height: 100%;
   width: 42%;
 }
 
 .nfx-player__elapsed::after {
-  background: var(--nfx-red);
+  background: var(--nfx-accent);
   border-radius: 50%;
   content: "";
   height: 13px;

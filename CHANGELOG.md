@@ -176,7 +176,9 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   production source adds a colour literal outside a token declaration, a
   Tailwind arbitrary colour, a `text-[Npx]` below 11 px or off the scale, an
   arbitrary `tracking-[…]` or a `backdrop-filter` blur, and when a story
-  frames itself in a colour literal instead of `--mtc-surface`. Existing
+  (under `src/` or `examples/`) frames itself in any background string but
+  one `--mtc-*` token (or `transparent`): a hex, `rgb()`/`hsl()`, a named
+  colour such as `'black'` or `'white'`, or a gradient. Existing
   debt (documented canvas fallbacks and the widget type sizes the next
   release sweeps) is a ratchet in
   `scripts/style-token-budget.json`: a file can never exceed its budget, and a
@@ -299,25 +301,28 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   streaming clone's red logotype, its red "N" series mark and "TOP 10"
   poster badge, the document suite's coloured file-type icons, its
   four-colour calendar tile and gradient assistant orb, the drive's gradient
-  assistant mark, and the maps, code, notebook, support and platform
-  clones' logo tiles. Product self-references and branded features in
-  labels, placeholders and chrome copy are neutral ("Files", "Tracker",
-  "Forecasts", "Search maps", "Processing fee", "Assistant", "Ask AI",
-  "AI summary", "Governance", "Orchestration", "Search the portal", "Docs",
-  "SQL editor", "Fraud screening", "Workflows", "Call", "Videos", "Messages",
-  "AI agent", "Most watched today", "Start a group session"), card chips read
-  "Card" instead of a payment network's logotype, the platform clone's code
-  sample and resource ids use neutral dataset paths, and the proprietary
-  typefaces are gone from the clone font stacks (system and open fonts
-  only). `src/__tests__/cloneNeutrality.test.tsx` renders all 140 clone
-  stories and fails when visible text or an accessible name says a
-  referenced product, vendor or branded feature. Layouts are unchanged; the
-  folders, Storybook titles, story names and `cloneVendor` / `cloneProduct`
-  parameters still name the reference so it can be found. The archetype
-  catalog's `shortName` is now `displayName` and its `mark` letter is an
-  `icon`, `NeutralMark` has no `color` prop, and the document suite's
-  `initialGeminiOpen` prop and stories are `initialAssistantOpen` and
-  `Assisted*`. Clone baselines were regenerated.
+  assistant mark, and the maps, code, notebook, support and platform clones'
+  logo tiles. The streaming clone's poster badges ("New episode", "New
+  season", "Limited series") and progress bars use the toolkit's azure
+  accent instead of the reference's signature red. Product self-references
+  and branded features in labels, placeholders and chrome copy are neutral
+  ("Files", "Tracker", "Forecasts", "Search maps", "Processing fee",
+  "Assistant", "Ask AI", "AI summary", "Governance", "Orchestration",
+  "Search the portal", "Docs", "SQL editor", "Fraud screening", "Workflows",
+  "Call", "Videos", "Messages", "AI agent", "Most watched today", "Start a
+  group session"), card chips read "Card" instead of a payment network's
+  logotype, the platform clone's code sample and resource ids use neutral
+  dataset paths, and the proprietary typefaces are gone from the clone font
+  stacks (system and open fonts only).
+  `src/__tests__/cloneNeutrality.test.tsx` renders all 140 clone stories and
+  fails when visible text or an accessible name says a referenced product,
+  vendor or branded feature. Layouts are unchanged; the folders, Storybook
+  titles, story names and `cloneVendor` / `cloneProduct` parameters still
+  name the reference so it can be found. The archetype catalog's `shortName`
+  is now `displayName` and its `mark` letter is an `icon`, `NeutralMark` has
+  no `color` prop, and the document suite's `initialGeminiOpen` prop and
+  stories are `initialAssistantOpen` and `Assisted*`. Clone baselines were
+  regenerated.
 
 ### Fixed
 
@@ -350,6 +355,8 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   Vite 8.3.1** in `pnpm-workspace.yaml`, and their comment. Both releases
   passed pnpm 11's one-day release age at 2026-09-25T12:46:30Z, after which
   the entries excused nothing.
+- **The streaming clone's signature red** (`--nfx-red`, `#e50914`) on its
+  poster badges and progress bars.
 - **Logo reproductions in the clone showcases**: the drawn marks and their
   CSS (the file, calendar, photo, chat, CRM, spreadsheet, ledger, merge and
   music logos, the lettered and script-font wordmarks, the four-colour mail

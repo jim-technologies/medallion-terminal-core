@@ -10,14 +10,16 @@ can be judged against it. It never shows that product's name, logo,
 wordmark, branded features or proprietary typeface: headers use a neutral
 name and `shared/NeutralMark`, a generic glyph on one slate square that is
 the same in every clone (it takes no colour, so no clone's mark carries the
-brand colour its logo is known by). Labels, placeholders and chrome copy say
-what the surface does ("Files", "Tracker", "Search maps", "Ask AI",
-"Governance"), not whose it is, and font stacks name only system and open
-fonts. The vendor and product appear only where a reader needs them to find
-the reference: the folder, the Storybook title, story names and
-descriptions, and the `cloneVendor` / `cloneProduct` parameters.
-Third-party names that are ordinary data inside the demo (a stock ticker, an
-airline on a bank line) stay as data.
+brand colour its logo is known by), and marks a product is known by for
+their colour, such as the streaming clone's poster badges and progress
+bars, use the toolkit's azure accent (`#2971c6`) instead. Labels,
+placeholders and chrome copy say what the surface does ("Files", "Tracker",
+"Search maps", "Ask AI", "Governance"), not whose it is, and font stacks
+name only system and open fonts. The vendor and product appear only where a
+reader needs them to find the reference: the folder, the Storybook title,
+story names and descriptions, and the `cloneVendor` / `cloneProduct`
+parameters. Third-party names that are ordinary data inside the demo (a
+stock ticker, an airline on a bank line) stay as data.
 
 `src/__tests__/cloneNeutrality.test.tsx` renders every clone story and fails
 when its visible text or an accessible name (label, title, placeholder, alt)
