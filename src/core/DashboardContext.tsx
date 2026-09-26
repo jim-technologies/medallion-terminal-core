@@ -97,6 +97,10 @@ export interface DashboardContextValue {
   // operations (for example Authorization and tenant routing). These are
   // never read from template JSON or included in snapshots.
   backendHeaders: Record<string, string>
+  // Host transport for requests to backendUrl (TerminalService calls and
+  // backend-relative file operations), e.g. `createProductFetch()` from
+  // `./app`. Template-authored URLs never use it. Unset = global fetch.
+  fetch?: typeof globalThis.fetch
   // Dashboard-level refresh interval (ms). Overrides per-widget
   // `source.refreshInterval` when set. 0 / undefined = no override.
   // Streaming sources are unaffected.

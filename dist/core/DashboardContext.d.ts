@@ -57,6 +57,7 @@ export interface DashboardContextValue {
     widgets: WidgetConfig[];
     backendUrl?: string;
     backendHeaders: Record<string, string>;
+    fetch?: typeof globalThis.fetch;
     refreshIntervalMs?: number;
     toast: (message: string, severity?: Severity) => void;
     compact: boolean;

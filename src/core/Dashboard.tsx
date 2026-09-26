@@ -110,6 +110,14 @@ export interface DashboardProps {
    */
   backendHeaders?: Record<string, string>
   /**
+   * Host transport for requests to `backendUrl`: TerminalService calls and
+   * backend-relative file operations, never template-authored URLs. Pass
+   * `createProductFetch()` from `medallion-terminal-core/app` for request
+   * ids, trace context and a session-expiry hook. Keep its identity stable;
+   * a new function refetches sources. Defaults to the global `fetch`.
+   */
+  fetch?: typeof globalThis.fetch
+  /**
    * `full` renders toolbar and status chrome; `minimal` leaves the title and
    * widget grid for embedding.
    */
@@ -452,6 +460,7 @@ export function Dashboard({
   template,
   backendUrl,
   backendHeaders = EMPTY_BACKEND_HEADERS,
+  fetch: backendFetch,
   onEvent,
   onIntent,
   onCtxChange,
@@ -720,6 +729,7 @@ export function Dashboard({
       setCtx,
       backendUrl,
       backendHeaders,
+      fetch: backendFetch,
       widgets,
       refreshIntervalMs: refreshIntervalMs ?? undefined,
       toast,
@@ -742,7 +752,7 @@ export function Dashboard({
       registerWidgetData,
       snapshot,
     }),
-    [dispatch, ctx, setCtx, backendUrl, backendHeaders, widgets, refreshIntervalMs, toast, compact,
+    [dispatch, ctx, setCtx, backendUrl, backendHeaders, backendFetch, widgets, refreshIntervalMs, toast, compact,
      fullscreenId, focusedId, refreshPulse, requestRefresh, emit,
      emitIntent,
      recentActions, clearRecentActions, recentAlerts, clearRecentAlerts,

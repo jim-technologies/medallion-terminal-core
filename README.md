@@ -107,6 +107,7 @@ Use the narrowest public entry for each surface:
 | `medallion-terminal-core/toolkit` | Controls and workbench composition without Dashboard |
 | `medallion-terminal-core/dashboard` | Dashboard, widget registry, templates, and host intents |
 | `medallion-terminal-core/asset-open` | Asset resolver, renderer, and application-frame contracts |
+| `medallion-terminal-core/app` | Product transport: `createProductFetch`, `ensureOk`, `SourceError` (no React) |
 | `medallion-terminal-core` | Backward-compatible combined SDK |
 
 Built-in widgets and host-registered `React.lazy` applications retain dynamic
@@ -884,6 +885,27 @@ For wiring this into a real product, in order:
      backendHeaders={backendHeaders}
    />
    ```
+
+   Product UIs also pass their transport. `createProductFetch()` from
+   `medallion-terminal-core/app` adds `x-request-id` and a W3C `traceparent`
+   to every backend call, composes a timeout with the caller's abort signal,
+   types network failures as `SourceError`, and reports a 401 so the host can
+   show `SessionExpiredState` and renew the session:
+
+   ```tsx
+   const productFetch = useMemo(() => createProductFetch({
+     timeoutMs: 30_000,
+     onUnauthenticated: () => setSessionExpired(true),
+   }), [])
+
+   <Dashboard template={template} backendUrl={apiUrl} fetch={productFetch} />
+   ```
+
+   It is an ordinary `fetch`, so connect-web clients take it too
+   (`createConnectTransport({ baseUrl, fetch: productFetch })`), and
+   `ensureOk(response)` turns a non-2xx response into a `SourceError` for
+   plain callers. `Dashboard.fetch` serves the same requests as
+   `backendHeaders`; template-authored URLs keep the platform `fetch`.
 
    These headers cover `ListSources`, `Get`, `Stream`, `Generate`, action
    lifecycle calls, and backend-relative file operations. They are not copied

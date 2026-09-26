@@ -330,26 +330,39 @@ export function resolveEndpointUrl(backendUrl: string | undefined, endpoint: str
 // relative by definition. A same-origin absolute URL is also safe when its
 // origin can be established from backendUrl (or from window for same-origin
 // deployments).
+export function isBackendEndpoint(backendUrl: string | undefined, endpoint: string): boolean {
+  if (!/^(?:https?:)?\/\//i.test(endpoint)) return true
+
+  let trustedOrigin: string | undefined
+  if (backendUrl && /^https?:\/\//i.test(backendUrl)) {
+    try { trustedOrigin = new URL(backendUrl).origin } catch { return false }
+  } else if (typeof window !== 'undefined') {
+    trustedOrigin = window.location.origin
+  }
+  if (!trustedOrigin) return false
+
+  try {
+    return new URL(endpoint, trustedOrigin).origin === trustedOrigin
+  } catch {
+    return false
+  }
+}
+
 export function backendHeadersForEndpoint(
   backendUrl: string | undefined,
   endpoint: string,
   headers: Record<string, string>,
 ): Record<string, string> {
-  if (!/^(?:https?:)?\/\//i.test(endpoint)) return headers
+  return isBackendEndpoint(backendUrl, endpoint) ? headers : {}
+}
 
-  let trustedOrigin: string | undefined
-  if (backendUrl && /^https?:\/\//i.test(backendUrl)) {
-    try { trustedOrigin = new URL(backendUrl).origin } catch { return {} }
-  } else if (typeof window !== 'undefined') {
-    trustedOrigin = window.location.origin
-  }
-  if (!trustedOrigin) return {}
-
-  try {
-    return new URL(endpoint, trustedOrigin).origin === trustedOrigin ? headers : {}
-  } catch {
-    return {}
-  }
+// The host transport follows the same boundary as the host headers.
+export function transportForEndpoint(
+  backendUrl: string | undefined,
+  endpoint: string,
+  transport: typeof globalThis.fetch | undefined,
+): typeof globalThis.fetch {
+  return transport && isBackendEndpoint(backendUrl, endpoint) ? transport : globalThis.fetch
 }
 
 export function arrayBufferToBase64(buf: ArrayBuffer): string {

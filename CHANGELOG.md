@@ -65,6 +65,23 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   copy for the kind while the server's reason, code and request id sit in a
   Details disclosure. A 403 now reads "You don't have access" with
   `payroll:read scope required` under Details instead of "HTTP 403".
+- **`medallion-terminal-core/app`: product transport.** `createProductFetch`
+  wraps `fetch` for product UIs and stays a drop-in `fetch` (plain calls and
+  connect-web's `createConnectTransport({ fetch })`): every request carries
+  `x-request-id` and a W3C `traceparent` unless it already has them, aborts on
+  the caller's signal or after `timeoutMs`, rejects with a `SourceError`
+  (`unavailable`) on a timeout or network failure (a caller's own abort keeps
+  the platform `AbortError`), reports each 401 to `onUnauthenticated` with its
+  typed error, and reports every settled request to `onRequest` for
+  telemetry. `ensureOk` turns a non-2xx response into a `SourceError` that
+  keeps the id the client sent. No React and no runtime dependencies; the
+  entry is budgeted at 4 KiB.
+- **`Dashboard.fetch` (and `MultiDashboard.fetch`)** injects the host
+  transport for exactly the requests `backendHeaders` covers: `Get`,
+  `Stream`, `ListSources`, `Generate`, `SubmitAction`, `WatchAction` and
+  backend-relative file operations. Template-authored URLs keep the platform
+  `fetch`. `useDataSource(source, { fetch })` and a fourth `useWatchAction`
+  argument take the same transport.
 - **Message catalog and `Intl` formatters.** `DesignSystemProvider` takes
   `locale`, `timeZone` and `messages` (per-key overrides); nested scopes and
   Dashboards inherit what they do not set. Toolkit defaults (loading and
@@ -187,6 +204,9 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   Vite 8.3.1** in `pnpm-workspace.yaml`, and their comment. Both releases
   passed pnpm 11's one-day release age at 2026-09-25T12:46:30Z, after which
   the entries excused nothing.
+- **`installReadinessTerminalMock`** (Storybook example helper). The
+  production-readiness stories inject the fixture TerminalService through
+  `Dashboard.fetch` instead of replacing `window.fetch`.
 
 ## [0.5.2] — 2026-09-25
 

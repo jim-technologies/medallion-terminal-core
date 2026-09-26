@@ -25,5 +25,5 @@ interface WatchTarget {
     id?: string;
     actionId?: string;
 }
-export declare function useWatchAction(backendUrl: string | undefined, target: WatchTarget | null, backendHeaders?: Record<string, string>): UseWatchActionState;
+export declare function useWatchAction(backendUrl: string | undefined, target: WatchTarget | null, backendHeaders?: Record<string, string>, transport?: typeof globalThis.fetch): UseWatchActionState;
 export {};

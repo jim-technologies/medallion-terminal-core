@@ -75,6 +75,10 @@ const dashboard = await import(
   `${pathToFileURL(path.resolve(root, packageJson.exports['./dashboard'].import)).href}`
   + `?package-check=${Date.now()}`
 )
+const app = await import(
+  `${pathToFileURL(path.resolve(root, packageJson.exports['./app'].import)).href}`
+  + `?package-check=${Date.now()}`
+)
 const assetOpen = await import(
   `${pathToFileURL(path.resolve(root, packageJson.exports['./asset-open'].import)).href}`
   + `?package-check=${Date.now()}`
@@ -146,6 +150,7 @@ for (const [entry, module, names] of [
     ],
   ],
   ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
+  ['./app', app, ['createProductFetch', 'ensureOk', 'SourceError', 'toSourceError']],
   [
     './asset-open',
     assetOpen,
@@ -231,6 +236,11 @@ const budgets = [
     label: 'dashboard entry',
     path: path.resolve(root, packageJson.exports['./dashboard'].import),
     maxGzipBytes: 40 * 1024,
+  },
+  {
+    label: 'app entry',
+    path: path.resolve(root, packageJson.exports['./app'].import),
+    maxGzipBytes: 4 * 1024,
   },
   {
     label: 'asset-open entry',

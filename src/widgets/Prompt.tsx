@@ -21,7 +21,7 @@ interface LegacyResponse {
 }
 
 export function Prompt({ options }: WidgetProps) {
-  const { dispatch, ctx, setCtx, backendUrl, backendHeaders, widgets } = useDashboard()
+  const { dispatch, ctx, setCtx, backendUrl, backendHeaders, fetch: backendFetch, widgets } = useDashboard()
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [reply, setReply] = useState<string | null>(null)
@@ -46,7 +46,7 @@ export function Prompt({ options }: WidgetProps) {
 
     try {
       const res = hasBackend
-        ? await fetch(buildGenerateUrl(backendUrl!), {
+        ? await (backendFetch ?? globalThis.fetch)(buildGenerateUrl(backendUrl!), {
             method: 'POST',
             headers: { ...backendHeaders, 'Content-Type': 'application/json' },
             body: JSON.stringify(buildGenerateRequest(text, ctx, widgets)),
@@ -79,7 +79,7 @@ export function Prompt({ options }: WidgetProps) {
       inFlight.current = false
       setLoading(false)
     }
-  }, [query, loading, hasBackend, backendUrl, backendHeaders, fallbackUrl, ctx, widgets, dispatch, setCtx])
+  }, [query, loading, hasBackend, backendUrl, backendHeaders, backendFetch, fallbackUrl, ctx, widgets, dispatch, setCtx])
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {

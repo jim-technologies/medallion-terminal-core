@@ -162,41 +162,44 @@ export function createReadinessTerminalFetch(
     if (url.origin !== new URL(READINESS_BACKEND_URL).origin) {
       return fallback(input, init)
     }
-
-    if (request.method !== 'POST') return json({ code: 'invalid_argument', message: 'POST required' }, 405)
-    if (!isAuthorized(request.headers)) {
-      return json({ code: 'unauthenticated', message: 'valid tenant credential required' }, 401)
-    }
-    if (!url.pathname.startsWith(SERVICE_PATH)) {
-      return json({ code: 'not_found', message: 'unknown endpoint' }, 404)
-    }
-
-    const method = url.pathname.slice(SERVICE_PATH.length)
-    const body = await request.json().catch(() => ({})) as Record<string, unknown>
-    if (method === 'ListSources') return json({ sources: SOURCES })
-    if (method === 'Get') {
-      try {
-        return getSource(String(body.source_id ?? ''), objectValue(body.params))
-      } catch (error) {
-        return json({
-          code: 'invalid_argument',
-          message: error instanceof Error ? error.message : 'invalid request',
-        }, 400)
-      }
-    }
-    if (method === 'SubmitAction') return submitAction(body, actions)
-    if (method === 'WatchAction') return watchAction(body, actions)
-    return json({ code: 'not_found', message: `unknown RPC: ${method}` }, 404)
+    const response = await route(request, url, actions)
+    // Echo the caller's request id the way a real gateway does, so failures
+    // can show the id that correlates them with a server span.
+    const requestId = request.headers.get('X-Request-Id')
+    if (requestId) response.headers.set('X-Request-Id', requestId)
+    return response
   }) as typeof fetch
 }
 
-export function installReadinessTerminalMock(): () => void {
-  const original = window.fetch
-  const mock = createReadinessTerminalFetch(original.bind(window))
-  window.fetch = mock
-  return () => {
-    if (window.fetch === mock) window.fetch = original
+async function route(
+  request: Request,
+  url: URL,
+  actions: Map<string, SubmittedAction>,
+): Promise<Response> {
+  if (request.method !== 'POST') return json({ code: 'invalid_argument', message: 'POST required' }, 405)
+  if (!isAuthorized(request.headers)) {
+    return json({ code: 'unauthenticated', message: 'valid tenant credential required' }, 401)
   }
+  if (!url.pathname.startsWith(SERVICE_PATH)) {
+    return json({ code: 'not_found', message: 'unknown endpoint' }, 404)
+  }
+
+  const method = url.pathname.slice(SERVICE_PATH.length)
+  const body = await request.json().catch(() => ({})) as Record<string, unknown>
+  if (method === 'ListSources') return json({ sources: SOURCES })
+  if (method === 'Get') {
+    try {
+      return getSource(String(body.source_id ?? ''), objectValue(body.params))
+    } catch (error) {
+      return json({
+        code: 'invalid_argument',
+        message: error instanceof Error ? error.message : 'invalid request',
+      }, 400)
+    }
+  }
+  if (method === 'SubmitAction') return submitAction(body, actions)
+  if (method === 'WatchAction') return watchAction(body, actions)
+  return json({ code: 'not_found', message: `unknown RPC: ${method}` }, 404)
 }
 
 function isAuthorized(headers: Headers): boolean {
@@ -311,7 +314,7 @@ function accessAudit() {
 
 function resilienceProbe(scenario: string): Response {
   if (scenario === 'rate_limited') {
-    return json({ code: 'resource_exhausted', message: 'retry after 2 seconds' }, 429)
+    return json({ code: 'resource_exhausted', message: 'retry after 2 seconds' }, 429, { 'Retry-After': '2' })
   }
   if (scenario === 'unavailable') {
     return json({ code: 'unavailable', message: 'dependency unavailable' }, 503)
@@ -631,9 +634,9 @@ function connectFrame(value: object, flags = 0): Uint8Array {
   return frame
 }
 
-function json(value: unknown, status = 200): Response {
+function json(value: unknown, status = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(value), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...headers },
   })
 }

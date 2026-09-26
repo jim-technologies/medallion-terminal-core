@@ -50,7 +50,9 @@ export declare function previewKind(contentType?: string, filename?: string, sem
 export declare function isNativePreviewKind(kind: PreviewKind): kind is Exclude<PreviewKind, 'heic' | 'mkv' | null>;
 export declare function buildMediaUrl(template: string, bucket: string, path: string): string;
 export declare function resolveEndpointUrl(backendUrl: string | undefined, endpoint: string): string;
+export declare function isBackendEndpoint(backendUrl: string | undefined, endpoint: string): boolean;
 export declare function backendHeadersForEndpoint(backendUrl: string | undefined, endpoint: string, headers: Record<string, string>): Record<string, string>;
+export declare function transportForEndpoint(backendUrl: string | undefined, endpoint: string, transport: typeof globalThis.fetch | undefined): typeof globalThis.fetch;
 export declare function arrayBufferToBase64(buf: ArrayBuffer): string;
 export declare function readConnectErrorMessage(res: Response): Promise<string>;
 export declare function parseConnectStream(res: Response, mime?: string): Promise<Blob>;

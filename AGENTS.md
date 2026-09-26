@@ -249,6 +249,8 @@ src/
   toolkit.ts              — `/toolkit` entry: foundations + components + workbench, no dashboard
   dashboard.ts            — `/dashboard` entry: Dashboard, MultiDashboard, registry, context
   asset-open.ts           — `/asset-open` entry: workspace asset-application bridge
+  app.ts                  — `/app` entry: product transport (createProductFetch, SourceError); no React
+  app/                    — productFetch: request id, traceparent, timeout, 401 hook
   index.css               — Scoped theme tokens + shared product chrome
   foundations/            — Public tokens, presentation/density types, scoped provider
   components/             — Accessible reusable application controls

@@ -98,7 +98,17 @@ export interface DataSourceState {
   refresh: () => void
 }
 
-export function useDataSource(source?: DataSource): DataSourceState {
+/** Options for `useDataSource`. */
+export interface UseDataSourceOptions {
+  /**
+   * Transport for this source's fetches (not SSE). Dashboards pass their
+   * host transport for backend sources only. Keep its identity stable.
+   */
+  fetch?: typeof globalThis.fetch
+}
+
+export function useDataSource(source?: DataSource, options: UseDataSourceOptions = {}): DataSourceState {
+  const transport = options.fetch
   const [data, setData] = useState<unknown>(null)
   const [loading, setLoading] = useState(true)
   const [sourceError, setError] = useState<SourceError | null>(null)
@@ -195,7 +205,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
       const connect = async () => {
         if (disposed) return
         try {
-          const res = await fetch(source.url!, {
+          const res = await (transport ?? globalThis.fetch)(source.url!, {
             method: 'POST',
             // Spread author headers first so the protocol Content-Type
             // wins. Otherwise a stray Content-Type header on the source
@@ -298,7 +308,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
       if (disposed || fetching) return
       fetching = true
       try {
-        const res = await fetch(source.url!, {
+        const res = await (transport ?? globalThis.fetch)(source.url!, {
           method: source.method || 'GET',
           headers: source.headers,
           body: source.body ? JSON.stringify(source.body) : undefined,
@@ -329,7 +339,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
       if (interval) clearInterval(interval)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchKey, handleData, inline, refreshTick])
+  }, [fetchKey, handleData, inline, refreshTick, transport])
 
   // Drain pending throttled update on unmount so we don't leak timers.
   useEffect(() => () => {

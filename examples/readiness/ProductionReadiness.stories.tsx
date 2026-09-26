@@ -1,5 +1,6 @@
-import { useLayoutEffect, useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
+import { createProductFetch } from '../../src/app/productFetch'
 import { Dashboard } from '../../src/core/Dashboard'
 import { MultiDashboard } from '../../src/core/MultiDashboard'
 import {
@@ -11,7 +12,15 @@ import {
   READINESS_TABS,
   RESILIENCE_LAB_TEMPLATE,
 } from './readinessTemplates'
-import { installReadinessTerminalMock } from './readinessTerminalMock'
+import { createReadinessTerminalFetch } from './readinessTerminalMock'
+
+// The fixture TerminalService is injected as the Dashboard's host transport,
+// wrapped the way a product would wrap its real one: every backend request
+// carries a request id and trace context that failures can quote. Only
+// backend calls reach it; nothing patches the global fetch.
+const READINESS_FETCH = createProductFetch({
+  fetch: createReadinessTerminalFetch((input, init) => globalThis.fetch(input, init)),
+})
 
 type ReadinessView = 'connected' | 'access' | 'resilience' | 'scale' | 'workflow'
 
@@ -32,6 +41,7 @@ function ProductionReadinessShowcase({
         onSelect={setActiveIndex}
         backendUrl={READINESS_BACKEND_URL}
         backendHeaders={READINESS_BACKEND_HEADERS}
+        fetch={READINESS_FETCH}
       />
     )
   }
@@ -49,16 +59,9 @@ function ProductionReadinessShowcase({
       template={template}
       backendUrl={READINESS_BACKEND_URL}
       backendHeaders={READINESS_BACKEND_HEADERS}
+      fetch={READINESS_FETCH}
     />
   )
-}
-
-function ReadinessTerminalBoundary({ children }: { children: ReactNode }) {
-  // Install before Dashboard's passive data-loading effects and restore when
-  // Storybook unmounts the story. Only the reserved example.test origin is
-  // intercepted; unrelated requests continue through the browser's fetch.
-  useLayoutEffect(() => installReadinessTerminalMock(), [])
-  return children
 }
 
 const meta = {
@@ -77,13 +80,6 @@ const meta = {
       },
     },
   },
-  decorators: [
-    Story => (
-      <ReadinessTerminalBoundary>
-        <Story />
-      </ReadinessTerminalBoundary>
-    ),
-  ],
   args: { view: 'connected' },
   argTypes: {
     view: {

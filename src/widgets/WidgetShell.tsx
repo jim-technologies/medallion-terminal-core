@@ -236,7 +236,13 @@ export function WidgetShell({ config, contentHeight, snapshotKey, registry }: Wi
     }
   }, [config.source, ctx, backendUrl, backendHeaders, refreshIntervalMs])
   const source = resolution.source
-  const { data, loading, error, sourceError, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(source)
+  // The host transport serves backend sources only; template URLs keep the
+  // platform fetch, as backend headers do.
+  const { fetch: backendFetch } = useDashboard()
+  const { data, loading, error, sourceError, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(
+    source,
+    { fetch: config.source?.source_id ? backendFetch : undefined },
+  )
   const Component = getWidget(config.component, registry)
 
   // Snapshot capture: expose the current rendered data to the dashboard

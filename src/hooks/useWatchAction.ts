@@ -77,6 +77,7 @@ export function useWatchAction(
   backendUrl: string | undefined,
   target: WatchTarget | null,
   backendHeaders: Record<string, string> = {},
+  transport?: typeof globalThis.fetch,
 ): UseWatchActionState {
   const [updates, setUpdates] = useState<ActionUpdate[]>([])
   const [done, setDone] = useState(false)
@@ -105,7 +106,7 @@ export function useWatchAction(
 
     ;(async () => {
       try {
-        const res = await fetch(buildWatchActionUrl(backendUrl), {
+        const res = await (transport ?? globalThis.fetch)(buildWatchActionUrl(backendUrl), {
           method: 'POST',
           headers: { ...backendHeaders, 'Content-Type': CONNECT_JSON_CONTENT_TYPE },
           body: JSON.stringify(buildActionWatchRequest(target)),

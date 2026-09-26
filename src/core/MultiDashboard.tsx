@@ -45,6 +45,7 @@ export function MultiDashboard({
   onSelect,
   backendUrl,
   backendHeaders,
+  fetch: backendFetch,
   theme: themeProp,
   templateTrust,
   templateTrustPolicy,
@@ -61,6 +62,7 @@ export function MultiDashboard({
   onSelect: (index: number) => void
   backendUrl?: string
   backendHeaders?: Record<string, string>
+  fetch?: DashboardProps['fetch']
   theme?: DashboardTheme
   templateTrust?: DashboardTemplateTrust
   templateTrustPolicy?: TemplateTrustPolicy
@@ -97,6 +99,7 @@ export function MultiDashboard({
                 template={tab.template}
                 backendUrl={backendUrl}
                 backendHeaders={backendHeaders}
+                fetch={backendFetch}
                 theme={theme}
                 templateTrust={templateTrust}
                 templateTrustPolicy={templateTrustPolicy}

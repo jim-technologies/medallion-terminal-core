@@ -32,6 +32,7 @@ import {
   errorMessage,
   resolveEndpointUrl,
   backendHeadersForEndpoint,
+  transportForEndpoint,
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
 import { isErrorStatus, isTerminalStatus } from '../hooks/useWatchAction'
@@ -112,6 +113,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     setCtx,
     backendUrl,
     backendHeaders,
+    fetch: backendFetch,
     toast,
     requestRefresh,
     emitIntent,
@@ -219,7 +221,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     setSearching(true)
     try {
       const endpoint = resolveEndpointUrl(backendUrl, searchUrl)
-      const res = await fetch(endpoint, {
+      const res = await transportForEndpoint(backendUrl, endpoint, backendFetch)(endpoint, {
         method: 'POST',
         headers: {
           ...backendHeadersForEndpoint(backendUrl, endpoint, backendHeaders),
@@ -291,7 +293,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     setDlgBusy(true)
     try {
       const endpoint = resolveEndpointUrl(backendUrl, ingestUrl)
-      const res = await fetch(endpoint, {
+      const res = await transportForEndpoint(backendUrl, endpoint, backendFetch)(endpoint, {
         method: 'POST',
         headers: {
           ...backendHeadersForEndpoint(backendUrl, endpoint, backendHeaders),
@@ -452,7 +454,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     const fullPath = entryFullPath(e)
     const url = resolveEndpointUrl(backendUrl, downloadURL)
     try {
-      const res = await fetch(url, {
+      const res = await transportForEndpoint(backendUrl, url, backendFetch)(url, {
         method: 'POST',
         headers: {
           ...backendHeadersForEndpoint(backendUrl, url, backendHeaders),
@@ -486,7 +488,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       const qs = new URLSearchParams({ [bucketParam]: bucket, repo, path, content_type: contentType })
       const endpoint = resolveEndpointUrl(backendUrl, uploadUrl)
       const separator = endpoint.includes('?') ? '&' : '?'
-      const res = await fetch(`${endpoint}${separator}${qs.toString()}`, {
+      const res = await transportForEndpoint(backendUrl, endpoint, backendFetch)(`${endpoint}${separator}${qs.toString()}`, {
         method: 'POST',
         headers: backendHeadersForEndpoint(backendUrl, endpoint, backendHeaders),
         body: file,
@@ -501,7 +503,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
       params: { [bucketParam]: bucket, repo, path, content_type: contentType, data_b64: arrayBufferToBase64(buf) },
       clientRequestId: newClientRequestId(),
     })
-    const res = await fetch(url, {
+    const res = await (backendFetch ?? globalThis.fetch)(url, {
       method: 'POST',
       headers: { ...backendHeaders, 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1' },
       body: JSON.stringify(req),

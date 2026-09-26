@@ -59,6 +59,7 @@ export default defineConfig({
         toolkit: resolve(import.meta.dirname, 'src/toolkit.ts'),
         dashboard: resolve(import.meta.dirname, 'src/dashboard.ts'),
         'asset-open': resolve(import.meta.dirname, 'src/asset-open.ts'),
+        app: resolve(import.meta.dirname, 'src/app.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,

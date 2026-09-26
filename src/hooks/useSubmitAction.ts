@@ -53,6 +53,7 @@ export function useSubmitAction(widgetId?: string) {
   const {
     backendUrl,
     backendHeaders,
+    fetch: backendFetch,
     emit,
     requestRefresh,
     toast,
@@ -69,6 +70,7 @@ export function useSubmitAction(widgetId?: string) {
     backendUrl,
     active ? { clientRequestId: active.clientRequestId } : null,
     backendHeaders,
+    backendFetch,
   )
 
   const finish = useCallback((reply: SubmitActionReply, config: ActiveAction) => {
@@ -190,7 +192,7 @@ export function useSubmitAction(widgetId?: string) {
     lastWatchKey.current = ''
 
     try {
-      const response = await fetch(buildSubmitActionUrl(backendUrl), {
+      const response = await (backendFetch ?? globalThis.fetch)(buildSubmitActionUrl(backendUrl), {
         method: 'POST',
         headers: { ...backendHeaders, 'Content-Type': 'application/json' },
         body: JSON.stringify(buildActionRequest({
@@ -248,7 +250,7 @@ export function useSubmitAction(widgetId?: string) {
       finish(reply, config)
       return reply
     }
-  }, [backendUrl, backendHeaders, emit, finish, toast, widgetId])
+  }, [backendUrl, backendHeaders, backendFetch, emit, finish, toast, widgetId])
 
   return {
     submit,

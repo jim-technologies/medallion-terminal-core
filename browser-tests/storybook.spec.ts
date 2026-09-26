@@ -330,9 +330,11 @@ test('Production readiness recovery scenario exposes failure and recovery states
   await scenario.selectOption('empty')
   await expect(root.getByText('valid empty result')).toBeVisible()
 
-  // Failures render as typed states, never as a bare HTTP status.
+  // Failures render as typed states, never as a bare HTTP status; the wait
+  // comes from the server's Retry-After.
   await scenario.selectOption('rate_limited')
   await expect(probe.getByText('Too many requests')).toBeVisible()
+  await expect(probe.getByText('Try again in 2 seconds.')).toBeVisible()
 
   await scenario.selectOption('unavailable')
   await expect(probe.getByText('Service unavailable')).toBeVisible()

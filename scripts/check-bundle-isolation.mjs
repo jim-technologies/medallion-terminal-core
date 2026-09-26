@@ -28,6 +28,13 @@ const checks = [
     requireDynamicImport: false,
   },
   {
+    // Transport only: no React, no widgets, no renderer peers.
+    label: 'app',
+    entry: path.join(root, 'dist/app.js'),
+    maxStaticGzipBytes: 4 * 1024,
+    requireDynamicImport: false,
+  },
+  {
     label: 'asset-open',
     entry: path.join(root, 'dist/asset-open.js'),
     maxStaticGzipBytes: 12 * 1024,

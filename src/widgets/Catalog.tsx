@@ -50,7 +50,7 @@ const SHAPE_LABEL: Record<string, string> = {
 }
 
 export function Catalog() {
-  const { backendUrl, backendHeaders } = useDashboard()
+  const { backendUrl, backendHeaders, fetch: backendFetch } = useDashboard()
   const [sources, setSources] = useState<Source[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -65,7 +65,7 @@ export function Catalog() {
     setLoading(true)
     setError(null)
     const ctrl = new AbortController()
-    fetch(`${backendUrl.replace(/\/$/, '')}/${SERVICE}/ListSources`, {
+    ;(backendFetch ?? globalThis.fetch)(`${backendUrl.replace(/\/$/, '')}/${SERVICE}/ListSources`, {
       method: 'POST',
       headers: { ...backendHeaders, 'Content-Type': 'application/json' },
       body: '{}',
@@ -85,7 +85,7 @@ export function Catalog() {
       disposed = true
       ctrl.abort()
     }
-  }, [backendUrl, backendHeaders])
+  }, [backendUrl, backendHeaders, backendFetch])
 
   if (backendUrl === undefined) return <Empty padded>No backendUrl configured on Dashboard</Empty>
   if (loading) return <Empty padded>Loading catalog…</Empty>

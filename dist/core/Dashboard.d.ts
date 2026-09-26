@@ -20,6 +20,14 @@ export interface DashboardProps {
      */
     backendHeaders?: Record<string, string>;
     /**
+     * Host transport for requests to `backendUrl`: TerminalService calls and
+     * backend-relative file operations, never template-authored URLs. Pass
+     * `createProductFetch()` from `medallion-terminal-core/app` for request
+     * ids, trace context and a session-expiry hook. Keep its identity stable;
+     * a new function refetches sources. Defaults to the global `fetch`.
+     */
+    fetch?: typeof globalThis.fetch;
+    /**
      * `full` renders toolbar and status chrome; `minimal` leaves the title and
      * widget grid for embedding.
      */
@@ -71,4 +79,4 @@ export interface DashboardProps {
      */
     registry?: WidgetRegistry;
 }
-export declare function Dashboard({ template, backendUrl, backendHeaders, onEvent, onIntent, onCtxChange, paletteSuggest, chrome, onShare, theme: themeProp, templateTrust, templateTrustPolicy, resolveAssetIntent, assetRenderers, assetApplicationFrame, saveAssetOpenPreference, onAssetOpenError, registry, }: DashboardProps): import("react").JSX.Element;
+export declare function Dashboard({ template, backendUrl, backendHeaders, fetch: backendFetch, onEvent, onIntent, onCtxChange, paletteSuggest, chrome, onShare, theme: themeProp, templateTrust, templateTrustPolicy, resolveAssetIntent, assetRenderers, assetApplicationFrame, saveAssetOpenPreference, onAssetOpenError, registry, }: DashboardProps): import("react").JSX.Element;

@@ -31,6 +31,11 @@
       "import": "./dist/asset-open.js",
       "default": "./dist/asset-open.js"
     },
+    "./app": {
+      "types": "./dist/app.d.ts",
+      "import": "./dist/app.js",
+      "default": "./dist/app.js"
+    },
     "./proto": {
       "types": "./dist/proto.d.ts"
     },

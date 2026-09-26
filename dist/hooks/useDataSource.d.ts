@@ -20,4 +20,12 @@ export interface DataSourceState {
     nextRetryAt: number | null;
     refresh: () => void;
 }
-export declare function useDataSource(source?: DataSource): DataSourceState;
+/** Options for `useDataSource`. */
+export interface UseDataSourceOptions {
+    /**
+     * Transport for this source's fetches (not SSE). Dashboards pass their
+     * host transport for backend sources only. Keep its identity stable.
+     */
+    fetch?: typeof globalThis.fetch;
+}
+export declare function useDataSource(source?: DataSource, options?: UseDataSourceOptions): DataSourceState;
