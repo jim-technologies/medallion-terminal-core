@@ -902,16 +902,29 @@ For wiring this into a real product, in order:
    <Dashboard template={template} backendUrl={apiUrl} fetch={productFetch} />
    ```
 
-   `timeoutMs` covers only the wait for the response headers. Once they
-   arrive the body is never cut, so `Stream` sources and `WatchAction`
-   lifecycles stay connected for as long as the server keeps them open, and
-   binary uploads (a `Blob`, `File`, `FormData` or stream body) are not
-   bounded at all; the caller's own abort signal still ends any of them. A
-   unary call such as `Generate` must answer within `timeoutMs`, so size it
-   for the slowest one you serve.
+   `timeoutMs` covers only the wait for the response headers, and it covers
+   every request whose body is buffered: none, a string, `URLSearchParams`,
+   an `ArrayBuffer` or a typed array. Once the headers arrive the body is
+   never cut, so `Stream` sources and `WatchAction` lifecycles stay
+   connected for as long as the server keeps them open. Open-ended uploads
+   (a `Blob`, `File`, `FormData` or `ReadableStream` body, and any `Request`
+   object with a body, whose body is always a stream) are not bounded, and
+   the caller's own abort signal still ends any request. A unary call such
+   as `Generate` must answer within `timeoutMs`, so size it for the slowest
+   one you serve, or give that one call its own wait:
+   `productFetch(url, { ...init, timeoutMs: 0 })` waits indefinitely and a
+   positive value replaces the transport's, even for an upload.
 
    It is an ordinary `fetch`, so connect-web clients take it too
-   (`createConnectTransport({ baseUrl, fetch: productFetch })`), and
+   (`createConnectTransport({ baseUrl, fetch: productFetch })`). connect-web
+   serialises every message, JSON or binary, to a `Uint8Array`, so its unary
+   and streaming calls are bounded like any other buffered request: a hung
+   backend rejects the call after `timeoutMs` with a `ConnectError` whose
+   `cause` is the typed timeout, and `toSourceError(error)` returns that
+   `SourceError`. A connect-web call sets its own wait with its `timeoutMs`
+   call option (`client.generate(request, { timeoutMs: 120_000 })`):
+   connect-web sends it as `connect-timeout-ms` and enforces it over the
+   whole call, so the product fetch adds no wait of its own to that call.
    `ensureOk(response)` turns a non-2xx response into a `SourceError` for
    plain callers. A typed error keeps the request id the transport sent even
    when the server does not echo `x-request-id`. `Dashboard.fetch` serves the

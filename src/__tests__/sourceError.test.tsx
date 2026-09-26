@@ -75,6 +75,32 @@ describe('SourceError from responses', () => {
     expect(cancelled).toBe(true)
   })
 
+  it('reads no more of a long error body than the bound and cancels the rest', async () => {
+    // A valid Connect error whose reason is 64 KiB: read whole, it would
+    // surface that reason; read to the 16 K character bound, it is cut, so
+    // the status speaks for itself. One KiB per pull, none read ahead.
+    const kib = 1024
+    const body = new TextEncoder().encode(JSON.stringify({ code: 'internal', message: 'x'.repeat(64 * kib) }))
+    let pulled = 0
+    let cancelled = false
+    const stream = new ReadableStream<Uint8Array>({
+      pull: controller => {
+        const offset = pulled * kib
+        if (offset >= body.length) return controller.close()
+        pulled += 1
+        controller.enqueue(body.subarray(offset, offset + kib))
+      },
+      cancel: () => { cancelled = true },
+    }, { highWaterMark: 0 })
+    const error = await sourceErrorFromResponse(new Response(stream, {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    }))
+    expect(error).toMatchObject({ kind: 'unknown', message: 'HTTP 500', code: undefined })
+    expect(pulled).toBeLessThanOrEqual(17)
+    expect(cancelled).toBe(true)
+  })
+
   it('uses the request id the client sent when the server echoes none', async () => {
     const error = await sourceErrorFromResponse(new Response(null, { status: 401 }), { requestId: 'client-1' })
     expect(error).toMatchObject({ kind: 'unauthenticated', requestId: 'client-1' })
@@ -112,6 +138,9 @@ describe('SourceError from thrown values', () => {
   it('passes SourceErrors through, including ones from another package copy', () => {
     const own = new SourceError('x', { kind: 'forbidden' })
     expect(toSourceError(own)).toBe(own)
+    // connect-web wraps a failed product fetch as the cause of its own error.
+    const wrapped = Object.assign(new Error('[unknown] x'), { code: 2, rawMessage: 'x', cause: own })
+    expect(toSourceError(wrapped)).toBe(own)
     const foreign = Object.assign(new Error('y'), { name: 'SourceError', kind: 'not_found' })
     expect(isSourceError(foreign)).toBe(true)
     expect(isSourceError(new Error('z'))).toBe(false)

@@ -98,7 +98,8 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   `sourceErrorFromResponse` (reads a bounded Connect JSON error body and the
   `x-request-id` / `Retry-After` headers; it stops reading an error body
   after 16 K characters and cancels the rest), `toSourceError` (generated Connect
-  client errors by numeric or string code, timeouts and network failures) and
+  client errors by numeric or string code, a `SourceError` a transport
+  wrapped as its error's `cause`, timeouts and network failures) and
   `describeSourceError`. `useDataSource()` returns `sourceError`; widgets
   render it through `ErrorState`, which takes `error` and leads with product
   copy for the kind while the server's reason, code and request id sit in a
@@ -134,12 +135,25 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   reports each 401 to `onUnauthenticated` with its typed error, and reports
   every settled request to `onRequest` for telemetry. The timeout never cuts
   a body that is already streaming, so `Stream` sources, `WatchAction`
-  lifecycles and slow downloads run past it, and a binary upload (`Blob`,
-  `File`, `FormData`, `ArrayBuffer` or stream body) is not bounded at all.
-  A `SourceError` built from a response it returned keeps the id the client
-  sent when the server echoes none (in `ensureOk` and in the Dashboard's own
-  data sources alike). No React and no runtime dependencies; the entry is
-  budgeted at 4 KiB.
+  lifecycles and slow downloads run past it. It bounds every request whose
+  body is buffered (none, a string, `URLSearchParams`, an `ArrayBuffer` or a
+  typed array), which includes every connect-web call, unary or streaming,
+  JSON or binary, since connect-web serialises each message to a
+  `Uint8Array`; only open-ended uploads (a `Blob`, `File`, `FormData` or
+  `ReadableStream` body, or a `Request` object with a body) are unbounded.
+  One call sets its own wait with `ProductRequestInit.timeoutMs` (`0` opts
+  it out, a positive value bounds it, even an upload), and a connect-web
+  call that passes its own `timeoutMs` call option (sent as
+  `connect-timeout-ms`) is left to the deadline connect-web enforces. A hung
+  backend rejects a connect-web call after `timeoutMs` with a `ConnectError`
+  whose `cause` is the typed timeout; `toSourceError` returns that cause.
+  The unit suite drives a generated `TerminalService` client through
+  `createConnectTransport({ fetch: productFetch })` against a loopback server
+  that never answers (`@connectrpc/connect` and `@connectrpc/connect-web`
+  2.2 are dev dependencies for that test only). A `SourceError` built from a
+  response it returned keeps the id the client sent when the server echoes
+  none (in `ensureOk` and in the Dashboard's own data sources alike). No
+  React and no runtime dependencies; the entry is budgeted at 4 KiB.
 - **`Dashboard.fetch` (and `MultiDashboard.fetch`)** injects the host
   transport for exactly the requests `backendHeaders` covers: `Get`,
   `Stream`, `ListSources`, `Generate`, `SubmitAction`, `WatchAction` and

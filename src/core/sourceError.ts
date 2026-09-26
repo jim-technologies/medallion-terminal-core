@@ -227,13 +227,18 @@ interface ConnectLikeError {
 }
 
 /**
- * Types any thrown value: a `SourceError` passes through; an error from a
- * generated Connect client (numeric or string `code`, `rawMessage`,
- * `metadata` headers) keeps its code and request id; a timeout or network
- * failure is `unavailable`; anything else is `unknown`.
+ * Types any thrown value: a `SourceError` passes through, and so does one a
+ * transport wrapped as the `cause` of its own error (connect-web rejects a
+ * call whose product fetch failed with a `ConnectError` carrying that
+ * `SourceError`); an error from a generated Connect client (numeric or
+ * string `code`, `rawMessage`, `metadata` headers) keeps its code and
+ * request id; a timeout or network failure is `unavailable`; anything else
+ * is `unknown`.
  */
 export function toSourceError(value: unknown): SourceError {
   if (isSourceError(value)) return value
+  const cause = value instanceof Error ? (value as { cause?: unknown }).cause : undefined
+  if (isSourceError(cause)) return cause
   const error = value as ConnectLikeError | null
   const code = typeof error?.code === 'number'
     ? CONNECT_CODES[error.code]

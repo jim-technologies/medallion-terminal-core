@@ -71,10 +71,13 @@ export declare function sourceErrorFromResponse(response: Response, options?: {
     now?: number;
 }): Promise<SourceError>;
 /**
- * Types any thrown value: a `SourceError` passes through; an error from a
- * generated Connect client (numeric or string `code`, `rawMessage`,
- * `metadata` headers) keeps its code and request id; a timeout or network
- * failure is `unavailable`; anything else is `unknown`.
+ * Types any thrown value: a `SourceError` passes through, and so does one a
+ * transport wrapped as the `cause` of its own error (connect-web rejects a
+ * call whose product fetch failed with a `ConnectError` carrying that
+ * `SourceError`); an error from a generated Connect client (numeric or
+ * string `code`, `rawMessage`, `metadata` headers) keeps its code and
+ * request id; a timeout or network failure is `unavailable`; anything else
+ * is `unknown`.
  */
 export declare function toSourceError(value: unknown): SourceError;
 /**

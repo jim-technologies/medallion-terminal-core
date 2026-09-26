@@ -1,3 +1,5 @@
+import { Code, ConnectError, createClient } from '@connectrpc/connect'
+import { createConnectTransport } from '@connectrpc/connect-web'
 import { createServer, type RequestListener, type Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -5,10 +7,12 @@ import {
   createProductFetch,
   ensureOk,
   newTraceparent,
+  type ProductFetchOptions,
   type ProductRequestEvent,
 } from '../app/productFetch'
 import { CONNECT_JSON_CONTENT_TYPE, parseConnectEnvelopes } from '../core/connectFraming'
-import { SourceError, sourceErrorFromResponse } from '../core/sourceError'
+import { SourceError, sourceErrorFromResponse, toSourceError } from '../core/sourceError'
+import { TerminalService } from '../gen/medallion/terminal/v1/terminal_pb'
 
 interface Call {
   input: RequestInfo | URL
@@ -67,6 +71,30 @@ function connectFrame(flags: number, value: unknown): Buffer {
 }
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+// A backend that accepts the request and never answers it.
+const hung: RequestListener = () => {}
+
+// A generated TerminalService client over connect-web, the way product UIs
+// wire it: `createConnectTransport({ fetch: productFetch })`.
+function terminalClient(baseUrl: string, options: ProductFetchOptions, useBinaryFormat = false) {
+  return createClient(TerminalService, createConnectTransport({
+    baseUrl,
+    useBinaryFormat,
+    fetch: createProductFetch(options),
+  }))
+}
+
+// How a call settles, and when; still pending after `guardMs` is an outcome
+// too (the regression this guards against).
+async function settle<T>(call: Promise<T>, guardMs = 1_500) {
+  const started = performance.now()
+  const outcome = await Promise.race([
+    call.then(value => ({ value }), (error: unknown) => ({ error })),
+    sleep(guardMs).then(() => ({ pending: true as const })),
+  ])
+  return { ...outcome, elapsedMs: performance.now() - started }
+}
 
 describe('createProductFetch', () => {
   it('adds a request id and a W3C traceparent without replacing the caller’s own', async () => {
@@ -199,14 +227,40 @@ describe('createProductFetch', () => {
     await expect(reader.read()).rejects.toMatchObject({ name: 'AbortError' })
   })
 
-  it('does not bound a binary upload, whose send time grows with its size', async () => {
+  it('does not bound an open-ended upload, whose send time grows with its size', async () => {
     const productFetch = createProductFetch({ fetch: slowToRespond(80).fetch, timeoutMs: 20 })
     const upload = new Blob([new Uint8Array(1024)], { type: 'video/mp4' })
-    for (const body of [upload, new File([upload], 'clip.mp4'), new Uint8Array(8), new FormData()]) {
+    const stream = new ReadableStream<Uint8Array>({ start: controller => controller.close() })
+    for (const body of [upload, new File([upload], 'clip.mp4'), new FormData(), stream]) {
       await expect(productFetch('/api/upload', { method: 'POST', body })).resolves.toMatchObject({ status: 200 })
     }
-    await expect(productFetch('/api/rpc', { method: 'POST', body: '{}' }))
-      .rejects.toMatchObject({ name: 'SourceError', message: 'Request timed out after 20 ms' })
+    // A Request's body is always a stream, whatever built it.
+    await expect(productFetch(new Request('https://storage.example.test/upload', { method: 'POST', body: upload })))
+      .resolves.toMatchObject({ status: 200 })
+  })
+
+  it('bounds buffered bodies, which is every body connect-web sends', async () => {
+    const productFetch = createProductFetch({ fetch: slowToRespond(80).fetch, timeoutMs: 20 })
+    const bytes = new TextEncoder().encode('{"sourceId":"revenue"}')
+    for (const body of [undefined, '{}', new URLSearchParams({ q: 'x' }), bytes, bytes.buffer, new DataView(bytes.buffer)]) {
+      await expect(productFetch('/api/rpc', { method: 'POST', body }))
+        .rejects.toMatchObject({ name: 'SourceError', kind: 'unavailable', message: 'Request timed out after 20 ms' })
+    }
+  })
+
+  it('lets one call opt out of the wait or set its own', async () => {
+    const { calls, fetch } = slowToRespond(80)
+    const productFetch = createProductFetch({ fetch, timeoutMs: 20 })
+    await expect(productFetch('/api/generate', { method: 'POST', body: '{}', timeoutMs: 0 }))
+      .resolves.toMatchObject({ status: 200 })
+    await expect(productFetch('/api/generate', { method: 'POST', body: '{}', timeoutMs: 500 }))
+      .resolves.toMatchObject({ status: 200 })
+    await expect(productFetch('/api/upload', { method: 'POST', body: new Blob(['x']), timeoutMs: 30 }))
+      .rejects.toMatchObject({ name: 'SourceError', message: 'Request timed out after 30 ms' })
+    await expect(createProductFetch({ fetch })('/api/rpc', { timeoutMs: 25 }))
+      .rejects.toMatchObject({ name: 'SourceError', message: 'Request timed out after 25 ms' })
+    // The per-call setting belongs to the transport, not the platform fetch.
+    expect(calls.map(call => call.init && 'timeoutMs' in call.init)).toEqual([false, false, false, false])
   })
 
   it('keeps the platform AbortError when the caller cancels', async () => {
@@ -239,6 +293,64 @@ describe('createProductFetch', () => {
       { method: 'POST', url: '/api/ok', status: 200, requestId: 'req-0', durationMs: 5, kind: undefined },
       { method: 'GET', url: '/api/missing', status: 404, requestId: 'req-1', durationMs: 5, kind: 'not_found' },
     ])
+  })
+})
+
+describe('createProductFetch under a real connect-web client', () => {
+  // connect-web serialises every message, JSON or binary, to a Uint8Array
+  // body, so these calls must be bounded like any other buffered request.
+  for (const useBinaryFormat of [false, true]) {
+    it(`rejects a hung unary call with the typed timeout within timeoutMs (${useBinaryFormat ? 'binary' : 'JSON'})`, async () => {
+      const baseUrl = await serve(hung)
+      const client = terminalClient(baseUrl, { timeoutMs: 200, newRequestId: () => 'req-hung' }, useBinaryFormat)
+      const result = await settle(client.get({ sourceId: 'revenue' }))
+
+      expect(result).not.toHaveProperty('pending')
+      expect(result.elapsedMs).toBeGreaterThanOrEqual(190)
+      expect(result.elapsedMs).toBeLessThan(700)
+      // connect-web wraps what its fetch threw; the typed error is its cause.
+      const error = 'error' in result ? result.error : undefined
+      expect(error).toBeInstanceOf(ConnectError)
+      expect((error as ConnectError).cause).toBeInstanceOf(SourceError)
+      expect(toSourceError(error)).toBe((error as ConnectError).cause)
+      expect(toSourceError(error)).toMatchObject({
+        name: 'SourceError',
+        kind: 'unavailable',
+        message: 'Request timed out after 200 ms',
+        requestId: 'req-hung',
+      })
+    })
+  }
+
+  it('leaves a call that sets its own timeoutMs to connect-web’s deadline', async () => {
+    const slow = await serve(async (_request, response) => {
+      await sleep(400)
+      response.writeHead(200, { 'Content-Type': 'application/json' })
+      response.end(JSON.stringify({ metric: { value: 42 } }))
+    })
+    const answered = await settle(terminalClient(slow, { timeoutMs: 200 }).get({ sourceId: 'revenue' }, { timeoutMs: 2_000 }))
+    expect(answered).toMatchObject({ value: { payload: { case: 'metric', value: { value: 42 } } } })
+
+    const stalled = await settle(terminalClient(await serve(hung), { timeoutMs: 5_000 }).get({ sourceId: 'revenue' }, { timeoutMs: 300 }))
+    expect(stalled).toMatchObject({ error: { code: Code.DeadlineExceeded } })
+    expect(stalled.elapsedMs).toBeLessThan(900)
+  })
+
+  it('keeps a server stream open past timeoutMs once its headers arrive', async () => {
+    const baseUrl = await serve(async (_request, response) => {
+      response.writeHead(200, { 'Content-Type': CONNECT_JSON_CONTENT_TYPE })
+      response.flushHeaders()
+      for (let value = 1; value <= 6; value++) {
+        await sleep(100)
+        response.write(connectFrame(0, { metric: { value } }))
+      }
+      response.end(connectFrame(0x02, {}))
+    })
+    const values: number[] = []
+    for await (const message of terminalClient(baseUrl, { timeoutMs: 200 }).stream({ sourceId: 'ticks' })) {
+      if (message.payload.case === 'metric') values.push(message.payload.value.value)
+    }
+    expect(values).toEqual([1, 2, 3, 4, 5, 6])
   })
 })
 

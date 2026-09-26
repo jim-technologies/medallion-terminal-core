@@ -7,7 +7,12 @@
  * failures as `SourceError`. No React and no runtime dependencies.
  */
 export { createProductFetch, ensureOk, newTraceparent } from './app/productFetch'
-export type { ProductFetchOptions, ProductRequestEvent } from './app/productFetch'
+export type {
+  ProductFetch,
+  ProductFetchOptions,
+  ProductRequestEvent,
+  ProductRequestInit,
+} from './app/productFetch'
 export {
   SourceError,
   describeSourceError,
