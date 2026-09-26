@@ -6,7 +6,7 @@ const meta: Meta<typeof ActionForm> = {
   component: ActionForm,
   decorators: [
     (Story) => (
-      <div style={{ minHeight: 520, width: 600, background: '#11151a', padding: 16, borderRadius: 8 }}>
+      <div style={{ minHeight: 520, width: 600, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 16, borderRadius: 'var(--mtc-radius-md)' }}>
         <Story />
       </div>
     ),

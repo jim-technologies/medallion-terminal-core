@@ -214,7 +214,7 @@ export function MediaGalleryImpl({ data, options, widgetId }: WidgetProps) {
                 {(opts.group_by ?? 'day') !== 'none' && (
                   <div
                     id={`media-group-${cssId(group.key)}`}
-                    className="sticky top-0 z-10 py-1.5 bg-zinc-950/95 backdrop-blur-sm text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-500"
+                    className="sticky top-0 z-10 py-1.5 bg-zinc-950 text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-500"
                   >
                     {group.label}
                   </div>

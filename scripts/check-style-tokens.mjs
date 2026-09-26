@@ -11,6 +11,11 @@
 //   font-size       text-[Npx] below 11 px or off the 11/12/13/14/16/20/24
 //                   scale
 //   tracking        an arbitrary tracking-[…] letter-spacing
+//   blur            a backdrop-filter blur (surfaces are flat; overlays
+//                   carry elevation, not frosted glass)
+//   story-frame     in a story, a frame `background` given as a colour
+//                   literal: frames use --mtc-surface / --mtc-border so every
+//                   theme previews on its own canvas
 //
 // Existing debt is a ratchet, not a pass: scripts/style-token-budget.json
 // records the violations each file had when the guard landed (documented
@@ -19,8 +24,9 @@
 // file's current count fails too, so paying debt down forces the budget to
 // follow (`node scripts/check-style-tokens.mjs --write` rewrites it).
 //
-// Stories, tests, fixtures and generated code are exempt: fixtures may use
-// literal values, and generated code is not authored.
+// Stories, tests, fixtures and generated code are exempt from the other
+// rules: fixtures may use literal values, and generated code is not
+// authored. Stories still get the story-frame rule.
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -34,7 +40,14 @@ const rules = {
   'arbitrary-color': /\b(?:bg|text|border(?:-[trblxy])?|fill|stroke|from|via|to|ring|outline|decoration|shadow|accent|caret|divide)-\[(?:#|rgba?\(|hsla?\()/g,
   'font-size': /\btext-\[(\d+(?:\.\d+)?)px\]/g,
   tracking: /\btracking-\[[^\]]+\]/g,
+  blur: /\bbackdrop-blur\b|\bbackdrop-filter\s*:|\bbackdropFilter\b/g,
 }
+
+const storyRules = {
+  'story-frame': /\bbackground(?:Color)?:\s*['"](?:#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\()/g,
+}
+
+const isStory = relative => /\.stories\.[cm]?[jt]sx?$/.test(relative)
 
 function exempt(relative) {
   return /(?:^|\/)(?:__tests__|gen|fonts)\//.test(relative)
@@ -53,11 +66,12 @@ function* sourceFiles(dir) {
 function violations(relative, text) {
   const found = []
   const lines = text.split('\n')
+  const active = isStory(relative) ? storyRules : rules
   lines.forEach((line, index) => {
     // A custom-property declaration in the token stylesheet *is* the token.
     const tokenDeclaration = relative === 'src/index.css'
       && /^\s*--(?:mtc|color)-[\w-]+\s*:/.test(line)
-    for (const [rule, pattern] of Object.entries(rules)) {
+    for (const [rule, pattern] of Object.entries(active)) {
       if (rule === 'color-literal' && tokenDeclaration) continue
       for (const match of line.matchAll(pattern)) {
         if (rule === 'font-size') {
@@ -82,7 +96,7 @@ const counts = {}
 const details = {}
 for (const absolute of sourceFiles(path.join(root, 'src'))) {
   const relative = path.relative(root, absolute).split(path.sep).join('/')
-  if (exempt(relative)) continue
+  if (exempt(relative) && !isStory(relative)) continue
   const found = violations(relative, readFileSync(absolute, 'utf8'))
   if (found.length === 0) continue
   counts[relative] = {}

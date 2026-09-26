@@ -6,7 +6,7 @@ const meta: Meta<typeof Section> = {
   component: Section,
   decorators: [
     (Story) => (
-      <div style={{ height: 32, width: 720, background: '#0a0a0a', padding: 4, borderRadius: 6 }}>
+      <div style={{ height: 32, width: 720, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 4, borderRadius: 'var(--mtc-radius-md)' }}>
         <Story />
       </div>
     ),

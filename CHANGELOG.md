@@ -157,9 +157,11 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   still win, and `lang` is emitted only when `locale` is passed.
 - **`scripts/check-style-tokens.mjs`**, run by `pnpm lint`, fails when
   production source adds a colour literal outside a token declaration, a
-  Tailwind arbitrary colour, a `text-[Npx]` below 11 px or off the scale, or
-  an arbitrary `tracking-[…]`. Existing debt (documented canvas fallbacks and
-  the widget type sizes the next release sweeps) is a ratchet in
+  Tailwind arbitrary colour, a `text-[Npx]` below 11 px or off the scale, an
+  arbitrary `tracking-[…]` or a `backdrop-filter` blur, and when a story
+  frames itself in a colour literal instead of `--mtc-surface`. Existing
+  debt (documented canvas fallbacks and the widget type sizes the next
+  release sweeps) is a ratchet in
   `scripts/style-token-budget.json`: a file can never exceed its budget, and a
   stale budget fails until it is lowered.
 - **Light visual baselines.** The Playwright gate renders every themed
@@ -266,15 +268,16 @@ with `Intl` formatters, and a JSON payload case. The ontology components
 
 - **Decorative surface effects**: the workspace radial and linear gradients,
   inset highlights on toolbars, controls, widgets, buttons and inputs, the
-  widget drop shadow, the overlay `backdrop-filter` blur, the dashboard
-  title's signal bar, the button press translation, the landing-card hover
+  widget drop shadow, the `backdrop-filter` blur on overlays and sticky
+  headers (the dashboard's fullscreen overlay is now an opaque canvas and the
+  media gallery's day headers are solid), the dashboard title's signal bar, the button press translation, the landing-card hover
   lift, and the media thumbnail placeholder gradient. `--mtc-highlight` stays
   defined as `transparent` so host overrides remain valid.
-- **Hard-coded Storybook canvas colours.** The 44 widget stories that framed
-  themselves in `background: '#18181b'` use `--mtc-surface` and
-  `--mtc-border` instead, so light and high-contrast themes preview
-  correctly; the preview's fixed `backgrounds` swatches are disabled because
-  the themed root paints the canvas.
+- **Hard-coded Storybook canvas colours.** The 48 widget stories that framed
+  themselves in a dark literal (`#18181b`, `#11151a` or `#0a0a0a`) use
+  `--mtc-surface` and `--mtc-border` instead, so light and high-contrast
+  themes preview correctly; the preview's fixed `backgrounds` swatches are
+  disabled because the themed root paints the canvas.
 - **The `minimumReleaseAgeExclude` entries for MapLibre GL JS 6.11.2 and
   Vite 8.3.1** in `pnpm-workspace.yaml`, and their comment. Both releases
   passed pnpm 11's one-day release age at 2026-09-25T12:46:30Z, after which

@@ -1041,7 +1041,7 @@ function FullscreenOverlay({
   const contentHeight = typeof window !== 'undefined' ? Math.floor(window.innerHeight * 0.82) : 600
   return (
     <div
-      className="fixed inset-0 z-30 bg-zinc-950/95 backdrop-blur-sm p-4 md:p-8 flex flex-col motion-safe:animate-[fadeIn_180ms_ease-out]"
+      className="fixed inset-0 z-30 bg-zinc-950 p-4 md:p-8 flex flex-col motion-safe:animate-[fadeIn_180ms_ease-out]"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
