@@ -8,6 +8,7 @@ import {
   formatOperationalPercent,
 } from '../shared/OperationalShowcasePrimitives'
 import '../shared/OperationalShowcases.css'
+import { NeutralMark } from '../shared/NeutralMark'
 
 export type StripeShowcaseSection = 'overview' | 'payments' | 'billing' | 'disputes'
 export type StripePaymentStatus = 'Succeeded' | 'Refunded' | 'Failed' | 'Pending'
@@ -153,8 +154,8 @@ export function StripeShowcase({
 
   return (
     <div className="ready-showcase stripe-showcase">
-      <aside className="stripe-sidebar" aria-label="Stripe navigation">
-        <div className="stripe-brand"><span>S</span></div>
+      <aside className="stripe-sidebar" aria-label="Payments navigation">
+        <div className="stripe-brand"><NeutralMark icon="money" color="#635bff" /></div>
         <button className="stripe-account-switcher"><span>{accountName}</span><small>Standard account</small><OperationalShowcaseIcon name="chevron-down" size={13} /></button>
         <nav aria-label="Commerce">
           {STRIPE_NAV.map(item => (
@@ -288,7 +289,7 @@ export function StripeShowcase({
                     <h2>Payment details</h2>
                     <dl>
                       <div><dt>Amount</dt><dd>{formatOperationalCurrency(selectedPayment.amount, { cents: true })} USD</dd></div>
-                      <div><dt>Stripe fee</dt><dd>−{formatOperationalCurrency(selectedPayment.fee, { cents: true })} USD</dd></div>
+                      <div><dt>Processing fee</dt><dd>−{formatOperationalCurrency(selectedPayment.fee, { cents: true })} USD</dd></div>
                       <div className="total"><dt>Net</dt><dd>{formatOperationalCurrency(selectedPayment.amount - selectedPayment.fee, { cents: true })} USD</dd></div>
                     </dl>
                     <div className="stripe-detail-timeline">

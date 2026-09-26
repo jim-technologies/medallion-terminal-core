@@ -63,7 +63,7 @@ function IconButton({ icon, label }: { icon: OperationalShowcaseIconName; label:
 
 function GitHubMark() {
   return (
-    <span className="gh-mark" aria-label="GitHub" role="img">
+    <span className="gh-mark" aria-label="Code" role="img">
       <OperationalShowcaseIcon name="graph" size={19} />
     </span>
   )
@@ -139,7 +139,7 @@ export function GitHubShowcase({
         <a className="gh-global-context" href="#repository">Dashboard</a>
         <label className="gh-global-search">
           <OperationalShowcaseIcon name="search" size={15} />
-          <input aria-label="Search GitHub" placeholder="Type / to search" />
+          <input aria-label="Search" placeholder="Type / to search" />
           <kbd>/</kbd>
         </label>
         <div className="gh-global-actions">

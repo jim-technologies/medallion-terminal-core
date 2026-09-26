@@ -41,7 +41,8 @@ export interface ProductShowcaseDefinition {
   id: ProductShowcaseId
   vendor: string
   product: string
-  shortName: string
+  /** Neutral name the clone shows in place of the product's own name. */
+  displayName: string
   archetype: ProductArchetype
   accent: string
   accentSoft: string
@@ -53,74 +54,74 @@ export interface ProductShowcaseDefinition {
 
 export const PRODUCT_ARCHETYPE_CATALOG: Record<ProductShowcaseId, ProductShowcaseDefinition> = {
   'google-gmail': {
-    id: 'google-gmail', vendor: 'Google', product: 'Google Gmail', shortName: 'Gmail',
+    id: 'google-gmail', vendor: 'Google', product: 'Google Gmail', displayName: 'Mail',
     archetype: 'mail', accent: '#c5221f', accentSoft: '#fce8e6', surface: 'light', mark: 'M',
     views: ['inbox', 'thread', 'compose'], defaultView: 'inbox',
   },
   'microsoft-outlook': {
-    id: 'microsoft-outlook', vendor: 'Microsoft', product: 'Microsoft Outlook', shortName: 'Outlook',
-    archetype: 'mail', accent: '#0f6cbd', accentSoft: '#deecf9', surface: 'light', mark: 'O',
+    id: 'microsoft-outlook', vendor: 'Microsoft', product: 'Microsoft Outlook', displayName: 'Inbox',
+    archetype: 'mail', accent: '#0f6cbd', accentSoft: '#deecf9', surface: 'light', mark: 'I',
     views: ['focused', 'reading-pane', 'compose'], defaultView: 'focused',
   },
   notion: {
-    id: 'notion', vendor: 'Notion', product: 'Notion', shortName: 'Notion',
-    archetype: 'knowledge', accent: '#37352f', accentSoft: '#efefed', surface: 'light', mark: 'N',
+    id: 'notion', vendor: 'Notion', product: 'Notion', displayName: 'Pages',
+    archetype: 'knowledge', accent: '#37352f', accentSoft: '#efefed', surface: 'light', mark: 'P',
     views: ['document', 'database', 'comments'], defaultView: 'document',
   },
   'atlassian-confluence': {
-    id: 'atlassian-confluence', vendor: 'Atlassian', product: 'Atlassian Confluence', shortName: 'Confluence',
-    archetype: 'knowledge', accent: '#1868db', accentSoft: '#e9f2ff', surface: 'light', mark: 'C',
+    id: 'atlassian-confluence', vendor: 'Atlassian', product: 'Atlassian Confluence', displayName: 'Wiki',
+    archetype: 'knowledge', accent: '#1868db', accentSoft: '#e9f2ff', surface: 'light', mark: 'W',
     views: ['space', 'page', 'page-tree'], defaultView: 'space',
   },
   linear: {
-    id: 'linear', vendor: 'Linear', product: 'Linear', shortName: 'Linear',
-    archetype: 'work', accent: '#5e6ad2', accentSoft: '#262846', surface: 'dark', mark: 'L',
+    id: 'linear', vendor: 'Linear', product: 'Linear', displayName: 'Issues',
+    archetype: 'work', accent: '#5e6ad2', accentSoft: '#262846', surface: 'dark', mark: 'I',
     views: ['issues', 'cycle', 'issue-detail'], defaultView: 'issues',
   },
   'atlassian-jira': {
-    id: 'atlassian-jira', vendor: 'Atlassian', product: 'Atlassian Jira', shortName: 'Jira',
-    archetype: 'work', accent: '#0c66e4', accentSoft: '#e9f2ff', surface: 'light', mark: 'J',
+    id: 'atlassian-jira', vendor: 'Atlassian', product: 'Atlassian Jira', displayName: 'Tracker',
+    archetype: 'work', accent: '#0c66e4', accentSoft: '#e9f2ff', surface: 'light', mark: 'T',
     views: ['backlog', 'board', 'issue-detail'], defaultView: 'backlog',
   },
   binance: {
-    id: 'binance', vendor: 'Binance', product: 'Binance', shortName: 'Binance',
-    archetype: 'market', accent: '#f0b90b', accentSoft: '#332d16', surface: 'dark', mark: 'B',
+    id: 'binance', vendor: 'Binance', product: 'Binance', displayName: 'Exchange',
+    archetype: 'market', accent: '#f0b90b', accentSoft: '#332d16', surface: 'dark', mark: 'E',
     views: ['spot', 'open-orders', 'wallet'], defaultView: 'spot',
   },
   coingecko: {
-    id: 'coingecko', vendor: 'CoinGecko', product: 'CoinGecko', shortName: 'CoinGecko',
-    archetype: 'market', accent: '#78a53a', accentSoft: '#eef6df', surface: 'light', mark: 'CG',
+    id: 'coingecko', vendor: 'CoinGecko', product: 'CoinGecko', displayName: 'Markets',
+    archetype: 'market', accent: '#78a53a', accentSoft: '#eef6df', surface: 'light', mark: 'M',
     views: ['markets', 'coin-detail', 'portfolio'], defaultView: 'markets',
   },
   polymarket: {
-    id: 'polymarket', vendor: 'Polymarket', product: 'Polymarket', shortName: 'Polymarket',
-    archetype: 'market', accent: '#2f6fed', accentSoft: '#e8efff', surface: 'light', mark: 'P',
+    id: 'polymarket', vendor: 'Polymarket', product: 'Polymarket', displayName: 'Forecasts',
+    archetype: 'market', accent: '#2f6fed', accentSoft: '#e8efff', surface: 'light', mark: 'F',
     views: ['discovery', 'market-detail', 'portfolio'], defaultView: 'discovery',
   },
   'interactive-brokers-trader-workstation': {
     id: 'interactive-brokers-trader-workstation', vendor: 'Interactive Brokers',
-    product: 'Interactive Brokers Trader Workstation', shortName: 'Trader Workstation',
-    archetype: 'market', accent: '#d62728', accentSoft: '#351b1b', surface: 'dark', mark: 'IB',
+    product: 'Interactive Brokers Trader Workstation', displayName: 'Trading desk',
+    archetype: 'market', accent: '#d62728', accentSoft: '#351b1b', surface: 'dark', mark: 'T',
     views: ['mosaic', 'portfolio', 'order-entry'], defaultView: 'mosaic',
   },
   'grafana-labs-grafana': {
-    id: 'grafana-labs-grafana', vendor: 'Grafana Labs', product: 'Grafana Labs Grafana', shortName: 'Grafana',
-    archetype: 'analytics', accent: '#ff9830', accentSoft: '#3a2818', surface: 'dark', mark: 'G',
+    id: 'grafana-labs-grafana', vendor: 'Grafana Labs', product: 'Grafana Labs Grafana', displayName: 'Metrics',
+    archetype: 'analytics', accent: '#ff9830', accentSoft: '#3a2818', surface: 'dark', mark: 'M',
     views: ['dashboard', 'explore', 'alerting'], defaultView: 'dashboard',
   },
   'apache-superset': {
-    id: 'apache-superset', vendor: 'Apache', product: 'Apache Superset', shortName: 'Superset',
-    archetype: 'analytics', accent: '#20a7c9', accentSoft: '#e4f6fa', surface: 'light', mark: 'S',
+    id: 'apache-superset', vendor: 'Apache', product: 'Apache Superset', displayName: 'Analytics',
+    archetype: 'analytics', accent: '#20a7c9', accentSoft: '#e4f6fa', surface: 'light', mark: 'A',
     views: ['dashboard', 'explore', 'sql-lab'], defaultView: 'dashboard',
   },
   'meta-whatsapp': {
-    id: 'meta-whatsapp', vendor: 'Meta', product: 'Meta WhatsApp', shortName: 'WhatsApp',
-    archetype: 'conversation', accent: '#00a884', accentSoft: '#d9fdd3', surface: 'light', mark: 'W',
+    id: 'meta-whatsapp', vendor: 'Meta', product: 'Meta WhatsApp', displayName: 'Chat',
+    archetype: 'conversation', accent: '#00a884', accentSoft: '#d9fdd3', surface: 'light', mark: 'C',
     views: ['chat', 'communities', 'media'], defaultView: 'chat',
   },
   'openai-chatgpt': {
-    id: 'openai-chatgpt', vendor: 'OpenAI', product: 'OpenAI ChatGPT', shortName: 'ChatGPT',
-    archetype: 'conversation', accent: '#10a37f', accentSoft: '#e8f7f2', surface: 'light', mark: 'AI',
+    id: 'openai-chatgpt', vendor: 'OpenAI', product: 'OpenAI ChatGPT', displayName: 'Assistant',
+    archetype: 'conversation', accent: '#10a37f', accentSoft: '#e8f7f2', surface: 'light', mark: 'A',
     views: ['conversation', 'projects', 'canvas'], defaultView: 'conversation',
   },
 }
@@ -187,7 +188,7 @@ interface ShowcaseRendererProps {
 }
 
 function ProductMark({ definition }: { definition: ProductShowcaseDefinition }) {
-  return <span className="ar-product-mark" aria-label={definition.shortName} title={definition.shortName}>{definition.mark}</span>
+  return <span className="ar-product-mark" aria-label={definition.displayName} title={definition.displayName}>{definition.mark}</span>
 }
 
 function Avatar({ name, size = 30 }: { name: string; size?: number }) {
@@ -223,7 +224,7 @@ function ViewTabs({
   labels?: Record<string, string>
 }) {
   return (
-    <nav className="ar-view-tabs" aria-label={`${definition.shortName} views`}>
+    <nav className="ar-view-tabs" aria-label={`${definition.displayName} views`}>
       {definition.views.map(item => (
         <button
           type="button"
@@ -289,7 +290,7 @@ function GmailShowcase({ definition, view, setView, companyName, userName, initi
       <header className="ar-mail-topbar">
         <IconButton icon="menu" label="Main menu" />
         <a className="ar-brand" href="#mail" onClick={event => event.preventDefault()}>
-          <ProductMark definition={definition} /><strong>{definition.shortName}</strong>
+          <ProductMark definition={definition} /><strong>{definition.displayName}</strong>
         </a>
         <label className="ar-global-search">
           <OperationalShowcaseIcon name="search" size={18} />
@@ -303,7 +304,7 @@ function GmailShowcase({ definition, view, setView, companyName, userName, initi
         </div>
       </header>
       <div className="ar-mail-body">
-        <aside className="ar-mail-sidebar" aria-label="Gmail folders">
+        <aside className="ar-mail-sidebar" aria-label="Mail folders">
           <button type="button" className="ar-compose-button" onClick={() => { setComposeOpen(true); setView('compose') }}>
             <OperationalShowcaseIcon name="plus" size={20} /> Compose
           </button>
@@ -402,15 +403,15 @@ function OutlookShowcase({
   return (
     <div className="ar-outlook-shell">
       <header className="ar-outlook-suitebar">
-        <button type="button" className="ar-outlook-launcher" aria-label="Microsoft 365 apps">
+        <button type="button" className="ar-outlook-launcher" aria-label="Apps">
           <span /><span /><span /><span /><span /><span /><span /><span /><span />
         </button>
         <a className="ar-brand" href="#outlook" onClick={event => event.preventDefault()}>
-          <ProductMark definition={definition} /><strong>Outlook</strong>
+          <ProductMark definition={definition} /><strong>{definition.displayName}</strong>
         </a>
         <label className="ar-outlook-search">
           <OperationalShowcaseIcon name="search" size={16} />
-          <span className="ar-sr-only">Search Outlook</span>
+          <span className="ar-sr-only">Search mail</span>
           <input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search" />
         </label>
         <div className="ar-top-actions">
@@ -419,7 +420,7 @@ function OutlookShowcase({
           <Avatar name={userName} size={30} />
         </div>
       </header>
-      <nav className="ar-outlook-ribbon" aria-label="Outlook commands">
+      <nav className="ar-outlook-ribbon" aria-label="Mail commands">
         <button className="is-active">Home</button><button>View</button><button>Help</button>
         <i />
         <button onClick={() => setView('compose')}><OperationalShowcaseIcon name="plus" size={15} /> New mail</button>
@@ -428,14 +429,14 @@ function OutlookShowcase({
         <button><OperationalShowcaseIcon name="flag" size={15} /> Flag</button>
       </nav>
       <div className="ar-outlook-workspace">
-        <aside className="ar-outlook-app-rail" aria-label="Microsoft 365 applications">
+        <aside className="ar-outlook-app-rail" aria-label="Applications">
           <button className="is-active" aria-label="Mail"><OperationalShowcaseIcon name="inbox" size={20} /></button>
           <button aria-label="Calendar"><OperationalShowcaseIcon name="calendar" size={20} /></button>
           <button aria-label="People"><OperationalShowcaseIcon name="people" size={20} /></button>
           <button aria-label="To Do"><OperationalShowcaseIcon name="check" size={20} /></button>
           <button aria-label="More apps"><OperationalShowcaseIcon name="apps" size={20} /></button>
         </aside>
-        <aside className="ar-outlook-folders" aria-label="Outlook folders">
+        <aside className="ar-outlook-folders" aria-label="Mail folders">
           <button type="button" className="ar-outlook-new-mail" onClick={() => setView('compose')}>
             <OperationalShowcaseIcon name="plus" size={17} /> New mail
           </button>
@@ -452,7 +453,7 @@ function OutlookShowcase({
             <button><OperationalShowcaseIcon name="box" size={16} /><span>Archive</span></button>
             <button><OperationalShowcaseIcon name="close" size={16} /><span>Deleted Items</span></button>
           </nav>
-          <div className="ar-outlook-account"><Avatar name={companyName} size={25} /><span><strong>{companyName}</strong><small>Microsoft 365</small></span></div>
+          <div className="ar-outlook-account"><Avatar name={companyName} size={25} /><span><strong>{companyName}</strong><small>Work account</small></span></div>
         </aside>
         <main className="ar-outlook-message-list">
           <header>
@@ -518,7 +519,7 @@ function ComposeCard({ definition, onClose }: { definition: ProductShowcaseDefin
       <label><span>To</span><input defaultValue="maya@jimtech.xyz" /></label>
       <label><span>Subject</span><input defaultValue="Operating review follow-up" /></label>
       <textarea defaultValue={'Hi Maya,\n\nThe review is complete. I added the final owner and timing notes.\n\nThanks,\nJun'} />
-      <footer><button type="button" className="ar-primary">Send</button><button type="button" className="ar-format">A</button><IconButton icon="document" label="Attach file" /><span>{definition.shortName} · Draft saved</span></footer>
+      <footer><button type="button" className="ar-primary">Send</button><button type="button" className="ar-format">A</button><IconButton icon="document" label="Attach file" /><span>{definition.displayName} · Draft saved</span></footer>
     </section>
   )
 }
@@ -553,12 +554,12 @@ function NotionShowcase({ definition, view, setView, companyName, userName, init
   return (
     <div className="ar-knowledge-shell">
       <header className="ar-knowledge-topbar">
-        <a className="ar-brand" href="#knowledge" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.shortName}</strong></a>
+        <a className="ar-brand" href="#knowledge" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.displayName}</strong></a>
         <label className="ar-compact-search"><OperationalShowcaseIcon name="search" size={16} /><input placeholder="Search" /><kbd>⌘K</kbd></label>
         <div className="ar-top-actions"><button type="button" className="ar-share-button">Share</button><IconButton icon="more" label="More" /><Avatar name={userName} /></div>
       </header>
       <div className="ar-knowledge-body">
-        <aside className="ar-knowledge-sidebar" aria-label="Notion workspace">
+        <aside className="ar-knowledge-sidebar" aria-label="Workspace pages">
           <div className="ar-workspace-row"><Avatar name={companyName} size={25} /><strong>{companyName}</strong><span>⌄</span></div>
           <nav aria-label="Workspace navigation">
             <button type="button"><OperationalShowcaseIcon name="search" size={16} />Search</button>
@@ -609,11 +610,11 @@ function ConfluenceShowcase({
   return (
     <div className="ar-confluence-shell">
       <header className="ar-confluence-global">
-        <button className="ar-confluence-launcher" aria-label="Atlassian applications"><OperationalShowcaseIcon name="apps" size={18} /></button>
+        <button className="ar-confluence-launcher" aria-label="Applications"><OperationalShowcaseIcon name="apps" size={18} /></button>
         <a className="ar-brand" href="#confluence" onClick={event => event.preventDefault()}>
-          <ProductMark definition={definition} /><strong>Confluence</strong>
+          <ProductMark definition={definition} /><strong>{definition.displayName}</strong>
         </a>
-        <nav aria-label="Confluence global navigation">
+        <nav aria-label="Wiki navigation">
           <button>Recent⌄</button><button>Spaces⌄</button><button>Teams</button><button>Templates</button>
         </nav>
         <button className="ar-confluence-create" onClick={() => setView('page')}>Create</button>
@@ -621,7 +622,7 @@ function ConfluenceShowcase({
         <IconButton icon="help" label="Help" /><IconButton icon="settings" label="Settings" /><Avatar name={userName} size={29} />
       </header>
       <div className="ar-confluence-body">
-        <aside className="ar-confluence-sidebar" aria-label="Confluence space navigation">
+        <aside className="ar-confluence-sidebar" aria-label="Space navigation">
           <header><span className="ar-confluence-space-mark">JT</span><span><strong>{companyName}</strong><small>Knowledge base</small></span><button>•••</button></header>
           <nav aria-label="Space navigation">
             <button className={view === 'space' ? 'is-active' : ''} onClick={() => setView('space')}><OperationalShowcaseIcon name="home" size={16} />Overview</button>
@@ -830,8 +831,8 @@ function LinearShowcase({ definition, view, setView, companyName, userName, init
 
   return (
     <div className="ar-work-shell">
-      <aside className="ar-work-sidebar" aria-label="Linear workspace navigation">
-        <div className="ar-work-brand"><ProductMark definition={definition} /><strong>{definition.shortName}</strong></div>
+      <aside className="ar-work-sidebar" aria-label="Workspace navigation">
+        <div className="ar-work-brand"><ProductMark definition={definition} /><strong>{definition.displayName}</strong></div>
         <button type="button" className="ar-work-search"><OperationalShowcaseIcon name="search" size={15} />Search <kbd>/</kbd></button>
         <button type="button" className="ar-work-create"><OperationalShowcaseIcon name="plus" size={15} />Create work item <kbd>C</kbd></button>
         <nav aria-label="Personal work">
@@ -880,9 +881,9 @@ function JiraShowcase({
   return (
     <div className="ar-jira-shell">
       <header className="ar-jira-global">
-        <button aria-label="Atlassian applications"><OperationalShowcaseIcon name="apps" size={18} /></button>
-        <a className="ar-brand" href="#jira" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>Jira</strong></a>
-        <nav aria-label="Jira global navigation">
+        <button aria-label="Applications"><OperationalShowcaseIcon name="apps" size={18} /></button>
+        <a className="ar-brand" href="#jira" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.displayName}</strong></a>
+        <nav aria-label="Tracker navigation">
           <button>Your work⌄</button><button>Projects⌄</button><button>Filters⌄</button><button>Dashboards⌄</button><button>Teams</button><button>Plans</button>
         </nav>
         <button className="ar-jira-create">Create</button>
@@ -890,7 +891,7 @@ function JiraShowcase({
         <IconButton icon="bell" label="Notifications" /><IconButton icon="help" label="Help" /><IconButton icon="settings" label="Settings" /><Avatar name={userName} size={29} />
       </header>
       <div className="ar-jira-body">
-        <aside className="ar-jira-sidebar" aria-label="Jira project navigation">
+        <aside className="ar-jira-sidebar" aria-label="Project navigation">
           <header><span className="ar-jira-project-mark">PD</span><span><strong>Platform delivery</strong><small>Software project</small></span><button>•••</button></header>
           <nav aria-label="Project navigation">
             <button><OperationalShowcaseIcon name="timeline" size={16} />Timeline</button>
@@ -1009,7 +1010,7 @@ function TinyLine({ values, positive = true }: { values: readonly number[]; posi
 
 function BinanceShowcase({ definition, view, setView, companyName, userName }: ShowcaseRendererProps) {
   const labels: Record<string, string> = { spot: 'Spot', 'open-orders': 'Open orders', wallet: 'Wallet' }
-  return <div className="ar-terminal-shell"><header className="ar-terminal-topbar"><a className="ar-brand" href="#terminal" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.shortName}</strong></a><nav aria-label="Binance products">{['Buy Crypto', 'Markets', 'Trade', 'Derivatives', 'Earn'].map(item => <button key={item}>{item}</button>)}</nav><div className="ar-top-actions"><span className="ar-live-dot" />Live data<span className="ar-account-name">{companyName}</span><IconButton icon="bell" label="Alerts" /><Avatar name={userName} /></div></header><ViewTabs definition={definition} view={view} setView={setView} labels={labels} />
+  return <div className="ar-terminal-shell"><header className="ar-terminal-topbar"><a className="ar-brand" href="#terminal" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.displayName}</strong></a><nav aria-label="Exchange products">{['Buy Crypto', 'Markets', 'Trade', 'Derivatives', 'Earn'].map(item => <button key={item}>{item}</button>)}</nav><div className="ar-top-actions"><span className="ar-live-dot" />Live data<span className="ar-account-name">{companyName}</span><IconButton icon="bell" label="Alerts" /><Avatar name={userName} /></div></header><ViewTabs definition={definition} view={view} setView={setView} labels={labels} />
     <main className="ar-terminal-grid">
       <section className="ar-terminal-watch"><header><strong>{view === 'portfolio' || view === 'wallet' ? 'Portfolio' : 'Watchlist'}</strong><button>+</button></header>{MARKET_ROWS.slice(0, 5).map((row, index) => <button className={index === 0 ? 'is-active' : ''} key={row[0]}><span><strong>{row[0]}</strong><small>{row[1]}</small></span><b>{row[2]}</b><em className={String(row[3]).startsWith('-') ? 'is-negative' : 'is-positive'}>{row[3]}</em></button>)}</section>
       <section className="ar-terminal-chart"><header><div><strong>BTC/USDT</strong><span>Bitcoin · Spot</span></div><b>$67,842.10</b><em>+2.48%</em></header><div className="ar-chart-toolbar"><button>1m</button><button>5m</button><button className="is-active">1h</button><button>4h</button><button>1D</button><span /><button>Indicators</button><button>Drawing</button></div><PriceChart /><footer><span>O 66,982.4</span><span>H 68,144.8</span><span>L 66,731.2</span><span>C 67,842.1</span><b>Vol 18.4K</b></footer></section>
@@ -1031,17 +1032,17 @@ function TraderWorkstationShowcase({ definition, view, setView, companyName, use
   return (
     <div className="ar-tws-shell">
       <header className="ar-tws-menubar">
-        <a className="ar-brand" href="#tws" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>Trader Workstation</strong></a>
-        <nav aria-label="Trader Workstation menus">{['File', 'Account', 'New Window', 'Research', 'Analytical Tools', 'Trading Tools', 'Help'].map(item => <button key={item}>{item}</button>)}</nav>
+        <a className="ar-brand" href="#tws" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.displayName}</strong></a>
+        <nav aria-label="Trading desk menus">{['File', 'Account', 'New Window', 'Research', 'Analytical Tools', 'Trading Tools', 'Help'].map(item => <button key={item}>{item}</button>)}</nav>
         <span className="ar-tws-market-state"><i /> LIVE · NYSE OPEN</span>
         <button className="ar-tws-layout-lock"><OperationalShowcaseIcon name="shield" size={14} /> Layout locked</button>
         <Avatar name={userName} size={25} />
       </header>
-      <nav className="ar-tws-workspaces" aria-label="Trader Workstation layouts">
+      <nav className="ar-tws-workspaces" aria-label="Trading desk layouts">
         <button className={view === 'mosaic' ? 'is-active' : ''} onClick={() => setView('mosaic')}>Mosaic</button>
         <button className={view === 'portfolio' ? 'is-active' : ''} onClick={() => setView('portfolio')}>Portfolio</button>
         <button className={view === 'order-entry' ? 'is-active' : ''} onClick={() => setView('order-entry')}>Order entry</button>
-        <button>Classic TWS</button><button aria-label="Add layout">＋</button>
+        <button>Classic layout</button><button aria-label="Add layout">＋</button>
         <span>{companyName} · DU•••1842</span>
       </nav>
       <main className={`ar-tws-mosaic is-${view}`}>
@@ -1136,9 +1137,9 @@ function CoinTrackerShowcase({ definition, view, setView, companyName, userName,
       <header className="ar-tracker-topbar">
         <a className="ar-brand" href="#markets" onClick={event => event.preventDefault()}>
           <ProductMark definition={definition} />
-          <strong>CoinGecko</strong>
+          <strong>{definition.displayName}</strong>
         </a>
-        <nav aria-label="CoinGecko products">
+        <nav aria-label="Market products">
           <button type="button">Cryptocurrencies</button>
           <button type="button">Exchanges</button>
           <button type="button">NFT</button>
@@ -1263,7 +1264,7 @@ function PredictionShowcase({ definition, view, setView, companyName, userName, 
   const [selectedId, setSelectedId] = useState(initialSelectedId ?? 'rates')
   const selected = PREDICTION_MARKETS.find(market => market.id === selectedId) ?? PREDICTION_MARKETS[0]
   const detail = view === 'market-detail'
-  return <div className="ar-prediction-shell"><header className="ar-prediction-topbar"><a className="ar-brand" href="#prediction" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>Polymarket</strong></a><label><OperationalShowcaseIcon name="search" size={16} /><input placeholder="Search markets" /></label><nav aria-label="Polymarket navigation"><button>Markets</button><button>Live</button><button>Activity</button><button>Leaderboard</button></nav><button className="ar-balance">{companyName} · $12,840</button><Avatar name={userName} /></header><div className="ar-prediction-categories">{['Trending', 'Politics', 'Sports', 'Crypto', 'Economy', 'Technology', 'Culture'].map((item, index) => <button className={index === 0 ? 'is-active' : ''} key={item}>{item}</button>)}</div><ViewTabs definition={definition} view={view} setView={setView} labels={{ discovery: 'Discover', 'market-detail': 'Market detail', portfolio: 'Portfolio' }} /><main className="ar-prediction-main">{detail ? <PredictionDetail market={selected} /> : <><div className="ar-prediction-heading"><div><span className="ar-eyebrow">{view === 'portfolio' ? 'Your positions' : 'Live markets'}</span><h1>{view === 'portfolio' ? 'Portfolio' : 'What will happen next?'}</h1></div><button>Newest⌄</button></div><div className="ar-market-card-grid">{PREDICTION_MARKETS.map(market => <button type="button" className="ar-market-card" key={market.id} onClick={() => { setSelectedId(market.id); setView('market-detail'); onSelectItem?.(market.id) }}><header><span>{market.category[0]}</span><em>{market.category}</em><time>Dec 31</time></header><h2>{market.question}</h2><div className="ar-probability"><strong>{market.yes}%</strong><span>chance</span><em className={market.change.startsWith('-') ? 'is-negative' : 'is-positive'}>{market.change} pts</em></div><TinyLine values={[28, 31, 34, 32, 39, 45, 43, market.yes]} positive={!market.change.startsWith('-')} /><div className="ar-outcome-buttons"><span>Yes <b>{market.yes}¢</b></span><span>No <b>{100 - market.yes}¢</b></span></div><footer><span>Vol. {market.volume}</span><span>◎ 4.2k traders</span></footer></button>)}</div></>}</main></div>
+  return <div className="ar-prediction-shell"><header className="ar-prediction-topbar"><a className="ar-brand" href="#prediction" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.displayName}</strong></a><label><OperationalShowcaseIcon name="search" size={16} /><input placeholder="Search markets" /></label><nav aria-label="Forecast navigation"><button>Markets</button><button>Live</button><button>Activity</button><button>Leaderboard</button></nav><button className="ar-balance">{companyName} · $12,840</button><Avatar name={userName} /></header><div className="ar-prediction-categories">{['Trending', 'Politics', 'Sports', 'Crypto', 'Economy', 'Technology', 'Culture'].map((item, index) => <button className={index === 0 ? 'is-active' : ''} key={item}>{item}</button>)}</div><ViewTabs definition={definition} view={view} setView={setView} labels={{ discovery: 'Discover', 'market-detail': 'Market detail', portfolio: 'Portfolio' }} /><main className="ar-prediction-main">{detail ? <PredictionDetail market={selected} /> : <><div className="ar-prediction-heading"><div><span className="ar-eyebrow">{view === 'portfolio' ? 'Your positions' : 'Live markets'}</span><h1>{view === 'portfolio' ? 'Portfolio' : 'What will happen next?'}</h1></div><button>Newest⌄</button></div><div className="ar-market-card-grid">{PREDICTION_MARKETS.map(market => <button type="button" className="ar-market-card" key={market.id} onClick={() => { setSelectedId(market.id); setView('market-detail'); onSelectItem?.(market.id) }}><header><span>{market.category[0]}</span><em>{market.category}</em><time>Dec 31</time></header><h2>{market.question}</h2><div className="ar-probability"><strong>{market.yes}%</strong><span>chance</span><em className={market.change.startsWith('-') ? 'is-negative' : 'is-positive'}>{market.change} pts</em></div><TinyLine values={[28, 31, 34, 32, 39, 45, 43, market.yes]} positive={!market.change.startsWith('-')} /><div className="ar-outcome-buttons"><span>Yes <b>{market.yes}¢</b></span><span>No <b>{100 - market.yes}¢</b></span></div><footer><span>Vol. {market.volume}</span><span>◎ 4.2k traders</span></footer></button>)}</div></>}</main></div>
 }
 
 function PredictionDetail({ market }: { market: PredictionMarket }) {
@@ -1278,15 +1279,15 @@ function AnalyticsShowcase(props: ShowcaseRendererProps) {
 
 function GrafanaShowcase({ definition, view, setView, companyName, userName }: ShowcaseRendererProps) {
   const labels: Record<string, string> = { dashboard: 'Dashboard', explore: 'Explore', alerting: 'Alerting' }
-  return <div className="ar-analytics-shell"><header className="ar-analytics-topbar"><a className="ar-brand" href="#analytics" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.shortName}</strong></a><nav aria-label="Grafana products">{['Home', 'Dashboards', 'Explore', 'Alerting', 'Connections'].map(item => <button key={item}>{item}</button>)}</nav><label><OperationalShowcaseIcon name="search" size={15} /><input placeholder="Search" /></label><div className="ar-top-actions"><IconButton icon="plus" label="Create" /><IconButton icon="help" label="Help" /><Avatar name={userName} /></div></header><div className="ar-analytics-body"><aside className="ar-analytics-sidebar" aria-label="Grafana workspace navigation"><div className="ar-analytics-org"><span>JT</span><strong>{companyName}</strong></div><nav aria-label="Workspace navigation">{[['home', 'Home'], ['search', 'Search'], ['chart', 'Dashboards'], ['activity', 'Explore'], ['bell', 'Alerting'], ['database', 'Data sources']].map(([icon, label], index) => <button className={index === (view === 'dashboard' ? 2 : view === 'alerting' ? 4 : 3) ? 'is-active' : ''} key={label}><OperationalShowcaseIcon name={icon as OperationalShowcaseIconName} size={16} />{label}</button>)}</nav><div className="ar-analytics-saved"><span>Starred</span><button>Operations overview</button><button>Revenue quality</button><button>Platform health</button></div></aside><main className="ar-analytics-main"><header><div><span className="ar-eyebrow">Operations</span><h1>{view === 'dashboard' ? 'Operating platform overview' : titleCase(view)}</h1></div><div><button>Last 24 hours⌄</button><button>Refresh</button><button className="ar-primary">Share</button></div></header><ViewTabs definition={definition} view={view} setView={setView} labels={labels} />{view === 'dashboard' ? <AnalyticsDashboard superset={false} /> : view === 'alerting' ? <AlertingView /> : <AnalyticsExplorer sql={false} superset={false} />}</main></div></div>
+  return <div className="ar-analytics-shell"><header className="ar-analytics-topbar"><a className="ar-brand" href="#analytics" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.displayName}</strong></a><nav aria-label="Metrics products">{['Home', 'Dashboards', 'Explore', 'Alerting', 'Connections'].map(item => <button key={item}>{item}</button>)}</nav><label><OperationalShowcaseIcon name="search" size={15} /><input placeholder="Search" /></label><div className="ar-top-actions"><IconButton icon="plus" label="Create" /><IconButton icon="help" label="Help" /><Avatar name={userName} /></div></header><div className="ar-analytics-body"><aside className="ar-analytics-sidebar" aria-label="Metrics workspace navigation"><div className="ar-analytics-org"><span>JT</span><strong>{companyName}</strong></div><nav aria-label="Workspace navigation">{[['home', 'Home'], ['search', 'Search'], ['chart', 'Dashboards'], ['activity', 'Explore'], ['bell', 'Alerting'], ['database', 'Data sources']].map(([icon, label], index) => <button className={index === (view === 'dashboard' ? 2 : view === 'alerting' ? 4 : 3) ? 'is-active' : ''} key={label}><OperationalShowcaseIcon name={icon as OperationalShowcaseIconName} size={16} />{label}</button>)}</nav><div className="ar-analytics-saved"><span>Starred</span><button>Operations overview</button><button>Revenue quality</button><button>Platform health</button></div></aside><main className="ar-analytics-main"><header><div><span className="ar-eyebrow">Operations</span><h1>{view === 'dashboard' ? 'Operating platform overview' : titleCase(view)}</h1></div><div><button>Last 24 hours⌄</button><button>Refresh</button><button className="ar-primary">Share</button></div></header><ViewTabs definition={definition} view={view} setView={setView} labels={labels} />{view === 'dashboard' ? <AnalyticsDashboard superset={false} /> : view === 'alerting' ? <AlertingView /> : <AnalyticsExplorer sql={false} superset={false} />}</main></div></div>
 }
 
 function SupersetShowcase({ definition, view, setView, companyName, userName }: ShowcaseRendererProps) {
   return (
     <div className="ar-superset-shell">
       <header className="ar-superset-topbar">
-        <a className="ar-brand" href="#superset" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>Superset</strong></a>
-        <nav aria-label="Superset navigation">
+        <a className="ar-brand" href="#superset" onClick={event => event.preventDefault()}><ProductMark definition={definition} /><strong>{definition.displayName}</strong></a>
+        <nav aria-label="Analytics navigation">
           <button className={view === 'dashboard' ? 'is-active' : ''} onClick={() => setView('dashboard')}>Dashboards⌄</button>
           <button className={view === 'explore' ? 'is-active' : ''} onClick={() => setView('explore')}>Charts⌄</button>
           <button>Datasets⌄</button>
@@ -1385,10 +1386,10 @@ function ConversationShowcase(props: ShowcaseRendererProps) {
 function WhatsAppShowcase({ definition, view, setView, userName, initialSelectedId, onSelectItem }: ShowcaseRendererProps) {
   const [selectedId, setSelectedId] = useState(initialSelectedId ?? 'operations')
   const selected = CHAT_ITEMS.find(item => item.id === selectedId) ?? CHAT_ITEMS[0]
-  return <div className="ar-whatsapp-shell"><div className="ar-chat-rail"><ProductMark definition={definition} /><nav aria-label="WhatsApp navigation"><button className="is-active" aria-label="Chats"><OperationalShowcaseIcon name="message" size={20} /><b>4</b></button><button aria-label="Updates"><OperationalShowcaseIcon name="activity" size={20} /></button><button aria-label="Communities"><OperationalShowcaseIcon name="people" size={20} /></button><button aria-label="Calls"><OperationalShowcaseIcon name="phone" size={20} /></button></nav><div><IconButton icon="settings" label="Settings" /><Avatar name={userName} size={31} /></div></div><aside className="ar-chat-list" aria-label="Conversation list"><header><h1>{view === 'communities' ? 'Communities' : 'Chats'}</h1><div><IconButton icon="plus" label="New chat" /><IconButton icon="more" label="More" /></div></header><label><OperationalShowcaseIcon name="search" size={15} /><input placeholder="Search or start a new chat" /></label><ViewTabs definition={definition} view={view} setView={setView} labels={{ chat: 'All', communities: 'Communities', media: 'Media' }} />{CHAT_ITEMS.map(chat => <button type="button" key={chat.id} className={selectedId === chat.id ? 'is-active' : ''} onClick={() => { setSelectedId(chat.id); onSelectItem?.(chat.id) }}><Avatar name={chat.name} size={45} /><span><strong>{chat.name}</strong><small>{chat.preview}</small></span><time>{chat.time}</time>{chat.unread && <b>{chat.unread}</b>}</button>)}</aside><main className="ar-chat-thread"><header><Avatar name={selected.name} size={37} /><span><strong>{selected.name}</strong><small>5 participants · online</small></span><div><IconButton icon="video" label="Video call" /><IconButton icon="phone" label="Call" /><IconButton icon="search" label="Search" /><IconButton icon="more" label="More" /></div></header><div className="ar-message-wall"><time>Today</time><p className="is-system">Messages are protected by your organization’s communication policy.</p><div className="ar-bubble is-other"><strong>Maya Chen</strong><p>The operating review is ready. I linked the customer commitments and owners.</p><time>10:38 AM</time></div><div className="ar-bubble is-me"><p>Perfect. I’ll review it before the team sync.</p><time>10:39 AM ✓✓</time></div><div className="ar-bubble is-other"><strong>Lina Torres</strong><button className="ar-chat-file"><OperationalShowcaseIcon name="document" size={22} /><span><b>Operating review.pdf</b><small>1.8 MB · PDF</small></span></button><p>The final launch dates are on page four.</p><time>10:42 AM</time></div>{view === 'media' && <div className="ar-media-strip"><span>Launch board</span><span>Customer map</span><span>Review chart</span></div>}</div><footer><IconButton icon="plus" label="Attach" /><IconButton icon="sparkles" label="Stickers" /><input placeholder="Type a message" /><IconButton icon="send" label="Send" /></footer></main></div>
+  return <div className="ar-whatsapp-shell"><div className="ar-chat-rail"><ProductMark definition={definition} /><nav aria-label="Chat navigation"><button className="is-active" aria-label="Chats"><OperationalShowcaseIcon name="message" size={20} /><b>4</b></button><button aria-label="Updates"><OperationalShowcaseIcon name="activity" size={20} /></button><button aria-label="Communities"><OperationalShowcaseIcon name="people" size={20} /></button><button aria-label="Calls"><OperationalShowcaseIcon name="phone" size={20} /></button></nav><div><IconButton icon="settings" label="Settings" /><Avatar name={userName} size={31} /></div></div><aside className="ar-chat-list" aria-label="Conversation list"><header><h1>{view === 'communities' ? 'Communities' : 'Chats'}</h1><div><IconButton icon="plus" label="New chat" /><IconButton icon="more" label="More" /></div></header><label><OperationalShowcaseIcon name="search" size={15} /><input placeholder="Search or start a new chat" /></label><ViewTabs definition={definition} view={view} setView={setView} labels={{ chat: 'All', communities: 'Communities', media: 'Media' }} />{CHAT_ITEMS.map(chat => <button type="button" key={chat.id} className={selectedId === chat.id ? 'is-active' : ''} onClick={() => { setSelectedId(chat.id); onSelectItem?.(chat.id) }}><Avatar name={chat.name} size={45} /><span><strong>{chat.name}</strong><small>{chat.preview}</small></span><time>{chat.time}</time>{chat.unread && <b>{chat.unread}</b>}</button>)}</aside><main className="ar-chat-thread"><header><Avatar name={selected.name} size={37} /><span><strong>{selected.name}</strong><small>5 participants · online</small></span><div><IconButton icon="video" label="Video call" /><IconButton icon="phone" label="Call" /><IconButton icon="search" label="Search" /><IconButton icon="more" label="More" /></div></header><div className="ar-message-wall"><time>Today</time><p className="is-system">Messages are protected by your organization’s communication policy.</p><div className="ar-bubble is-other"><strong>Maya Chen</strong><p>The operating review is ready. I linked the customer commitments and owners.</p><time>10:38 AM</time></div><div className="ar-bubble is-me"><p>Perfect. I’ll review it before the team sync.</p><time>10:39 AM ✓✓</time></div><div className="ar-bubble is-other"><strong>Lina Torres</strong><button className="ar-chat-file"><OperationalShowcaseIcon name="document" size={22} /><span><b>Operating review.pdf</b><small>1.8 MB · PDF</small></span></button><p>The final launch dates are on page four.</p><time>10:42 AM</time></div>{view === 'media' && <div className="ar-media-strip"><span>Launch board</span><span>Customer map</span><span>Review chart</span></div>}</div><footer><IconButton icon="plus" label="Attach" /><IconButton icon="sparkles" label="Stickers" /><input placeholder="Type a message" /><IconButton icon="send" label="Send" /></footer></main></div>
 }
 
 function AssistantShowcase({ definition, view, setView, companyName, userName }: ShowcaseRendererProps) {
   const canvas = view === 'canvas'
-  return <div className="ar-assistant-shell"><aside className="ar-assistant-sidebar" aria-label="ChatGPT conversations"><header><ProductMark definition={definition} /><IconButton icon="menu" label="Collapse sidebar" /></header><button className="ar-new-chat"><OperationalShowcaseIcon name="plus" size={17} />New chat <kbd>⌘⇧O</kbd></button><button><OperationalShowcaseIcon name="search" size={17} />Search chats</button><button><OperationalShowcaseIcon name="sparkles" size={17} />Explore GPTs</button><div className="ar-assistant-section">Projects <button aria-label="New project">+</button></div><button className={view === 'projects' ? 'is-active' : ''}><span className="ar-folder-mark">JT</span>{companyName}</button><div className="ar-assistant-section">Chats</div>{['Platform readiness review', 'Customer health brief', 'Q3 operating plan', 'Revenue scenario model'].map((chat, index) => <button className={index === 0 && view === 'conversation' ? 'is-active' : ''} key={chat}><OperationalShowcaseIcon name="message" size={15} />{chat}</button>)}<div className="ar-assistant-user"><Avatar name={userName} size={30} /><span><strong>{userName}</strong><small>{CLONE_DEMO_IDENTITY.email}</small></span><button>⋯</button></div></aside><main className={`ar-assistant-main ${canvas ? 'has-canvas' : ''}`}><header><button>ChatGPT <span>⌄</span></button><ViewTabs definition={definition} view={view} setView={setView} labels={{ conversation: 'Chat', projects: 'Project', canvas: 'Canvas' }} /><div><button>Share</button><IconButton icon="more" label="More" /></div></header><section className="ar-assistant-thread"><div className="ar-user-prompt">Review our frontend framework and identify the smallest next step before production.</div><div className="ar-assistant-answer"><ProductMark definition={definition} /><article><p>Your presentation foundation is broad enough to begin integration. The next step should be a focused production-hardening pass rather than more component breadth.</p><h3>Recommended sequence</h3><ol><li><strong>Browser regression coverage</strong><span>Exercise keyboard flows, breakpoints, themes, streaming reconnects, and uploads in a real browser.</span></li><li><strong>Backend conformance fixtures</strong><span>Give every TerminalService implementation the same contract tests.</span></li><li><strong>Large-result navigation</strong><span>Connect existing page tokens to consistent load-more behavior before adding virtualization.</span></li></ol><aside><strong>Readiness</strong><span>Core presentation contracts are ready. Production services remain host-owned.</span></aside></article></div></section><footer className="ar-prompt-box"><textarea placeholder="Message ChatGPT" defaultValue={view === 'projects' ? `Use context from the ${companyName} project` : ''} /><div><button>＋</button><button>Tools</button><span /><button className="ar-voice">◉</button><button className="ar-send">↑</button></div><small>AI can make mistakes. Verify important information.</small></footer></main>{canvas && <aside className="ar-canvas" aria-label="Canvas workspace"><header><span><strong>Production readiness plan</strong><small>Saved</small></span><div><button>Preview</button><IconButton icon="close" label="Close canvas" /></div></header><article><h1>Production readiness plan</h1><p className="ar-lead">A bounded path from presentation framework to dependable host integration.</p><h2>1. Browser confidence</h2><p>Automate the interactions users depend on: navigation, selection, forms, media, and reconnect behavior.</p><h2>2. Service conformance</h2><pre><code>{'TerminalService\n├── Get / Stream\n├── ListSources\n├── SubmitAction / WatchAction\n└── Generate (optional)'}</code></pre><h2>3. Integration milestone</h2><ul><li>Connect one authorized catalog</li><li>Resolve one object detail</li><li>Submit one revision-safe action</li></ul></article><footer><button>Ask ChatGPT</button><button>⋯</button></footer></aside>}</div>
+  return <div className="ar-assistant-shell"><aside className="ar-assistant-sidebar" aria-label="Assistant conversations"><header><ProductMark definition={definition} /><IconButton icon="menu" label="Collapse sidebar" /></header><button className="ar-new-chat"><OperationalShowcaseIcon name="plus" size={17} />New chat <kbd>⌘⇧O</kbd></button><button><OperationalShowcaseIcon name="search" size={17} />Search chats</button><button><OperationalShowcaseIcon name="sparkles" size={17} />Explore assistants</button><div className="ar-assistant-section">Projects <button aria-label="New project">+</button></div><button className={view === 'projects' ? 'is-active' : ''}><span className="ar-folder-mark">JT</span>{companyName}</button><div className="ar-assistant-section">Chats</div>{['Platform readiness review', 'Customer health brief', 'Q3 operating plan', 'Revenue scenario model'].map((chat, index) => <button className={index === 0 && view === 'conversation' ? 'is-active' : ''} key={chat}><OperationalShowcaseIcon name="message" size={15} />{chat}</button>)}<div className="ar-assistant-user"><Avatar name={userName} size={30} /><span><strong>{userName}</strong><small>{CLONE_DEMO_IDENTITY.email}</small></span><button>⋯</button></div></aside><main className={`ar-assistant-main ${canvas ? 'has-canvas' : ''}`}><header><button>Assistant <span>⌄</span></button><ViewTabs definition={definition} view={view} setView={setView} labels={{ conversation: 'Chat', projects: 'Project', canvas: 'Canvas' }} /><div><button>Share</button><IconButton icon="more" label="More" /></div></header><section className="ar-assistant-thread"><div className="ar-user-prompt">Review our frontend framework and identify the smallest next step before production.</div><div className="ar-assistant-answer"><ProductMark definition={definition} /><article><p>Your presentation foundation is broad enough to begin integration. The next step should be a focused production-hardening pass rather than more component breadth.</p><h3>Recommended sequence</h3><ol><li><strong>Browser regression coverage</strong><span>Exercise keyboard flows, breakpoints, themes, streaming reconnects, and uploads in a real browser.</span></li><li><strong>Backend conformance fixtures</strong><span>Give every TerminalService implementation the same contract tests.</span></li><li><strong>Large-result navigation</strong><span>Connect existing page tokens to consistent load-more behavior before adding virtualization.</span></li></ol><aside><strong>Readiness</strong><span>Core presentation contracts are ready. Production services remain host-owned.</span></aside></article></div></section><footer className="ar-prompt-box"><textarea placeholder="Message the assistant" defaultValue={view === 'projects' ? `Use context from the ${companyName} project` : ''} /><div><button>＋</button><button>Tools</button><span /><button className="ar-voice">◉</button><button className="ar-send">↑</button></div><small>AI can make mistakes. Verify important information.</small></footer></main>{canvas && <aside className="ar-canvas" aria-label="Canvas workspace"><header><span><strong>Production readiness plan</strong><small>Saved</small></span><div><button>Preview</button><IconButton icon="close" label="Close canvas" /></div></header><article><h1>Production readiness plan</h1><p className="ar-lead">A bounded path from presentation framework to dependable host integration.</p><h2>1. Browser confidence</h2><p>Automate the interactions users depend on: navigation, selection, forms, media, and reconnect behavior.</p><h2>2. Service conformance</h2><pre><code>{'TerminalService\n├── Get / Stream\n├── ListSources\n├── SubmitAction / WatchAction\n└── Generate (optional)'}</code></pre><h2>3. Integration milestone</h2><ul><li>Connect one authorized catalog</li><li>Resolve one object detail</li><li>Submit one revision-safe action</li></ul></article><footer><button>Ask the assistant</button><button>⋯</button></footer></aside>}</div>
 }

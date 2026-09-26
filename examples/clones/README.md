@@ -3,6 +3,18 @@
 These product-faithful examples prove presentation readiness without adding
 vendor-specific APIs to the published framework.
 
+## Neutral names
+
+A clone reproduces a product's layout and interaction model so the toolkit
+can be judged against it. It never shows that product's name, logo or
+wordmark: headers use a neutral name and `shared/NeutralMark` (a generic
+glyph on the clone's accent), and labels, placeholders and chrome copy say
+what the surface does ("Files", "Tracker", "Search maps"), not whose it is.
+The vendor and product appear only where a reader needs them to find the
+reference: the folder, the Storybook title and the `cloneVendor` /
+`cloneProduct` parameters. Third-party names that are data inside the demo
+(a stock ticker, a connector, a message channel) stay as data.
+
 ## Catalog rule
 
 Organize every showcase by vendor first, then by product or shared product

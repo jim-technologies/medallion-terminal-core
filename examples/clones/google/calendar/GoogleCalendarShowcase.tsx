@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
 import './GoogleCalendarShowcase.css'
+import { NeutralMark } from '../../shared/NeutralMark'
 
 export type GoogleCalendarView = 'month' | 'week' | 'day' | 'schedule'
 export type GoogleCalendarEntryKind =
@@ -528,15 +529,6 @@ function CalendarIcon({
   )
 }
 
-function GoogleCalendarLogo() {
-  return (
-    <span aria-hidden="true" className="gcal-logo">
-      <span className="gcal-logo__top" />
-      <span className="gcal-logo__number">20</span>
-    </span>
-  )
-}
-
 function IconButton({
   icon,
   label,
@@ -1000,7 +992,7 @@ function ScheduleView({
       </header>
       {days.length === 0 && (
         <div className="gcal-schedule__empty">
-          <GoogleCalendarLogo />
+          <NeutralMark icon="calendar" color="#1a73e8" size={40} />
           <strong>No events in this range</strong>
           <span>Enjoy the open time.</span>
         </div>
@@ -1100,8 +1092,8 @@ function EventDetails({
           <div className="gcal-detail-row">
             <CalendarIcon name="video" />
             <div className="gcal-detail-row__content">
-              <button className="gcal-meet-button" type="button">Join with Google Meet</button>
-              <span>meet.google.com/jim-team-sync</span>
+              <button className="gcal-meet-button" type="button">Join video call</button>
+              <span>video.example.test/jim-team-sync</span>
             </div>
           </div>
         )}
@@ -1247,7 +1239,7 @@ function QuickComposer({
         </button>
         <button className="gcal-composer__add-row is-meet" type="button">
           <CalendarIcon name="video" />
-          Add Google Meet video conferencing
+          Add video conferencing
         </button>
         <button className="gcal-composer__add-row" type="button">
           <CalendarIcon name="pin" />
@@ -1282,11 +1274,11 @@ function QuickComposer({
 
 function GoogleSideRail() {
   return (
-    <aside aria-label="Google Workspace side panel" className="gcal-side-rail">
-      <button aria-label="Google Keep" className="is-keep" title="Keep" type="button">▰</button>
-      <button aria-label="Google Tasks" className="is-tasks" title="Tasks" type="button">✓</button>
-      <button aria-label="Google Contacts" className="is-contacts" title="Contacts" type="button">●</button>
-      <button aria-label="Google Maps" className="is-maps" title="Maps" type="button">◆</button>
+    <aside aria-label="Workspace side panel" className="gcal-side-rail">
+      <button aria-label="Notes" className="is-keep" title="Notes" type="button">▰</button>
+      <button aria-label="Tasks" className="is-tasks" title="Tasks" type="button">✓</button>
+      <button aria-label="Contacts" className="is-contacts" title="Contacts" type="button">●</button>
+      <button aria-label="Maps" className="is-maps" title="Maps" type="button">◆</button>
       <span />
       <button aria-label="Get add-ons" className="is-add" title="Get add-ons" type="button">
         <CalendarIcon name="plus" size={18} />
@@ -1414,7 +1406,7 @@ export function GoogleCalendarShowcase({
       <header className="gcal-topbar">
         <div className="gcal-brand">
           <IconButton icon="menu" label="Main menu" />
-          <GoogleCalendarLogo />
+          <NeutralMark icon="calendar" color="#1a73e8" size={36} />
           <span>Calendar</span>
         </div>
         <div className="gcal-navigation">
@@ -1462,7 +1454,7 @@ export function GoogleCalendarShowcase({
             </select>
             <CalendarIcon name="chevron-down" size={16} />
           </label>
-          <IconButton icon="apps" label="Google apps" />
+          <IconButton icon="apps" label="Apps" />
           <button
             aria-label={`Account: ${CLONE_DEMO_IDENTITY.user}, ${CLONE_DEMO_IDENTITY.email}`}
             className="gcal-avatar"

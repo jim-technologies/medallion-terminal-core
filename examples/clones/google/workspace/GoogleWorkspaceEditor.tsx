@@ -245,7 +245,7 @@ export function GoogleWorkspaceEditor({
             <button type="button" className="workspace-plain-button" aria-label="Move file">
               <WorkspaceIcon name="folder" />
             </button>
-            <span className="workspace-save-status"><WorkspaceIcon name="cloudDone" /> Saved to Drive</span>
+            <span className="workspace-save-status"><WorkspaceIcon name="cloudDone" /> Saved to Files</span>
           </div>
           <nav className="workspace-menu" aria-label={`${config.label} menus`}>
             {config.menus.map(menu => <button type="button" key={menu}>{menu}</button>)}
@@ -787,7 +787,7 @@ function GeminiPanel({
 
 function WorkspaceAppRail() {
   return (
-    <aside className="workspace-app-rail" aria-label="Google Workspace side panel">
+    <aside className="workspace-app-rail" aria-label="Workspace side panel">
       <button type="button" className="is-calendar" aria-label="Calendar"><span>31</span></button>
       <button type="button" className="is-keep" aria-label="Keep"><WorkspaceIcon name="bulb" /></button>
       <button type="button" className="is-tasks" aria-label="Tasks"><WorkspaceIcon name="checkCircle" /></button>

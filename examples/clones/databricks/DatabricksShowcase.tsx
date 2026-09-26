@@ -310,7 +310,7 @@ function DatabricksBrand() {
   return (
     <div className="dbx-brand">
       <span><OperationalShowcaseIcon name="layers" size={22} /></span>
-      <strong>databricks</strong>
+      <strong>Workspace</strong>
     </div>
   )
 }
@@ -400,7 +400,7 @@ function DatabricksNotebook({ cells }: { cells: readonly DatabricksNotebookCell[
           <button className="dbx-add-cell" type="button"><OperationalShowcaseIcon name="plus" size={13} /> Code <span>⌄</span></button>
         </div>
         {assistantOpen ? (
-          <aside className="dbx-assistant" aria-label="Databricks Assistant">
+          <aside className="dbx-assistant" aria-label="Assistant">
             <header><span><OperationalShowcaseIcon name="sparkles" size={16} /> Assistant</span><button aria-label="Close Assistant" onClick={() => setAssistantOpen(false)} type="button"><OperationalShowcaseIcon name="close" size={14} /></button></header>
             <div className="dbx-assistant-context"><OperationalShowcaseIcon name="document" size={13} /><span>Customer health intelligence</span><strong>3 cells</strong></div>
             <div className="dbx-assistant-message">
@@ -412,7 +412,7 @@ function DatabricksNotebook({ cells }: { cells: readonly DatabricksNotebookCell[
               <button type="button">Add data quality checks</button>
               <button type="button">Optimize the join</button>
             </div>
-            <label><textarea aria-label="Ask Databricks Assistant" placeholder="Ask about this notebook…" /><button aria-label="Send to Assistant" type="button"><OperationalShowcaseIcon name="send" size={14} /></button></label>
+            <label><textarea aria-label="Ask the assistant" placeholder="Ask about this notebook…" /><button aria-label="Send to Assistant" type="button"><OperationalShowcaseIcon name="send" size={14} /></button></label>
           </aside>
         ) : null}
       </div>
@@ -648,10 +648,10 @@ export function DatabricksShowcase({
 
   return (
     <div className="databricks-showcase">
-      <aside className="dbx-sidebar" aria-label="Databricks navigation">
+      <aside className="dbx-sidebar" aria-label="Workspace navigation">
         <DatabricksBrand />
         <button className="dbx-new-menu" type="button"><OperationalShowcaseIcon name="plus" size={15} /><span>New</span><OperationalShowcaseIcon name="chevron-down" size={12} /></button>
-        <nav aria-label="Databricks sections">
+        <nav aria-label="Workspace sections">
           <button type="button"><OperationalShowcaseIcon name="home" size={16} /><span>Home</span></button>
           <button type="button"><OperationalShowcaseIcon name="clock" size={16} /><span>Recents</span></button>
           {DATABRICKS_NAV.map((item, index) => (
@@ -676,7 +676,7 @@ export function DatabricksShowcase({
           <button className="dbx-workspace-switcher" type="button"><span>JT</span><strong>{workspaceName}</strong><OperationalShowcaseIcon name="chevron-down" size={13} /></button>
           <button className="dbx-global-search" type="button"><OperationalShowcaseIcon name="search" size={15} /><span>Search data, notebooks, queries, and jobs</span><kbd>⌘ K</kbd></button>
           <span className="dbx-topbar-spacer" />
-          <button aria-label="Databricks Assistant" type="button"><OperationalShowcaseIcon name="sparkles" size={16} /></button>
+          <button aria-label="Assistant" type="button"><OperationalShowcaseIcon name="sparkles" size={16} /></button>
           <button aria-label="Help" type="button"><OperationalShowcaseIcon name="help" size={16} /></button>
           <button aria-label="Notifications" type="button"><OperationalShowcaseIcon name="bell" size={16} /><i /></button>
           <button aria-label={`${CLONE_DEMO_IDENTITY.user} account`} className="dbx-user" type="button">{CLONE_DEMO_IDENTITY.user.slice(0, 1)}</button>

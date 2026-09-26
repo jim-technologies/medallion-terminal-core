@@ -81,48 +81,6 @@
   text-overflow: ellipsis;
 }
 
-.gdrive-mark {
-  position: relative;
-  display: inline-block;
-  width: 28px;
-  height: 25px;
-  flex: 0 0 auto;
-  transform: translateY(-1px);
-}
-
-.gdrive-mark i {
-  position: absolute;
-  display: block;
-  border-radius: 2px;
-}
-
-.gdrive-mark i:nth-child(1) {
-  top: 1px;
-  left: 5px;
-  width: 9px;
-  height: 23px;
-  background: #0b57d0;
-  transform: skew(-28deg);
-}
-
-.gdrive-mark i:nth-child(2) {
-  top: 1px;
-  right: 4px;
-  width: 9px;
-  height: 23px;
-  background: #34a853;
-  transform: skew(28deg);
-}
-
-.gdrive-mark i:nth-child(3) {
-  right: 4px;
-  bottom: 0;
-  width: 21px;
-  height: 8px;
-  background: #f9ab00;
-  transform: skew(-29deg);
-}
-
 .gdrive-icon-button {
   display: inline-grid;
   width: 40px;
@@ -1282,7 +1240,6 @@
     gap: 10px;
   }
 
-  .gdrive-brand .gdrive-mark,
   .gdrive-brand > span:last-child {
     display: none;
   }

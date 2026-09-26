@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
 import './GoogleDriveShowcase.css'
+import { NeutralMark } from '../../shared/NeutralMark'
 
 export type GoogleDriveSection =
   | 'home'
@@ -214,7 +215,7 @@ export const GOOGLE_DRIVE_SAMPLE_ITEMS: readonly GoogleDriveItem[] = [
 
 const SECTION_LABELS: Record<GoogleDriveSection, string> = {
   home: 'Home',
-  'my-drive': 'My Drive',
+  'my-drive': 'My files',
   computers: 'Computers',
   shared: 'Shared with me',
   recent: 'Recent',
@@ -299,9 +300,9 @@ function formatModified(timestamp: string): string {
 }
 
 function itemLocation(item: GoogleDriveItem, items: readonly GoogleDriveItem[]): string {
-  if (!item.parent_id) return 'My Drive'
+  if (!item.parent_id) return 'My files'
   if (item.parent_id === '__computers__') return 'Computers'
-  return items.find(candidate => candidate.id === item.parent_id)?.name ?? 'My Drive'
+  return items.find(candidate => candidate.id === item.parent_id)?.name ?? 'My files'
 }
 
 export function GoogleDriveShowcase({
@@ -390,15 +391,15 @@ export function GoogleDriveShowcase({
           <button className="gdrive-icon-button" aria-label="Main menu">
             <GoogleDriveIcon name="menu" />
           </button>
-          <GoogleDriveMark />
-          <span>Drive</span>
+          <NeutralMark icon="document" color="#1a73e8" size={36} />
+          <span>Files</span>
         </div>
 
         <form className="gdrive-search" onSubmit={event => event.preventDefault()}>
           <GoogleDriveIcon name="search" />
           <input
-            aria-label="Search in Drive"
-            placeholder="Search in Drive"
+            aria-label="Search in Files"
+            placeholder="Search in Files"
             value={query}
             onChange={event => setQuery(event.target.value)}
           />
@@ -451,14 +452,14 @@ export function GoogleDriveShowcase({
               <button role="menuitem"><GoogleDriveIcon name="upload-file" />File upload</button>
               <button role="menuitem"><GoogleDriveIcon name="upload-folder" />Folder upload</button>
               <div />
-              <button role="menuitem"><DocumentGlyph type="document" />Google Doc</button>
-              <button role="menuitem"><DocumentGlyph type="spreadsheet" />Google Sheet</button>
-              <button role="menuitem"><DocumentGlyph type="presentation" />Google Slides</button>
+              <button role="menuitem"><DocumentGlyph type="document" />Document</button>
+              <button role="menuitem"><DocumentGlyph type="spreadsheet" />Spreadsheet</button>
+              <button role="menuitem"><DocumentGlyph type="presentation" />Presentation</button>
             </div>
           )}
         </div>
 
-        <nav className="gdrive-nav" aria-label="Drive navigation">
+        <nav className="gdrive-nav" aria-label="Files navigation">
           <NavigationButton section="home" active={section === 'home'} icon="home" onSelect={navigate} />
           <NavigationButton section="my-drive" active={section === 'my-drive'} icon="drive" onSelect={navigate} />
           <NavigationButton section="computers" active={section === 'computers'} icon="computer" onSelect={navigate} />
@@ -487,7 +488,7 @@ export function GoogleDriveShowcase({
               <div className="gdrive-breadcrumbs">
                 {currentFolder && (
                   <>
-                    <button onClick={() => setCurrentFolderId(null)}>My Drive</button>
+                    <button onClick={() => setCurrentFolderId(null)}>My files</button>
                     <GoogleDriveIcon name="chevron-right" size={18} />
                   </>
                 )}
@@ -536,7 +537,7 @@ export function GoogleDriveShowcase({
               <div className="gdrive-ai-shelf">
                 <div className="gdrive-ai-mark"><GoogleDriveIcon name="sparkles" /></div>
                 <div className="gdrive-ai-copy">
-                  <strong>Ask Drive about your work</strong>
+                  <strong>Ask about your files</strong>
                   <span>Get answers grounded in your files</span>
                 </div>
                 <div className="gdrive-ai-prompts">
@@ -841,7 +842,7 @@ function DetailsPanel({
               <dt>Owner</dt>
               <dd>{item.owner === 'me' ? `${CLONE_DEMO_IDENTITY.user} (me)` : item.owner}</dd>
             </div>
-            <div><dt>Location</dt><dd>{location ?? 'My Drive'}</dd></div>
+            <div><dt>Location</dt><dd>{location ?? 'My files'}</dd></div>
             <div><dt>Modified</dt><dd>{formatModified(item.modified_at)}, 2026</dd></div>
             {item.kind === 'file' && <div><dt>Size</dt><dd>{formatGoogleDriveBytes(item.size_bytes)}</dd></div>}
           </dl>
@@ -906,14 +907,6 @@ function AvatarStack({ members }: { members?: string[] }) {
       {members.slice(0, 3).map((member, index) => (
         <span key={`${member}-${index}`} className="gdrive-avatar" data-index={index}>{member}</span>
       ))}
-    </span>
-  )
-}
-
-function GoogleDriveMark() {
-  return (
-    <span className="gdrive-mark" aria-hidden="true">
-      <i /><i /><i />
     </span>
   )
 }

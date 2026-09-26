@@ -9,6 +9,7 @@ import {
   operationalShowcaseInitials,
 } from '../shared/OperationalShowcasePrimitives'
 import '../shared/OperationalShowcases.css'
+import { NeutralMark } from '../shared/NeutralMark'
 
 export type ShopifyShowcaseSection = 'home' | 'orders' | 'inventory'
 export type ShopifyPaymentStatus = 'Paid' | 'Pending' | 'Refunded' | 'Partially refunded'
@@ -211,7 +212,7 @@ export function ShopifyShowcase({
     <div className="ready-showcase shopify-showcase">
       <header className="shopify-topbar">
         <button className="shopify-mobile-menu" aria-label="Menu"><OperationalShowcaseIcon name="menu" /></button>
-        <div className="shopify-logo"><span>S</span><strong>shopify</strong></div>
+        <div className="shopify-logo"><NeutralMark icon="cart" color="#4f8a2b" /><strong>Store</strong></div>
         <label className="shopify-global-search"><OperationalShowcaseIcon name="search" size={16} /><input placeholder="Search" /><kbd>⌘ K</kbd></label>
         <div className="ready-top-actions">
           <button aria-label="Assistant"><OperationalShowcaseIcon name="sparkles" /></button>
@@ -221,7 +222,7 @@ export function ShopifyShowcase({
       </header>
 
       <div className="shopify-body">
-        <aside aria-label="Shopify navigation" className="shopify-sidebar">
+        <aside aria-label="Store navigation" className="shopify-sidebar">
           <nav aria-label="Store administration">
             {SHOPIFY_NAV.map(item => (
               <button

@@ -1564,20 +1564,6 @@
   min-width: 210px;
 }
 
-.shopify-logo > span {
-  align-items: center;
-  background: #85bf47;
-  border-radius: 5px 5px 6px 6px;
-  color: white;
-  display: inline-flex;
-  font-size: 14px;
-  font-weight: 800;
-  height: 28px;
-  justify-content: center;
-  transform: rotate(-2deg);
-  width: 24px;
-}
-
 .shopify-logo > strong {
   font-size: 17px;
   font-style: italic;
@@ -2731,14 +2717,6 @@
   display: flex;
   height: 35px;
   padding: 0 8px;
-}
-
-.stripe-brand span {
-  color: #635bff;
-  font-size: 23px;
-  font-style: italic;
-  font-weight: 850;
-  letter-spacing: -0.09em;
 }
 
 .stripe-account-switcher {
@@ -6821,5 +6799,4 @@
   .intercom-thread-back {
     display: flex;
   }
-
 }

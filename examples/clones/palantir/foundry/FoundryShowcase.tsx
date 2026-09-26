@@ -365,8 +365,8 @@ const FOUNDRY_NAV: {
   label: string
   icon: 'layers' | 'database' | 'graph' | 'bolt'
 }[] = [
-  { id: 'ontology', label: 'Ontology Manager', icon: 'layers' },
-  { id: 'objects', label: 'Object Explorer', icon: 'database' },
+  { id: 'ontology', label: 'Ontology manager', icon: 'layers' },
+  { id: 'objects', label: 'Object explorer', icon: 'database' },
   { id: 'lineage', label: 'Data Lineage', icon: 'graph' },
   { id: 'actions', label: 'Action Types', icon: 'bolt' },
 ]
@@ -412,7 +412,7 @@ export function FoundryShowcase({
       <header className="foundry-topbar">
         <div className="foundry-brand">
           <span className="foundry-mark"><OperationalShowcaseIcon name="layers" size={17} /></span>
-          <strong>Foundry</strong>
+          <strong>Operations</strong>
           <span className="foundry-product">Platform</span>
         </div>
         <button className="foundry-workspace-switcher">
@@ -432,7 +432,7 @@ export function FoundryShowcase({
       </header>
 
       <div className="foundry-body">
-        <aside aria-label="Foundry workspace navigation" className="foundry-sidebar">
+        <aside aria-label="Workspace navigation" className="foundry-sidebar">
           <div className="foundry-space-label">Operations model</div>
           <nav aria-label="Ontology workspace">
             {FOUNDRY_NAV.map(item => (
@@ -465,7 +465,7 @@ export function FoundryShowcase({
               <div className="ready-page-heading foundry-page-heading">
                 <div>
                   <div className="ready-eyebrow">Ontology</div>
-                  <h1>Ontology Manager</h1>
+                  <h1>Ontology manager</h1>
                   <p>Model the objects, relationships, and actions that power operational applications.</p>
                 </div>
                 <div className="ready-heading-actions">
@@ -557,7 +557,7 @@ export function FoundryShowcase({
               <div className="ready-page-heading foundry-page-heading">
                 <div>
                   <div className="ready-eyebrow">Ontology / Customer</div>
-                  <h1>Object Explorer</h1>
+                  <h1>Object explorer</h1>
                   <p>Inspect trusted object data and navigate relationships without joining tables.</p>
                 </div>
                 <button className="ready-button primary"><OperationalShowcaseIcon name="bolt" size={15} />Take action</button>

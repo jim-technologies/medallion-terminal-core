@@ -6,6 +6,7 @@ import {
   formatProductCurrency,
 } from '../../shared/ProductShowcasePrimitives'
 import '../../shared/ProductShowcases.css'
+import { NeutralMark } from '../../shared/NeutralMark'
 
 export type QuickBooksShowcaseSection = 'overview' | 'cash-flow' | 'transactions'
 export type QuickBooksTransactionStatus = 'For review' | 'Categorized' | 'Excluded'
@@ -154,14 +155,6 @@ export function quickBooksCashBalance(points: QuickBooksCashPoint[]): number {
   return points[points.length - 1]?.balance ?? 0
 }
 
-function QuickBooksMark() {
-  return (
-    <span className="quickbooks-mark" aria-hidden="true">
-      <span>qb</span>
-    </span>
-  )
-}
-
 function QuickBooksTopbar({
   companyName,
 }: {
@@ -170,16 +163,15 @@ function QuickBooksTopbar({
   return (
     <header className="quickbooks-topbar">
       <button className="quickbooks-brand">
-        <span className="quickbooks-intuit">intuit</span>
-        <QuickBooksMark />
-        <span>quickbooks</span>
+        <NeutralMark icon="money" color="#2e7d32" />
+        <span>Ledger</span>
       </button>
       <label className="quickbooks-global-search">
         <ProductShowcaseIcon name="search" size={16} />
         <input placeholder="Search transactions, contacts, reports, and help" />
       </label>
       <div className="quickbooks-top-actions">
-        <button className="quickbooks-assist"><ProductShowcaseIcon name="sparkles" size={15} /> Intuit Assist</button>
+        <button className="quickbooks-assist"><ProductShowcaseIcon name="sparkles" size={15} /> Assistant</button>
         <button aria-label="Help"><ProductShowcaseIcon name="help" /></button>
         <button aria-label="Settings"><ProductShowcaseIcon name="settings" /></button>
         <button aria-label="Notifications"><ProductShowcaseIcon name="bell" /></button>
@@ -201,7 +193,7 @@ function QuickBooksSidebar({
   onSectionChange: (section: QuickBooksShowcaseSection) => void
 }) {
   return (
-    <aside aria-label="QuickBooks navigation" className="quickbooks-sidebar">
+    <aside aria-label="Ledger navigation" className="quickbooks-sidebar">
       <button className="quickbooks-new-button"><ProductShowcaseIcon name="plus" size={17} /> New</button>
       <nav aria-label="Business overview">
         <button className={section === 'overview' ? 'is-active' : ''} onClick={() => onSectionChange('overview')}>
@@ -223,7 +215,7 @@ function QuickBooksSidebar({
         <button><ProductShowcaseIcon name="reports" size={18} /> Reports</button>
       </nav>
       <div className="quickbooks-sidebar-heading">INTUIT APPS</div>
-      <nav aria-label="Intuit applications">
+      <nav aria-label="Applications">
         <button><ProductShowcaseIcon name="money" size={18} /> Accounting</button>
         <button><ProductShowcaseIcon name="contact" size={18} /> Customer Hub</button>
         <button><ProductShowcaseIcon name="invoice" size={18} /> Sales & get paid</button>
@@ -344,7 +336,7 @@ function QuickBooksOverview({
         <div>
           <span>BUSINESS FEED</span>
           <strong>Four bank transactions are ready to review</strong>
-          <p>Intuit Assist found likely categories and an invoice match.</p>
+          <p>The assistant found likely categories and an invoice match.</p>
         </div>
         <button onClick={() => onSectionChange('transactions')}>Review transactions <ProductShowcaseIcon name="chevron-right" size={14} /></button>
       </section>
@@ -586,7 +578,7 @@ function QuickBooksTransactions({
       </div>
       <footer className="quickbooks-transaction-footer">
         <span>{filtered.length} transactions</span>
-        <span>Bank balance {formatProductCurrency(174_620)} · In QuickBooks {formatProductCurrency(156_120)}</span>
+        <span>Bank balance {formatProductCurrency(174_620)} · In ledger {formatProductCurrency(156_120)}</span>
       </footer>
     </div>
   )

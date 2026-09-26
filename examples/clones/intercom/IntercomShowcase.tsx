@@ -282,9 +282,9 @@ export function IntercomShowcase({
 
   return (
     <div className="ready-showcase intercom-showcase">
-      <aside aria-label="Intercom applications" className="intercom-rail">
-        <div className="intercom-mark">I</div>
-        <nav aria-label="Intercom applications">
+      <aside aria-label="Applications" className="intercom-rail">
+        <div className="intercom-mark"><OperationalShowcaseIcon name="inbox" size={17} /></div>
+        <nav aria-label="Applications">
           <button aria-label="Inbox" className={section === 'inbox' ? 'active' : ''} onClick={() => { setSection('inbox'); setStateFilter(undefined) }}><OperationalShowcaseIcon name="inbox" /></button>
           <button aria-label="Tickets" className={section === 'tickets' ? 'active' : ''} onClick={() => { setSection('tickets'); setStateFilter('Open') }}><OperationalShowcaseIcon name="ticket" /></button>
           <button aria-label="Contacts"><OperationalShowcaseIcon name="people" /></button>

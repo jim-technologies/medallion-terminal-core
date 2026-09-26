@@ -106,36 +106,6 @@
   letter-spacing: -.45px;
 }
 
-.bks-brand__mark {
-  background: linear-gradient(150deg, #8b5cf6, #00c8a7);
-  border-radius: 7px 7px 10px 7px;
-  box-shadow: 0 5px 14px rgb(0 0 0 / 30%);
-  display: grid;
-  height: 31px;
-  place-items: center;
-  position: relative;
-  transform: rotate(-4deg);
-  width: 31px;
-}
-
-.bks-brand__mark::after {
-  border: 1.5px solid rgb(255 255 255 / 58%);
-  border-radius: 5px;
-  content: "";
-  inset: 5px;
-  position: absolute;
-}
-
-.bks-brand__mark span {
-  color: white;
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1;
-  position: relative;
-  transform: rotate(4deg);
-  z-index: 1;
-}
-
 .bks-sidebar nav {
   display: grid;
   gap: 3px;
@@ -2390,11 +2360,6 @@
   .bks-brand {
     flex: 0 0 47px;
     height: 58px;
-  }
-
-  .bks-brand__mark {
-    height: 28px;
-    width: 28px;
   }
 
   .bks-sidebar nav {

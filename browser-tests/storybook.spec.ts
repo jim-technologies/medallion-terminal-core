@@ -169,7 +169,7 @@ for (const [name, id] of themedToolkitStories) {
 
 test('Google Drive supports search and layout switching', async ({ page }) => {
   const root = await openStory(page, stories.drive)
-  const search = page.getByRole('textbox', { name: 'Search in Drive' })
+  const search = page.getByRole('textbox', { name: 'Search in Files' })
   await search.fill('roadmap')
   await expect(root.getByText(/roadmap/i).first()).toBeVisible()
   await page.getByRole('button', { name: 'Grid view' }).click()
@@ -276,7 +276,7 @@ test('Instagram supports engagement, discovery, and search', async ({ page }) =>
 
   await root.getByRole('button', { name: 'Explore', exact: true }).click()
   await expect(showcase).toHaveAttribute('data-view', 'explore')
-  await root.getByRole('searchbox', { name: 'Search Instagram' }).fill('quiet')
+  await root.getByRole('searchbox', { name: 'Search Gallery' }).fill('quiet')
   await expect(root.getByRole('button', { name: /Open Jun/ })).toBeVisible()
 })
 
@@ -292,7 +292,7 @@ test('Facebook navigates from the feed to a business page', async ({ page }) => 
 test('Threads switches feeds and accepts a draft', async ({ page }) => {
   const root = await openStory(page, stories.threads)
   const showcase = root.locator('[data-product="meta-threads"]')
-  const feedNavigation = root.getByRole('navigation', { name: 'Threads feed' })
+  const feedNavigation = root.getByRole('navigation', { name: 'Posts feed' })
   await feedNavigation.getByRole('button', { name: 'Following' }).click()
   await expect(showcase).toHaveAttribute('data-view', 'following')
 

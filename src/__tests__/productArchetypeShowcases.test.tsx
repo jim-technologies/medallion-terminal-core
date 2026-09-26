@@ -60,7 +60,7 @@ describe('shared product archetype showcases', () => {
         )
         expect(html, `${id}/${view}`).toContain(`data-product="${id}"`)
         expect(html, `${id}/${view}`).toContain(`data-view="${view}"`)
-        expect(html, `${id}/${view}`).toContain(PRODUCT_ARCHETYPE_CATALOG[id].shortName)
+        expect(html, `${id}/${view}`).toContain(PRODUCT_ARCHETYPE_CATALOG[id].displayName)
         expect(html, `${id}/${view}`).toContain('Jun')
       }
     }

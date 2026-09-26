@@ -91,12 +91,6 @@
   margin: 0 12px 19px;
 }
 
-.spt-brand svg {
-  color: var(--spt-green);
-  height: 30px;
-  width: 30px;
-}
-
 .spt-sidebar__primary nav {
   display: grid;
   gap: 2px;
@@ -1713,11 +1707,6 @@
   .spt-topbar__mobile-context .spt-brand {
     font-size: 19px;
     margin: 0;
-  }
-
-  .spt-topbar__mobile-context .spt-brand svg {
-    height: 26px;
-    width: 26px;
   }
 
   .spt-topbar__mobile-context > strong {

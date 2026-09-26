@@ -13,6 +13,7 @@ import {
   type CodePipelineJob,
 } from '../shared/codeCollaborationModel'
 import './GitLabShowcase.css'
+import { NeutralMark } from '../shared/NeutralMark'
 
 export const GITLAB_SHOWCASE_VIEWS = ['merge-request', 'changes', 'pipeline'] as const
 export type GitLabShowcaseView = typeof GITLAB_SHOWCASE_VIEWS[number]
@@ -44,19 +45,6 @@ export function resolveGitLabShowcaseView(view?: string): GitLabShowcaseView {
   return GITLAB_SHOWCASE_VIEWS.includes(view as GitLabShowcaseView)
     ? view as GitLabShowcaseView
     : 'merge-request'
-}
-
-function GitLabMark() {
-  return (
-    <span className="gl-mark" aria-label="GitLab" role="img">
-      <svg viewBox="0 0 36 36" aria-hidden="true">
-        <path fill="#e24329" d="m18 31.2 6.5-20H11.5z" />
-        <path fill="#fc6d26" d="m18 31.2-12.4-9 5.9-11zM18 31.2l12.4-9-5.9-11z" />
-        <path fill="#fca326" d="M5.6 22.2 3.2 14.8l8.3-3.6zM30.4 22.2l2.4-7.4-8.3-3.6z" />
-        <path fill="#e24329" d="M3.2 14.8 5.7 7l5.8 4.2zM32.8 14.8 30.3 7l-5.8 4.2z" />
-      </svg>
-    </span>
-  )
 }
 
 function Avatar({ person, name, size = 30 }: { person?: CodeCollaborator; name?: string; size?: number }) {
@@ -146,7 +134,7 @@ export function GitLabShowcase({
   return (
     <div className="gitlab-showcase" data-product="gitlab" data-view={view}>
       <header className="gl-global-header">
-        <a className="gl-brand" href="#project"><GitLabMark /><strong>GitLab</strong></a>
+        <a className="gl-brand" href="#project"><NeutralMark icon="code" color="#c2410c" /><strong>Code</strong></a>
         <nav aria-label="Global">
           <button type="button">Projects <OperationalShowcaseIcon name="chevron-down" size={12} /></button>
           <button type="button">Groups <OperationalShowcaseIcon name="chevron-down" size={12} /></button>
@@ -154,7 +142,7 @@ export function GitLabShowcase({
         </nav>
         <label className="gl-global-search">
           <OperationalShowcaseIcon name="search" size={15} />
-          <input aria-label="Search GitLab" placeholder="Search or go to…" />
+          <input aria-label="Search" placeholder="Search or go to…" />
           <kbd>/</kbd>
         </label>
         <div className="gl-global-actions">

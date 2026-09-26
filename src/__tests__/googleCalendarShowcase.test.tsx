@@ -96,12 +96,12 @@ describe('GoogleCalendarShowcase', () => {
     )
 
     expect(details).toContain('Event details for Q3 finance review')
-    expect(details).toContain('Join with Google Meet')
+    expect(details).toContain('Join video call')
     expect(details).toContain('Revenue forecast FY26')
     expect(details).toContain('Organized by Lina Tran')
     expect(composer).toContain('Create calendar entry')
     expect(composer).toContain('Appointment schedule')
-    expect(composer).toContain('Add Google Meet video conferencing')
+    expect(composer).toContain('Add video conferencing')
     expect(composer).toContain('Pacific Time')
   })
 

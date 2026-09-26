@@ -55,7 +55,7 @@ describe('NetflixShowcase', () => {
     const search = renderToStaticMarkup(<NetflixShowcase initialQuery="coast" />)
     const myList = renderToStaticMarkup(<NetflixShowcase initialSection="my-list" />)
 
-    expect(home).toContain('NETFLIX')
+    expect(home).toContain('WATCH')
     expect(home).toContain('Continue Watching for Jun')
     expect(home).toContain('Top 10 in the U.S. Today')
     expect(home).toContain('Field Notes')

@@ -89,7 +89,7 @@ export interface PalantirFoundationShowcaseProps {
 export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   {
     id: 'compass',
-    product: 'Compass',
+    product: 'Files & projects',
     layer: 'Organize & govern',
     summary: 'Projects, folders, resources, discovery, sharing, and governed file organization.',
     primitives: ['asset_catalog', 'file_browser', 'catalog'],
@@ -98,7 +98,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'data-connection',
-    product: 'Data Connection & HyperAuto',
+    product: 'Data connections & sync',
     layer: 'Connect & integrate',
     summary: 'Sources, generated ingestion, syncs, schedules, exports, and connection health.',
     primitives: ['catalog', 'events', 'action_form'],
@@ -107,7 +107,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'pipeline-builder',
-    product: 'Pipeline Builder & Data Health',
+    product: 'Pipelines & data health',
     layer: 'Connect & integrate',
     summary: 'Graph-based transforms, dataset previews, quality checks, outputs, and delivery.',
     primitives: ['dag', 'table', 'action_log'],
@@ -116,7 +116,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'code-repositories',
-    product: 'Code Repositories & Workspaces',
+    product: 'Code repositories & workspaces',
     layer: 'Connect & integrate',
     summary: 'Repositories, IDE workspaces, refs, checks, previews, SDKs, and proposals.',
     primitives: ['code_browser', 'dag', 'action_log'],
@@ -143,7 +143,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'ontology-manager',
-    product: 'Ontology Manager',
+    product: 'Ontology manager',
     layer: 'Model & operate',
     summary: 'Object, property, link, action, interface, and function type presentation.',
     primitives: ['asset_catalog', 'object_view', 'action_form'],
@@ -152,7 +152,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'object-explorer-actions',
-    product: 'Object Explorer, Views & Actions',
+    product: 'Object explorer, views & actions',
     layer: 'Model & operate',
     summary: 'Object search, canonical views, linked context, writeback forms, and audit state.',
     primitives: ['object_view', 'record_grid', 'action_form'],
@@ -170,7 +170,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'workshop',
-    product: 'Workshop, Slate & Carbon',
+    product: 'Operational apps & portals',
     layer: 'Model & operate',
     summary: 'Operational apps and curated workspaces composed from object-aware views and actions.',
     primitives: ['Dashboard', 'record_board', 'action_form'],
@@ -179,7 +179,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'quiver-contour',
-    product: 'Quiver, Contour & Insight',
+    product: 'Analysis & insight',
     layer: 'Analyze & automate',
     summary: 'Point-and-click analysis, charts, tables, paths, filters, drill-down, and exports.',
     primitives: ['charts', 'table', 'ctx + export'],
@@ -188,7 +188,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'notepad-fusion',
-    product: 'Notepad & Fusion',
+    product: 'Notes & spreadsheets',
     layer: 'Analyze & automate',
     summary: 'Ontology-aware documents, templated reports, and bidirectional spreadsheet workflows.',
     primitives: ['docs clone', 'sheets clone', 'table'],
@@ -206,7 +206,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'aip',
-    product: 'AIP Logic, Chatbots & Evals',
+    product: 'AI logic, chat & evaluations',
     layer: 'Analyze & automate',
     summary: 'Assistants, agents, generated dashboards, governed tools, progress, and evaluations.',
     primitives: ['prompt', 'Generate', 'action_log'],
@@ -215,7 +215,7 @@ export const PALANTIR_SAMPLE_CAPABILITIES: readonly PalantirCapability[] = [
   },
   {
     id: 'product-delivery',
-    product: 'DevOps, Marketplace & Apollo',
+    product: 'Delivery, marketplace & releases',
     layer: 'Organize & govern',
     summary: 'Products, releases, installations, deployment health, channels, and fleet operations.',
     primitives: ['asset_catalog', 'events', 'action_log'],
@@ -462,7 +462,7 @@ const FOUNDATION_NAV: {
   icon: OperationalShowcaseIconName
 }[] = [
   { id: 'coverage', label: 'Readiness map', icon: 'apps' },
-  { id: 'compass', label: 'Compass', icon: 'document' },
+  { id: 'compass', label: 'Files', icon: 'document' },
   { id: 'data', label: 'Data integration', icon: 'graph' },
   { id: 'code', label: 'Code repositories', icon: 'code' },
 ]
@@ -517,7 +517,7 @@ export function PalantirFoundationShowcase({
       <header className="foundry-topbar">
         <div className="foundry-brand">
           <span className="foundry-mark"><OperationalShowcaseIcon name="layers" size={17} /></span>
-          <strong>Foundry</strong>
+          <strong>Operations</strong>
           <span className="foundry-product">Platform</span>
         </div>
         <button className="foundry-workspace-switcher">
@@ -538,7 +538,7 @@ export function PalantirFoundationShowcase({
 
       <div className="foundry-body">
         <aside className="foundry-sidebar">
-          <div className="foundry-space-label">Foundry foundation</div>
+          <div className="foundry-space-label">Platform foundation</div>
           <nav>
             {FOUNDATION_NAV.map(item => (
               <button
@@ -555,12 +555,12 @@ export function PalantirFoundationShowcase({
           <div className="foundry-sidebar-group palantir-covered-group">
             <span>Covered modules</span>
             {[
-              ['Ontology Manager', 'layers'],
-              ['Object Explorer', 'database'],
-              ['Workshop / Slate', 'apps'],
-              ['Quiver / Fusion', 'chart'],
+              ['Ontology manager', 'layers'],
+              ['Object explorer', 'database'],
+              ['Operational apps', 'apps'],
+              ['Analysis', 'chart'],
               ['Map', 'location'],
-              ['AIP', 'sparkles'],
+              ['AI', 'sparkles'],
             ].map(([label, icon]) => (
               <div className="palantir-covered-link" key={label}>
                 <OperationalShowcaseIcon name={icon as OperationalShowcaseIconName} size={15} />
@@ -621,14 +621,14 @@ function PalantirCoverageSurface({
       <div className="ready-page-heading foundry-page-heading">
         <div>
           <div className="ready-eyebrow">Platform readiness</div>
-          <h1>Palantir platform capability map</h1>
-          <p>Foundry, AIP, and delivery presentation coverage is separated from host security, compute, storage, and execution.</p>
+          <h1>Platform capability map</h1>
+          <p>Data, AI, and delivery presentation coverage is separated from host security, compute, storage, and execution.</p>
         </div>
         <button className="ready-button secondary"><OperationalShowcaseIcon name="check" size={14} />No frontend gaps</button>
       </div>
 
       <div className="palantir-readiness-stats">
-        <FoundationStat label="Capability groups" value={String(summary.total)} detail="Foundry + AIP + delivery scope" />
+        <FoundationStat label="Capability groups" value={String(summary.total)} detail="Data + AI + delivery scope" />
         <FoundationStat label="Exact showcases" value={String(summary.showcased)} detail="Clone-style Storybook states" tone="blue" />
         <FoundationStat label="Core-ready" value={String(summary.coreReady)} detail="Composable framework primitives" tone="green" />
         <FoundationStat label="Missing frontend" value={String(summary.missing)} detail="Nothing blocks presentation work" tone="green" />
@@ -769,7 +769,7 @@ function PalantirDataSurface({
       <div className="ready-page-heading foundry-page-heading">
         <div>
           <div className="ready-eyebrow">Data foundation</div>
-          <h1>Data Connection & Pipeline Builder</h1>
+          <h1>Data connections & pipelines</h1>
           <p>Connect external systems, monitor syncs, transform raw inputs, preview outputs, and deliver governed datasets.</p>
         </div>
         <div className="ready-heading-actions"><button className="ready-button secondary">View builds</button><button className="ready-button primary"><OperationalShowcaseIcon name="plus" size={14} />New source</button></div>
@@ -814,7 +814,7 @@ function PalantirDataSurface({
       </div>
 
       <section className="palantir-pipeline-panel">
-        <header><div><span className="ready-eyebrow">Pipeline Builder</span><h2>customer_360</h2><p>Main · Saved · 5 nodes · 1 output</p></div><div><button className="ready-button secondary">Preview</button><button className="ready-button primary"><OperationalShowcaseIcon name="bolt" size={14} />Build</button></div></header>
+        <header><div><span className="ready-eyebrow">Pipeline</span><h2>customer_360</h2><p>Main · Saved · 5 nodes · 1 output</p></div><div><button className="ready-button secondary">Preview</button><button className="ready-button primary"><OperationalShowcaseIcon name="bolt" size={14} />Build</button></div></header>
         <div className="palantir-pipeline-flow">
           <PipelineNode icon="database" kind="Input" label={selectedConnection.name} detail={selectedConnection.sourceType} />
           <PipelineEdge label="sync" />

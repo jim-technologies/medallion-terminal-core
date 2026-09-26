@@ -66,17 +66,6 @@
   text-decoration: none !important;
 }
 
-.gl-mark {
-  display: inline-flex;
-  height: 31px;
-  width: 31px;
-}
-
-.gl-mark svg {
-  height: 100%;
-  width: 100%;
-}
-
 .gl-global-header > nav {
   display: flex;
   gap: 2px;

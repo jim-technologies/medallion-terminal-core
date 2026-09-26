@@ -8,6 +8,7 @@ import {
   productShowcaseInitials,
 } from '../shared/ProductShowcasePrimitives'
 import '../shared/ProductShowcases.css'
+import { NeutralMark } from '../shared/NeutralMark'
 
 export type AirtableShowcaseView = 'grid' | 'board' | 'record'
 export type AirtableProjectStatus = 'Not started' | 'In progress' | 'Blocked' | 'Done'
@@ -198,16 +199,6 @@ export function selectAirtableProjects(
   })
 }
 
-function AirtableMark() {
-  return (
-    <span className="airtable-mark" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-    </span>
-  )
-}
-
 function AirtableTopbar({
   workspaceName,
   query,
@@ -223,8 +214,8 @@ function AirtableTopbar({
         <button className="airtable-icon-button airtable-menu-button" aria-label="Open navigation">
           <ProductShowcaseIcon name="menu" />
         </button>
-        <AirtableMark />
-        <span className="airtable-brand-name">Airtable</span>
+        <NeutralMark icon="database" color="#2d7ff9" />
+        <span className="airtable-brand-name">Bases</span>
       </div>
       <button className="airtable-workspace-switcher">
         <span className="airtable-workspace-badge">{productShowcaseInitials(workspaceName)}</span>

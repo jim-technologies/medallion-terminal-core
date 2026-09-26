@@ -12,6 +12,7 @@ import {
 import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import { OperationalShowcaseIcon } from '../shared/OperationalShowcasePrimitives'
 import './SlackShowcase.css'
+import { NeutralMark } from '../shared/NeutralMark'
 
 export interface SlackMember {
   id: string
@@ -489,7 +490,7 @@ export function SlackShowcase({
 
       <div className="slack-clone__workspace">
         <aside className="slack-clone__rail" aria-label="Workspaces">
-          <SlackMark compact />
+          <NeutralMark icon="message" color="#4a2c5a" size={36} label="Chat" />
           <button type="button" className="slack-clone__workspace-tile active" aria-label={workspaceName}>
             JT
           </button>
@@ -524,7 +525,7 @@ export function SlackShowcase({
             </button>
           </div>
 
-          <nav className="slack-clone__primary-nav" aria-label="Slack navigation">
+          <nav className="slack-clone__primary-nav" aria-label="Chat navigation">
             <button type="button">
               <OperationalShowcaseIcon name="message" size={16} />
               Threads
@@ -691,17 +692,6 @@ export function SlackShowcase({
         )}
       </div>
     </div>
-  )
-}
-
-function SlackMark({ compact = false }: { compact?: boolean }) {
-  return (
-    <span className={`slack-clone__mark ${compact ? 'compact' : ''}`} role="img" aria-label="Slack">
-      <i className="cyan" />
-      <i className="green" />
-      <i className="yellow" />
-      <i className="red" />
-    </span>
   )
 }
 

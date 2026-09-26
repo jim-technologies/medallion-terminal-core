@@ -39,10 +39,10 @@ describe('GoogleDriveShowcase', () => {
   it('server-renders the complete application anatomy', () => {
     const html = renderToStaticMarkup(<GoogleDriveShowcase />)
 
-    expect(html).toContain('Search in Drive')
-    expect(html).toContain('My Drive')
+    expect(html).toContain('Search in Files')
+    expect(html).toContain('My files')
     expect(html).toContain('Shared with me')
-    expect(html).toContain('Ask Drive about your work')
+    expect(html).toContain('Ask about your files')
     expect(html).toContain('Suggested')
     expect(html).toContain('Folders and files')
     expect(html).toContain('8.4 GB of 30 GB used')

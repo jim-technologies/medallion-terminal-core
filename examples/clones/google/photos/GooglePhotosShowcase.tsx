@@ -14,6 +14,7 @@ import {
 } from '../../../../src/widgets/mediaShape'
 import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
 import './GooglePhotosShowcase.css'
+import { NeutralMark } from '../../shared/NeutralMark'
 
 export type GooglePhotosSection =
   | 'photos'
@@ -461,7 +462,7 @@ export function GooglePhotosShowcase({
           <button type="button" className="gphotos-icon-button gphotos-menu-button" aria-label="Main menu">
             <PhotosIcon name="menu" />
           </button>
-          <GooglePhotosMark />
+          <NeutralMark icon="camera" color="#1a73e8" size={32} />
           <span>Photos</span>
         </div>
 
@@ -499,7 +500,7 @@ export function GooglePhotosShowcase({
           <button type="button" className="gphotos-icon-button" aria-label="Settings">
             <PhotosIcon name="settings" />
           </button>
-          <button type="button" className="gphotos-icon-button" aria-label="Google apps">
+          <button type="button" className="gphotos-icon-button" aria-label="Apps">
             <PhotosIcon name="apps" />
           </button>
           <button
@@ -513,7 +514,7 @@ export function GooglePhotosShowcase({
       </header>
 
       <div className="gphotos-shell">
-        <aside className="gphotos-sidebar" aria-label="Google Photos navigation">
+        <aside className="gphotos-sidebar" aria-label="Photos navigation">
           <div className="gphotos-create-wrap">
             <button
               type="button"
@@ -1093,7 +1094,7 @@ function UpdatesView({ items }: { items: readonly GooglePhotosItem[] }) {
       <section>
         <h2>Suggestions</h2>
         <button type="button" className="gphotos-update-row">
-          <span className="gphotos-update-avatar is-google"><GooglePhotosMark /></span>
+          <span className="gphotos-update-avatar"><NeutralMark icon="camera" color="#1a73e8" size={32} /></span>
           <div><strong>A new memory is ready: Best of spring</strong><small>Yesterday</small></div>
           <img src="/examples/media-demo.svg#forest" alt="" />
         </button>
@@ -1262,17 +1263,6 @@ function formatTime(value?: string): string {
 
 function humanize(value: string): string {
   return value.replace(/[_-]+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase())
-}
-
-function GooglePhotosMark() {
-  return (
-    <svg className="gphotos-logo" viewBox="0 0 32 32" aria-hidden="true">
-      <path fill="#4285f4" d="M16 2a8 8 0 0 1 8 8v6h-8a8 8 0 0 1-8-8 6 6 0 0 1 8-6Z" />
-      <path fill="#34a853" d="M30 16a8 8 0 0 1-8 8h-6v-8a8 8 0 0 1 8-8 6 6 0 0 1 6 8Z" />
-      <path fill="#fbbc04" d="M16 30a8 8 0 0 1-8-8v-6h8a8 8 0 0 1 8 8 6 6 0 0 1-8 6Z" />
-      <path fill="#ea4335" d="M2 16a8 8 0 0 1 8-8h6v8a8 8 0 0 1-8 8 6 6 0 0 1-6-8Z" />
-    </svg>
-  )
 }
 
 type PhotosIconName =

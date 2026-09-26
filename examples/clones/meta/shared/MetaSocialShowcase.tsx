@@ -9,6 +9,7 @@ import {
   type OperationalShowcaseIconName,
 } from '../../shared/OperationalShowcasePrimitives'
 import './MetaSocialShowcase.css'
+import { NeutralMark } from '../../shared/NeutralMark'
 
 export type MetaSocialProduct = 'instagram' | 'facebook' | 'threads'
 
@@ -373,7 +374,7 @@ function InstagramShowcase(props: ProductRendererProps) {
       <main className="meta-instagram-main">
         {view === 'feed' && (
           <div className="meta-instagram-home">
-            <section className="meta-instagram-stream" aria-label="Instagram feed">
+            <section className="meta-instagram-stream" aria-label="Gallery feed">
               <StoryStrip stories={stories} product="instagram" />
               <PostList {...props} product="instagram" />
             </section>
@@ -409,12 +410,12 @@ function FacebookShowcase(props: ProductRendererProps) {
       <header className="meta-facebook-topbar">
         <SocialLogo product="facebook" />
         <SearchControl
-          label="Search Facebook"
+          label="Search Social"
           value={query}
           onChange={setQuery}
           compact
         />
-        <nav aria-label="Facebook primary">
+        <nav aria-label="Social primary">
           <NavIcon label="Home" icon="home" active={view === 'feed'} onClick={() => setView('feed')} />
           <NavIcon label="Video" icon="play" />
           <NavIcon label="Groups" icon="people" active={view === 'groups'} onClick={() => setView('groups')} />
@@ -428,7 +429,7 @@ function FacebookShowcase(props: ProductRendererProps) {
         </div>
       </header>
       <div className="meta-facebook-body">
-        <aside className="meta-facebook-left" aria-label="Facebook shortcuts">
+        <aside className="meta-facebook-left" aria-label="Social shortcuts">
           <FacebookSideItem author={AUTHORS.jun} label={userName} />
           <FacebookSideItem icon="people" label="Friends" />
           <FacebookSideItem icon="clock" label="Memories" />
@@ -455,7 +456,7 @@ function FacebookShowcase(props: ProductRendererProps) {
         </main>
         <aside
           className="meta-facebook-right"
-          aria-label="Facebook contacts and sponsored content"
+          aria-label="Contacts and sponsored content"
         >
           <section>
             <h2>Sponsored</h2>
@@ -501,7 +502,7 @@ function ThreadsShowcase(props: ProductRendererProps) {
         <header>
           <SocialLogo product="threads" />
           {view !== 'profile' ? (
-            <nav aria-label="Threads feed">
+            <nav aria-label="Posts feed">
               <button
                 type="button"
                 className={view === 'for-you' ? 'is-active' : ''}
@@ -529,9 +530,9 @@ function ThreadsShowcase(props: ProductRendererProps) {
           </>
         )}
       </main>
-      <aside className="meta-threads-discovery" aria-label="Threads discovery">
+      <aside className="meta-threads-discovery" aria-label="Posts discovery">
         <SearchControl
-          label="Search Threads"
+          label="Search Posts"
           value={query}
           onChange={setQuery}
         />
@@ -612,18 +613,22 @@ function SocialLogo({ product }: { product: MetaSocialProduct }) {
       aria-label={label}
       title={label}
     >
-      <b aria-hidden="true">
-        {product === 'instagram' ? '◎' : product === 'facebook' ? 'f' : '@'}
-      </b>
-      <span>{label}</span>
+      <NeutralMark
+        icon={product === 'instagram' ? 'camera' : product === 'facebook' ? 'people' : 'message'}
+        color={product === 'instagram' ? '#b0306a' : product === 'facebook' ? '#1f5fbf' : '#303030'}
+        size={30}
+      />
+      <span className="meta-social-logo__name">{label}</span>
     </span>
   )
 }
 
+// Neutral names: the showcases reproduce these products' layouts, never
+// their names or logos.
 function productName(product: MetaSocialProduct): string {
-  if (product === 'instagram') return 'Instagram'
-  if (product === 'facebook') return 'Facebook'
-  return 'Threads'
+  if (product === 'instagram') return 'Gallery'
+  if (product === 'facebook') return 'Social'
+  return 'Posts'
 }
 
 function SocialAvatar({
@@ -996,7 +1001,7 @@ function SuggestionsPanel({
           </div>
         )
       })}
-      <footer>About · Help · Privacy · Terms · Locations · Meta Verified</footer>
+      <footer>About · Help · Privacy · Terms · Locations · Verified</footer>
     </section>
   )
 }

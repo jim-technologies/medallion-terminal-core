@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
 import './SpotifyShowcase.css'
+import { NeutralMark } from '../shared/NeutralMark'
 
 export type SpotifyView = 'home' | 'search' | 'library' | 'playlist'
 export type SpotifySidePanel = 'now-playing' | 'queue' | null
@@ -197,7 +198,7 @@ export const SPOTIFY_SAMPLE_COLLECTIONS: readonly SpotifyCollection[] = [
     kind: 'playlist',
     trackIds: ['signal-bloom', 'relay-stations', 'soft-circuit', 'daylight-cache', 'terminal-garden', 'almost-static', 'warm-start', 'long-form'],
     artworkTone: 'emerald',
-    owner: 'Spotify',
+    owner: 'Music',
     description: 'Low-distraction electronic and instrumental music for long stretches of focused work.',
     followers: '2,184,320 saves',
     pinned: true,
@@ -221,7 +222,7 @@ export const SPOTIFY_SAMPLE_COLLECTIONS: readonly SpotifyCollection[] = [
     kind: 'playlist',
     trackIds: ['daylight-cache', 'terminal-garden', 'late-deploy', 'long-form', 'almost-static', 'atlas-small-things'],
     artworkTone: 'blue',
-    owner: 'Spotify',
+    owner: 'Music',
     description: 'A rotating selection based on the music you return to.',
   },
   {
@@ -231,7 +232,7 @@ export const SPOTIFY_SAMPLE_COLLECTIONS: readonly SpotifyCollection[] = [
     kind: 'playlist',
     trackIds: ['daylight-cache', 'soft-circuit', 'atlas-small-things', 'warm-start'],
     artworkTone: 'amber',
-    owner: 'Spotify',
+    owner: 'Music',
   },
   {
     id: 'quiet-machinery',
@@ -259,7 +260,7 @@ export const SPOTIFY_SAMPLE_COLLECTIONS: readonly SpotifyCollection[] = [
     kind: 'playlist',
     trackIds: ['late-deploy', 'relay-stations', 'long-form', 'terminal-garden'],
     artworkTone: 'rose',
-    owner: 'Spotify',
+    owner: 'Music',
   },
   {
     id: 'useful-weather',
@@ -428,12 +429,9 @@ function SpotifyIcon({ name, size = 22 }: { name: SpotifyIconName; size?: number
 
 function SpotifyBrand() {
   return (
-    <span aria-label="Spotify" className="spt-brand">
-      <svg aria-hidden="true" viewBox="0 0 32 32">
-        <circle cx="16" cy="16" fill="currentColor" r="15" />
-        <path d="M8 12.5c5.6-1.7 11.7-1.3 16.5 1.2M9.2 17c4.8-1.3 9.8-.9 14 1.1M10.2 21c3.9-1 8-.7 11.5.9" fill="none" stroke="#000" strokeLinecap="round" strokeWidth="2" />
-      </svg>
-      <b>Spotify</b>
+    <span className="spt-brand">
+      <NeutralMark icon="play" color="#1f8a4c" size={30} />
+      <b>Music</b>
     </span>
   )
 }
@@ -511,10 +509,10 @@ function SpotifySidebar({
   onViewChange: (view: SpotifyView) => void
 }) {
   return (
-    <aside className="spt-sidebar" aria-label="Spotify navigation and library">
+    <aside className="spt-sidebar" aria-label="Music navigation and library">
       <section className="spt-sidebar__primary">
         <SpotifyBrand />
-        <nav aria-label="Spotify primary navigation">
+        <nav aria-label="Music primary navigation">
           <button className={view === 'home' ? 'is-active' : ''} onClick={() => onViewChange('home')} type="button">
             <SpotifyIcon name="home" /> <span>Home</span>
           </button>
@@ -1060,7 +1058,7 @@ function SpotifyMobileNav({ view, onViewChange }: { view: SpotifyView; onViewCha
     ['library', 'library', 'Your Library'],
   ]
   return (
-    <nav aria-label="Spotify mobile navigation" className="spt-mobile-nav">
+    <nav aria-label="Music mobile navigation" className="spt-mobile-nav">
       {items.map(([target, icon, label]) => (
         <button className={view === target ? 'is-active' : ''} key={target} onClick={() => onViewChange(target)} type="button">
           <SpotifyIcon name={icon} size={21} /><span>{label}</span>

@@ -24,6 +24,7 @@ import {
   type BackstageView,
 } from './BackstageModel'
 import './BackstageShowcase.css'
+import { NeutralMark } from '../../shared/NeutralMark'
 
 export {
   resolveBackstageRelations,
@@ -380,11 +381,9 @@ const KIND_OPTIONS: readonly (BackstageEntityKind | 'All')[] = [
 // Shared shell and visual primitives.
 function BackstageBrand() {
   return (
-    <div className="bks-brand" aria-label="Backstage">
-      <span className="bks-brand__mark" aria-hidden="true">
-        <span>B</span>
-      </span>
-      <strong>Backstage</strong>
+    <div className="bks-brand">
+      <NeutralMark icon="layers" color="#2e9e8f" />
+      <strong>Catalog</strong>
     </div>
   )
 }

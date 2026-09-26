@@ -5,6 +5,7 @@ import {
   type OperationalShowcaseIconName,
 } from '../shared/OperationalShowcasePrimitives'
 import './SnowflakeShowcase.css'
+import { NeutralMark } from '../shared/NeutralMark'
 
 export type SnowflakeShowcaseSection = 'workspace' | 'catalog' | 'monitoring'
 export type SnowflakeCatalogKind = 'Table' | 'View' | 'Dynamic table' | 'Stage'
@@ -222,8 +223,8 @@ function snowflakeColumnType(column: string): string {
 function SnowflakeBrand() {
   return (
     <div className="snow-brand">
-      <span className="snow-brand-mark" aria-hidden="true">✣</span>
-      <span>snowflake</span>
+      <NeutralMark icon="database" color="#1f8ac0" size={26} />
+      <span>Warehouse</span>
     </div>
   )
 }
@@ -553,10 +554,10 @@ export function SnowflakeShowcase({
 
   return (
     <div className="snowflake-showcase">
-      <aside className="snow-sidebar" aria-label="Snowflake navigation">
+      <aside className="snow-sidebar" aria-label="Warehouse navigation">
         <SnowflakeBrand />
         <button className="snow-global-search" type="button"><OperationalShowcaseIcon name="search" size={16} /><span>Search</span><kbd>⌘ K</kbd></button>
-        <nav aria-label="Snowflake sections">
+        <nav aria-label="Warehouse sections">
           <button type="button"><OperationalShowcaseIcon name="home" size={17} /><span>Home</span></button>
           {SNOWFLAKE_NAV.map(item => (
             <div className="snow-nav-group" key={item.id}>

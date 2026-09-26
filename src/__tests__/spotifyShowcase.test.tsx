@@ -56,7 +56,7 @@ describe('SpotifyShowcase', () => {
       <SpotifyShowcase initialSidePanel={null} initialView="library" />,
     )
 
-    expect(home).toContain('Spotify')
+    expect(home).toContain('Music')
     expect(home).toContain('Good afternoon')
     expect(home).toContain('Your Library')
     expect(home).toContain('Deep Focus for Jun')

@@ -65,11 +65,6 @@
   white-space: nowrap;
 }
 
-.gphotos-logo {
-  width: 31px !important;
-  height: 31px !important;
-}
-
 .gphotos-icon-button,
 .gphotos-search button,
 .gphotos-viewer-button {
@@ -1456,15 +1451,6 @@
   font-weight: 600;
 }
 
-.gphotos-update-avatar.is-google {
-  background: #f1f3f4;
-}
-
-.gphotos-update-avatar .gphotos-logo {
-  width: 25px !important;
-  height: 25px !important;
-}
-
 .gphotos-update-row > div {
   flex: 1;
   min-width: 0;
@@ -1886,8 +1872,7 @@
     padding-right: 10px;
   }
 
-  .gphotos-brand > .gphotos-logo,
-  .gphotos-brand > span {
+  .gphotos-brand > span:last-child {
     display: none;
   }
 

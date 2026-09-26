@@ -7,6 +7,7 @@ import {
   type ProductShowcaseIconName,
 } from '../shared/ProductShowcasePrimitives'
 import '../shared/ProductShowcases.css'
+import { NeutralMark } from '../shared/NeutralMark'
 
 export type HubSpotShowcaseSection = 'contacts' | 'record' | 'pipeline'
 export type HubSpotLeadStatus = 'New' | 'Open' | 'Qualified' | 'Customer'
@@ -301,16 +302,6 @@ export function hubSpotWeightedPipeline(deals: HubSpotDeal[]): number {
   return deals.reduce((total, deal) => total + deal.amount * deal.probability, 0)
 }
 
-function HubSpotMark() {
-  return (
-    <span className="hubspot-mark" aria-hidden="true">
-      <i />
-      <i />
-      <i />
-    </span>
-  )
-}
-
 function HubSpotTopbar({
   portalName,
   query,
@@ -324,8 +315,8 @@ function HubSpotTopbar({
     <>
       <header className="hubspot-topbar">
         <button className="hubspot-brand">
-          <HubSpotMark />
-          <span>HubSpot</span>
+          <NeutralMark icon="people" color="#e8663d" />
+          <span>CRM</span>
         </button>
         <label className="hubspot-global-search">
           <ProductShowcaseIcon name="search" size={15} />
@@ -333,7 +324,7 @@ function HubSpotTopbar({
             value={query}
             onChange={event => onQueryChange(event.target.value)}
             type="search"
-            placeholder="Search HubSpot"
+            placeholder="Search"
           />
           <kbd>⌘ K</kbd>
         </label>

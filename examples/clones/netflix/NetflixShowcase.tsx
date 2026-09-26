@@ -509,8 +509,8 @@ function NetflixIcon({ name, size = 22 }: { name: NetflixIconName; size?: number
   )
 }
 
-function NetflixWordmark() {
-  return <span aria-label="Netflix" className="nfx-wordmark">NETFLIX</span>
+function StreamingWordmark() {
+  return <span className="nfx-wordmark">WATCH</span>
 }
 
 function artworkUrl(title: NetflixTitle): string {
@@ -587,8 +587,8 @@ function NetflixHeader({
   return (
     <header className="nfx-header">
       <div className="nfx-header__left">
-        <NetflixWordmark />
-        <nav aria-label="Netflix navigation">
+        <StreamingWordmark />
+        <nav aria-label="Streaming navigation">
           {links.map(([value, label]) => (
             <button
               aria-current={section === value ? 'page' : undefined}
@@ -795,7 +795,7 @@ function BrowseSection({
     ? ['Bingeworthy TV Shows', 'Critically Acclaimed Series', 'Drama', 'Documentaries']
     : section === 'movies'
       ? ['Popular Movies', 'Award-Winning', 'Thrillers', 'Independent Films']
-      : ['New on Netflix', 'Top 10 Today', 'Worth the Wait']
+      : ['New this week', 'Top 10 Today', 'Worth the Wait']
   return (
     <div className="nfx-browse-page">
       <div className="nfx-browse-page__heading">
@@ -947,7 +947,7 @@ function NetflixPlayer({ title, onBack }: { title: NetflixTitle; onBack: () => v
 function ProfileGate({ profiles, onSelect }: { profiles: readonly NetflixProfile[]; onSelect: (profile: NetflixProfile) => void }) {
   return (
     <section className="nfx-profile-gate">
-      <NetflixWordmark />
+      <StreamingWordmark />
       <div>
         <h1>Who's watching?</h1>
         <div className="nfx-profile-grid">

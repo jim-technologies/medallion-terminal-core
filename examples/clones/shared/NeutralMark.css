@@ -1,0 +1,16 @@
+/* Neutral product mark shared by every clone showcase (see NeutralMark.tsx). */
+.clone-neutral-mark {
+  align-items: center;
+  background: var(--clone-mark-color, #5b6573);
+  border-radius: calc(var(--clone-mark-size, 28px) / 4);
+  color: #fff;
+  display: inline-flex;
+  flex: none;
+  height: var(--clone-mark-size, 28px);
+  justify-content: center;
+  width: var(--clone-mark-size, 28px);
+}
+
+.clone-neutral-mark svg {
+  display: block;
+}

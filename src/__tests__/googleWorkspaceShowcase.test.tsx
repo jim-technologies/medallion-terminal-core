@@ -23,7 +23,7 @@ describe('GoogleWorkspaceEditor', () => {
     expect(html).toContain('Q3 Operating Plan')
     expect(html).toContain('Executive summary')
     expect(html).toContain('Document outline')
-    expect(html).toContain('Saved to Drive')
+    expect(html).toContain('Saved to Files')
     expect(html).toContain('Share')
     expect(html).toContain('Account: Jun')
     expect(html).toContain('workspace-ruler-scale')

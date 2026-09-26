@@ -205,6 +205,16 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   ones moved from `${story}.png` to `${story}-dark.png` beside the new
   `-light` files.
 
+- **Clone showcases no longer show third-party names, logos or wordmarks.**
+  Every clone header renders a neutral name and `NeutralMark` (a generic
+  glyph on the clone's accent) in place of the product's name and logo, and
+  product self-references in labels, placeholders and chrome copy are
+  neutral ("Files", "Tracker", "Forecasts", "Search maps", "Processing
+  fee"). Layouts are unchanged; the folders, Storybook titles and
+  `cloneVendor` / `cloneProduct` parameters still name the reference so it
+  can be found. The archetype catalog's `shortName` is now `displayName`.
+  Clone baselines were regenerated.
+
 ### Fixed
 
 - **README named the wrong license.** Its License section said MIT; it now
@@ -228,6 +238,10 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   Vite 8.3.1** in `pnpm-workspace.yaml`, and their comment. Both releases
   passed pnpm 11's one-day release age at 2026-09-25T12:46:30Z, after which
   the entries excused nothing.
+- **Logo reproductions in the clone showcases**: the drawn marks and their
+  CSS (the file, calendar, photo, chat, CRM, spreadsheet, ledger, merge and
+  music logos, the lettered and script-font wordmarks, and the four-colour
+  mail mark).
 - **`installReadinessTerminalMock`** (Storybook example helper). The
   production-readiness stories inject the fixture TerminalService through
   `Dashboard.fetch` instead of replacing `window.fetch`.

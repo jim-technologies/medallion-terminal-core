@@ -48,9 +48,9 @@ describe('Meta social showcases', () => {
 
   it('keeps every surface recognizable with original fixture content', () => {
     const expectedCopy: Record<MetaSocialProduct, readonly string[]> = {
-      instagram: ['Instagram', 'Suggested for you', 'View all 96 comments'],
-      facebook: ['Facebook', 'What&#x27;s on your mind, Jun?', 'Sponsored'],
-      threads: ['Threads', 'For you', 'Start a thread...'],
+      instagram: ['Gallery', 'Suggested for you', 'View all 96 comments'],
+      facebook: ['Social', 'What&#x27;s on your mind, Jun?', 'Sponsored'],
+      threads: ['Posts', 'For you', 'Start a thread...'],
     }
 
     for (const product of PRODUCTS) {

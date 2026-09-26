@@ -81,45 +81,10 @@
   white-space: nowrap;
 }
 
-.meta-social-logo b {
-  display: grid;
-  place-items: center;
-  width: 31px;
-  height: 31px;
-  font-size: 29px;
-  font-weight: 500;
-  letter-spacing: -0.08em;
-}
-
-.meta-social-logo.is-instagram span {
-  font-family: "Segoe Script", "Brush Script MT", cursive;
-  font-size: 23px;
-  font-weight: 700;
-  letter-spacing: -0.07em;
-}
-
 .meta-social-logo.is-facebook {
   color: #0866ff;
   font-size: 22px;
   letter-spacing: -0.04em;
-}
-
-.meta-social-logo.is-facebook b {
-  width: 40px;
-  height: 40px;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  font-size: 34px;
-  font-weight: 800;
-  line-height: 1;
-  background: #0866ff;
-  border-radius: 50%;
-}
-
-.meta-social-logo.is-threads b {
-  font-family: Arial, sans-serif;
-  font-size: 28px;
-  font-weight: 700;
 }
 
 .meta-social-avatar {
@@ -878,7 +843,7 @@
   left: 16px;
 }
 
-.meta-facebook-topbar > .meta-social-logo > span {
+.meta-facebook-topbar > .meta-social-logo > .meta-social-logo__name {
   display: none;
 }
 
@@ -1495,7 +1460,7 @@
   margin: 0 0 30px;
 }
 
-.meta-social-rail.is-compact > .meta-social-logo > span,
+.meta-social-rail.is-compact > .meta-social-logo > .meta-social-logo__name,
 .meta-social-rail.is-compact nav button > span,
 .meta-social-rail.is-compact .meta-social-more > span {
   display: none;
@@ -1546,12 +1511,6 @@
   font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.02em;
-}
-
-.meta-threads-main > header > .meta-social-logo b {
-  width: 23px;
-  height: 23px;
-  font-size: 22px;
 }
 
 .meta-threads-main > header > nav {
@@ -1874,7 +1833,7 @@
     margin-inline: 0;
   }
 
-  .meta-instagram-shell > .meta-social-rail > .meta-social-logo > span,
+  .meta-instagram-shell > .meta-social-rail > .meta-social-logo > .meta-social-logo__name,
   .meta-instagram-shell > .meta-social-rail nav button > span,
   .meta-instagram-shell > .meta-social-rail .meta-social-more > span {
     display: none;
@@ -2179,7 +2138,7 @@
     padding-inline: 10px;
   }
 
-  .meta-threads-main > header > .meta-social-logo span {
+  .meta-threads-main > header > .meta-social-logo .meta-social-logo__name {
     display: none;
   }
 

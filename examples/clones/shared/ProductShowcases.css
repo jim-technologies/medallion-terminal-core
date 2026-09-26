@@ -123,45 +123,6 @@
   letter-spacing: -.02em;
 }
 
-.airtable-mark {
-  display: block;
-  height: 21px;
-  position: relative;
-  width: 25px;
-}
-
-.airtable-mark span {
-  clip-path: polygon(0 18%, 100% 0, 100% 75%, 0 100%);
-  display: block;
-  position: absolute;
-}
-
-.airtable-mark span:nth-child(1) {
-  background: #f82b60;
-  height: 12px;
-  left: 0;
-  top: 1px;
-  width: 13px;
-}
-
-.airtable-mark span:nth-child(2) {
-  background: #fcbd01;
-  clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 74%);
-  height: 12px;
-  right: 0;
-  top: 1px;
-  width: 11px;
-}
-
-.airtable-mark span:nth-child(3) {
-  background: #20c933;
-  clip-path: polygon(0 20%, 100% 0, 100% 80%, 0 100%);
-  bottom: 0;
-  height: 9px;
-  left: 7px;
-  width: 13px;
-}
-
 .airtable-icon-button {
   align-items: center;
   border-radius: 6px !important;
@@ -1329,67 +1290,6 @@
   font-size: 18px !important;
   font-weight: 750 !important;
   gap: 8px;
-}
-
-.hubspot-mark {
-  height: 24px;
-  position: relative;
-  width: 25px;
-}
-
-.hubspot-mark::before {
-  background: var(--hubspot-orange);
-  border-radius: 50%;
-  content: "";
-  height: 8px;
-  left: 8px;
-  position: absolute;
-  top: 8px;
-  width: 8px;
-}
-
-.hubspot-mark::after {
-  background: var(--hubspot-orange);
-  content: "";
-  height: 3px;
-  left: 1px;
-  position: absolute;
-  top: 10.5px;
-  transform: rotate(15deg);
-  width: 11px;
-}
-
-.hubspot-mark i {
-  background: var(--hubspot-orange);
-  border-radius: 50%;
-  height: 6px;
-  position: absolute;
-  width: 6px;
-}
-
-.hubspot-mark i:nth-child(1) { left: 0; top: 7px; }
-.hubspot-mark i:nth-child(2) { right: 2px; top: 1px; }
-.hubspot-mark i:nth-child(3) { bottom: 1px; right: 1px; }
-
-.hubspot-mark i:nth-child(2)::after,
-.hubspot-mark i:nth-child(3)::after {
-  background: var(--hubspot-orange);
-  content: "";
-  height: 2px;
-  position: absolute;
-  right: 4px;
-  transform-origin: right center;
-  width: 11px;
-}
-
-.hubspot-mark i:nth-child(2)::after {
-  top: 4px;
-  transform: rotate(-39deg);
-}
-
-.hubspot-mark i:nth-child(3)::after {
-  bottom: 4px;
-  transform: rotate(39deg);
 }
 
 .hubspot-global-search {
@@ -2644,35 +2544,11 @@
   gap: 5px;
 }
 
-.quickbooks-intuit {
-  color: #393a3d;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: .04em;
-  margin-right: 2px;
-  text-transform: uppercase;
-}
-
 .quickbooks-brand > span:last-child {
   color: #393a3d;
   font-size: 17px;
   font-weight: 750;
   letter-spacing: -.025em;
-}
-
-.quickbooks-mark {
-  align-items: center;
-  background: var(--qb-green);
-  border-radius: 50%;
-  color: #fff;
-  display: inline-flex;
-  font-size: 10px;
-  font-weight: 800;
-  height: 27px;
-  justify-content: center;
-  letter-spacing: -.05em;
-  text-transform: lowercase;
-  width: 27px;
 }
 
 .quickbooks-global-search {
@@ -4293,7 +4169,6 @@
     padding: 0 9px;
   }
 
-  .quickbooks-intuit,
   .quickbooks-brand > span:last-child,
   .quickbooks-company-switcher > span:nth-child(2),
   .quickbooks-company-switcher > svg {
