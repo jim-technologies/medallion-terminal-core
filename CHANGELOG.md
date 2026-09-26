@@ -73,6 +73,12 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   (`mode="embed"`, `createEmbedChannel`: versioned `mtc:*` messages with an
   origin allow-list, resize, navigate, init). `useProductShell` exposes
   them to pages.
+- **`ObjectPage`**: breadcrumbs, `ObjectHeader` and section tabs
+  (Overview, Properties, Links, History) composing the object components.
+  The product plans' object anatomy maps onto one component per role: the
+  linked-objects panel is `LinkPanel`, the activity timeline is
+  `ActivityFeed variant="timeline"`, the facet rail is `FacetList`, and the
+  resource table is `DataGrid`.
 - **`OperationsTray`**: long-running operations with status, progress,
   Cancel, Retry, Dismiss, polite announcements, floating or inline.
 - `StatusTone` type; message keys for copy, values, property panels, the

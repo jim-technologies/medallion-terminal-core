@@ -141,6 +141,7 @@ export declare const EN_MESSAGES: {
     readonly 'ops.status.succeeded': 'Done';
     readonly 'ops.status.failed': 'Failed';
     readonly 'ops.status.cancelled': 'Cancelled';
+    readonly 'objectPage.sections': 'Object sections';
 };
 /** A key in the toolkit message catalog. */
 export type MessageKey = keyof typeof EN_MESSAGES;

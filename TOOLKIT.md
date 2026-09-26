@@ -262,7 +262,13 @@ Popover and menu document listeners exist only while their layer is open.
 
 ### Object components
 
-The ontology anatomy: an object has a type (`ObjectTypeRef`: label, icon,
+The product UI plans call some of these by their role: the object header
+is `ObjectHeader`, the linked-objects panel is `LinkPanel`, the activity
+timeline is `ActivityFeed variant="timeline"`, the facet rail is
+`FacetList` and the resource table is `DataGrid`; one component serves each
+role.
+
+The object anatomy: an object has a type (`ObjectTypeRef`: label, icon,
 colour slot, with `typePresentation` resolving the fallbacks) and is
 referenced by an `ObjectRef` (id, title, type, `href`).
 
@@ -277,6 +283,9 @@ referenced by an `ObjectRef` (id, title, type, `href`).
   metadata and actions; `compact` for inspectors and hover cards.
 - `ObjectChip`: an inline object reference (link, button or text), with an
   optional `hoverCard`.
+- `ObjectPage`: the object anatomy as a page: breadcrumbs, the
+  `ObjectHeader` and `ObjectPageTab` sections (controlled or not) whose
+  panels compose the components above.
 - `FacetList`: the explorer's facet rail (`FacetGroup`s of `FacetOption`s
   with counts; `single` groups are radio buttons with type glyphs, `multi`
   groups checkboxes; "Show more"; `onClear`).

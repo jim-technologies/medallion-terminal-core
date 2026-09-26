@@ -200,6 +200,7 @@ snapshots.
 | `PropertyPanel` | An object's properties | Grouped rows with 11 px muted group labels, a 160 px label column, "n of m" with a filter |
 | `ObjectHeader` | An object's identity | 40 px `TypeGlyph`, type eyebrow in the type colour, mono id with copy, 20/600 title, status and metadata; `compact` for inspectors and hover cards |
 | `ObjectChip` | Inline object references | 16 px glyph plus title; a link in the link colour when it has an `href` |
+| `ObjectPage` | An object's page | Breadcrumbs, the `ObjectHeader`, section tabs (Overview, Properties, Links, History) on the page gutter; Overview is a two-column grid of property, link, graph and activity panels |
 | `LinkPanel` | An object's relationships | One group per link type: relation, arrow (← for incoming), target type glyph and name, count; the first three objects with their detail; "View all" |
 | `LinkGraph` | The object's one-hop neighbourhood | Deterministic radial sectors per link type, relation on the middle edge, at most 40 nodes with "+N", dashed incoming edges, labels radial when the ring is dense; 1:1 scale fitted to at least 80%, pan and zoom |
 | `SchemaGraph` | The ontology's types and link types | Layered left to right, type glyph, name and count per node, curved directed edges with labels, back edges routed around nodes, the selected type highlighted |

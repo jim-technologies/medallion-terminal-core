@@ -141,6 +141,7 @@ export const EN_MESSAGES = {
   'ops.status.succeeded': 'Done',
   'ops.status.failed': 'Failed',
   'ops.status.cancelled': 'Cancelled',
+  'objectPage.sections': 'Object sections',
 } as const
 
 /** A key in the toolkit message catalog. */
@@ -288,6 +289,7 @@ export const ZH_CN_MESSAGES: MessageCatalog = {
   'ops.status.succeeded': '完成',
   'ops.status.failed': '失败',
   'ops.status.cancelled': '已取消',
+  'objectPage.sections': '对象分区',
 }
 
 const BUILT_IN_CATALOGS: Readonly<Record<string, MessageCatalog>> = {

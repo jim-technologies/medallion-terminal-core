@@ -116,6 +116,7 @@ const toolkitStories = {
   toolkitShellEmbedded: 'toolkit-app-productshell--embedded-page',
   toolkitShellMinimal: 'toolkit-app-productshell--without-session',
   toolkitOperationsTray: 'toolkit-app-productshell--operations-tray-states',
+  toolkitObjectPage: 'toolkit-objects-objectpage--customer-object-page',
 } as const
 
 // Widgets rebuilt on toolkit components keep themed baselines too. Their
@@ -725,6 +726,7 @@ for (const theme of ['dark', 'light'] as const) {
 // `${story}-${theme}-mobile.png` at 390 × 844, beside the desktop one.
 const mobileBaselineStories = [
   'toolkitShell',
+  'toolkitObjectPage',
 ] as const satisfies readonly (keyof typeof toolkitStories)[]
 
 for (const theme of ['dark', 'light'] as const) {

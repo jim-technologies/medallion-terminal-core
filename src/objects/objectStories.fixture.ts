@@ -3,6 +3,7 @@
  * with typed properties, its links and its activity. Names are invented;
  * nothing refers to a real organisation.
  */
+import type { ActivityItem } from './ActivityFeed'
 import type { LinkGroup, LinkItem } from './LinkPanel'
 import type { PropertyDefinition } from './PropertyPanel'
 import type { SchemaGraphRelation, SchemaGraphType } from './SchemaGraph'
@@ -175,4 +176,19 @@ export const SCHEMA_RELATIONS: SchemaGraphRelation[] = [
   { from: 'employment', to: 'customer', label: 'At' },
   { from: 'order', to: 'dataset', label: 'Recorded in' },
   { from: 'contract', to: 'order', label: 'Governs' },
+]
+
+const minutesAgo = (count: number) => STORY_NOW - count * 60_000
+
+export const CUSTOMER_ACTIVITY: ActivityItem[] = [
+  { id: 'a1', actor: { name: 'Jamie Kim' }, verb: 'updated', object: CUSTOMER, summary: 'Churn risk Healthy → Watch', timestamp: minutesAgo(18) },
+  { id: 'a2', actor: { name: 'Morgan Lee' }, verb: 'linked', object: { id: 'ctr-msa', title: 'Northstar master agreement', type: TYPES.contract, href: '#/objects/ctr-msa' }, timestamp: minutesAgo(60 * 24 * 57) },
+  { id: 'a3', actor: { name: 'Sync CRM' }, verb: 'created this object', timestamp: minutesAgo(60 * 24 * 86) },
+]
+
+export const CUSTOMER_HISTORY: ActivityItem[] = [
+  { id: 'h1', verb: 'Revision 14', summary: 'Churn risk Healthy → Watch · Jamie Kim', timestamp: '2026-09-25T16:42:00Z', tone: 'warning' },
+  { id: 'h2', verb: 'Revision 13', summary: 'Linked Northstar master agreement · Morgan Lee', timestamp: '2026-07-30T10:05:00Z', tone: 'info' },
+  { id: 'h3', verb: 'Revision 12', summary: 'Annual contract value $251,000.00 → $284,000.00 · Sync CRM', timestamp: '2026-07-01T08:00:00Z', tone: 'ok' },
+  { id: 'h4', verb: 'Created', summary: 'From gold.customer_360 · Sync CRM', timestamp: '2026-07-01T07:58:00Z', tone: 'neutral' },
 ]

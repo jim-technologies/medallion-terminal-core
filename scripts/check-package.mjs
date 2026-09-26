@@ -177,6 +177,7 @@ for (const [entry, module, names] of [
       'FilePreview',
       'CodeView',
       'planPreview',
+      'ObjectPage',
     ],
   ],
   ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
