@@ -4,6 +4,42 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-09-25
+
+Foundations for the ontology-first look across the fleet: deterministic
+visual regression, tokens v2 (slate neutrals and one azure accent), the
+`standard` density, icon set v2 with type identity, typed transport failures
+with access and session states, a product transport entry, a message catalog
+with `Intl` formatters, and a JSON payload case. The ontology components
+(`PropertyValue`, `ObjectHeader`, `DataGrid`, link panels and graphs,
+`NavRail`, `ProductShell`) follow in 0.7.0.
+
+### Migration
+
+- **Errors.** Read `useDataSource().sourceError` (a `SourceError`) instead of
+  the string `error`, which is deprecated and removed in 0.7.0. Render a
+  failure with `SourceErrorState` (or `ErrorState error={…}`) rather than its
+  message; hosts that matched on `"HTTP 403"` text should switch on `kind`.
+  Expose `X-Request-Id` through CORS so request ids reach the UI.
+- **Transport.** Pass `fetch={createProductFetch({ onUnauthenticated })}`
+  (`medallion-terminal-core/app`) to `Dashboard` or `MultiDashboard` to get
+  request ids, trace context and a session-expiry hook on backend calls.
+  Tests and stories inject a fixture transport the same way instead of
+  replacing `window.fetch`.
+- **Density and shape.** `standard` (28 px controls, 32 px rows) is the
+  default; pass `density="comfortable"` to keep the old spacing (now 32/40
+  px). `--mtc-radius-lg` is 6 px and badges are no longer pills.
+- **Strings.** Toolkit defaults come from the message catalog: pass
+  `locale` (and `messages` overrides) to `DesignSystemProvider`. Component
+  props such as `retryLabel` still win.
+- **Portals.** Render menus, trays and toasts into `usePortalContainer()`
+  so they keep the scope's theme and fonts.
+- **FileBrowser markup is not API.** Hosts that restyle or rewrite the built-in
+  widget's DOM by class name should register their own widget; the 0.7.0
+  resource table replaces that markup.
+- **Clone showcases.** `ProductShowcaseDefinition.shortName` is now
+  `displayName`, a neutral name.
+
 ### Added
 
 - **Vendored fonts.** Inter 4.1 and JetBrains Mono 2.304 ship as Latin and
@@ -152,7 +188,6 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   commit subject names the example dashboard in a spelling the content rule
   does not cover; `.public-surface-allow` gains a `COMMIT` exception pinned
   to that one exact subject line instead of a rewrite of published history.
-
 - **Icons draw 1.75-unit strokes** (was 1.8) and every glyph is one path;
   `Icon` accepts a `strokeWidth` override (TypeGlyph uses 2 at 16 and
   20 px).
