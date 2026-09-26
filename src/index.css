@@ -2,6 +2,8 @@
 @layer theme, base, utilities;
 @import "tailwindcss/theme" layer(theme);
 @import "tailwindcss/utilities" layer(utilities);
+@import "./styles/display.css";
+@import "./styles/objects.css";
 
 /* Product-faithful Storybook showcases use isolated authored CSS. Keep their
    prose and presentation tokens out of Tailwind's published-library scan.

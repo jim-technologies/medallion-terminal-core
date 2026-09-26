@@ -2,6 +2,7 @@ import './index.css';
 export * from './foundations';
 export * from './components';
 export * from './workbench';
+export * from './objects';
 export { Dashboard } from './core/Dashboard';
 export type { DashboardProps, DashboardTemplateTrust, DashboardTheme } from './core/Dashboard';
 export { MultiDashboard, useTabFromUrl } from './core/MultiDashboard';
@@ -97,7 +98,7 @@ export type { ConversationMessageKind, ConversationParticipantData, Conversation
 export type { AssetCatalogData, AssetCatalogItem, ObjectData, ObjectProperty, ObjectLink, ObjectAction, GraphData, GraphNodeData, GraphEdgeData, RepositoryData, RepositoryEntryData, RepositoryEntryKind, RepositoryFileData, } from './widgets/platformShapes';
 export { WidgetShell } from './widgets/WidgetShell';
 export { Placeholder } from './widgets/Placeholder';
-export { Skeleton, Empty } from './widgets/states';
+export { WidgetSkeleton, Empty } from './widgets/states';
 export { SEMANTIC, PALETTE, resolveColor } from './widgets/colors';
 export { abbreviateAxis, formatCompact, formatStat, formatTimestamp, formatPercent, formatCurrency, formatBps } from './widgets/format';
 export { HoverContext, HoverProvider, useHover } from './core/HoverContext';

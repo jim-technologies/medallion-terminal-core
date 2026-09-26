@@ -26,4 +26,4 @@ export {
   formatRelativeTime,
 } from './intl'
 export type { DateInput, DateTimeOptions, LocaleOptions } from './intl'
-export type { ComponentSize, Density, Intent, PresentationTheme } from './types'
+export type { ComponentSize, Density, Intent, PresentationTheme, StatusTone } from './types'

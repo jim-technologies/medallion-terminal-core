@@ -79,6 +79,14 @@ const toolkitStories = {
   toolkitTableViewer: 'toolkit-compositions-workbenches--database-table-viewer',
   toolkitScopedRegistry: 'toolkit-integration-hostbridge--scoped-widget-registry',
   toolkitHostIntent: 'toolkit-integration-hostbridge--host-intent-emission',
+  toolkitStatusKeys: 'toolkit-components-display--status-keys-and-avatars',
+  toolkitSkeletonCopy: 'toolkit-components-display--skeletons-and-copy',
+  toolkitPanel: 'toolkit-components-display--panel-frame',
+  toolkitPropertyValues: 'toolkit-objects-propertyvalue--every-kind',
+  toolkitPropertyPanel: 'toolkit-objects-propertypanel--grouped-and-filterable',
+  toolkitObjectHeader: 'toolkit-objects-objectheader--object-page-header',
+  toolkitInspectorHeader: 'toolkit-objects-objectheader--inspector-header',
+  toolkitObjectChips: 'toolkit-objects-objectheader--chips-and-hover-cards',
 } as const
 
 const stories = {
@@ -544,6 +552,23 @@ for (const name of themeInvariantToolkitStories) {
     const root = await openStory(page, toolkitStories[name], { pinClock: true })
     await expectBaseline(root, name)
   })
+}
+
+// Density matters for these surfaces: they also keep a compact baseline in
+// each theme, `${story}-${theme}-compact.png`, beside the standard one. The
+// compact text must equal the standard text snapshot.
+const compactToolkitStories = [
+  'toolkitPropertyPanel',
+] as const satisfies readonly (keyof typeof toolkitStories)[]
+
+for (const theme of ['dark', 'light'] as const) {
+  for (const name of compactToolkitStories) {
+    test(`${name} ${theme} compact visual baseline`, async ({ page }) => {
+      const root = await openStory(page, toolkitStories[name], { theme, density: 'compact', pinClock: true })
+      await expect(root).toHaveScreenshot(`${name}-${theme}-compact.png`)
+      await expectAriaBaseline(root, name)
+    })
+  }
 }
 
 // Themed surfaces: `${story}-${theme}.png` in dark and light. The text must

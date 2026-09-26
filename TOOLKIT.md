@@ -204,6 +204,41 @@ and restore the previously focused element. Menus use roving focus. Tooltips
 are associated with their focusable trigger through `aria-describedby`.
 Popover and menu document listeners exist only while their layer is open.
 
+### Display primitives
+
+- `StatusBadge`: status dot plus label (`tone`: `ok`, `warning`,
+  `danger`, `info`, `neutral`).
+- `Kbd`: a keyboard key or shortcut hint.
+- `Avatar`: initials (or an image) for a person or service; `initialsOf`
+  derives the initials.
+- `Skeleton`: a line, block, circle or paragraph placeholder.
+- `CopyButton`: copies a value; inject `clipboard` in tests.
+- `MetaRow`: a wrapping row of muted metadata items.
+- `Panel`: titled, bordered content frame with header actions and footer.
+- `HoverCard`: a non-modal preview on hover and focus, portalled into the
+  scope so it keeps the theme and escapes clipping ancestors.
+
+### Object components
+
+The ontology anatomy: an object has a type (`ObjectTypeRef`: label, icon,
+colour slot, with `typePresentation` resolving the fallbacks) and is
+referenced by an `ObjectRef` (id, title, type, `href`).
+
+- `PropertyValue`: one value rendered by its kind (`string`, `id`, `code`,
+  `number`, `integer`, `currency`, `percent`, `date`, `datetime`, `boolean`,
+  `enum`, `list`, `object`, `link`, `url`, `email`); `context="grid"` keeps
+  one compact line. `formatPropertyText`, `propertySortKey` and
+  `compareSortKeys` give the same value as text and as a sort key.
+- `PropertyPanel`: grouped `PropertyDefinition`s in a `Panel` with a
+  filter and an "n of m" count.
+- `ObjectHeader`: glyph, type eyebrow, monospace id with copy, title, status,
+  metadata and actions; `compact` for inspectors and hover cards.
+- `ObjectChip`: an inline object reference (link, button or text), with an
+  optional `hoverCard`.
+
+`PropertyList` renders its values through `PropertyValue` as well, and its
+items accept `kind` and `format`.
+
 ### Workbench
 
 - `AppSurface`: neutral application canvas.

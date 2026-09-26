@@ -124,7 +124,7 @@ describe('design-system foundations', () => {
     expect(html).toContain('Symbol(private)')
   })
 
-  it('renders property values as text, keeping JSON for structured values only', () => {
+  it('renders property values through PropertyValue: chips, Yes/No, disclosures, never JSON', () => {
     const html = renderToStaticMarkup(
       <DesignSystemProvider>
         <PropertyList
@@ -139,11 +139,12 @@ describe('design-system foundations', () => {
       </DesignSystemProvider>,
     )
 
-    expect(html).toContain('<dd>US-West, EU-Central</dd>')
-    expect(html).toContain('<dd>Yes, No</dd>')
-    expect(html).toContain('<dd>—</dd>')
-    expect(html).toContain('<dd><code>{&quot;id&quot;:&quot;u_7&quot;,&quot;name&quot;:&quot;Ada&quot;}</code></dd>')
-    expect(html).toContain('<dd>Enterprise</dd>')
+    expect(html).toContain('<span>US-West</span></span><span class="mtc-tag mtc-value-chip" data-intent="neutral" data-size="small"><span>EU-Central</span>')
+    expect(html).toContain('<span>Yes</span></span><span class="mtc-tag mtc-value-chip" data-intent="neutral" data-size="small"><span>No</span>')
+    expect(html).toContain('<dd><span class="mtc-value-empty">—</span></dd>')
+    expect(html).toContain('<summary>2 fields</summary>')
+    expect(html).not.toContain('&quot;u_7&quot;')
+    expect(html).toContain('<span class="mtc-value-text" data-context="panel">Enterprise</span>')
   })
 
   it('renders no portal host during server rendering', () => {

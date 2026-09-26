@@ -1,0 +1,45 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "Grouped and filterable" [level=1]
+  - paragraph: An object's properties grouped under muted labels, each value typed by PropertyValue. The header counts what the filter shows.
+  - region "Grouped and filterable component example":
+    - region "Properties":
+      - heading "Properties" [level=2]
+      - text: 12 of 12
+      - button "Filter properties"
+      - group "Identity":
+        - term: Customer ID
+        - definition:
+          - code: CUS-01842
+          - button "Copy"
+          - status
+        - term: Legal name
+        - definition: Northstar Laboratories, Inc.
+        - term: Website
+        - definition:
+          - link "northstar.example (opens in a new tab)":
+            - /url: https://northstar.example/
+      - group "Commercial":
+        - term: Segment
+        - definition: Enterprise
+        - term: Annual contract value
+        - definition: $284,000.00USD
+        - term: Churn risk
+        - definition: Watch
+        - term: Churn probability
+        - definition: 18.0%
+        - term: Health score
+        - definition: "92"
+        - term: Renewal date
+        - definition:
+          - time: Oct 18, 2026
+          - text: in 23 days
+        - term: Regions
+        - definition: North America EU-Central
+        - term: Design partner
+        - definition: "Yes"
+        - term: Account owner
+        - definition:
+          - link "Ada Morgan":
+            - /url: "#/objects/per-ada-morgan"
+  - text: Theme and density inherit from the scoped toolkit root.

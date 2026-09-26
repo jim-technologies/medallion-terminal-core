@@ -47,6 +47,20 @@ export const EN_MESSAGES = {
   'state.stale.description': 'Last updated {time}.',
   'state.stale.generic': 'This view has not refreshed recently.',
   'state.stale.action': 'Refresh',
+  'copy.label': 'Copy',
+  'copy.copied': 'Copied',
+  'value.yes': 'Yes',
+  'value.no': 'No',
+  'value.more': '+{count}',
+  'value.moreTitle': '{count} more: {items}',
+  'value.fields': '{count} fields',
+  'value.newTab': '(opens in a new tab)',
+  'panel.filter': 'Filter',
+  'propertyPanel.title': 'Properties',
+  'propertyPanel.count': '{shown} of {total}',
+  'propertyPanel.filter': 'Filter properties',
+  'propertyPanel.noMatch': 'No properties match “{query}”',
+  'objectHeader.copyId': 'Copy ID',
 } as const
 
 /** A key in the toolkit message catalog. */
@@ -100,6 +114,20 @@ export const ZH_CN_MESSAGES: MessageCatalog = {
   'state.stale.description': '最后更新于{time}。',
   'state.stale.generic': '此视图最近没有刷新。',
   'state.stale.action': '刷新',
+  'copy.label': '复制',
+  'copy.copied': '已复制',
+  'value.yes': '是',
+  'value.no': '否',
+  'value.more': '+{count}',
+  'value.moreTitle': '另外 {count} 项：{items}',
+  'value.fields': '{count} 个字段',
+  'value.newTab': '（在新标签页中打开）',
+  'panel.filter': '筛选',
+  'propertyPanel.title': '属性',
+  'propertyPanel.count': '{shown} / {total}',
+  'propertyPanel.filter': '筛选属性',
+  'propertyPanel.noMatch': '没有与“{query}”匹配的属性',
+  'objectHeader.copyId': '复制 ID',
 }
 
 const BUILT_IN_CATALOGS: Readonly<Record<string, MessageCatalog>> = {

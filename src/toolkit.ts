@@ -7,6 +7,7 @@
 export * from './foundations'
 export * from './components'
 export * from './workbench'
+export * from './objects'
 // Typed failures that ErrorState and the access/session states render.
 export {
   SourceError,

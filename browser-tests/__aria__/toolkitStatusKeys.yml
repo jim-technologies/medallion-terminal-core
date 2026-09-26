@@ -1,0 +1,23 @@
+- main:
+  - text: Toolkit · Display
+  - heading "StatusBadge, Kbd, Avatar & MetaRow" [level=1]
+  - paragraph: "Small display primitives shared by object pages, grids and product shells: status, keys, avatars, loading placeholders, copy actions, metadata rows and panels."
+  - region "StatusBadge, Kbd, Avatar & MetaRow component example":
+    - region "Status tones": Active Needs review Failed Running Cancelled Healthy
+    - region "Keyboard hints":
+      - paragraph: Search with Ctrl K , focus the filter with / , close with Esc .
+    - region "Avatars":
+      - img "Jamie Kim"
+      - img "Morgan Lee"
+      - img "Sync CRM"
+      - img "Ada Morgan"
+      - text: Daniel Reyes
+    - region "Metadata":
+      - list:
+        - listitem: Updated 18 min ago by Jamie Kim
+        - listitem: Revision 14
+        - listitem:
+          - text: Source
+          - link "gold.customer_360":
+            - /url: "#/datasets/customer_360"
+  - text: Theme and density inherit from the scoped toolkit root.

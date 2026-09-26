@@ -3,9 +3,9 @@
 - term: Active
 - definition: "Yes"
 - term: Owners
-- definition: Jun, Finance
+- definition: Jun Finance
 - term: Configuration
 - definition:
-  - code: "{\"horizon\":90,\"currency\":\"USD\"}"
+  - group: 2 fields
 - term: Description
 - definition: —

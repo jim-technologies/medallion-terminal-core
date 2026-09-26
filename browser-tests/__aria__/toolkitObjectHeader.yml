@@ -1,0 +1,20 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "Object page header" [level=1]
+  - paragraph: "The object's identity: a 40 px type glyph, the type eyebrow in the type's colour with the monospace id, the title, status and metadata. The compact variant serves inspectors and hover cards."
+  - region "Object page header component example":
+    - link "Customer":
+      - /url: "#/ontology/types/customer"
+    - code: res-customer-northstar
+    - button "Copy ID"
+    - status
+    - heading "Northstar Labs" [level=1]
+    - text: Active
+    - list:
+      - listitem: Updated 18 min ago by Jamie Kim
+      - listitem: Revision 14
+      - listitem: Source gold.customer_360
+    - button "Actions"
+    - button "Edit properties"
+    - button "More object actions"
+  - text: Theme and density inherit from the scoped toolkit root.

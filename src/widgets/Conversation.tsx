@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import type { WidgetProps } from '../types/template'
-import { Skeleton } from './states'
+import { WidgetSkeleton } from './states'
 
 // Keep transcript rendering out of the package entry until mounted. The
 // registry imports ConversationImpl directly; named-export consumers receive
@@ -11,7 +11,7 @@ const LazyConversation = lazy(() =>
 
 export function Conversation(props: WidgetProps) {
   return (
-    <Suspense fallback={<Skeleton component="conversation" />}>
+    <Suspense fallback={<WidgetSkeleton component="conversation" />}>
       <LazyConversation {...props} />
     </Suspense>
   )

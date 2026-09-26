@@ -7,6 +7,10 @@ const storyFiles = [
   '../components/Iconography.stories.tsx',
   '../components/Overlays.stories.tsx',
   '../components/Navigation.stories.tsx',
+  '../components/Display.stories.tsx',
+  '../objects/PropertyValue.stories.tsx',
+  '../objects/PropertyPanel.stories.tsx',
+  '../objects/ObjectHeader.stories.tsx',
   '../workbench/Workbench.stories.tsx',
   '../workbench/Compositions.stories.tsx',
 ].map(path => readFileSync(new URL(path, import.meta.url), 'utf8')).join('\n')
@@ -53,6 +57,17 @@ const publicComponents = [
   'RateLimitedState',
   'StaleState',
   'SourceErrorState',
+  'StatusBadge',
+  'Kbd',
+  'Avatar',
+  'Skeleton',
+  'CopyButton',
+  'MetaRow',
+  'Panel',
+  'PropertyValue',
+  'PropertyPanel',
+  'ObjectHeader',
+  'ObjectChip',
 ]
 
 describe('application toolkit Storybook coverage', () => {

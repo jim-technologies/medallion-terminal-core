@@ -47,6 +47,20 @@ export declare const EN_MESSAGES: {
     readonly 'state.stale.description': 'Last updated {time}.';
     readonly 'state.stale.generic': 'This view has not refreshed recently.';
     readonly 'state.stale.action': 'Refresh';
+    readonly 'copy.label': 'Copy';
+    readonly 'copy.copied': 'Copied';
+    readonly 'value.yes': 'Yes';
+    readonly 'value.no': 'No';
+    readonly 'value.more': '+{count}';
+    readonly 'value.moreTitle': '{count} more: {items}';
+    readonly 'value.fields': '{count} fields';
+    readonly 'value.newTab': '(opens in a new tab)';
+    readonly 'panel.filter': 'Filter';
+    readonly 'propertyPanel.title': 'Properties';
+    readonly 'propertyPanel.count': '{shown} of {total}';
+    readonly 'propertyPanel.filter': 'Filter properties';
+    readonly 'propertyPanel.noMatch': 'No properties match “{query}”';
+    readonly 'objectHeader.copyId': 'Copy ID';
 };
 /** A key in the toolkit message catalog. */
 export type MessageKey = keyof typeof EN_MESSAGES;

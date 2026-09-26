@@ -1,4 +1,4 @@
-import { type HTMLAttributes, type ReactElement, type ReactNode, type RefObject } from 'react';
+import { type CSSProperties, type HTMLAttributes, type ReactElement, type ReactNode, type RefObject } from 'react';
 import type { Intent } from '../foundations/types';
 /** Props for a text tooltip attached to one trigger. */
 export interface TooltipProps {
@@ -96,6 +96,15 @@ export interface ContextMenuProps extends Omit<HTMLAttributes<HTMLDivElement>, '
 }
 /** Pointer and Shift+F10 accessible contextual menu. */
 export declare const ContextMenu: import("react").ForwardRefExoticComponent<ContextMenuProps & import("react").RefAttributes<HTMLDivElement>>;
+export interface MenuPopupProps {
+    label: string;
+    items: readonly MenuItem[];
+    initialIndex: number;
+    onClose: (restoreFocus?: boolean) => void;
+    align?: 'start' | 'end';
+    style?: CSSProperties;
+}
+export declare function MenuPopup({ label, items, initialIndex, onClose, align, style, }: MenuPopupProps): import("react").JSX.Element;
 /** Props shared by modal dialog surfaces. */
 export interface DialogProps {
     /** Controlled visibility. */
@@ -130,3 +139,4 @@ export interface DrawerProps extends Omit<DialogProps, 'size'> {
 }
 /** Modal drawer with the same keyboard and focus contract as Dialog. */
 export declare const Drawer: import("react").ForwardRefExoticComponent<DrawerProps & import("react").RefAttributes<HTMLDivElement>>;
+export declare function useDismissableLayer(open: boolean, rootRef: RefObject<HTMLElement | null>, close: () => void): void;

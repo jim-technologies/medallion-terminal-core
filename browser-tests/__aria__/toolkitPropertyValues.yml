@@ -1,0 +1,130 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "Every kind" [level=1]
+  - paragraph: A value's kind decides its font, alignment, format and affordance. Panels add secondary detail (currency code, relative time, copy); grid cells keep one line.
+  - region "Every kind component example":
+    - table "Property kinds rendered in panels and grids":
+      - caption: Property kinds rendered in panels and grids
+      - rowgroup:
+        - row "Kind Panel Grid cell":
+          - columnheader "Kind"
+          - columnheader "Panel"
+          - columnheader "Grid cell"
+      - rowgroup:
+        - row "string Northstar Laboratories, Inc. Northstar Laboratories, Inc.":
+          - rowheader "string"
+          - cell "Northstar Laboratories, Inc."
+          - cell "Northstar Laboratories, Inc."
+        - row "string (long) Enterprise customer assembled from the CRM, billing, product usage and support systems; renewal negotiations open in October with an expansion into two new regions. Enterprise customer assembled from the CRM, billing, product usage and support systems; renewal negotiations open in October with an expansion into two new regions.":
+          - rowheader "string (long)"
+          - cell "Enterprise customer assembled from the CRM, billing, product usage and support systems; renewal negotiations open in October with an expansion into two new regions."
+          - cell "Enterprise customer assembled from the CRM, billing, product usage and support systems; renewal negotiations open in October with an expansion into two new regions."
+        - row "id CUS-01842 Copy CUS-01842":
+          - rowheader "id"
+          - cell "CUS-01842 Copy":
+            - code: CUS-01842
+            - button "Copy"
+            - status
+          - cell "CUS-01842":
+            - code: CUS-01842
+        - row "code sha256:9f2c41e0a7 Copy sha256:9f2c41e0a7":
+          - rowheader "code"
+          - cell "sha256:9f2c41e0a7 Copy":
+            - code: sha256:9f2c41e0a7
+            - button "Copy"
+            - status
+          - cell "sha256:9f2c41e0a7":
+            - code: sha256:9f2c41e0a7
+        - row "number 1,234,567.891 1,234,567.891":
+          - rowheader "number"
+          - cell "1,234,567.891"
+          - cell "1,234,567.891"
+        - row "integer 48,210 48,210":
+          - rowheader "integer"
+          - cell "48,210"
+          - cell "48,210"
+        - row "currency:USD $284,000.00USD $284,000.00":
+          - rowheader "currency:USD"
+          - cell "$284,000.00USD"
+          - cell "$284,000.00"
+        - row "currency:EUR €9,815.50EUR €9,815.50":
+          - rowheader "currency:EUR"
+          - cell "€9,815.50EUR"
+          - cell "€9,815.50"
+        - row "percent 18.0% 18.0%":
+          - rowheader "percent"
+          - cell "18.0%"
+          - cell "18.0%"
+        - row "date Oct 18, 2026 in 23 days Oct 18, 2026":
+          - rowheader "date"
+          - cell "Oct 18, 2026 in 23 days":
+            - time: Oct 18, 2026
+            - text: in 23 days
+          - cell "Oct 18, 2026":
+            - time: Oct 18, 2026
+        - row "datetime Sep 25, 2026, 8:42 AM 1 hour ago Sep 25, 2026, 8:42 AM":
+          - rowheader "datetime"
+          - cell "Sep 25, 2026, 8:42 AM 1 hour ago":
+            - time: Sep 25, 2026, 8:42 AM
+            - text: 1 hour ago
+          - cell "Sep 25, 2026, 8:42 AM":
+            - time: Sep 25, 2026, 8:42 AM
+        - row "boolean Yes Yes":
+          - rowheader "boolean"
+          - cell "Yes"
+          - cell "Yes"
+        - row "boolean (false) No No":
+          - rowheader "boolean (false)"
+          - cell "No"
+          - cell "No"
+        - row "enum Enterprise Enterprise":
+          - rowheader "enum"
+          - cell "Enterprise"
+          - cell "Enterprise"
+        - row "enum (tone) Churned Churned":
+          - rowheader "enum (tone)"
+          - cell "Churned"
+          - cell "Churned"
+        - row "list North America EU-Central APAC +2 North America EU-Central +3":
+          - rowheader "list"
+          - cell "North America EU-Central APAC +2"
+          - cell "North America EU-Central +3"
+        - row "link Ada Morgan Ada Morgan":
+          - rowheader "link"
+          - cell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+          - cell "Ada Morgan":
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+        - row "url northstar.example/docs (opens in a new tab) northstar.example/docs (opens in a new tab)":
+          - rowheader "url"
+          - cell "northstar.example/docs (opens in a new tab)":
+            - link "northstar.example/docs (opens in a new tab)":
+              - /url: https://northstar.example/docs
+          - cell "northstar.example/docs (opens in a new tab)":
+            - link "northstar.example/docs (opens in a new tab)":
+              - /url: https://northstar.example/docs
+        - row "url (not http) javascript:alert(1) javascript:alert(1)":
+          - rowheader "url (not http)"
+          - cell "javascript:alert(1)"
+          - cell "javascript:alert(1)"
+        - row "email ada.morgan@northstar.example ada.morgan@northstar.example":
+          - rowheader "email"
+          - cell "ada.morgan@northstar.example":
+            - link "ada.morgan@northstar.example":
+              - /url: mailto:ada.morgan@northstar.example
+          - cell "ada.morgan@northstar.example":
+            - link "ada.morgan@northstar.example":
+              - /url: mailto:ada.morgan@northstar.example
+        - row "object":
+          - rowheader "object"
+          - cell:
+            - group: 3 fields
+          - cell:
+            - group: 3 fields
+        - row "empty — —":
+          - rowheader "empty"
+          - cell "—"
+          - cell "—"
+  - text: Theme and density inherit from the scoped toolkit root.

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Skeleton, ErrorState } from './states'
+import { WidgetSkeleton, ErrorState } from './states'
 
-const meta: Meta<typeof Skeleton> = {
+const meta: Meta<typeof WidgetSkeleton> = {
   title: 'Widgets/States',
-  component: Skeleton,
+  component: WidgetSkeleton,
   decorators: [
     (Story) => (
       <div style={{ height: 320, width: 460, margin: 16, background: 'var(--mtc-surface)', border: '1px solid var(--mtc-border)', padding: 16, borderRadius: 'var(--mtc-radius-md)' }}>
@@ -13,7 +13,7 @@ const meta: Meta<typeof Skeleton> = {
   ],
 }
 export default meta
-type Story = StoryObj<typeof Skeleton>
+type Story = StoryObj<typeof WidgetSkeleton>
 
 export const ChartLoading: Story = { name: 'Loading — chart',  args: { component: 'timeseries' } }
 export const TableLoading: Story = { name: 'Loading — table',  args: { component: 'table' } }

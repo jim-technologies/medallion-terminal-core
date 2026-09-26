@@ -4,4 +4,4 @@ export { EN_MESSAGES, ZH_CN_MESSAGES, builtInMessages, formatMessage, } from './
 export type { MessageCatalog, MessageKey, MessageValues } from './messages';
 export { formatBytes, formatDateTime, formatDuration, formatNumber, formatRelativeTime, } from './intl';
 export type { DateInput, DateTimeOptions, LocaleOptions } from './intl';
-export type { ComponentSize, Density, Intent, PresentationTheme } from './types';
+export type { ComponentSize, Density, Intent, PresentationTheme, StatusTone } from './types';

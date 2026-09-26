@@ -7,7 +7,7 @@ import { resolveSource, interpolate } from '../core/resolveSource'
 import { useNow } from '../core/NowContext'
 import { evaluateAlert } from '../core/alerts'
 import { playAlertBeep } from '../core/sound'
-import { Skeleton, ErrorState } from './states'
+import { WidgetSkeleton, ErrorState } from './states'
 import { SourceErrorState } from '../workbench/States'
 import { downloadView, viewRowCount, type ExportFormat } from '../export/exportView'
 import { EXPORT_FORMATS } from '../export/serializers'
@@ -44,13 +44,13 @@ function renderBody(args: {
   // resolution errors aren't fixed by re-fetching, but a stream/poll
   // failure might be transient.
   if (resolution.error) return <ErrorState message={resolution.error} />
-  if (loading) return <Skeleton component={component} />
+  if (loading) return <WidgetSkeleton component={component} />
   // Compact states fill the widget body and scroll rather than clip.
   if (error) return <SourceErrorState error={error} onRetry={onRetry} compact className="h-full" />
   return (
     <div className="h-full motion-safe:animate-[fadeIn_200ms_ease-out]">
       <ErrorBoundary onError={onRenderError}>
-        <Suspense fallback={<Skeleton component={component} />}>
+        <Suspense fallback={<WidgetSkeleton component={component} />}>
           <Component data={data} options={options} widgetId={widgetId} />
         </Suspense>
       </ErrorBoundary>

@@ -7,6 +7,10 @@ export type { ButtonGroupProps, ButtonProps, ButtonVariant, IconButtonProps, } f
 export { Checkbox, Combobox, FormField, Input, Radio, Switch, TextArea, } from './FormControls';
 export type { CheckboxProps, ComboboxOption, ComboboxProps, FormFieldProps, InputProps, RadioProps, SwitchProps, TextAreaProps, } from './FormControls';
 export { Badge, Callout, Tag } from './Feedback';
+export { Avatar, CopyButton, Kbd, MetaRow, Panel, Skeleton, StatusBadge, initialsOf, } from './Display';
+export type { AvatarProps, AvatarSize, ClipboardWriter, CopyButtonProps, KbdProps, MetaRowProps, PanelProps, SkeletonProps, StatusBadgeProps, } from './Display';
+export { HoverCard } from './HoverCard';
+export type { HoverCardProps } from './HoverCard';
 export type { BadgeProps, CalloutProps, TagProps } from './Feedback';
 export { ContextMenu, Dialog, Drawer, Menu, Popover, Tooltip, } from './Overlays';
 export type { ContextMenuProps, DialogProps, DrawerProps, MenuItem, MenuProps, PopoverProps, TooltipProps, } from './Overlays';

@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import type { WidgetProps } from '../types/template'
-import { Skeleton } from './states'
+import { WidgetSkeleton } from './states'
 
 // Keep the photo/video viewer out of the package entry until it is actually
 // mounted. Unlike the registry path (which imports MediaGalleryImpl directly),
@@ -12,7 +12,7 @@ const LazyMediaGallery = lazy(() =>
 
 export function MediaGallery(props: WidgetProps) {
   return (
-    <Suspense fallback={<Skeleton component="media_gallery" />}>
+    <Suspense fallback={<WidgetSkeleton component="media_gallery" />}>
       <LazyMediaGallery {...props} />
     </Suspense>
   )

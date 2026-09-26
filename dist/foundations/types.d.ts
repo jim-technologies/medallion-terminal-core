@@ -12,3 +12,8 @@ export type Density = 'compact' | 'standard' | 'comfortable';
 export type Intent = 'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
 /** Consistent control sizing independent of the active density. */
 export type ComponentSize = 'small' | 'medium' | 'large';
+/**
+ * Tone of a status: `ok`, `warning` and `danger` carry meaning, `info` marks
+ * something in progress or informational, `neutral` has no judgement.
+ */
+export type StatusTone = 'ok' | 'warning' | 'danger' | 'info' | 'neutral';

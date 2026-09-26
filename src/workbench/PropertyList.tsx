@@ -6,6 +6,8 @@ import {
 } from 'react'
 import type { Density } from '../foundations/types'
 import { cx } from '../components/utils'
+import { PropertyValue } from '../objects/PropertyValue'
+import type { PropertyKind } from '../objects/propertyFormat'
 
 /** One named value in a PropertyList. */
 export interface PropertyListItem {
@@ -17,6 +19,10 @@ export interface PropertyListItem {
   value: unknown
   /** Optional explanation shown with the property name. */
   description?: ReactNode
+  /** Presentation kind; inferred from the value when unset. */
+  kind?: PropertyKind
+  /** Kind refinement such as `currency:USD` or `datetime`. */
+  format?: string
 }
 
 /** Props for arbitrary object metadata. */
@@ -32,10 +38,10 @@ export interface PropertyListProps extends HTMLAttributes<HTMLDListElement> {
 }
 
 /**
- * Generic definition list for arbitrary host-owned metadata. Values render in
- * the sans face at the base size; lists of plain values read as a
- * comma-separated list, and only structured values fall back to monospace
- * JSON.
+ * Generic definition list for arbitrary host-owned metadata. Each value is
+ * rendered by `PropertyValue`: numbers grouped, booleans as Yes/No, lists as
+ * chips and nested objects in a disclosure, never as raw JSON. Pass `kind`
+ * or `format` on an item for typed rendering (currency, dates, ids).
  */
 export const PropertyList = forwardRef<HTMLDListElement, PropertyListProps>(function PropertyList(
   {
@@ -62,45 +68,13 @@ export const PropertyList = forwardRef<HTMLDListElement, PropertyListProps>(func
             <span>{item.label}</span>
             {item.description && <small>{item.description}</small>}
           </dt>
-          <dd>{formatPropertyValue(item.value, emptyValue)}</dd>
+          <dd>
+            {isValidElement(item.value)
+              ? item.value
+              : <PropertyValue value={item.value} kind={item.kind} format={item.format} emptyValue={emptyValue} />}
+          </dd>
         </div>
       ))}
     </dl>
   )
 })
-
-const MAX_SERIALIZED_LENGTH = 5000
-
-function isPlainValue(value: unknown): value is string | number | bigint | boolean {
-  return typeof value === 'string' || typeof value === 'number'
-    || typeof value === 'bigint' || typeof value === 'boolean'
-}
-
-function plainText(value: string | number | bigint | boolean): string {
-  if (typeof value === 'boolean') return value ? 'Yes' : 'No'
-  return String(value)
-}
-
-function formatPropertyValue(value: unknown, emptyValue: ReactNode): ReactNode {
-  if (value == null || value === '') return emptyValue
-  if (isValidElement(value)) return value
-  if (isPlainValue(value)) return plainText(value)
-  if (Array.isArray(value) && value.every(isPlainValue)) {
-    if (value.length === 0) return emptyValue
-    const joined = value.map(plainText).join(', ')
-    return joined.length > MAX_SERIALIZED_LENGTH ? `${joined.slice(0, MAX_SERIALIZED_LENGTH)}…` : joined
-  }
-  try {
-    const serialized = JSON.stringify(value)
-    if (typeof serialized !== 'string') return String(value)
-    return (
-      <code>
-        {serialized.length > MAX_SERIALIZED_LENGTH
-          ? `${serialized.slice(0, MAX_SERIALIZED_LENGTH)}…`
-          : serialized}
-      </code>
-    )
-  } catch {
-    return String(value)
-  }
-}

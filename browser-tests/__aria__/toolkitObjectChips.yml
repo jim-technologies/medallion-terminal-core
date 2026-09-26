@@ -1,0 +1,17 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "ObjectChip & HoverCard" [level=1]
+  - paragraph: "The object's identity: a 40 px type glyph, the type eyebrow in the type's colour with the monospace id, the title, status and metadata. The compact variant serves inspectors and hover cards."
+  - region "ObjectChip & HoverCard component example":
+    - paragraph:
+      - text: Account owner
+      - link "Ada Morgan":
+        - /url: "#/objects/per-ada-morgan"
+    - paragraph:
+      - text: "Links:"
+      - link "Northstar Labs":
+        - /url: "#/objects/res-customer-northstar"
+      - link "ORD-4481":
+        - /url: "#/objects/ord-4481"
+      - text: Northstar master agreement
+  - text: Theme and density inherit from the scoped toolkit root.

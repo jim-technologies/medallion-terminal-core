@@ -1,0 +1,18 @@
+- main:
+  - text: Toolkit · Display
+  - heading "Panel" [level=1]
+  - paragraph: "Small display primitives shared by object pages, grids and product shells: status, keys, avatars, loading placeholders, copy actions, metadata rows and panels."
+  - region "Panel component example":
+    - region "Recent syncs":
+      - heading "Recent syncs" [level=2]
+      - text: 3 runs
+      - button "Refresh syncs"
+      - list:
+        - listitem: CRM accounts Succeeded
+        - listitem: Billing invoices Succeeded
+        - listitem: Support tickets Succeeded
+    - region "Notes":
+      - heading "Notes" [level=2]
+      - paragraph: "Panels are flat: a 1 px border, a 36 px header, and no shadow. Elevation belongs to overlays."
+      - button "Add note"
+  - text: Theme and density inherit from the scoped toolkit root.

@@ -178,6 +178,41 @@ for status.
 - Products never ship a second icon system, and no glyph reproduces another
   product's icons or logo.
 
+## Component inventory
+
+Every component below lives in the toolkit (`medallion-terminal-core/toolkit`),
+is routing-agnostic (an `href` plus an optional `onNavigate` for a plain click,
+so new-tab and copy-link keep working), takes its strings from the message
+catalog with prop overrides, and has dark and light baselines with exact text
+snapshots.
+
+| Component | Use | Rules |
+|---|---|---|
+| `StatusBadge` | An object's or run's status | Dot plus label; tone `ok`, `warning`, `danger`, `info` or `neutral`; never colour alone |
+| `Kbd` | Keyboard hints (`Ctrl K`, `/`) | 11 px, bordered; the only uppercase allowed is a key's own name |
+| `Avatar` | People and services in feeds and menus | Initials on the quiet fill (24 or 32 px); decorative beside a visible name |
+| `Skeleton` | Loading placeholders in the content's shape | Hidden from assistive technology; announce loading on the region |
+| `CopyButton` | Ids, hashes, paths | Ghost icon button; a check and a polite "Copied" status confirm |
+| `MetaRow` | "Updated … by …", revision, source | 12 px muted, wraps, 12 px gaps |
+| `Panel` | The frame for property, link, feed and graph panels | 1 px border, 36 px header with a 14/600 title and muted count, no shadow |
+| `HoverCard` | A preview of the object behind a link | Opens on hover and focus, closes on Escape; supplementary only, never the sole path to an action |
+| `PropertyValue` | Any property value | Rendering by kind (see below); monospace only for ids and code; nothing rendered as HTML |
+| `PropertyPanel` | An object's properties | Grouped rows with 11 px muted group labels, a 160 px label column, "n of m" with a filter |
+| `ObjectHeader` | An object's identity | 40 px `TypeGlyph`, type eyebrow in the type colour, mono id with copy, 20/600 title, status and metadata; `compact` for inspectors and hover cards |
+| `ObjectChip` | Inline object references | 16 px glyph plus title; a link in the link colour when it has an `href` |
+
+**Typed values.** `PropertyValue` decides presentation from `kind` or
+`format`: strings clamp to two lines in panels and one in grids; `id` and
+`code` are monospace with a copy action in panels; numbers group and align to
+the end in grids; `currency:XXX` adds the muted code in panels; `percent`
+takes a 0–1 ratio (`18.0%`); `date` and `datetime` add relative time in
+panels (a calendar date never shifts a day across time zones); booleans are a
+check or cross with Yes or No; `enum` is a chip, or a `StatusBadge` when a
+tone is given; lists show three chips then "+N"; object references are
+`ObjectChip`s; `url` links only `http:` and `https:` (new tab, external icon);
+nested objects open in a disclosure, never as raw JSON; empty values are an
+em dash in `--mtc-muted-subtle`.
+
 ## Surface hierarchy
 
 1. Workspace canvas.

@@ -4,6 +4,40 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Added
+
+- **Display primitives**: `StatusBadge` (dot plus label, five tones),
+  `Kbd`, `Avatar` (initials, optional image; `initialsOf`), `Skeleton`
+  (line, block, circle, paragraph), `CopyButton` (injectable clipboard, a
+  polite "Copied" status), `MetaRow`, `Panel` (the flat 36 px-header frame)
+  and `HoverCard` (hover and focus, Escape, portalled into the scope).
+- **Object components**: `PropertyValue` renders a value by kind or format
+  (ids and code in monospace with copy, grouped tabular numbers, currency
+  with its code, 0–1 ratios as percentages, dates with relative time and no
+  time-zone day shift, Yes/No with an icon, enum chips and tone badges,
+  lists as chips with "+N", object references as chips, `http(s)` links
+  only, nested objects in a disclosure); `PropertyPanel` (grouped,
+  filterable, "n of m"); `ObjectHeader` (40 px glyph, type eyebrow in the
+  type colour, monospace id with copy, title, status, metadata, actions;
+  `compact` for inspectors); `ObjectChip` (link, button or text, optional
+  hover card). Shared types `ObjectRef`, `ObjectTypeRef`, `PropertyKind`
+  and helpers `typePresentation`, `isObjectRef`, `resolvePropertyKind`,
+  `formatPropertyText`, `propertySortKey`, `compareSortKeys`.
+- `StatusTone` type; message keys for copy, values and property panels (en
+  and zh-CN).
+- Baselines (dark, light, and compact for the property panel) and exact
+  text snapshots for every new story.
+
+### Changed
+
+- `PropertyList` renders values through `PropertyValue`: numbers are
+  grouped, booleans read Yes/No with an icon, lists are chips and nested
+  objects open in a disclosure instead of printing JSON. Items accept
+  `kind` and `format`.
+- The root entry's archetype placeholder for loading widgets is now
+  `WidgetSkeleton`; `Skeleton` is the toolkit placeholder.
+- Declarations exclude every `*.fixture.ts`.
+
 ## [0.6.0] — 2026-09-25
 
 Foundations for the ontology-first look across the fleet: deterministic

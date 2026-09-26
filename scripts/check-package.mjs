@@ -147,6 +147,18 @@ for (const [entry, module, names] of [
       'useMessage',
       'ZH_CN_MESSAGES',
       'formatDateTime',
+      'StatusBadge',
+      'Kbd',
+      'Avatar',
+      'Skeleton',
+      'CopyButton',
+      'MetaRow',
+      'Panel',
+      'HoverCard',
+      'PropertyValue',
+      'PropertyPanel',
+      'ObjectHeader',
+      'ObjectChip',
     ],
   ],
   ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
@@ -193,6 +205,10 @@ for (const name of [
   'TerminalIntent',
   'WidgetRegistry',
   'FileBrowserEntry',
+  'PropertyValueProps',
+  'PropertyDefinition',
+  'ObjectHeaderProps',
+  'ObjectRef',
 ]) {
   if (!new RegExp(`\\b${name}\\b`).test(declarations)) {
     throw new Error(`Published declarations are missing ${JSON.stringify(name)}`)
@@ -250,10 +266,11 @@ const budgets = [
   {
     // 0.6.0 spent the old 18 KiB on tokens v2 (twelve type slots, status
     // tints, four themes) and the vendored @font-face rules; typed error
-    // states add their disclosure styles on top.
+    // states add their disclosure styles on top. 0.7.0 adds the display
+    // primitives and the object components (typed values, panels, headers).
     label: 'library styles',
     path: path.resolve(root, packageJson.exports['./styles']),
-    maxGzipBytes: 19 * 1024,
+    maxGzipBytes: 20 * 1024,
   },
 ]
 

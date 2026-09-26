@@ -1,0 +1,13 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "Compact (inspector)" [level=1]
+  - paragraph: "The object's identity: a 40 px type glyph, the type eyebrow in the type's colour with the monospace id, the title, status and metadata. The compact variant serves inspectors and hover cards."
+  - region "Compact (inspector) component example":
+    - text: Customer
+    - code: CUS-01842
+    - button "Copy ID"
+    - status
+    - heading "Northstar Labs" [level=2]
+    - text: Active
+    - button "Open object"
+  - text: Theme and density inherit from the scoped toolkit root.

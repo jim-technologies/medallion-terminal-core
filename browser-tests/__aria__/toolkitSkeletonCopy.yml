@@ -1,0 +1,14 @@
+- main:
+  - text: Toolkit · Display
+  - heading "Skeleton & CopyButton" [level=1]
+  - paragraph: "Small display primitives shared by object pages, grids and product shells: status, keys, avatars, loading placeholders, copy actions, metadata rows and panels."
+  - region "Skeleton & CopyButton component example":
+    - region "Loading placeholders"
+    - region "Copy actions":
+      - code: sha256:9f2c41e0a7
+      - button "Copy hash"
+      - status
+      - code: res-customer-northstar
+      - button "Copy object ID"
+      - status
+  - text: Theme and density inherit from the scoped toolkit root.

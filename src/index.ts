@@ -5,6 +5,7 @@ import './index.css'
 export * from './foundations'
 export * from './components'
 export * from './workbench'
+export * from './objects'
 
 // Core
 export { Dashboard } from './core/Dashboard'
@@ -283,7 +284,7 @@ export type {
 } from './widgets/platformShapes'
 export { WidgetShell } from './widgets/WidgetShell'
 export { Placeholder } from './widgets/Placeholder'
-export { Skeleton, Empty } from './widgets/states'
+export { WidgetSkeleton, Empty } from './widgets/states'
 export { SEMANTIC, PALETTE, resolveColor } from './widgets/colors'
 export { abbreviateAxis, formatCompact, formatStat, formatTimestamp, formatPercent, formatCurrency, formatBps } from './widgets/format'
 export { HoverContext, HoverProvider, useHover } from './core/HoverContext'

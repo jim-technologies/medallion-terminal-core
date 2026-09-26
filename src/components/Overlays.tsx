@@ -369,7 +369,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(function
   )
 })
 
-interface MenuPopupProps {
+export interface MenuPopupProps {
   label: string
   items: readonly MenuItem[]
   initialIndex: number
@@ -378,7 +378,7 @@ interface MenuPopupProps {
   style?: CSSProperties
 }
 
-function MenuPopup({
+export function MenuPopup({
   label,
   items,
   initialIndex,
@@ -624,7 +624,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
   )
 })
 
-function useDismissableLayer(
+export function useDismissableLayer(
   open: boolean,
   rootRef: RefObject<HTMLElement | null>,
   close: () => void,

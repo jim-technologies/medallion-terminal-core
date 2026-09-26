@@ -1,5 +1,5 @@
 import { ErrorState as WorkbenchErrorState } from '../workbench/States';
-export declare function Skeleton({ component }: {
+export declare function WidgetSkeleton({ component }: {
     component?: string;
 }): import("react").JSX.Element;
 export declare function Empty({ children, padded }: {

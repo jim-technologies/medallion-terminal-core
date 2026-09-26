@@ -24,11 +24,12 @@ const checks = [
   {
     // 0.6.0 moved product states into the toolkit: typed SourceError, the
     // access/session/freshness states, and the en + zh-CN message catalog
-    // with Intl formatters (~4.7 KiB together). Still no chart, map, media
-    // or dashboard code.
+    // with Intl formatters (~4.7 KiB together). 0.7.0 adds the object
+    // components (typed values, panels, headers, chips). Still no chart,
+    // map, media or dashboard code.
     label: 'toolkit',
     entry: path.join(root, 'dist/toolkit.js'),
-    maxStaticGzipBytes: 20 * 1024,
+    maxStaticGzipBytes: 24 * 1024,
     requireDynamicImport: false,
   },
   {

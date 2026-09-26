@@ -61,7 +61,7 @@ const ARCHETYPE: Record<string, string> = {
   file_browser: 'table',
 }
 
-export function Skeleton({ component }: { component?: string }) {
+export function WidgetSkeleton({ component }: { component?: string }) {
   switch (component ? ARCHETYPE[component] : 'block') {
     case 'chart':  return <ChartSkeleton />
     case 'table':  return <TableSkeleton />
