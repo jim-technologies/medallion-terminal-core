@@ -202,10 +202,15 @@ async function openStory(page: Page, id: string, { theme = 'dark', density, pinC
   // A story's play function runs after the first render; compare and
   // interact only once it has finished, so a baseline never captures a
   // half-played story.
+  // The preview's "preparing" overlay must be gone too: a page screenshot
+  // taken under it records a spinner instead of the story.
   await page.waitForFunction(() => {
     const preview = (window as unknown as { __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } } }).__STORYBOOK_PREVIEW__
     const phase = preview?.currentRender?.phase
-    return !phase || ['played', 'completing', 'completed', 'afterEach', 'finished', 'errored', 'aborted'].includes(phase)
+    return phase !== undefined
+      && ['played', 'completing', 'completed', 'afterEach', 'finished', 'errored', 'aborted'].includes(phase)
+      && document.body.classList.contains('sb-show-main')
+      && !document.body.classList.contains('sb-show-preparing-story')
   })
   expect(errors, `browser errors in ${id}`).toEqual([])
   // A dev server under load can serve its "failed to load the preview"
