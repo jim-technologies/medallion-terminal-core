@@ -107,7 +107,7 @@ Use the narrowest public entry for each surface:
 | `medallion-terminal-core/toolkit` | Controls and workbench composition without Dashboard |
 | `medallion-terminal-core/dashboard` | Dashboard, widget registry, templates, and host intents |
 | `medallion-terminal-core/asset-open` | Asset resolver, renderer, and application-frame contracts |
-| `medallion-terminal-core/app` | Product transport: `createProductFetch`, `ensureOk`, `SourceError` (no React) |
+| `medallion-terminal-core/app` | Product UIs: `ProductShell` with its session, router, telemetry and embed ports, the typed history router, `OperationsTray`, and the product transport (`createProductFetch`, `ensureOk`, `SourceError`) |
 | `medallion-terminal-core` | Backward-compatible combined SDK |
 
 Built-in widgets and host-registered `React.lazy` applications retain dynamic

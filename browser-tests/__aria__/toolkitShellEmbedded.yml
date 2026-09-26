@@ -1,0 +1,43 @@
+- main:
+  - navigation "Breadcrumbs":
+    - list:
+      - listitem:
+        - button "Buckets"
+      - listitem: finance
+  - heading "finance" [level=1]
+  - button "Upload"
+  - grid "Files in finance":
+    - rowgroup:
+      - row "Name Size Modified":
+        - columnheader "Name"
+        - columnheader "Size"
+        - columnheader "Modified"
+    - rowgroup:
+      - row "q3-forecast.csv 48,200 Sep 24, 2026":
+        - gridcell "q3-forecast.csv":
+          - link "q3-forecast.csv":
+            - /url: /b/finance/f/q3-forecast.csv
+        - gridcell "48,200"
+        - gridcell "Sep 24, 2026":
+          - time: Sep 24, 2026
+      - row "board-deck.pdf 2,400,000 Sep 22, 2026":
+        - gridcell "board-deck.pdf":
+          - link "board-deck.pdf":
+            - /url: /b/finance/f/board-deck.pdf
+        - gridcell "2,400,000"
+        - gridcell "Sep 22, 2026":
+          - time: Sep 22, 2026
+      - row "notes.md 3,120 Sep 21, 2026":
+        - gridcell "notes.md":
+          - link "notes.md":
+            - /url: /b/finance/f/notes.md
+        - gridcell "3,120"
+        - gridcell "Sep 21, 2026":
+          - time: Sep 21, 2026
+      - row "payroll-2026-08.xlsx 912,000 Sep 2, 2026":
+        - gridcell "payroll-2026-08.xlsx":
+          - link "payroll-2026-08.xlsx":
+            - /url: /b/finance/f/payroll-2026-08.xlsx
+        - gridcell "912,000"
+        - gridcell "Sep 2, 2026":
+          - time: Sep 2, 2026

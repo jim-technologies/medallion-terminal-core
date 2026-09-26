@@ -9,6 +9,7 @@
 @import "./styles/navigation.css";
 @import "./styles/feedback.css";
 @import "./styles/files.css";
+@import "./styles/shell.css";
 
 /* Product-faithful Storybook showcases use isolated authored CSS. Keep their
    prose and presentation tokens out of Tailwind's published-library scan.

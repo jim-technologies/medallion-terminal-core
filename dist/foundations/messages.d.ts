@@ -119,6 +119,28 @@ export declare const EN_MESSAGES: {
     readonly 'code.wrap': 'Wrap lines';
     readonly 'code.copy': 'Copy code';
     readonly 'code.truncated': 'Showing the first {shown} of {total} lines.';
+    readonly 'shell.skip': 'Skip to content';
+    readonly 'shell.menu': 'Open navigation';
+    readonly 'shell.navigation': 'Product navigation';
+    readonly 'shell.search': 'Search';
+    readonly 'shell.account': 'Account';
+    readonly 'shell.signOut': 'Sign out';
+    readonly 'ops.title': 'Operations';
+    readonly 'ops.running': '{count} running';
+    readonly 'ops.queued': '{count} queued';
+    readonly 'ops.failed': '{count} failed';
+    readonly 'ops.done': '{count} done';
+    readonly 'ops.show': 'Show operations';
+    readonly 'ops.hide': 'Hide operations';
+    readonly 'ops.cancel': 'Cancel {label}';
+    readonly 'ops.retry': 'Retry {label}';
+    readonly 'ops.dismiss': 'Dismiss {label}';
+    readonly 'ops.clear': 'Clear finished';
+    readonly 'ops.status.queued': 'Queued';
+    readonly 'ops.status.running': 'Running';
+    readonly 'ops.status.succeeded': 'Done';
+    readonly 'ops.status.failed': 'Failed';
+    readonly 'ops.status.cancelled': 'Cancelled';
 };
 /** A key in the toolkit message catalog. */
 export type MessageKey = keyof typeof EN_MESSAGES;

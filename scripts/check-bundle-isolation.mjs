@@ -35,10 +35,12 @@ const checks = [
     requireDynamicImport: false,
   },
   {
-    // Transport only: no React, no widgets, no renderer peers.
+    // The product shell and its ports plus the toolkit pieces the shell
+    // draws (nav rail, palette, toasts, dialogs, states) and the product
+    // transport. No dashboard, widget, chart, map or media code.
     label: 'app',
     entry: path.join(root, 'dist/app.js'),
-    maxStaticGzipBytes: 4 * 1024,
+    maxStaticGzipBytes: 26 * 1024,
     requireDynamicImport: false,
   },
   {

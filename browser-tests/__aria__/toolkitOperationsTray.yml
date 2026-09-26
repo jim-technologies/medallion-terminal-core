@@ -1,0 +1,27 @@
+- heading "Activity" [level=1]
+- paragraph: Uploads and ingests in this workspace.
+- region "Uploads":
+  - button "Uploads 1 running · 1 queued · 1 failed · 1 done Hide operations" [expanded]:
+    - text: Uploads 1 running · 1 queued · 1 failed · 1 done
+    - img "Hide operations"
+  - status: "payroll-2026-09.xlsx: Failed. q3-forecast.csv: Done"
+  - list:
+    - listitem:
+      - img "Running"
+      - text: board-deck-v2.pdf 1.8 of 4.2 MB · finance/
+      - progressbar "board-deck-v2.pdf"
+      - button "Cancel board-deck-v2.pdf"
+    - listitem:
+      - img "Queued"
+      - text: site-photos.zip Waiting for a free slot
+      - button "Cancel site-photos.zip"
+    - listitem:
+      - img "Failed"
+      - text: payroll-2026-09.xlsx The bucket is read-only for you.
+      - button "Retry payroll-2026-09.xlsx"
+      - button "Dismiss payroll-2026-09.xlsx"
+    - listitem:
+      - img "Done"
+      - text: q3-forecast.csv 48.2 kB
+      - button "Dismiss q3-forecast.csv"
+  - button "Clear finished"

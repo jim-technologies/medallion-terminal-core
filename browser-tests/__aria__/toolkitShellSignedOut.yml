@@ -1,0 +1,41 @@
+- link "Skip to content":
+  - /url: "#mtc-main"
+- banner:
+  - link "Storage":
+    - /url: /buckets
+  - button "Northstar workspace"
+  - button "Search files"
+- navigation "Product navigation":
+  - list:
+    - listitem:
+      - link "Buckets":
+        - /url: /buckets
+    - listitem:
+      - link "finance 1284":
+        - /url: /b/finance
+    - listitem:
+      - link "media 58":
+        - /url: /b/media
+    - listitem:
+      - link "Activity":
+        - /url: /activity
+  - button "Collapse navigation" [expanded]
+- main:
+  - status:
+    - text: You’re signed out Sign in to continue.
+    - button "Sign in"
+- complementary:
+  - text: File
+  - code: finance/q3-forecast.csv
+  - button "Copy ID"
+  - status
+  - heading "q3-forecast.csv" [level=2]
+  - term: Size
+  - definition: 48,200
+  - term: Type
+  - definition: text/csv
+  - term: Modified
+  - definition:
+    - time: Sep 24, 2026
+    - text: in 2 months
+- contentinfo: Prototype data Catalog fresh 2 min ago en · UTC

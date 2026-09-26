@@ -214,6 +214,8 @@ snapshots.
 | `Pagination` | Page and cursor paging | Summary, Previous and Next, "Page n of m" when the count is known |
 | `FilePreview` | Previews of stored files | Bounded reads, signature-checked images and PDFs, sanitised Markdown with the type scale, CSV in a `DataGrid`, a neutral notice when cut, a download action when refused |
 | `CodeView` | Source, logs and raw JSON | Monospace 12 px on a 20 px line, muted line numbers that are never copied, wrap with a hanging indent, highlighted lines as selection plus accent bar |
+| `ProductShell` | The frame of every product UI | 44 px top bar (product mark, scope, centred search with `Ctrl K`, account), 232 px rail (48 collapsed, a drawer on phones), page, optional 360 px inspector, 24 px status bar; flat, one border between regions |
+| `OperationsTray` | Uploads, ingests and other long work | A raised tray at the bottom end (a sheet on phones), summary header, status icon per row, a 4 px accent progress bar, Cancel, Retry and Dismiss |
 | `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
 
 **Typed values.** `PropertyValue` decides presentation from `kind` or

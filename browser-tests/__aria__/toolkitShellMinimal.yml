@@ -1,0 +1,16 @@
+- link "Skip to content":
+  - /url: "#mtc-main"
+- banner:
+  - link "Tables":
+    - /url: /
+  - button "Sales base"
+- navigation "Product navigation":
+  - list:
+    - listitem:
+      - link "Bases":
+        - /url: /buckets
+  - button "Collapse navigation" [expanded]
+- main:
+  - heading "Bases" [level=1]
+  - paragraph: Tables and records in this workspace.
+- contentinfo

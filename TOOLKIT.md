@@ -390,6 +390,77 @@ headers; `toSourceError(thrown)` maps errors from generated Connect clients
 (numeric or string `code`, `rawMessage`, `metadata`), timeouts and network
 failures. The Connect code decides the kind before the HTTP status does.
 
+## Product shell (`medallion-terminal-core/app`)
+
+Every product UI (storage, tables, git, consoles) shares one frame and one
+set of ports, so pages never call `fetch`, read `window.location` or build
+their own header:
+
+```tsx
+import {
+  ProductShell, createHistoryRouter, createHttpSessionPort, renewViaFrame,
+  createProductFetch, requestTelemetry, useRoute,
+} from 'medallion-terminal-core/app'
+
+const router = createHistoryRouter()
+const session = createHttpSessionPort({
+  sessionUrl: '/auth/session',
+  renew: () => renewViaFrame({ url: config.renewUrl }),
+})
+const telemetry = { record: event => beacon('/ui/telemetry', event) }
+const productFetch = createProductFetch({ onRequest: requestTelemetry(telemetry) })
+
+<ProductShell product={{ name: 'Storage', icon: 'bucket' }} router={router}
+  session={session} telemetry={telemetry} nav={nav} search={search}
+  operations={uploads}>
+  <Pages />
+</ProductShell>
+```
+
+- **Frame.** A 44 px top bar (product, `scope` switcher, a search trigger
+  opening the `CommandPalette` with Ctrl/⌘ K, `actions`, the account menu
+  with Sign out), the `NavRail` (collapsible; a drawer below 768 px), the
+  page, an optional `inspector` (a bottom sheet on phones), a 24 px `status`
+  bar, toasts (`useToast` works inside) and the `OperationsTray`. The rail
+  marks the item whose path best matches the location unless `activeNavId`
+  is given.
+- **Router port.** `Router` has `location`, `navigate`, `back`,
+  `subscribe` and `href`. `createHistoryRouter({ base })` uses the History
+  API; `createMemoryRouter(path)` serves tests, stories and frames; a host
+  framework can adapt its own router. `useRoute(routes)` matches a route
+  table (`'/b/:bucket/f/*path'`) with typed params (`RouteParams`),
+  `matchPath` and `buildPath` convert both ways, and `RouterLink` renders an
+  anchor that routes in place on a plain click.
+- **Session port.** `SessionPort` has `load`, `renew`, `signIn` and an
+  optional `signOut`. `createHttpSessionPort` reads `/auth/session`
+  (`authenticated`, `subject`, `displayName`, `workspaceId`, `expiresAt`,
+  `signInUrl`, snake or camel case). `renewViaFrame` renews in a hidden
+  same-site frame through the Terminal's launch URL: the product callback
+  sets the fresh cookie and its `/auth/renewed` page posts
+  `mtc:session-renewed` (`SESSION_RENEWED`) to the parent; no new
+  credential. The shell renews a minute before `expiresAt` and after any
+  401 (wire `useProductShell().session.reportUnauthenticated` to
+  `createProductFetch({ onUnauthenticated })`), never polls, and runs no
+  timer while the page is hidden. A failed renewal keeps the page mounted
+  under a "session expired" dialog; Continue renews or leaves for sign-in
+  with the current path as `return_to`. Signed-out users see
+  `SignedOutState`.
+- **Telemetry port.** `TelemetryPort.record` receives `navigation`,
+  `request` (method, path without its query, status, code, request id,
+  duration; from `requestTelemetry(port)` on the product fetch) and
+  `session` summaries. No bodies, no third-party collector.
+- **Embed.** `mode="embed"` draws only the page for a host frame and speaks
+  a versioned handshake with the allow-listed `embedOrigins` (the referrer
+  must match; nothing is posted to `*`): the product posts `mtc:ready`,
+  `mtc:resize` (content height), `mtc:navigated` and `mtc:session-expired`;
+  the host may send `mtc:init` (theme, locale, time zone) and `mtc:navigate`
+  (an app path). `createEmbedChannel` and `parseEmbedHostMessage` implement
+  it.
+- **`OperationsTray`**: long-running `Operation`s (uploads, ingests,
+  transactions, workflow runs) with status, progress, Cancel, Retry and
+  Dismiss, a summary header, polite announcements of finished work, and a
+  bottom sheet on phones; `placement="inline"` renders it in a page.
+
 ## Host integration
 
 ### Generic intents

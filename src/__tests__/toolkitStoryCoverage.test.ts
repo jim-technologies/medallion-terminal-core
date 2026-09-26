@@ -18,6 +18,7 @@ const storyFiles = [
   '../workbench/Shell.stories.tsx',
   '../objects/Explore.stories.tsx',
   '../files/Files.stories.tsx',
+  '../app/ProductShell.stories.tsx',
   '../workbench/Workbench.stories.tsx',
   '../workbench/Compositions.stories.tsx',
 ].map(path => readFileSync(new URL(path, import.meta.url), 'utf8')).join('\n')
@@ -90,6 +91,8 @@ const publicComponents = [
   'ActivityFeed',
   'FilePreview',
   'CodeView',
+  'ProductShell',
+  'OperationsTray',
 ]
 
 describe('application toolkit Storybook coverage', () => {

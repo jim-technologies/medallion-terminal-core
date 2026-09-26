@@ -110,6 +110,12 @@ const toolkitStories = {
   toolkitImagePreview: 'toolkit-files--signature-checks',
   toolkitTextPreview: 'toolkit-files--source-and-text',
   toolkitCodeView: 'toolkit-files--code-view-controls',
+  toolkitShell: 'toolkit-app-productshell--standalone-shell',
+  toolkitShellExpired: 'toolkit-app-productshell--session-expired',
+  toolkitShellSignedOut: 'toolkit-app-productshell--signed-out',
+  toolkitShellEmbedded: 'toolkit-app-productshell--embedded-page',
+  toolkitShellMinimal: 'toolkit-app-productshell--without-session',
+  toolkitOperationsTray: 'toolkit-app-productshell--operations-tray-states',
 } as const
 
 // Widgets rebuilt on toolkit components keep themed baselines too. Their
@@ -546,6 +552,46 @@ test('RecordGrid is a keyboard grid: one tab stop, arrow keys, header sort', asy
   await expect(grid.locator('[role="columnheader"][aria-sort="ascending"]')).toHaveCount(1)
 })
 
+test('ProductShell routes from the rail, marks the current page and opens search with Ctrl+K', async ({ page }) => {
+  const root = await openStory(page, stories.toolkitShell)
+  const nav = root.getByRole('navigation', { name: 'Product navigation' })
+  await expect(nav.getByRole('link', { name: /finance/ })).toHaveAttribute('aria-current', 'page')
+  await nav.getByRole('link', { name: /Buckets/ }).click()
+  await expect(root.getByRole('heading', { name: 'Buckets', level: 1 })).toBeVisible()
+  await expect(nav.getByRole('link', { name: /Buckets/ })).toHaveAttribute('aria-current', 'page')
+  await root.getByRole('button', { name: 'Open finance' }).click()
+  await expect(root.getByRole('grid', { name: 'Files in finance' })).toBeVisible()
+  await page.keyboard.press('Control+k')
+  const palette = page.getByRole('dialog', { name: 'Command palette' })
+  await expect(palette.getByRole('combobox')).toBeFocused()
+  await page.keyboard.type('board')
+  await page.keyboard.press('Enter')
+  await expect(palette).toHaveCount(0)
+  await expect(page).toHaveTitle('Opened board-deck.pdf')
+})
+
+test('ProductShell keeps the page under the expired-session dialog and renews on Continue', async ({ page }) => {
+  const root = await openStory(page, stories.toolkitShellExpired)
+  const dialog = page.getByRole('dialog', { name: 'Your session expired' })
+  await expect(dialog).toBeVisible()
+  // The page is still there underneath.
+  await expect(root.getByRole('grid', { name: 'Files in finance' })).toBeAttached()
+  await dialog.getByRole('button', { name: 'Continue' }).click()
+  await expect(dialog).toHaveCount(0)
+  await expect(root.getByRole('grid', { name: 'Files in finance' })).toBeVisible()
+})
+
+test('ProductShell moves the navigation into a drawer on phones', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  const root = await openStory(page, stories.toolkitShell)
+  await expect(root.getByRole('navigation', { name: 'Product navigation' })).toBeHidden()
+  await root.getByRole('button', { name: 'Open navigation' }).click()
+  const drawer = page.getByRole('dialog', { name: 'Storage' })
+  await drawer.getByRole('link', { name: /Activity/ }).click()
+  await expect(drawer).toHaveCount(0)
+  await expect(root.getByRole('heading', { name: 'Activity', level: 1 })).toBeVisible()
+})
+
 test('CopyButton confirms a copy with a polite status', async ({ page }) => {
   const root = await openStory(page, stories.toolkitSkeletonCopy)
   const actions = root.getByRole('region', { name: 'Copy actions' })
@@ -671,6 +717,23 @@ for (const theme of ['dark', 'light'] as const) {
       const root = await openStory(page, toolkitStories[name], { theme, density: 'compact', pinClock: true })
       await expect(root).toHaveScreenshot(`${name}-${theme}-compact.png`)
       await expectAriaBaseline(root, name)
+    })
+  }
+}
+
+// Full-page surfaces also keep a phone baseline in each theme,
+// `${story}-${theme}-mobile.png` at 390 × 844, beside the desktop one.
+const mobileBaselineStories = [
+  'toolkitShell',
+] as const satisfies readonly (keyof typeof toolkitStories)[]
+
+for (const theme of ['dark', 'light'] as const) {
+  for (const name of mobileBaselineStories) {
+    test(`${name} ${theme} mobile visual baseline`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 })
+      const root = await openStory(page, toolkitStories[name], { theme, pinClock: true })
+      await expect(page).toHaveScreenshot(`${name}-${theme}-mobile.png`)
+      await expectAriaBaseline(root, `${name}-mobile`)
     })
   }
 }

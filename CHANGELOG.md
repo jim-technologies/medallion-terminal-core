@@ -59,6 +59,22 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   copied, wrap, copy, highlighted lines, bounded lines). The policy is
   exported: `planPreview`, `DEFAULT_PREVIEW_LIMITS`, `readBounded`,
   `parseDelimited`, `hasRasterSignature`, `hasPdfSignature`.
+- **Product shell** (`medallion-terminal-core/app`): `ProductShell` (top
+  bar with product, scope, search palette and account menu; nav rail with a
+  phone drawer; page; inspector; status bar; toasts; operations tray; skip
+  link) over four ports: a `Router` (`createHistoryRouter`,
+  `createMemoryRouter`, `matchPath`, `buildPath`, `matchRoutes`, typed
+  `RouteParams`, `useRoute`, `useLocation`, `RouterLink`), a `SessionPort`
+  (`createHttpSessionPort`, `renewViaFrame` through the Terminal launch URL,
+  renewal a minute before expiry and after a 401, no polling and no timers
+  while hidden, an expired-session dialog that keeps the page, a signed-out
+  state), a `TelemetryPort` (`requestTelemetry` for the product fetch;
+  navigation and session summaries) and the embed handshake
+  (`mode="embed"`, `createEmbedChannel`: versioned `mtc:*` messages with an
+  origin allow-list, resize, navigate, init). `useProductShell` exposes
+  them to pages.
+- **`OperationsTray`**: long-running operations with status, progress,
+  Cancel, Retry, Dismiss, polite announcements, floating or inline.
 - `StatusTone` type; message keys for copy, values, property panels, the
   grid, links, graphs, navigation, search, paging, toasts and activity (en
   and zh-CN).

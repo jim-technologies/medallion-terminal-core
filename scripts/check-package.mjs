@@ -180,7 +180,28 @@ for (const [entry, module, names] of [
     ],
   ],
   ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
-  ['./app', app, ['createProductFetch', 'ensureOk', 'SourceError', 'toSourceError']],
+  [
+    './app',
+    app,
+    [
+      'createProductFetch',
+      'ensureOk',
+      'SourceError',
+      'toSourceError',
+      'ProductShell',
+      'useProductShell',
+      'createHistoryRouter',
+      'createMemoryRouter',
+      'matchPath',
+      'useRoute',
+      'RouterLink',
+      'createHttpSessionPort',
+      'renewViaFrame',
+      'createEmbedChannel',
+      'requestTelemetry',
+      'OperationsTray',
+    ],
+  ],
   [
     './asset-open',
     assetOpen,
@@ -239,6 +260,10 @@ for (const name of [
   'FilePreviewProps',
   'CodeViewProps',
   'FileBrowserExtensions',
+  'ProductShellProps',
+  'SessionPort',
+  'Router',
+  'Operation',
 ]) {
   if (!new RegExp(`\\b${name}\\b`).test(declarations)) {
     throw new Error(`Published declarations are missing ${JSON.stringify(name)}`)
@@ -284,9 +309,11 @@ const budgets = [
     maxGzipBytes: 40 * 1024,
   },
   {
+    // 0.7.0: the product shell, router, session, embed and telemetry ports
+    // and the operations tray join the product transport.
     label: 'app entry',
     path: path.resolve(root, packageJson.exports['./app'].import),
-    maxGzipBytes: 4 * 1024,
+    maxGzipBytes: 10 * 1024,
   },
   {
     label: 'asset-open entry',

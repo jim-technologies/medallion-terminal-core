@@ -31,7 +31,7 @@ export interface SchemaGraphRelation {
 export interface SchemaGraphProps {
   types: readonly SchemaGraphType[]
   relations: readonly SchemaGraphRelation[]
-  /** Accessible name, such as "Ontology graph". */
+  /** Accessible name, such as "Object type graph". */
   label: string
   /** The highlighted type. */
   selectedId?: string
