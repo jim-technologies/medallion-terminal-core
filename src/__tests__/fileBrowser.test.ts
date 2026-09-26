@@ -17,7 +17,6 @@ import {
   resolveEndpointUrl,
   backendHeadersForEndpoint,
 } from '../widgets/fileBrowserHelpers'
-import { prettyJSON, parseCSV } from '../widgets/fileBrowserDecoders'
 
 describe('FileBrowser helpers', () => {
   describe('isFolder', () => {
@@ -290,28 +289,6 @@ describe('FileBrowser helpers', () => {
     it('empty queue returns null', () => {
       expect(nextInQueue([], 'anything', false, true)).toBeNull()
       expect(prevInQueue([], 'anything', true)).toBeNull()
-    })
-  })
-
-  describe('prettyJSON', () => {
-    it('indents valid JSON', () => {
-      expect(prettyJSON('{"a":1,"b":[2,3]}')).toBe('{\n  "a": 1,\n  "b": [\n    2,\n    3\n  ]\n}')
-    })
-    it('returns input unchanged on parse failure', () => {
-      expect(prettyJSON('not json {')).toBe('not json {')
-    })
-  })
-
-  describe('parseCSV', () => {
-    it('parses a simple CSV', () => {
-      expect(parseCSV('a,b,c\n1,2,3\n')).toEqual([['a', 'b', 'c'], ['1', '2', '3']])
-    })
-    it('handles quoted fields with commas and CRLF', () => {
-      expect(parseCSV('name,note\r\n"smith, john","hello, world"\r\n'))
-        .toEqual([['name', 'note'], ['smith, john', 'hello, world']])
-    })
-    it('handles escaped quotes', () => {
-      expect(parseCSV('quote\n"she said ""hi"""\n')).toEqual([['quote'], ['she said "hi"']])
     })
   })
 

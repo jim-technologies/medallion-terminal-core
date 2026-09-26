@@ -82,7 +82,7 @@ export interface DataGridProps<Row> {
     onNavigate?: (row: Row, event: MouseEvent<HTMLAnchorElement>) => void;
     /** Commands for the context menu (right-click, the Menu key, Shift+F10). */
     contextActions?: (row: Row) => readonly MenuItem[];
-    /** F2 on a cell: rename or edit it. */
+    /** F2 on a cell, or a double-click on it: rename or edit it. */
     onCellEdit?: (row: Row, columnId: string) => void;
     /** Called once per page when the last rows come into view. */
     onEndReached?: () => void;

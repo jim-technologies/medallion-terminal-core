@@ -74,6 +74,23 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - The root entry's archetype placeholder for loading widgets is now
   `WidgetSkeleton`; `Skeleton` is the toolkit placeholder.
 - Declarations exclude every `*.fixture.ts`.
+- **`file_browser` on the toolkit.** The list is a `DataGrid` (one tab stop,
+  keyboard selection, sortable columns, formatted sizes and dates instead of
+  raw ISO), the toolbar uses `Breadcrumbs`, `SearchField`, `Button` and
+  `Pagination`, the upload dialog is the toolkit `Dialog` (focus trapped
+  and restored), icons replace emoji, and the preview overlay renders
+  through `FilePreview` (bounded, signature-checked). New extension points
+  (`FileBrowserExtensions`: `entryIcon`, `entryHref`, `selection`,
+  `selectedIds`, `onSelectionChange`, `contextActions`, `onOpen`) and
+  stable `data-mtc-*` hooks replace host DOM surgery. Payloads and options
+  are unchanged.
+- **`record_grid` on `DataGrid`**: one tab stop instead of a button per
+  cell, `aria-sort` headers, Enter selects the record, F2 or a double-click
+  edits a cell in place (Enter saves, Escape cancels), toolkit search,
+  view and New controls, and `Pagination` for client pages.
+- The widgets' `CursorPager` renders the toolkit `Pagination` in cursor
+  mode.
+- `DataGrid` double-click edits the cell when `onCellEdit` is set.
 - The Dashboard's Ctrl/⌘ K palette is rebuilt on the toolkit
   `CommandPalette`: typed commands still apply on Enter, and suggestions,
   saved views and recent commands are keyboard-reachable options. Its
@@ -92,6 +109,9 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   `CommandPalette` is now the host-driven palette. `PaletteSuggest` and
   `PaletteSuggestion` (the `Dashboard.paletteSuggest` types) remain.
 - `src/core/Toaster.tsx`, replaced by the toolkit `Toaster`.
+- `src/widgets/fileBrowserDecoders.ts` (`fetchText`, `parseCSV`,
+  `prettyJSON`, `renderMarkdown`): unbounded reads and an unbounded CSV
+  parser, replaced by `FilePreview` and its bounded policy.
 
 ## [0.6.0] — 2026-09-25
 

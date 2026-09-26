@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Pagination } from '../components/Pagination'
 import { useDashboard } from '../core/DashboardContext'
 
 export interface CursorPaginationOptions {
@@ -25,6 +26,7 @@ export function cursorPageTokenKey(
 // Opaque cursors only point forward, so the client keeps the cursors it has
 // visited in a tiny local stack. A deep-linked cursor can always return to the
 // first page; backends never need to expose offsets or reversible tokens.
+// Rendered with the toolkit Pagination in cursor mode.
 export function CursorPager({
   nextPageToken,
   widgetId,
@@ -68,23 +70,15 @@ export function CursorPager({
   }
 
   return (
-    <nav className="flex items-center gap-1" aria-label={ariaLabel} data-page-token-key={key}>
-      <button
-        type="button"
-        onClick={goBack}
-        disabled={!canGoBack}
-        className="mtc-control px-2 py-0.5 disabled:opacity-30"
-      >
-        {options?.previous_label ?? 'Previous'}
-      </button>
-      <button
-        type="button"
-        onClick={goForward}
-        disabled={!nextToken}
-        className="mtc-control px-2 py-0.5 disabled:opacity-30"
-      >
-        {options?.next_label ?? 'Next'}
-      </button>
-    </nav>
+    <Pagination
+      label={ariaLabel}
+      data-page-token-key={key}
+      hasPrevious={canGoBack}
+      hasNext={!!nextToken}
+      onPrevious={goBack}
+      onNext={goForward}
+      previousLabel={options?.previous_label}
+      nextLabel={options?.next_label}
+    />
   )
 }

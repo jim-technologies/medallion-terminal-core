@@ -238,6 +238,7 @@ for (const name of [
   'ToastData',
   'FilePreviewProps',
   'CodeViewProps',
+  'FileBrowserExtensions',
 ]) {
   if (!new RegExp(`\\b${name}\\b`).test(declarations)) {
     throw new Error(`Published declarations are missing ${JSON.stringify(name)}`)

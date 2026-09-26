@@ -475,6 +475,42 @@ No migration is required for path-only backends. Add `id` when a stable host
 object identity is available; keep `path` and `name` for storage navigation
 and URLs.
 
+### File browser extension points
+
+The `file_browser` widget lists entries in a `DataGrid` and previews them
+with `FilePreview`. Hosts customise it by registering a wrapper that passes
+`FileBrowserExtensions`, never by rewriting its DOM:
+
+```tsx
+registry.register('file_browser', props => (
+  <FileBrowser
+    {...props}
+    entryIcon={entry => <FileTypeIcon entry={entry} />}
+    entryHref={(entry, path) => `/b/${bucket}/f/${path}`}
+    selection="multi"
+    onSelectionChange={entries => setSelected(entries)}
+    contextActions={(entry, path) => [{ id: 'rename', label: 'Rename', onSelect: () => rename(path) }]}
+    onOpen={(entry, path) => (entry.kind === 'folder' ? false : openFile(path))}
+  />
+))
+```
+
+- `entryIcon`: the leading icon (a folder or file glyph by default).
+- `entryHref`: one link per row on the name; with `onOpen`, a plain click is
+  handed to it.
+- `selection`, `selectedIds`, `onSelectionChange`: none, single (default) or
+  multi with ranges.
+- `contextActions`: right-click, the Menu key or Shift+F10.
+- `onOpen`: Enter, double-click or a plain click on the link; return `true`
+  to replace the built-in behaviour (enter folders, preview or download).
+
+Stable hooks for styling and tests are data attributes, not class names:
+`data-mtc-file-browser` (with `data-mtc-path` and `data-mtc-view`) on the
+root, `data-mtc-part` on `toolbar`, `list`, `gallery`, `preview` and
+`upload-dialog`, and `data-mtc-entry-kind` (`folder` or `file`),
+`data-mtc-entry-id` and `data-mtc-entry-path` on every row and tile. The
+payload and options contracts are unchanged.
+
 ## Accessibility and validation
 
 - Every interactive surface has a keyboard path and visible focus treatment.

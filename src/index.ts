@@ -148,6 +148,7 @@ export { ActionLog } from './widgets/ActionLog'
 export { AlertLog } from './widgets/AlertLog'
 export { Tape } from './widgets/Tape'
 export { FileBrowser } from './widgets/FileBrowser'
+export type { FileBrowserExtensions, FileBrowserProps } from './widgets/FileBrowser'
 export {
   fileEntryIdentity,
   isFolder as isFileBrowserContainer,

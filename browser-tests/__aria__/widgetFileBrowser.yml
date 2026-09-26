@@ -1,0 +1,57 @@
+- navigation "Folder path":
+  - list:
+    - listitem:
+      - button "default"
+    - listitem: "2024"
+- button "Upload"
+- button "Gallery"
+- grid "Files in 2024":
+  - rowgroup:
+    - row "Select all rows Name Size Type Modified":
+      - columnheader "Select all rows":
+        - checkbox "Select all rows" [checked=mixed]
+      - columnheader "Name"
+      - columnheader "Size"
+      - columnheader "Type"
+      - columnheader "Modified"
+  - rowgroup:
+    - row "Select contracts contracts — Folder —":
+      - gridcell "Select contracts":
+        - checkbox "Select contracts"
+      - gridcell "contracts":
+        - link "contracts":
+          - /url: "#/b/finance/f/finance/contracts"
+      - gridcell "—"
+      - gridcell "Folder"
+      - gridcell "—"
+    - row "Select board-deck.pdf board-deck.pdf 2.4 MB application/pdf Sep 22, 2026, 2:05 AM":
+      - gridcell "Select board-deck.pdf":
+        - checkbox "Select board-deck.pdf"
+      - gridcell "board-deck.pdf":
+        - link "board-deck.pdf":
+          - /url: "#/b/finance/f/finance/board-deck.pdf"
+      - gridcell "2.4 MB"
+      - gridcell "application/pdf"
+      - gridcell "Sep 22, 2026, 2:05 AM":
+        - time: Sep 22, 2026, 2:05 AM
+    - row "Select notes.md notes.md 3.1 kB text/markdown Sep 21, 2026, 4:40 AM":
+      - gridcell "Select notes.md":
+        - checkbox "Select notes.md"
+      - gridcell "notes.md":
+        - link "notes.md":
+          - /url: "#/b/finance/f/finance/notes.md"
+      - gridcell "3.1 kB"
+      - gridcell "text/markdown"
+      - gridcell "Sep 21, 2026, 4:40 AM":
+        - time: Sep 21, 2026, 4:40 AM
+    - row "Select q3-forecast.csv q3-forecast.csv 48.2 kB text/csv Sep 24, 2026, 9:20 AM" [selected]:
+      - gridcell "Select q3-forecast.csv":
+        - checkbox "Select q3-forecast.csv" [checked]
+      - gridcell "q3-forecast.csv":
+        - link "q3-forecast.csv":
+          - /url: "#/b/finance/f/finance/q3-forecast.csv"
+      - gridcell "48.2 kB"
+      - gridcell "text/csv"
+      - gridcell "Sep 24, 2026, 9:20 AM":
+        - time: Sep 24, 2026, 9:20 AM
+- text: 4 on page

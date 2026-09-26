@@ -75,7 +75,7 @@ export const HostIntentEmission: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const name = await canvas.findByText('quarterly-forecast.pdf')
-    const row = name.closest('tr')
+    const row = name.closest<HTMLElement>('[role="row"]')
     if (!row) throw new Error('Expected file row')
     await userEvent.click(row)
     await expect(onIntent).toHaveBeenCalledWith({

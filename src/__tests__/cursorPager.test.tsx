@@ -29,8 +29,9 @@ describe('CursorPager', () => {
 
     expect(html).toContain('aria-label="Asset pages"')
     expect(html).toContain('data-page-token-key="assets_page_token"')
-    expect(html).toContain('<button type="button" disabled=""')
-    expect(html).toContain('>Next</button>')
+    // Previous is disabled on the first page; Next is live.
+    expect(html).toMatch(/<button type="button" disabled=""[^>]*>.*?<span class="mtc-button-label">Previous<\/span>/)
+    expect(html).toMatch(/<button type="button"(?! disabled)[^>]*>.*?<span class="mtc-button-label">Next<\/span>/)
     expect(html).not.toContain('opaque-secret-cursor')
   })
 
@@ -52,9 +53,9 @@ describe('CursorPager', () => {
     )
 
     expect(html).toContain('data-page-token-key="history_cursor"')
-    expect(html).toContain('>Newer</button>')
-    expect(html).toContain('disabled=""')
-    expect(html).toContain('>Older</button>')
+    // A deep link can go back to the first page; there is no next cursor.
+    expect(html).toMatch(/<button type="button"(?! disabled)[^>]*>.*?<span class="mtc-button-label">Newer<\/span>/)
+    expect(html).toMatch(/<button type="button" disabled=""[^>]*>.*?<span class="mtc-button-label">Older<\/span>/)
     expect(html).not.toContain('opaque-current-page')
   })
 })

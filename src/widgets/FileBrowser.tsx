@@ -1,4 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Button, IconButton } from '../components/Button'
+import { Tag } from '../components/Feedback'
+import { FormField, Input } from '../components/FormControls'
+import { Icon } from '../components/Icon'
+import { Breadcrumbs } from '../components/Navigation'
+import { Dialog, type MenuItem } from '../components/Overlays'
+import { Pagination } from '../components/Pagination'
+import { SearchField } from '../components/SearchField'
+import { FilePreview } from '../files/FilePreview'
+import { useLocale } from '../foundations/DesignSystemProvider'
+import { formatBytes, formatDateTime } from '../foundations/intl'
+import { DataGrid, type DataGridColumn } from '../workbench/DataGrid'
 import { useDashboard } from '../core/DashboardContext'
 import {
   useAssetOpen,
@@ -36,8 +48,7 @@ import {
   type FileBrowserEntry,
 } from './fileBrowserHelpers'
 import { isErrorStatus, isTerminalStatus } from '../hooks/useWatchAction'
-import { fetchText, prettyJSON, parseCSV, renderMarkdown } from './fileBrowserDecoders'
-import { handleModalKeyDown, useModalFocus } from '../components/utils'
+import { cx, handleModalKeyDown, useModalFocus } from '../components/utils'
 import type { WidgetProps } from '../types/template'
 
 // FileBrowser is a generic file-pane primitive: breadcrumb header +
@@ -106,7 +117,48 @@ interface FileBrowserOptions {
   open_intent?: string
 }
 
-export function FileBrowser({ data, options, widgetId }: WidgetProps) {
+/**
+ * Host extension points of the file browser. Register a wrapper to use
+ * them: `registry.register('file_browser', props => <FileBrowser {...props}
+ * entryHref={...} />)`. The widget's payload and options are unchanged.
+ */
+export interface FileBrowserExtensions {
+  /** Leading icon for an entry; a folder or file glyph by default. */
+  entryIcon?: (entry: FileBrowserEntry) => ReactNode
+  /** A link for an entry's name (one per row), such as a product route. */
+  entryHref?: (entry: FileBrowserEntry, path: string) => string | undefined
+  /** Row selection; `single` by default. */
+  selection?: 'none' | 'single' | 'multi'
+  /** Controlled selection, by `fileEntryIdentity`. */
+  selectedIds?: readonly string[]
+  /** Called with the selected entries after every change. */
+  onSelectionChange?: (entries: FileBrowserEntry[]) => void
+  /** Commands for an entry's context menu (right-click, Menu key, Shift+F10). */
+  contextActions?: (entry: FileBrowserEntry, path: string) => readonly MenuItem[]
+  /**
+   * Called when an entry is opened (Enter, double-click, or a plain click on
+   * its link); return `true` to handle it instead of the built-in behaviour
+   * (navigate into folders, preview or download files).
+   */
+  onOpen?: (entry: FileBrowserEntry, path: string) => boolean | void
+}
+
+/** Props of the file browser widget: the widget props plus extension points. */
+export type FileBrowserProps = WidgetProps & FileBrowserExtensions
+
+export function FileBrowser({
+  data,
+  options,
+  widgetId,
+  entryIcon,
+  entryHref,
+  selection = 'single',
+  selectedIds,
+  onSelectionChange,
+  contextActions,
+  onOpen,
+}: FileBrowserProps) {
+  const { locale, timeZone } = useLocale()
   const opts = (options ?? {}) as FileBrowserOptions
   const {
     ctx,
@@ -146,6 +198,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   const [uploading, setUploading] = useState(false)
   const uploadInFlight = useRef(false)
   const [preview, setPreview] = useState<FileBrowserEntry | null>(null)
+  const [internalSelection, setInternalSelection] = useState<string[]>([])
 
   // Upload dialog state. Opened by the toolbar "Upload" button; offers a
   // File tab and (when ingest_url is set) a From-URL tab. `dlgRepo`
@@ -412,6 +465,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
   // the workspace's preferred application and retain native preview/download as
   // zero-configuration fallbacks.
   const onRowClick = (e: FileBrowserEntry) => {
+    if (onOpen?.(e, entryFullPath(e)) === true) return
     const objectId = e.id ?? e.object_id
     if (objectId) {
       emitIntent?.({
@@ -553,9 +607,82 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
     }
   }
 
+  const identity = (entry: FileBrowserEntry) => fileEntryIdentity(entry, currentPath) || entryFullPath(entry)
+  const columns: DataGridColumn<FileBrowserEntry>[] = [
+    {
+      id: 'name',
+      header: 'Name',
+      width: 280,
+      grow: true,
+      sortValue: entry => `${isFolder(entry) ? 0 : 1}${(entry.name ?? '').toLowerCase()}`,
+      cell: entry => (
+        <span className="mtc-file-name">
+          <span className="mtc-file-icon" aria-hidden="true">
+            {entryIcon?.(entry) ?? <Icon name={isFolder(entry) ? 'folder' : 'file'} />}
+          </span>
+          <span className="mtc-file-name-text">{entry.name}</span>
+        </span>
+      ),
+    },
+    {
+      id: 'size',
+      header: 'Size',
+      width: 104,
+      align: 'end',
+      sortValue: entry => (isFolder(entry) ? null : entry.size_bytes ?? null),
+      cell: entry => (isFolder(entry) || entry.size_bytes == null
+        ? <span className="mtc-value-empty">—</span>
+        : formatBytes(entry.size_bytes, { locale })),
+    },
+    {
+      id: 'type',
+      header: 'Type',
+      width: 160,
+      accessor: entry => (isFolder(entry) ? 'Folder' : entry.content_type ?? ''),
+    },
+    {
+      id: 'modified',
+      header: 'Modified',
+      width: 176,
+      sortValue: entry => (entry.modified_at ? Date.parse(entry.modified_at) || entry.modified_at : null),
+      cell: entry => (entry.modified_at
+        ? <time dateTime={entry.modified_at}>{formatDateTime(entry.modified_at, { locale, timeZone })}</time>
+        : <span className="mtc-value-empty">—</span>),
+    },
+    ...(openWithEnabled ? [{
+      id: 'actions',
+      header: 'Actions',
+      width: 72,
+      sortable: false,
+      cell: (entry: FileBrowserEntry) => (isFolder(entry) ? null : (
+        <IconButton
+          icon={<Icon name="more" />}
+          variant="ghost"
+          size="small"
+          tabIndex={-1}
+          aria-label={`Open ${entry.name ?? 'file'} with another application`}
+          onClick={event => {
+            event.stopPropagation()
+            openWithApplications(entry)
+          }}
+        />
+      )),
+    } satisfies DataGridColumn<FileBrowserEntry>] : []),
+  ]
+  const selectedKeys = selectedIds ?? internalSelection
+  const changeSelection = (keys: string[]) => {
+    if (!selectedIds) setInternalSelection(keys)
+    const chosen = sorted.filter(entry => keys.includes(identity(entry)))
+    onSelectionChange?.(chosen)
+    if (chosen.length === 1) selectEntry(chosen[0]!)
+  }
+
   return (
     <div
-      className="h-full flex flex-col relative"
+      className="mtc-file-browser h-full flex flex-col relative"
+      data-mtc-file-browser=""
+      data-mtc-path={currentPath}
+      data-mtc-view={viewMode}
       onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
       onDragLeave={() => setDragging(false)}
       onDrop={(e) => {
@@ -564,194 +691,109 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
         if (e.dataTransfer.files.length > 0) void handleFiles(e.dataTransfer.files)
       }}
     >
-      <div className="flex items-center gap-1 px-3 py-1.5 text-xs border-b border-zinc-800 shrink-0">
-        <button onClick={() => navigateTo('')} className="text-sky-400 hover:underline">/</button>
-        {segments.map((seg, i) => {
-          const fullPath = segments.slice(0, i + 1).join('/')
-          return (
-            <span key={i} className="flex items-center gap-1">
-              <span className="text-zinc-600">/</span>
-              <button
-                onClick={() => navigateTo(fullPath)}
-                className="text-sky-400 hover:underline"
-              >
-                {seg}
-              </button>
-            </span>
-          )
-        })}
-        <div className="ml-auto flex items-center gap-3 text-zinc-500">
+      <div className="mtc-file-browser-toolbar" data-mtc-part="toolbar">
+        <Breadcrumbs
+          label="Folder path"
+          items={[
+            { id: '/', label: bucket, onSelect: () => navigateTo('') },
+            ...segments.map((segment, index) => ({
+              id: segments.slice(0, index + 1).join('/'),
+              label: segment,
+              onSelect: () => navigateTo(segments.slice(0, index + 1).join('/')),
+            })),
+          ]}
+        />
+        <div className="mtc-file-browser-actions">
           {searchUrl && (
-            <div className="flex items-center gap-1">
-              <input
-                type="search"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') void runSearch()
-                  if (e.key === 'Escape') clearSearch()
-                }}
-                placeholder="Search files…"
-                className="bg-zinc-800 border border-zinc-700 rounded px-2 py-0.5 text-xs text-zinc-100 outline-none focus:border-zinc-500 w-40"
-              />
-              <button
-                onClick={() => void runSearch()}
-                disabled={searching}
-                className="text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 px-1"
-                aria-label="Search"
-                title="Search this namespace"
-              >
-                {searching ? '…' : '🔍'}
-              </button>
-              {searchHits && (
-                <button
-                  onClick={clearSearch}
-                  className="text-zinc-400 hover:text-zinc-100 px-1"
-                  title="Clear search, back to browsing"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
+            <SearchField
+              label="Search files"
+              placeholder="Search files"
+              size="small"
+              value={searchText}
+              onValueChange={value => {
+                setSearchText(value)
+                if (value === '' && searchHits) clearSearch()
+              }}
+              onSubmit={() => void runSearch()}
+              aria-busy={searching || undefined}
+              className="mtc-file-browser-search"
+            />
           )}
-          {/* Upload: opens a dialog to pick a destination repo + filename,
-              and either choose a local file or paste a media URL (HTTP(S) /
-              .m3u8) the server fetches itself. Distinct from drag-drop,
-              which always targets the current folder. */}
+          {searchHits && <Tag onRemove={clearSearch} removeLabel="Clear search, back to browsing">Search results</Tag>}
+          {/* Upload: pick a destination repo and filename, then a local file
+              or a media URL the server fetches itself. Drag-drop always
+              targets the current folder. */}
           {(uploadUrl || uploadActionId || ingestUrl) && (
-            <button
-              onClick={openDialog}
-              className="text-zinc-200 hover:text-white border border-zinc-700 rounded px-2 py-0.5"
-              title="Upload a file or fetch a media URL"
-            >
-              ⬆ Upload
-            </button>
+            <Button size="small" startIcon={<Icon name="upload" />} onClick={openDialog} title="Upload a file or fetch a media URL">
+              Upload
+            </Button>
           )}
-          {/* View-mode toggle. Icons (default) sends ZERO image bytes — the
-              row icon is just an emoji. Gallery loads inline thumbnails
-              via <img loading="lazy">, browser-cached aggressively by the
-              /media handler's Cache-Control for image types. */}
-          <button
+          {/* List sends no image bytes; the gallery loads lazy thumbnails. */}
+          <Button
+            size="small"
+            variant="ghost"
+            startIcon={<Icon name={viewMode === 'gallery' ? 'table' : 'image'} />}
             onClick={toggleViewMode}
-            className="text-zinc-400 hover:text-zinc-100 border border-zinc-700 rounded px-2 py-0.5"
-            title={viewMode === 'gallery' ? 'Switch to icons (no thumbnails)' : 'Switch to gallery (loads image thumbnails)'}
+            aria-pressed={viewMode === 'gallery'}
+            title={viewMode === 'gallery' ? 'Switch to the list (no thumbnails)' : 'Switch to the gallery (loads image thumbnails)'}
           >
-            {viewMode === 'gallery' ? '◫ Gallery' : '☰ Icons'}
-          </button>
-          <span className="tabular-nums">
-            {searchHits ? `${searchHits.length} result${searchHits.length === 1 ? '' : 's'}` : `${entries.length} on page`}
-          </span>
-          {(hasPrev || hasNext) && (
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => goToPage(page - 1)}
-                disabled={!hasPrev}
-                className="text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 disabled:cursor-not-allowed px-1"
-                aria-label="Previous page"
-              >
-                ‹
-              </button>
-              <span className="tabular-nums text-zinc-400">Page {page}</span>
-              <button
-                onClick={() => goToPage(page + 1)}
-                disabled={!hasNext}
-                className="text-zinc-400 hover:text-zinc-100 disabled:text-zinc-700 disabled:cursor-not-allowed px-1"
-                aria-label="Next page"
-              >
-                ›
-              </button>
-            </div>
-          )}
+            Gallery
+          </Button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto relative min-h-0">
+      <div className="flex-1 overflow-hidden relative min-h-0 flex flex-col" data-mtc-part={viewMode === 'gallery' ? 'gallery' : 'list'}>
         {dragging && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center border-2 border-dashed border-sky-500 bg-zinc-900/80 pointer-events-none">
-            <div className="text-sky-300 text-sm">Drop files to upload</div>
+          <div className="mtc-file-browser-drop" aria-hidden="true">
+            <Icon name="upload" /> Drop files to upload
           </div>
         )}
         {sorted.length === 0 ? (
           <Empty>{searchHits ? 'No files match your search.' : 'This folder is empty. Drop files to upload.'}</Empty>
         ) : viewMode === 'gallery' ? (
-          <GalleryGrid
-            entries={sorted}
-            onClick={onRowClick}
-            onSelect={selectEntry}
-            onOpenWith={openWithEnabled ? openWithApplications : undefined}
-            mediaUrlFor={mediaUrlFor}
-            entryKey={entry => fileEntryIdentity(entry, currentPath)}
-          />
+          <div className="flex-1 overflow-auto">
+            <GalleryGrid
+              entries={sorted}
+              onClick={onRowClick}
+              onSelect={selectEntry}
+              onOpenWith={openWithEnabled ? openWithApplications : undefined}
+              mediaUrlFor={mediaUrlFor}
+              entryKey={identity}
+              entryIcon={entryIcon}
+            />
+          </div>
         ) : (
-          <table className="w-full text-xs">
-            <thead className="sticky top-0 bg-zinc-900 z-[1]">
-              <tr className="text-zinc-400 border-b border-zinc-800">
-                <th className="text-left px-3 py-2 w-8">
-                  <span className="sr-only">Entry kind</span>
-                </th>
-                <th className="text-left px-3 py-2">Name</th>
-                <th className="text-right px-3 py-2 w-24">Size</th>
-                <th className="text-left px-3 py-2 w-40">Type</th>
-                <th className="text-left px-3 py-2 w-36">Modified</th>
-                {openWithEnabled && (
-                  <th className="w-10">
-                    <span className="sr-only">Actions</span>
-                  </th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map((e, i) => (
-                <tr
-                  key={fileEntryIdentity(e, currentPath) || String(i)}
-                  tabIndex={0}
-                  onClick={() => selectEntry(e)}
-                  onDoubleClick={() => onRowClick(e)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                      event.preventDefault()
-                      onRowClick(e)
-                    } else if (event.key === ' ') {
-                      event.preventDefault()
-                      selectEntry(e)
-                    }
-                  }}
-                  className="group border-b border-zinc-800/40 hover:bg-zinc-800/40 cursor-pointer select-none"
-                >
-                  <td className="px-3 py-1.5 select-none">{isFolder(e) ? '📁' : '📄'}</td>
-                  <td className="px-3 py-1.5 text-zinc-100 truncate">{e.name}</td>
-                  <td className="px-3 py-1.5 text-right text-zinc-400">
-                    {isFolder(e) ? '—' : humanSize(e.size_bytes ?? 0)}
-                  </td>
-                  <td className="px-3 py-1.5 text-zinc-500 truncate">{e.content_type ?? ''}</td>
-                  <td className="px-3 py-1.5 text-zinc-500 truncate">{e.modified_at ?? ''}</td>
-                  {openWithEnabled && (
-                    <td className="pr-2 text-right">
-                      {!isFolder(e) && (
-                        <button
-                          type="button"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            openWithApplications(e)
-                          }}
-                          onDoubleClick={event => event.stopPropagation()}
-                          className="size-7 rounded text-zinc-600 hover:text-zinc-100 hover:bg-zinc-700/70 opacity-60 group-hover:opacity-100 focus:opacity-100"
-                          aria-label={`Open ${e.name ?? 'file'} with another application`}
-                          title="Open with…"
-                        >
-                          ···
-                        </button>
-                      )}
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <DataGrid
+            label={searchHits ? 'Search results' : `Files in ${currentPath || bucket}`}
+            className="mtc-file-browser-grid"
+            columns={columns}
+            rows={sorted}
+            rowKey={identity}
+            rowLabel={entry => entry.name ?? entryFullPath(entry)}
+            selection={selection}
+            selectedKeys={selectedKeys}
+            onSelectionChange={changeSelection}
+            onRowActivate={onRowClick}
+            rowHref={entryHref ? entry => entryHref(entry, entryFullPath(entry)) : undefined}
+            onNavigate={entryHref && onOpen ? (entry => {
+              if (onOpen(entry, entryFullPath(entry)) !== true) onRowClick(entry)
+            }) : undefined}
+            contextActions={contextActions ? entry => contextActions(entry, entryFullPath(entry)) : undefined}
+            rowProps={entry => ({
+              'data-mtc-entry-kind': isFolder(entry) ? 'folder' : 'file',
+              'data-mtc-entry-id': entry.id ?? entry.object_id,
+              'data-mtc-entry-path': entryFullPath(entry),
+            })}
+            footer={searchHits
+              ? <span>{searchHits.length} result{searchHits.length === 1 ? '' : 's'}</span>
+              : (hasPrev || hasNext)
+                ? <Pagination label="File pages" summary={`${entries.length} on page`} page={page} hasNext={hasNext} onPageChange={goToPage} />
+                : <span>{entries.length} on page</span>}
+          />
         )}
 
         {uploading && (
-          <div className="absolute bottom-2 right-2 bg-zinc-800 border border-zinc-700 text-zinc-200 px-3 py-1.5 rounded text-xs shadow-lg">
+          <div className="mtc-file-browser-uploading" role="status">
             Uploading…
           </div>
         )}
@@ -761,6 +803,7 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
         <PreviewOverlay
           entry={preview}
           mediaUrl={mediaUrlFor(preview)}
+          fetch={transportForEndpoint(backendUrl, mediaUrlFor(preview), backendFetch)}
           autoAdvanceQueue={playableQueue(sorted)}
           navigableQueue={navigableQueue(sorted)}
           onSelect={(e) => setPreview(e)}
@@ -770,107 +813,63 @@ export function FileBrowser({ data, options, widgetId }: WidgetProps) {
         />
       )}
 
-      {dialogOpen && (
-        <div
-          className="absolute inset-0 z-20 flex items-center justify-center bg-black/60"
-          onClick={() => { if (!dlgBusy) setDialogOpen(false) }}
-        >
-          <div
-            className="flex flex-col gap-3 bg-zinc-900 border border-zinc-700 rounded-lg p-5 shadow-2xl w-full max-w-md"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-medium text-zinc-100">Upload to {bucket}</h2>
-              <button
-                onClick={() => { if (!dlgBusy) setDialogOpen(false) }}
-                className="text-zinc-500 hover:text-zinc-200"
-                aria-label="Close"
-              >
-                ✕
-              </button>
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={open => { if (!dlgBusy) setDialogOpen(open) }}
+        title={`Upload to ${bucket}`}
+        dismissible={!dlgBusy}
+        className="mtc-file-browser-upload"
+        footer={dlgMode === 'url' ? (
+          <Button intent="primary" variant="solid" loading={dlgBusy} loadingLabel="Starting…" onClick={() => void submitIngest()}>
+            Fetch and store
+          </Button>
+        ) : undefined}
+      >
+        <div className="grid gap-3" data-mtc-part="upload-dialog">
+          {/* A local file, or a media URL the server fetches (only with ingest_url). */}
+          {ingestUrl && (
+            <div role="group" aria-label="Upload source" className="flex gap-1">
+              <Button size="small" variant={dlgMode === 'url' ? 'solid' : 'outline'} intent={dlgMode === 'url' ? 'primary' : 'neutral'} aria-pressed={dlgMode === 'url'} onClick={() => setDlgMode('url')}>
+                From URL
+              </Button>
+              <Button size="small" variant={dlgMode === 'file' ? 'solid' : 'outline'} intent={dlgMode === 'file' ? 'primary' : 'neutral'} aria-pressed={dlgMode === 'file'} onClick={() => setDlgMode('file')}>
+                Local file
+              </Button>
             </div>
-
-            {/* Mode tabs: a local File, or a media URL the server fetches.
-                The URL tab only shows when ingest_url is configured. */}
-            {ingestUrl && (
-              <div className="flex gap-1 text-xs">
-                <button
-                  onClick={() => setDlgMode('url')}
-                  className={`px-3 py-1 rounded border ${dlgMode === 'url' ? 'border-sky-500 text-sky-300 bg-sky-500/10' : 'border-zinc-700 text-zinc-400 hover:text-zinc-200'}`}
-                >
-                  From URL
-                </button>
-                <button
-                  onClick={() => setDlgMode('file')}
-                  className={`px-3 py-1 rounded border ${dlgMode === 'file' ? 'border-sky-500 text-sky-300 bg-sky-500/10' : 'border-zinc-700 text-zinc-400 hover:text-zinc-200'}`}
-                >
-                  Local file
-                </button>
-              </div>
-            )}
-
-            <label className="flex flex-col gap-1 text-xs text-zinc-400">
-              Folder (repo)
-              <input
-                type="text"
-                value={dlgRepo}
-                onChange={(e) => setDlgRepo(e.target.value)}
-                placeholder="e.g. year=2026/name=avatar"
-                className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
+          )}
+          <FormField label="Folder (repo)" description="The repository partition. Becomes a source key.">
+            <Input value={dlgRepo} onChange={(e) => setDlgRepo(e.target.value)} placeholder="e.g. year=2026/name=avatar" />
+          </FormField>
+          <FormField
+            label={dlgMode === 'file' ? 'Filename (optional; defaults to the file’s name)' : 'Filename'}
+            description="Location inside the repo (may include subfolders)."
+          >
+            <Input value={dlgName} onChange={(e) => setDlgName(e.target.value)} placeholder="e.g. avatar.mp4" />
+          </FormField>
+          {dlgMode === 'url' ? (
+            <FormField label="Media URL" description="HTTP(S) media URL or raw HLS playlist. Fetched server-side.">
+              <Input
+                type="url"
+                value={dlgSrcURL}
+                onChange={(e) => setDlgSrcURL(e.target.value)}
+                placeholder="https://example.com/media.mp4 or https://example.com/playlist.m3u8"
               />
-              <span className="text-zinc-600">The repository partition. Becomes a source key.</span>
-            </label>
-
-            <label className="flex flex-col gap-1 text-xs text-zinc-400">
-              Filename {dlgMode === 'file' && '(optional — defaults to the file’s name)'}
-              <input
-                type="text"
-                value={dlgName}
-                onChange={(e) => setDlgName(e.target.value)}
-                placeholder="e.g. avatar.mp4"
-                className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
+            </FormField>
+          ) : (
+            <FormField label="File">
+              <Input
+                type="file"
+                onChange={(e) => {
+                  const f = e.target.files?.[0]
+                  if (f) void submitDialogFile(f)
+                }}
+                disabled={dlgBusy}
               />
-              <span className="text-zinc-600">Location inside the repo (may include subfolders).</span>
-            </label>
-
-            {dlgMode === 'url' ? (
-              <>
-                <label className="flex flex-col gap-1 text-xs text-zinc-400">
-                  Media URL
-                  <input
-                    type="url"
-                    value={dlgSrcURL}
-                    onChange={(e) => setDlgSrcURL(e.target.value)}
-                    placeholder="https://example.com/media.mp4 or https://example.com/playlist.m3u8"
-                    className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 outline-none focus:border-zinc-500"
-                  />
-                  <span className="text-zinc-600">HTTP(S) media URL or raw HLS playlist. Fetched server-side.</span>
-                </label>
-                <button
-                  onClick={() => void submitIngest()}
-                  disabled={dlgBusy}
-                  className="self-end px-3 py-1.5 rounded bg-sky-600 hover:bg-sky-500 disabled:bg-zinc-700 text-white text-sm"
-                >
-                  {dlgBusy ? 'Starting…' : 'Fetch & store'}
-                </button>
-              </>
-            ) : (
-              <>
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0]
-                    if (f) void submitDialogFile(f)
-                  }}
-                  disabled={dlgBusy}
-                  className="text-xs text-zinc-300 file:mr-3 file:rounded file:border-0 file:bg-sky-600 file:px-3 file:py-1.5 file:text-white hover:file:bg-sky-500"
-                />
-                {dlgBusy && <span className="self-end text-xs text-zinc-400">Uploading…</span>}
-              </>
-            )}
-          </div>
+            </FormField>
+          )}
+          {dlgBusy && dlgMode === 'file' && <p className="text-[length:var(--mtc-font-size-sm)] text-[var(--mtc-muted)]" role="status">Uploading…</p>}
         </div>
-      )}
+      </Dialog>
     </div>
   )
 }
@@ -886,6 +885,7 @@ function GalleryGrid({
   onOpenWith,
   mediaUrlFor,
   entryKey,
+  entryIcon,
 }: {
   entries: FileBrowserEntry[]
   onClick: (e: FileBrowserEntry) => void
@@ -893,9 +893,10 @@ function GalleryGrid({
   onOpenWith?: (e: FileBrowserEntry) => void
   mediaUrlFor: (e: FileBrowserEntry) => string
   entryKey: (e: FileBrowserEntry) => string
+  entryIcon?: (e: FileBrowserEntry) => ReactNode
 }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 p-3">
+    <div className="mtc-file-gallery">
       {entries.map((e, i) => {
         const kind = previewKind(e.content_type, e.name, e.kind)
         const isImage = kind === 'image'
@@ -903,7 +904,9 @@ function GalleryGrid({
         return (
           <div
             key={entryKey(e) || String(i)}
-            className="group relative min-w-0"
+            className="mtc-file-tile"
+            data-mtc-entry-kind={folder ? 'folder' : 'file'}
+            data-mtc-entry-id={e.id ?? e.object_id}
           >
             <button
               type="button"
@@ -915,36 +918,29 @@ function GalleryGrid({
                   onClick(e)
                 }
               }}
-              className="w-full flex flex-col items-center gap-1 p-2 rounded border border-zinc-800 hover:border-zinc-600 bg-zinc-900/60 text-left select-none"
+              className="mtc-file-tile-button"
             >
-              <div className="w-full aspect-square bg-zinc-950 rounded flex items-center justify-center overflow-hidden">
-                {folder ? (
-                  <span className="text-4xl select-none">📁</span>
-                ) : isImage && e.name ? (
-                  <img
-                    src={mediaUrlFor(e)}
-                    alt={e.name ?? ''}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover"
-                  />
+              <span className="mtc-file-tile-media">
+                {isImage && e.name ? (
+                  <img src={mediaUrlFor(e)} alt="" loading="lazy" decoding="async" />
                 ) : (
-                  <span className="text-4xl select-none">📄</span>
+                  <span className="mtc-file-tile-icon" aria-hidden="true">
+                    {entryIcon?.(e) ?? <Icon name={folder ? 'folder' : 'file'} size={32} strokeWidth={1.5} />}
+                  </span>
                 )}
-              </div>
-              <span className="w-full text-xs text-zinc-200 truncate" title={e.name}>{e.name}</span>
+              </span>
+              <span className="mtc-file-tile-name" title={e.name}>{e.name}</span>
             </button>
             {onOpenWith && !folder && (
-              <button
-                type="button"
-                onClick={() => onOpenWith(e)}
-                onDoubleClick={event => event.stopPropagation()}
-                className="absolute top-3 right-3 size-7 rounded bg-zinc-950/85 border border-zinc-700 text-zinc-400 hover:text-white opacity-70 group-hover:opacity-100 focus:opacity-100 shadow"
+              <IconButton
+                icon={<Icon name="more" />}
+                size="small"
+                className="mtc-file-tile-more"
                 aria-label={`Open ${e.name ?? 'file'} with another application`}
                 title="Open with…"
-              >
-                ···
-              </button>
+                onClick={() => onOpenWith(e)}
+                onDoubleClick={event => event.stopPropagation()}
+              />
             )}
           </div>
         )
@@ -953,26 +949,16 @@ function GalleryGrid({
   )
 }
 
-// PreviewOverlay covers the FileBrowser area with a dim backdrop and renders
-// the appropriate native media element for the file's content_type. Browsers
-// drive the byte loads via Range requests against `mediaUrl`, so the backend
-// only has to fetch the chunks overlapping the visible portion (or the
-// scrubbed-to position for video/audio).
-//
-// Design rules so the four kinds feel uniform:
-//   • Same rounded shadow card for every kind (audio gets a tagged card,
-//     others inherit theirs from the media element itself).
-//   • Loading sentinel under the media until the element fires its first
-//     load event — no black-screen-while-fetching for big files.
-//   • onError → fall back to a "preview failed, try Download" pane
-//     instead of a silently-broken element.
-//   • Backdrop click (anywhere in the dim area) closes; click on the
-//     media itself does not, so scrubbing/selecting text works.
-//   • playsInline + preload="metadata" on video to keep iOS sane and
-//     avoid pulling the whole file before the user even hits play.
+// PreviewOverlay covers the FileBrowser area with a modal preview. Audio and
+// video play natively (the browser drives Range requests, and finishing a
+// track advances the queue); everything else goes through the toolkit
+// FilePreview, so previews are bounded and signature-checked: text reads at
+// most 1 MB, CSV at most 1,000 rows, a renamed SVG never renders as an
+// image, and HTML is shown as source.
 function PreviewOverlay({
   entry,
   mediaUrl,
+  fetch: transport,
   autoAdvanceQueue,
   navigableQueue: navQueue,
   onSelect,
@@ -982,6 +968,7 @@ function PreviewOverlay({
 }: {
   entry: FileBrowserEntry
   mediaUrl: string
+  fetch?: typeof globalThis.fetch
   // autoAdvanceQueue is what onEnded (audio/video) walks. Excludes
   // images so finishing track 3 doesn't jump to a photo with no audio
   // playing — the queue dead-ends gracefully.
@@ -995,18 +982,8 @@ function PreviewOverlay({
   onOpenWith?: () => void
 }) {
   const kind = previewKind(entry.content_type, entry.name, entry.kind)
-  const isTextLike = kind === 'text' || kind === 'json' || kind === 'yaml' || kind === 'csv' || kind === 'markdown'
-  // image/video/pdf show a loading sentinel until the element loads.
-  // text-family previews fetch the bytes asynchronously.
-  const [loading, setLoading] = useState(
-    kind === 'image' || kind === 'video' || kind === 'pdf' || isTextLike,
-  )
   const [failed, setFailed] = useState(false)
-  const [failedMsg, setFailedMsg] = useState<string | null>(null)
-  // Text-family preview state.
-  const [textBody, setTextBody] = useState<string | null>(null)
-  const [csvRows, setCsvRows] = useState<string[][] | null>(null)
-  const [markdownHtml, setMarkdownHtml] = useState<string | null>(null)
+  useEffect(() => setFailed(false), [mediaUrl])
 
   // Playlist controls (only meaningful when navQueue has > 1 entries
   // and the current kind is part of it — image/audio/video).
@@ -1035,42 +1012,7 @@ function PreviewOverlay({
     if (next) onSelect(next)
   }
 
-  const onMediaLoad = () => setLoading(false)
-  const onMediaError = () => { setLoading(false); setFailed(true); setFailedMsg(null) }
-  const backdropClose = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) onClose()
-  }
-
-  // Text-family previews: fetch + transform. CSV → table rows, JSON →
-  // pretty-printed string, markdown → HTML (lazy-loaded `marked`),
-  // text/yaml → raw with monospace.
-  useEffect(() => {
-    if (!isTextLike) return undefined
-    let cancelled = false
-    void (async () => {
-      try {
-        const raw = await fetchText(mediaUrl)
-        if (cancelled) return
-        if (kind === 'csv') {
-          setCsvRows(parseCSV(raw))
-        } else if (kind === 'json') {
-          setTextBody(prettyJSON(raw))
-        } else if (kind === 'markdown') {
-          setMarkdownHtml(await renderMarkdown(raw))
-        } else {
-          setTextBody(raw)
-        }
-        setLoading(false)
-      } catch (err) {
-        if (cancelled) return
-        setFailedMsg(errorMessage(err))
-        setFailed(true)
-        setLoading(false)
-      }
-    })()
-    return () => { cancelled = true }
-  }, [kind, isTextLike, mediaUrl])
-
+  const media = kind === 'video' || kind === 'audio'
   return (
     <div
       ref={overlayRef}
@@ -1078,19 +1020,17 @@ function PreviewOverlay({
       aria-modal="true"
       aria-label={`Preview ${entry.name ?? 'file'}`}
       tabIndex={-1}
-      className="fixed inset-0 z-50 flex flex-col bg-zinc-950/95"
-      onClick={backdropClose}
+      className="mtc-file-preview-overlay"
+      data-mtc-part="preview"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose()
+      }}
       onKeyDown={(event) => {
         handleModalKeyDown(event, overlayRef, true, onClose)
         if (event.defaultPrevented) return
         const target = event.target as HTMLElement
-        if (
-          target.tagName === 'INPUT'
-          || target.tagName === 'TEXTAREA'
-          || target.isContentEditable
-        ) {
-          return
-        }
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return
+        if (target.closest('[role="grid"], pre')) return
         if (event.key === 'ArrowRight') {
           event.preventDefault()
           advanceNext()
@@ -1098,200 +1038,80 @@ function PreviewOverlay({
           event.preventDefault()
           advancePrev()
         } else if (event.key === ' ') {
-          const media = overlayRef.current?.querySelector(
-            'video, audio',
-          ) as HTMLMediaElement | null
-          if (media) {
+          const element = overlayRef.current?.querySelector('video, audio') as HTMLMediaElement | null
+          if (element) {
             event.preventDefault()
-            if (media.paused) void media.play()
-            else media.pause()
+            if (element.paused) void element.play()
+            else element.pause()
           }
         }
       }}
     >
-      <div className="flex items-center gap-3 px-4 py-2 text-zinc-200 border-b border-zinc-800 bg-zinc-900">
-        <span className="text-sm font-medium truncate flex-1">{entry.name}</span>
-        <span className="text-xs text-zinc-500 truncate max-w-[200px]">{entry.content_type}</span>
+      <div className="mtc-file-preview-bar">
+        <span className="mtc-file-preview-name">{entry.name}</span>
+        {entry.content_type && <span className="mtc-file-preview-meta">{entry.content_type}</span>}
         {typeof entry.size_bytes === 'number' && (
-          <span className="text-xs text-zinc-600 tabular-nums">{humanSize(entry.size_bytes)}</span>
+          <span className="mtc-file-preview-meta">{humanSize(entry.size_bytes)}</span>
         )}
         {queueVisible && (
-          <div className="flex items-center gap-2 text-zinc-400 text-sm border-l border-zinc-700 pl-3 ml-2">
-            <button
-              onClick={advancePrev}
-              className="hover:text-zinc-100 leading-none px-1"
-              aria-label="Previous (←)"
-              title="Previous (←)"
-            >
-              ⏮
-            </button>
-            <button
-              onClick={advanceNext}
-              className="hover:text-zinc-100 leading-none px-1"
-              aria-label="Next (→)"
-              title="Next (→)"
-            >
-              ⏭
-            </button>
-            <button
-              onClick={() => setShuffle((v) => !v)}
-              className={`px-1 leading-none ${shuffle ? 'text-sky-400' : 'hover:text-zinc-100'}`}
-              aria-label="Toggle shuffle"
-              title={shuffle ? 'Shuffle on' : 'Shuffle off'}
-            >
-              🔀
-            </button>
-            <button
-              onClick={() => setRepeat((v) => !v)}
-              className={`px-1 leading-none ${repeat ? 'text-sky-400' : 'hover:text-zinc-100'}`}
-              aria-label="Toggle repeat"
-              title={repeat ? 'Repeat on' : 'Repeat off'}
-            >
-              🔁
-            </button>
-            <span className="text-xs text-zinc-500 tabular-nums">
+          <div className="mtc-file-preview-queue" role="group" aria-label="Queue">
+            <IconButton icon={<Icon name="chevron-left" />} variant="ghost" size="small" aria-label="Previous (←)" onClick={advancePrev} />
+            <IconButton icon={<Icon name="chevron-right" />} variant="ghost" size="small" aria-label="Next (→)" onClick={advanceNext} />
+            <Button size="small" variant="ghost" aria-pressed={shuffle} onClick={() => setShuffle((v) => !v)}>Shuffle</Button>
+            <Button size="small" variant="ghost" aria-pressed={repeat} onClick={() => setRepeat((v) => !v)}>Repeat</Button>
+            <span className="mtc-file-preview-meta">
               {queueIndex >= 0 ? queueIndex + 1 : '–'} / {navQueue.length}
             </span>
           </div>
         )}
         {onOpenWith && (
-          <button
-            type="button"
-            onClick={onOpenWith}
-            className="text-xs text-zinc-400 hover:text-zinc-100"
-          >
-            Open with…
-          </button>
+          <Button size="small" variant="ghost" onClick={onOpenWith}>Open with…</Button>
         )}
-        <button
-          onClick={onDownload}
-          className="text-xs text-sky-400 hover:underline"
-        >
-          Download
-        </button>
-        <button
-          ref={closeRef}
-          onClick={onClose}
-          className="text-zinc-400 hover:text-zinc-100 text-lg leading-none"
-          aria-label="Close preview"
-        >
-          ×
-        </button>
+        <Button size="small" startIcon={<Icon name="download" />} onClick={onDownload}>Download</Button>
+        <IconButton ref={closeRef} icon={<Icon name="close" />} variant="ghost" size="small" aria-label="Close preview" onClick={onClose} />
       </div>
       <div
-        className="flex-1 flex items-center justify-center overflow-auto px-4 pt-4 pb-24 relative"
-        onClick={backdropClose}
+        className={cx('mtc-file-preview-stage', media && 'mtc-file-preview-stage-media')}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) onClose()
+        }}
       >
-        {loading && !failed && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-zinc-500 text-xs uppercase tracking-wider">Loading…</div>
-          </div>
-        )}
-        {failed && (
-          <div className="flex flex-col items-center gap-3 text-zinc-300 text-sm max-w-md text-center">
-            <span className="text-zinc-500">⚠ Preview couldn't load.</span>
-            {failedMsg && (
-              <span className="text-zinc-600 text-xs font-mono break-words">{failedMsg}</span>
-            )}
-            <button onClick={onDownload} className="text-sky-400 hover:underline text-xs">
-              Download instead
-            </button>
-          </div>
-        )}
-        {!failed && kind === 'video' && (
+        {media && failed ? (
+          <Empty>Preview could not load. Use Download instead.</Empty>
+        ) : kind === 'video' ? (
           <video
             src={mediaUrl}
             controls
             autoPlay
             playsInline
             preload="metadata"
-            onLoadedMetadata={onMediaLoad}
             onEnded={autoAdvance}
-            onError={onMediaError}
-            className="max-h-full max-w-full bg-black rounded shadow-2xl"
+            onError={() => setFailed(true)}
+            className="mtc-file-preview-media"
           />
-        )}
-        {!failed && kind === 'audio' && (
-          <div className="flex flex-col items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-lg p-6 shadow-2xl w-full max-w-md">
-            <div className="text-3xl select-none" aria-hidden="true">♪</div>
-            <div className="text-sm text-zinc-200 truncate max-w-full" title={entry.name}>{entry.name}</div>
+        ) : kind === 'audio' ? (
+          <div className="mtc-file-preview-audio-card">
+            <Icon name="music" size={32} />
+            <span className="mtc-file-preview-name" title={entry.name}>{entry.name}</span>
             <audio
               src={mediaUrl}
               controls
               autoPlay
               preload="metadata"
               onEnded={autoAdvance}
-              onError={onMediaError}
-              className="w-full"
+              onError={() => setFailed(true)}
+              className="mtc-file-preview-audio"
             />
           </div>
-        )}
-        {!failed && kind === 'image' && (
-          <img
-            src={mediaUrl}
-            alt={entry.name ?? ''}
-            decoding="async"
-            onLoad={onMediaLoad}
-            onError={onMediaError}
-            className="max-h-full max-w-full object-contain rounded shadow-2xl"
+        ) : (
+          <FilePreview
+            key={mediaUrl}
+            file={{ name: entry.name ?? '', url: mediaUrl, contentType: entry.content_type, sizeBytes: entry.size_bytes }}
+            fetch={transport}
+            onDownload={onDownload}
+            height="calc(100vh - 8rem)"
+            className="mtc-file-preview-body"
           />
-        )}
-        {!failed && kind === 'pdf' && (
-          // iframe is more reliably rendered than <embed> across browsers
-          // (some refuse <embed> for security reasons; iframe with a
-          // direct PDF src gets the native viewer with toolbar/scrub).
-          <iframe
-            src={mediaUrl}
-            title={entry.name ?? 'PDF preview'}
-            onLoad={onMediaLoad}
-            className="w-full h-full bg-white rounded shadow-2xl border-0"
-          />
-        )}
-        {!failed && (kind === 'text' || kind === 'json' || kind === 'yaml') && textBody !== null && (
-          <pre className="w-full h-full overflow-auto bg-zinc-900 text-zinc-100 text-xs font-mono p-4 rounded shadow-2xl whitespace-pre-wrap break-words">
-            {textBody}
-          </pre>
-        )}
-        {!failed && kind === 'markdown' && markdownHtml !== null && (
-          <div
-            className="w-full h-full overflow-auto bg-white text-zinc-900 text-sm p-6 rounded shadow-2xl prose prose-zinc max-w-none"
-            // marked is the trust boundary; v18+ sanitises by default.
-            dangerouslySetInnerHTML={{ __html: markdownHtml }}
-          />
-        )}
-        {!failed && kind === 'csv' && csvRows !== null && (
-          <div className="w-full h-full overflow-auto bg-zinc-900 text-zinc-100 text-xs p-4 rounded shadow-2xl">
-            <table className="border-collapse">
-              {csvRows.length > 0 && (
-                <thead>
-                  <tr>
-                    {csvRows[0].map((h, i) => (
-                      <th key={i} className="border border-zinc-700 px-2 py-1 text-left font-semibold sticky top-0 bg-zinc-800">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-              )}
-              <tbody>
-                {csvRows.slice(1).map((row, i) => (
-                  <tr key={i}>
-                    {row.map((cell, j) => (
-                      <td key={j} className="border border-zinc-800 px-2 py-1 align-top">{cell}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        {(kind === null || kind === 'heic' || kind === 'mkv') && !failed && (
-          <div className="flex flex-col items-center gap-3 text-zinc-300 text-sm">
-            <span className="text-zinc-500">
-              No native preview for {entry.content_type ?? 'this file type'}.
-            </span>
-            <button onClick={onDownload} className="text-sky-400 hover:underline text-xs">
-              Download instead
-            </button>
-          </div>
         )}
       </div>
     </div>

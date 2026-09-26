@@ -126,7 +126,7 @@ export interface DataGridProps<Row> {
   onNavigate?: (row: Row, event: MouseEvent<HTMLAnchorElement>) => void
   /** Commands for the context menu (right-click, the Menu key, Shift+F10). */
   contextActions?: (row: Row) => readonly MenuItem[]
-  /** F2 on a cell: rename or edit it. */
+  /** F2 on a cell, or a double-click on it: rename or edit it. */
   onCellEdit?: (row: Row, columnId: string) => void
   /** Called once per page when the last rows come into view. */
   onEndReached?: () => void
@@ -630,9 +630,17 @@ export function DataGrid<Row>({
                 style={{ top: rowIndex * lineHeight }}
                 {...rowProps?.(row)}
                 onClick={event => onRowClick(event, rowIndex)}
+                // A double-click opens or edits; it should not select text.
+                onMouseDown={event => {
+                  if (event.detail > 1) event.preventDefault()
+                }}
                 onDoubleClick={event => {
-                  if ((event.target as HTMLElement).closest('a, button, input, select, textarea')) return
-                  activateRow(rowIndex)
+                  const target = event.target as HTMLElement
+                  if (target.closest('a, button, input, select, textarea')) return
+                  // An editable grid edits the double-clicked cell; others open the row.
+                  const columnId = target.closest<HTMLElement>('[data-column-id]')?.dataset.columnId
+                  if (onCellEdit && columnId) onCellEdit(row, columnId)
+                  else activateRow(rowIndex)
                 }}
                 onContextMenu={contextActions ? event => {
                   event.preventDefault()
@@ -677,6 +685,7 @@ export function DataGrid<Row>({
                       key={column.id}
                       role="gridcell"
                       className="mtc-data-grid-cell"
+                      data-column-id={column.id}
                       data-align={numeric ? 'end' : 'start'}
                       {...cellProps(rowIndex, columnIndex)}
                     >

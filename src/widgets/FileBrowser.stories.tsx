@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
+import { TypeGlyph } from '../components/TypeGlyph'
 import { FileBrowser } from './FileBrowser'
 import { DashboardContext, DEFAULT_DASHBOARD_CONTEXT } from '../core/DashboardContext'
 import {
@@ -274,5 +275,54 @@ export const HostControlledApplicationPane: Story = {
     await expect(canvas.queryByRole('dialog', {
       name: 'Jim Video Player: launch-reel.mp4',
     })).not.toBeInTheDocument()
+  },
+}
+
+const opened = fn()
+const renamed = fn()
+const selected = fn()
+
+export const HostExtensions: Story = {
+  args: {
+    data: {
+      entries: [
+        { kind: 'folder', name: 'contracts', path: 'finance/contracts' },
+        { id: 'obj-q3', kind: 'file', name: 'q3-forecast.csv', size_bytes: 48_200, content_type: 'text/csv', modified_at: '2026-09-24T16:20:00Z', path: 'finance/q3-forecast.csv' },
+        { id: 'obj-board', kind: 'file', name: 'board-deck.pdf', size_bytes: 2_400_000, content_type: 'application/pdf', modified_at: '2026-09-22T09:05:00Z', path: 'finance/board-deck.pdf' },
+        { id: 'obj-notes', kind: 'file', name: 'notes.md', size_bytes: 3_120, content_type: 'text/markdown', modified_at: '2026-09-21T11:40:00Z', path: 'finance/notes.md' },
+      ],
+    },
+    selection: 'multi',
+    entryIcon: entry => (entry.kind === 'folder' ? <TypeGlyph icon="folder" color="azure" size={16} /> : undefined),
+    entryHref: (_entry, path) => `#/b/finance/f/${path}`,
+    onOpen: (entry, path) => {
+      opened(path)
+      return entry.kind !== 'folder'
+    },
+    onSelectionChange: entries => selected(entries.map(entry => entry.name)),
+    contextActions: (entry, path) => [
+      { id: 'rename', label: 'Rename', shortcut: 'F2', onSelect: () => renamed(path) },
+      { id: 'download', label: 'Download', disabled: entry.kind === 'folder' },
+      { id: 'sep', separator: true },
+      { id: 'delete', label: 'Delete', intent: 'danger' },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const grid = canvas.getByRole('grid', { name: /Files in/ })
+    await expect(canvasElement.querySelector('[data-mtc-file-browser]')).not.toBeNull()
+    const rows = grid.querySelectorAll('[data-mtc-entry-kind="file"]')
+    await expect(rows).toHaveLength(3)
+    await expect(canvas.getByRole('link', { name: 'q3-forecast.csv' })).toHaveAttribute('href', '#/b/finance/f/finance/q3-forecast.csv')
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Select q3-forecast.csv' }))
+    await expect(selected).toHaveBeenLastCalledWith(['q3-forecast.csv'])
+    const cell = grid.querySelector<HTMLElement>('[data-mtc-entry-path="finance/q3-forecast.csv"] [role="gridcell"]:nth-child(2)')!
+    cell.focus()
+    await userEvent.keyboard('{Enter}')
+    await expect(opened).toHaveBeenCalledWith('finance/q3-forecast.csv')
+    await userEvent.keyboard('{Shift>}{F10}{/Shift}')
+    const menu = await within(document.body).findByRole('menu', { name: 'Actions for q3-forecast.csv' })
+    await userEvent.click(within(menu).getByRole('menuitem', { name: /Rename/ }))
+    await expect(renamed).toHaveBeenCalledWith('finance/q3-forecast.csv')
   },
 }

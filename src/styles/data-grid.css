@@ -104,4 +104,6 @@
   color: var(--mtc-muted);
   font-size: var(--mtc-font-size-sm);
 }
+.mtc-root .mtc-data-grid-editor { display: flex; min-width: 0; flex: 1 1 auto; align-items: center; gap: var(--mtc-space-1); }
+.mtc-root .mtc-data-grid-editor > :first-child { min-width: 0; flex: 1 1 auto; }
 .mtc-root .mtc-data-grid-menu-layer { position: fixed; z-index: 85; top: 0; left: 0; }

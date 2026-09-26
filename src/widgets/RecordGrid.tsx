@@ -1,4 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Button, IconButton } from '../components/Button'
+import { Input } from '../components/FormControls'
+import { Icon } from '../components/Icon'
+import { Pagination } from '../components/Pagination'
+import { DataGrid, type DataGridColumn } from '../workbench/DataGrid'
 import { useDashboard } from '../core/DashboardContext'
 import { useSubmitAction } from '../hooks/useSubmitAction'
 import { isErrorStatus } from '../hooks/useWatchAction'
@@ -53,9 +58,11 @@ function compareValues(left: unknown, right: unknown): number {
   })
 }
 
-// Mutable, schema-driven record grid. Table remains the lightweight
-// read-only analytical surface; record_grid adds identity, field types,
-// saved views, linked values, revisions, selection, and governed writes.
+// Mutable, schema-driven record grid on the toolkit DataGrid: one tab stop,
+// arrow keys, Enter selects the record, F2 or a double-click edits a cell
+// (Enter saves, Escape cancels). Table remains the lightweight read-only
+// analytical surface; record_grid adds identity, field types, saved views,
+// linked values, revisions, selection, and governed writes.
 export function RecordGrid({ data, options, widgetId }: WidgetProps) {
   const set = useMemo(() => normalizeRecordSet(data), [data])
   const opts = (options ?? {}) as RecordGridOptions
@@ -126,15 +133,6 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
     setCtx(recordIdKey, opts.new_record_value ?? 'new')
   }
 
-  const toggleSort = (field: string) => {
-    setSort(current =>
-      current?.field === field
-        ? { field, descending: !current.descending }
-        : { field, descending: false },
-    )
-    setPage(0)
-  }
-
   const saveEdit = async () => {
     if (!edit || mutation.submitting) return
     await mutation.submit({
@@ -154,19 +152,55 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
     })
   }
 
+  const columns: DataGridColumn<WorkRecordData>[] = fields.map(field => ({
+    id: field.key,
+    header: field.label,
+    width: field.type === 'boolean' ? 96 : 176,
+    accessor: record => record.values[field.key],
+    align: field.type === 'number' || field.type === 'currency' || field.type === 'percent' ? 'end' : 'start',
+    cell: record => {
+      const editing = edit?.record.id === record.id && edit.field.key === field.key
+      if (!editing) return <RecordValue field={field} value={record.values[field.key]} />
+      return (
+        <span className="mtc-data-grid-editor">
+          <RecordFieldInput
+            field={field}
+            value={edit.value}
+            onChange={value => setEdit(current => current ? { ...current, value } : current)}
+            compact
+            autoFocus
+            disabled={mutation.submitting}
+            onCommit={() => void saveEdit()}
+            onCancel={() => setEdit(null)}
+          />
+          <IconButton icon={<Icon name="check" />} size="small" variant="ghost" aria-label={`Save ${field.label}`} disabled={mutation.submitting} onClick={() => void saveEdit()} />
+          <IconButton icon={<Icon name="close" />} size="small" variant="ghost" aria-label="Cancel edit" onClick={() => setEdit(null)} />
+        </span>
+      )
+    },
+  }))
+
+  const startEdit = (record: WorkRecordData, columnId: string) => {
+    const field = fields.find(candidate => candidate.key === columnId)
+    if (!field || !canInlineEdit || !isRecordFieldEditable(field)) return
+    setEdit({ record, field, value: record.values[field.key] })
+  }
+
   return (
-    <div className="h-full flex flex-col min-h-0">
-      <div className="flex items-center gap-2 pb-2">
+    <div className="h-full flex flex-col min-h-0 gap-2">
+      <div className="flex items-center gap-2">
         {(opts.search !== false) && (
-          <input
+          <Input
             type="search"
+            size="small"
             value={query}
             onChange={event => {
               setQuery(event.target.value)
               setPage(0)
             }}
+            aria-label={`Search ${set.tableName || 'records'}`}
             placeholder={`Search ${set.tableName || 'records'}…`}
-            className="mtc-control min-w-0 flex-1 px-2 py-1.5 text-xs text-zinc-100 outline-none focus:border-sky-500"
+            className="min-w-0 flex-1"
           />
         )}
         {gridViews.length > 1 && (
@@ -177,7 +211,8 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
               setPage(0)
               setSort(null)
             }}
-            className="mtc-control max-w-[12rem] px-2 py-1.5 text-xs text-zinc-300 outline-none"
+            className="mtc-input max-w-[12rem]"
+            data-size="small"
             aria-label="Saved view"
           >
             {gridViews.map(candidate => (
@@ -186,149 +221,60 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
           </select>
         )}
         {set.capabilities.create && (
-          <button
-            type="button"
-            onClick={startNew}
-            className="mtc-control px-2.5 py-1.5 text-[10px] uppercase tracking-wider text-sky-300 border-sky-500/30 shrink-0"
-          >
-            + New
-          </button>
+          <Button size="small" intent="primary" startIcon={<Icon name="add" />} onClick={startNew}>
+            New
+          </Button>
         )}
       </div>
 
-      <div className="overflow-auto flex-1 min-h-0 border border-zinc-800 rounded">
-        <table className="w-full text-xs">
-          <thead className="sticky top-0 z-[1] bg-zinc-900">
-            <tr>
-              {fields.map(field => (
-                <th
-                  key={field.key}
-                  className="border-b border-r last:border-r-0 border-zinc-800 px-2.5 py-2 text-left font-medium text-zinc-400 whitespace-nowrap"
-                >
-                  <button
-                    type="button"
-                    onClick={() => toggleSort(field.key)}
-                    className="w-full flex items-center gap-1 text-left hover:text-zinc-100"
-                  >
-                    <span>{field.label}</span>
-                    {field.required && <span className="text-amber-400" title="Required">*</span>}
-                    {field.readOnly && <span className="text-zinc-600" title="Computed or read-only">◇</span>}
-                    {sort?.field === field.key && (
-                      <span className="ml-auto text-zinc-600">{sort.descending ? '↓' : '↑'}</span>
-                    )}
-                  </button>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {pageRecords.map(record => (
-              <tr
-                key={record.id}
-                onClick={() => selectRecord(record)}
-                className="border-b last:border-b-0 border-zinc-800/70 hover:bg-zinc-800/40 cursor-pointer"
-              >
-                {fields.map(field => {
-                  const editing = edit?.record.id === record.id && edit.field.key === field.key
-                  const editable = canInlineEdit && isRecordFieldEditable(field)
-                  return (
-                    <td
-                      key={field.key}
-                      className="min-w-[9rem] max-w-[22rem] border-r last:border-r-0 border-zinc-800/70 px-2.5 py-2 text-zinc-200 align-top"
-                      onClick={event => {
-                        if (!editable) return
-                        event.stopPropagation()
-                      }}
-                    >
-                      {editing ? (
-                        <div className="min-w-[10rem]">
-                          <RecordFieldInput
-                            field={field}
-                            value={edit.value}
-                            onChange={value => setEdit(current => current ? { ...current, value } : current)}
-                            compact
-                            autoFocus
-                            disabled={mutation.submitting}
-                            onCommit={() => void saveEdit()}
-                            onCancel={() => setEdit(null)}
-                          />
-                          <div className="flex items-center justify-end gap-1 mt-1">
-                            <button
-                              type="button"
-                              onClick={() => setEdit(null)}
-                              className="px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => void saveEdit()}
-                              disabled={mutation.submitting}
-                              className="px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-sky-300 disabled:opacity-40"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (editable) setEdit({ record, field, value: record.values[field.key] })
-                          }}
-                          className={`w-full min-h-5 text-left ${editable ? 'hover:text-sky-300' : 'cursor-default'}`}
-                          title={editable ? `Edit ${field.label}` : undefined}
-                        >
-                          <RecordValue field={field} value={record.values[field.key]} />
-                        </button>
-                      )}
-                    </td>
-                  )
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {pageRecords.length === 0 && (
-          <div className="h-40"><Empty>No matching records</Empty></div>
-        )}
-      </div>
-
-      <div className="pt-2 flex items-center justify-between gap-3 text-[10px] text-zinc-500">
-        <span>
-          {visibleRecords.length} shown
-          {set.total != null && set.total !== visibleRecords.length ? ` · ${set.total} total` : ''}
-          {view ? ` · ${view.name}` : ''}
-        </span>
-        {serverPaged ? (
-          <CursorPager
-            nextPageToken={set.nextPageToken}
-            widgetId={widgetId}
-            options={opts}
-            ariaLabel="Record pages"
-          />
-        ) : totalPages > 1 && (
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setPage(current => Math.max(0, current - 1))}
-              disabled={safePage === 0}
-              className="mtc-control px-2 py-0.5 disabled:opacity-30"
-            >
-              Previous
-            </button>
-            <span className="px-1 tabular-nums">{safePage + 1}/{totalPages}</span>
-            <button
-              type="button"
-              onClick={() => setPage(current => Math.min(totalPages - 1, current + 1))}
-              disabled={safePage === totalPages - 1}
-              className="mtc-control px-2 py-0.5 disabled:opacity-30"
-            >
-              Next
-            </button>
+      <DataGrid
+        label={set.tableName || 'Records'}
+        className="min-h-0 flex-1"
+        columns={columns}
+        rows={pageRecords}
+        rowKey={record => record.id}
+        rowLabel={record => recordTitle(set, record)}
+        selection="single"
+        selectedKeys={ctx[recordIdKey] ? [ctx[recordIdKey]!] : []}
+        onSelectionChange={keys => {
+          const record = pageRecords.find(candidate => candidate.id === keys[0])
+          if (record) selectRecord(record)
+        }}
+        onRowActivate={selectRecord}
+        onCellEdit={canInlineEdit ? startEdit : undefined}
+        sort={sort ? { columnId: sort.field, direction: sort.descending ? 'descending' : 'ascending' } : null}
+        onSortChange={next => {
+          setSort(next ? { field: next.columnId, descending: next.direction === 'descending' } : null)
+          setPage(0)
+        }}
+        sortMode="server"
+        empty={<Empty>No matching records</Empty>}
+        rowProps={record => ({ 'data-mtc-record-id': record.id })}
+        footer={(
+          <div className="flex w-full items-center justify-between gap-3">
+            <span>
+              {visibleRecords.length} shown
+              {set.total != null && set.total !== visibleRecords.length ? ` · ${set.total} total` : ''}
+              {view ? ` · ${view.name}` : ''}
+            </span>
+            {serverPaged ? (
+              <CursorPager
+                nextPageToken={set.nextPageToken}
+                widgetId={widgetId}
+                options={opts}
+                ariaLabel="Record pages"
+              />
+            ) : totalPages > 1 && (
+              <Pagination
+                label="Record pages"
+                page={safePage + 1}
+                pageCount={totalPages}
+                onPageChange={next => setPage(next - 1)}
+              />
+            )}
           </div>
         )}
-      </div>
+      />
     </div>
   )
 }

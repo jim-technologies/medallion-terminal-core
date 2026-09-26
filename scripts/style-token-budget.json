@@ -97,9 +97,6 @@
   "src/widgets/RecordForm.tsx": {
     "font-size": 8
   },
-  "src/widgets/RecordGrid.tsx": {
-    "font-size": 4
-  },
   "src/widgets/Section.tsx": {
     "font-size": 1,
     "tracking": 1

@@ -5,23 +5,22 @@
 - button "Copy link"
 - button "Ctrl K"
 - text: Context orgjim-technologies path
-- button /
-- button "⬆ Upload"
-- button "☰ Icons"
-- text: 1 on page
-- table:
+- navigation "Folder path":
+  - list:
+    - listitem: jim-technologies
+- button "Upload"
+- button "Gallery"
+- grid "Files in jim-technologies":
   - rowgroup:
-    - row "Entry kind Name Size Type Modified":
-      - columnheader "Entry kind"
+    - row "Name Size Type Modified":
       - columnheader "Name"
       - columnheader "Size"
       - columnheader "Type"
       - columnheader "Modified"
   - rowgroup:
-    - row "📄 quarterly-forecast.pdf 62.5 KB application/pdf":
-      - cell "📄"
-      - cell "quarterly-forecast.pdf"
-      - cell "62.5 KB"
-      - cell "application/pdf"
-      - cell
-- text: idle 11:45:00
+    - row "quarterly-forecast.pdf 64 kB application/pdf —" [selected]:
+      - gridcell "quarterly-forecast.pdf"
+      - gridcell "64 kB"
+      - gridcell "application/pdf"
+      - gridcell "—"
+- text: 1 on page idle 11:45:00

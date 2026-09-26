@@ -112,10 +112,18 @@ const toolkitStories = {
   toolkitCodeView: 'toolkit-files--code-view-controls',
 } as const
 
+// Widgets rebuilt on toolkit components keep themed baselines too. Their
+// story frames have a fixed width, so they skip the mobile containment check.
+const widgetStories = {
+  widgetFileBrowser: 'widgets-filebrowser--host-extensions',
+  widgetRecordGrid: 'widgets-records-recordgrid--default',
+} as const
+
 const stories = {
   dashboard: 'core-dashboard--full-demo',
   ...cloneStories,
   ...toolkitStories,
+  ...widgetStories,
   githubFiles: 'clones-github--files-changed',
   githubChecks: 'clones-github--checks',
   gitlabChanges: 'clones-gitlab--changes',
@@ -221,8 +229,11 @@ const themeInvariantToolkitStories = new Set<keyof typeof toolkitStories>([
   'toolkitLight',
   'toolkitCompact',
 ])
-const themedToolkitStories = Object.entries(toolkitStories)
-  .filter(([name]) => !themeInvariantToolkitStories.has(name as keyof typeof toolkitStories))
+const themedToolkitStories = [
+  ...Object.entries(toolkitStories)
+    .filter(([name]) => !themeInvariantToolkitStories.has(name as keyof typeof toolkitStories)),
+  ...Object.entries(widgetStories),
+]
 
 for (const [name, id] of themedToolkitStories) {
   test(`${name} has no automated accessibility violations in the light theme`, async ({ page }) => {
@@ -510,6 +521,29 @@ test('FilePreview renders a valid image from a blob and refuses a renamed SVG', 
   await expect(root.getByRole('img', { name: 'chart.png' })).toHaveAttribute('src', /^blob:/)
   await expect(root.getByText('Preview blocked')).toBeVisible()
   await expect(root.locator('img[alt="renamed.png"], svg[onload]')).toHaveCount(0)
+})
+
+test('FileBrowser lists entries in a keyboard grid with stable data hooks', async ({ page }) => {
+  const root = await openStory(page, stories.widgetFileBrowser)
+  const grid = root.getByRole('grid', { name: /Files in/ })
+  await expect(grid.locator('[data-mtc-entry-kind="folder"]')).toHaveCount(1)
+  await expect(grid.locator('[data-mtc-entry-kind="file"]')).toHaveCount(3)
+  await expect(grid.getByRole('columnheader', { name: 'Modified' })).toBeVisible()
+  // Dates are formatted, never raw ISO.
+  await expect(grid.getByText('2026-09-24T16:20:00Z')).toHaveCount(0)
+  await expect(grid.locator('[tabindex="0"]')).toHaveCount(1)
+})
+
+test('RecordGrid is a keyboard grid: one tab stop, arrow keys, header sort', async ({ page }) => {
+  const root = await openStory(page, stories.widgetRecordGrid)
+  const grid = root.getByRole('grid')
+  await grid.locator('[data-cell="0:0"]').click()
+  await expect(grid.locator('[tabindex="0"]')).toHaveCount(1)
+  await page.keyboard.press('ArrowRight')
+  await expect(grid.locator('[data-cell="0:1"]')).toBeFocused()
+  await page.keyboard.press('ArrowUp')
+  await page.keyboard.press('Enter')
+  await expect(grid.locator('[role="columnheader"][aria-sort="ascending"]')).toHaveCount(1)
 })
 
 test('CopyButton confirms a copy with a polite status', async ({ page }) => {
