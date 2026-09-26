@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   cellValue,
+  fitColumnWidths,
   moveFocus,
   nextSort,
   rangeKeys,
@@ -91,5 +92,42 @@ describe('rangeKeys and moveFocus', () => {
     expect(moveFocus({ row: 5, column: 2 }, 'Home', dims)).toEqual({ row: 5, column: 0 })
     expect(moveFocus({ row: 5, column: 2 }, 'End', { ...dims, ctrl: true })).toEqual({ row: 99, column: 4 })
     expect(moveFocus({ row: 5, column: 2 }, 'x', dims)).toBeNull()
+  })
+})
+
+describe('fitColumnWidths', () => {
+  const text = (width: number, min = 96) => ({ width, min, shrink: true })
+  const rigid = (width: number) => ({ width, min: width, shrink: false })
+  const sum = (widths: number[]) => widths.reduce((total, width) => total + width, 0)
+
+  it('keeps natural widths when they fit', () => {
+    expect(fitColumnWidths([text(120), rigid(90), rigid(80)], 420)).toEqual([120, 90, 80])
+    // Unmeasured viewport: nothing to fit against.
+    expect(fitColumnWidths([text(400), rigid(300)], 0)).toEqual([400, 300])
+  })
+
+  it('shrinks text columns in proportion to their room and lands exactly on the width', () => {
+    const widths = fitColumnWidths([text(300), text(196), rigid(110), rigid(90)], 500)
+    expect(sum(widths)).toBe(500)
+    expect(widths.slice(2)).toEqual([110, 90])
+    // 204 and 100 px of room give up the 196 px excess about 2:1.
+    expect(widths[0]).toBe(168)
+    expect(widths[1]).toBe(132)
+  })
+
+  it('shrinks a higher tier only once the lower tiers are at their minimum', () => {
+    const name = { width: 170, min: 96, shrink: true, tier: 1 }
+    // 192 px too wide: the other text columns give their 174 px first.
+    expect(fitColumnWidths([name, text(90, 72), text(200, 72), rigid(70), rigid(150), text(100, 72)], 588))
+      .toEqual([152, 72, 72, 70, 150, 72])
+    // Enough room in the lower tier: the name keeps its width.
+    expect(fitColumnWidths([name, text(200, 72), rigid(100)], 400)).toEqual([170, 130, 100])
+  })
+
+  it('never shrinks below a minimum or touches numbers, and scrolls the rest', () => {
+    const widths = fitColumnWidths([text(300, 120), rigid(140), rigid(160)], 320)
+    expect(widths).toEqual([120, 140, 160])
+    expect(sum(widths)).toBeGreaterThan(320)
+    expect(fitColumnWidths([rigid(200), rigid(200)], 300)).toEqual([200, 200])
   })
 })

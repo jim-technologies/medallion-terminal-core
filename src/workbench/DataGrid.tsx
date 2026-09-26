@@ -33,6 +33,7 @@ import {
 } from '../objects/propertyFormat'
 import {
   cellValue,
+  fitColumnWidths,
   moveFocus,
   nextSort,
   rangeKeys,
@@ -72,9 +73,18 @@ export interface DataGridColumn<Row> {
   tones?: Readonly<Record<string, StatusTone>>
   /** Custom cell content. Keep it one line; rows have a fixed height. */
   cell?: (row: Row, context: DataGridCellContext) => ReactNode
-  /** Initial width in pixels (160 when unset). */
+  /**
+   * Width in pixels. Unset, the column is sized to its content (its header
+   * and the rows in view, at most 360 px), and a text column gives way when
+   * the grid is narrower than its columns; numbers, dates and Yes/No never
+   * do, so the grid scrolls rather than cut a value.
+   */
   width?: number
-  /** Narrowest width a resize may reach (48 when unset). */
+  /**
+   * Narrowest width: a resize stops here (48 when unset), and a
+   * content-sized text column never gives way below it (72 when unset, 96
+   * for the primary column, which gives way last).
+   */
   minWidth?: number
   /** Takes the remaining width; the last column grows when none does. */
   grow?: boolean
@@ -155,7 +165,17 @@ export interface DataGridProps<Row> {
 }
 
 const ROW_HEIGHT: Record<Density, number> = { compact: 28, standard: 32, comfortable: 40 }
+// A content-sized column before it is measured (and without a DOM).
 const DEFAULT_WIDTH = 160
+// Content-sized columns are measured up to this width; longer text truncates.
+const MAX_CONTENT_WIDTH = 360
+// Content-sized text columns give way down to these widths by default; the
+// primary column (the row's name) gives way last and keeps more.
+const FIT_MIN_WIDTH = 72
+const PRIMARY_FIT_MIN_WIDTH = 96
+const RESIZE_MIN_WIDTH = 48
+// Room kept in a sortable header for the sort arrow (icon plus gap).
+const SORT_ICON_ROOM = 20
 const SELECTION_WIDTH = 40
 const RESIZE_STEP = 16
 const SKELETON_ROWS = 8
@@ -163,7 +183,18 @@ const EMPTY_HEIGHT = 160
 
 type RenderedColumn<Row> =
   | { kind: 'select'; width: number }
-  | { kind: 'data'; column: DataGridColumn<Row>; width: number }
+  | { kind: 'data'; column: DataGridColumn<Row>; width: number; contentSized: boolean }
+
+// Kinds whose text must never be cut: they keep their width and the grid
+// scrolls instead.
+const RIGID_KINDS = new Set<PropertyKind>(['number', 'integer', 'currency', 'percent', 'bytes', 'date', 'datetime', 'boolean'])
+
+/** Whether a content-sized column may give way: start-aligned text. */
+function isTextColumn<Row>(column: DataGridColumn<Row>, sample: unknown): boolean {
+  if (column.align === 'end') return false
+  if (column.cell && !column.kind && !column.format) return true
+  return !RIGID_KINDS.has(resolvePropertyKind(sample, column.kind, column.format).kind)
+}
 
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false
@@ -219,6 +250,7 @@ export function DataGrid<Row>({
   const resolvedDensity = density ?? scope?.density ?? 'standard'
   const lineHeight = rowHeight ?? ROW_HEIGHT[resolvedDensity]
 
+  const rootRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const focusPending = useRef(false)
@@ -231,6 +263,12 @@ export function DataGrid<Row>({
   const selectedList = selectedKeys ?? internalSelection
   const selectedSet = useMemo(() => new Set(selectedList), [selectedList])
   const [widths, setWidths] = useState<Record<string, number>>({})
+  // Content widths of the content-sized columns, measured after render.
+  const [measured, setMeasured] = useState<Record<string, number>>({})
+  const measuredRef = useRef(measured)
+  measuredRef.current = measured
+  const measureBasis = useRef<{ rows: readonly Row[]; columns: string; fonts: number } | null>(null)
+  const [fontEpoch, setFontEpoch] = useState(0)
   const [active, setActive] = useState<GridPosition>(() => ({
     row: rows.length > 0 ? 0 : -1,
     column: selection === 'multi' ? 1 : 0,
@@ -244,14 +282,34 @@ export function DataGrid<Row>({
   }, [rows, columns, activeSort, sortMode, locale])
   const keys = useMemo(() => displayRows.map((row, index) => rowKey(row, index)), [displayRows, rowKey])
 
-  const renderedColumns = useMemo<RenderedColumn<Row>[]>(() => [
-    ...(selection === 'multi' ? [{ kind: 'select' as const, width: SELECTION_WIDTH }] : []),
-    ...columns.map(column => ({
-      kind: 'data' as const,
-      column,
-      width: widths[column.id] ?? column.width ?? DEFAULT_WIDTH,
-    })),
-  ], [columns, selection, widths])
+  // Natural widths (set, resized or measured), fitted to the viewport.
+  const sample = displayRows[0]
+  const renderedColumns = useMemo<RenderedColumn<Row>[]>(() => {
+    const entries = [
+      ...(selection === 'multi' ? [{ kind: 'select' as const, width: SELECTION_WIDTH }] : []),
+      ...columns.map(column => {
+        const contentSized = column.width === undefined && widths[column.id] === undefined
+        return {
+          kind: 'data' as const,
+          column,
+          contentSized,
+          width: widths[column.id] ?? column.width ?? measured[column.id] ?? DEFAULT_WIDTH,
+        }
+      }),
+    ]
+    const primaryId = (columns.find(column => column.primary) ?? columns[0])?.id
+    const fitted = fitColumnWidths(entries.map(entry => {
+      if (entry.kind === 'select') return { width: entry.width, min: entry.width, shrink: false }
+      const primary = entry.column.id === primaryId
+      return {
+        width: entry.width,
+        min: Math.min(entry.width, entry.column.minWidth ?? (primary ? PRIMARY_FIT_MIN_WIDTH : FIT_MIN_WIDTH)),
+        shrink: entry.contentSized && isTextColumn(entry.column, sample === undefined ? undefined : cellValue(entry.column, sample)),
+        tier: primary ? 1 : 0,
+      }
+    }), viewport.width)
+    return entries.map((entry, index) => ({ ...entry, width: fitted[index]! }))
+  }, [columns, selection, widths, measured, viewport.width, sample])
   const growIndex = useMemo(() => {
     const explicit = renderedColumns.findIndex(entry => entry.kind === 'data' && entry.column.grow)
     return explicit >= 0 ? explicit : renderedColumns.length - 1
@@ -319,6 +377,53 @@ export function DataGrid<Row>({
     const observer = new ResizeObserver(measure)
     observer.observe(element)
     return () => observer.disconnect()
+  }, [])
+
+  // Measure the content-sized columns: give their header and rendered cells
+  // max-content width for one synchronous reflow, read them, and put them
+  // back before paint. While the rows and columns stay the same (a scroll of
+  // a windowed grid) widths only grow, so columns do not jitter; new rows,
+  // new columns or a font load measure afresh.
+  const columnKey = renderedColumns.map(entry => (entry.kind === 'data' && entry.contentSized ? `${entry.column.id}*` : entry.kind === 'data' ? entry.column.id : '')).join('|')
+  useLayoutEffect(() => {
+    const root = rootRef.current
+    const element = viewportRef.current
+    if (!root || !element || !columnKey.includes('*')) return
+    const basis = measureBasis.current
+    const fresh = !basis || basis.rows !== rows || basis.columns !== columnKey || basis.fonts !== fontEpoch
+    measureBasis.current = { rows, columns: columnKey, fonts: fontEpoch }
+    root.dataset.measuring = 'true'
+    const current = measuredRef.current
+    const next: Record<string, number> = {}
+    renderedColumns.forEach((entry, index) => {
+      if (entry.kind !== 'data' || !entry.contentSized) return
+      let width = 0
+      for (const cell of element.querySelectorAll<HTMLElement>(`[aria-colindex="${index + 1}"]`)) {
+        const header = cell.getAttribute('role') === 'columnheader'
+        const sorted = cell.getAttribute('aria-sort') === 'ascending' || cell.getAttribute('aria-sort') === 'descending'
+        const room = header && entry.column.sortable !== false && !sorted ? SORT_ICON_ROOM : 0
+        width = Math.max(width, cell.getBoundingClientRect().width + room)
+      }
+      // A hidden grid measures nothing; keep what it had.
+      if (width <= 0) {
+        if (current[entry.column.id] !== undefined) next[entry.column.id] = current[entry.column.id]!
+        return
+      }
+      const content = Math.min(MAX_CONTENT_WIDTH, Math.ceil(width))
+      next[entry.column.id] = fresh ? content : Math.max(content, current[entry.column.id] ?? 0)
+    })
+    delete root.dataset.measuring
+    const keys = Object.keys(next)
+    if (keys.length !== Object.keys(current).length || keys.some(key => current[key] !== next[key])) setMeasured(next)
+  }, [rows, displayRows, columnKey, range.start, range.end, fontEpoch, renderedColumns])
+
+  // Web fonts change text metrics; measure again once they have loaded.
+  useEffect(() => {
+    const fonts = typeof document === 'undefined' ? undefined : document.fonts
+    if (!fonts?.addEventListener) return
+    const bump = () => setFontEpoch(value => value + 1)
+    fonts.addEventListener('loadingdone', bump)
+    return () => fonts.removeEventListener('loadingdone', bump)
   }, [])
 
   // Near the end: the last rows (half the overscan) are inside the viewport.
@@ -416,7 +521,7 @@ export function DataGrid<Row>({
   const resizeColumn = (columnIndex: number, delta: number) => {
     const entry = renderedColumns[columnIndex]
     if (!entry || entry.kind !== 'data') return
-    const next = Math.max(entry.column.minWidth ?? 48, entry.width + delta)
+    const next = Math.max(entry.column.minWidth ?? RESIZE_MIN_WIDTH, entry.width + delta)
     setWidths(current => ({ ...current, [entry.column.id]: next }))
   }
 
@@ -501,7 +606,7 @@ export function DataGrid<Row>({
     const entry = renderedColumns[columnIndex]
     if (!entry || entry.kind !== 'data') return
     const startWidth = entry.width
-    const min = entry.column.minWidth ?? 48
+    const min = entry.column.minWidth ?? RESIZE_MIN_WIDTH
     const id = entry.column.id
     const onMove = (move: globalThis.PointerEvent) => {
       setWidths(current => ({ ...current, [id]: Math.max(min, startWidth + move.clientX - startX) }))
@@ -517,8 +622,10 @@ export function DataGrid<Row>({
   const cellProps = (rowIndex: number, columnIndex: number) => {
     const isActive = active.row === rowIndex && active.column === columnIndex
     const offset = pinnedOffsets.get(columnIndex)
+    const entry = renderedColumns[columnIndex]
     return {
       'data-cell': `${rowIndex}:${columnIndex}`,
+      'data-fit': entry?.kind === 'data' && entry.contentSized ? 'content' : undefined,
       tabIndex: isActive ? 0 : -1,
       'aria-colindex': columnIndex + 1,
       'data-pinned': offset !== undefined || undefined,
@@ -547,6 +654,7 @@ export function DataGrid<Row>({
 
   return (
     <div
+      ref={rootRef}
       className={cx('mtc-data-grid', density && `mtc-density-${density}`, className)}
       style={{ ...gridStyle, height }}
     >

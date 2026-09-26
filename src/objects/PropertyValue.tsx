@@ -95,6 +95,7 @@ function ValueView({
     case 'integer':
     case 'currency':
     case 'percent':
+    case 'bytes':
       return <NumericValue value={value} resolved={resolved} locale={locale} panel={panel} />
     case 'date':
     case 'datetime': {

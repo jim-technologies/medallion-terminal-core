@@ -36,6 +36,9 @@
 .mtc-root .mtc-data-grid-body > .mtc-data-grid-row[data-selected="true"] > .mtc-data-grid-cell:first-child { box-shadow: inset 2px 0 0 var(--mtc-accent); }
 .mtc-root .mtc-data-grid-body > .mtc-data-grid-row[data-selected="true"]:hover { background: var(--mtc-selection-hover); }
 .mtc-root .mtc-data-grid-body > .mtc-data-grid-row[data-skeleton="true"] { pointer-events: none; }
+/* Content-sized columns are measured at their content's width, for one
+   synchronous reflow that is never painted. */
+.mtc-root .mtc-data-grid[data-measuring="true"] .mtc-data-grid-cell[data-fit="content"] { width: max-content; max-width: none; }
 .mtc-root .mtc-data-grid-header-row { border-bottom: 1px solid var(--mtc-border-strong); box-shadow: var(--mtc-elevation-0); }
 
 .mtc-root .mtc-data-grid-cell {
@@ -111,9 +114,12 @@
 /* The `table` widget on DataGrid: heat cells, signed values and the tick
    flash of streaming rows. */
 .mtc-root .mtc-data-table-heat { position: absolute; inset: 0; background: var(--mtc-heat); pointer-events: none; }
-.mtc-root .mtc-data-table-value { position: relative; font-variant-numeric: tabular-nums; }
+.mtc-root .mtc-data-table-value { position: relative; overflow: hidden; font-variant-numeric: tabular-nums; text-overflow: ellipsis; }
 .mtc-root .mtc-data-table-value[data-tone="ok"] { color: var(--mtc-ok); }
 .mtc-root .mtc-data-table-value[data-tone="danger"] { color: var(--mtc-danger); }
+/* On a heat tint the signed colour takes its soft (higher-contrast) step. */
+.mtc-root .mtc-data-table-heat ~ .mtc-data-table-value[data-tone="ok"] { color: var(--mtc-ok-soft); }
+.mtc-root .mtc-data-table-heat ~ .mtc-data-table-value[data-tone="danger"] { color: var(--mtc-danger-soft); }
 .mtc-root .mtc-data-table .mtc-data-grid-row[data-flash="up"] { background: color-mix(in oklab, var(--mtc-ok) 15%, var(--mtc-surface)); }
 .mtc-root .mtc-data-table .mtc-data-grid-row[data-flash="down"] { background: color-mix(in oklab, var(--mtc-danger) 15%, var(--mtc-surface)); }
 .mtc-root .mtc-data-table .mtc-data-grid-row { transition: background var(--mtc-duration-slow) var(--mtc-easing-standard); }

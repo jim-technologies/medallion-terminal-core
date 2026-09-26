@@ -287,7 +287,6 @@ function DelimitedTable({ name, preview, truncatedBytes, height }: { name: strin
     header: header[index]?.trim() || t('preview.column', { index: index + 1 }),
     accessor: row => row.cells[index] ?? '',
     kind: 'string' as const,
-    width: 160,
   })), [header, width, t])
   const rows = useMemo(() => body.map((cells, id) => ({ id, cells })), [body])
   const cut = preview.truncatedRows || preview.truncatedColumns || truncatedBytes

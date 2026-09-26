@@ -211,13 +211,13 @@ function Section({ children }: { children: ReactNode }) {
 // Shared column sets.
 
 const CUSTOMER_COLUMNS: DataGridColumn<CustomerRow>[] = [
-  { id: 'name', header: 'Name', accessor: row => row.name, width: 220, primary: true, pinned: true },
-  { id: 'segment', header: 'Segment', accessor: row => row.segment, kind: 'enum', width: 130 },
-  { id: 'acv', header: 'Annual contract value', accessor: row => row.acv, format: 'currency:USD', width: 190 },
-  { id: 'churn', header: 'Churn risk', accessor: row => row.churnRisk, kind: 'enum', tones: CHURN_TONES, width: 130 },
-  { id: 'renewal', header: 'Renewal', accessor: row => row.renewal, kind: 'date', width: 140 },
-  { id: 'owner', header: 'Owner', accessor: row => row.owner, kind: 'link', width: 170 },
-  { id: 'regions', header: 'Regions', accessor: row => row.regions, kind: 'list', width: 220, grow: true },
+  { id: 'name', header: 'Name', accessor: row => row.name, primary: true, pinned: true },
+  { id: 'segment', header: 'Segment', accessor: row => row.segment, kind: 'enum' },
+  { id: 'acv', header: 'Annual contract value', accessor: row => row.acv, format: 'currency:USD' },
+  { id: 'churn', header: 'Churn risk', accessor: row => row.churnRisk, kind: 'enum', tones: CHURN_TONES },
+  { id: 'renewal', header: 'Renewal', accessor: row => row.renewal, kind: 'date' },
+  { id: 'owner', header: 'Owner', accessor: row => row.owner, kind: 'link' },
+  { id: 'regions', header: 'Regions', accessor: row => row.regions, kind: 'list', grow: true },
 ]
 
 // ---------------------------------------------------------------------------
@@ -393,11 +393,11 @@ export const ObjectViewPage: Story = {
 // Object type: schema, link types, a neighbourhood graph and sample objects.
 
 const SCHEMA_COLUMNS: DataGridColumn<SchemaPropertyRow>[] = [
-  { id: 'name', header: 'Property', accessor: row => row.name, width: 180, grow: true },
-  { id: 'apiName', header: 'API name', accessor: row => row.apiName, kind: 'code', width: 160 },
-  { id: 'kind', header: 'Kind', accessor: row => row.kind, kind: 'enum', width: 100 },
-  { id: 'required', header: 'Required', accessor: row => row.required, kind: 'boolean', width: 100 },
-  { id: 'format', header: 'Format', accessor: row => row.format, width: 140 },
+  { id: 'name', header: 'Property', accessor: row => row.name, grow: true },
+  { id: 'apiName', header: 'API name', accessor: row => row.apiName, kind: 'code' },
+  { id: 'kind', header: 'Kind', accessor: row => row.kind, kind: 'enum' },
+  { id: 'required', header: 'Required', accessor: row => row.required, kind: 'boolean' },
+  { id: 'format', header: 'Format', accessor: row => row.format },
 ]
 
 // The type's direct neighbours: every link type that starts or ends here.
@@ -478,15 +478,14 @@ const TYPE_COLUMNS: DataGridColumn<TypeRow>[] = [
         <span className="truncate">{row.type.label}</span>
       </span>
     ),
-    width: 200,
     primary: true,
   },
-  { id: 'description', header: 'Description', accessor: row => row.description, width: 280, grow: true },
-  { id: 'properties', header: 'Properties', accessor: row => row.properties, kind: 'integer', width: 120 },
-  { id: 'links', header: 'Link types', accessor: row => row.linkTypes, kind: 'integer', width: 120 },
-  { id: 'objects', header: 'Objects', accessor: row => row.type.count, kind: 'integer', width: 120 },
-  { id: 'status', header: 'Status', accessor: row => row.status, kind: 'enum', tones: TYPE_STATUS_TONES, width: 130 },
-  { id: 'updated', header: 'Updated', accessor: row => row.updated, kind: 'date', width: 130 },
+  { id: 'description', header: 'Description', accessor: row => row.description, grow: true },
+  { id: 'properties', header: 'Properties', accessor: row => row.properties, kind: 'integer' },
+  { id: 'links', header: 'Link types', accessor: row => row.linkTypes, kind: 'integer' },
+  { id: 'objects', header: 'Objects', accessor: row => row.type.count, kind: 'integer' },
+  { id: 'status', header: 'Status', accessor: row => row.status, kind: 'enum', tones: TYPE_STATUS_TONES },
+  { id: 'updated', header: 'Updated', accessor: row => row.updated, kind: 'date' },
 ]
 
 function SchemaGraphTemplate() {
@@ -551,9 +550,9 @@ function SchemaGraphTemplate() {
           <DataGrid
             label="Link types"
             columns={[
-              { id: 'from', header: 'From', accessor: row => row.from, width: 160 },
-              { id: 'label', header: 'Relation', accessor: row => row.label, width: 160, grow: true },
-              { id: 'to', header: 'To', accessor: row => row.to, width: 160 },
+              { id: 'from', header: 'From', accessor: row => row.from },
+              { id: 'label', header: 'Relation', accessor: row => row.label, grow: true },
+              { id: 'to', header: 'To', accessor: row => row.to },
             ]}
             rows={SCHEMA_RELATIONS}
             rowKey={row => `${row.from}-${row.label}-${row.to}`}
@@ -605,15 +604,14 @@ const FILE_COLUMNS: DataGridColumn<FileRow>[] = [
         <span className="truncate">{row.name}</span>
       </span>
     ),
-    width: 230,
     primary: true,
     pinned: true,
   },
-  { id: 'kind', header: 'Kind', accessor: row => FILE_KINDS[row.kind], width: 120 },
-  { id: 'semantic', header: 'Object', accessor: row => row.semanticType, kind: 'link', width: 220 },
-  { id: 'size', header: 'Size', accessor: row => row.size, cell: row => (row.size === undefined ? '—' : formatBytes(row.size)), sortValue: row => row.size ?? -1, align: 'end', width: 110 },
-  { id: 'updated', header: 'Updated', accessor: row => row.updated, kind: 'datetime', width: 190 },
-  { id: 'owner', header: 'Owner', accessor: row => row.owner, width: 150, grow: true },
+  { id: 'kind', header: 'Kind', accessor: row => FILE_KINDS[row.kind] },
+  { id: 'semantic', header: 'Object', accessor: row => row.semanticType, kind: 'link' },
+  { id: 'size', header: 'Size', accessor: row => row.size, kind: 'bytes' },
+  { id: 'updated', header: 'Updated', accessor: row => row.updated, kind: 'datetime' },
+  { id: 'owner', header: 'Owner', accessor: row => row.owner, grow: true },
 ]
 
 function FilesTemplate() {
@@ -699,12 +697,12 @@ export const FilesPage: Story = {
 // Operations: service health, releases, incidents and administration.
 
 const RELEASE_COLUMNS: DataGridColumn<ReleaseRow>[] = [
-  { id: 'service', header: 'Service', accessor: row => row.service, width: 170, grow: true },
-  { id: 'version', header: 'Version', accessor: row => row.version, kind: 'code', width: 110 },
-  { id: 'environment', header: 'Environment', accessor: row => row.environment, width: 130 },
-  { id: 'status', header: 'Status', accessor: row => row.status, kind: 'enum', tones: RELEASE_TONES, width: 140 },
-  { id: 'deployed', header: 'Deployed', accessor: row => row.deployed, kind: 'datetime', width: 190 },
-  { id: 'by', header: 'By', accessor: row => row.by, width: 130 },
+  { id: 'service', header: 'Service', accessor: row => row.service, grow: true },
+  { id: 'version', header: 'Version', accessor: row => row.version, kind: 'code' },
+  { id: 'environment', header: 'Environment', accessor: row => row.environment },
+  { id: 'status', header: 'Status', accessor: row => row.status, kind: 'enum', tones: RELEASE_TONES },
+  { id: 'deployed', header: 'Deployed', accessor: row => row.deployed, kind: 'datetime' },
+  { id: 'by', header: 'By', accessor: row => row.by },
 ]
 
 const ADMIN_PAGES = [
@@ -778,17 +776,16 @@ const BUCKET_COLUMNS: DataGridColumn<BucketRow>[] = [
         <span className="truncate">{row.name}</span>
       </span>
     ),
-    width: 180,
     primary: true,
     pinned: true,
   },
-  { id: 'used', header: 'Used', accessor: row => row.used, cell: row => `${formatBytes(row.used)} of ${formatBytes(row.quota)}`, sortValue: row => row.used, width: 170 },
-  { id: 'usage', header: 'Usage', accessor: row => row.used / row.quota, format: 'percent', width: 100 },
-  { id: 'objects', header: 'Objects', accessor: row => row.objects, kind: 'integer', width: 120 },
-  { id: 'class', header: 'Class', accessor: row => row.storageClass, kind: 'enum', width: 130 },
-  { id: 'versioning', header: 'Versioning', accessor: row => row.versioning, kind: 'boolean', width: 120 },
-  { id: 'updated', header: 'Last write', accessor: row => row.updated, kind: 'datetime', width: 190 },
-  { id: 'status', header: 'Status', accessor: row => row.status, kind: 'enum', tones: BUCKET_TONES, width: 130 },
+  { id: 'used', header: 'Used', accessor: row => row.used, cell: row => `${formatBytes(row.used)} of ${formatBytes(row.quota)}`, sortValue: row => row.used },
+  { id: 'usage', header: 'Usage', accessor: row => row.used / row.quota, format: 'percent' },
+  { id: 'objects', header: 'Objects', accessor: row => row.objects, kind: 'integer' },
+  { id: 'class', header: 'Class', accessor: row => row.storageClass, kind: 'enum' },
+  { id: 'versioning', header: 'Versioning', accessor: row => row.versioning, kind: 'boolean' },
+  { id: 'updated', header: 'Last write', accessor: row => row.updated, kind: 'datetime' },
+  { id: 'status', header: 'Status', accessor: row => row.status, kind: 'enum', tones: BUCKET_TONES },
 ]
 
 function StorageTemplate() {
@@ -882,15 +879,14 @@ const CONNECTOR_COLUMNS: DataGridColumn<ConnectorRow>[] = [
         <span className="truncate">{row.name}</span>
       </span>
     ),
-    width: 200,
     primary: true,
     pinned: true,
   },
-  { id: 'source', header: 'Source', accessor: row => row.source, width: 130 },
-  { id: 'status', header: 'Status', accessor: row => row.status, kind: 'enum', tones: CONNECTOR_TONES, width: 120 },
-  { id: 'lastSync', header: 'Last sync', accessor: row => row.lastSync, kind: 'datetime', width: 190 },
-  { id: 'records', header: 'Records', accessor: row => row.records, kind: 'integer', width: 130 },
-  { id: 'owner', header: 'Owner', accessor: row => row.owner, width: 150, grow: true },
+  { id: 'source', header: 'Source', accessor: row => row.source },
+  { id: 'status', header: 'Status', accessor: row => row.status, kind: 'enum', tones: CONNECTOR_TONES },
+  { id: 'lastSync', header: 'Last sync', accessor: row => row.lastSync, kind: 'datetime' },
+  { id: 'records', header: 'Records', accessor: row => row.records, kind: 'integer' },
+  { id: 'owner', header: 'Owner', accessor: row => row.owner, grow: true },
 ]
 
 function ConnectTemplate() {

@@ -68,13 +68,13 @@ const customerColumns: DataGridColumn<CustomerRow>[] = [
     cell: row => <ObjectChip object={{ id: row.id, title: row.name, type: TYPES.customer }} />,
     sortValue: row => row.name,
   },
-  { id: 'customerId', header: 'Customer ID', kind: 'id', width: 120 },
-  { id: 'segment', header: 'Segment', kind: 'enum', width: 104 },
-  { id: 'acv', header: 'Annual contract value', format: 'currency:USD', width: 152 },
-  { id: 'health', header: 'Health', kind: 'integer', width: 80 },
-  { id: 'renewal', header: 'Renewal', kind: 'date', width: 116 },
-  { id: 'status', header: 'Status', kind: 'enum', tones: { Active: 'ok', Churned: 'danger' }, width: 104 },
-  { id: 'owner', header: 'Account owner', width: 136, sortValue: row => row.owner.title },
+  { id: 'customerId', header: 'Customer ID', kind: 'id' },
+  { id: 'segment', header: 'Segment', kind: 'enum' },
+  { id: 'acv', header: 'Annual contract value', format: 'currency:USD' },
+  { id: 'health', header: 'Health', kind: 'integer' },
+  { id: 'renewal', header: 'Renewal', kind: 'date' },
+  { id: 'status', header: 'Status', kind: 'enum', tones: { Active: 'ok', Churned: 'danger' } },
+  { id: 'owner', header: 'Account owner', sortValue: row => row.owner.title },
 ]
 
 const activated = fn()
@@ -140,10 +140,10 @@ const EVENTS: EventRow[] = Array.from({ length: 10_000 }, (_, index) => ({
 }))
 
 const eventColumns: DataGridColumn<EventRow>[] = [
-  { id: 'sequence', header: 'Event', kind: 'id', width: 140 },
-  { id: 'kind', header: 'Kind', width: 200 },
-  { id: 'amount', header: 'Amount', format: 'currency:USD', width: 140 },
-  { id: 'at', header: 'Recorded', kind: 'datetime', width: 220 },
+  { id: 'sequence', header: 'Event', kind: 'id' },
+  { id: 'kind', header: 'Kind' },
+  { id: 'amount', header: 'Amount', format: 'currency:USD' },
+  { id: 'at', header: 'Recorded', kind: 'datetime' },
 ]
 
 export const TenThousandRows: Story = {
@@ -201,9 +201,9 @@ export const ContextActionsAndPaging: Story = {
       <DataGrid
         label="Reports"
         columns={[
-          { id: 'name', header: 'Name', width: 260 },
-          { id: 'size', header: 'Size', kind: 'integer', width: 120 },
-          { id: 'modified', header: 'Modified', kind: 'date', width: 160 },
+          { id: 'name', header: 'Name', grow: true },
+          { id: 'size', header: 'Size', kind: 'bytes' },
+          { id: 'modified', header: 'Modified', kind: 'date' },
         ]}
         rows={rows}
         rowKey={row => row.id}

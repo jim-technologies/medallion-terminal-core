@@ -147,3 +147,53 @@ export function moveFocus(
     default: return null
   }
 }
+
+/** A column as the width fit sees it. */
+export interface FitColumn {
+  /** Its natural width: set, resized, or measured from its content. */
+  width: number
+  /** The narrowest it may give way to. */
+  min: number
+  /** Whether it gives way when the grid is too narrow (content-sized text). */
+  shrink: boolean
+  /** Columns of a higher tier give way only once lower tiers are at their minimum. */
+  tier?: number
+}
+
+/**
+ * Column widths that fit the available width. Columns keep their natural
+ * width when they all fit; otherwise the columns that may shrink give way,
+ * lowest tier first, each in proportion to how far it can (never below its
+ * minimum), and whatever still does not fit scrolls. Numbers, dates and set
+ * widths never shrink, so a value is never cut mid-number.
+ */
+export function fitColumnWidths(columns: readonly FitColumn[], available: number): number[] {
+  const widths = columns.map(column => Math.max(0, Math.round(column.width)))
+  let excess = widths.reduce((total, width) => total + width, 0) - Math.floor(available)
+  if (available <= 0 || excess <= 0) return widths
+  const tiers = [...new Set(columns.filter(column => column.shrink).map(column => column.tier ?? 0))].sort((a, b) => a - b)
+  for (const tier of tiers) {
+    if (excess <= 0) break
+    const room = columns.map((column, index) => (
+      column.shrink && (column.tier ?? 0) === tier ? Math.max(0, widths[index]! - Math.round(column.min)) : 0
+    ))
+    const total = room.reduce((sum, value) => sum + value, 0)
+    if (total === 0) continue
+    const take = Math.min(excess, total)
+    // Hand out the reduction in proportion, then settle the rounding on the
+    // columns with the most room so the tier gives exactly `take`.
+    const cuts = room.map(value => Math.floor((value * take) / total))
+    let remaining = take - cuts.reduce((sum, value) => sum + value, 0)
+    const byRoom = room.map((value, index) => ({ value, index })).sort((a, b) => b.value - a.value || a.index - b.index)
+    for (const { index } of byRoom) {
+      if (remaining <= 0) break
+      if (cuts[index]! < room[index]!) {
+        cuts[index]! += 1
+        remaining -= 1
+      }
+    }
+    cuts.forEach((cut, index) => { widths[index]! -= cut })
+    excess -= take
+  }
+  return widths
+}

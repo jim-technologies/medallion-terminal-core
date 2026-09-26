@@ -4,6 +4,7 @@ import { Input } from '../components/FormControls'
 import { Icon } from '../components/Icon'
 import { Pagination } from '../components/Pagination'
 import { DataGrid, type DataGridColumn } from '../workbench/DataGrid'
+import type { PropertyKind } from '../objects/propertyFormat'
 import { useDashboard } from '../core/DashboardContext'
 import { useSubmitAction } from '../hooks/useSubmitAction'
 import { isErrorStatus } from '../hooks/useWatchAction'
@@ -155,7 +156,11 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
   const columns: DataGridColumn<WorkRecordData>[] = fields.map(field => ({
     id: field.key,
     header: field.label,
-    width: field.type === 'boolean' ? 96 : 176,
+    // Content-sized; dates and Yes/No keep their width like numbers do, and
+    // the record's title field takes the spare width and gives way last.
+    kind: recordColumnKind(field.type),
+    grow: field.key === set.primaryField,
+    primary: field.key === set.primaryField,
     accessor: record => record.values[field.key],
     align: field.type === 'number' || field.type === 'currency' || field.type === 'percent' ? 'end' : 'start',
     cell: record => {
@@ -277,4 +282,11 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
       />
     </div>
   )
+}
+
+function recordColumnKind(type: string): PropertyKind | undefined {
+  if (type === 'date') return 'date'
+  if (type === 'datetime' || type === 'created_at' || type === 'updated_at') return 'datetime'
+  if (type === 'boolean') return 'boolean'
+  return undefined
 }

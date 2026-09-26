@@ -11,6 +11,9 @@ import { safeUrl } from './textNormalize'
 import type { WidgetProps } from '../types/template'
 
 const DEFAULT_PAGE_SIZE = 25
+// A sparkline cell is a fixed-size drawing (80 px plus the cell padding), so
+// its column is the one set width; every other column fits its content.
+const SPARKLINE_COLUMN_WIDTH = 104
 // Tick-flash window. Matches Metric so a multi-metric dashboard reads
 // consistently across tile types.
 const FLASH_MS = 600
@@ -184,8 +187,9 @@ export function DataTable({ data, options }: WidgetProps) {
     URL.revokeObjectURL(url)
   }
 
-  // The first (label) column takes the spare width so numbers stay next to
-  // their headers instead of drifting to the far edge.
+  // Columns size to their content and fit the widget: the first (label)
+  // column takes any spare width, so numbers stay next to their headers, and
+  // gives way first when the widget is narrow.
   const gridColumns: DataGridColumn<Record<string, unknown>>[] = columns.map((col, index) => {
     const fmt = columnFormats[col]
     // Numeric formats right-align so digits line up under tabular-nums.
@@ -193,7 +197,7 @@ export function DataTable({ data, options }: WidgetProps) {
     return {
       id: col,
       header: labels[col] ?? col,
-      width: fmt === 'sparkline' ? 112 : 144,
+      width: fmt === 'sparkline' ? SPARKLINE_COLUMN_WIDTH : undefined,
       grow: index === 0,
       align: numeric || (!fmt && rows.some(row => typeof row[col] === 'number')) ? 'end' : 'start',
       cell: row => <TableCell value={row[col]} format={fmt} heat={heatRanges[col]} />,
@@ -376,6 +380,10 @@ function normalize(data: unknown): NormalizedTable {
   return empty
 }
 
+// The strongest heat tint, in percent: text on it keeps 4.5:1 in every theme
+// (signed values switch to their soft tone on a tint).
+const HEAT_MAX = 25
+
 // Diverging when the column straddles 0 (% change), sequential otherwise.
 // Returns a translucent theme color so the row's hover effect still shows
 // through and host/operator themes remain consistent.
@@ -385,11 +393,11 @@ function heatColor(value: number, min: number, max: number): string {
     const span = Math.max(Math.abs(min), Math.abs(max))
     const t = Math.max(-1, Math.min(1, value / span))
     return t >= 0
-      ? `color-mix(in oklab, var(--mtc-ok) ${35 * t}%, transparent)`
-      : `color-mix(in oklab, var(--mtc-danger) ${35 * -t}%, transparent)`
+      ? `color-mix(in oklab, var(--mtc-ok) ${HEAT_MAX * t}%, transparent)`
+      : `color-mix(in oklab, var(--mtc-danger) ${HEAT_MAX * -t}%, transparent)`
   }
   const t = (value - min) / (max - min)
-  return `color-mix(in oklab, var(--mtc-accent) ${35 * t}%, transparent)`
+  return `color-mix(in oklab, var(--mtc-accent) ${HEAT_MAX * t}%, transparent)`
 }
 
 // CSV-escape: wrap in quotes when needed, double internal quotes.
@@ -409,7 +417,7 @@ function csvEscape(v: unknown): string {
 // at least two finite numbers.
 function SparklineCell({ values }: { values: unknown[] }) {
   const nums = values.map(v => Number(v)).filter(n => Number.isFinite(n))
-  if (nums.length < 2) return <span className="text-zinc-600">—</span>
+  if (nums.length < 2) return <span className="mtc-value-empty">—</span>
   const min = Math.min(...nums)
   const max = Math.max(...nums)
   const range = max - min || 1

@@ -3,12 +3,13 @@
  * DataGrid cells: a value's kind decides its text, alignment and sort key.
  * Pure functions; the React rendering lives in PropertyValue.
  */
-import { formatDateTime, formatNumber, formatRelativeTime } from '../foundations/intl'
+import { formatBytes, formatDateTime, formatNumber, formatRelativeTime } from '../foundations/intl'
 import { isObjectRef } from './types'
 
 /**
  * How a property value is presented. Formats refine kinds: `currency:EUR`,
- * `percent` (a 0-1 ratio), `date`, `datetime`, `id`, `code`, `url`, `email`.
+ * `percent` (a 0-1 ratio), `bytes` (a byte count, `48.2 kB`), `date`,
+ * `datetime`, `id`, `code`, `url`, `email`.
  */
 export type PropertyKind =
   | 'string'
@@ -18,6 +19,7 @@ export type PropertyKind =
   | 'integer'
   | 'currency'
   | 'percent'
+  | 'bytes'
   | 'date'
   | 'datetime'
   | 'boolean'
@@ -36,7 +38,7 @@ export interface ResolvedKind {
 }
 
 const KINDS = new Set<PropertyKind>([
-  'string', 'id', 'code', 'number', 'integer', 'currency', 'percent', 'date', 'datetime',
+  'string', 'id', 'code', 'number', 'integer', 'currency', 'percent', 'bytes', 'date', 'datetime',
   'boolean', 'enum', 'list', 'object', 'link', 'url', 'email',
 ])
 
@@ -67,7 +69,7 @@ export function isEmptyValue(value: unknown): boolean {
 
 /** Kinds whose values align to the end of a grid column. */
 export function isNumericKind(kind: PropertyKind): boolean {
-  return kind === 'number' || kind === 'integer' || kind === 'currency' || kind === 'percent'
+  return kind === 'number' || kind === 'integer' || kind === 'currency' || kind === 'percent' || kind === 'bytes'
 }
 
 function toNumber(value: unknown): number | null {
@@ -118,7 +120,7 @@ export interface PropertyTextOptions {
   no?: string
 }
 
-/** A number in the kind's format (grouped, currency, percent). */
+/** A number in the kind's format (grouped, currency, percent, bytes). */
 export function formatNumericValue(amount: number, resolved: ResolvedKind, locale = 'en'): string {
   switch (resolved.kind) {
     case 'integer':
@@ -129,6 +131,8 @@ export function formatNumericValue(amount: number, resolved: ResolvedKind, local
       } catch {
         return `${formatNumber(amount, { locale })} ${resolved.currency ?? ''}`.trim()
       }
+    case 'bytes':
+      return formatBytes(amount, { locale })
     case 'percent':
       return new Intl.NumberFormat(locale, {
         style: 'percent',
@@ -184,7 +188,8 @@ export function formatPropertyText(value: unknown, resolved: ResolvedKind, optio
     case 'number':
     case 'integer':
     case 'currency':
-    case 'percent': {
+    case 'percent':
+    case 'bytes': {
       const amount = toNumber(value)
       return amount == null ? String(value) : formatNumericValue(amount, resolved, locale)
     }

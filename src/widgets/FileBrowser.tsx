@@ -8,8 +8,6 @@ import { Dialog, type MenuItem } from '../components/Overlays'
 import { Pagination } from '../components/Pagination'
 import { SearchField } from '../components/SearchField'
 import { FilePreview } from '../files/FilePreview'
-import { useLocale } from '../foundations/DesignSystemProvider'
-import { formatBytes, formatDateTime } from '../foundations/intl'
 import { DataGrid, type DataGridColumn } from '../workbench/DataGrid'
 import { useDashboard } from '../core/DashboardContext'
 import {
@@ -158,7 +156,6 @@ export function FileBrowser({
   contextActions,
   onOpen,
 }: FileBrowserProps) {
-  const { locale, timeZone } = useLocale()
   const opts = (options ?? {}) as FileBrowserOptions
   const {
     ctx,
@@ -612,7 +609,6 @@ export function FileBrowser({
     {
       id: 'name',
       header: 'Name',
-      width: 280,
       grow: true,
       sortValue: entry => `${isFolder(entry) ? 0 : 1}${(entry.name ?? '').toLowerCase()}`,
       cell: entry => (
@@ -627,27 +623,19 @@ export function FileBrowser({
     {
       id: 'size',
       header: 'Size',
-      width: 104,
-      align: 'end',
-      sortValue: entry => (isFolder(entry) ? null : entry.size_bytes ?? null),
-      cell: entry => (isFolder(entry) || entry.size_bytes == null
-        ? <span className="mtc-value-empty">—</span>
-        : formatBytes(entry.size_bytes, { locale })),
+      kind: 'bytes',
+      accessor: entry => (isFolder(entry) ? null : entry.size_bytes ?? null),
     },
     {
       id: 'type',
       header: 'Type',
-      width: 160,
       accessor: entry => (isFolder(entry) ? 'Folder' : entry.content_type ?? ''),
     },
     {
       id: 'modified',
       header: 'Modified',
-      width: 176,
-      sortValue: entry => (entry.modified_at ? Date.parse(entry.modified_at) || entry.modified_at : null),
-      cell: entry => (entry.modified_at
-        ? <time dateTime={entry.modified_at}>{formatDateTime(entry.modified_at, { locale, timeZone })}</time>
-        : <span className="mtc-value-empty">—</span>),
+      kind: 'datetime',
+      accessor: entry => entry.modified_at || null,
     },
     ...(openWithEnabled ? [{
       id: 'actions',
