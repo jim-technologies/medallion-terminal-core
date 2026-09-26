@@ -106,6 +106,7 @@ Roles added by tokens v2 (no descriptive alias):
 | Selected row or navigation item | `--mtc-selection`, `--mtc-selection-hover` |
 | Link text | `--mtc-link` |
 | Text on a solid accent fill | `--mtc-on-accent` |
+| Text on a black scrim over media (light in every theme) | `--mtc-on-scrim` |
 | Status tints | `--mtc-ok-bg`, `--mtc-warning-bg`, `--mtc-danger-bg`, `--mtc-info-bg` |
 | Graph edges | `--mtc-graph-edge`, `--mtc-graph-edge-active` |
 | Object type identity | `--mtc-type-{azure,cyan,teal,green,lime,olive,amber,orange,red,rose,magenta,violet}-{fg,bg}` |

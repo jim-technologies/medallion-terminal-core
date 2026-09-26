@@ -97,6 +97,10 @@
   --mtc-info-soft: var(--mtc-accent-soft);
   --mtc-info-bg: #162537;
   --mtc-on-solid: #080e16;
+  /* Text and marks over a media scrim (a black wash on a photo or video
+     frame: captions, duration badges, viewer arrows). The scrim is dark in
+     every theme, so this stays light in every theme. */
+  --mtc-on-scrim: #ffffff;
   --mtc-graph-edge: #636a72;
   --mtc-graph-edge-active: var(--mtc-accent);
   --mtc-grid: #1c2024;

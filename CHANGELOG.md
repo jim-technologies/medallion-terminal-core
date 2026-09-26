@@ -65,7 +65,8 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   type identity slots `--mtc-type-{azure,cyan,teal,green,lime,olive,amber,
   orange,red,rose,magenta,violet}-{fg,bg}`, `--mtc-font-size-2xl|3xl`,
   per-size `--mtc-line-height-{xs…3xl}`, `--mtc-space-12|16`,
-  `--mtc-radius-xs`, and `--mtc-elevation-0|3`. Every existing `--mtc-*`
+  `--mtc-radius-xs`, `--mtc-elevation-0|3`, and `--mtc-on-scrim` (text on
+  a black scrim over media, light in every theme). Every existing `--mtc-*`
   name is kept.
 - **Icon set v2 and `TypeGlyph`.** `Icon` grows from 22 to 93 first-party
   glyphs (`ICON_NAMES`): object nouns for type icons (`object`, `person`,
@@ -323,6 +324,13 @@ with `Intl` formatters, and a JSON payload case. The ontology components
 - **README named the wrong license.** Its License section said MIT; it now
   names Apache-2.0 (the `LICENSE` file and `package.json`) and the fonts'
   OFL.
+- **MediaGallery text on media was unreadable in the light theme.** Tile
+  captions, the video duration badge and the viewer's previous and next
+  arrows sat on a black scrim in `text-zinc-100` / `text-zinc-300`, which
+  map to the theme's foreground and so turned dark in light. They use
+  `--mtc-on-scrim` now, and the arrows' scrim is 70% black like the
+  badge's (`themeColors.test.ts` checks the text on it over a white image
+  at 4.5:1).
 
 ### Removed
 

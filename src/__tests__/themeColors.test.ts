@@ -138,6 +138,15 @@ describe('theme color accessibility', () => {
       ).toBeGreaterThanOrEqual(4.5)
     })
 
+    it(`${themeName} keeps text over a media scrim readable on any image`, () => {
+      // The badge scrim is black at 70%; over the brightest image (white) it
+      // composites to #4d4d4d, the worst case the text can sit on.
+      expect(
+        contrast(hex(theme, 'on-scrim'), '#4d4d4d'),
+        `${themeName} --mtc-on-scrim on a 70% black scrim over white`,
+      ).toBeGreaterThanOrEqual(4.5)
+    })
+
     it(`${themeName} keeps control boundaries and graph edges visible`, () => {
       for (const role of ['border-control', 'graph-edge', 'accent-strong']) {
         for (const background of ['bg', 'surface']) {

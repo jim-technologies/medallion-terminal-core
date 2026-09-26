@@ -305,11 +305,11 @@ function MediaTile({
     >
       <MediaThumbnail item={item} />
       <div className="absolute inset-x-0 bottom-0 pt-8 pb-1.5 px-2 bg-gradient-to-t from-black/85 to-transparent">
-        <div className="text-[11px] font-medium text-zinc-100 truncate">{item.title}</div>
+        <div className="text-[11px] font-medium text-[var(--mtc-on-scrim)] truncate">{item.title}</div>
       </div>
       <div className="absolute top-1.5 left-1.5 flex items-center gap-1">
         {item.kind === 'video' && (
-          <span className="px-1.5 py-0.5 rounded-sm bg-black/70 text-[9px] uppercase tracking-wider text-zinc-100">
+          <span className="px-1.5 py-0.5 rounded-sm bg-black/70 text-[9px] uppercase tracking-wider text-[var(--mtc-on-scrim)]">
             ▶{duration ? ` ${duration}` : ''}
           </span>
         )}
@@ -502,7 +502,7 @@ function MediaViewer({
               <button
                 type="button"
                 onClick={onPrevious}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-12 rounded-sm bg-black/55 text-zinc-300 hover:bg-black/80 hover:text-white"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-12 rounded-sm bg-black/70 text-[var(--mtc-on-scrim)] hover:bg-black/85"
                 aria-label="Previous media"
                 title="Previous (←)"
               >
@@ -511,7 +511,7 @@ function MediaViewer({
               <button
                 type="button"
                 onClick={onNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-12 rounded-sm bg-black/55 text-zinc-300 hover:bg-black/80 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-12 rounded-sm bg-black/70 text-[var(--mtc-on-scrim)] hover:bg-black/85"
                 aria-label="Next media"
                 title="Next (→)"
               >

@@ -81,6 +81,7 @@ the semantic roles below. The standalone embed accepts the same presets with
 | Links | `--mtc-link` | Link text |
 | Status | `--mtc-{ok,warning,danger,info}`, `-soft`, `-bg` | Status text, text on a status tint, the tint itself |
 | On status | `--mtc-on-solid` | Text on solid status fills |
+| On scrim | `--mtc-on-scrim` | Text and marks on a black scrim over media (captions, duration badges, viewer arrows); light in every theme because the scrim is always dark |
 | Graph | `--mtc-graph-edge`, `--mtc-graph-edge-active`, `--mtc-grid` | Edges (3:1), the active edge, chart and canvas grids |
 | Type identity | `--mtc-type-{slot}-fg`, `--mtc-type-{slot}-bg` | Object type chips and graph nodes only |
 | Data | `--mtc-chart-1` … `--mtc-chart-8` | Categorical series |
@@ -96,7 +97,8 @@ legacy sites.
 **Contrast.** `themeColors.test.ts` checks every theme: text roles at 4.5:1
 on the canvas, surfaces, quiet fill and selection; `--mtc-muted-subtle` at
 3:1; status soft text on its tint, `--mtc-on-accent` on
-`--mtc-accent-strong`, every type slot on its chip, and code tokens at 4.5:1;
+`--mtc-accent-strong`, `--mtc-on-scrim` on a 70% black scrim over a white
+image, every type slot on its chip, and code tokens at 4.5:1;
 control boundaries, graph edges, the primary fill and chart colours at 3:1.
 State must also carry a label, icon, shape or position cue; colour alone is
 never the only signal.
