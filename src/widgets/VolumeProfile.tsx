@@ -18,7 +18,7 @@ export function VolumeProfile({ data }: WidgetProps) {
 
   return (
     <div className="h-full overflow-auto">
-      <div className="flex flex-col gap-px font-mono text-[10px]">
+      <div className="flex flex-col gap-px font-mono text-[length:var(--mtc-font-size-xs)]">
         {rows.map((r, i) => {
           const pct = (r.volume / max) * 100
           return (

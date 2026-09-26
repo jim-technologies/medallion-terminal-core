@@ -37,12 +37,12 @@ export function AlertLog({ options }: WidgetProps) {
   return (
     <div className="h-full flex flex-col text-xs font-mono">
       <div className="flex items-center justify-between px-2 py-1 border-b border-zinc-800 shrink-0">
-        <span className="text-[10px] uppercase tracking-wider text-zinc-500">
+        <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">
           {recentAlerts.length} alert{recentAlerts.length === 1 ? '' : 's'}
         </span>
         <button
           onClick={clearRecentAlerts}
-          className="text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-1.5 py-0.5 rounded"
+          className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 hover:text-zinc-200 px-1.5 py-0.5 rounded"
           title="Clear log"
         >
           Clear
@@ -59,12 +59,12 @@ export function AlertLog({ options }: WidgetProps) {
             >
               <span className="text-zinc-500 shrink-0 w-8 tabular-nums">{ago(now, r.receivedAt)}</span>
               <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${tone.dot}`} />
-              <span className={`uppercase tracking-wider text-[10px] shrink-0 ${tone.text}`}>
+              <span className={`text-[length:var(--mtc-font-size-xs)] shrink-0 ${tone.text}`}>
                 {r.severity}
               </span>
               <span className="text-zinc-200 truncate flex-1 min-w-0">{r.message}</span>
               {r.widgetId && (
-                <span className="text-zinc-600 text-[10px] shrink-0">{r.widgetId}</span>
+                <span className="text-zinc-600 text-[length:var(--mtc-font-size-xs)] shrink-0">{r.widgetId}</span>
               )}
             </div>
           )

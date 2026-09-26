@@ -650,7 +650,7 @@ function ResolvingAssetOpen({
         onClick={event => event.stopPropagation()}
         onKeyDown={event => handleModalKeyDown(event, dialogRef, true, onClose)}
       >
-        <div className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">
+        <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">
           Open asset
         </div>
         <div className="mt-1 text-sm font-medium text-zinc-100 truncate">
@@ -713,13 +713,13 @@ function AssetApplicationChooser({
       >
         <div className="px-4 py-3 border-b border-zinc-800 flex items-start gap-3">
           <div className="min-w-0 flex-1">
-            <div className="text-[10px] uppercase tracking-[0.14em] text-zinc-500">
+            <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">
               Open with
             </div>
             <h2 className="mt-0.5 text-sm font-medium text-zinc-100 truncate">
               {request.asset.name}
             </h2>
-            <div className="mt-0.5 text-[10px] text-zinc-600 font-mono truncate">
+            <div className="mt-0.5 text-[length:var(--mtc-font-size-xs)] text-zinc-600 font-mono truncate">
               {typeLabel} · {request.intent}
             </div>
           </div>
@@ -736,7 +736,7 @@ function AssetApplicationChooser({
 
         <div className="max-h-[26rem] overflow-auto p-2">
           {resolution.applications.length > 0 && (
-            <div className="px-2 pt-1 pb-1.5 text-[9px] uppercase tracking-[0.14em] text-zinc-600">
+            <div className="px-2 pt-1 pb-1.5 text-[length:var(--mtc-font-size-xs)] text-zinc-600">
               Workspace applications
             </div>
           )}
@@ -752,7 +752,7 @@ function AssetApplicationChooser({
           ))}
 
           {(fallbacks.native || fallbacks.download) && (
-            <div className="px-2 pt-3 pb-1.5 text-[9px] uppercase tracking-[0.14em] text-zinc-600">
+            <div className="px-2 pt-3 pb-1.5 text-[length:var(--mtc-font-size-xs)] text-zinc-600">
               Built in
             </div>
           )}
@@ -793,11 +793,11 @@ function AssetApplicationChooser({
               Always use my choice for {typeLabel}
             </label>
           ) : (
-            <span className="text-[10px] text-zinc-600">
+            <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600">
               Apps are filtered by workspace policy
             </span>
           )}
-          <span className="text-[10px] text-zinc-600 shrink-0">esc close</span>
+          <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600 shrink-0">esc close</span>
         </div>
       </div>
     </div>
@@ -823,19 +823,19 @@ function ApplicationChoice({
       onClick={onClick}
       className="w-full flex items-center gap-3 rounded-md px-2.5 py-2 text-left hover:bg-zinc-800/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-sky-500"
     >
-      <span className="size-9 shrink-0 rounded-md border border-zinc-700 bg-zinc-900 flex items-center justify-center text-[10px] font-semibold tracking-wide text-zinc-300">
+      <span className="size-9 shrink-0 rounded-md border border-zinc-700 bg-zinc-900 flex items-center justify-center text-[length:var(--mtc-font-size-xs)] font-semibold text-zinc-300">
         {icon}
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-2">
           <span className="text-sm text-zinc-100 truncate">{name}</span>
           {preferred && (
-            <span className="text-[8px] uppercase tracking-wider text-sky-300 border border-sky-500/30 bg-sky-500/10 rounded px-1 py-0.5">
+            <span className="text-[length:var(--mtc-font-size-xs)] text-sky-300 border border-sky-500/30 bg-sky-500/10 rounded px-1 py-0.5">
               Default
             </span>
           )}
         </span>
-        <span className="block text-[10px] text-zinc-500 truncate">{description}</span>
+        <span className="block text-[length:var(--mtc-font-size-xs)] text-zinc-500 truncate">{description}</span>
       </span>
       <span className="text-zinc-600" aria-hidden="true">›</span>
     </button>
@@ -864,17 +864,17 @@ function DefaultAssetApplicationFrame({
       onKeyDown={event => handleModalKeyDown(event, dialogRef, true, close)}
     >
       <div className="h-11 shrink-0 flex items-center gap-3 px-4 border-b border-zinc-800 bg-zinc-900/95">
-        <span className="size-6 rounded border border-zinc-700 bg-zinc-950 flex items-center justify-center text-[8px] font-semibold text-zinc-300">
+        <span className="size-6 rounded border border-zinc-700 bg-zinc-950 flex items-center justify-center text-[length:var(--mtc-font-size-xs)] font-semibold text-zinc-300">
           {application.icon ?? appInitials(application.name)}
         </span>
         <div className="min-w-0 flex-1 flex items-baseline gap-2">
           <span className="text-xs font-medium text-zinc-200 truncate">{application.name}</span>
-          <span className="text-[10px] text-zinc-600 truncate">{request.asset.name}</span>
+          <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600 truncate">{request.asset.name}</span>
         </div>
         <button
           type="button"
           onClick={chooseApplication}
-          className="text-[10px] uppercase tracking-wider text-zinc-400 hover:text-zinc-100 border border-zinc-700 rounded px-2 py-1"
+          className="text-[length:var(--mtc-font-size-xs)] text-zinc-400 hover:text-zinc-100 border border-zinc-700 rounded px-2 py-1"
         >
           Open with…
         </button>

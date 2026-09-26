@@ -356,7 +356,7 @@ function GraphNode({
       style={{ left, top }}
     >
       <div className="text-xs font-semibold">{title}</div>
-      <div className="mt-1 text-[10px] text-[var(--mtc-muted)]">{detail}</div>
+      <div className="mt-1 text-[length:var(--mtc-font-size-xs)] text-[var(--mtc-muted)]">{detail}</div>
     </div>
   )
 }
@@ -622,7 +622,7 @@ function DatabaseWorkbench() {
             </span>
             <div className="grid leading-tight">
               <strong className="text-sm">Database explorer</strong>
-              <span className="text-[10px] text-[var(--mtc-muted)]">Generic SQL presentation</span>
+              <span className="text-[length:var(--mtc-font-size-xs)] text-[var(--mtc-muted)]">Generic SQL presentation</span>
             </div>
           </div>
         )}
@@ -665,7 +665,7 @@ function DatabaseWorkbench() {
               </div>
             )}
             footer={(
-              <div className="text-[10px] leading-relaxed text-[var(--mtc-muted)]">
+              <div className="text-[length:var(--mtc-font-size-xs)] leading-relaxed text-[var(--mtc-muted)]">
                 Metadata synchronized 2 minutes ago
               </div>
             )}
@@ -778,7 +778,7 @@ function DatabaseTableViewerExample() {
             </span>
             <div className="grid leading-tight">
               <strong className="text-sm">View table</strong>
-              <span className="font-mono text-[10px] text-[var(--mtc-muted)]">
+              <span className="font-mono text-[length:var(--mtc-font-size-xs)] text-[var(--mtc-muted)]">
                 {table.qualifiedName}
               </span>
             </div>
@@ -786,7 +786,7 @@ function DatabaseTableViewerExample() {
         )}
         end={(
           <>
-            <output className="text-[10px] text-[var(--mtc-muted)]">{refreshStatus}</output>
+            <output className="text-[length:var(--mtc-font-size-xs)] text-[var(--mtc-muted)]">{refreshStatus}</output>
             <Badge dot intent="success">Read only</Badge>
           </>
         )}
@@ -867,7 +867,7 @@ function DatabaseTableViewerExample() {
                   </div>
                   <p className="mt-1 text-xs text-[var(--mtc-muted)]">{table.description}</p>
                 </div>
-                <span className="text-[10px] text-[var(--mtc-muted)]">
+                <span className="text-[length:var(--mtc-font-size-xs)] text-[var(--mtc-muted)]">
                   Primary key · <code>{table.primaryKey}</code>
                 </span>
               </div>
@@ -998,7 +998,7 @@ function DatabaseContent({
               {table.description}
             </p>
           </div>
-          <div className="flex items-center gap-2 text-[10px] text-[var(--mtc-muted)]">
+          <div className="flex items-center gap-2 text-[length:var(--mtc-font-size-xs)] text-[var(--mtc-muted)]">
             <span>{table.columns.length} columns</span>
             <span aria-hidden="true">·</span>
             <span>{table.storageSize}</span>
@@ -1090,7 +1090,7 @@ function DatabaseRows({
           onChange={event => onQueryChange(event.currentTarget.value)}
           className="w-full sm:w-72"
         />
-        <div className="flex items-center gap-2 text-[10px] text-[var(--mtc-muted)]">
+        <div className="flex items-center gap-2 text-[length:var(--mtc-font-size-xs)] text-[var(--mtc-muted)]">
           <Badge>{table.rows.length} loaded</Badge>
           <span>Cursor pagination remains host-owned</span>
         </div>
@@ -1173,7 +1173,7 @@ function DatabaseRows({
         </table>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2 py-3">
-        <output className="text-[10px] text-[var(--mtc-muted)]">
+        <output className="text-[length:var(--mtc-font-size-xs)] text-[var(--mtc-muted)]">
           {start}–{end} of {rows.length} loaded · {table.estimatedRows.toLocaleString()} estimated
         </output>
         <div className="flex items-center gap-1" role="group" aria-label="Loaded row pages">
@@ -1386,7 +1386,7 @@ function DatabaseInspector({
       title={rowLabel ?? table.name}
       subtitle={selectedRow ? `Row · ${table.name}` : `Table · ${table.qualifiedName}`}
       footer={(
-        <p className="text-[10px] leading-relaxed text-[var(--mtc-muted)]">
+        <p className="text-[length:var(--mtc-font-size-xs)] leading-relaxed text-[var(--mtc-muted)]">
           Metadata and row values are rendered safely as host-provided data.
         </p>
       )}

@@ -182,7 +182,7 @@ export function RecordForm({ data, options, widgetId }: WidgetProps) {
     >
       <div className="flex items-start justify-between gap-3 pb-3 border-b border-zinc-800">
         <div className="min-w-0">
-          <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">
             {editing ? 'Edit record' : 'New record'} · {set.tableName || set.tableId}
           </div>
           <h4 className="text-sm font-semibold text-zinc-100 mt-0.5 truncate">
@@ -191,7 +191,7 @@ export function RecordForm({ data, options, widgetId }: WidgetProps) {
               : `Add to ${set.tableName || 'table'}`}
           </h4>
           {editing && selectedRecord && (
-            <div className="text-[9px] font-mono text-zinc-600 mt-0.5">
+            <div className="text-[length:var(--mtc-font-size-xs)] font-mono text-zinc-600 mt-0.5">
               {selectedRecord.id}{selectedRecord.revision ? ` · rev ${selectedRecord.revision}` : ''}
             </div>
           )}
@@ -203,7 +203,7 @@ export function RecordForm({ data, options, widgetId }: WidgetProps) {
               setCtx(tableIdKey, set.tableId)
               setCtx(recordIdKey, opts.new_record_value ?? 'new')
             }}
-            className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400 shrink-0"
+            className="mtc-control px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-400 shrink-0"
           >
             New
           </button>
@@ -213,11 +213,11 @@ export function RecordForm({ data, options, widgetId }: WidgetProps) {
       <div className={`grid ${columns} gap-x-4 gap-y-3 py-3 overflow-y-auto flex-1 min-h-0 pr-1`}>
         {fields.map(field => (
           <label key={field.key} className={field.type === 'long_text' ? 'md:col-span-2' : ''}>
-            <span className="flex items-center gap-1 mb-1 text-[10px] uppercase tracking-wider text-zinc-500">
+            <span className="flex items-center gap-1 mb-1 text-[length:var(--mtc-font-size-xs)] text-zinc-500">
               {field.label}
               {field.required && <span className="text-amber-400">*</span>}
-              {field.readOnly && <span className="normal-case tracking-normal text-zinc-700">computed</span>}
-              {errors[field.key] && <span className="ml-auto text-red-400 normal-case tracking-normal">{errors[field.key]}</span>}
+              {field.readOnly && <span className="text-zinc-500">Computed</span>}
+              {errors[field.key] && <span className="ml-auto text-red-400">{errors[field.key]}</span>}
             </span>
             <RecordFieldInput
               field={field}
@@ -226,7 +226,7 @@ export function RecordForm({ data, options, widgetId }: WidgetProps) {
               disabled={mutation.submitting}
             />
             {field.description && (
-              <span className="block text-[9px] text-zinc-600 mt-1 leading-relaxed">{field.description}</span>
+              <span className="block text-[length:var(--mtc-font-size-xs)] text-zinc-600 mt-1 leading-relaxed">{field.description}</span>
             )}
           </label>
         ))}
@@ -238,7 +238,7 @@ export function RecordForm({ data, options, widgetId }: WidgetProps) {
             type="button"
             onClick={() => void deleteRecord()}
             disabled={mutation.submitting || backendUrl === undefined}
-            className={`mtc-control px-2.5 py-1.5 text-[10px] uppercase tracking-wider disabled:opacity-40 ${
+            className={`mtc-control px-2.5 py-1.5 text-[length:var(--mtc-font-size-xs)] disabled:opacity-40 ${
               confirmDelete ? 'text-red-300 border-red-500/40 bg-red-500/10' : 'text-zinc-500'
             }`}
           >
@@ -249,14 +249,14 @@ export function RecordForm({ data, options, widgetId }: WidgetProps) {
           type="button"
           onClick={reset}
           disabled={mutation.submitting}
-          className="mtc-control ml-auto px-2.5 py-1.5 text-[10px] uppercase tracking-wider text-zinc-500 disabled:opacity-40"
+          className="mtc-control ml-auto px-2.5 py-1.5 text-[length:var(--mtc-font-size-xs)] text-zinc-500 disabled:opacity-40"
         >
           Reset
         </button>
         <button
           type="submit"
           disabled={!canSubmit || mutation.submitting}
-          className="mtc-control px-3 py-1.5 text-[10px] uppercase tracking-wider text-sky-300 border-sky-500/40 bg-sky-500/10 disabled:opacity-40"
+          className="mtc-control px-3 py-1.5 text-[length:var(--mtc-font-size-xs)] text-sky-300 border-sky-500/40 bg-sky-500/10 disabled:opacity-40"
           title={!canSubmit ? 'This record set is read-only or backendUrl is missing' : undefined}
         >
           {mutation.submitting ? 'Saving…' : opts.submit_label ?? (editing ? 'Save changes' : 'Create record')}

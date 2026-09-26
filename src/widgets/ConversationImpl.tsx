@@ -101,7 +101,7 @@ export function ConversationImpl({ data, options, widgetId }: WidgetProps) {
         ))}
       </div>
       {hasPagination && (
-        <div className="border-t border-zinc-800 pt-1.5 flex items-center justify-between gap-2 text-[10px] text-zinc-500 shrink-0">
+        <div className="border-t border-zinc-800 pt-1.5 flex items-center justify-between gap-2 text-[length:var(--mtc-font-size-xs)] text-zinc-500 shrink-0">
           <span>{conversation.nextPageToken ? 'Older history available' : ''}</span>
           <CursorPager
             nextPageToken={conversation.nextPageToken}
@@ -154,7 +154,7 @@ function ConversationHeader({
       </span>
       <span className="flex shrink-0 items-center gap-2">
         {conversation.unreadCount != null && conversation.unreadCount > 0 && (
-          <span className="rounded-full bg-sky-500/15 px-1.5 py-0.5 text-[9px] font-medium text-sky-300">
+          <span className="rounded-full bg-sky-500/15 px-1.5 py-0.5 text-[length:var(--mtc-font-size-xs)] font-medium text-sky-300">
             {conversation.unreadCount} unread
           </span>
         )}
@@ -229,7 +229,7 @@ function ConversationMessage({
         }`}
       >
         {message.body ?? message.senderName}
-        {message.timestamp && <span className="ml-2 text-[9px] text-zinc-500">{formatMessageTime(message.timestamp)}</span>}
+        {message.timestamp && <span className="ml-2 text-[length:var(--mtc-font-size-xs)] text-zinc-500">{formatMessageTime(message.timestamp)}</span>}
       </div>
     )
   }
@@ -248,7 +248,7 @@ function ConversationMessage({
         }`}
       >
         <div className="mb-1 flex items-center justify-between gap-2 text-zinc-500">
-          <span className="uppercase tracking-wider">Tool · {message.senderName}</span>
+          <span className="">Tool · {message.senderName}</span>
           {message.status && <span>{humanize(message.status)}</span>}
         </div>
         {message.body && <div className="whitespace-pre-wrap break-words text-zinc-300">{message.body}</div>}
@@ -289,11 +289,11 @@ function ConversationMessage({
               {message.senderName}
             </strong>
             {message.timestamp && (
-              <time className="shrink-0 text-[9px] text-zinc-500" dateTime={message.timestamp}>
+              <time className="shrink-0 text-[length:var(--mtc-font-size-xs)] text-zinc-500" dateTime={message.timestamp}>
                 {formatMessageTime(message.timestamp)}
               </time>
             )}
-            {message.edited && <span className="text-[9px] text-zinc-500">edited</span>}
+            {message.edited && <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">edited</span>}
           </div>
         )}
         {reply && <ReplyPreview message={reply} />}
@@ -319,7 +319,7 @@ function ConversationMessage({
           {options.show_reactions !== false && message.reactions.map(reaction => (
             <span
               key={reaction.key}
-              className={`rounded-full border px-1.5 py-0.5 text-[10px] ${
+              className={`rounded-full border px-1.5 py-0.5 text-[length:var(--mtc-font-size-xs)] ${
                 reaction.viewerReacted
                   ? 'border-sky-500/40 bg-sky-500/10 text-sky-200'
                   : 'border-zinc-800 bg-zinc-900 text-zinc-400'
@@ -329,12 +329,12 @@ function ConversationMessage({
             </span>
           ))}
           {message.threadReplyCount != null && message.threadReplyCount > 0 && (
-            <span className="text-[10px] font-medium text-sky-400">
+            <span className="text-[length:var(--mtc-font-size-xs)] font-medium text-sky-400">
               {message.threadReplyCount} {message.threadReplyCount === 1 ? 'reply' : 'replies'}
             </span>
           )}
           {options.show_delivery_status !== false && message.status && (
-            <span className={`text-[9px] ${statusTone(message.status)}`}>
+            <span className={`text-[length:var(--mtc-font-size-xs)] ${statusTone(message.status)}`}>
               {humanize(message.status)}
             </span>
           )}
@@ -346,7 +346,7 @@ function ConversationMessage({
 
 function ReplyPreview({ message }: { message: ConversationMessageData }) {
   return (
-    <div className="mb-1.5 max-w-full border-l-2 border-zinc-700 pl-2 text-[10px] text-zinc-500">
+    <div className="mb-1.5 max-w-full border-l-2 border-zinc-700 pl-2 text-[length:var(--mtc-font-size-xs)] text-zinc-500">
       <strong className="mr-1 text-zinc-400">{message.senderName}</strong>
       <span className="line-clamp-1">{message.body ?? message.attachments[0]?.name ?? 'Message'}</span>
     </div>
@@ -378,7 +378,7 @@ function Attachments({ attachments }: { attachments: ConversationAttachmentData[
               <strong className="block truncate text-[11px] font-medium text-zinc-300">
                 {attachment.name}
               </strong>
-              <span className="block text-[9px] text-zinc-500">
+              <span className="block text-[length:var(--mtc-font-size-xs)] text-zinc-500">
                 {[humanize(attachment.kind), formatBytes(attachment.sizeBytes)]
                   .filter(Boolean)
                   .join(' · ')}
@@ -422,7 +422,7 @@ function Avatar({
 }) {
   const name = participant?.name ?? fallbackName
   const avatarUrl = safeUrl(participant?.avatarUrl ?? fallbackUrl)
-  const sizeClass = size === 'small' ? 'h-5 w-5 text-[8px]' : 'h-7 w-7 text-[9px]'
+  const sizeClass = size === 'small' ? 'h-5 w-5 text-[length:var(--mtc-font-size-xs)]' : 'h-7 w-7 text-[length:var(--mtc-font-size-xs)]'
   const common = `${sizeClass} rounded flex shrink-0 items-center justify-center border border-zinc-700 bg-zinc-800 font-medium text-zinc-300`
   return avatarUrl ? (
     <img src={avatarUrl} alt={name} loading="lazy" className={`${common} object-cover`} />

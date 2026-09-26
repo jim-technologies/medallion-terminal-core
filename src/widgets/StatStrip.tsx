@@ -38,16 +38,16 @@ function Card({ stat }: { stat: Stat }) {
     : stat.delta >= 0 ? 'text-emerald-400' : 'text-red-400'
   return (
     <div className="shrink-0 min-w-[120px] max-w-[180px] flex flex-col justify-center px-3 py-1 border-l border-zinc-800 first:border-l-0">
-      <div className="text-[10px] uppercase tracking-wider text-zinc-500 truncate">{stat.label}</div>
+      <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 truncate">{stat.label}</div>
       <div className="flex items-baseline gap-1">
         <span className="text-base font-semibold text-zinc-100 tabular-nums truncate">
           {formatStat(animated)}
         </span>
-        {stat.unit && <span className="text-[10px] text-zinc-500 shrink-0">{stat.unit}</span>}
+        {stat.unit && <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 shrink-0">{stat.unit}</span>}
       </div>
       <div className="flex items-center gap-2">
         {stat.delta != null && (
-          <span className={`text-[10px] font-medium tabular-nums ${deltaColor}`}>
+          <span className={`text-[length:var(--mtc-font-size-xs)] font-medium tabular-nums ${deltaColor}`}>
             {stat.delta >= 0 ? '▲' : '▼'} {formatDelta(stat.delta)}
           </span>
         )}

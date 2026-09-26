@@ -184,7 +184,7 @@ export function MediaGalleryImpl({ data, options, widgetId }: WidgetProps) {
                 type="button"
                 onClick={() => setKind(value)}
                 aria-pressed={kind === value}
-                className={`px-2 py-1 rounded text-[10px] uppercase tracking-wider whitespace-nowrap border ${
+                className={`px-2 py-1 rounded text-[length:var(--mtc-font-size-xs)] whitespace-nowrap border ${
                   kind === value
                     ? 'bg-sky-500/15 text-sky-300 border-sky-500/30'
                     : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-zinc-200'
@@ -197,7 +197,7 @@ export function MediaGalleryImpl({ data, options, widgetId }: WidgetProps) {
         )}
       </div>
 
-      <div className="flex items-center justify-between py-1.5 text-[10px] uppercase tracking-wider text-zinc-600 shrink-0">
+      <div className="flex items-center justify-between py-1.5 text-[length:var(--mtc-font-size-xs)] text-zinc-600 shrink-0">
         <span>{filtered.length.toLocaleString()} shown</span>
         {library.total != null && <span>{library.total.toLocaleString()} total</span>}
       </div>
@@ -214,7 +214,7 @@ export function MediaGalleryImpl({ data, options, widgetId }: WidgetProps) {
                 {(opts.group_by ?? 'day') !== 'none' && (
                   <div
                     id={`media-group-${cssId(group.key)}`}
-                    className="sticky top-0 z-10 py-1.5 bg-zinc-950 text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-500"
+                    className="sticky top-0 z-10 py-1.5 bg-zinc-950 text-[length:var(--mtc-font-size-xs)] font-medium text-zinc-500"
                   >
                     {group.label}
                   </div>
@@ -309,7 +309,7 @@ function MediaTile({
       </div>
       <div className="absolute top-1.5 left-1.5 flex items-center gap-1">
         {item.kind === 'video' && (
-          <span className="px-1.5 py-0.5 rounded-sm bg-black/70 text-[9px] uppercase tracking-wider text-[var(--mtc-on-scrim)]">
+          <span className="px-1.5 py-0.5 rounded-sm bg-black/70 text-[length:var(--mtc-font-size-xs)] text-[var(--mtc-on-scrim)]">
             ▶{duration ? ` ${duration}` : ''}
           </span>
         )}
@@ -419,7 +419,7 @@ function MediaViewer({
       <div className="flex items-center gap-3 px-4 py-2 border-b border-zinc-800 bg-zinc-900/95 shrink-0">
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium truncate">{item.title}</div>
-          <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+          <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">
             {item.kind}{item.favorite ? ' · favorite' : ''}
           </div>
         </div>
@@ -457,7 +457,7 @@ function MediaViewer({
       <div className="flex-1 min-h-0 flex" onClick={closeFromBackdrop}>
         <div className="relative flex-1 min-w-0 flex items-center justify-center p-4 bg-black/40 overflow-hidden">
           {loading && !failed && (
-            <div className="absolute inset-0 flex items-center justify-center text-[10px] uppercase tracking-wider text-zinc-600">
+            <div className="absolute inset-0 flex items-center justify-center text-[length:var(--mtc-font-size-xs)] text-zinc-600">
               Loading media…
             </div>
           )}
@@ -523,7 +523,7 @@ function MediaViewer({
 
         {showDetails && (
           <aside className="hidden lg:block w-72 xl:w-80 shrink-0 border-l border-zinc-800 bg-zinc-900/70 p-4 overflow-auto">
-            <div className="text-[10px] uppercase tracking-[0.14em] text-zinc-500 mb-4">Details</div>
+            <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 mb-4">Details</div>
             <dl className="space-y-3 text-xs">
               <Detail label="Captured" value={formatMediaDate(item.capturedAt ?? item.createdAt)} />
               <Detail label="Type" value={item.contentType ?? item.kind} />
@@ -543,7 +543,7 @@ function MediaViewer({
             {item.tags.length > 0 && (
               <div className="mt-5 flex flex-wrap gap-1">
                 {item.tags.map(tag => (
-                  <span key={tag} className="px-1.5 py-0.5 rounded bg-zinc-800 text-[10px] text-zinc-400">
+                  <span key={tag} className="px-1.5 py-0.5 rounded bg-zinc-800 text-[length:var(--mtc-font-size-xs)] text-zinc-400">
                     {tag}
                   </span>
                 ))}
@@ -560,7 +560,7 @@ function Detail({ label, value }: { label: string; value: string | undefined }) 
   if (!value) return null
   return (
     <div>
-      <dt className="text-[9px] uppercase tracking-wider text-zinc-600">{label}</dt>
+      <dt className="text-[length:var(--mtc-font-size-xs)] text-zinc-600">{label}</dt>
       <dd className="mt-0.5 text-zinc-300 break-words">{value}</dd>
     </div>
   )

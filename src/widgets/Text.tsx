@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
+import { renderMarkdown } from '../files/markdown'
 import type { WidgetProps } from '../types/template'
 import { Empty } from './states'
 import { normalize, type TextItem } from './textNormalize'
 
 const FLASH_MS = 1500
 
-export function Text({ data }: WidgetProps) {
+export function Text({ data, options }: WidgetProps) {
   const items = normalize(data)
+  // Bodies are Markdown (sanitised) unless the template turns it off.
+  const markdown = (options as { markdown?: boolean } | undefined)?.markdown !== false
 
   // Flash-on-new-item. Tracks the set of identities we've rendered
   // before; items appearing for the first time get a brief sky tint.
@@ -76,9 +79,9 @@ export function Text({ data }: WidgetProps) {
               {item.meta && (
                 <div className="text-xs text-zinc-500 mb-1.5">{item.meta}</div>
               )}
-              {item.body && (
-                <p className="text-sm text-zinc-300 leading-relaxed">{item.body}</p>
-              )}
+              {item.body && (markdown
+                ? <MarkdownBody source={item.body} />
+                : <p className="text-sm text-zinc-300 leading-relaxed">{item.body}</p>)}
               {item.tags && item.tags.length > 0 && (
                 <div className="flex gap-1.5 mt-2 flex-wrap">
                   {item.tags.map((tag, j) => (
@@ -101,6 +104,28 @@ export function Text({ data }: WidgetProps) {
         )
       })}
     </div>
+  )
+}
+
+// Renders a body as sanitised Markdown once the parser has loaded; plain
+// text shows until then (and if rendering fails), so nothing flashes empty.
+function MarkdownBody({ source }: { source: string }) {
+  const [html, setHtml] = useState<string | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    void renderMarkdown(source).then(result => {
+      if (!cancelled) setHtml(result)
+    })
+    return () => { cancelled = true }
+  }, [source])
+  if (html === null) return <p className="text-sm text-zinc-300 leading-relaxed">{source}</p>
+  return (
+    <div
+      className="mtc-markdown"
+      data-variant="inline"
+      // Sanitised by DOMPurify in renderMarkdown.
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   )
 }
 

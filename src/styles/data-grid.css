@@ -107,3 +107,13 @@
 .mtc-root .mtc-data-grid-editor { display: flex; min-width: 0; flex: 1 1 auto; align-items: center; gap: var(--mtc-space-1); }
 .mtc-root .mtc-data-grid-editor > :first-child { min-width: 0; flex: 1 1 auto; }
 .mtc-root .mtc-data-grid-menu-layer { position: fixed; z-index: 85; top: 0; left: 0; }
+
+/* The `table` widget on DataGrid: heat cells, signed values and the tick
+   flash of streaming rows. */
+.mtc-root .mtc-data-table-heat { position: absolute; inset: 0; background: var(--mtc-heat); pointer-events: none; }
+.mtc-root .mtc-data-table-value { position: relative; font-variant-numeric: tabular-nums; }
+.mtc-root .mtc-data-table-value[data-tone="ok"] { color: var(--mtc-ok); }
+.mtc-root .mtc-data-table-value[data-tone="danger"] { color: var(--mtc-danger); }
+.mtc-root .mtc-data-table .mtc-data-grid-row[data-flash="up"] { background: color-mix(in oklab, var(--mtc-ok) 15%, var(--mtc-surface)); }
+.mtc-root .mtc-data-table .mtc-data-grid-row[data-flash="down"] { background: color-mix(in oklab, var(--mtc-danger) 15%, var(--mtc-surface)); }
+.mtc-root .mtc-data-table .mtc-data-grid-row { transition: background var(--mtc-duration-slow) var(--mtc-easing-standard); }

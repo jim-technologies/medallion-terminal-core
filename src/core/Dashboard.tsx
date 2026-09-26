@@ -190,7 +190,7 @@ function RangeSelector({ value, onChange }: { value: string; onChange: (v: strin
           <button
             key={r}
             onClick={() => onChange(r)}
-            className={`px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${
+            className={`px-2 py-0.5 text-[length:var(--mtc-font-size-xs)] font-medium rounded ${
               active ? 'bg-sky-500/20 text-sky-200' : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
@@ -219,7 +219,7 @@ function RefreshPicker({ value, onChange }: { value: number | null; onChange: (m
           <button
             key={opt.label}
             onClick={() => onChange(opt.ms)}
-            className={`px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded ${
+            className={`px-2 py-0.5 text-[length:var(--mtc-font-size-xs)] font-medium rounded ${
               active ? 'bg-sky-500/20 text-sky-200' : 'text-zinc-400 hover:text-zinc-200'
             }`}
             title={opt.ms ? `Refresh every ${opt.label}` : 'No auto-refresh'}
@@ -242,7 +242,7 @@ function OpenPaletteHint() {
   return (
     <button
       onClick={trigger}
-      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 font-mono"
+      className="mtc-control px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-500 hover:text-zinc-200 font-mono"
       title="Open command palette"
     >
       {isMac ? '⌘' : 'Ctrl'} K
@@ -291,13 +291,13 @@ function StatusBar() {
     'text-zinc-400'
 
   return (
-    <div className="mtc-statusbar px-3 md:px-5 py-1 flex items-center gap-4 text-[10px] font-mono text-zinc-500 shrink-0">
+    <div className="mtc-statusbar px-3 md:px-5 py-1 flex items-center gap-4 text-[length:var(--mtc-font-size-xs)] font-mono text-zinc-500 shrink-0">
       <div className="flex-1 min-w-0 truncate">
         {latest ? (
           <span className="flex items-center gap-2">
             <span className="tabular-nums w-7 shrink-0">{formatAgo(now, latest.receivedAt)}</span>
             <span className="text-zinc-300 shrink-0">{latest.actionId}</span>
-            <span className={`uppercase tracking-wider shrink-0 ${latestTone}`}>
+            <span className={`shrink-0 ${latestTone}`}>
               {latest.status.replace(/^ACTION_STATUS_/, '').toLowerCase()}
             </span>
             {latest.message && (
@@ -338,7 +338,7 @@ function HealthPill({ health }: { health: Record<string, WidgetHealth> }) {
   if (streams.length === 0 && errored.length === 0) return null
   const errorTitles = errored.map(e => e.title).join('\n')
   return (
-    <div className="mtc-control flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider">
+    <div className="mtc-control flex items-center gap-1.5 px-2 py-1 text-[length:var(--mtc-font-size-xs)] ">
       {streams.length > 0 && (
         <span
           className={liveStreams === streams.length ? 'text-emerald-400' : 'text-amber-400'}
@@ -361,7 +361,7 @@ function RefreshAllButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
+      className="mtc-control px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-500 hover:text-zinc-200"
       title="Refresh every widget"
     >
       Refresh
@@ -373,7 +373,7 @@ function SoundToggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => 
   return (
     <button
       onClick={onToggle}
-      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
+      className="mtc-control px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-500 hover:text-zinc-200"
       title={enabled ? 'Mute alert sounds' : 'Enable alert sounds (warn/error)'}
     >
       Sound {enabled ? 'on' : 'off'}
@@ -385,7 +385,7 @@ function DensityToggle({ compact, onToggle }: { compact: boolean; onToggle: () =
   return (
     <button
       onClick={onToggle}
-      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
+      className="mtc-control px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-500 hover:text-zinc-200"
       title={compact ? 'Switch to standard density' : 'Switch to compact density'}
     >
       {compact ? 'Standard' : 'Compact'}
@@ -407,7 +407,7 @@ function SnapshotButton({ onCopied }: { onCopied: () => void }) {
   return (
     <button
       onClick={copy}
-      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200"
+      className="mtc-control px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-500 hover:text-zinc-200"
       title="Copy current dashboard URL"
     >
       Copy link
@@ -424,7 +424,7 @@ function ShareButton({ onClick, busy }: { onClick: () => void; busy: boolean }) 
     <button
       onClick={onClick}
       disabled={busy}
-      className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-sky-300 hover:text-sky-200 border-sky-500/40"
+      className="mtc-control px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-sky-300 hover:text-sky-200 border-sky-500/40"
       title="Freeze data into a static, self-contained dashboard to share — nothing re-fetches or regenerates"
     >
       {busy ? 'Sharing…' : 'Share view'}
@@ -440,11 +440,11 @@ function SnapshotBadge({ frozenAt }: { frozenAt?: string }) {
     : null
   return (
     <span
-      className="mtc-control flex items-center gap-1.5 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400"
+      className="mtc-control flex items-center gap-1.5 px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-400"
       title={label ? `Static snapshot frozen ${label} — data does not refresh` : 'Static view — data does not refresh'}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-zinc-500" />
-      {label ? 'Snapshot' : 'Static view'}{label ? <span className="text-zinc-600 normal-case tracking-normal">· {label}</span> : null}
+      {label ? 'Snapshot' : 'Static view'}{label ? <span className="text-zinc-600">· {label}</span> : null}
     </span>
   )
 }
@@ -913,14 +913,14 @@ export function Dashboard({
           </div>
           {chrome === 'full' && Object.keys(ctx).length > 0 && (
             <div className="px-3 md:px-5 pb-3 flex items-center gap-2 flex-wrap">
-              <span className="text-[9px] uppercase tracking-[0.14em] text-zinc-500 mr-1">Context</span>
+              <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 mr-1">Context</span>
               {Object.entries(ctx).map(([k, v]) => {
                 if (k === 'range') {
                   return <RangeSelector key={k} value={v} onChange={val => setCtx(k, val)} />
                 }
                 return (
                   <div key={k} className="mtc-context-chip px-2 py-1 text-[11px]">
-                    <span className="text-zinc-500 uppercase tracking-wider mr-1">{k}</span>
+                    <span className="text-zinc-500 mr-1">{k}</span>
                     <span className="text-zinc-100 font-mono">{v}</span>
                   </div>
                 )
@@ -992,7 +992,7 @@ function ValidationBanner({
   return (
     <div className={`border-b ${tone} px-3 md:px-5 py-2 text-xs flex items-start gap-3`}>
       <div className="flex-1 min-w-0">
-        <div className="font-medium uppercase tracking-wider text-[10px] mb-1">
+        <div className="font-medium text-[length:var(--mtc-font-size-xs)] mb-1">
           {label} ({errors.length + warnings.length})
         </div>
         <ul className="space-y-0.5">
@@ -1004,14 +1004,14 @@ function ValidationBanner({
             </li>
           ))}
           {issues.length > 8 && (
-            <li className="opacity-60 text-[10px]">… and {issues.length - 8} more</li>
+            <li className="opacity-60 text-[length:var(--mtc-font-size-xs)]">… and {issues.length - 8} more</li>
           )}
         </ul>
       </div>
       {dismissible && (
         <button
           onClick={onDismiss}
-          className="text-[10px] uppercase tracking-wider opacity-70 hover:opacity-100 shrink-0"
+          className="text-[length:var(--mtc-font-size-xs)] opacity-70 hover:opacity-100 shrink-0"
         >
           Dismiss
         </button>
@@ -1024,7 +1024,7 @@ function TemplateBlocked({ issues }: { issues: TemplateSecurityIssue[] }) {
   const errors = issues.filter(i => i.severity === 'error')
   return (
     <div className="col-span-full border border-red-500/40 bg-red-500/10 rounded p-4 text-sm text-red-100">
-      <div className="font-medium text-xs uppercase tracking-wider mb-2">Template blocked</div>
+      <div className="font-medium text-xs mb-2">Template blocked</div>
       <p className="text-red-200/80 mb-3">
         This dashboard includes URL, header, iframe, or polling behavior that the host trust policy rejected.
       </p>
@@ -1037,7 +1037,7 @@ function TemplateBlocked({ issues }: { issues: TemplateSecurityIssue[] }) {
           </li>
         ))}
         {errors.length > 6 && (
-          <li className="opacity-60 text-[10px]">… and {errors.length - 6} more</li>
+          <li className="opacity-60 text-[length:var(--mtc-font-size-xs)]">… and {errors.length - 6} more</li>
         )}
       </ul>
     </div>
@@ -1064,7 +1064,7 @@ function FullscreenOverlay({
       aria-label={`Fullscreen ${widget.title ?? widget.id ?? widget.component}`}
     >
       <div className="flex items-center justify-between mb-3 shrink-0">
-        <span className="text-[10px] uppercase tracking-wider text-zinc-500">
+        <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">
           Fullscreen — esc to close
         </span>
         <button

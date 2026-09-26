@@ -11,7 +11,7 @@ export function Section({ options }: WidgetProps) {
   return (
     <div className="h-full flex items-center gap-3 px-1">
       {label && (
-        <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-500 shrink-0">
+        <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 shrink-0">
           {label}
         </span>
       )}

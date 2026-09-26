@@ -300,7 +300,7 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `heatmap` | `{ rows, columns, cells }` | 2D color matrix |
 | `events` | `{ events: [{ timestamp, label, status }] }` | Streamable timeline |
 | `distribution` | `{ slices: [{ label, value }] }` | Pie/donut |
-| `text` | `{ items: [{ title, body, ... }] }` | News, summaries |
+| `text` | `{ items: [{ title, body, ... }] }` | News, summaries; `body` is sanitised Markdown (`options.markdown: false` for raw text) |
 | `conversation` | `{ id, participants?, messages: [{ id, timestamp?, sender_id?, kind?, body?, reply_to_id?, attachments?, reactions?, thread_reply_count?, status?, context? }] }` | Channel, direct-message, support, and human/AI transcripts with `channel`, `direct`, and `assistant` modes |
 | `orderbook` | `{ bids, asks, mid?, spread? }` | Depth ladder |
 | `depth_chart` | `{ bids, asks, mid?, spread? }` | Cumulative bid/ask liquidity; shares `OrderBookPayload` with the ladder |

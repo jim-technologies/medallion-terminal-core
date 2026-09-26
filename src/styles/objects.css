@@ -38,6 +38,7 @@
 .mtc-root .mtc-value-date { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--mtc-space-2); white-space: normal; }
 .mtc-root .mtc-value-secondary { margin-left: var(--mtc-space-1); color: var(--mtc-muted); font-size: var(--mtc-font-size-sm); }
 .mtc-root .mtc-value-date .mtc-value-secondary { margin-left: 0; }
+.mtc-root .mtc-value-number .mtc-value-code { margin-left: 0; }
 .mtc-root .mtc-value-boolean { display: inline-flex; align-items: center; gap: 0.375rem; }
 .mtc-root .mtc-value-boolean .mtc-icon { color: var(--mtc-muted); }
 .mtc-root .mtc-value-boolean[data-value="true"] .mtc-icon { color: var(--mtc-ok); }
@@ -123,3 +124,6 @@
   .mtc-root .mtc-object-page-tabs > .mtc-tabs-list { padding: 0 var(--mtc-space-4); }
   .mtc-root .mtc-object-page-tabs > .mtc-tabs-panels > .mtc-tab-panel { padding: var(--mtc-space-4); }
 }
+.mtc-root .mtc-object-view-description { color: var(--mtc-muted-strong); font-size: var(--mtc-font-size-md); }
+.mtc-root .mtc-object-view { display: flex; flex-direction: column; gap: var(--mtc-space-3); }
+.mtc-root .mtc-object-view > * { flex-shrink: 0; }

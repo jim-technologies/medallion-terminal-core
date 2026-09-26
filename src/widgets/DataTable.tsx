@@ -1,4 +1,9 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { Button } from '../components/Button'
+import { Input } from '../components/FormControls'
+import { Icon } from '../components/Icon'
+import { Pagination } from '../components/Pagination'
+import { DataGrid, type DataGridColumn } from '../workbench/DataGrid'
 import { useDashboard } from '../core/DashboardContext'
 import { Empty } from './states'
 import { formatCurrency, formatPercent, formatBps, formatCompact, formatDateTime } from './format'
@@ -16,7 +21,7 @@ interface RowContext {
 }
 
 export function DataTable({ data, options }: WidgetProps) {
-  const { setCtx } = useDashboard()
+  const { ctx, setCtx } = useDashboard()
   const pageSize = (options?.pageSize as number) || DEFAULT_PAGE_SIZE
   const rowContext = options?.row_context as RowContext | undefined
   const heatColumns = (options?.heat_columns as string[] | undefined) ?? []
@@ -161,12 +166,6 @@ export function DataTable({ data, options }: WidgetProps) {
   const display = sorted.slice(safePage * pageSize, (safePage + 1) * pageSize)
   const showPagination = sorted.length > pageSize
 
-  const toggleSort = (col: string) => {
-    if (sortKey === col) setSortAsc(!sortAsc)
-    else { setSortKey(col); setSortAsc(true) }
-    setPage(0)
-  }
-
   if (columns.length === 0) {
     return <Empty>No data</Empty>
   }
@@ -185,161 +184,124 @@ export function DataTable({ data, options }: WidgetProps) {
     URL.revokeObjectURL(url)
   }
 
+  const gridColumns: DataGridColumn<Record<string, unknown>>[] = columns.map(col => {
+    const fmt = columnFormats[col]
+    // Numeric formats right-align so digits line up under tabular-nums.
+    const numeric = !!fmt && fmt !== 'sparkline' && /^(currency|percent|bps|compact)(:|$)/.test(fmt)
+    return {
+      id: col,
+      header: labels[col] ?? col,
+      width: fmt === 'sparkline' ? 112 : 144,
+      align: numeric || (!fmt && rows.some(row => typeof row[col] === 'number')) ? 'end' : 'start',
+      cell: row => <TableCell value={row[col]} format={fmt} heat={heatRanges[col]} />,
+    }
+  })
+  const selectedRowKey = rowContext
+    ? display.find(row => {
+      const value = row[rowContext.field ?? columns[0]!]
+      return value != null && String(value) === ctx[rowContext.key]
+    })
+    : undefined
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full gap-2 mtc-data-table">
       {(searchEnabled || exportEnabled) && (
-        <div className="flex items-center gap-2 pb-1">
+        <div className="flex items-center gap-2">
           {searchEnabled && (
-            <input
-              type="text"
+            <Input
+              type="search"
+              size="small"
               value={query}
+              aria-label="Filter rows"
               onChange={e => { setQuery(e.target.value); setPage(0) }}
-              placeholder="filter…"
-              className="flex-1 bg-zinc-950 border border-zinc-800 rounded px-2 py-0.5 text-xs text-zinc-200 placeholder-zinc-600 outline-none focus:border-zinc-600"
+              placeholder="Filter…"
+              className="min-w-0 flex-1"
             />
           )}
           {exportEnabled && (
-            <button
-              onClick={exportCsv}
-              className="text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 rounded border border-zinc-800 shrink-0"
-              title="Download as CSV"
-            >
-              ↓ CSV
-            </button>
+            <Button size="small" variant="ghost" startIcon={<Icon name="download" />} onClick={exportCsv} title="Download as CSV">
+              CSV
+            </Button>
           )}
         </div>
       )}
-      <div className="overflow-auto flex-1 min-h-0" tabIndex={0} aria-label="Table data">
-        <table className="w-full text-sm">
-          <thead className="sticky top-0 bg-zinc-900">
-            <tr>
-              {columns.map(col => {
-                const fmt = columnFormats[col]
-                // Numeric formats right-align so digits line up under
-                // tabular-nums. Sparklines / strings stay left.
-                const numeric = fmt && fmt !== 'sparkline' &&
-                  /^(currency|percent|bps|compact)(:|$)/.test(fmt)
-                return (
-                  <th
-                    key={col}
-                    onClick={() => toggleSort(col)}
-                    className={`px-3 py-2 text-zinc-400 border-b border-zinc-700 cursor-pointer hover:text-zinc-100 select-none whitespace-nowrap font-medium ${numeric ? 'text-right' : 'text-left'}`}
-                  >
-                    {labels[col] ?? col}
-                    {sortKey === col && (
-                      <span className="ml-1 text-zinc-500">{sortAsc ? '\u2191' : '\u2193'}</span>
-                    )}
-                  </th>
-                )
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {display.map((row, i) => {
-              const flash = flashes.get(rowKey(row, i))
-              const flashClass =
-                flash === 'up'   ? 'bg-emerald-500/15' :
-                flash === 'down' ? 'bg-red-500/15' :
-                ''
-              return (
-              <tr
-                key={i}
-                onClick={rowContext ? () => handleRowClick(row) : undefined}
-                className={`border-b border-zinc-800/60 transition-colors duration-300 ${flashClass} ${
-                  rowContext ? 'cursor-pointer hover:bg-zinc-800' : 'hover:bg-zinc-800/40'
-                }`}
-              >
-                {columns.map(col => {
-                  const range = heatRanges[col]
-                  const value = row[col]
-                  const heatStyle =
-                    range && typeof value === 'number'
-                      ? { backgroundColor: heatColor(value, range.min, range.max) }
-                      : undefined
-                  const fmt = columnFormats[col]
-                  // Sparkline column: the cell value is a number[] (or
-                  // an array we can coerce) and we render a tiny inline
-                  // SVG instead of formatted text. The signed coloring
-                  // and heat-cell tinting don't apply.
-                  // Link column: value is a URL string or {label, url}.
-                  // Internal (root-relative) links navigate in-tab;
-                  // external ones open a new tab. Empty/unsafe urls fall
-                  // back to plain text.
-                  if (fmt === 'link' && value != null) {
-                    const obj = typeof value === 'object' && !Array.isArray(value)
-                      ? value as {label?: unknown; url?: unknown}
-                      : { label: undefined, url: value }
-                    const url = safeUrl(obj.url)
-                    const label = obj.label != null && obj.label !== ''
-                      ? String(obj.label)
-                      : url ?? ''
-                    return (
-                      <td key={col} className="px-3 py-2.5 whitespace-nowrap" style={heatStyle}>
-                        {url ? (
-                          <a
-                            href={url}
-                            {...(url.startsWith('/')
-                              ? {}
-                              : { target: '_blank', rel: 'noopener noreferrer' })}
-                            className="text-sky-400 hover:underline"
-                          >
-                            {label}
-                            <span className="ml-1 text-xs text-zinc-500" aria-hidden="true">{url.startsWith('/') ? '→' : '↗'}</span>
-                          </a>
-                        ) : (
-                          <span className="text-zinc-100">{label}</span>
-                        )}
-                      </td>
-                    )
-                  }
-                  if (fmt === 'sparkline' && Array.isArray(value)) {
-                    return (
-                      <td key={col} className="px-3 py-2.5 whitespace-nowrap" style={heatStyle}>
-                        <SparklineCell values={value as unknown[]} />
-                      </td>
-                    )
-                  }
-                  const display = fmt ? formatWith(value, fmt) : formatCell(value)
-                  // Signed numeric formats color the cell green/red.
-                  const isSigned = fmt ? fmt.split(':').slice(1).includes('signed') : false
-                  const isNumericFmt = fmt && fmt !== 'sparkline' &&
-                    /^(currency|percent|bps|compact)(:|$)/.test(fmt)
-                  const align = isNumericFmt ? 'text-right' : ''
-                  const tone =
-                    isSigned && typeof value === 'number'
-                      ? value > 0 ? 'text-emerald-400' :
-                        value < 0 ? 'text-red-400' :
-                        'text-zinc-100'
-                      : 'text-zinc-100'
-                  return (
-                    <td
-                      key={col}
-                      className={`px-3 py-2.5 whitespace-nowrap tabular-nums ${align} ${tone}`}
-                      style={heatStyle}
-                    >
-                      {display}
-                    </td>
-                  )
-                })}
-              </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-      {showPagination && (
-        <div className="flex items-center justify-between px-3 py-2 border-t border-zinc-800 text-xs text-zinc-400">
-          <span>{sorted.length} rows</span>
-          <div className="flex items-center gap-1">
-            <button onClick={() => setPage(0)} disabled={safePage === 0} className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30">&laquo;</button>
-            <button onClick={() => setPage(p => p - 1)} disabled={safePage === 0} className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30">&lsaquo;</button>
-            <span className="px-2 text-zinc-300">{safePage + 1} / {totalPages}</span>
-            <button onClick={() => setPage(p => p + 1)} disabled={safePage >= totalPages - 1} className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30">&rsaquo;</button>
-            <button onClick={() => setPage(totalPages - 1)} disabled={safePage >= totalPages - 1} className="px-1.5 py-0.5 rounded hover:bg-zinc-800 disabled:opacity-30">&raquo;</button>
-          </div>
-        </div>
-      )}
+      <DataGrid
+        label="Table data"
+        className="min-h-0 flex-1"
+        columns={gridColumns}
+        rows={display}
+        rowKey={(row, i) => rowKey(row, i)}
+        rowLabel={row => String(row[columns[0]!] ?? '')}
+        selection={rowContext ? 'single' : 'none'}
+        selectedKeys={selectedRowKey ? [rowKey(selectedRowKey, display.indexOf(selectedRowKey))] : []}
+        onSelectionChange={keys => {
+          const index = display.findIndex((row, i) => rowKey(row, i) === keys[0])
+          if (index >= 0) handleRowClick(display[index]!)
+        }}
+        sort={sortKey ? { columnId: sortKey, direction: sortAsc ? 'ascending' : 'descending' } : null}
+        onSortChange={next => {
+          setSortKey(next?.columnId ?? null)
+          setSortAsc(next?.direction !== 'descending')
+          setPage(0)
+        }}
+        sortMode="server"
+        rowProps={(row) => {
+          const flash = flashes.get(rowKey(row, display.indexOf(row)))
+          return { 'data-flash': flash }
+        }}
+        footer={showPagination ? (
+          <Pagination
+            label="Table pages"
+            summary={`${sorted.length} rows`}
+            page={safePage + 1}
+            pageCount={totalPages}
+            onPageChange={next => setPage(next - 1)}
+          />
+        ) : undefined}
+      />
     </div>
+  )
+}
+
+function TableCell({ value, format, heat }: { value: unknown; format?: string; heat?: { min: number; max: number } }) {
+  const heatStyle = heat && typeof value === 'number'
+    ? { '--mtc-heat': heatColor(value, heat.min, heat.max) } as CSSProperties
+    : undefined
+  let content: ReactNode
+  // Link column: value is a URL string or {label, url}. Internal
+  // (root-relative) links navigate in-tab; external ones open a new tab.
+  // Empty/unsafe urls fall back to plain text.
+  if (format === 'link' && value != null) {
+    const obj = typeof value === 'object' && !Array.isArray(value)
+      ? value as { label?: unknown; url?: unknown }
+      : { label: undefined, url: value }
+    const url = safeUrl(obj.url)
+    const label = obj.label != null && obj.label !== '' ? String(obj.label) : url ?? ''
+    content = url ? (
+      <a
+        href={url}
+        tabIndex={-1}
+        {...(url.startsWith('/') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
+        className="mtc-value-link"
+      >
+        <span className="mtc-value-link-text">{label}</span>
+        {!url.startsWith('/') && <Icon name="external-link" />}
+      </a>
+    ) : <span>{label}</span>
+  } else if (format === 'sparkline' && Array.isArray(value)) {
+    content = <SparklineCell values={value as unknown[]} />
+  } else {
+    const display = format ? formatWith(value, format) : formatCell(value)
+    // Signed numeric formats colour the value.
+    const signed = format ? format.split(':').slice(1).includes('signed') : false
+    const tone = signed && typeof value === 'number' ? (value > 0 ? 'ok' : value < 0 ? 'danger' : undefined) : undefined
+    content = <span className="mtc-data-table-value" data-tone={tone}>{display}</span>
+  }
+  return (
+    <>
+      {heatStyle && <span className="mtc-data-table-heat" style={heatStyle} aria-hidden="true" />}
+      {content}
+    </>
   )
 }
 

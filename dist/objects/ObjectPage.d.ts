@@ -13,7 +13,7 @@ export interface ObjectPageTab {
 export interface ObjectPageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
     /** The object's identity (type, title, id, status, metadata, actions). */
     header: ObjectHeaderProps;
-    /** Location trail, such as Ontology › Customer › Northstar Labs. */
+    /** Location trail: where the object sits, ending with the object itself. */
     breadcrumbs?: readonly BreadcrumbItem[];
     /** Sections in order; the first is shown by default. */
     tabs: readonly ObjectPageTab[];

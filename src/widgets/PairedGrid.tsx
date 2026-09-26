@@ -61,17 +61,17 @@ export function PairedGrid({ data, options }: WidgetProps) {
         {subjectVal != null && (
           <span className="text-zinc-300 tabular-nums">{subjectVal.toLocaleString()}</span>
         )}
-        {grid.venue && <span className="ml-auto text-zinc-500 text-[10px] uppercase tracking-wider">{grid.venue}</span>}
+        {grid.venue && <span className="ml-auto text-zinc-500 text-[length:var(--mtc-font-size-xs)] ">{grid.venue}</span>}
       </div>
       <div className="flex-1 overflow-auto min-h-0">
         <table className="w-full font-mono tabular-nums">
           <thead className="sticky top-0 bg-zinc-900 z-10">
-            <tr className="text-[10px] text-zinc-600 border-b border-zinc-800/60">
-              <th colSpan={measures.length} className="text-center py-1 text-emerald-400 uppercase tracking-wider">{grid.left_label}</th>
+            <tr className="text-[length:var(--mtc-font-size-xs)] text-zinc-600 border-b border-zinc-800/60">
+              <th colSpan={measures.length} className="text-center py-1 text-emerald-400 ">{grid.left_label}</th>
               <th className="bg-zinc-950" />
-              <th colSpan={measures.length} className="text-center py-1 text-red-400 uppercase tracking-wider">{grid.right_label}</th>
+              <th colSpan={measures.length} className="text-center py-1 text-red-400 ">{grid.right_label}</th>
             </tr>
-            <tr className="text-[10px] uppercase tracking-wider text-zinc-500 border-b border-zinc-800">
+            <tr className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 border-b border-zinc-800">
               {measures.map(m => <th key={`l-${m.key}`} className="text-right px-2 py-1.5">{m.label}</th>)}
               <th className="text-center px-2 py-1.5 bg-zinc-950">{grid.key_label}</th>
               {measures.map(m => <th key={`r-${m.key}`} className="text-right px-2 py-1.5">{m.label}</th>)}

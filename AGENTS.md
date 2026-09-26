@@ -128,6 +128,7 @@ Proto-defined in `proto/medallion/terminal/v1/shapes.proto`. Widgets accept both
 - `events`: `{events: [{timestamp, label, status?}]}`.
 - `distribution`: `{slices: [{label, value}]}`.
 - `text`: `{items: [{title?, body?, source?, date?, tags?, image_url?, id?}]}`.
+  `body` is sanitised Markdown; `options.markdown: false` shows it as typed.
 - `conversation`: `{id, title?, viewer_id?, participants?, messages:
   [{id, timestamp?, sender_id?, kind?, body?, reply_to_id?, attachments?,
   reactions?, thread_reply_count?, status?, context?}], unread_count?,

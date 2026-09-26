@@ -72,7 +72,7 @@ export function Events({ data, options }: WidgetProps) {
             </div>
             {e.body && <div className="text-xs text-zinc-400 mt-0.5 line-clamp-2">{e.body}</div>}
             {(e.source || (e.tags && e.tags.length > 0)) && (
-              <div className="flex items-center gap-2 mt-1 text-[10px] text-zinc-500 flex-wrap">
+              <div className="flex items-center gap-2 mt-1 text-[length:var(--mtc-font-size-xs)] text-zinc-500 flex-wrap">
                 {e.source && <span className="text-zinc-500">{e.source}</span>}
                 {e.tags?.map((t, ti) => (
                   <span key={ti} className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">{t}</span>

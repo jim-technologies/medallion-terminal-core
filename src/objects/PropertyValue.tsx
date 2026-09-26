@@ -228,7 +228,8 @@ function NumericValue({
     <span className="mtc-value-number">
       {formatNumericValue(amount, resolved, locale)}
       {panel && resolved.kind === 'currency' && (
-        <span className="mtc-value-secondary">{resolved.currency}</span>
+        // The space keeps the code a separate word for assistive technology.
+        <>{' '}<span className="mtc-value-secondary mtc-value-code">{resolved.currency}</span></>
       )}
     </span>
   )

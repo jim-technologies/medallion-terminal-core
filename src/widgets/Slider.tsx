@@ -63,7 +63,7 @@ export function Slider({ options }: WidgetProps) {
   return (
     <div className="flex flex-col h-full justify-center gap-2 px-2">
       <div className="flex items-baseline justify-between">
-        <span className="text-[10px] uppercase tracking-wider text-zinc-500">{label}</span>
+        <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">{label}</span>
         <span className="text-sm font-semibold text-zinc-100 tabular-nums">
           {format(value, step)}{opts.unit && <span className="text-zinc-500 ml-1">{opts.unit}</span>}
         </span>
@@ -77,7 +77,7 @@ export function Slider({ options }: WidgetProps) {
         onChange={e => onChange(Number(e.target.value))}
         className="w-full accent-sky-500"
       />
-      <div className="flex justify-between text-[10px] text-zinc-600 tabular-nums">
+      <div className="flex justify-between text-[length:var(--mtc-font-size-xs)] text-zinc-600 tabular-nums">
         <span>{format(min, step)}</span>
         <span>{format(max, step)}</span>
       </div>

@@ -129,7 +129,7 @@ export function Timeseries({ data, options }: WidgetProps) {
                 stroke={color}
                 strokeOpacity={0.4}
                 strokeDasharray="3 3"
-                label={{ value: a.label, position: 'insideTopLeft', fontSize: 10, fill: color }}
+                label={{ value: a.label, position: 'insideTopLeft', fontSize: 11, fill: color }}
               />
             )
           }

@@ -5,12 +5,6 @@ export interface DataSourceState {
     data: unknown;
     loading: boolean;
     /**
-     * One-line failure summary (`permission_denied: payroll:read scope
-     * required`, `HTTP 503`). Kept for compatibility; read `sourceError`.
-     * @deprecated since 0.6.0: use `sourceError`; removed in 0.7.0.
-     */
-    error: string | null;
-    /**
      * The typed failure: kind, HTTP status, Connect code, the server's reason,
      * request id and `Retry-After`. `null` while healthy.
      */

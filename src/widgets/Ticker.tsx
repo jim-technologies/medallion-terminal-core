@@ -63,7 +63,7 @@ function Pill({ item, ...rest }: { item: Item; 'aria-hidden'?: boolean }) {
       {...rest}
       className={`shrink-0 px-2.5 py-1 rounded border bg-zinc-900/40 text-xs flex items-center gap-2 font-mono ${color}`}
     >
-      <span className="text-[10px] text-zinc-500 tabular-nums">{item.timestamp}</span>
+      <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 tabular-nums">{item.timestamp}</span>
       <span>{item.label}</span>
     </div>
   )

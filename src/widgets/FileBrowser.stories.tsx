@@ -15,11 +15,11 @@ function JimVideoPlayer({ asset }: AssetAppRendererProps) {
   return (
     <div className="h-full min-h-[26rem] bg-black flex items-center justify-center">
       <div className="w-full max-w-3xl aspect-video border border-zinc-800 bg-zinc-950 shadow-2xl flex flex-col">
-        <div className="flex-1 flex items-center justify-center text-5xl text-zinc-700">▶</div>
+        <div className="flex-1 flex items-center justify-center text-5xl text-zinc-600" aria-hidden="true">▶</div>
         <div className="h-12 border-t border-zinc-800 px-4 flex items-center gap-3">
           <span className="size-2 rounded-full bg-sky-400" />
           <span className="text-xs text-zinc-300 truncate">{asset.name}</span>
-          <span className="ml-auto text-[10px] uppercase tracking-wider text-zinc-600">
+          <span className="ml-auto text-[length:var(--mtc-font-size-xs)] text-zinc-600">
             Jim Technologies
           </span>
         </div>
@@ -35,7 +35,7 @@ function ReviewRoomPlayer({ asset }: AssetAppRendererProps) {
         Review preview · {asset.name}
       </div>
       <aside className="border-l border-zinc-800 p-4 text-xs text-zinc-500">
-        <div className="uppercase tracking-wider text-[10px] mb-3">Review notes</div>
+        <div className="text-[length:var(--mtc-font-size-xs)] mb-3">Review notes</div>
         No comments yet.
       </aside>
     </div>
@@ -57,7 +57,7 @@ function WorkspaceApplicationPane({
     >
       <header className="h-11 flex items-center gap-2 border-b border-zinc-800 px-3">
         <span className="text-xs text-zinc-200">{application.name}</span>
-        <span className="min-w-0 flex-1 truncate text-[10px] text-zinc-500">
+        <span className="min-w-0 flex-1 truncate text-[length:var(--mtc-font-size-xs)] text-zinc-500">
           {request.asset.name}
         </span>
         <button type="button" onClick={chooseApplication} className="text-xs text-zinc-400">

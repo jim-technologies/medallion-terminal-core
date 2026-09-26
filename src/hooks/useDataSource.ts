@@ -4,7 +4,6 @@ import { parseConnectEnvelopes, CONNECT_JSON_CONTENT_TYPE } from '../core/connec
 import { getNested } from '../core/getNested'
 import {
   SourceError,
-  describeSourceError,
   sourceErrorFromResponse,
   sourceErrorKindForCode,
   toSourceError,
@@ -78,12 +77,6 @@ export function unwrapDataResponse(raw: unknown): unknown {
 export interface DataSourceState {
   data: unknown
   loading: boolean
-  /**
-   * One-line failure summary (`permission_denied: payroll:read scope
-   * required`, `HTTP 503`). Kept for compatibility; read `sourceError`.
-   * @deprecated since 0.6.0: use `sourceError`; removed in 0.7.0.
-   */
-  error: string | null
   /**
    * The typed failure: kind, HTTP status, Connect code, the server's reason,
    * request id and `Retry-After`. `null` while healthy.
@@ -347,6 +340,5 @@ export function useDataSource(source?: DataSource, options: UseDataSourceOptions
     if (throttleTimer.current) clearTimeout(throttleTimer.current)
   }, [])
 
-  const error = useMemo(() => (sourceError ? describeSourceError(sourceError) : null), [sourceError])
-  return { data, loading, error, sourceError, lastUpdated, connected, nextRetryAt, refresh }
+  return { data, loading, sourceError, lastUpdated, connected, nextRetryAt, refresh }
 }

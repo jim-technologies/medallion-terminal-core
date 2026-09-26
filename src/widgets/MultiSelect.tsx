@@ -46,8 +46,8 @@ export function MultiSelect({ options }: WidgetProps) {
   return (
     <div className="flex flex-col h-full justify-center gap-2 px-2">
       <div className="flex items-baseline justify-between">
-        <span className="text-[10px] uppercase tracking-wider text-zinc-500">{opts.label ?? opts.key}</span>
-        <span className="text-[10px] text-zinc-600">{selected.size} / {choices.length}</span>
+        <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">{opts.label ?? opts.key}</span>
+        <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600">{selected.size} / {choices.length}</span>
       </div>
       <div className="flex flex-wrap gap-1">
         {choices.map(c => {

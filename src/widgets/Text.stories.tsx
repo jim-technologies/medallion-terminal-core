@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { expect, within } from 'storybook/test'
 import { Text } from './Text'
 
 const meta: Meta<typeof Text> = {
@@ -58,6 +59,46 @@ export const PlainText: Story = {
   name: 'Plain String',
   args: {
     data: 'This is a simple text block. You can use it for any freeform content — alerts, descriptions, or status messages.',
+  },
+}
+
+// Bodies are Markdown by default: headings, lists, emphasis, code and
+// links render, and anything unsafe (script, event handlers, javascript:
+// links) is stripped. `options.markdown: false` shows the raw text.
+export const MarkdownBody: Story = {
+  name: 'Markdown body',
+  args: {
+    data: {
+      title: 'Morning brief',
+      meta: 'Research desk · 07:30',
+      body: [
+        'Rates held; **the curve steepened** by 6 bp.',
+        '',
+        '- Watch `2s10s` into the auction',
+        '- Funding stayed [calm](https://example.com/funding)',
+        '',
+        '<img src=x onerror="alert(1)">[unsafe](javascript:alert(1))',
+      ].join('\n'),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(await canvas.findByText('the curve steepened')).toHaveProperty('tagName', 'STRONG')
+    await expect(canvas.getByText('2s10s')).toHaveProperty('tagName', 'CODE')
+    await expect(canvas.getByRole('link', { name: 'calm' })).toHaveAttribute('href', 'https://example.com/funding')
+    await expect(canvasElement.querySelector('[onerror]')).toBeNull()
+    await expect(canvasElement.querySelector('a[href^="javascript"]')).toBeNull()
+  },
+}
+
+export const RawText: Story = {
+  name: 'Markdown off',
+  args: {
+    options: { markdown: false },
+    data: { title: 'Raw note', body: 'Shown as typed: **not bold**, `not code`.' },
+  },
+  play: async ({ canvasElement }) => {
+    await expect(await within(canvasElement).findByText('Shown as typed: **not bold**, `not code`.')).toBeVisible()
   },
 }
 

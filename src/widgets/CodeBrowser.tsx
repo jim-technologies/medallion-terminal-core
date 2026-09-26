@@ -81,7 +81,7 @@ export function CodeBrowser({ data, options }: WidgetProps) {
             ↗
           </a>
         )}
-        <span className="text-zinc-700">/</span>
+        <span className="text-zinc-600" aria-hidden="true">/</span>
         {repository.refs.length > 1 ? (
           <select
             value={repository.ref}
@@ -100,7 +100,7 @@ export function CodeBrowser({ data, options }: WidgetProps) {
             const path = segments.slice(0, index + 1).join('/')
             return (
               <span key={path} className="flex items-center gap-1 min-w-0">
-                <span className="text-zinc-700">/</span>
+                <span className="text-zinc-600" aria-hidden="true">/</span>
                 <button
                   onClick={() => setCtx(pathKey, path)}
                   className="text-sky-400 hover:underline truncate"
@@ -133,7 +133,7 @@ export function CodeBrowser({ data, options }: WidgetProps) {
                     {entry.kind === 'directory' ? '▸' : entry.kind === 'symlink' ? '↗' : '·'}
                   </span>
                   <span className="truncate">{entry.name}</span>
-                  <span className="text-[9px] text-zinc-600 tabular-nums">
+                  <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600 tabular-nums">
                     {entry.kind === 'file' && entry.sizeBytes != null ? humanSize(entry.sizeBytes) : ''}
                   </span>
                 </button>
@@ -145,16 +145,16 @@ export function CodeBrowser({ data, options }: WidgetProps) {
         <div className="min-h-0 flex flex-col overflow-hidden">
           {repository.file ? (
             <>
-              <div className="flex items-center gap-2 px-3 py-1.5 border-b border-zinc-800 text-[10px] text-zinc-500 shrink-0">
+              <div className="flex items-center gap-2 px-3 py-1.5 border-b border-zinc-800 text-[length:var(--mtc-font-size-xs)] text-zinc-500 shrink-0">
                 <span className="font-mono truncate text-zinc-300">{repository.file.path}</span>
                 {repository.file.language && (
-                  <span className="uppercase tracking-wider shrink-0">{repository.file.language}</span>
+                  <span className="shrink-0">{repository.file.language}</span>
                 )}
                 {repository.file.sizeBytes != null && (
                   <span className="tabular-nums shrink-0">{humanSize(repository.file.sizeBytes)}</span>
                 )}
                 {repository.file.truncated && (
-                  <span className="text-amber-400 uppercase tracking-wider shrink-0">truncated</span>
+                  <span className="text-amber-400 shrink-0">truncated</span>
                 )}
                 <button
                   onClick={() => void copyFile()}
@@ -191,7 +191,7 @@ function Code({ content, wrap }: { content: string; wrap: boolean }) {
         <tbody>
           {lines.map((line, index) => (
             <tr key={index}>
-              <td className="sticky left-0 w-12 px-2 text-right align-top select-none text-zinc-700 bg-zinc-950/95 border-r border-zinc-900">
+              <td className="sticky left-0 w-12 px-2 text-right align-top select-none text-zinc-500 bg-zinc-950/95 border-r border-zinc-900">
                 {index + 1}
               </td>
               <td className={`px-3 text-zinc-300 align-top ${wrap ? 'whitespace-pre-wrap break-words' : 'whitespace-pre'}`}>

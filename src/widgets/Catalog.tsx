@@ -104,7 +104,7 @@ export function Catalog() {
     <div className="h-full overflow-auto pr-1" tabIndex={0} aria-label="Source catalog">
       {Object.entries(grouped).map(([shape, list]) => (
         <div key={shape} className="mb-4 last:mb-0">
-          <div className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5">
+          <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 mb-1.5">
             {shape} <span className="text-zinc-500">— {list.length}</span>
           </div>
           {list.map(s => (
@@ -112,15 +112,15 @@ export function Catalog() {
               <div className="flex items-baseline gap-2 flex-wrap">
                 <span className="text-sm text-zinc-100 font-mono">{s.id}</span>
                 {s.streamable && (
-                  <span className="text-[9px] uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                    live
+                  <span className="text-[length:var(--mtc-font-size-xs)] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                    Live
                   </span>
                 )}
                 {s.name && <span className="text-xs text-zinc-400">— {s.name}</span>}
               </div>
               {s.description && <div className="text-xs text-zinc-500 mt-0.5">{s.description}</div>}
               {s.params && s.params.length > 0 && (
-                <div className="text-[10px] text-zinc-500 mt-1 font-mono">
+                <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 mt-1 font-mono">
                   params:{' '}
                   {s.params.map(p => (p.required ? `${p.key}*` : p.key)).join(', ')}
                 </div>
@@ -128,7 +128,7 @@ export function Catalog() {
               {s.tags && s.tags.length > 0 && (
                 <div className="flex gap-1 mt-1 flex-wrap">
                   {s.tags.map(t => (
-                    <span key={t} className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                    <span key={t} className="text-[length:var(--mtc-font-size-xs)] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
                       {t}
                     </span>
                   ))}

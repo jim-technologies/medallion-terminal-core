@@ -30,12 +30,12 @@ export function Clock({ options }: WidgetProps) {
         const session = sessionFor(zone, now)
         return (
           <div key={zone} className="flex flex-col items-center">
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500 flex items-center gap-1.5">
+            <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 flex items-center gap-1.5">
               <span>{label}</span>
               <span className={`w-1.5 h-1.5 rounded-full ${session}`} />
             </div>
             <div className="text-base font-semibold text-zinc-100 tabular-nums">{time}</div>
-            <div className="text-[10px] text-zinc-600 tabular-nums">{offset}</div>
+            <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-600 tabular-nums">{offset}</div>
           </div>
         )
       })}

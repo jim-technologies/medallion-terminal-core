@@ -174,7 +174,7 @@ export function RecordBoard({ data, options, widgetId }: WidgetProps) {
           <button
             type="button"
             onClick={startNew}
-            className="mtc-control px-2.5 py-1.5 text-[10px] uppercase tracking-wider text-sky-300 border-sky-500/30"
+            className="mtc-control px-2.5 py-1.5 text-[length:var(--mtc-font-size-xs)] text-sky-300 border-sky-500/30"
           >
             + New
           </button>
@@ -203,10 +203,10 @@ export function RecordBoard({ data, options, widgetId }: WidgetProps) {
               >
                 <header className="flex items-center gap-2 px-3 py-2 border-b border-zinc-800">
                   <span className={`w-1.5 h-1.5 rounded-full ${laneTone(choice?.color)}`} />
-                  <span className="text-[10px] uppercase tracking-wider text-zinc-400 truncate">
+                  <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-400 truncate">
                     {(choice?.label ?? lane) || 'Unassigned'}
                   </span>
-                  <span className="ml-auto text-[10px] tabular-nums text-zinc-600">{laneRecords.length}</span>
+                  <span className="ml-auto text-[length:var(--mtc-font-size-xs)] tabular-nums text-zinc-600">{laneRecords.length}</span>
                 </header>
                 <div className="p-2 space-y-2 overflow-y-auto min-h-0">
                   {laneRecords.map(record => (
@@ -229,15 +229,15 @@ export function RecordBoard({ data, options, widgetId }: WidgetProps) {
                         <h4 className="text-xs font-semibold text-zinc-100 leading-snug">
                           {recordTitle(set, record, view?.titleField)}
                         </h4>
-                        <span className="text-[9px] font-mono text-zinc-600">{record.id}</span>
+                        <span className="text-[length:var(--mtc-font-size-xs)] font-mono text-zinc-600">{record.id}</span>
                         {cardFields.length > 0 && (
                           <dl className="mt-2 space-y-1.5">
                             {cardFields.map(field => (
                               <div key={field.key} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2">
-                                <dt className="text-[9px] uppercase tracking-wider text-zinc-600 truncate">
+                                <dt className="text-[length:var(--mtc-font-size-xs)] text-zinc-600 truncate">
                                   {field.label}
                                 </dt>
-                                <dd className="text-[10px] text-zinc-300 min-w-0 truncate">
+                                <dd className="text-[length:var(--mtc-font-size-xs)] text-zinc-300 min-w-0 truncate">
                                   <RecordValue field={field} value={record.values[field.key]} />
                                 </dd>
                               </div>
@@ -250,7 +250,7 @@ export function RecordBoard({ data, options, widgetId }: WidgetProps) {
                           value={valueKey(record.values[groupField.key])}
                           onChange={event => void moveRecord(record, event.target.value)}
                           disabled={mutation.submitting}
-                          className="mtc-control mt-2 w-full px-2 py-1 text-[10px] text-zinc-400 outline-none disabled:opacity-40"
+                          className="mtc-control mt-2 w-full px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-400 outline-none disabled:opacity-40"
                           aria-label={`Move ${recordTitle(set, record, view?.titleField)} to lane`}
                         >
                           {laneValues.map(value => {
@@ -266,7 +266,7 @@ export function RecordBoard({ data, options, widgetId }: WidgetProps) {
                     </article>
                   ))}
                   {laneRecords.length === 0 && (
-                    <div className="py-8 text-center text-[10px] text-zinc-700">No records</div>
+                    <div className="py-8 text-center text-[length:var(--mtc-font-size-xs)] text-zinc-500">No records</div>
                   )}
                 </div>
               </section>

@@ -36,7 +36,7 @@ export function Histogram({ data, options }: WidgetProps) {
         <XAxis
           dataKey="bin"
           stroke={AXIS}
-          tick={{ fontSize: 10, fill: TICK }}
+          tick={{ fontSize: 11, fill: TICK }}
           interval="preserveStartEnd"
         />
         <YAxis

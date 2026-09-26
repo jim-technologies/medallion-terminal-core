@@ -247,14 +247,14 @@ export function GeoMap({ data, options }: WidgetProps) {
         <button
           type="button"
           onClick={fit}
-          className="w-8 h-8 text-[10px] text-zinc-300 hover:bg-zinc-800"
+          className="w-8 h-8 text-[length:var(--mtc-font-size-xs)] text-zinc-300 hover:bg-zinc-800"
           aria-label="Fit features"
           title="Fit features"
         >
           ⛶
         </button>
       </div>
-      <div className="absolute left-2 top-2 rounded border border-zinc-800 bg-zinc-950/80 px-2 py-1 text-[10px] font-mono text-zinc-400">
+      <div className="absolute left-2 top-2 rounded border border-zinc-800 bg-zinc-950/80 px-2 py-1 text-[length:var(--mtc-font-size-xs)] font-mono text-zinc-400">
         {collection.features.length.toLocaleString()} feature{collection.features.length === 1 ? '' : 's'}
       </div>
       {selected && (
@@ -268,7 +268,7 @@ export function GeoMap({ data, options }: WidgetProps) {
             {geoFeatureLabel(selected)}
           </span>
           {typeof selected.properties._mtc_status === 'string' && (
-            <span className="mt-0.5 block text-[10px] uppercase tracking-wider text-zinc-500">
+            <span className="mt-0.5 block text-[length:var(--mtc-font-size-xs)] text-zinc-500">
               {selected.properties._mtc_status}
             </span>
           )}

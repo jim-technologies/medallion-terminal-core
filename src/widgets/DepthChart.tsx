@@ -108,13 +108,13 @@ export function DepthChart({ data, options }: WidgetProps) {
               dataKey="price"
               domain={['dataMin', 'dataMax']}
               stroke={AXIS}
-              tick={{ fontSize: 10, fill: TICK }}
+              tick={{ fontSize: 11, fill: TICK }}
               tickFormatter={formatPrice}
               minTickGap={28}
             />
             <YAxis
               stroke={AXIS}
-              tick={{ fontSize: 10, fill: TICK }}
+              tick={{ fontSize: 11, fill: TICK }}
               tickFormatter={abbreviateAxis}
               width={48}
             />
@@ -137,7 +137,7 @@ export function DepthChart({ data, options }: WidgetProps) {
                 x={mid}
                 stroke="var(--mtc-muted-subtle)"
                 strokeDasharray="4 4"
-                label={{ value: 'mid', fill: TICK, fontSize: 9, position: 'insideTopRight' }}
+                label={{ value: 'mid', fill: TICK, fontSize: 11, position: 'insideTopRight' }}
               />
             )}
             <Area
@@ -161,7 +161,7 @@ export function DepthChart({ data, options }: WidgetProps) {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <div className="grid grid-cols-3 items-center gap-2 px-2 pt-1 text-[10px] font-mono text-zinc-500 shrink-0">
+      <div className="grid grid-cols-3 items-center gap-2 px-2 pt-1 text-[length:var(--mtc-font-size-xs)] font-mono text-zinc-500 shrink-0">
         <span className="text-emerald-400/90">bid {formatCompact(totalBid)}</span>
         <span className="text-center">
           {spread !== undefined ? `spread ${formatPrice(spread)}` : '—'}

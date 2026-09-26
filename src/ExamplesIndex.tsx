@@ -167,16 +167,16 @@ export function ExamplesIndex() {
               <span className="bg-zinc-600 rounded-sm" />
               <span className="bg-zinc-400 rounded-sm" />
             </span>
-            <span className="text-xs font-semibold uppercase tracking-[0.16em]">Medallion</span>
+            <span className="text-xs font-semibold ">Medallion</span>
           </div>
-          <span className="text-[9px] uppercase tracking-[0.16em] text-zinc-600">Operating intelligence</span>
+          <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600">Operating intelligence</span>
         </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-6 md:px-10">
         <section className="py-12 md:py-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,0.75fr)] gap-8 items-center border-b border-zinc-800">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.18em] text-sky-400 mb-3">Built for owners and operators</div>
+            <div className="text-[length:var(--mtc-font-size-xs)] text-sky-400 mb-3">Built for owners and operators</div>
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-100 max-w-3xl">
               See the whole business. Act from one place.
             </h1>
@@ -200,7 +200,7 @@ export function ExamplesIndex() {
           </div>
 
           <div className="mtc-landing-card p-5">
-            <div className="text-[10px] uppercase tracking-[0.16em] text-zinc-500 mb-4">One operating model</div>
+            <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 mb-4">One operating model</div>
             <div className="grid grid-cols-2 gap-px bg-zinc-800 border border-zinc-800 rounded overflow-hidden">
               {[
                 ['Business pulse', 'Cash, margin, pipeline'],
@@ -210,7 +210,7 @@ export function ExamplesIndex() {
               ].map(([title, detail]) => (
                 <div key={title} className="bg-zinc-900 p-3 min-h-[78px]">
                   <div className="text-xs font-medium text-zinc-200">{title}</div>
-                  <div className="text-[10px] text-zinc-500 mt-1 leading-relaxed">{detail}</div>
+                  <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 mt-1 leading-relaxed">{detail}</div>
                 </div>
               ))}
             </div>
@@ -220,10 +220,10 @@ export function ExamplesIndex() {
         <section className="py-10">
           <div className="flex items-end justify-between gap-4 mb-5">
             <div>
-              <div className="text-[10px] uppercase tracking-[0.16em] text-zinc-600 mb-1">Reference workspaces</div>
+              <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-600 mb-1">Reference workspaces</div>
               <h2 className="text-xl font-semibold tracking-tight text-zinc-100">Built from the same primitives</h2>
             </div>
-            <span className="text-[10px] text-zinc-600 font-mono">{EXAMPLES.length} examples</span>
+            <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600 font-mono">{EXAMPLES.length} examples</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -236,13 +236,13 @@ export function ExamplesIndex() {
                 <div className="flex items-baseline justify-between gap-3 mb-2">
                   <h3 className="text-sm font-semibold text-zinc-100">{ex.title}</h3>
                   {ex.featured && (
-                    <span className="text-[8px] uppercase tracking-[0.14em] text-sky-400 shrink-0">Foundation</span>
+                    <span className="text-[length:var(--mtc-font-size-xs)] text-sky-400 shrink-0">Foundation</span>
                   )}
                 </div>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4 min-h-[3.9rem]">{ex.blurb}</p>
                 <div className="flex gap-1.5 flex-wrap">
                   {ex.tags.map(t => (
-                    <span key={t} className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-500 uppercase tracking-wider">
+                    <span key={t} className="text-[length:var(--mtc-font-size-xs)] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-500 ">
                       {t}
                     </span>
                   ))}

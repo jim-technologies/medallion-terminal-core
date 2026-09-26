@@ -12,7 +12,7 @@ import { SourceErrorState } from '../workbench/States'
 import { downloadView, viewRowCount, type ExportFormat } from '../export/exportView'
 import { EXPORT_FORMATS } from '../export/serializers'
 import type { WidgetConfig } from '../types/template'
-import type { SourceError } from '../core/sourceError'
+import { describeSourceError, type SourceError } from '../core/sourceError'
 
 function formatAge(now: number, ts: number | null): string | null {
   if (!ts) return null
@@ -241,7 +241,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey, registry }: Wi
   // The host transport serves backend sources only; template URLs keep the
   // platform fetch, as backend headers do.
   const { fetch: backendFetch } = useDashboard()
-  const { data, loading, error, sourceError, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(
+  const { data, loading, sourceError, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(
     source,
     { fetch: config.source?.source_id ? backendFetch : undefined },
   )
@@ -322,6 +322,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey, registry }: Wi
   // streaming sources can churn between connected/disconnected and
   // we'd flood the sink if we emitted every render.
   const lastErrorEmitted = useRef<string | null>(null)
+  const error = useMemo(() => (sourceError ? describeSourceError(sourceError) : null), [sourceError])
   useEffect(() => {
     const msg = resolution.error ?? error
     const source: 'data' | 'resolve' = resolution.error ? 'resolve' : 'data'

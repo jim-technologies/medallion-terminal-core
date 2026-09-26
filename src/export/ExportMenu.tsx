@@ -67,7 +67,7 @@ export function ExportMenu({ view, filenameBase, onExport, variant = 'button' }:
         onClick={() => setOpen((o) => !o)}
         disabled={disabled}
         title={disabled ? 'No data to export' : `Export ${rowCount.toLocaleString()} rows`}
-        className="mtc-control text-[10px] uppercase tracking-wider text-zinc-500 hover:text-zinc-200 px-2 py-0.5 shrink-0 disabled:opacity-40"
+        className="mtc-control text-[length:var(--mtc-font-size-xs)] text-zinc-500 hover:text-zinc-200 px-2 py-0.5 shrink-0 disabled:opacity-40"
         aria-label="Export data"
       >
         ↓ Export
@@ -79,7 +79,7 @@ export function ExportMenu({ view, filenameBase, onExport, variant = 'button' }:
       {trigger}
       {open && !disabled && (
         <div className="mtc-popover absolute right-0 top-full mt-1 py-1 z-30 min-w-[140px]">
-          <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-zinc-600">
+          <div className="px-3 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-600">
             {rowCount.toLocaleString()} rows
           </div>
           {EXPORT_FORMATS.map((f) => (

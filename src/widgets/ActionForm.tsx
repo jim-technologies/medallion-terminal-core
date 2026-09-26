@@ -206,7 +206,7 @@ export function ActionForm({ data, options, widgetId }: WidgetProps) {
 
       {confirming && (
         <div className="mtc-callout border border-amber-500/30 bg-amber-500/5 rounded px-3 py-2">
-          <div className="text-[10px] uppercase tracking-wider text-amber-300">Confirm action</div>
+          <div className="text-[length:var(--mtc-font-size-xs)] text-amber-300">Confirm action</div>
           <div className="mt-1 text-xs text-zinc-300">
             Submit <span className="font-mono text-zinc-100">{form.actionId}</span> with the values above?
           </div>
@@ -227,7 +227,7 @@ export function ActionForm({ data, options, widgetId }: WidgetProps) {
         <button
           type="submit"
           disabled={submitting}
-          className={`flex-1 rounded px-3 py-2 text-xs font-semibold uppercase tracking-wider disabled:opacity-40 ${submitTone(form.tone)}`}
+          className={`flex-1 rounded px-3 py-2 text-xs font-semibold disabled:opacity-40 ${submitTone(form.tone)}`}
         >
           {submitting ? 'Working…' : confirming ? `Confirm ${form.submitLabel}` : form.submitLabel}
         </button>
@@ -262,10 +262,10 @@ function ActionInput({
 }) {
   const label = (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-[10px] uppercase tracking-wider text-zinc-400">
+      <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-400">
         {field.label}{field.required && <span className="ml-1 text-red-400">*</span>}
       </span>
-      {error && <span className="text-[10px] text-red-400">{error}</span>}
+      {error && <span className="text-[length:var(--mtc-font-size-xs)] text-red-400">{error}</span>}
     </div>
   )
 
@@ -283,7 +283,7 @@ function ActionInput({
           />
           {value === true ? 'Yes' : 'No'}
         </span>
-        {field.description && <span className="text-[10px] text-zinc-600">{field.description}</span>}
+        {field.description && <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600">{field.description}</span>}
       </label>
     )
   }
@@ -311,7 +311,7 @@ function ActionInput({
             <option key={choice.value} value={choice.value}>{choice.label}</option>
           ))}
         </select>
-        {field.description && <span className="text-[10px] text-zinc-600">{field.description}</span>}
+        {field.description && <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600">{field.description}</span>}
       </label>
     )
   }
@@ -359,7 +359,7 @@ function ActionInput({
           className={inputClass}
         />
       )}
-      {field.description && <span className="text-[10px] text-zinc-600">{field.description}</span>}
+      {field.description && <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-600">{field.description}</span>}
     </label>
   )
 }

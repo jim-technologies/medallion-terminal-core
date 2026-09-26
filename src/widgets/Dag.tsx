@@ -91,7 +91,7 @@ export function Dag({ data, options }: WidgetProps) {
                 x={(e.x1 + e.x2) / 2}
                 y={(e.y1 + e.y2) / 2 - 4}
                 textAnchor="middle"
-                fontSize={9}
+                fontSize={11}
                 fill="var(--mtc-muted)"
                 fontFamily="var(--mtc-font-sans)"
               >
@@ -142,7 +142,7 @@ export function Dag({ data, options }: WidgetProps) {
                   x={n.x + NODE_W / 2}
                   y={n.y + 36}
                   textAnchor="middle"
-                  fontSize={9}
+                  fontSize={11}
                   fill="var(--mtc-muted)"
                   fontFamily="var(--mtc-font-sans)"
                 >

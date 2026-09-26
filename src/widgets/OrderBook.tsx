@@ -40,7 +40,7 @@ export function OrderBook({ data, options }: WidgetProps) {
 
   return (
     <div className="h-full flex flex-col text-xs font-mono">
-      <div className="grid grid-cols-3 gap-2 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-500 border-b border-zinc-800">
+      <div className="grid grid-cols-3 gap-2 px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-500 border-b border-zinc-800">
         <span>Price</span>
         <span className="text-right">Size</span>
         <span className="text-right">Cum</span>
@@ -56,7 +56,7 @@ export function OrderBook({ data, options }: WidgetProps) {
         </div>
         <div className="border-y border-zinc-700 bg-zinc-900/60 px-2 py-1.5 flex items-center justify-between shrink-0">
           <span className="text-zinc-200 tabular-nums">{format(mid)}</span>
-          <span className="text-zinc-500 text-[10px]">spread {format(spread)}</span>
+          <span className="text-zinc-500 text-[length:var(--mtc-font-size-xs)]">spread {format(spread)}</span>
         </div>
         <div className="flex-1 overflow-auto">
           {topBids.map((b, i) => {
@@ -66,7 +66,7 @@ export function OrderBook({ data, options }: WidgetProps) {
         </div>
       </div>
       {book.venue && (
-        <div className="text-[10px] text-zinc-500 px-2 py-1 border-t border-zinc-800 shrink-0">
+        <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 px-2 py-1 border-t border-zinc-800 shrink-0">
           {book.venue}
         </div>
       )}

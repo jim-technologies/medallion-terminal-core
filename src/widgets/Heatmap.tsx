@@ -59,7 +59,7 @@ export function Heatmap({ data, options }: WidgetProps) {
         {columns.map(col => (
           <div
             key={`c-${col}`}
-            className="text-[10px] text-zinc-400 truncate text-center flex items-center justify-center sticky top-0 z-10 bg-zinc-900"
+            className="text-[length:var(--mtc-font-size-xs)] text-zinc-400 truncate text-center flex items-center justify-center sticky top-0 z-10 bg-zinc-900"
             style={{ height: COL_LABEL_H }}
           >
             {col}
@@ -81,7 +81,7 @@ export function Heatmap({ data, options }: WidgetProps) {
               <div
                 key={`cell-${r}-${c}`}
                 onClick={clickable ? () => handleClick(r, c) : undefined}
-                className={`rounded-sm flex items-center justify-center text-[10px] font-medium tabular-nums ${
+                className={`rounded-sm flex items-center justify-center text-[length:var(--mtc-font-size-xs)] font-medium tabular-nums ${
                   clickable ? 'cursor-pointer hover:ring-1 hover:ring-zinc-400' : ''
                 }`}
                 style={{ backgroundColor: bg, minHeight: 30 }}
@@ -104,7 +104,7 @@ function Legend({ min, max, scale }: { min: number; max: number; scale: 'sequent
   const stops = scale === 'diverging' ? [-1, -0.5, 0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1]
   const range = max - min
   return (
-    <div className="flex items-center gap-2 mt-2 text-[10px] text-zinc-500 shrink-0">
+    <div className="flex items-center gap-2 mt-2 text-[length:var(--mtc-font-size-xs)] text-zinc-500 shrink-0">
       <span className="tabular-nums">{formatCompact(min)}</span>
       <div className="flex-1 max-w-[160px] flex h-2 rounded-sm overflow-hidden">
         {stops.map((t, i) => {

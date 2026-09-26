@@ -43,13 +43,13 @@
           - rowheader "integer"
           - cell "48,210"
           - cell "48,210"
-        - row "currency:USD $284,000.00USD $284,000.00":
+        - row "currency:USD $284,000.00 USD $284,000.00":
           - rowheader "currency:USD"
-          - cell "$284,000.00USD"
+          - cell "$284,000.00 USD"
           - cell "$284,000.00"
-        - row "currency:EUR €9,815.50EUR €9,815.50":
+        - row "currency:EUR €9,815.50 EUR €9,815.50":
           - rowheader "currency:EUR"
-          - cell "€9,815.50EUR"
+          - cell "€9,815.50 EUR"
           - cell "€9,815.50"
         - row "percent 18.0% 18.0%":
           - rowheader "percent"

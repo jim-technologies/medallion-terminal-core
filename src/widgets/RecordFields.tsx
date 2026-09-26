@@ -51,7 +51,7 @@ function tone(color?: string): string {
 function Chip({ field, value }: RecordValueProps) {
   const choice = choiceFor(field, value)
   return (
-    <span className={`inline-flex max-w-full items-center border rounded px-1.5 py-0.5 text-[10px] ${tone(choice?.color)}`}>
+    <span className={`inline-flex max-w-full items-center border rounded px-1.5 py-0.5 text-[length:var(--mtc-font-size-xs)] ${tone(choice?.color)}`}>
       <span className="truncate">{choice?.label ?? recordValueLabel(value)}</span>
     </span>
   )
@@ -72,7 +72,7 @@ function formatRecordNumber(field: RecordFieldData, value: number): string {
 // Shared schema-aware value renderer used by grid, board, calendar, and form.
 // It renders only semantic tones; arbitrary backend strings never become CSS.
 export function RecordValue({ field, value }: RecordValueProps) {
-  if (value == null || value === '') return <span className="text-zinc-700">—</span>
+  if (value == null || value === '') return <span className="text-zinc-600">—</span>
 
   if (field.type === 'boolean') {
     return (
@@ -91,13 +91,13 @@ export function RecordValue({ field, value }: RecordValueProps) {
   }
 
   if (Array.isArray(value)) {
-    if (value.length === 0) return <span className="text-zinc-700">—</span>
+    if (value.length === 0) return <span className="text-zinc-600">—</span>
     return (
       <span className="flex items-center gap-1 flex-wrap">
         {value.slice(0, 4).map((entry, index) => (
           <Chip key={`${recordValueLabel(entry)}:${index}`} field={field} value={entry} />
         ))}
-        {value.length > 4 && <span className="text-[10px] text-zinc-500">+{value.length - 4}</span>}
+        {value.length > 4 && <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">+{value.length - 4}</span>}
       </span>
     )
   }

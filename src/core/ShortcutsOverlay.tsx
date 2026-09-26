@@ -58,12 +58,12 @@ export function ShortcutsOverlay({ templateShortcuts }: { templateShortcuts?: Te
       >
         <div className="px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between">
           <h3 className="text-sm font-medium text-zinc-100">Keyboard shortcuts</h3>
-          <span className="text-[10px] text-zinc-500">esc to close</span>
+          <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">esc to close</span>
         </div>
         <div className="px-4 py-3 flex flex-col gap-1.5">
           {SHORTCUTS.map((s, i) => (
             <div key={i} className="flex items-baseline gap-3">
-              <kbd className="text-[10px] font-mono text-zinc-300 bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 shrink-0">
+              <kbd className="text-[length:var(--mtc-font-size-xs)] font-mono text-zinc-300 bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 shrink-0">
                 {s.keys}
               </kbd>
               <span className="text-xs text-zinc-400">{s.description}</span>
@@ -71,12 +71,12 @@ export function ShortcutsOverlay({ templateShortcuts }: { templateShortcuts?: Te
           ))}
           {templateShortcuts && templateShortcuts.length > 0 && (
             <>
-              <div className="text-[10px] uppercase tracking-wider text-zinc-500 mt-3 mb-1">
+              <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 mt-3 mb-1">
                 Dashboard shortcuts
               </div>
               {templateShortcuts.map((s, i) => (
                 <div key={`tpl-${i}`} className="flex items-baseline gap-3">
-                  <kbd className="text-[10px] font-mono text-zinc-300 bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 shrink-0">
+                  <kbd className="text-[length:var(--mtc-font-size-xs)] font-mono text-zinc-300 bg-zinc-800 border border-zinc-700 rounded px-1.5 py-0.5 shrink-0">
                     {s.key}
                   </kbd>
                   <span className="text-xs text-zinc-400">{describeShortcut(s)}</span>

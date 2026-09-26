@@ -189,3 +189,5 @@
 .mtc-root .mtc-file-preview-stage-media { display: flex; align-items: center; justify-content: center; }
 .mtc-root .mtc-file-preview-body { max-width: 72rem; margin: 0 auto; }
 .mtc-root .mtc-file-preview-audio-card { display: grid; width: min(28rem, 100%); justify-items: center; gap: var(--mtc-space-3); padding: var(--mtc-space-6); border: 1px solid var(--mtc-border); border-radius: var(--mtc-radius-md); background: var(--mtc-surface); color: var(--mtc-muted-strong); }
+.mtc-root .mtc-markdown[data-variant="inline"] { overflow: visible; padding: 0; border: 0; background: transparent; font-size: var(--mtc-font-size-md); }
+.mtc-root .mtc-markdown[data-variant="inline"] :is(p, ul, ol, pre, blockquote, table) { margin-bottom: var(--mtc-space-2); }

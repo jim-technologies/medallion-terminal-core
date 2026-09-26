@@ -56,7 +56,7 @@ export function Select({ data, options }: WidgetProps) {
 
   return (
     <div className="flex flex-col h-full justify-center gap-1.5 px-2">
-      <label htmlFor={selectId} className="text-[10px] uppercase tracking-wider text-zinc-500">
+      <label htmlFor={selectId} className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">
         {opts.label ?? opts.key}
       </label>
       <select

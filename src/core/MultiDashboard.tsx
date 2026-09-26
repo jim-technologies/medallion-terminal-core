@@ -142,7 +142,7 @@ function TabStrip({
           >
             <span>{tab.label || `Tab ${i + 1}`}</span>
             {hint && (
-              <span className="text-[9px] text-zinc-500 font-mono uppercase tracking-wider">{hint}</span>
+              <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 font-mono ">{hint}</span>
             )}
           </button>
         )

@@ -71,7 +71,7 @@ function BoxplotChart({
         return (
           <g key={`g-${i}`}>
             <line x1={PADDING.left} x2={PADDING.left + innerW} y1={y} y2={y} stroke="var(--mtc-grid)" strokeDasharray="3 3" />
-            <text x={PADDING.left - 6} y={y + 3} textAnchor="end" fontSize={10} fill="var(--mtc-muted)" fontFamily="var(--mtc-font-sans)">
+            <text x={PADDING.left - 6} y={y + 3} textAnchor="end" fontSize={11} fill="var(--mtc-muted)" fontFamily="var(--mtc-font-sans)">
               {formatCompact(t)}
             </text>
           </g>

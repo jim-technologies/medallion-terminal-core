@@ -43,7 +43,7 @@ export function Distribution({ data }: WidgetProps) {
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div className="text-[10px] uppercase tracking-wider text-zinc-500 truncate max-w-[60%]">{top.label}</div>
+          <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 truncate max-w-[60%]">{top.label}</div>
           <div className="text-2xl font-bold text-white tabular-nums">{topPct.toFixed(1)}%</div>
         </div>
       </div>

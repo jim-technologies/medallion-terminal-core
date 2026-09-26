@@ -18,7 +18,7 @@ function JimMediaPlayer({ asset }: AssetAppRendererProps) {
         </div>
         <div className="h-14 border-t border-zinc-800 px-4 flex items-center gap-3">
           <span className="text-sm text-zinc-200 truncate">{asset.name}</span>
-          <span className="ml-auto text-[10px] uppercase tracking-[0.14em] text-zinc-600">
+          <span className="ml-auto text-[length:var(--mtc-font-size-xs)] text-zinc-600">
             Workspace player
           </span>
         </div>

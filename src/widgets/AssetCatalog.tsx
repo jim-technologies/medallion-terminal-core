@@ -97,7 +97,7 @@ export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
                 <button
                   key={value}
                   onClick={() => setKind(value)}
-                  className={`px-2 py-1 rounded text-[10px] uppercase tracking-wider whitespace-nowrap ${
+                  className={`px-2 py-1 rounded text-[length:var(--mtc-font-size-xs)] whitespace-nowrap ${
                     kind === value
                       ? 'bg-sky-500/15 text-sky-300 border border-sky-500/30'
                       : 'bg-zinc-900 text-zinc-500 border border-zinc-800 hover:text-zinc-200'
@@ -111,7 +111,7 @@ export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
         </div>
       )}
 
-      <div className="flex items-center justify-between py-1.5 text-[10px] uppercase tracking-wider text-zinc-500 shrink-0">
+      <div className="flex items-center justify-between py-1.5 text-[length:var(--mtc-font-size-xs)] text-zinc-500 shrink-0">
         <span>{filtered.length.toLocaleString()} shown</span>
         {catalog.total != null && <span>{catalog.total.toLocaleString()} total</span>}
       </div>
@@ -151,12 +151,12 @@ export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
                         {item.name}
                       </span>
                       {item.status && (
-                        <span className={`text-[9px] uppercase tracking-wider shrink-0 ${statusTone(item.status)}`}>
+                        <span className={`text-[length:var(--mtc-font-size-xs)] shrink-0 ${statusTone(item.status)}`}>
                           {item.status}
                         </span>
                       )}
                     </div>
-                    <div className="ml-7 mt-0.5 flex items-center gap-2 text-[10px] text-zinc-500 min-w-0">
+                    <div className="ml-7 mt-0.5 flex items-center gap-2 text-[length:var(--mtc-font-size-xs)] text-zinc-500 min-w-0">
                       <span className="font-mono truncate">{item.id}</span>
                       <span className="shrink-0">{humanize(item.kind)}</span>
                       {item.owner && <span className="truncate">owner {item.owner}</span>}
@@ -167,7 +167,7 @@ export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
                       </div>
                     )}
                     {(metadata.length > 0 || item.updatedAt) && (
-                      <div className="ml-7 mt-1 flex gap-x-3 gap-y-1 flex-wrap text-[10px] text-zinc-500">
+                      <div className="ml-7 mt-1 flex gap-x-3 gap-y-1 flex-wrap text-[length:var(--mtc-font-size-xs)] text-zinc-500">
                         {metadata.map(([key, value]) => (
                           <span key={key}>
                             {humanize(key)} <span className="text-zinc-400">{String(value)}</span>
@@ -179,7 +179,7 @@ export function AssetCatalog({ data, options, widgetId }: WidgetProps) {
                     {item.tags.length > 0 && (
                       <div className="ml-7 mt-1.5 flex gap-1 flex-wrap">
                         {item.tags.map((tag) => (
-                          <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                          <span key={tag} className="text-[length:var(--mtc-font-size-xs)] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
                             {tag}
                           </span>
                         ))}

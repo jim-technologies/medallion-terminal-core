@@ -132,7 +132,7 @@ export function RecordCalendar({ data, options }: WidgetProps) {
         <button
           type="button"
           onClick={() => setMonth(startOfMonth(new Date()))}
-          className="mtc-control px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-400"
+          className="mtc-control px-2 py-1 text-[length:var(--mtc-font-size-xs)] text-zinc-400"
         >
           Today
         </button>
@@ -163,7 +163,7 @@ export function RecordCalendar({ data, options }: WidgetProps) {
 
       <div className="flex-1 min-h-0 overflow-x-auto">
         <div className="h-full min-w-[42rem] flex flex-col">
-          <div className="grid grid-cols-7 border-t border-l border-zinc-800 text-[9px] uppercase tracking-wider text-zinc-600">
+          <div className="grid grid-cols-7 border-t border-l border-zinc-800 text-[length:var(--mtc-font-size-xs)] text-zinc-600">
             {labels.map(label => (
               <div key={label} className="border-r border-b border-zinc-800 px-2 py-1">{label}</div>
             ))}
@@ -180,10 +180,10 @@ export function RecordCalendar({ data, options }: WidgetProps) {
                     inMonth ? 'bg-zinc-900/35' : 'bg-zinc-950/45'
                   }`}
                 >
-                  <div className={`text-[10px] tabular-nums mb-1 ${
+                  <div className={`text-[length:var(--mtc-font-size-xs)] tabular-nums mb-1 ${
                     key === today
                       ? 'w-5 h-5 grid place-items-center rounded-full bg-sky-500 text-zinc-100'
-                      : inMonth ? 'text-zinc-400' : 'text-zinc-700'
+                      : inMonth ? 'text-zinc-400' : 'text-zinc-600'
                   }`}>
                     {cell.getDate()}
                   </div>
@@ -202,13 +202,13 @@ export function RecordCalendar({ data, options }: WidgetProps) {
                             colorField ? record.values[colorField.key] : undefined,
                           ),
                         )}`} />
-                        <span className="text-[9px] leading-tight text-zinc-300 line-clamp-2">
+                        <span className="text-[length:var(--mtc-font-size-xs)] leading-tight text-zinc-300 line-clamp-2">
                           {recordTitle(set, record, view?.titleField)}
                         </span>
                       </button>
                     ))}
                     {dayRecords.length > 4 && (
-                      <div className="text-[9px] text-zinc-600 px-1">+{dayRecords.length - 4} more</div>
+                      <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-600 px-1">+{dayRecords.length - 4} more</div>
                     )}
                   </div>
                 </div>

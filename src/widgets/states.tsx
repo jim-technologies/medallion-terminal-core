@@ -83,7 +83,7 @@ export function Empty({ children, padded }: { children: React.ReactNode; padded?
     <WorkbenchEmptyState
       title={children}
       compact
-      icon={<span className="text-xs uppercase tracking-[0.2em] leading-none">·  ·  ·</span>}
+      icon={<span className="text-xs leading-none">· ·  ·</span>}
       className={`h-full${padded ? ' px-4' : ''}`}
     />
   )

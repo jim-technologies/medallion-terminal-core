@@ -35,7 +35,7 @@ export function Radar({ data }: WidgetProps) {
       <RadarChart data={chart.rows} outerRadius="75%">
         <PolarGrid stroke={GRID} />
         <PolarAngleAxis dataKey="metric" stroke={AXIS} tick={{ fontSize: 11, fill: TICK }} />
-        <PolarRadiusAxis stroke={AXIS} tick={{ fontSize: 9, fill: TICK_FAINT }} />
+        <PolarRadiusAxis stroke={AXIS} tick={{ fontSize: 11, fill: TICK_FAINT }} />
         <Tooltip contentStyle={TOOLTIP_STYLE} />
         {chart.series.length > 1 && (
           <Legend wrapperStyle={{ fontSize: 11, color: TICK }} />

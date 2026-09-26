@@ -1,80 +1,81 @@
 import { C as e, E as t, T as n, c as r, d as i, h as a, i as o, p as s, x as c } from "./States-Ds3cxTem.js";
 import { r as l } from "./utils-j4lJ7S1v.js";
-import { a as u, d, i as f, o as p } from "./types-DjTHxOgh.js";
-import { _ as m, a as h, c as g, d as _, h as v, i as y, l as b, m as x, n as S, o as C, r as w, s as T, t as E, u as D } from "./sourceError-BwpI_4dr.js";
-import { t as O } from "./NavRail-CJR5DthP.js";
-import { createContext as k, forwardRef as A, useCallback as j, useContext as M, useEffect as N, useId as ee, useMemo as P, useRef as F, useState as I, useSyncExternalStore as L } from "react";
-import { Fragment as R, jsx as z, jsxs as B } from "react/jsx-runtime";
-import { createPortal as V } from "react-dom";
+import { r as u } from "./types-Ds11x4VM.js";
+import { _ as d, a as f, c as p, d as m, h, i as g, l as _, m as v, n as y, o as b, r as x, s as S, t as C, u as w } from "./sourceError-BwpI_4dr.js";
+import { i as T, n as E, r as D } from "./Overlays-_7OI9Emq.js";
+import { t as O } from "./NavRail-COtjELlH.js";
+import { createContext as k, forwardRef as A, useCallback as j, useContext as M, useEffect as N, useId as ee, useMemo as P, useRef as F, useState as I, useSyncExternalStore as te } from "react";
+import { Fragment as L, jsx as R, jsxs as z } from "react/jsx-runtime";
+import { createPortal as B } from "react-dom";
 //#region src/app/productFetch.ts
-var H = "x-request-id", U = "traceparent", te = "connect-timeout-ms";
-function W(e) {
+var V = "x-request-id", H = "traceparent", ne = "connect-timeout-ms";
+function U(e) {
 	let t = new Uint8Array(e);
 	return globalThis.crypto.getRandomValues(t), Array.from(t, (e) => e.toString(16).padStart(2, "0")).join("");
 }
-function G() {
-	return `00-${W(16)}-${W(8)}-01`;
+function W() {
+	return `00-${U(16)}-${U(8)}-01`;
 }
-function ne() {
-	return typeof globalThis.crypto?.randomUUID == "function" ? globalThis.crypto.randomUUID() : W(16);
+function re() {
+	return typeof globalThis.crypto?.randomUUID == "function" ? globalThis.crypto.randomUUID() : U(16);
 }
-function re(e) {
+function ie(e) {
 	return typeof e == "string" ? e : e instanceof URL ? e.href : e.url;
 }
-function ie(e, t) {
+function ae(e, t) {
 	return (t?.method ?? (e instanceof Request ? e.method : "GET")).toUpperCase();
 }
-function ae(e, t) {
+function oe(e, t) {
 	let n = t?.body ?? (e instanceof Request ? e.body : null);
 	return n instanceof Blob || n instanceof FormData || n instanceof ReadableStream;
 }
-function oe(e, t, n, r) {
-	let i = r?.timeoutMs === void 0 ? t.has(te) || ae(n, r) ? void 0 : e : r.timeoutMs;
+function se(e, t, n, r) {
+	let i = r?.timeoutMs === void 0 ? t.has(ne) || oe(n, r) ? void 0 : e : r.timeoutMs;
 	return i && i > 0 ? i : void 0;
 }
-function se(e) {
+function ce(e) {
 	let t = e.filter((e) => !!e);
 	return t.length <= 1 ? t[0] : AbortSignal.any(t);
 }
-function ce(e = {}) {
-	let { onUnauthenticated: t, timeoutMs: n, onRequest: r, newRequestId: i = ne, newTraceparent: a = G, now: o = () => performance.now() } = e;
+function le(e = {}) {
+	let { onUnauthenticated: t, timeoutMs: n, onRequest: r, newRequestId: i = re, newTraceparent: a = W, now: o = () => performance.now() } = e;
 	return async function(s, c) {
 		let l = e.fetch ?? globalThis.fetch, u = new Headers(c?.headers ?? (s instanceof Request ? s.headers : void 0));
-		u.has(H) || u.set(H, i()), u.has(U) || u.set(U, a());
-		let d = u.get(H), f = u.get(U), p = c?.signal ?? (s instanceof Request ? s.signal : void 0), m = oe(n, u, s, c), g = m ? new AbortController() : void 0, _ = g ? setTimeout(() => g.abort(new DOMException(`No response within ${m} ms`, "TimeoutError")), m) : void 0, v = ie(s, c), y = re(s), b = o(), x = (e) => r?.({
+		u.has(V) || u.set(V, i()), u.has(H) || u.set(H, a());
+		let d = u.get(V), p = u.get(H), m = c?.signal ?? (s instanceof Request ? s.signal : void 0), h = se(n, u, s, c), g = h ? new AbortController() : void 0, _ = g ? setTimeout(() => g.abort(new DOMException(`No response within ${h} ms`, "TimeoutError")), h) : void 0, v = ae(s, c), y = ie(s), b = o(), x = (e) => r?.({
 			method: v,
 			url: y,
 			requestId: d,
-			traceparent: f,
+			traceparent: p,
 			durationMs: o() - b,
 			...e
-		}), { timeoutMs: S, ...C } = c ?? {}, w;
+		}), { timeoutMs: T, ...E } = c ?? {}, D;
 		try {
-			w = await l(s, {
-				...C,
+			D = await l(s, {
+				...E,
 				headers: u,
-				signal: se([p ?? void 0, g?.signal])
+				signal: ce([m ?? void 0, g?.signal])
 			});
 		} catch (e) {
-			if (p?.aborted) throw e;
-			let t = g?.signal.aborted ? new E(`Request timed out after ${m} ms`, {
+			if (m?.aborted) throw e;
+			let t = g?.signal.aborted ? new C(`Request timed out after ${h} ms`, {
 				kind: "unavailable",
 				requestId: d
-			}) : le(D(e), d);
+			}) : ue(w(e), d);
 			throw x({ error: t }), t;
 		} finally {
 			clearTimeout(_);
 		}
-		if (h(w, d), w.ok) return x({ status: w.status }), w;
-		let O = await T(w.clone(), { requestId: d });
+		if (f(D, d), D.ok) return x({ status: D.status }), D;
+		let O = await S(D.clone(), { requestId: d });
 		return x({
-			status: w.status,
+			status: D.status,
 			error: O
-		}), w.status === 401 && t?.(O), w;
+		}), D.status === 401 && t?.(O), D;
 	};
 }
-function le(e, t) {
-	return e.requestId ? e : new E(e.message, {
+function ue(e, t) {
+	return e.requestId ? e : new C(e.message, {
 		kind: e.kind,
 		status: e.status,
 		code: e.code,
@@ -82,13 +83,13 @@ function le(e, t) {
 		requestId: t
 	});
 }
-async function ue(e) {
+async function de(e) {
 	if (e.ok) return e;
-	throw await T(e);
+	throw await S(e);
 }
 //#endregion
 //#region src/app/router.ts
-function K(e) {
+function G(e) {
 	let t = new URL(e, "http://app.local");
 	return {
 		pathname: t.pathname,
@@ -96,13 +97,13 @@ function K(e) {
 		hash: t.hash
 	};
 }
-function de(e) {
+function fe(e) {
 	let t = e.replace(/\/+$/, "");
 	return t === "" || t.startsWith("/") ? t : `/${t}`;
 }
-function fe({ base: e = "", window: t = globalThis.window } = {}) {
-	let n = de(e), r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e()), a = (e) => n && (e === n || e.startsWith(`${n}/`)) ? e.slice(n.length) || "/" : e, o = () => i(), s = (e) => {
-		let { pathname: t, search: r, hash: i } = K(e);
+function pe({ base: e = "", window: t = globalThis.window } = {}) {
+	let n = fe(e), r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e()), a = (e) => n && (e === n || e.startsWith(`${n}/`)) ? e.slice(n.length) || "/" : e, o = () => i(), s = (e) => {
+		let { pathname: t, search: r, hash: i } = G(e);
 		return `${n}${t}${r}${i}`;
 	};
 	return {
@@ -129,12 +130,12 @@ function fe({ base: e = "", window: t = globalThis.window } = {}) {
 		href: s
 	};
 }
-function pe(e = "/") {
-	let t = [K(e)], n = 0, r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e());
+function me(e = "/") {
+	let t = [G(e)], n = 0, r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e());
 	return {
 		location: () => t[n],
 		navigate(e, r) {
-			let a = K(e);
+			let a = G(e);
 			r?.replace ? t[n] = a : (t.splice(n + 1, t.length, a), n = t.length - 1), i();
 		},
 		back() {
@@ -144,12 +145,12 @@ function pe(e = "/") {
 			return r.add(e), () => r.delete(e);
 		},
 		href: (e) => {
-			let { pathname: t, search: n, hash: r } = K(e);
+			let { pathname: t, search: n, hash: r } = G(e);
 			return `${t}${n}${r}`;
 		}
 	};
 }
-function q(e, t) {
+function K(e, t) {
 	let n = e.split("/").filter(Boolean), r = t.split("/").filter(Boolean), i = {};
 	for (let e = 0; e < n.length; e++) {
 		let t = n[e];
@@ -161,13 +162,13 @@ function q(e, t) {
 	}
 	return r.length === n.length ? i : null;
 }
-function me(e, t) {
+function he(e, t) {
 	let n = t;
 	return `/${e.split("/").filter(Boolean).map((e) => e.startsWith("*") ? (n[e.slice(1) || "splat"] ?? "").split("/").filter(Boolean).map(encodeURIComponent).join("/") : e.startsWith(":") ? encodeURIComponent(n[e.slice(1)] ?? "") : e).filter(Boolean).join("/")}`;
 }
-function J(e, t) {
+function q(e, t) {
 	for (let [n, r] of Object.entries(e)) {
-		let e = q(r, t);
+		let e = K(r, t);
 		if (e) return {
 			id: n,
 			params: e
@@ -177,15 +178,15 @@ function J(e, t) {
 }
 //#endregion
 //#region src/app/routing.tsx
-var Y = k(null);
-function he({ router: e, children: t }) {
-	return /* @__PURE__ */ z(Y.Provider, {
+var J = k(null);
+function Y({ router: e, children: t }) {
+	return /* @__PURE__ */ R(J.Provider, {
 		value: e,
 		children: t
 	});
 }
 function X() {
-	let e = M(Y);
+	let e = M(J);
 	if (!e) throw Error("useRouter must be used inside a RouterProvider or ProductShell");
 	return e;
 }
@@ -200,20 +201,20 @@ function Z() {
 			return ge(t, n) || (t = n), t;
 		};
 	}, [e]);
-	return L(t, n, n);
+	return te(t, n, n);
 }
 function _e(e) {
 	let { pathname: t } = Z();
-	return P(() => J(e, t), [e, t]);
+	return P(() => q(e, t), [e, t]);
 }
 var ve = A(function({ to: e, replace: t, onClick: n, ...r }, i) {
 	let a = X();
-	return /* @__PURE__ */ z("a", {
+	return /* @__PURE__ */ R("a", {
 		...r,
 		ref: i,
 		href: a.href(e),
 		onClick: (i) => {
-			n?.(i), !(!d(i) || r.target && r.target !== "_self") && (i.preventDefault(), a.navigate(e, { replace: t }));
+			n?.(i), !(!u(i) || r.target && r.target !== "_self") && (i.preventDefault(), a.navigate(e, { replace: t }));
 		}
 	});
 });
@@ -434,35 +435,35 @@ function Ne({ operations: e, title: r, onCancel: o, onRetry: c, onDismiss: u, on
 		w.queued > 0 && g("ops.queued", { count: w.queued }),
 		w.failed > 0 && g("ops.failed", { count: w.failed }),
 		w.succeeded > 0 && g("ops.done", { count: w.succeeded })
-	].filter(Boolean).join(" · "), E = e.some((e) => Q.has(e.status)), D = /* @__PURE__ */ B("section", {
+	].filter(Boolean).join(" · "), E = e.some((e) => Q.has(e.status)), D = /* @__PURE__ */ z("section", {
 		className: "mtc-operations-tray",
 		"aria-label": r ?? g("ops.title"),
 		"data-open": y || void 0,
 		"data-placement": h,
 		children: [
-			/* @__PURE__ */ z("div", {
+			/* @__PURE__ */ R("div", {
 				className: "mtc-operations-header",
-				children: /* @__PURE__ */ B("button", {
+				children: /* @__PURE__ */ z("button", {
 					type: "button",
 					className: "mtc-operations-toggle",
 					"aria-expanded": y,
 					"aria-controls": _,
 					onClick: () => b(!y),
 					children: [
-						/* @__PURE__ */ z(a, {
+						/* @__PURE__ */ R(a, {
 							name: w.running > 0 ? "spinner" : w.failed > 0 ? "error" : "success",
 							className: "mtc-operations-header-icon",
 							"data-status": w.running > 0 ? "running" : w.failed > 0 ? "failed" : "succeeded"
 						}),
-						/* @__PURE__ */ z("span", {
+						/* @__PURE__ */ R("span", {
 							className: "mtc-operations-title",
 							children: r ?? g("ops.title")
 						}),
-						/* @__PURE__ */ z("span", {
+						/* @__PURE__ */ R("span", {
 							className: "mtc-operations-summary",
 							children: T
 						}),
-						/* @__PURE__ */ z(a, {
+						/* @__PURE__ */ R(a, {
 							name: "chevron-down",
 							className: "mtc-operations-chevron",
 							label: g(y ? "ops.hide" : "ops.show")
@@ -470,70 +471,70 @@ function Ne({ operations: e, title: r, onCancel: o, onRetry: c, onDismiss: u, on
 					]
 				})
 			}),
-			/* @__PURE__ */ z("span", {
+			/* @__PURE__ */ R("span", {
 				role: "status",
 				className: "mtc-visually-hidden",
 				children: S
 			}),
-			y && /* @__PURE__ */ B(R, { children: [/* @__PURE__ */ z("ul", {
+			y && /* @__PURE__ */ z(L, { children: [/* @__PURE__ */ R("ul", {
 				id: _,
 				className: "mtc-operations-list",
 				children: e.map((e) => {
 					let t = Q.has(e.status), n = e.progress === void 0 ? void 0 : Math.round(Math.min(1, Math.max(0, e.progress)) * 100);
-					return /* @__PURE__ */ B("li", {
+					return /* @__PURE__ */ z("li", {
 						className: "mtc-operation",
 						"data-status": e.status,
 						children: [
-							/* @__PURE__ */ z(a, {
+							/* @__PURE__ */ R(a, {
 								name: Me[e.status],
 								className: "mtc-operation-icon",
 								label: g(`ops.status.${e.status}`)
 							}),
-							/* @__PURE__ */ B("div", {
+							/* @__PURE__ */ z("div", {
 								className: "mtc-operation-main",
 								children: [
-									/* @__PURE__ */ z("span", {
+									/* @__PURE__ */ R("span", {
 										className: "mtc-operation-label",
 										title: e.label,
 										children: e.label
 									}),
-									e.detail != null && /* @__PURE__ */ z("span", {
+									e.detail != null && /* @__PURE__ */ R("span", {
 										className: "mtc-operation-detail",
 										children: e.detail
 									}),
-									e.status === "running" && /* @__PURE__ */ z("span", {
+									e.status === "running" && /* @__PURE__ */ R("span", {
 										className: "mtc-operation-progress",
 										role: "progressbar",
 										"aria-label": e.label,
 										"aria-valuemin": 0,
 										"aria-valuemax": 100,
 										"aria-valuenow": n,
-										children: /* @__PURE__ */ z("span", {
+										children: /* @__PURE__ */ R("span", {
 											style: n === void 0 ? void 0 : { width: `${n}%` },
 											"data-indeterminate": n === void 0 || void 0
 										})
 									})
 								]
 							}),
-							/* @__PURE__ */ B("div", {
+							/* @__PURE__ */ z("div", {
 								className: "mtc-operation-actions",
 								children: [
-									!t && e.cancellable && o && /* @__PURE__ */ z(s, {
-										icon: /* @__PURE__ */ z(a, { name: "close" }),
+									!t && e.cancellable && o && /* @__PURE__ */ R(s, {
+										icon: /* @__PURE__ */ R(a, { name: "close" }),
 										variant: "ghost",
 										size: "small",
 										"aria-label": g("ops.cancel", { label: e.label }),
 										onClick: () => o(e.id)
 									}),
-									e.status === "failed" && e.retryable && c && /* @__PURE__ */ z(s, {
-										icon: /* @__PURE__ */ z(a, { name: "refresh" }),
+									e.status === "failed" && e.retryable && c && /* @__PURE__ */ R(s, {
+										icon: /* @__PURE__ */ R(a, { name: "refresh" }),
 										variant: "ghost",
 										size: "small",
 										"aria-label": g("ops.retry", { label: e.label }),
 										onClick: () => c(e.id)
 									}),
-									t && u && /* @__PURE__ */ z(s, {
-										icon: /* @__PURE__ */ z(a, { name: "minus" }),
+									t && u && /* @__PURE__ */ R(s, {
+										icon: /* @__PURE__ */ R(a, { name: "minus" }),
 										variant: "ghost",
 										size: "small",
 										"aria-label": g("ops.dismiss", { label: e.label }),
@@ -544,9 +545,9 @@ function Ne({ operations: e, title: r, onCancel: o, onRetry: c, onDismiss: u, on
 						]
 					}, e.id);
 				})
-			}), E && d && /* @__PURE__ */ z("div", {
+			}), E && d && /* @__PURE__ */ R("div", {
 				className: "mtc-operations-footer",
-				children: /* @__PURE__ */ z(i, {
+				children: /* @__PURE__ */ R(i, {
 					size: "small",
 					variant: "ghost",
 					onClick: d,
@@ -555,7 +556,7 @@ function Ne({ operations: e, title: r, onCancel: o, onRetry: c, onDismiss: u, on
 			})] })
 		]
 	});
-	return h === "floating" && v ? V(D, v) : D;
+	return h === "floating" && v ? B(D, v) : D;
 }
 //#endregion
 //#region src/app/ProductShell.tsx
@@ -570,14 +571,14 @@ function $(e) {
 	return `${t}${n}${r}`;
 }
 function Ie(t) {
-	let { router: n, session: r, telemetry: i, mode: a = "standalone", embedOrigins: o = [], theme: s, density: l, locale: u, timeZone: d, messages: f } = t, p = a === "embed", m = P(() => p && typeof window < "u" ? je({ allowedOrigins: o }) : null, [p]), h = e(), [g, v] = I({}), y = Ee(r);
+	let { router: n, session: r, telemetry: i, mode: a = "standalone", embedOrigins: o = [], theme: s, density: l, locale: u, timeZone: d, messages: f } = t, p = a === "embed", h = P(() => p && typeof window < "u" ? je({ allowedOrigins: o }) : null, [p]), g = e(), [_, v] = I({}), y = Ee(r);
 	N(() => n.subscribe(() => {
 		let e = $(n);
 		i?.record({
 			type: "navigation",
 			path: e,
 			at: Date.now()
-		}), m?.post({
+		}), h?.post({
 			type: "mtc:navigated",
 			version: 1,
 			path: e
@@ -585,37 +586,37 @@ function Ie(t) {
 	}), [
 		n,
 		i,
-		m
+		h
 	]), N(() => {
 		y.status !== "loading" && (i?.record({
 			type: "session",
 			status: y.status,
 			at: Date.now()
-		}), y.status === "expired" && m?.post({
+		}), y.status === "expired" && h?.post({
 			type: "mtc:session-expired",
 			version: 1
 		}));
 	}, [
 		y.status,
 		i,
-		m
+		h
 	]), N(() => {
-		if (!m) return;
-		let e = m.subscribe((e) => {
+		if (!h) return;
+		let e = h.subscribe((e) => {
 			e.type === "mtc:navigate" ? n.navigate(e.path) : v({
 				theme: e.theme,
 				locale: e.locale,
 				timeZone: e.timeZone
 			});
 		});
-		return m.post({
+		return h.post({
 			type: "mtc:ready",
 			version: 1,
 			product: t.product.name,
 			path: $(n)
 		}), e;
 	}, [
-		m,
+		h,
 		n,
 		t.product.name
 	]);
@@ -630,23 +631,23 @@ function Ie(t) {
 		i,
 		p
 	]);
-	return /* @__PURE__ */ z(c, {
-		theme: g.theme ?? s ?? h?.theme ?? "dark",
-		density: l ?? h?.density,
-		locale: g.locale ?? u,
-		timeZone: g.timeZone ?? d,
+	return /* @__PURE__ */ R(c, {
+		theme: _.theme ?? s ?? g?.theme ?? "dark",
+		density: l ?? g?.density,
+		locale: _.locale ?? u,
+		timeZone: _.timeZone ?? d,
 		messages: f,
 		className: "mtc-product-shell-root",
-		children: /* @__PURE__ */ z(he, {
+		children: /* @__PURE__ */ R(Y, {
 			router: n,
-			children: /* @__PURE__ */ z(Pe.Provider, {
+			children: /* @__PURE__ */ R(Pe.Provider, {
 				value: b,
-				children: /* @__PURE__ */ z(_, { children: p ? /* @__PURE__ */ z(Ve, {
-					channel: m,
+				children: /* @__PURE__ */ R(m, { children: p ? /* @__PURE__ */ R(Ve, {
+					channel: h,
 					...t,
 					session: r,
 					controller: y
-				}) : /* @__PURE__ */ z(Be, {
+				}) : /* @__PURE__ */ R(Be, {
 					...t,
 					session: r,
 					controller: y
@@ -656,7 +657,7 @@ function Ie(t) {
 	});
 }
 function Le({ controller: e, session: t, router: n, children: i }) {
-	return e.status === "loading" ? /* @__PURE__ */ z(o, {}) : e.status === "signed-out" ? /* @__PURE__ */ z(r, { onSignIn: t ? () => t.signIn($(n), e.session ?? void 0) : void 0 }) : /* @__PURE__ */ z(R, { children: i });
+	return e.status === "loading" ? /* @__PURE__ */ R(o, {}) : e.status === "signed-out" ? /* @__PURE__ */ R(r, { onSignIn: t ? () => t.signIn($(n), e.session ?? void 0) : void 0 }) : /* @__PURE__ */ R(L, { children: i });
 }
 function Re({ controller: e, session: t, router: r }) {
 	let a = n(), [o, s] = I(!1);
@@ -666,27 +667,27 @@ function Re({ controller: e, session: t, router: r }) {
 		let n = await e.renew();
 		s(!1), n || t?.signIn($(r), e.session ?? void 0);
 	};
-	return /* @__PURE__ */ z(f, {
+	return /* @__PURE__ */ R(E, {
 		open: !0,
 		onOpenChange: () => {},
 		title: a("state.sessionExpired.title"),
 		dismissible: !1,
 		size: "small",
-		footer: /* @__PURE__ */ z(i, {
+		footer: /* @__PURE__ */ R(i, {
 			intent: "primary",
 			variant: "solid",
 			loading: o,
 			onClick: () => void c(),
 			children: a("state.sessionExpired.action")
 		}),
-		children: /* @__PURE__ */ z("p", {
+		children: /* @__PURE__ */ R("p", {
 			className: "mtc-shell-expired-text",
 			children: a("state.sessionExpired.description")
 		})
 	});
 }
 function ze(e) {
-	return /* @__PURE__ */ z(Ne, {
+	return /* @__PURE__ */ R(Ne, {
 		operations: e.operations ?? [],
 		onCancel: e.onCancelOperation,
 		onRetry: e.onRetryOperation,
@@ -694,134 +695,134 @@ function ze(e) {
 	});
 }
 function Be(e) {
-	let { product: t, nav: r, activeNavId: i, scope: o, search: c, actions: l, accountMenu: d, status: f, inspector: h, router: g, controller: _, session: y } = e, b = n(), { pathname: S } = Z(), [C, w] = I(!1), [T, E] = I(!1), [D, k] = I(!1), A = F(null), M = j((e) => {
-		e.href && (g.navigate(e.href), E(!1));
-	}, [g]), N = P(() => (r ?? []).map((e) => ({
+	let { product: t, nav: r, activeNavId: i, scope: o, search: c, actions: l, accountMenu: u, status: f, inspector: p, router: m, controller: g, session: _ } = e, y = n(), { pathname: b } = Z(), [x, S] = I(!1), [C, w] = I(!1), [E, k] = I(!1), A = F(null), M = j((e) => {
+		e.href && (m.navigate(e.href), w(!1));
+	}, [m]), N = P(() => (r ?? []).map((e) => ({
 		...e,
 		items: e.items.map((e) => ({
 			...e,
-			href: e.href ? g.href(e.href) : void 0
+			href: e.href ? m.href(e.href) : void 0
 		}))
-	})), [r, g]), ee = i ?? (r ?? []).flatMap((e) => e.items).filter((e) => e.href && (S === e.href || S.startsWith(e.href === "/" ? "/" : `${e.href}/`))).sort((e, t) => (t.href?.length ?? 0) - (e.href?.length ?? 0))[0]?.id, L = (e) => {
+	})), [r, m]), ee = i ?? (r ?? []).flatMap((e) => e.items).filter((e) => e.href && (b === e.href || b.startsWith(e.href === "/" ? "/" : `${e.href}/`))).sort((e, t) => (t.href?.length ?? 0) - (e.href?.length ?? 0))[0]?.id, te = (e) => {
 		let t = r?.flatMap((e) => e.items).find((t) => t.id === e.id);
 		t && M(t);
-	}, R = _.session, V = [...d ?? [], ...y?.signOut ? [{
+	}, L = g.session, B = [...u ?? [], ..._?.signOut ? [{
 		id: "sign-out",
-		label: b("shell.signOut"),
-		icon: /* @__PURE__ */ z(a, { name: "sign-out" }),
-		onSelect: () => void y.signOut?.()
-	}] : []], H = (e) => /* @__PURE__ */ z(O, {
-		label: b("shell.navigation"),
+		label: y("shell.signOut"),
+		icon: /* @__PURE__ */ R(a, { name: "sign-out" }),
+		onSelect: () => void _.signOut?.()
+	}] : []], V = (e) => /* @__PURE__ */ R(O, {
+		label: y("shell.navigation"),
 		sections: N,
 		activeId: ee,
-		onNavigate: L,
-		collapsed: !e && C,
-		onCollapsedChange: e ? void 0 : w,
+		onNavigate: te,
+		collapsed: !e && x,
+		onCollapsedChange: e ? void 0 : S,
 		className: e ? "mtc-shell-drawer-rail" : "mtc-shell-rail"
 	});
-	return /* @__PURE__ */ B("div", {
+	return /* @__PURE__ */ z("div", {
 		className: "mtc-shell",
-		"data-inspector": h ? "open" : void 0,
-		"data-rail": r ? C ? "collapsed" : "expanded" : "none",
+		"data-inspector": p ? "open" : void 0,
+		"data-rail": r ? x ? "collapsed" : "expanded" : "none",
 		children: [
-			/* @__PURE__ */ z("a", {
+			/* @__PURE__ */ R("a", {
 				className: "mtc-shell-skip",
 				href: "#mtc-main",
 				onClick: (e) => {
 					e.preventDefault(), A.current?.focus();
 				},
-				children: b("shell.skip")
+				children: y("shell.skip")
 			}),
-			/* @__PURE__ */ B("header", {
+			/* @__PURE__ */ z("header", {
 				className: "mtc-shell-topbar",
 				children: [
-					r && /* @__PURE__ */ z(s, {
-						icon: /* @__PURE__ */ z(a, { name: "menu" }),
-						"aria-label": b("shell.menu"),
+					r && /* @__PURE__ */ R(s, {
+						icon: /* @__PURE__ */ R(a, { name: "menu" }),
+						"aria-label": y("shell.menu"),
 						variant: "ghost",
 						className: "mtc-shell-menu",
-						onClick: () => E(!0)
+						onClick: () => w(!0)
 					}),
-					/* @__PURE__ */ B("a", {
+					/* @__PURE__ */ z("a", {
 						className: "mtc-shell-product",
-						href: g.href(t.home ?? "/"),
+						href: m.href(t.home ?? "/"),
 						onClick: (e) => {
-							e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || (e.preventDefault(), g.navigate(t.home ?? "/"));
+							e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || (e.preventDefault(), m.navigate(t.home ?? "/"));
 						},
-						children: [/* @__PURE__ */ z("span", {
+						children: [/* @__PURE__ */ R("span", {
 							className: "mtc-shell-mark",
 							"aria-hidden": "true",
-							children: /* @__PURE__ */ z(a, { name: t.icon ?? "object" })
-						}), /* @__PURE__ */ z("span", { children: t.name })]
+							children: /* @__PURE__ */ R(a, { name: t.icon ?? "object" })
+						}), /* @__PURE__ */ R("span", { children: t.name })]
 					}),
-					o && /* @__PURE__ */ z("div", {
+					o && /* @__PURE__ */ R("div", {
 						className: "mtc-shell-scope",
 						children: o
 					}),
-					c && /* @__PURE__ */ B("button", {
+					c && /* @__PURE__ */ z("button", {
 						type: "button",
 						className: "mtc-shell-search",
 						onClick: () => k(!0),
 						children: [
-							/* @__PURE__ */ z(a, { name: "search" }),
-							/* @__PURE__ */ z("span", {
+							/* @__PURE__ */ R(a, { name: "search" }),
+							/* @__PURE__ */ R("span", {
 								className: "mtc-shell-search-text",
-								children: c.placeholder ?? b("shell.search")
+								children: c.placeholder ?? y("shell.search")
 							}),
-							/* @__PURE__ */ z(m, {
+							/* @__PURE__ */ R(d, {
 								"aria-hidden": "true",
 								children: "Ctrl K"
 							})
 						]
 					}),
-					/* @__PURE__ */ B("div", {
+					/* @__PURE__ */ z("div", {
 						className: "mtc-shell-actions",
-						children: [l, R?.authenticated && /* @__PURE__ */ z(p, {
-							label: b("shell.account"),
+						children: [l, L?.authenticated && /* @__PURE__ */ R(T, {
+							label: y("shell.account"),
 							align: "end",
-							trigger: /* @__PURE__ */ z(v, {
-								name: R.displayName ?? R.subject ?? "?",
+							trigger: /* @__PURE__ */ R(h, {
+								name: L.displayName ?? L.subject ?? "?",
 								decorative: !0
 							}),
-							items: V.length > 0 ? V : [{
+							items: B.length > 0 ? B : [{
 								id: "who",
-								label: R.displayName ?? R.subject ?? "",
+								label: L.displayName ?? L.subject ?? "",
 								disabled: !0
 							}]
 						})]
 					})
 				]
 			}),
-			r && /* @__PURE__ */ z("div", {
+			r && /* @__PURE__ */ R("div", {
 				className: "mtc-shell-rail-slot",
-				children: H(!1)
+				children: V(!1)
 			}),
-			/* @__PURE__ */ z("main", {
+			/* @__PURE__ */ R("main", {
 				id: "mtc-main",
 				ref: A,
 				tabIndex: -1,
 				className: "mtc-shell-main",
-				children: /* @__PURE__ */ z(Le, { ...e })
+				children: /* @__PURE__ */ R(Le, { ...e })
 			}),
-			h && /* @__PURE__ */ z("aside", {
+			p && /* @__PURE__ */ R("aside", {
 				className: "mtc-shell-inspector",
-				children: h
+				children: p
 			}),
-			/* @__PURE__ */ z("footer", {
+			/* @__PURE__ */ R("footer", {
 				className: "mtc-shell-status",
 				children: f
 			}),
-			r && /* @__PURE__ */ z(u, {
-				open: T,
-				onOpenChange: E,
+			r && /* @__PURE__ */ R(D, {
+				open: C,
+				onOpenChange: w,
 				title: t.name,
 				side: "left",
 				width: 288,
 				className: "mtc-shell-drawer",
-				children: H(!0)
+				children: V(!0)
 			}),
-			c && /* @__PURE__ */ z(x, {
-				open: D,
+			c && /* @__PURE__ */ R(v, {
+				open: E,
 				onOpenChange: k,
 				query: c.query,
 				onQueryChange: c.onQueryChange,
@@ -830,8 +831,8 @@ function Be(e) {
 				loading: c.loading,
 				placeholder: c.placeholder
 			}),
-			/* @__PURE__ */ z(ze, { ...e }),
-			/* @__PURE__ */ z(Re, { ...e })
+			/* @__PURE__ */ R(ze, { ...e }),
+			/* @__PURE__ */ R(Re, { ...e })
 		]
 	});
 }
@@ -849,19 +850,19 @@ function Ve(e) {
 			}));
 		});
 		return i.observe(e), () => i.disconnect();
-	}, [t]), /* @__PURE__ */ B("div", {
+	}, [t]), /* @__PURE__ */ z("div", {
 		ref: n,
 		className: "mtc-shell-embedded",
 		children: [
-			/* @__PURE__ */ z("main", {
+			/* @__PURE__ */ R("main", {
 				id: "mtc-main",
 				className: "mtc-shell-main",
-				children: /* @__PURE__ */ z(Le, { ...e })
+				children: /* @__PURE__ */ R(Le, { ...e })
 			}),
-			/* @__PURE__ */ z(ze, { ...e }),
-			/* @__PURE__ */ z(Re, { ...e })
+			/* @__PURE__ */ R(ze, { ...e }),
+			/* @__PURE__ */ R(Re, { ...e })
 		]
 	});
 }
 //#endregion
-export { Ne as OperationsTray, Ie as ProductShell, Te as RENEW_LEAD_MS, ve as RouterLink, he as RouterProvider, Se as SESSION_RENEWED, Ce as SESSION_RENEW_FAILED, E as SourceError, me as buildPath, je as createEmbedChannel, fe as createHistoryRouter, xe as createHttpSessionPort, pe as createMemoryRouter, ce as createProductFetch, S as describeSourceError, ue as ensureOk, w as isSourceError, q as matchPath, J as matchRoutes, G as newTraceparent, Ae as parseEmbedHostMessage, y as parseRetryAfter, be as parseSessionBody, we as renewViaFrame, Oe as requestTelemetry, C as responseRequestId, T as sourceErrorFromResponse, g as sourceErrorKindForCode, b as sourceErrorKindForStatus, D as toSourceError, Z as useLocation, Fe as useProductShell, _e as useRoute, X as useRouter, Ee as useSessionController };
+export { Ne as OperationsTray, Ie as ProductShell, Te as RENEW_LEAD_MS, ve as RouterLink, Y as RouterProvider, Se as SESSION_RENEWED, Ce as SESSION_RENEW_FAILED, C as SourceError, he as buildPath, je as createEmbedChannel, pe as createHistoryRouter, xe as createHttpSessionPort, me as createMemoryRouter, le as createProductFetch, y as describeSourceError, de as ensureOk, x as isSourceError, K as matchPath, q as matchRoutes, W as newTraceparent, Ae as parseEmbedHostMessage, g as parseRetryAfter, be as parseSessionBody, we as renewViaFrame, Oe as requestTelemetry, b as responseRequestId, S as sourceErrorFromResponse, p as sourceErrorKindForCode, _ as sourceErrorKindForStatus, w as toSourceError, Z as useLocation, Fe as useProductShell, _e as useRoute, X as useRouter, Ee as useSessionController };

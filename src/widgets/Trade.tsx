@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useDashboard } from '../core/DashboardContext'
-import { newClientRequestId } from '../core/resolveSource'
+import { interpolate, newClientRequestId } from '../core/resolveSource'
 import { useSubmitAction } from '../hooks/useSubmitAction'
 import { isErrorStatus, isTerminalStatus } from '../hooks/useWatchAction'
 import { Empty } from './states'
@@ -42,7 +42,9 @@ export function Trade({ options, widgetId }: WidgetProps) {
     submitting: actionSubmitting,
     result: actionResult,
   } = useSubmitAction(widgetId)
-  const symbol = opts.symbol ?? ctx.symbol ?? ''
+  // Options may carry ${ctx.x} placeholders like every template string.
+  const symbol = opts.symbol ? interpolate(opts.symbol, ctx) : ctx.symbol ?? ''
+  const quoteUnit = opts.quote_unit ? interpolate(opts.quote_unit, ctx) : undefined
   const fallbackUrl = opts.url
   const actionId = opts.action_id ?? 'place_order'
   // Prefer Connect (proto-driven) when the dashboard has a backend.
@@ -208,7 +210,7 @@ export function Trade({ options, widgetId }: WidgetProps) {
   }
 
   const sideButtonClass = (s: Side) =>
-    `flex-1 py-1.5 text-xs font-semibold uppercase tracking-wider rounded transition-colors ${
+    `flex-1 py-1.5 text-xs font-semibold rounded transition-colors ${
       side === s
         ? s === 'buy'
           ? 'bg-emerald-500/20 text-emerald-400'
@@ -222,10 +224,10 @@ export function Trade({ options, widgetId }: WidgetProps) {
 
   if (confirming) {
     const px = price ? Number(price) : null
-    const summary = `${side.toUpperCase()} ${amount}${opts.quote_unit ? ` ${opts.quote_unit}` : ''} ${px ? `@ ${px.toLocaleString()}` : 'at market'}`
+    const summary = `${side.toUpperCase()} ${amount}${quoteUnit ? ` ${quoteUnit}` : ''} ${px ? `@ ${px.toLocaleString()}` : 'at market'}`
     return (
       <div className="flex flex-col gap-2 h-full justify-center">
-        <div className="text-[10px] uppercase tracking-wider text-zinc-500">Confirm</div>
+        <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">Confirm</div>
         <div className={`text-sm font-medium ${side === 'buy' ? 'text-emerald-300' : 'text-red-300'}`}>
           {summary}
         </div>
@@ -233,14 +235,14 @@ export function Trade({ options, widgetId }: WidgetProps) {
         <div className="flex gap-2 mt-1">
           <button
             onClick={() => setConfirming(false)}
-            className="flex-1 py-2 rounded text-xs font-semibold uppercase tracking-wider bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+            className="flex-1 py-2 rounded text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
           >
             Cancel
           </button>
           <button
             onClick={submit}
             disabled={submitting}
-            className={`flex-1 py-2 rounded text-xs font-semibold uppercase tracking-wider disabled:opacity-30 ${submitColor}`}
+            className={`flex-1 py-2 rounded text-xs font-semibold disabled:opacity-30 ${submitColor}`}
           >
             {submitting ? '...' : 'Confirm'}
           </button>
@@ -258,11 +260,11 @@ export function Trade({ options, widgetId }: WidgetProps) {
       </div>
 
       {symbol && (
-        <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+        <div className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">
           {symbol}{opts.available != null && (
-            <span className="ml-2 text-zinc-400 normal-case">
+            <span className="ml-2 text-zinc-400">
               avail <span className="tabular-nums text-zinc-200">{opts.available.toLocaleString()}</span>
-              {opts.quote_unit && <span className="ml-1">{opts.quote_unit}</span>}
+              {quoteUnit && <span className="ml-1">{quoteUnit}</span>}
             </span>
           )}
         </div>
@@ -270,7 +272,7 @@ export function Trade({ options, widgetId }: WidgetProps) {
 
       <Field
         label="Amount"
-        unit={opts.quote_unit}
+        unit={quoteUnit}
         value={amount}
         onChange={setAmount}
         disabled={submitting}
@@ -286,7 +288,7 @@ export function Trade({ options, widgetId }: WidgetProps) {
                 key={i}
                 onClick={() => setAmount(display)}
                 disabled={submitting}
-                className="flex-1 text-[10px] uppercase tracking-wider text-zinc-400 hover:text-zinc-100 bg-zinc-800/60 hover:bg-zinc-800 rounded py-1 disabled:opacity-30"
+                className="flex-1 text-[length:var(--mtc-font-size-xs)] text-zinc-400 hover:text-zinc-100 bg-zinc-800/60 hover:bg-zinc-800 rounded py-1 disabled:opacity-30"
                 title={`${(pct * 100).toFixed(0)}% of available`}
               >
                 {(pct * 100).toFixed(0)}%
@@ -306,9 +308,9 @@ export function Trade({ options, widgetId }: WidgetProps) {
       <button
         onClick={submit}
         disabled={submitting || !amount}
-        className={`mt-1 py-2 rounded text-sm font-semibold uppercase tracking-wider disabled:opacity-30 ${submitColor}`}
+        className={`mt-1 py-2 rounded text-sm font-semibold disabled:opacity-30 ${submitColor}`}
       >
-        {submitting ? '...' : side === 'buy' ? `Buy ${opts.quote_unit ?? ''}`.trim() : `Sell ${opts.quote_unit ?? ''}`.trim()}
+        {submitting ? '...' : side === 'buy' ? `Buy ${quoteUnit ?? ''}`.trim() : `Sell ${quoteUnit ?? ''}`.trim()}
       </button>
 
       {(target === 'connect'
@@ -347,7 +349,7 @@ function Field({
 }) {
   return (
     <div className="flex items-center gap-2 bg-zinc-800 border border-zinc-700 rounded px-2 py-1.5 focus-within:border-zinc-500">
-      <span className="text-[10px] uppercase tracking-wider text-zinc-500 w-12 shrink-0">{label}</span>
+      <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500 w-12 shrink-0">{label}</span>
       <input
         type="number"
         inputMode="decimal"
@@ -355,7 +357,9 @@ function Field({
         value={value}
         onChange={e => onChange(e.target.value)}
         disabled={disabled}
-        className="flex-1 bg-transparent outline-none text-right text-sm text-zinc-100 tabular-nums disabled:opacity-50"
+        aria-label={label}
+        // min-w-0 lets the input shrink so a narrow ticket keeps the unit.
+        className="min-w-0 flex-1 bg-transparent outline-none text-right text-sm text-zinc-100 tabular-nums disabled:opacity-50"
       />
       {unit && <span className="text-xs text-zinc-500 shrink-0">{unit}</span>}
     </div>

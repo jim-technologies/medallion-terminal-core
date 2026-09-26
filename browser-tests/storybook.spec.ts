@@ -185,6 +185,14 @@ async function openStory(page: Page, id: string, { theme = 'dark', density, pinC
       if (attempt >= 3 || !String(error).includes('Execution context was destroyed')) throw error
     }
   }
+  // A story's play function runs after the first render; compare and
+  // interact only once it has finished, so a baseline never captures a
+  // half-played story.
+  await page.waitForFunction(() => {
+    const preview = (window as unknown as { __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } } }).__STORYBOOK_PREVIEW__
+    const phase = preview?.currentRender?.phase
+    return !phase || ['played', 'completing', 'completed', 'afterEach', 'finished', 'errored', 'aborted'].includes(phase)
+  })
   expect(errors, `browser errors in ${id}`).toEqual([])
   // A dev server under load can serve its "failed to load the preview"
   // page instead of the story; fail (and let the retry run) rather than
@@ -201,9 +209,14 @@ async function openStory(page: Page, id: string, { theme = 'dark', density, pinC
 // change fails the gate until the snapshot is regenerated on purpose. It is
 // taken after the screenshot, which waits for the page to settle.
 async function expectAriaBaseline(root: Locator, name: string) {
-  const snapshot = await root.ariaSnapshot()
-  // Never compare, or record, a story that has not rendered.
-  expect(snapshot.trim(), `accessibility tree of ${name}`).not.toBe('')
+  // Never compare, or record, a story that has not rendered. Under load the
+  // preview can remount a story for a moment after its screenshot, so an
+  // empty tree is re-read for a few seconds before it counts as a failure.
+  let snapshot = ''
+  await expect.poll(async () => {
+    snapshot = await root.ariaSnapshot()
+    return snapshot.trim()
+  }, { message: `accessibility tree of ${name}`, timeout: 5_000 }).not.toBe('')
   expect(snapshot).toMatchSnapshot(`${name}.yml`)
 }
 
@@ -724,16 +737,16 @@ for (const theme of ['dark', 'light'] as const) {
 
 // Full-page surfaces also keep a phone baseline in each theme,
 // `${story}-${theme}-mobile.png` at 390 × 844, beside the desktop one.
-const mobileBaselineStories = [
-  'toolkitShell',
-  'toolkitObjectPage',
-] as const satisfies readonly (keyof typeof toolkitStories)[]
+const mobileBaselineStories = {
+  toolkitShell: toolkitStories.toolkitShell,
+  toolkitObjectPage: toolkitStories.toolkitObjectPage,
+}
 
 for (const theme of ['dark', 'light'] as const) {
-  for (const name of mobileBaselineStories) {
+  for (const [name, id] of Object.entries(mobileBaselineStories)) {
     test(`${name} ${theme} mobile visual baseline`, async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 })
-      const root = await openStory(page, toolkitStories[name], { theme, pinClock: true })
+      const root = await openStory(page, id, { theme, pinClock: true })
       await expect(page).toHaveScreenshot(`${name}-${theme}-mobile.png`)
       await expectAriaBaseline(root, `${name}-mobile`)
     })

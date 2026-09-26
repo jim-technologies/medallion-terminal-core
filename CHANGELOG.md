@@ -123,6 +123,42 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   of stacking its cycle in one final rank.
 - Text sort keys compare with one shared `Intl.Collator` (a 10,000-row text
   sort went from ~500 ms to ~30 ms).
+- **Widgets follow the v2 type scale.** No widget, dashboard chrome or
+  example renders text under 11 px (the `--mtc-font-size-xs` step); SVG
+  and chart axis labels are 11 px; small labels are sentence case without
+  letter spacing instead of uppercase micro-caps (the catalog's "live"
+  badge reads "Live"). The style guard's legacy budget for sizes and
+  tracking is now zero, so any new sub-11 px size fails lint.
+- **`object_view` on the object components**: `ObjectHeader` (compact),
+  `PropertyPanel` (typed values, filter) and `LinkPanel` (links grouped by
+  link type) replace the bespoke header, key-value list and link list;
+  action buttons are toolkit `Button`s. The payload is unchanged.
+- **`table` on `DataGrid`**: one tab stop and keyboard navigation, windowed
+  rows, `aria-sort` headers, typed number cells; heat shading, signed
+  colours, row flashes, search, CSV export and paging keep their options.
+- **`text` bodies are Markdown** (sanitised with DOMPurify, loaded lazily,
+  plain text until it loads); `options.markdown: false` keeps raw text.
+- `trade` resolves `${ctx.*}` placeholders in `options.symbol` and
+  `options.quote_unit`, like every other template string (the example
+  ticket no longer shows a literal `${ctx.symbol}`); the amount and price
+  inputs are labelled and shrink so a narrow ticket keeps its unit.
+- A currency value's code is its own word for assistive technology
+  ("$284,000.00 USD", not "$284,000.00USD").
+- In the stacked phone layout, property values (`PropertyList`,
+  `PropertyPanel`) no longer inherit the browser's 40 px definition indent,
+  so they line up with their labels and use the full width.
+- The browser suite waits for a story's play function to finish before it
+  compares or interacts, so no baseline captures a half-played story, and
+  re-reads an empty accessibility tree for a few seconds before failing.
+- Regenerated for the widget alignment: `dashboard-{mobile,tablet}`,
+  `readiness-{dark,light}`, `toolkitDatabase-*`, `toolkitTableViewer-*`,
+  `toolkitHostIntent-*` and `toolkitObjectPage-*-mobile` screenshots, and
+  the `dashboard-*`, `readiness`, `toolkitObjectPage*`,
+  `toolkitPropertyPanel` and `toolkitPropertyValues` text snapshots.
+- Text that was drawn in the border colour (code browser line numbers,
+  days outside the month, empty board lanes, path separators) uses the
+  muted text colours, and decorative separators are hidden from assistive
+  technology.
 
 ### Removed
 
@@ -134,6 +170,12 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - `src/widgets/fileBrowserDecoders.ts` (`fetchText`, `parseCSV`,
   `prettyJSON`, `renderMarkdown`): unbounded reads and an unbounded CSV
   parser, replaced by `FilePreview` and its bounded policy.
+- `useDataSource().error`, the one-line error string deprecated in 0.6.0.
+  Read `sourceError` (a `SourceError`) and `describeSourceError` for a
+  summary line.
+- The widgets' bespoke `object_view` header and link list and the `table`
+  widget's hand-built `<table>` markup (replaced by the toolkit components
+  above).
 
 ## [0.6.0] — 2026-09-25
 
