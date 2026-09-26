@@ -4,6 +4,48 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-09-26
+
+The ontology components: typed property values and panels, object headers
+and chips, one windowed `DataGrid` for every table, link panels and graphs,
+navigation, search, feeds, toasts and paging, bounded file previews, an
+`ObjectPage`, and a `ProductShell` with session, router, telemetry and embed
+ports (`medallion-terminal-core/app`). The widgets that had their own
+tables, headers, palettes and toasts now render through them, every size
+is on the type scale (11 px minimum), and eight page templates built only
+from toolkit exports are the reference for product pages.
+
+### Migration
+
+- **`useDataSource().error` is gone.** Read `sourceError` (a
+  `SourceError`), render it with `SourceErrorState`, and call
+  `describeSourceError(sourceError)` where a one-line summary is needed.
+- **`Skeleton` is the toolkit placeholder.** The root entry's widget
+  loading archetype is `WidgetSkeleton`; a host that imported `Skeleton`
+  from the root for a widget body imports `WidgetSkeleton` instead.
+- **The root `CommandPalette` is the host-driven toolkit palette**
+  (`open`, `query`, `groups`, `onSelect`). The Dashboard-internal palette
+  was never usable outside a `Dashboard` and is no longer exported;
+  `PaletteSuggest` and `PaletteSuggestion` are unchanged.
+- **`file_browser` markup is replaced.** The list is a `DataGrid`; target
+  the stable `data-mtc-file-browser`, `data-mtc-part`, `data-mtc-entry-*`
+  hooks or use `FileBrowserExtensions` (`entryIcon`, `entryHref`,
+  `selection`, `contextActions`, `onOpen`) instead of class names or DOM
+  rewriting. `fileBrowserDecoders` is removed; previews go through
+  `FilePreview` and its limits.
+- **`record_grid`, `table` and `object_view`** render through `DataGrid`,
+  `ObjectHeader`, `PropertyPanel` and `LinkPanel`: payloads and options are
+  unchanged, but tests that found cells as `<td>` or buttons should query
+  `role="gridcell"` and `role="row"`.
+- **`PropertyList` values are typed.** Numbers group, booleans read Yes/No,
+  lists are chips and nested objects are disclosures; pass `kind` or
+  `format` on an item to choose the rendering.
+- **`text` bodies are Markdown.** Pass `options.markdown: false` to keep the
+  raw text of a feed that is not Markdown.
+- **The `./app` entry is React.** It now exports `ProductShell` and its
+  ports beside `createProductFetch`; it has `react` and `react-dom` as peer
+  dependencies like the other entries.
+
 ### Added
 
 - **Display primitives**: `StatusBadge` (dot plus label, five tones),
@@ -154,9 +196,10 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - In the stacked phone layout, property values (`PropertyList`,
   `PropertyPanel`) no longer inherit the browser's 40 px definition indent,
   so they line up with their labels and use the full width.
-- The browser suite waits for a story's play function to finish before it
-  compares or interacts, so no baseline captures a half-played story, and
-  re-reads an empty accessibility tree for a few seconds before failing.
+- The browser suite waits for a story's play function to finish and the
+  preview's loading overlay to clear before it compares or interacts, so no
+  baseline captures a half-played story or a spinner, and it re-reads an
+  empty accessibility tree for a few seconds before failing.
 - Regenerated for the widget alignment: `dashboard-{mobile,tablet}`,
   `readiness-{dark,light}`, `toolkitDatabase-*`, `toolkitTableViewer-*`,
   `toolkitHostIntent-*` and `toolkitObjectPage-*-mobile` screenshots, and
