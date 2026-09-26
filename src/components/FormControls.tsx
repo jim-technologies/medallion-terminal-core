@@ -13,6 +13,7 @@ import {
   type ReactNode,
   type TextareaHTMLAttributes,
 } from 'react'
+import { useMessage } from '../foundations/DesignSystemProvider'
 import type { ComponentSize, Density } from '../foundations/types'
 import { Icon } from './Icon'
 import { cx } from './utils'
@@ -281,7 +282,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     value,
     onValueChange,
     options,
-    placeholder = 'Select…',
+    placeholder,
     disabled,
     required,
     name,
@@ -294,10 +295,11 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     size = 'medium',
     density,
     className,
-    emptyMessage = 'No matching options',
+    emptyMessage,
   },
   ref,
 ) {
+  const t = useMessage()
   const generatedId = useId()
   const inputId = id ?? `mtc-combobox-${generatedId}`
   const listboxId = `${inputId}-listbox`
@@ -374,7 +376,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
         value={query}
         disabled={disabled}
         required={required}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t('combobox.placeholder')}
         role="combobox"
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
@@ -428,7 +430,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
       {open && !disabled && (
         <div id={listboxId} role="listbox" className="mtc-combobox-list mtc-popover">
           {filtered.length === 0 ? (
-            <div className="mtc-combobox-empty">{emptyMessage}</div>
+            <div className="mtc-combobox-empty">{emptyMessage ?? t('combobox.empty')}</div>
           ) : filtered.map((option, index) => (
             <div
               id={`${inputId}-option-${index}`}

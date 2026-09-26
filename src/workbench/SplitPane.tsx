@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from 'react'
 import { cx, useControllableState } from '../components/utils'
+import { useMessage } from '../foundations/DesignSystemProvider'
 
 /** Props for a keyboard- and pointer-resizable two-pane layout. */
 export interface SplitPaneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
@@ -55,13 +56,14 @@ export const SplitPane = forwardRef<HTMLDivElement, SplitPaneProps>(function Spl
     step = 5,
     disabled,
     stackOnNarrow = true,
-    separatorLabel = 'Resize panes',
+    separatorLabel,
     className,
     style,
     ...rest
   },
   forwardedRef,
 ) {
+  const t = useMessage()
   const rootRef = useRef<HTMLDivElement | null>(null)
   const dragging = useRef(false)
   const [rawSize, setRawSize] = useControllableState({
@@ -109,7 +111,7 @@ export const SplitPane = forwardRef<HTMLDivElement, SplitPaneProps>(function Spl
       <div className="mtc-split-content mtc-split-start">{primaryPane === 'start' ? primary : secondary}</div>
       <div
         role="separator"
-        aria-label={separatorLabel}
+        aria-label={separatorLabel ?? t('splitPane.resize')}
         aria-orientation={orientation === 'horizontal' ? 'vertical' : 'horizontal'}
         aria-valuemin={lowerBound}
         aria-valuemax={upperBound}

@@ -53,6 +53,17 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   the host page's styles (serif portals). The host is created on first use,
   follows theme and density changes, and is removed when its last user
   unmounts; it returns `null` outside a scope and during server rendering.
+- **Message catalog and `Intl` formatters.** `DesignSystemProvider` takes
+  `locale`, `timeZone` and `messages` (per-key overrides); nested scopes and
+  Dashboards inherit what they do not set. Toolkit defaults (loading and
+  error copy, retry, dialog and drawer close, tree expand and collapse, the
+  combobox placeholder and empty text, tag remove, toolbar, breadcrumbs and
+  split-pane labels, the button busy label) are keyed in `EN_MESSAGES`, with
+  `ZH_CN_MESSAGES` selected for any Chinese locale. `useMessage()` and
+  `useLocale()` expose the scope's catalog and locale; `formatNumber`,
+  `formatBytes`, `formatDateTime`, `formatRelativeTime` and `formatDuration`
+  format with an explicit locale and time zone. Explicit component props
+  still win, and `lang` is emitted only when `locale` is passed.
 - **`scripts/check-style-tokens.mjs`**, run by `pnpm lint`, fails when
   production source adds a colour literal outside a token declaration, a
   Tailwind arbitrary colour, a `text-[Npx]` below 11 px or off the scale, or

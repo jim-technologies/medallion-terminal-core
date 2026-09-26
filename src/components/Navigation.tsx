@@ -6,6 +6,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
+import { useMessage } from '../foundations/DesignSystemProvider'
 import type { Density } from '../foundations/types'
 import { Icon } from './Icon'
 import { cx } from './utils'
@@ -183,12 +184,13 @@ export interface BreadcrumbsProps extends HTMLAttributes<HTMLElement> {
 
 /** Responsive semantic breadcrumbs using links or buttons where actionable. */
 export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(function Breadcrumbs(
-  { items, label = 'Breadcrumbs', maxItems, className, ...rest },
+  { items, label, maxItems, className, ...rest },
   ref,
 ) {
+  const t = useMessage()
   const visible = visibleBreadcrumbs(items, maxItems)
   return (
-    <nav {...rest} ref={ref} aria-label={label} className={cx('mtc-breadcrumbs', className)}>
+    <nav {...rest} ref={ref} aria-label={label ?? t('breadcrumbs.label')} className={cx('mtc-breadcrumbs', className)}>
       <ol>
         {visible.map((item, index) => {
           const current = index === visible.length - 1

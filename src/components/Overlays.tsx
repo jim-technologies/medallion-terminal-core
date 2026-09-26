@@ -13,6 +13,7 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react'
+import { useMessage } from '../foundations/DesignSystemProvider'
 import type { Intent } from '../foundations/types'
 import { IconButton } from './Button'
 import { Icon } from './Icon'
@@ -497,6 +498,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
   },
   forwardedRef,
 ) {
+  const t = useMessage()
   const titleId = useId()
   const descriptionId = useId()
   const contentRef = useRef<HTMLDivElement>(null)
@@ -532,7 +534,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
           {dismissible && (
             <IconButton
               icon={<Icon name="close" />}
-              aria-label="Close dialog"
+              aria-label={t('dialog.close')}
               variant="ghost"
               size="small"
               onClick={() => onOpenChange(false)}
@@ -571,6 +573,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
   },
   forwardedRef,
 ) {
+  const t = useMessage()
   const titleId = useId()
   const descriptionId = useId()
   const contentRef = useRef<HTMLDivElement>(null)
@@ -607,7 +610,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
           {dismissible && (
             <IconButton
               icon={<Icon name="close" />}
-              aria-label="Close drawer"
+              aria-label={t('drawer.close')}
               variant="ghost"
               size="small"
               onClick={() => onOpenChange(false)}

@@ -129,7 +129,22 @@ for (const name of requiredExports) {
   if (!(name in library)) throw new Error(`Published entry is missing export ${JSON.stringify(name)}`)
 }
 for (const [entry, module, names] of [
-  ['./toolkit', toolkit, ['DesignSystemProvider', 'Button', 'Dialog', 'AppSurface', 'Tree', 'TypeGlyph']],
+  [
+    './toolkit',
+    toolkit,
+    [
+      'DesignSystemProvider',
+      'Button',
+      'Dialog',
+      'AppSurface',
+      'Tree',
+      'TypeGlyph',
+      'usePortalContainer',
+      'useMessage',
+      'ZH_CN_MESSAGES',
+      'formatDateTime',
+    ],
+  ],
   ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
   [
     './asset-open',

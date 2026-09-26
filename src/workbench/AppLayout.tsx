@@ -4,6 +4,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react'
+import { useMessage } from '../foundations/DesignSystemProvider'
 import type { Density } from '../foundations/types'
 import { cx } from '../components/utils'
 
@@ -49,7 +50,7 @@ export interface ToolbarProps extends HTMLAttributes<HTMLDivElement> {
 /** Application toolbar with independent start, overflow, and end regions. */
 export const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(function Toolbar(
   {
-    label = 'Toolbar',
+    label,
     start,
     end,
     density,
@@ -60,12 +61,13 @@ export const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(function Toolbar
   },
   ref,
 ) {
+  const t = useMessage()
   return (
     <div
       {...rest}
       ref={ref}
       role="toolbar"
-      aria-label={label}
+      aria-label={label ?? t('toolbar.label')}
       className={cx('mtc-app-toolbar', density && `mtc-density-${density}`, className)}
       data-sticky={sticky || undefined}
     >

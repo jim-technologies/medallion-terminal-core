@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Meta, StoryObj } from '@storybook/react'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
-import { Badge, Button, Input } from '../components'
-import { DesignSystemProvider, usePortalContainer } from './DesignSystemProvider'
+import { Badge, Button, Combobox, Input } from '../components'
+import { ErrorState, LoadingState, PropertyList } from '../workbench'
+import { DesignSystemProvider, useLocale, usePortalContainer } from './DesignSystemProvider'
+import { formatBytes, formatDateTime, formatDuration, formatNumber, formatRelativeTime } from './intl'
 import type { Density as DensityValue, PresentationTheme } from './types'
 
 const meta = {
@@ -67,6 +69,60 @@ export const PortalContainer: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Close portalled panel' }))
     await waitFor(() => expect(document.querySelector('[data-testid="portalled-panel"]')).toBeNull())
   },
+}
+
+// The zh-CN column renders CJK glyphs from system fonts (only Latin is
+// vendored), so this story is asserted by its play test, not by pixels.
+export const LocaleAndMessages: Story = {
+  name: 'Locale and messages',
+  render: () => (
+    <div className="grid gap-4 bg-[var(--mtc-bg)] p-6 md:grid-cols-2">
+      <DesignSystemProvider locale="en" timeZone="UTC">
+        <LocaleSample />
+      </DesignSystemProvider>
+      <DesignSystemProvider locale="zh-CN" timeZone="Asia/Shanghai">
+        <LocaleSample />
+      </DesignSystemProvider>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const english = within(canvasElement.querySelector<HTMLElement>('[lang="en"]')!)
+    const chinese = within(canvasElement.querySelector<HTMLElement>('[lang="zh-CN"]')!)
+    await expect(english.getByText('Loading')).toBeVisible()
+    await expect(english.getByRole('button', { name: 'Retry' })).toBeVisible()
+    await expect(english.getByPlaceholderText('Select…')).toBeVisible()
+    await expect(english.getByText('2.3 MB')).toBeVisible()
+    await expect(chinese.getByText('正在加载')).toBeVisible()
+    await expect(chinese.getByRole('button', { name: '重试' })).toBeVisible()
+    await expect(chinese.getByPlaceholderText('请选择…')).toBeVisible()
+    await expect(chinese.getByText('无法加载')).toBeVisible()
+  },
+}
+
+const SAMPLE_INSTANT = Date.UTC(2026, 9, 18, 15, 4)
+
+function LocaleSample() {
+  const { locale, timeZone } = useLocale()
+  return (
+    <section className="grid content-start gap-3 rounded-[var(--mtc-radius-md)] border border-[var(--mtc-border)] bg-[var(--mtc-surface)] p-4 text-[var(--mtc-fg)]">
+      <h2 className="text-[length:var(--mtc-font-size-lg)] font-semibold">{locale}</h2>
+      <LoadingState compact />
+      <ErrorState compact message="HTTP 503" onRetry={() => {}} />
+      <Combobox aria-label={`${locale} owner`} value="" onValueChange={() => {}} options={[]} />
+      <PropertyList
+        items={[
+          { label: 'Count', value: formatNumber(1234567.8, { locale }) },
+          { label: 'Size', value: formatBytes(2_300_000, { locale }) },
+          { label: 'Updated', value: formatDateTime(SAMPLE_INSTANT, { locale, timeZone }) },
+          {
+            label: 'Relative',
+            value: formatRelativeTime(SAMPLE_INSTANT - 5 * 60_000, { locale, now: SAMPLE_INSTANT }),
+          },
+          { label: 'Wait', value: formatDuration(30_000, { locale }) },
+        ]}
+      />
+    </section>
+  )
 }
 
 function PortalSample() {

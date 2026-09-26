@@ -3,6 +3,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react'
+import { useMessage } from '../foundations/DesignSystemProvider'
 import type { ComponentSize, Intent } from '../foundations/types'
 import { Icon, type IconName } from './Icon'
 import { cx } from './utils'
@@ -24,13 +25,14 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
     intent = 'neutral',
     size = 'small',
     onRemove,
-    removeLabel = 'Remove',
+    removeLabel,
     className,
     children,
     ...rest
   },
   ref,
 ) {
+  const t = useMessage()
   return (
     <span
       {...rest}
@@ -41,7 +43,7 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
     >
       <span>{children}</span>
       {onRemove && (
-        <button type="button" onClick={onRemove} aria-label={removeLabel} className="mtc-tag-remove">
+        <button type="button" onClick={onRemove} aria-label={removeLabel ?? t('tag.remove')} className="mtc-tag-remove">
           <Icon name="close" />
         </button>
       )}

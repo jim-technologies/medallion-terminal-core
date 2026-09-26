@@ -3,6 +3,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react'
+import { useMessage } from '../foundations/DesignSystemProvider'
 import type { Intent } from '../foundations/types'
 import { Button } from '../components/Button'
 import { Icon } from '../components/Icon'
@@ -52,7 +53,7 @@ export interface LoadingStateProps extends HTMLAttributes<HTMLDivElement> {
 
 export const LoadingState = forwardRef<HTMLDivElement, LoadingStateProps>(function LoadingState(
   {
-    label = 'Loading',
+    label,
     description,
     variant = 'spinner',
     lines = 3,
@@ -62,6 +63,7 @@ export const LoadingState = forwardRef<HTMLDivElement, LoadingStateProps>(functi
   },
   ref,
 ) {
+  const t = useMessage()
   return (
     <div
       {...rest}
@@ -81,7 +83,7 @@ export const LoadingState = forwardRef<HTMLDivElement, LoadingStateProps>(functi
           ))}
         </div>
       )}
-      <div className="mtc-state-title">{label}</div>
+      <div className="mtc-state-title">{label ?? t('state.loading')}</div>
       {description && <div className="mtc-state-description">{description}</div>}
     </div>
   )
@@ -112,10 +114,10 @@ export interface ErrorStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 't
 
 export const ErrorState = forwardRef<HTMLDivElement, ErrorStateProps>(function ErrorState(
   {
-    title = 'Unable to load',
+    title,
     message,
     onRetry,
-    retryLabel = 'Retry',
+    retryLabel,
     actions,
     compact,
     intent = 'danger',
@@ -124,6 +126,7 @@ export const ErrorState = forwardRef<HTMLDivElement, ErrorStateProps>(function E
   },
   ref,
 ) {
+  const t = useMessage()
   return (
     <div
       {...rest}
@@ -136,11 +139,11 @@ export const ErrorState = forwardRef<HTMLDivElement, ErrorStateProps>(function E
       <div className="mtc-state-icon" aria-hidden="true">
         <Icon name={intent === 'warning' ? 'warning' : 'error'} />
       </div>
-      <div className="mtc-state-title">{title}</div>
+      <div className="mtc-state-title">{title ?? t('state.error.title')}</div>
       <div className="mtc-state-description">{message}</div>
       {(onRetry || actions) && (
         <div className="mtc-state-actions">
-          {onRetry && <Button size="small" onClick={onRetry}>{retryLabel}</Button>}
+          {onRetry && <Button size="small" onClick={onRetry}>{retryLabel ?? t('state.retry')}</Button>}
           {actions}
         </div>
       )}

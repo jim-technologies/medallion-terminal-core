@@ -131,6 +131,46 @@ Hosts may override tokens beneath their own `.mtc-root`. Reduced-motion media
 preferences set toolkit transition durations to zero and constrain animation
 without changing host-global behavior.
 
+### Locale and messages
+
+Every toolkit string a component shows by default (loading and error copy,
+retry, close, expand and collapse labels, the combobox placeholder) comes from
+a keyed catalog. `DesignSystemProvider` takes the locale, an optional time
+zone for dates, and per-key overrides; nested scopes and Dashboards inherit
+what they do not set:
+
+```tsx
+<DesignSystemProvider locale="zh-CN" timeZone="Asia/Shanghai"
+  messages={{ 'state.loading': '正在加载工作区' }}>
+  …
+</DesignSystemProvider>
+```
+
+- Built-in catalogs: `EN_MESSAGES` (the default) and `ZH_CN_MESSAGES`,
+  selected by language (`zh`, `zh-CN` and `zh-Hans` all pick Simplified
+  Chinese). `MessageKey` types the keys; overrides are
+  `Partial<MessageCatalog>`.
+- `useMessage()` returns `t(key, values)` for host components that want the
+  same strings; placeholders are `{name}`.
+- A component prop (`retryLabel`, `placeholder`, `label`) still wins over the
+  catalog.
+- `lang` is set on the provider root only when `locale` is passed, so
+  existing server markup is unchanged.
+
+Formatting uses the platform `Intl` APIs with an explicit locale, so server
+and client agree when the host passes the same values (`useLocale()` returns
+the scope's `locale` and `timeZone`):
+
+| Function | Output (`en`) |
+|---|---|
+| `formatNumber(1234567.8, { locale })` | `1,234,567.8` |
+| `formatBytes(2_300_000, { locale })` | `2.3 MB` (SI units, one decimal) |
+| `formatDateTime(value, { locale, timeZone })` | `Oct 18, 2026, 3:04 PM` |
+| `formatRelativeTime(value, { locale, now })` | `5 minutes ago`, `in 3 days` |
+| `formatDuration(ms, { locale })` | `30 seconds`, `2 minutes` (rounded up) |
+
+Unparseable dates are returned as written, never as "Invalid Date".
+
 ### Intents and sizes
 
 Interactive and status components use the shared `Intent` union:

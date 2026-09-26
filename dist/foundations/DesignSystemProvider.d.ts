@@ -1,4 +1,5 @@
 import { type HTMLAttributes, type ReactNode } from 'react';
+import { type MessageCatalog, type MessageKey, type MessageValues } from './messages';
 import type { Density, PresentationTheme } from './types';
 /** Presentation settings of the nearest scoped design-system root. */
 export interface DesignSystemContextValue {
@@ -6,6 +7,13 @@ export interface DesignSystemContextValue {
     theme: PresentationTheme;
     /** Density of the enclosing `.mtc-root`. */
     density: Density;
+}
+/** Locale settings of the nearest scope. */
+export interface LocaleSettings {
+    /** BCP 47 locale; `en` outside any scope. */
+    locale: string;
+    /** IANA time zone for dates; the runtime's zone when unset. */
+    timeZone?: string;
 }
 /**
  * Reads the nearest `DesignSystemProvider` (or Dashboard) settings. Returns
@@ -20,19 +28,41 @@ export declare function useDesignSystem(): DesignSystemContextValue | null;
  * first client render), so render inline or nothing until it is set.
  */
 export declare function usePortalContainer(): HTMLElement | null;
+/** Locale of the nearest scope, for the `Intl` formatters. */
+export declare function useLocale(): LocaleSettings;
+/** Looks up a toolkit message and fills its `{name}` placeholders. */
+export type Translate = (key: MessageKey, values?: MessageValues) => string;
+/**
+ * The nearest scope's message catalog as a lookup function. Outside a scope
+ * it reads the English defaults.
+ */
+export declare function useMessage(): Translate;
+/** Locale inputs a scope accepts; unset values inherit the enclosing scope. */
+interface LocaleProps {
+    /**
+     * BCP 47 locale. Selects the built-in catalog (`en`, or `zh-CN` for any
+     * Chinese locale) and the formatting locale.
+     */
+    locale?: string;
+    /** IANA time zone for formatted dates, e.g. `UTC`. */
+    timeZone?: string;
+    /** Per-key overrides layered over the built-in catalog. */
+    messages?: Partial<MessageCatalog>;
+}
 /** Props shared by every scoped root. */
-interface ScopeProps {
+interface ScopeProps extends LocaleProps {
     theme: PresentationTheme;
     density: Density;
     children: ReactNode;
 }
 /**
  * Publishes a scope to descendants. Framework roots (Dashboard) use it with
- * their own theme and density.
+ * their own theme and density; locale settings they do not set are
+ * inherited from the enclosing scope.
  */
-export declare function DesignSystemScope({ theme, density, children }: ScopeProps): import("react").JSX.Element;
+export declare function DesignSystemScope({ theme, density, locale, timeZone, messages, children, }: ScopeProps): import("react").JSX.Element;
 /** Props for the scoped design-system root. */
-export interface DesignSystemProviderProps extends HTMLAttributes<HTMLDivElement> {
+export interface DesignSystemProviderProps extends HTMLAttributes<HTMLDivElement>, LocaleProps {
     /** Theme applied only to this subtree. */
     theme?: PresentationTheme;
     /** Control and workbench spacing for this subtree. */

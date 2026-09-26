@@ -9,6 +9,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
+import { useMessage } from '../foundations/DesignSystemProvider'
 import type { Density } from '../foundations/types'
 import { Icon } from '../components/Icon'
 import { cx } from '../components/utils'
@@ -71,6 +72,7 @@ export const Tree = forwardRef<HTMLDivElement, TreeProps>(function Tree(
   ref,
 ) {
   const visible = useMemo(() => flattenVisible(items, expandedIds), [items, expandedIds])
+  const t = useMessage()
   const itemRefs = useRef(new Map<string, HTMLDivElement>())
   const [focusedId, setFocusedId] = useState<string | undefined>(
     selectedId ?? visible.find(entry => !entry.item.disabled)?.item.id,
@@ -177,7 +179,9 @@ export const Tree = forwardRef<HTMLDivElement, TreeProps>(function Tree(
               type="button"
               className="mtc-tree-toggle"
               tabIndex={-1}
-              aria-label={hasChildren ? `${expanded ? 'Collapse' : 'Expand'} ${stringLabel(item.label)}` : undefined}
+              aria-label={hasChildren
+                ? t(expanded ? 'tree.collapse' : 'tree.expand', { label: stringLabel(item.label) })
+                : undefined}
               aria-hidden={!hasChildren || undefined}
               disabled={!hasChildren || item.disabled}
               onClick={(event) => {

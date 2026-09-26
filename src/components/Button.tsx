@@ -4,6 +4,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react'
+import { useMessage } from '../foundations/DesignSystemProvider'
 import type { ComponentSize, Density, Intent } from '../foundations/types'
 import { Icon } from './Icon'
 import { cx } from './utils'
@@ -38,7 +39,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     size = 'medium',
     density,
     loading = false,
-    loadingLabel = 'Working',
+    loadingLabel,
     startIcon,
     endIcon,
     disabled,
@@ -49,6 +50,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref,
 ) {
+  const t = useMessage()
   return (
     <button
       {...rest}
@@ -64,7 +66,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       {loading
         ? <Icon name="spinner" className="mtc-button-spinner" />
         : startIcon}
-      <span className="mtc-button-label">{loading ? loadingLabel : children}</span>
+      <span className="mtc-button-label">{loading ? loadingLabel ?? t('button.working') : children}</span>
       {!loading && endIcon}
     </button>
   )
@@ -84,12 +86,14 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
     icon,
     className,
     loading = false,
-    loadingLabel = 'Working',
+    loadingLabel: loadingLabelProp,
     'aria-label': ariaLabel,
     ...rest
   },
   ref,
 ) {
+  const t = useMessage()
+  const loadingLabel = loadingLabelProp ?? t('button.working')
   return (
     <Button
       {...rest}

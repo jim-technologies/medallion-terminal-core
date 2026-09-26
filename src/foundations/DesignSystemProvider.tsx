@@ -1,6 +1,7 @@
 import {
   createContext,
   forwardRef,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -8,6 +9,14 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react'
+import {
+  EN_MESSAGES,
+  builtInMessages,
+  formatMessage,
+  type MessageCatalog,
+  type MessageKey,
+  type MessageValues,
+} from './messages'
 import type { Density, PresentationTheme } from './types'
 
 /** Presentation settings of the nearest scoped design-system root. */
@@ -25,9 +34,20 @@ interface PortalRegistry {
   update(theme: PresentationTheme, density: Density): void
 }
 
-interface ScopeValue extends DesignSystemContextValue {
-  portal: PortalRegistry
+/** Locale settings of the nearest scope. */
+export interface LocaleSettings {
+  /** BCP 47 locale; `en` outside any scope. */
+  locale: string
+  /** IANA time zone for dates; the runtime's zone when unset. */
+  timeZone?: string
 }
+
+interface ScopeValue extends DesignSystemContextValue, LocaleSettings {
+  portal: PortalRegistry
+  messages: MessageCatalog
+}
+
+const DEFAULT_LOCALE = 'en'
 
 const DesignSystemContext = createContext<ScopeValue | null>(null)
 
@@ -97,8 +117,42 @@ export function usePortalContainer(): HTMLElement | null {
   return host
 }
 
+/** Locale of the nearest scope, for the `Intl` formatters. */
+export function useLocale(): LocaleSettings {
+  const scope = useContext(DesignSystemContext)
+  return { locale: scope?.locale ?? DEFAULT_LOCALE, timeZone: scope?.timeZone }
+}
+
+/** Looks up a toolkit message and fills its `{name}` placeholders. */
+export type Translate = (key: MessageKey, values?: MessageValues) => string
+
+/**
+ * The nearest scope's message catalog as a lookup function. Outside a scope
+ * it reads the English defaults.
+ */
+export function useMessage(): Translate {
+  const messages = useContext(DesignSystemContext)?.messages ?? EN_MESSAGES
+  return useCallback<Translate>(
+    (key, values) => formatMessage(messages[key], values),
+    [messages],
+  )
+}
+
+/** Locale inputs a scope accepts; unset values inherit the enclosing scope. */
+interface LocaleProps {
+  /**
+   * BCP 47 locale. Selects the built-in catalog (`en`, or `zh-CN` for any
+   * Chinese locale) and the formatting locale.
+   */
+  locale?: string
+  /** IANA time zone for formatted dates, e.g. `UTC`. */
+  timeZone?: string
+  /** Per-key overrides layered over the built-in catalog. */
+  messages?: Partial<MessageCatalog>
+}
+
 /** Props shared by every scoped root. */
-interface ScopeProps {
+interface ScopeProps extends LocaleProps {
   theme: PresentationTheme
   density: Density
   children: ReactNode
@@ -106,18 +160,43 @@ interface ScopeProps {
 
 /**
  * Publishes a scope to descendants. Framework roots (Dashboard) use it with
- * their own theme and density.
+ * their own theme and density; locale settings they do not set are
+ * inherited from the enclosing scope.
  */
-export function DesignSystemScope({ theme, density, children }: ScopeProps) {
+export function DesignSystemScope({
+  theme,
+  density,
+  locale,
+  timeZone,
+  messages,
+  children,
+}: ScopeProps) {
+  const parent = useContext(DesignSystemContext)
   // One registry per scope; the host follows later theme/density changes.
   const [portal] = useState(() => createPortalRegistry(theme, density))
   useEffect(() => { portal.update(theme, density) }, [portal, theme, density])
-  const value = useMemo<ScopeValue>(() => ({ theme, density, portal }), [theme, density, portal])
+  const resolvedLocale = locale ?? parent?.locale ?? DEFAULT_LOCALE
+  const resolvedTimeZone = timeZone ?? parent?.timeZone
+  const inheritedMessages = parent?.messages
+  const catalog = useMemo<MessageCatalog>(() => {
+    const base = locale === undefined && inheritedMessages
+      ? inheritedMessages
+      : builtInMessages(resolvedLocale)
+    return messages ? { ...base, ...messages } : base
+  }, [locale, resolvedLocale, inheritedMessages, messages])
+  const value = useMemo<ScopeValue>(() => ({
+    theme,
+    density,
+    portal,
+    locale: resolvedLocale,
+    timeZone: resolvedTimeZone,
+    messages: catalog,
+  }), [theme, density, portal, resolvedLocale, resolvedTimeZone, catalog])
   return <DesignSystemContext.Provider value={value}>{children}</DesignSystemContext.Provider>
 }
 
 /** Props for the scoped design-system root. */
-export interface DesignSystemProviderProps extends HTMLAttributes<HTMLDivElement> {
+export interface DesignSystemProviderProps extends HTMLAttributes<HTMLDivElement>, LocaleProps {
   /** Theme applied only to this subtree. */
   theme?: PresentationTheme
   /** Control and workbench spacing for this subtree. */
@@ -136,6 +215,9 @@ export const DesignSystemProvider = forwardRef<HTMLDivElement, DesignSystemProvi
     {
       theme = 'dark',
       density = 'standard',
+      locale,
+      timeZone,
+      messages,
       className,
       children,
       ...rest
@@ -154,8 +236,17 @@ export const DesignSystemProvider = forwardRef<HTMLDivElement, DesignSystemProvi
         ].filter(Boolean).join(' ')}
         data-theme={theme}
         data-density={density}
+        lang={locale ?? rest.lang}
       >
-        <DesignSystemScope theme={theme} density={density}>{children}</DesignSystemScope>
+        <DesignSystemScope
+          theme={theme}
+          density={density}
+          locale={locale}
+          timeZone={timeZone}
+          messages={messages}
+        >
+          {children}
+        </DesignSystemScope>
       </div>
     )
   },
