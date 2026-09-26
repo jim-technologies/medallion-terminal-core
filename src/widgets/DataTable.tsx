@@ -184,7 +184,9 @@ export function DataTable({ data, options }: WidgetProps) {
     URL.revokeObjectURL(url)
   }
 
-  const gridColumns: DataGridColumn<Record<string, unknown>>[] = columns.map(col => {
+  // The first (label) column takes the spare width so numbers stay next to
+  // their headers instead of drifting to the far edge.
+  const gridColumns: DataGridColumn<Record<string, unknown>>[] = columns.map((col, index) => {
     const fmt = columnFormats[col]
     // Numeric formats right-align so digits line up under tabular-nums.
     const numeric = !!fmt && fmt !== 'sparkline' && /^(currency|percent|bps|compact)(:|$)/.test(fmt)
@@ -192,6 +194,7 @@ export function DataTable({ data, options }: WidgetProps) {
       id: col,
       header: labels[col] ?? col,
       width: fmt === 'sparkline' ? 112 : 144,
+      grow: index === 0,
       align: numeric || (!fmt && rows.some(row => typeof row[col] === 'number')) ? 'end' : 'start',
       cell: row => <TableCell value={row[col]} format={fmt} heat={heatRanges[col]} />,
     }

@@ -77,7 +77,7 @@ export const MarkdownBody: Story = {
         '- Watch `2s10s` into the auction',
         '- Funding stayed [calm](https://example.com/funding)',
         '',
-        '<img src=x onerror="alert(1)">[unsafe](javascript:alert(1))',
+        '<span onclick="alert(1)">Inline HTML keeps its text, not its handlers.</span> [unsafe](javascript:alert(1))',
       ].join('\n'),
     },
   },
@@ -86,7 +86,7 @@ export const MarkdownBody: Story = {
     await expect(await canvas.findByText('the curve steepened')).toHaveProperty('tagName', 'STRONG')
     await expect(canvas.getByText('2s10s')).toHaveProperty('tagName', 'CODE')
     await expect(canvas.getByRole('link', { name: 'calm' })).toHaveAttribute('href', 'https://example.com/funding')
-    await expect(canvasElement.querySelector('[onerror]')).toBeNull()
+    await expect(canvas.getByText('Inline HTML keeps its text, not its handlers.')).not.toHaveAttribute('onclick')
     await expect(canvasElement.querySelector('a[href^="javascript"]')).toBeNull()
   },
 }
