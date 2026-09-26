@@ -47,6 +47,7 @@ const SHAPE_LABEL: Record<string, string> = {
   SHAPE_GEO:          'geo',
   SHAPE_MEDIA:        'media',
   SHAPE_CONVERSATION: 'conversation',
+  SHAPE_JSON: 'json',
 }
 
 export function Catalog() {

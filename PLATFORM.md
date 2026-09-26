@@ -28,6 +28,7 @@ http://localhost:5173/?template=/examples/platform-foundation.json&backend=http:
 | Operational geography | `geo_map` | `GeoPayload` / GeoJSON | Geospatial query, authorized features, host-controlled MapLibre style and tiles |
 | Photo/video libraries | `media_gallery` | `MediaPayload` | Authorized media query, thumbnails/transcodes, albums, indexing, signed originals, HTTP Range |
 | Channels, direct messages, and AI transcripts | `conversation` | `ConversationPayload` | Authorized history, search, pagination, realtime delivery, message writes, moderation, and retention |
+| Raw documents (run payloads, decoded messages) | `json` | `DataResponse.json` (`google.protobuf.Value`) | Decoding with its own descriptors, redaction, size limits; the frontend renders the document verbatim |
 | Code repositories | `code_browser` | `RepositoryPayload` | Git/ref resolution, tree listing, content retrieval, truncation, raw URLs |
 | Record workspaces / business apps | `record_grid`, `record_board`, `record_calendar`, `record_form` | `RecordSetPayload` | Schemas, records, links, views, policy, formulas, revisions, automations |
 | Files and data repositories | `file_browser`, `table`, charts | `TablePayload` and existing analytical shapes | Object storage, tabular query, previews, signed downloads, HTTP Range |

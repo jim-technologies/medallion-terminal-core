@@ -23,6 +23,7 @@ const SHAPE_CASE = {
   SHAPE_GEO: 'geo',
   SHAPE_MEDIA: 'media',
   SHAPE_CONVERSATION: 'conversation',
+  SHAPE_JSON: 'json',
 }
 const TERMINAL_STATUSES = new Set([
   'ACTION_STATUS_OK',

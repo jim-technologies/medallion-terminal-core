@@ -65,6 +65,13 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   copy for the kind while the server's reason, code and request id sit in a
   Details disclosure. A 403 now reads "You don't have access" with
   `payroll:read scope required` under Details instead of "HTTP 403".
+- **`DataResponse.json` (`google.protobuf.Value`, field 21) and
+  `SHAPE_JSON`.** A source can return any JSON document for the `json`
+  widget, such as the ProtoJSON of a message the backend decoded with its own
+  descriptors (workflow run payloads, for example); `useDataSource` unwraps
+  the case like every other one. Additive: `buf breaking` passes against
+  0.5.2. The reference backend serves a `platform_manifest` json source, so
+  the conformance check covers the new case (17 sources).
 - **Access, session and freshness states.** `AccessDeniedState`
   (`resource` names the scope and whom to ask), `SignedOutState`
   (`onSignIn`), `SessionExpiredState` (`onContinue` renews without leaving the

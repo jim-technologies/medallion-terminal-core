@@ -315,6 +315,7 @@ or by requiring all widgets to use `source_id` or `inline`.
 | `record_form` | `RecordSetPayload` | Context-driven create/edit/detail form with required-field and capability checks |
 | `geo_map` | `GeoPayload`, GeoJSON, or rows with `lat`/`lon` | MapLibre point/line/polygon overlays, auto-fit, semantic status, and selection |
 | `media_gallery` | `{ items: [{ id, title, kind, url, thumbnail_url?, captured_at?, duration_seconds?, collection_ids?, context? }], collections?, total? }` | Photo/video timeline, search, type/favorite/collection filters, metadata, context selection, and native keyboard-driven viewer |
+| `json` | Any JSON value, as `DataResponse.json` (`google.protobuf.Value`, shape `SHAPE_JSON`) or inline | Raw inspection; rendered verbatim, never interpreted |
 | `embed` | `{ url, label?, sandbox? }` | Image / iframe |
 | `trade` | (form) | Calls `SubmitAction`, watches via `WatchAction` |
 | `action_form` | `options.fields` or `{ fields }` | Generic typed form for approvals, admin operations, and advanced order attributes |

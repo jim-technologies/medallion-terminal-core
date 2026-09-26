@@ -154,6 +154,10 @@ Proto-defined in `proto/medallion/terminal/v1/shapes.proto`. Widgets accept both
 - Record widgets: `{workspace_id, table_id, primary_field, fields, records,
   views?, capabilities?}`. Formula/lookup/rollup/timestamp fields are
   backend-computed and read-only; updates/deletes carry `revision`.
+- `json`: any JSON value in `DataResponse.json` (`google.protobuf.Value`,
+  source shape `SHAPE_JSON`), for example the ProtoJSON of a message the
+  backend decoded with its own descriptors. Rendered verbatim, never
+  interpreted.
 
 ## Cross-widget interaction
 

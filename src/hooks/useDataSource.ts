@@ -63,6 +63,7 @@ const DATA_RESPONSE_CASES = new Set([
   'geo',
   'media',
   'conversation',
+  'json',
 ])
 
 export function unwrapDataResponse(raw: unknown): unknown {

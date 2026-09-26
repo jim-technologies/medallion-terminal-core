@@ -131,6 +131,15 @@ const SOURCES = [
     ],
   },
   {
+    id: 'platform_manifest',
+    name: 'Platform manifest',
+    description: 'A plain JSON document for raw inspection in the json widget.',
+    shape: 'SHAPE_JSON',
+    streamable: false,
+    tags: ['json', 'platform', 'demo'],
+    params: [],
+  },
+  {
     id: 'btc_spot',
     name: 'BTC spot price',
     description: 'Last trade price for BTC/USD. Streams a fresh tick every second.',
@@ -1179,6 +1188,14 @@ const HANDLERS = {
   platform_repository: p => getPlatformRepository(p),
   business_records:    p => getBusinessRecords(p),
   workspace_conversation: p => getWorkspaceConversation(p),
+  platform_manifest: () => ({
+    json: {
+      service: 'medallion-ref-backend',
+      sources: SOURCES.map(source => ({ id: source.id, shape: source.shape })),
+      streaming: true,
+      actions: ['SubmitAction', 'WatchAction'],
+    },
+  }),
   btc_spot:      () => getBtcSpot(),
   btc_candles:   p => getBtcCandles(parseInt(p.limit ?? '60', 10)),
   btc_orderbook: () => getBtcOrderbook(),
