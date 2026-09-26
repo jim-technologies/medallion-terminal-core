@@ -311,7 +311,12 @@ function StandaloneFrame(props: FrameProps) {
   )
 
   return (
-    <div className="mtc-shell" data-inspector={inspector ? 'open' : undefined} data-rail={nav ? (collapsed ? 'collapsed' : 'expanded') : 'none'}>
+    <div
+      className="mtc-shell"
+      data-inspector={inspector ? 'open' : undefined}
+      data-operations={props.operations?.length ? 'true' : undefined}
+      data-rail={nav ? (collapsed ? 'collapsed' : 'expanded') : 'none'}
+    >
       <a className="mtc-shell-skip" href="#mtc-main" onClick={event => {
         event.preventDefault()
         mainRef.current?.focus()

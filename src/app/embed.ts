@@ -25,7 +25,8 @@ export function parseEmbedHostMessage(data: unknown): EmbedHostMessage | null {
   const message = data as Record<string, unknown>
   if (message.version !== 1) return null
   if (message.type === 'mtc:navigate') {
-    return typeof message.path === 'string' && message.path.startsWith('/') && !message.path.startsWith('//')
+    // An app path: `//host` and `/\host` are protocol-relative to a URL parser.
+    return typeof message.path === 'string' && /^\/(?![/\\])/.test(message.path)
       ? { type: 'mtc:navigate', version: 1, path: message.path }
       : null
   }

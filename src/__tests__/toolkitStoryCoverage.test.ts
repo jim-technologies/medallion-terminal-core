@@ -19,6 +19,7 @@ const storyFiles = [
   '../objects/Explore.stories.tsx',
   '../files/Files.stories.tsx',
   '../app/ProductShell.stories.tsx',
+  '../app/Resource.stories.tsx',
   '../objects/ObjectPage.stories.tsx',
   '../workbench/Workbench.stories.tsx',
   '../workbench/Compositions.stories.tsx',
@@ -94,6 +95,7 @@ const publicComponents = [
   'CodeView',
   'ProductShell',
   'OperationsTray',
+  'ResourceCacheProvider',
   'ObjectPage',
 ]
 

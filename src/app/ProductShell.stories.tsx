@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { expect, fn, userEvent, within } from 'storybook/test'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Button, Icon, StatusBadge, TypeGlyph, type CommandGroup } from '../components'
 import { ObjectHeader } from '../objects'
 import { DataGrid, EmptyState, PageHeader, PropertyList, type NavRailSection } from '../workbench'
 import {
   OperationsTray,
   ProductShell,
+  RENEW_LEAD_MS,
   createMemoryRouter,
   useRoute,
   useRouter,
@@ -92,9 +93,9 @@ function Pages() {
         <DataGrid
           label={`Files in ${bucket}`}
           columns={[
-            { id: 'name', header: 'Name', width: 280, grow: true },
-            { id: 'size', header: 'Size', kind: 'integer', width: 120 },
-            { id: 'modified', header: 'Modified', kind: 'date', width: 160 },
+            { id: 'name', header: 'Name', grow: true },
+            { id: 'size', header: 'Size', kind: 'bytes' },
+            { id: 'modified', header: 'Modified', kind: 'date' },
           ]}
           rows={FILES}
           rowKey={row => row.name}
@@ -144,7 +145,7 @@ function StorageShell({ initialPath = '/b/finance', operations = OPERATIONS, ses
         <div className="grid gap-3 p-3">
           <ObjectHeader compact type={{ label: 'File', icon: 'file', color: 'cyan' }} title="q3-forecast.csv" objectId="finance/q3-forecast.csv" />
           <PropertyList items={[
-            { id: 'size', label: 'Size', value: 48_200, kind: 'integer' },
+            { id: 'size', label: 'Size', value: 48_200, kind: 'bytes' },
             { id: 'type', label: 'Type', value: 'text/csv' },
             { id: 'modified', label: 'Modified', value: '2026-09-24', kind: 'date' },
           ]}
@@ -186,6 +187,34 @@ function expiringPort(): SessionPort {
 export const SessionExpired: Story = {
   name: 'Session expired',
   render: () => <StorageShell session={useMemo(expiringPort, [])} operations={[]} />,
+}
+
+const renewed = fn()
+
+// The token expires a minute and a second after the page loads: the shell
+// renews it about a second later (a minute ahead of expiry), not at once.
+export const RenewsBeforeExpiry: Story = {
+  name: 'Renews before expiry',
+  render: () => (
+    <StorageShell
+      operations={[]}
+      session={useMemo<SessionPort>(() => ({
+        load: async () => ({ authenticated: true, displayName: 'Jamie Kim', expiresAt: Date.now() + RENEW_LEAD_MS + 1_000 }),
+        renew: async () => {
+          renewed()
+          return { authenticated: true, displayName: 'Jamie Kim', expiresAt: Date.now() + 5 * 60_000 }
+        },
+        signIn: fn(),
+      }), [])}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    renewed.mockClear()
+    await within(canvasElement).findByRole('grid', { name: 'Files in finance' })
+    await expect(renewed).not.toHaveBeenCalled()
+    await waitFor(() => expect(renewed).toHaveBeenCalledTimes(1), { timeout: 4_000 })
+    await expect(within(canvasElement).queryByRole('dialog')).toBeNull()
+  },
 }
 
 const signIn = fn()

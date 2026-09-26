@@ -36,6 +36,11 @@ export interface OperationsTrayProps {
   onClearFinished?: () => void
   /** Controlled expansion. */
   open?: boolean
+  /**
+   * Initial expansion when uncontrolled: open on larger screens, collapsed
+   * to its summary on phones (720 px and narrower), where the sheet would
+   * cover the page.
+   */
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
   /**
@@ -55,9 +60,17 @@ const STATUS_ICON: Record<OperationStatus, IconName> = {
 
 const FINISHED = new Set<OperationStatus>(['succeeded', 'failed', 'cancelled'])
 
+// Matches the stylesheet's bottom-sheet breakpoint.
+const PHONE_QUERY = '(max-width: 720px)'
+
+function opensExpanded(): boolean {
+  return typeof window === 'undefined' || typeof window.matchMedia !== 'function' || !window.matchMedia(PHONE_QUERY).matches
+}
+
 /**
  * Long-running operations in a tray at the bottom end of the screen (a
- * bottom sheet on phones): a summary header that expands to the list, with
+ * bottom sheet on phones, collapsed to its summary until opened): a summary
+ * header that expands to the list, with
  * progress, Cancel and Retry. Status changes are announced politely. The
  * tray only renders while there are operations, and it never polls: the
  * host feeds it.
@@ -70,14 +83,15 @@ export function OperationsTray({
   onDismiss,
   onClearFinished,
   open: controlledOpen,
-  defaultOpen = true,
+  defaultOpen,
   onOpenChange,
   placement = 'floating',
 }: OperationsTrayProps) {
   const t = useMessage()
   const listId = useId()
   const container = usePortalContainer()
-  const [open, setOpen] = useControllableState({ value: controlledOpen, defaultValue: defaultOpen, onChange: onOpenChange })
+  const [initiallyOpen] = useState(() => defaultOpen ?? opensExpanded())
+  const [open, setOpen] = useControllableState({ value: controlledOpen, defaultValue: initiallyOpen, onChange: onOpenChange })
   const previous = useRef(new Map<string, OperationStatus>())
   const [announcement, setAnnouncement] = useState('')
   // Announce each operation that finished since the last change, once.

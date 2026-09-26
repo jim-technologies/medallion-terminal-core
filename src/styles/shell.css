@@ -104,6 +104,9 @@
     border-left: 0;
     box-shadow: var(--mtc-elevation-3);
   }
+  /* The operations tray's summary bar sits under the inspector sheet, so
+     neither covers the other until the tray is opened. */
+  .mtc-root .mtc-shell[data-operations="true"] .mtc-shell-inspector { bottom: calc(1.5rem + 2.25rem); }
 }
 
 .mtc-root .mtc-operations-tray {
@@ -151,4 +154,6 @@
 
 @media (max-width: 720px) {
   .mtc-root .mtc-operations-tray[data-placement="floating"] { right: 0; bottom: 0; left: 0; width: 100%; border-radius: var(--mtc-radius-lg) var(--mtc-radius-lg) 0 0; }
+  /* Above the shell's status bar, which stays visible. */
+  .mtc-root:has(.mtc-shell-status) .mtc-operations-tray[data-placement="floating"] { bottom: 1.5rem; }
 }

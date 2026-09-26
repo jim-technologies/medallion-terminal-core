@@ -34,6 +34,14 @@ describe('matchPath and buildPath', () => {
     expect(matchRoutes(routes, '/b/finance/q3')).toEqual({ id: 'browse', params: { bucket: 'finance', path: 'q3' } })
     expect(matchRoutes(routes, '/elsewhere')).toBeNull()
   })
+
+  it('treats a malformed percent escape as no match, never a URIError', () => {
+    const routes = { file: '/b/:bucket/f/*path', browse: '/b/:bucket/*path' } as const
+    expect(() => matchRoutes(routes, '/b/fin%E0/f/x')).not.toThrow()
+    expect(matchRoutes(routes, '/b/fin%E0/f/x')).toBeNull()
+    expect(matchPath('/b/:bucket/*path', '/b/finance/q3/%E0%A4%A')).toBeNull()
+    expect(matchPath('/b/:bucket/*path', '/b/finance/%E0%A4%A4')).toEqual({ bucket: 'finance', path: '\u0924' })
+  })
 })
 
 describe('routers', () => {
@@ -163,6 +171,7 @@ describe('embed channel', () => {
   it('validates host messages', () => {
     expect(parseEmbedHostMessage({ type: 'mtc:navigate', version: 1, path: '/b/finance' })).toEqual({ type: 'mtc:navigate', version: 1, path: '/b/finance' })
     expect(parseEmbedHostMessage({ type: 'mtc:navigate', version: 1, path: '//evil.example' })).toBeNull()
+    expect(parseEmbedHostMessage({ type: 'mtc:navigate', version: 1, path: '/\\evil.example' })).toBeNull()
     expect(parseEmbedHostMessage({ type: 'mtc:navigate', version: 2, path: '/' })).toBeNull()
     expect(parseEmbedHostMessage({ type: 'mtc:init', version: 1, theme: 'neon', locale: 'zh-CN' }))
       .toEqual({ type: 'mtc:init', version: 1, theme: undefined, locale: 'zh-CN', timeZone: undefined })

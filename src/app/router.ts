@@ -132,10 +132,20 @@ type ParamName<S extends string> = S extends `:${infer Name}` ? Name : S extends
  */
 export type RouteParams<P extends string> = { [K in ParamName<Segments<P>>]: string }
 
+// A segment's decoded value, or null for a malformed escape such as `%E0`.
+function decodeSegment(segment: string): string | null {
+  try {
+    return decodeURIComponent(segment)
+  } catch {
+    return null
+  }
+}
+
 /**
  * Matches a pattern against a pathname. `:name` matches one segment, `*name`
  * the rest (possibly empty). Parameters are URL-decoded. Returns null when
- * the path does not match.
+ * the path does not match, including a parameter with a malformed percent
+ * escape (a bad deep link is "not found", never a thrown error).
  */
 export function matchPath<P extends string>(pattern: P, pathname: string): RouteParams<P> | null {
   const patternParts = pattern.split('/').filter(Boolean)
@@ -144,13 +154,18 @@ export function matchPath<P extends string>(pattern: P, pathname: string): Route
   for (let index = 0; index < patternParts.length; index++) {
     const part = patternParts[index]!
     if (part.startsWith('*')) {
-      params[part.slice(1) || 'splat'] = pathParts.slice(index).map(decodeURIComponent).join('/')
+      const rest = pathParts.slice(index).map(decodeSegment)
+      if (rest.some(segment => segment === null)) return null
+      params[part.slice(1) || 'splat'] = rest.join('/')
       return params as RouteParams<P>
     }
     const value = pathParts[index]
     if (value === undefined) return null
-    if (part.startsWith(':')) params[part.slice(1)] = decodeURIComponent(value)
-    else if (part !== value) return null
+    if (part.startsWith(':')) {
+      const decoded = decodeSegment(value)
+      if (decoded === null) return null
+      params[part.slice(1)] = decoded
+    } else if (part !== value) return null
   }
   return pathParts.length === patternParts.length ? params as RouteParams<P> : null
 }
