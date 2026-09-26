@@ -598,9 +598,11 @@ const FILE_COLUMNS: DataGridColumn<FileRow>[] = [
     id: 'name',
     header: 'Name',
     accessor: row => row.name,
+    // Files carry their extension; a folder's icon names its kind, since
+    // the grid has no Kind column.
     cell: row => (
       <span className="flex min-w-0 items-center gap-2">
-        <Icon name={FILE_ICONS[row.kind]} />
+        <Icon name={FILE_ICONS[row.kind]} label={row.kind === 'folder' ? FILE_KINDS.folder : undefined} />
         <span className="truncate">{row.name}</span>
       </span>
     ),

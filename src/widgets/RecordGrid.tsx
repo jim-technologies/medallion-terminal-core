@@ -156,22 +156,24 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
   const columns: DataGridColumn<WorkRecordData>[] = fields.map(field => ({
     id: field.key,
     header: field.label,
-    // Content-sized; dates and Yes/No keep their width like numbers do, and
-    // the record's title field takes the spare width and gives way last.
-    kind: recordColumnKind(field.type),
+    // Content-sized; dates, Yes/No and chips keep their width like numbers
+    // do, and the record's title field takes the spare width and gives way
+    // last.
+    kind: recordColumnKind(field),
     grow: field.key === set.primaryField,
     primary: field.key === set.primaryField,
     accessor: record => record.values[field.key],
     align: field.type === 'number' || field.type === 'currency' || field.type === 'percent' ? 'end' : 'start',
     cell: record => {
       const editing = edit?.record.id === record.id && edit.field.key === field.key
-      if (!editing) return <RecordValue field={field} value={record.values[field.key]} />
+      if (!editing) return <RecordValue field={field} value={record.values[field.key]} context="grid" />
       return (
         <span className="mtc-data-grid-editor">
           <RecordFieldInput
             field={field}
             value={edit.value}
             onChange={value => setEdit(current => current ? { ...current, value } : current)}
+            label={field.label}
             compact
             autoFocus
             disabled={mutation.submitting}
@@ -247,6 +249,7 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
         }}
         onRowActivate={selectRecord}
         onCellEdit={canInlineEdit ? startEdit : undefined}
+        editingCell={edit ? { rowKey: edit.record.id, columnId: edit.field.key } : null}
         sort={sort ? { columnId: sort.field, direction: sort.descending ? 'descending' : 'ascending' } : null}
         onSortChange={next => {
           setSort(next ? { field: next.columnId, descending: next.direction === 'descending' } : null)
@@ -284,9 +287,15 @@ export function RecordGrid({ data, options, widgetId }: WidgetProps) {
   )
 }
 
-function recordColumnKind(type: string): PropertyKind | undefined {
+// The kind a column declares to the grid, for how it fits: the value still
+// renders through RecordValue. Choices and lists render as chips, so they
+// keep their width like enum values and lists; other fields are text.
+function recordColumnKind(field: RecordFieldData): PropertyKind | undefined {
+  const { type } = field
   if (type === 'date') return 'date'
   if (type === 'datetime' || type === 'created_at' || type === 'updated_at') return 'datetime'
   if (type === 'boolean') return 'boolean'
+  if (type === 'multi_select' || field.allowMultiple) return 'list'
+  if (type === 'single_select' || ((type === 'user' || type === 'link') && field.choices.length > 0)) return 'enum'
   return undefined
 }

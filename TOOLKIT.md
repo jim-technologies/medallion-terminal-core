@@ -338,20 +338,33 @@ items accept `kind` and `format`.
   sized to its content (its header and the rows in view, up to 360 px) and
   fitted to the grid: spare width goes to the `grow` column. When the grid
   is too narrow, its text columns (plain text, ids and code, links to URLs
-  and email, and custom `cell` content) give way, the primary column last
-  and none below its `minWidth` (72 px, 96 for the primary column), but
-  only if that makes every column fit. When even those minimums leave the
-  grid too wide, every column keeps its content width and the grid scrolls
-  sideways, with pinned columns in place. Numbers, dates, Yes/No and chips
-  (enum values, lists, object links) never give way. A value is never cut
-  silently: whatever is narrower than its content (a text column that gave
-  way, a set or resized `width`, text past 360 px) ends in an ellipsis, a
-  pointer gets the whole value as the cell's title, keyboard focus shows it
-  whole over the cell (Escape hides it), and the cell's accessible name is
-  always the whole value. Custom content sits in a one-line box that ends
-  in an ellipsis; a flex layout inside it needs `min-width: 0` and a
-  truncating label. `rowHref` puts one link per row
-  on the primary column; `onNavigate` routes a plain click. Rows have one
+  and email, and custom `cell` content unless the column declares a
+  `kind`) give way, the primary column last and none below its `minWidth`
+  (72 px, 96 for the primary column), but only if that makes every column
+  fit. When even those minimums leave the grid too wide, every column
+  keeps its content width and the grid scrolls sideways, with pinned
+  columns in place. Columns of numbers, dates, Yes/No and chips (the
+  `enum`, `list` and `link` kinds) never give way. What is still narrower
+  than its content (a text column that gave way, a set or resized `width`,
+  content past 360 px) is shortened like this:
+  - typed values end in an ellipsis, chip and badge labels included;
+  - custom content sits in a one-line box that ends inline content (text,
+    chips) in an ellipsis; a block or flex layout inside the box is cut
+    without one unless it truncates its own label (`min-width: 0` and
+    `text-overflow: ellipsis`);
+  - a list shows its first items (two in a grid) and a "+N" chip whose
+    title names the rest; those items are not part of the cell's text.
+
+  A cell cut short gives a pointer its text as the cell's title and shows
+  its content unclipped over the cell on keyboard focus (Escape hides it).
+  The cell's accessible name is its text: the whole value, except for the
+  items behind a "+N". `editingCell` names the cell whose inline editor is
+  open: its content fills the cell outside the one-line box (lay the field
+  and its actions out in `.mtc-data-grid-editor`, where a one-line field
+  takes the row's height less 4 px and focus rings stay inside each
+  control), its controls hold the tab stop and their own keys, and focus
+  returns to the cell when it closes. `rowHref` puts one link per row on
+  the primary column; `onNavigate` routes a plain click. Rows have one
   fixed height, so above 200 rows (`virtualize="auto"`) only the rows in
   view render: ten thousand rows stay under 1,500 DOM nodes.
   `onEndReached` fires once per page as the last rows scroll into view

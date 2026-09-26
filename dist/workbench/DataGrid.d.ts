@@ -29,9 +29,12 @@ export interface DataGridColumn<Row> {
     tones?: Readonly<Record<string, StatusTone>>;
     /**
      * Custom cell content. Keep it one line; rows have a fixed height. It sits
-     * in a one-line box that ends in an ellipsis when the column is narrower
-     * than it; a flex layout inside needs `min-width: 0` and a truncating
-     * label to do the same.
+     * in a one-line box that ends inline content (text, chips) in an ellipsis
+     * when the column is narrower than it. A block or flex layout inside the
+     * box is cut without an ellipsis unless it truncates its own label
+     * (`min-width: 0` and `text-overflow: ellipsis`); the cell's title and the
+     * focus tip still show the whole text. A column with a custom cell gives
+     * way like text unless it declares a `kind`.
      */
     cell?: (row: Row, context: DataGridCellContext) => ReactNode;
     /**
@@ -39,8 +42,8 @@ export interface DataGridColumn<Row> {
      * and the rows in view, at most 360 px). When the grid is narrower than
      * its columns, text columns give way, ending their values in an ellipsis,
      * but only if that lets every column fit; otherwise every column keeps
-     * its width and the grid scrolls sideways. Numbers, dates, Yes/No and
-     * chips (enum values, lists, object links) never give way.
+     * its width and the grid scrolls sideways. Columns of numbers, dates,
+     * Yes/No and chips (the `enum`, `list` and `link` kinds) never give way.
      */
     width?: number;
     /**
@@ -100,6 +103,18 @@ export interface DataGridProps<Row> {
     contextActions?: (row: Row) => readonly MenuItem[];
     /** F2 on a cell, or a double-click on it: rename or edit it. */
     onCellEdit?: (row: Row, columnId: string) => void;
+    /**
+     * The cell whose inline editor is open (by row key and column id). Its
+     * custom content fills the cell instead of sitting in the one-line box
+     * (or the row link); wrap the editor in `.mtc-data-grid-editor` to lay
+     * its field and actions out in a row that fits the row height. The
+     * controls in it hold the tab stop and their own keys, and focus returns
+     * to the cell when the editor closes.
+     */
+    editingCell?: {
+        rowKey: string;
+        columnId: string;
+    } | null;
     /** Called once per page when the last rows come into view. */
     onEndReached?: () => void;
     /** Known total, when larger than the rows loaded so far. */
@@ -134,4 +149,4 @@ export interface DataGridProps<Row> {
  * stay under 1,500 DOM nodes. Cells render typed values with
  * `PropertyValue` unless a column supplies its own content.
  */
-export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, onEndReached, totalRows, loading, empty, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;
+export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, editingCell, onEndReached, totalRows, loading, empty, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;

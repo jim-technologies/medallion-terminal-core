@@ -25,6 +25,11 @@
 //                   a named colour such as 'black' or 'white', a gradient.
 //                   Frames use --mtc-surface / --mtc-border so every theme
 //                   previews on its own canvas
+//
+// A story gets only the story-frame rule, except the page templates
+// (src/templates/): they are the reference for product pages, so they get
+// every rule, the 11 px floor and sentence-case labels included, as well as
+// the story-frame rule (DESIGN.md, Typography, Scope).
 
 export const TYPE_SCALE = new Set([11, 12, 13, 14, 16, 20, 24])
 
@@ -45,11 +50,16 @@ const storyRules = {
 
 export const isStory = relative => /\.stories\.[cm]?[jt]sx?$/.test(relative)
 
+/** Whether a repository-relative path is a page template. */
+export const isTemplate = relative => relative.startsWith('src/templates/')
+
 /** Every rule a file's text breaks, with its line. */
 export function violations(relative, text) {
   const found = []
   const lines = text.split('\n')
-  const active = isStory(relative) ? storyRules : rules
+  const active = !isStory(relative) ? rules
+    : isTemplate(relative) ? { ...rules, ...storyRules }
+      : storyRules
   lines.forEach((line, index) => {
     // A custom-property declaration in the token stylesheet *is* the token.
     const tokenDeclaration = relative === 'src/index.css'

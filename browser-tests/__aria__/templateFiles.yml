@@ -82,10 +82,12 @@
         - columnheader "Updated"
         - columnheader "Owner"
     - rowgroup:
-      - row "2026 — — Sep 24, 2026, 2:12 AM Finance team":
-        - gridcell "2026":
-          - link "2026":
+      - row "Folder 2026 — — Sep 24, 2026, 2:12 AM Finance team":
+        - gridcell "Folder 2026":
+          - link "Folder 2026":
             - /url: "#/files/finance/2026"
+            - img "Folder"
+            - text: "2026"
         - gridcell "—"
         - gridcell "—"
         - gridcell "Sep 24, 2026, 2:12 AM":

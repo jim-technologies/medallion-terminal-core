@@ -166,8 +166,8 @@ export interface FitColumn {
  * give way, lowest tier first, each in proportion to how far it can (never
  * below its minimum), but only if that makes every column fit: when even
  * their minimums leave the grid too wide, every column keeps its natural
- * width and the grid scrolls, so no value is cut short on a grid that has
- * to scroll anyway. Numbers, dates, chips and set widths never shrink.
+ * width and the grid scrolls, so no column gives way on a grid that has to
+ * scroll anyway. Numbers, dates, chips and set widths never shrink.
  */
 export function fitColumnWidths(columns: readonly FitColumn[], available: number): number[] {
   const widths = columns.map(column => Math.max(0, Math.round(column.width)))

@@ -1,4 +1,6 @@
+import { Tag } from '../components/Feedback'
 import { Icon } from '../components/Icon'
+import { useMessage } from '../foundations/DesignSystemProvider'
 import type { StatusTone } from '../foundations/types'
 import { PropertyValue } from '../objects/PropertyValue'
 import { formatCompact, formatCurrency, formatPercent } from './format'
@@ -13,6 +15,11 @@ import { safeUrl } from './textNormalize'
 interface RecordValueProps {
   field: RecordFieldData
   value: unknown
+  /**
+   * `grid` keeps a list on one line (a fixed-height row): its first two
+   * chips, then "+N". `panel` (the default) wraps up to four.
+   */
+  context?: 'panel' | 'grid'
 }
 
 function choiceValue(value: unknown): string {
@@ -56,9 +63,12 @@ function toneOf(color?: string): StatusTone {
 // A choice renders like any enum value: a filled chip, or a status badge
 // when its choice carries a tone.
 function Chip({ field, value }: RecordValueProps) {
-  const choice = choiceFor(field, value)
-  const label = choice?.label ?? recordValueLabel(value)
-  return <PropertyValue value={label} kind="enum" tones={{ [label]: toneOf(choice?.color) }} context="grid" />
+  const label = chipLabel(field, value)
+  return <PropertyValue value={label} kind="enum" tones={{ [label]: toneOf(choiceFor(field, value)?.color) }} context="grid" />
+}
+
+function chipLabel(field: RecordFieldData, value: unknown): string {
+  return choiceFor(field, value)?.label ?? recordValueLabel(value)
 }
 
 function formatRecordNumber(field: RecordFieldData, value: number): string {
@@ -75,10 +85,34 @@ function formatRecordNumber(field: RecordFieldData, value: number): string {
 
 // Shared schema-aware value renderer used by grid, board, calendar, and form.
 // It renders only semantic tones; arbitrary backend strings never become CSS.
-export function RecordValue({ field, value }: RecordValueProps) {
+export function RecordValue({ field, value, context = 'panel' }: RecordValueProps) {
+  const t = useMessage()
   if (value == null || value === '') return <span className="mtc-value-empty">—</span>
 
   if (field.type === 'boolean') return <PropertyValue value={value === true || value === 'true'} kind="boolean" context="grid" />
+
+  // A list (multi-select, several users or links) is one chip per entry,
+  // never one chip of joined ids.
+  if (Array.isArray(value)) {
+    if (value.length === 0) return <span className="mtc-value-empty">—</span>
+    const shown = value.slice(0, context === 'grid' ? 2 : 4)
+    const rest = value.slice(shown.length)
+    return (
+      <span className="mtc-value-list" data-context={context}>
+        {shown.map((entry, index) => (
+          <Chip key={`${recordValueLabel(entry)}:${index}`} field={field} value={entry} />
+        ))}
+        {rest.length > 0 && (
+          <Tag
+            className="mtc-value-chip mtc-value-more"
+            title={t('value.moreTitle', { count: rest.length, items: rest.map(entry => chipLabel(field, entry)).join(', ') })}
+          >
+            {t('value.more', { count: rest.length })}
+          </Tag>
+        )}
+      </span>
+    )
+  }
 
   if (
     field.type === 'single_select' ||
@@ -86,18 +120,6 @@ export function RecordValue({ field, value }: RecordValueProps) {
     (field.type === 'link' && !!choiceFor(field, value))
   ) {
     return <Chip field={field} value={value} />
-  }
-
-  if (Array.isArray(value)) {
-    if (value.length === 0) return <span className="mtc-value-empty">—</span>
-    return (
-      <span className="flex items-center gap-1 flex-wrap">
-        {value.slice(0, 4).map((entry, index) => (
-          <Chip key={`${recordValueLabel(entry)}:${index}`} field={field} value={entry} />
-        ))}
-        {value.length > 4 && <span className="mtc-value-secondary">+{value.length - 4}</span>}
-      </span>
-    )
   }
 
   if (typeof value === 'number') {
@@ -135,6 +157,8 @@ export interface RecordFieldInputProps {
   field: RecordFieldData
   value: unknown
   onChange: (value: unknown) => void
+  /** Accessible name when no visible label wraps the control (a grid cell). */
+  label?: string
   disabled?: boolean
   compact?: boolean
   autoFocus?: boolean
@@ -178,6 +202,7 @@ export function RecordFieldInput({
   field,
   value,
   onChange,
+  label,
   disabled,
   compact,
   autoFocus,
@@ -203,6 +228,7 @@ export function RecordFieldInput({
           onChange={event => onChange(event.target.checked)}
           disabled={disabled}
           autoFocus={autoFocus}
+          aria-label={label}
           onKeyDown={event => keyHandler(event, onCommit, onCancel)}
           className="w-4 h-4"
         />
@@ -219,6 +245,7 @@ export function RecordFieldInput({
         onChange={event => onChange(event.target.value || null)}
         disabled={disabled}
         autoFocus={autoFocus}
+        aria-label={label}
         onKeyDown={event => keyHandler(event, onCommit, onCancel)}
         className={INPUT_CLASS}
       >
@@ -240,6 +267,7 @@ export function RecordFieldInput({
         onChange={event => onChange([...event.target.selectedOptions].map(option => option.value))}
         disabled={disabled}
         autoFocus={autoFocus}
+        aria-label={label}
         onKeyDown={event => keyHandler(event, onCommit, onCancel)}
         className={`${INPUT_CLASS} ${compact ? 'min-h-16' : 'min-h-24'}`}
       >
@@ -257,6 +285,7 @@ export function RecordFieldInput({
         onChange={event => onChange(event.target.value)}
         disabled={disabled}
         autoFocus={autoFocus}
+        aria-label={label}
         onKeyDown={event => keyHandler(event, onCommit, onCancel)}
         rows={compact ? 2 : 4}
         className={`${INPUT_CLASS} resize-y`}
@@ -293,6 +322,7 @@ export function RecordFieldInput({
       }}
       disabled={disabled}
       autoFocus={autoFocus}
+      aria-label={label}
       onKeyDown={event => keyHandler(event, onCommit, onCancel)}
       className={INPUT_CLASS}
     />

@@ -52,10 +52,11 @@
   background: inherit;
   white-space: nowrap;
 }
-/* A value never ends in a silent cut: text columns only give way when
-   every column then fits, and whatever is narrower than its content ends in
-   an ellipsis (custom content in its one-line box, typed values in their
-   own), with the whole value in the cell's title and in the focus tip. */
+/* Text columns only give way when every column then fits. A typed value
+   narrower than its content ends in an ellipsis in its own box, and custom
+   content in its one-line box when that content is inline; a block or flex
+   layout inside it truncates its own label or is cut without one. Either
+   way the cell's title and the focus tip carry the whole text. */
 .mtc-root .mtc-data-grid-cell > *,
 .mtc-root .mtc-data-grid-row-link > * { min-width: 0; max-width: 100%; }
 .mtc-root .mtc-data-grid-cell-text { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -139,8 +140,14 @@
   color: var(--mtc-muted);
   font-size: var(--mtc-font-size-sm);
 }
+/* An inline editor (the content of the grid's `editingCell`, outside the
+   one-line box) fills its cell. A one-line control takes the row's height
+   less 2 px on each side, and focus rings inside the editor are drawn
+   within each control, so the cell's clip never cuts them. */
 .mtc-root .mtc-data-grid-editor { display: flex; min-width: 0; flex: 1 1 auto; align-items: center; gap: var(--mtc-space-1); }
 .mtc-root .mtc-data-grid-editor > :first-child { min-width: 0; flex: 1 1 auto; }
+.mtc-root .mtc-data-grid-editor > :is(input, select:not([multiple])) { box-sizing: border-box; height: calc(var(--mtc-grid-row-height) - 4px); padding-block: 0; }
+.mtc-root .mtc-data-grid-editor :focus-visible { outline-offset: -2px; }
 .mtc-root .mtc-data-grid-menu-layer { position: fixed; z-index: 85; top: 0; left: 0; }
 
 /* The `table` widget on DataGrid: heat cells, signed values and the tick

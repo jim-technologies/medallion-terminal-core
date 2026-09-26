@@ -74,9 +74,12 @@ export interface DataGridColumn<Row> {
   tones?: Readonly<Record<string, StatusTone>>
   /**
    * Custom cell content. Keep it one line; rows have a fixed height. It sits
-   * in a one-line box that ends in an ellipsis when the column is narrower
-   * than it; a flex layout inside needs `min-width: 0` and a truncating
-   * label to do the same.
+   * in a one-line box that ends inline content (text, chips) in an ellipsis
+   * when the column is narrower than it. A block or flex layout inside the
+   * box is cut without an ellipsis unless it truncates its own label
+   * (`min-width: 0` and `text-overflow: ellipsis`); the cell's title and the
+   * focus tip still show the whole text. A column with a custom cell gives
+   * way like text unless it declares a `kind`.
    */
   cell?: (row: Row, context: DataGridCellContext) => ReactNode
   /**
@@ -84,8 +87,8 @@ export interface DataGridColumn<Row> {
    * and the rows in view, at most 360 px). When the grid is narrower than
    * its columns, text columns give way, ending their values in an ellipsis,
    * but only if that lets every column fit; otherwise every column keeps
-   * its width and the grid scrolls sideways. Numbers, dates, Yes/No and
-   * chips (enum values, lists, object links) never give way.
+   * its width and the grid scrolls sideways. Columns of numbers, dates,
+   * Yes/No and chips (the `enum`, `list` and `link` kinds) never give way.
    */
   width?: number
   /**
@@ -146,6 +149,15 @@ export interface DataGridProps<Row> {
   contextActions?: (row: Row) => readonly MenuItem[]
   /** F2 on a cell, or a double-click on it: rename or edit it. */
   onCellEdit?: (row: Row, columnId: string) => void
+  /**
+   * The cell whose inline editor is open (by row key and column id). Its
+   * custom content fills the cell instead of sitting in the one-line box
+   * (or the row link); wrap the editor in `.mtc-data-grid-editor` to lay
+   * its field and actions out in a row that fits the row height. The
+   * controls in it hold the tab stop and their own keys, and focus returns
+   * to the cell when the editor closes.
+   */
+  editingCell?: { rowKey: string; columnId: string } | null
   /** Called once per page when the last rows come into view. */
   onEndReached?: () => void
   /** Known total, when larger than the rows loaded so far. */
@@ -236,6 +248,10 @@ function hasVisibleFocus(element: HTMLElement): boolean {
   }
 }
 
+function isInEditingCell(target: EventTarget | null): boolean {
+  return target instanceof Element && target.closest('[data-editing="true"]') !== null
+}
+
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false
   if (target.dataset.gridSelect === 'true') return false
@@ -270,6 +286,7 @@ export function DataGrid<Row>({
   onNavigate,
   contextActions,
   onCellEdit,
+  editingCell,
   onEndReached,
   totalRows,
   loading = false,
@@ -503,6 +520,21 @@ export function DataGrid<Row>({
       ?.focus({ preventScroll: true })
   })
 
+  // When an inline editor closes, focus returns to its cell, unless it has
+  // already moved on to something else on the page.
+  const editingKey = editingCell ? `${editingCell.rowKey}\u0000${editingCell.columnId}` : null
+  const lastEditingKey = useRef(editingKey)
+  useEffect(() => {
+    const closed = lastEditingKey.current !== null && editingKey === null
+    lastEditingKey.current = editingKey
+    if (!closed) return
+    const focused = document.activeElement
+    if (focused && focused !== document.body && !viewportRef.current?.contains(focused)) return
+    viewportRef.current
+      ?.querySelector<HTMLElement>(`[data-cell="${active.row}:${active.column}"]`)
+      ?.focus({ preventScroll: true })
+  }, [editingKey, active.row, active.column])
+
   // Ask for the next page once per page when its last rows are in view.
   useEffect(() => {
     if (!onEndReached || loading || displayRows.length === 0) return
@@ -571,7 +603,8 @@ export function DataGrid<Row>({
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (isEditableTarget(event.target) || menu) return
+    // An open editor's controls (its field, Save, Cancel) keep their keys.
+    if (isEditableTarget(event.target) || menu || isInEditingCell(event.target)) return
     if (event.key === 'Escape' && valueTip) {
       event.stopPropagation()
       setValueTip(null)
@@ -711,8 +744,9 @@ export function DataGrid<Row>({
     tip.style.left = `${Math.max(8, overflow > 0 ? valueTip.left - overflow : valueTip.left)}px`
   }, [valueTip])
 
-  const cellContent = (column: DataGridColumn<Row>, row: Row, rowIndex: number, selected: boolean): ReactNode => {
+  const cellContent = (column: DataGridColumn<Row>, row: Row, rowIndex: number, selected: boolean, editing = false): ReactNode => {
     const value = cellValue(column, row)
+    if (column.cell && editing) return column.cell(row, { value, rowIndex, selected })
     return column.cell
       ? <span className="mtc-data-grid-cell-text">{column.cell(row, { value, rowIndex, selected })}</span>
       : (
@@ -866,7 +900,9 @@ export function DataGrid<Row>({
                   const { column } = entry
                   const resolved = resolvePropertyKind(cellValue(column, row), column.kind, column.format)
                   const numeric = column.align === 'end' || (!column.align && !column.cell && isNumericKind(resolved.kind))
-                  const content = cellContent(column, row, rowIndex, selected)
+                  const editing = editingCell?.rowKey === key && editingCell.columnId === column.id
+                  const content = cellContent(column, row, rowIndex, selected, editing)
+                  const props = cellProps(rowIndex, columnIndex)
                   return (
                     <div
                       key={column.id}
@@ -874,9 +910,15 @@ export function DataGrid<Row>({
                       className="mtc-data-grid-cell"
                       data-column-id={column.id}
                       data-align={numeric ? 'end' : 'start'}
-                      {...cellProps(rowIndex, columnIndex)}
+                      {...props}
+                      // While its editor is open the cell is not a tab stop
+                      // (the editor's controls are) and hovering it adds no
+                      // title.
+                      data-editing={editing || undefined}
+                      tabIndex={editing ? undefined : props.tabIndex}
+                      onPointerEnter={editing ? undefined : props.onPointerEnter}
                     >
-                      {href && columnIndex === primaryIndex ? (
+                      {href && columnIndex === primaryIndex && !editing ? (
                         <a
                           href={href}
                           tabIndex={-1}

@@ -14,12 +14,14 @@
 //
 // Stories, tests, fixtures and generated code are exempt from the other
 // rules: fixtures may use literal values, and generated code is not
-// authored. Stories still get the story-frame rule.
+// authored. Stories still get the story-frame rule, and the page templates
+// (src/templates/*.stories.tsx), the reference for product pages, get every
+// rule besides it.
 //
 // Scope of the type rules (DESIGN.md, Typography): the 11 px floor and
-// sentence-case labels govern what ships as Medallion, so every source file
-// and every example built on the toolkit (the custom widget, the readiness
-// workspace) is held to them. The clone showcases under examples/clones are
+// sentence-case labels govern what ships as Medallion, so every source file,
+// the page templates and every example built on the toolkit (the custom
+// widget, the readiness workspace) are held to them. The clone showcases under examples/clones are
 // exempt on purpose: each reproduces another product's density at the sizes
 // that product ships, from its own authored stylesheet rather than the
 // --mtc-* tokens, so the toolkit can be judged against it. They are

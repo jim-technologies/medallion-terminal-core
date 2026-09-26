@@ -1,0 +1,62 @@
+- searchbox "Search Work items"
+- button "New"
+- grid "Work items":
+  - rowgroup:
+    - row "Work item Customer Stage Owner Value Due Priority":
+      - columnheader "Work item"
+      - columnheader "Customer"
+      - columnheader "Stage"
+      - columnheader "Owner"
+      - columnheader "Value"
+      - columnheader "Due"
+      - columnheader "Priority"
+  - rowgroup:
+    - row "Alder website launch Save Work item Cancel edit Alder Studio Done Mina Patel $19,000 Jul 15, 2026 Normal":
+      - gridcell "Alder website launch Save Work item Cancel edit":
+        - textbox "Work item": Alder website launch
+        - button "Save Work item"
+        - button "Cancel edit"
+      - gridcell "Alder Studio"
+      - gridcell "Done"
+      - gridcell "Mina Patel"
+      - gridcell "$19,000"
+      - gridcell "Jul 15, 2026":
+        - time: Jul 15, 2026
+      - gridcell "Normal"
+    - row "Northstar onboarding Northstar Foods Delivery Mina Patel $48,000 Jul 18, 2026 High":
+      - gridcell "Northstar onboarding"
+      - gridcell "Northstar Foods"
+      - gridcell "Delivery"
+      - gridcell "Mina Patel"
+      - gridcell "$48,000"
+      - gridcell "Jul 18, 2026":
+        - time: Jul 18, 2026
+      - gridcell "High"
+    - row "Summit process audit Summit Works Blocked Jules Chen $28,500 Jul 20, 2026 Urgent":
+      - gridcell "Summit process audit"
+      - gridcell "Summit Works"
+      - gridcell "Blocked"
+      - gridcell "Jules Chen"
+      - gridcell "$28,500"
+      - gridcell "Jul 20, 2026":
+        - time: Jul 20, 2026
+      - gridcell "Urgent"
+    - row "Harbor annual renewal Harbor & Co. Review Jules Chen $36,000 Jul 21, 2026 Urgent":
+      - gridcell "Harbor annual renewal"
+      - gridcell "Harbor & Co."
+      - gridcell "Review"
+      - gridcell "Jules Chen"
+      - gridcell "$36,000"
+      - gridcell "Jul 21, 2026":
+        - time: Jul 21, 2026
+      - gridcell "Urgent"
+    - row "Beacon inventory rollout Beacon Retail Pipeline Noah Williams $72,000 Aug 4, 2026 High":
+      - gridcell "Beacon inventory rollout"
+      - gridcell "Beacon Retail"
+      - gridcell "Pipeline"
+      - gridcell "Noah Williams"
+      - gridcell "$72,000"
+      - gridcell "Aug 4, 2026":
+        - time: Aug 4, 2026
+      - gridcell "High"
+- text: 5 shown · All work

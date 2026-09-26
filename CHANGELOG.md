@@ -50,9 +50,10 @@ from toolkit exports are the reference for product pages.
   of 160 px each. Pass `width` for a fixed column; `minWidth` is now also
   how far a content-sized text column gives way.
 - **Cell and chip markup gained one wrapper each.** Custom `cell` content
-  renders inside `span.mtc-data-grid-cell-text`, `Badge` children inside
-  `span.mtc-badge-label` and `Tag` children inside `span.mtc-tag-label`, so
-  each can end in an ellipsis. A host selector that expected the content as
+  renders inside `span.mtc-data-grid-cell-text` (except in the cell named
+  by `editingCell`), `Badge` children inside `span.mtc-badge-label` and
+  `Tag` children inside `span.mtc-tag-label`, so each can end in an
+  ellipsis. A host selector that expected the content as
   a direct child of the cell or chip needs the wrapper in its path.
 - **`OperationsTray` starts collapsed on phones** (720 px and narrower)
   unless `defaultOpen` is given.
@@ -81,7 +82,9 @@ from toolkit exports are the reference for product pages.
   focus, typed cells, client or server sort, drag and Alt+arrow column
   resize, pinned leading columns, single or multi selection with ranges,
   row links (`rowHref`, `onNavigate`), row activation, context actions
-  (right-click, Menu key, Shift+F10), F2 editing, `onEndReached` paging
+  (right-click, Menu key, Shift+F10), F2 editing (`editingCell` names the
+  open editor: it fills its cell, its controls hold the tab stop and their
+  own keys, and focus returns to the cell when it closes), `onEndReached` paging
   with `totalRows`, skeleton, loading-more and empty rows, and `rowProps`
   data hooks. Above 200 rows only the rows in view render; a browser test
   holds ten thousand rows under 1,500 DOM nodes at every scroll offset and
@@ -196,8 +199,10 @@ from toolkit exports are the reference for product pages.
   are unchanged.
 - **`record_grid` on `DataGrid`**: one tab stop instead of a button per
   cell, `aria-sort` headers, Enter selects the record, F2 or a double-click
-  edits a cell in place (Enter saves, Escape cancels), toolkit search,
-  view and New controls, and `Pagination` for client pages.
+  edits a cell in place (Enter saves, Escape cancels; the editor fills the
+  cell, its field is named after the column, and focus returns to the cell
+  when it closes), toolkit search, view and New controls, and `Pagination`
+  for client pages.
 - The widgets' `CursorPager` renders the toolkit `Pagination` in cursor
   mode.
 - `DataGrid` double-click edits the cell when `onCellEdit` is set.
@@ -285,18 +290,26 @@ from toolkit exports are the reference for product pages.
   rule) and rejects uppercase and letter-spaced labels as well.
 - The browser suite addresses the page templates by their exact story ids.
 
-- **`DataGrid` never cuts a value silently.** Text columns give way only
-  when that lets every column fit; when even their minimums leave the grid
-  too wide (a phone, a pane beside an inspector), every column keeps its
-  content width and the grid scrolls sideways, so a grid never both
-  truncates and scrolls. Chips (enum values, lists, object links) keep
-  their width like numbers, dates and Yes/No. Whatever is still narrower
-  than its content (a text column that gave way, a set or resized width)
-  ends in an ellipsis: custom `cell` content in its one-line box, chip and
-  badge labels (the status dot keeps its size), list chips before the "+N"
-  chip, and numbers, dates and Yes/No under a set width. The whole value
-  stays reachable: the cell's title for a pointer, shown whole over the
-  cell on keyboard focus (Escape hides it), and the cell's accessible name.
+- **`DataGrid` text gives way only when every column then fits;
+  otherwise the grid scrolls.** When even the text columns' minimums leave
+  the grid too wide (a phone, a pane beside an inspector), every column
+  keeps its content width and the grid scrolls sideways, so a grid never
+  both shortens text and scrolls. Text columns are plain text, ids, code,
+  URL and email links, and custom `cell` content unless its column
+  declares a `kind`; columns of numbers, dates, Yes/No and chips (the
+  `enum`, `list` and `link` kinds) keep their width. What is still
+  narrower than its content (a text column that gave way, a set or resized
+  width, content past 360 px) is shortened like this: typed values end in
+  an ellipsis (chip and badge labels too, the status dot keeping its size,
+  and list chips before the "+N" chip); custom `cell` content ends in one
+  when it is inline in its one-line box (text, chips), while a block or
+  flex layout inside that box is cut without one unless it truncates its
+  own label. A list shows its first items (two in a grid) and a "+N" chip
+  whose title names the rest; those items are not in the cell's text. A
+  cell cut short gives a pointer its text as the cell's title and shows
+  its content unclipped over the cell on keyboard focus (Escape hides it);
+  the cell's accessible name is its text, the whole value except for the
+  items behind a "+N".
 - The Storage template's Buckets grid drops its Usage column, which
   repeated Used as a percentage, and the Files template collapses the rail
   (its folder tree navigates) and drops the Kind column (the icon carries
@@ -310,6 +323,43 @@ from toolkit exports are the reference for product pages.
   `text-overflow: ellipsis`, and on a status dot or icon squeezed to
   nothing; at 1440 px no template value may be cut short at all. The
   column-fit unit test now holds the scroll-instead case.
+- **`record_grid` chips stay whole on one line.** Choice columns (single
+  select, users and links with choices) declare the `enum` kind and list
+  columns (multi-select, or any field that allows several values) the
+  `list` kind, so they keep their width instead of giving way like text
+  (Stage and Priority no longer read "Deli…" and "Urg…" beside a wide
+  title column). A list in a grid row shows two chips and a "+N" chip
+  whose title names the rest, on one line: it used to show up to four
+  chips that wrapped onto a second line inside the 32 px row, cut at its
+  top and bottom with no ellipsis or title. Board cards and forms still
+  show up to four, now also with a titled "+N" chip. Several users or
+  links are one chip each, by their choice labels, instead of one chip of
+  the joined ids ("jules, noah").
+- **The `record_grid` inline editor fills its cell again.** The 0.7.0 grid
+  put it in the one-line ellipsis box, where it shrank to its content (210
+  of 780 px) and the box clipped its focus ring. `DataGrid`'s new
+  `editingCell` renders the open editor outside that box, one-line fields
+  take the row height less 2 px on each side in every density, and focus
+  rings inside the editor are drawn within each control. While it is open
+  the editor's controls are the grid's tab stop, Enter and Space on Save or
+  Cancel press them instead of activating or selecting the row, and when
+  it closes (Enter, Escape, Save or Cancel) focus returns to the cell. The
+  editor's field is named after its column for assistive technology.
+- The Files template names a folder's kind to assistive technology ("Folder
+  2026") through its icon, now that the grid has no Kind column; files
+  keep their extension.
+- The style guard holds the page templates (`src/templates/`, stories
+  included) to every production rule, the 11 px floor and sentence-case
+  labels among them, as `DESIGN.md` says; other stories still get only the
+  story-frame rule.
+- The browser suite's grid layout check also fails on a value cut at its
+  cell's top or bottom (chips wrapped onto a second line, content taller
+  than the row) and ignores visually hidden text; it now covers the
+  `record_grid` stories at seven widths from 1440 px to 390 px, with no
+  chip label cut short. A new test measures the inline editor against its
+  cell and its focus rings against the visible area in the standard and
+  compact densities. New baselines: `widgetRecordGridEditing` and
+  `widgetRecordGridLists` (dark and light).
 - The style guard catches CSS `font-size` and `font` declarations and
   inline or SVG `fontSize` values under 11 px, and Tailwind `text-[Nrem]`
   sizes; its rules live in `scripts/style-token-rules.mjs` with unit tests.

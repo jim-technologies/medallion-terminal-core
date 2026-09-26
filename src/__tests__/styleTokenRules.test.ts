@@ -53,4 +53,20 @@ describe('style-token rules: type sizes', () => {
     expect(rulesOf('src/widgets/Sample.stories.tsx', "const s = { fontSize: 9, background: '#fff' }"))
       .toEqual(["story-frame:background: '#fff'"])
   })
+
+  it('holds the page templates to the 11 px floor and sentence-case labels', () => {
+    const tsx = [
+      '<p className="text-[9px] uppercase">Owner</p>',
+      "<span style={{ fontSize: 10, letterSpacing: '0.08em' }} className=\"tracking-wider\">Kind</span>",
+      "const frame = { background: 'white' }",
+    ].join('\n')
+    expect(rulesOf('src/templates/Pages.stories.tsx', tsx)).toEqual([
+      'font-size:text-[9px]',
+      'micro-label:uppercase',
+      'font-size-css:fontSize: 10',
+      'micro-label:tracking-wider',
+      "story-frame:background: 'white'",
+    ])
+    expect(rulesOf('src/templates/Pages.stories.tsx', '<p className="text-[length:var(--mtc-font-size-xs)]">Owner</p>')).toEqual([])
+  })
 })

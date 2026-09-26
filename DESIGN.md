@@ -131,7 +131,9 @@ for status.
 - **Scope.** The floor, the scale and sentence-case labels govern
   everything that ships as Medallion: `src/`, the widgets, the page
   templates and the examples built on the toolkit (`examples/widgets`,
-  `examples/readiness`). The clone showcases under `examples/clones` are
+  `examples/readiness`). The style guard (`scripts/check-style-tokens.mjs`)
+  enforces them there, the page templates' stories included; other
+  stories are catalog frames and get only its story-frame rule. The clone showcases under `examples/clones` are
   exempt on purpose: each reproduces another product's density at the sizes
   that product ships, from its own stylesheet rather than the `--mtc-*`
   tokens, so the toolkit can be judged against it. They are fidelity
@@ -234,7 +236,7 @@ snapshots.
 | `CodeView` | Source, logs and raw JSON | Monospace 12 px on a 20 px line, muted line numbers that are never copied, wrap with a hanging indent, highlighted lines as selection plus accent bar |
 | `ProductShell` | The frame of every product UI | 44 px top bar (product mark, scope, centred search with `Ctrl K`, account), 232 px rail (48 collapsed, a drawer on phones), page, optional 360 px inspector, 24 px status bar; flat, one border between regions |
 | `OperationsTray` | Uploads, ingests and other long work | A raised tray at the bottom end (a sheet on phones), summary header, status icon per row, a 4 px accent progress bar, Cancel, Retry and Dismiss |
-| `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, columns sized to their content and fitted to the width (text gives way with an ellipsis only when every column then fits, otherwise the grid scrolls; numbers, dates and chips never give way; a value cut short keeps its title and shows whole on keyboard focus), selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
+| `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, columns sized to their content and fitted to the width (text, and custom cells without a kind, gives way only when every column then fits, otherwise the grid scrolls; number, date, Yes/No and chip columns never give way; a shortened typed value or inline custom content ends in an ellipsis, a list shows two chips and a "+N" whose title names the rest, and a cell cut short keeps its text as a title and shows unclipped on keyboard focus), selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
 
 **Typed values.** `PropertyValue` decides presentation from `kind` or
 `format`: strings clamp to two lines in panels and one in grids; `id` and

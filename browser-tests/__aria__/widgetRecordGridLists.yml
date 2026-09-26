@@ -1,0 +1,65 @@
+- searchbox "Search Work items"
+- button "New"
+- grid "Work items":
+  - rowgroup:
+    - row "Work item Tags Reviewers Customer Stage Value Due Priority":
+      - columnheader "Work item"
+      - columnheader "Tags"
+      - columnheader "Reviewers"
+      - columnheader "Customer"
+      - columnheader "Stage"
+      - columnheader "Value"
+      - columnheader "Due"
+      - columnheader "Priority"
+  - rowgroup:
+    - row "Alder website launch — — Alder Studio Done $19,000 Jul 15, 2026 Normal":
+      - gridcell "Alder website launch"
+      - gridcell "—"
+      - gridcell "—"
+      - gridcell "Alder Studio"
+      - gridcell "Done"
+      - gridcell "$19,000"
+      - gridcell "Jul 15, 2026":
+        - time: Jul 15, 2026
+      - gridcell "Normal"
+    - row "Northstar onboarding Finance Board review +1 Jules Chen Noah Williams Northstar Foods Delivery $48,000 Jul 18, 2026 High":
+      - gridcell "Northstar onboarding"
+      - gridcell "Finance Board review +1"
+      - gridcell "Jules Chen Noah Williams"
+      - gridcell "Northstar Foods"
+      - gridcell "Delivery"
+      - gridcell "$48,000"
+      - gridcell "Jul 18, 2026":
+        - time: Jul 18, 2026
+      - gridcell "High"
+    - row "Summit process audit Legal hold Finance Noah Williams Summit Works Blocked $28,500 Jul 20, 2026 Urgent":
+      - gridcell "Summit process audit"
+      - gridcell "Legal hold Finance"
+      - gridcell "Noah Williams"
+      - gridcell "Summit Works"
+      - gridcell "Blocked"
+      - gridcell "$28,500"
+      - gridcell "Jul 20, 2026":
+        - time: Jul 20, 2026
+      - gridcell "Urgent"
+    - row "Harbor annual renewal Renewal Mina Patel Harbor & Co. Review $36,000 Jul 21, 2026 Urgent":
+      - gridcell "Harbor annual renewal"
+      - gridcell "Renewal"
+      - gridcell "Mina Patel"
+      - gridcell "Harbor & Co."
+      - gridcell "Review"
+      - gridcell "$36,000"
+      - gridcell "Jul 21, 2026":
+        - time: Jul 21, 2026
+      - gridcell "Urgent"
+    - row "Beacon inventory rollout Finance Board review +2 Mina Patel Jules Chen +1 Beacon Retail Pipeline $72,000 Aug 4, 2026 High":
+      - gridcell "Beacon inventory rollout"
+      - gridcell "Finance Board review +2"
+      - gridcell "Mina Patel Jules Chen +1"
+      - gridcell "Beacon Retail"
+      - gridcell "Pipeline"
+      - gridcell "$72,000"
+      - gridcell "Aug 4, 2026":
+        - time: Aug 4, 2026
+      - gridcell "High"
+- text: 5 shown · All work

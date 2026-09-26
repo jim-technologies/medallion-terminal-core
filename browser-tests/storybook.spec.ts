@@ -127,6 +127,8 @@ const toolkitStories = {
 const widgetStories = {
   widgetFileBrowser: 'widgets-filebrowser--host-extensions',
   widgetRecordGrid: 'widgets-records-recordgrid--default',
+  widgetRecordGridEditing: 'widgets-records-recordgrid--inline-editing',
+  widgetRecordGridLists: 'widgets-records-recordgrid--lists-and-chips',
   widgetTable: 'widgets-datatable--watchlist-fit',
   widgetObjectView: 'widgets-objectview--customer-object',
   widgetText: 'widgets-text--markdown-body',
@@ -760,9 +762,12 @@ test('The flagship watchlist shows every column whole at 1440 px', async ({ page
 // Every grid value on the page is whole or ends in an ellipsis. A box that
 // clips its content passes only as a block container with `text-overflow:
 // ellipsis` whose overflowing content is inline (an ellipsis is never drawn
-// for a block child); anything else is a silent cut. A status dot or icon
-// squeezed to nothing counts as collapsed. Measured from layout, so a cut
-// that looks tidy in a screenshot still fails.
+// for a block child); anything else is a silent cut. A row has one line, so
+// anything that leaves its cell at the top or bottom (chips wrapped onto a
+// second line, content taller than the row) or is clipped vertically is cut
+// too. A status dot or icon squeezed to nothing counts as collapsed.
+// Measured from layout, so a cut that looks tidy in a screenshot still
+// fails.
 async function gridValueFit(page: Page): Promise<{ cut: string[]; ellipsised: string[]; collapsed: string[] }> {
   return page.evaluate(() => {
     const blockContainer = new Set(['block', 'inline-block', 'flow-root', 'list-item', 'table-cell'])
@@ -771,12 +776,19 @@ async function gridValueFit(page: Page): Promise<{ cut: string[]; ellipsised: st
     const collapsed = new Set<string>()
     for (const cell of document.querySelectorAll<HTMLElement>('#storybook-root [role="gridcell"], #storybook-root [role="columnheader"]')) {
       const label = `${cell.closest('[role="grid"]')?.getAttribute('aria-label')}: ${(cell.textContent ?? '').trim()}`
+      const bounds = cell.getBoundingClientRect()
       for (const element of [cell, ...cell.querySelectorAll('*')]) {
-        // Not rendered (inside a hidden pane): nothing to cut.
-        if (element.getClientRects().length === 0) continue
+        // Not rendered (inside a hidden pane), or text for assistive
+        // technology only: nothing to cut.
+        if (element.getClientRects().length === 0 || element.closest('.mtc-visually-hidden')) continue
         const style = getComputedStyle(element)
         const box = element.getBoundingClientRect()
         if ((element instanceof SVGSVGElement || element.classList.contains('mtc-badge-dot')) && box.width < 1) collapsed.add(label)
+        if (box.top < bounds.top - 0.5 || box.bottom > bounds.bottom + 0.5
+          || (style.overflowY !== 'visible' && element.scrollHeight > element.clientHeight + 1)) {
+          cut.add(label)
+          continue
+        }
         if (style.overflowX === 'visible' || element.scrollWidth <= element.clientWidth + 1) continue
         const blockSpill = [...element.children].some(child => (
           !getComputedStyle(child).display.startsWith('inline') && child.getBoundingClientRect().right > box.right + 1
@@ -833,6 +845,120 @@ test('DataGrid ends a value it cuts short in an ellipsis and keeps it reachable'
   await page.keyboard.press('ArrowRight')
   await expect(page.locator('.mtc-data-grid-value-tip')).toHaveText('Signed by the audit committee')
 })
+
+// A record grid keeps every row on one line at any width: chips never wrap
+// or give way (their columns keep their width and the grid scrolls), a list
+// shows two chips and "+N", whose title names the rest, and text gives way
+// only with an ellipsis.
+test('RecordGrid keeps list and choice chips whole on one line at every width', async ({ page }) => {
+  test.slow()
+  for (const id of [stories.widgetRecordGrid, stories.widgetRecordGridLists]) {
+    for (const width of [1440, 1100, 1000, 940, 880, 600, 390]) {
+      await page.setViewportSize({ width, height: 800 })
+      await openStory(page, id)
+      const fit = await gridValueFit(page)
+      expect(fit.cut, `${id} at ${width} px: cut values`).toEqual([])
+      expect(fit.collapsed, `${id} at ${width} px: collapsed marks`).toEqual([])
+      const shortChips = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>(
+        '#storybook-root [role="gridcell"] :is(.mtc-tag-label, .mtc-badge-label)',
+      )].filter(label => label.scrollWidth > label.clientWidth + 1).map(label => label.textContent))
+      expect(shortChips, `${id} at ${width} px: chips cut short`).toEqual([])
+    }
+  }
+  const grid = page.getByRole('grid', { name: 'Work items' })
+  const beacon = grid.getByRole('row', { name: /^Beacon inventory rollout/ })
+  await expect(beacon.locator('.mtc-value-more')).toHaveText(['+2', '+1'])
+  await expect(beacon.locator('.mtc-value-more').first()).toHaveAttribute('title', '2 more: Legal hold, Renewal')
+  await expect(beacon.locator('.mtc-value-more').last()).toHaveAttribute('title', '1 more: Noah Williams')
+})
+
+// The inline editor fills the cell it edits, and every focus ring in it is
+// drawn where the cell's clip leaves it visible, in each row density. Its
+// controls are the grid's tab stop while it is open, keep their own keys,
+// and hand focus back to the cell when it closes.
+for (const density of ['standard', 'compact'] as const) {
+  test(`RecordGrid's inline editor fills its cell and keeps its focus rings in view (${density})`, async ({ page }) => {
+    const root = await openStory(page, stories.widgetRecordGridEditing, { density })
+    const grid = root.getByRole('grid', { name: 'Work items' })
+    const input = grid.getByRole('textbox', { name: 'Work item' })
+    await expect(input).toBeFocused()
+    await expect(grid.locator('[tabindex="0"]')).toHaveCount(0)
+    const measure = () => page.evaluate(() => {
+      const focused = document.activeElement as HTMLElement
+      const editor = focused.closest<HTMLElement>('.mtc-data-grid-editor')!
+      const cell = editor.closest<HTMLElement>('[role="gridcell"]')!
+      // An element's clip edge is its padding box.
+      const paddingBox = (element: Element) => {
+        const rect = element.getBoundingClientRect()
+        const left = rect.left + element.clientLeft
+        const top = rect.top + element.clientTop
+        return { left, top, right: left + element.clientWidth, bottom: top + element.clientHeight }
+      }
+      const cellStyle = getComputedStyle(cell)
+      const cellBox = paddingBox(cell)
+      const content = {
+        left: cellBox.left + parseFloat(cellStyle.paddingLeft),
+        right: cellBox.right - parseFloat(cellStyle.paddingRight),
+      }
+      const editorBox = editor.getBoundingClientRect()
+      const control = editor.firstElementChild!.getBoundingClientRect()
+      const buttons = [...editor.querySelectorAll(':scope > button')].map(button => button.getBoundingClientRect())
+      // The ring's outer edge: its width plus its offset from the border box
+      // (a negative offset draws it inside the control).
+      const style = getComputedStyle(focused)
+      const reach = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset)
+      const box = focused.getBoundingClientRect()
+      const ring = { left: box.left - reach, top: box.top - reach, right: box.right + reach, bottom: box.bottom + reach }
+      // What shows: every clipping box from the control up to the grid.
+      const view = { left: -Infinity, top: -Infinity, right: Infinity, bottom: Infinity }
+      for (let element = focused.parentElement; element; element = element.parentElement) {
+        const clip = getComputedStyle(element)
+        if (clip.overflowX !== 'visible' || clip.overflowY !== 'visible') {
+          const edge = paddingBox(element)
+          view.left = Math.max(view.left, edge.left)
+          view.top = Math.max(view.top, edge.top)
+          view.right = Math.min(view.right, edge.right)
+          view.bottom = Math.min(view.bottom, edge.bottom)
+        }
+        if (element.getAttribute('role') === 'grid') break
+      }
+      return {
+        outline: style.outlineStyle,
+        editorFillsCell: Math.abs(editorBox.left - content.left) <= 1 && Math.abs(editorBox.right - content.right) <= 1,
+        controlTakesTheRest: Math.abs(control.right + parseFloat(getComputedStyle(editor).columnGap) - buttons[0]!.left) <= 1,
+        buttonsAtTheEnd: Math.abs(buttons.at(-1)!.right - content.right) <= 1,
+        ringInView: ring.left >= view.left - 0.5 && ring.top >= view.top - 0.5
+          && ring.right <= view.right + 0.5 && ring.bottom <= view.bottom + 0.5,
+        widths: { cell: content.right - content.left, editor: editorBox.width, control: control.width },
+        ring,
+        view,
+      }
+    })
+    const editing = await measure()
+    expect(editing, JSON.stringify(editing)).toMatchObject({
+      outline: 'solid', editorFillsCell: true, controlTakesTheRest: true, buttonsAtTheEnd: true, ringInView: true,
+    })
+    // Save and Cancel, reached with the keyboard, show their rings whole too.
+    for (const name of ['Save Work item', 'Cancel edit']) {
+      await page.keyboard.press('Tab')
+      await expect(root.getByRole('button', { name })).toBeFocused()
+      const button = await measure()
+      expect(button, `${name}: ${JSON.stringify(button)}`).toMatchObject({ outline: 'solid', ringInView: true })
+    }
+    // Enter presses Cancel (the grid leaves the editor's keys to it), and
+    // focus returns to the cell, as it does after Escape in the field.
+    const cell = grid.locator('[data-cell="0:0"]')
+    await page.keyboard.press('Enter')
+    await expect(input).toHaveCount(0)
+    await expect(cell).toBeFocused()
+    await cell.dblclick()
+    await expect(input).toBeFocused()
+    await page.keyboard.press('Escape')
+    await expect(input).toHaveCount(0)
+    await expect(cell).toBeFocused()
+    await expect(grid.locator('[tabindex="0"]')).toHaveCount(1)
+  })
+}
 
 test('DataGrid keeps ten thousand rows under 1,500 DOM nodes at every scroll offset', async ({ page }) => {
   const root = await openStory(page, stories.toolkitDataGridLarge)
