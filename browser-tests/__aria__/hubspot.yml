@@ -1,0 +1,169 @@
+- banner:
+  - button "CRM"
+  - searchbox "⌘ K"
+  - text: ⌘ K
+  - button "Marketplace"
+  - button "Calling"
+  - button "Help"
+  - button "Settings"
+  - button "Notifications"
+  - button "Jun Jim Technologies": J Jim Technologies
+- navigation "HubSpot sections":
+  - button "CRM"
+  - button "Marketing"
+  - button "Content"
+  - button "Sales"
+  - button "Service"
+  - button "Automation"
+  - button "Reporting"
+  - button "Commerce"
+  - button "Data Management"
+- complementary "CRM navigation":
+  - text: CRM
+  - navigation "CRM records":
+    - button "Contacts"
+    - button "Companies"
+    - button "Deals"
+    - button "Tickets"
+    - button "Lists"
+  - text: My workspace
+  - navigation "CRM workspace":
+    - button "Tasks"
+    - button "Activity feed"
+    - button "Forecast"
+  - button "Ask Breeze Summarize records and prepare follow-ups.":
+    - strong: Ask Breeze
+    - text: Summarize records and prepare follow-ups.
+- main:
+  - text: CRM Contacts
+  - heading "Contacts" [level=1]
+  - paragraph: 6 records · Updated a few seconds ago
+  - button "Import"
+  - button "Actions"
+  - button "Create contact"
+  - button "All contacts"
+  - button "My contacts"
+  - button "Recently assigned"
+  - button "Needs follow-up"
+  - button "Add view"
+  - button "Contact owner"
+  - text: Lead status
+  - combobox "Lead status":
+    - option "All" [selected]
+    - option "New"
+    - option "Open"
+    - option "Qualified"
+    - option "Customer"
+  - button "Create date"
+  - button "Last activity date"
+  - button "Advanced filters"
+  - checkbox "Select all contacts"
+  - text: 6 contacts
+  - button "Sort"
+  - button "Edit columns"
+  - button "More table actions"
+  - table:
+    - rowgroup:
+      - row "Select all visible contacts Contact name Email Company name Lead status Contact owner Last activity":
+        - columnheader "Select all visible contacts":
+          - checkbox "Select all visible contacts"
+        - columnheader "Contact name"
+        - columnheader "Email"
+        - columnheader "Company name"
+        - columnheader "Lead status"
+        - columnheader "Contact owner"
+        - columnheader "Last activity"
+    - rowgroup:
+      - row "Select Amelia Stone Open Amelia Stone amelia@northwindhealth.com Northwind Health Qualified Maya Chen Maya Chen 12 minutes ago":
+        - cell "Select Amelia Stone":
+          - checkbox "Select Amelia Stone"
+        - cell "Open Amelia Stone":
+          - button "Open Amelia Stone":
+            - text: AS
+            - strong: Amelia Stone
+            - text: VP, Operations
+        - cell "amelia@northwindhealth.com":
+          - link "amelia@northwindhealth.com":
+            - /url: mailto:amelia@northwindhealth.com
+        - cell "Northwind Health"
+        - cell "Qualified"
+        - cell "Maya Chen Maya Chen": MC Maya Chen
+        - cell "12 minutes ago"
+      - row "Select Marcus Reed Open Marcus Reed marcus@atlasworks.io Atlas Works Open Noah Williams Noah Williams 38 minutes ago":
+        - cell "Select Marcus Reed":
+          - checkbox "Select Marcus Reed"
+        - cell "Open Marcus Reed":
+          - button "Open Marcus Reed":
+            - text: MR
+            - strong: Marcus Reed
+            - text: Founder & CEO
+        - cell "marcus@atlasworks.io":
+          - link "marcus@atlasworks.io":
+            - /url: mailto:marcus@atlasworks.io
+        - cell "Atlas Works"
+        - cell "Open"
+        - cell "Noah Williams Noah Williams": NW Noah Williams
+        - cell "38 minutes ago"
+      - row "Select Nina Patel Open Nina Patel nina@cobaltlogistics.com Cobalt Logistics Customer Priya Shah Priya Shah 2 hours ago":
+        - cell "Select Nina Patel":
+          - checkbox "Select Nina Patel"
+        - cell "Open Nina Patel":
+          - button "Open Nina Patel":
+            - text: NP
+            - strong: Nina Patel
+            - text: Chief Financial Officer
+        - cell "nina@cobaltlogistics.com":
+          - link "nina@cobaltlogistics.com":
+            - /url: mailto:nina@cobaltlogistics.com
+        - cell "Cobalt Logistics"
+        - cell "Customer"
+        - cell "Priya Shah Priya Shah": PS Priya Shah
+        - cell "2 hours ago"
+      - row "Select Theo Martin Open Theo Martin theo@brightpath.energy Brightpath Energy New Lina Ortiz Lina Ortiz Yesterday":
+        - cell "Select Theo Martin":
+          - checkbox "Select Theo Martin"
+        - cell "Open Theo Martin":
+          - button "Open Theo Martin":
+            - text: TM
+            - strong: Theo Martin
+            - text: Director of Data
+        - cell "theo@brightpath.energy":
+          - link "theo@brightpath.energy":
+            - /url: mailto:theo@brightpath.energy
+        - cell "Brightpath Energy"
+        - cell "New"
+        - cell "Lina Ortiz Lina Ortiz": LO Lina Ortiz
+        - cell "Yesterday"
+      - row "Select Sarah Kim Open Sarah Kim sarah@finchretail.com Finch Retail Qualified Eli Turner Eli Turner Yesterday":
+        - cell "Select Sarah Kim":
+          - checkbox "Select Sarah Kim"
+        - cell "Open Sarah Kim":
+          - button "Open Sarah Kim":
+            - text: SK
+            - strong: Sarah Kim
+            - text: Head of Revenue
+        - cell "sarah@finchretail.com":
+          - link "sarah@finchretail.com":
+            - /url: mailto:sarah@finchretail.com
+        - cell "Finch Retail"
+        - cell "Qualified"
+        - cell "Eli Turner Eli Turner": ET Eli Turner
+        - cell "Yesterday"
+      - row "Select Jordan Bell Open Jordan Bell jordan@harborfoods.co Harbor Foods Open Maya Chen Maya Chen 2 days ago":
+        - cell "Select Jordan Bell":
+          - checkbox "Select Jordan Bell"
+        - cell "Open Jordan Bell":
+          - button "Open Jordan Bell":
+            - text: JB
+            - strong: Jordan Bell
+            - text: COO
+        - cell "jordan@harborfoods.co":
+          - link "jordan@harborfoods.co":
+            - /url: mailto:jordan@harborfoods.co
+        - cell "Harbor Foods"
+        - cell "Open"
+        - cell "Maya Chen Maya Chen": MC Maya Chen
+        - cell "2 days ago"
+  - text: 1–6 of 6
+  - button "Previous page" [disabled]
+  - button "Next page" [disabled]

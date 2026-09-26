@@ -1,0 +1,146 @@
+- banner:
+  - img "Social"
+  - text: Search Social
+  - searchbox "Search Social"
+  - navigation "Social primary":
+    - button "Home" [pressed]
+    - button "Video"
+    - button "Groups"
+    - button "Business page"
+  - button "Menu"
+  - button "Messenger"
+  - button "Notifications"
+  - img "Jun": J
+- complementary "Social shortcuts":
+  - button "Jun Jun":
+    - img "Jun": J
+    - text: Jun
+  - button "Friends"
+  - button "Memories"
+  - button "Saved"
+  - button "Groups"
+  - button "Video"
+  - button "Pages"
+  - separator
+  - heading "Your shortcuts" [level=2]
+  - button "Founder operators"
+  - button "Business analytics"
+  - button "Jim Technologies team"
+- main:
+  - region "Stories":
+    - button "Jun Your story":
+      - img "Jun": J
+      - text: Your story
+    - button "Jim Technologies Jim Tech":
+      - img "Jim Technologies": JT
+      - text: Jim Tech
+    - button "Maya Chen Maya":
+      - img "Maya Chen": MC
+      - text: Maya
+    - button "Lina Torres Lina":
+      - img "Lina Torres": LT
+      - text: Lina
+    - button "Noah Williams Noah":
+      - img "Noah Williams": NW
+      - text: Noah
+    - button "Amelia Stone Amelia":
+      - img "Amelia Stone": AS
+      - text: Amelia
+  - img "Jun": J
+  - button "What's on your mind, Jun?"
+  - button "Live video"
+  - button "Photo/video"
+  - button "Feeling/activity"
+  - article:
+    - img "Jim Technologies": JT
+    - strong:
+      - text: Jim Technologies
+      - img "Verified": ✓
+    - text: Technology company · 18m · Public
+    - button "Post options"
+    - paragraph: "A calmer operating system for growing teams: one view for customers, projects, data, and the decisions that move the business forward."
+    - button "Open post by Jim Technologies":
+      - img "Abstract studio planning board"
+    - text: ● ♥ 1.8K 96 comments · 214 shares
+    - button "Unlike post" [pressed]: Like
+    - button "Comment on post": Comment
+    - button "Share post": Share
+  - article:
+    - img "Maya Chen": MC
+    - strong:
+      - text: Maya Chen
+      - img "Verified": ✓
+    - text: Operations · 42m · Public
+    - button "Post options"
+    - paragraph: A productive offsite, a sharper launch plan, and just enough ocean air. The customer commitments are mapped and ready for review.
+    - button "Open post by Maya Chen":
+      - img "Abstract golden coast"
+    - text: ● ♥ 728 31 comments · 18 shares
+    - button "Like post": Like
+    - button "Comment on post": Comment
+    - button "Share post": Share
+  - article:
+    - img "Noah Williams": NW
+    - strong: Noah Williams
+    - text: Product design · 1h · Public
+    - button "Post options"
+    - paragraph: "Build note: the best business software makes complex systems feel legible. Strong defaults first, escape hatches second."
+    - button "Open post by Noah Williams":
+      - img "Abstract mountain ridge at sunset"
+    - text: ● ♥ 534 48 comments · 72 shares
+    - button "Like post": Like
+    - button "Comment on post": Comment
+    - button "Share post": Share
+  - article:
+    - img "Lina Torres": LT
+    - strong: Lina Torres
+    - text: Customer success · 2h · Friends
+    - button "Post options"
+    - paragraph: Closed the week with three customer launches and a much shorter open-issues list. Proud of this team.
+    - button "Open post by Lina Torres":
+      - img "Abstract city skyline at night"
+    - text: ● ♥ 391 24 comments · 9 shares
+    - button "Like post": Like
+    - button "Comment on post": Comment
+    - button "Share post": Share
+  - article:
+    - img "Amelia Stone": AS
+    - strong: Amelia Stone
+    - text: Founder community · 3h · Public
+    - button "Post options"
+    - paragraph: "Three things I wish every owner dashboard answered immediately: 1. What changed? 2. What needs a decision? 3. Who owns the next move?"
+    - text: ● ♥ 1.1K 143 comments · 287 shares
+    - button "Like post": Like
+    - button "Comment on post": Comment
+    - button "Share post": Share
+  - article:
+    - img "Jun": J
+    - strong:
+      - text: Jun
+      - img "Verified": ✓
+    - text: Jim Technologies · Founder · 5h · Public
+    - button "Post options"
+    - paragraph: "Quiet progress compounds. We finished the frontend readiness pass today: contracts, product surfaces, accessibility, and release gates are all green."
+    - button "Open post by Jun":
+      - img "Abstract forest path"
+    - text: ● ♥ 862 67 comments · 104 shares
+    - button "Unlike post" [pressed]: Like
+    - button "Comment on post": Comment
+    - button "Share post": Share
+- complementary "Contacts and sponsored content":
+  - heading "Sponsored" [level=2]
+  - strong: Build a clearer operating rhythm
+  - text: jimtech.xyz
+  - heading "Contacts" [level=2]
+  - button "Maya Chen Maya Chen":
+    - img "Maya Chen": MC
+    - text: Maya Chen
+  - button "Noah Williams Noah Williams":
+    - img "Noah Williams": NW
+    - text: Noah Williams
+  - button "Amelia Stone Amelia Stone":
+    - img "Amelia Stone": AS
+    - text: Amelia Stone
+  - button "Lina Torres Lina Torres":
+    - img "Lina Torres": LT
+    - text: Lina Torres

@@ -1,0 +1,108 @@
+- banner:
+  - link "Exchange Exchange":
+    - /url: "#terminal"
+    - text: E
+    - strong: Exchange
+  - navigation "Exchange products":
+    - button "Buy Crypto"
+    - button "Markets"
+    - button "Trade"
+    - button "Derivatives"
+    - button "Earn"
+  - text: Live data Jim Technologies
+  - button "Alerts"
+  - text: J
+- navigation "Exchange views":
+  - button "Spot"
+  - button "Open orders"
+  - button "Wallet"
+- main:
+  - strong: Watchlist
+  - button "+"
+  - button "BTC Bitcoin $67,842.10 +2.48%":
+    - strong: BTC
+    - text: Bitcoin $67,842.10
+    - emphasis: +2.48%
+  - button "ETH Ethereum $3,542.18 +1.36%":
+    - strong: ETH
+    - text: Ethereum $3,542.18
+    - emphasis: +1.36%
+  - button "SOL Solana $178.42 +4.82%":
+    - strong: SOL
+    - text: Solana $178.42
+    - emphasis: +4.82%
+  - button "BNB BNB $612.70 -0.34%":
+    - strong: BNB
+    - text: BNB $612.70
+    - emphasis: "-0.34%"
+  - button "USDC USDC $1.00 +0.01%":
+    - strong: USDC
+    - text: USDC $1.00
+    - emphasis: +0.01%
+  - strong: BTC/USDT
+  - text: Bitcoin · Spot $67,842.10
+  - emphasis: +2.48%
+  - button "1m"
+  - button "5m"
+  - button "1h"
+  - button "4h"
+  - button "1D"
+  - button "Indicators"
+  - button "Drawing"
+  - img "BTC price chart": 67,842.10
+  - text: O 66,982.4 H 68,144.8 L 66,731.2 C 67,842.1 Vol 18.4K
+  - strong: Order book
+  - text: 0.10 Price Size Total 67,912 0.180 1.20 67,898 0.310 1.90 67,876 0.440 2.60 67,861 0.570 3.30 67,850 0.700 4.00
+  - strong: 67,842.10
+  - text: ↑ 67,841.90 67,839 0.240 1.10 67,821 0.350 1.90 67,798 0.460 2.70 67,776 0.570 3.50 67,751 0.680 4.30
+  - strong: Order entry
+  - text: Available $84,218.42
+  - button "Buy"
+  - button "Sell"
+  - text: Order type
+  - combobox "Order type":
+    - option "Limit" [selected]
+    - option "Market"
+    - option "Stop"
+  - text: Price
+  - textbox "Price USD": 67,820.00
+  - text: USD Quantity
+  - textbox "Quantity BTC": "0.10"
+  - text: BTC 0% 25% 50% 75% 100%
+  - term: Order value
+  - definition: $6,782.00
+  - term: Estimated fee
+  - definition: $6.78
+  - button "Buy BTC"
+  - strong: Open orders
+  - navigation "Order history views":
+    - button "Open"
+    - button "History"
+    - button "Trades"
+  - table:
+    - rowgroup:
+      - row "Symbol Side Type Price Amount Filled Status":
+        - columnheader "Symbol"
+        - columnheader "Side"
+        - columnheader "Type"
+        - columnheader "Price"
+        - columnheader "Amount"
+        - columnheader "Filled"
+        - columnheader "Status"
+    - rowgroup:
+      - row "BTC/USDT Buy Limit 67,120.00 0.08 BTC 0% Working":
+        - cell "BTC/USDT"
+        - cell "Buy"
+        - cell "Limit"
+        - cell "67,120.00"
+        - cell "0.08 BTC"
+        - cell "0%"
+        - cell "Working"
+      - row "ETH/USDT Sell Stop limit 3,480.00 1.40 ETH 35% Partially filled":
+        - cell "ETH/USDT"
+        - cell "Sell"
+        - cell "Stop limit"
+        - cell "3,480.00"
+        - cell "1.40 ETH"
+        - cell "35%"
+        - cell "Partially filled"

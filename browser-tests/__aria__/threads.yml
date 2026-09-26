@@ -1,0 +1,126 @@
+- complementary "Posts sidebar":
+  - img "Posts"
+  - navigation "Posts navigation":
+    - button "Home"
+    - button "Search"
+    - button "Create"
+    - button "Activity"
+    - button "Profile"
+  - button "More"
+- main:
+  - img "Posts"
+  - navigation "Posts feed":
+    - button "For you"
+    - button "Following"
+  - button "More"
+  - img "Jun": J
+  - text: Start a thread...
+  - textbox "Start a thread..."
+  - button "Post"
+  - button "Attach photo"
+  - button "Add link"
+  - button "Add topic"
+  - article:
+    - img "Jim Technologies": JT
+    - strong:
+      - text: Jim Technologies
+      - img "Verified": ✓
+    - time: 18m
+    - button "Post options"
+    - paragraph: "A calmer operating system for growing teams: one view for customers, projects, data, and the decisions that move the business forward."
+    - button "Open post by Jim Technologies":
+      - img "Abstract studio planning board"
+    - button "Unlike post" [pressed]
+    - button "Comment on post"
+    - button "Share post"
+    - button "Remove from saved" [pressed]
+    - button "96 replies · 1.8K likes"
+  - article:
+    - img "Maya Chen": MC
+    - strong:
+      - text: Maya Chen
+      - img "Verified": ✓
+    - time: 42m
+    - button "Post options"
+    - paragraph: A productive offsite, a sharper launch plan, and just enough ocean air. The customer commitments are mapped and ready for review.
+    - button "Open post by Maya Chen":
+      - img "Abstract golden coast"
+    - button "Like post"
+    - button "Comment on post"
+    - button "Share post"
+    - button "Save post"
+    - button "31 replies · 728 likes"
+  - article:
+    - img "Noah Williams": NW
+    - strong: Noah Williams
+    - time: 1h
+    - button "Post options"
+    - paragraph: "Build note: the best business software makes complex systems feel legible. Strong defaults first, escape hatches second."
+    - button "Open post by Noah Williams":
+      - img "Abstract mountain ridge at sunset"
+    - button "Like post"
+    - button "Comment on post"
+    - button "Share post"
+    - button "Save post"
+    - button "48 replies · 534 likes"
+  - article:
+    - img "Lina Torres": LT
+    - strong: Lina Torres
+    - time: 2h
+    - button "Post options"
+    - paragraph: Closed the week with three customer launches and a much shorter open-issues list. Proud of this team.
+    - button "Open post by Lina Torres":
+      - img "Abstract city skyline at night"
+    - button "Like post"
+    - button "Comment on post"
+    - button "Share post"
+    - button "Save post"
+    - button "24 replies · 391 likes"
+  - article:
+    - img "Amelia Stone": AS
+    - strong: Amelia Stone
+    - time: 3h
+    - button "Post options"
+    - paragraph: "Three things I wish every owner dashboard answered immediately: 1. What changed? 2. What needs a decision? 3. Who owns the next move?"
+    - button "Like post"
+    - button "Comment on post"
+    - button "Share post"
+    - button "Save post"
+    - button "143 replies · 1.1K likes"
+  - article:
+    - img "Jun": J
+    - strong:
+      - text: Jun
+      - img "Verified": ✓
+    - time: 5h
+    - button "Post options"
+    - paragraph: "Quiet progress compounds. We finished the frontend readiness pass today: contracts, product surfaces, accessibility, and release gates are all green."
+    - button "Open post by Jun":
+      - img "Abstract forest path"
+    - button "Unlike post" [pressed]
+    - button "Comment on post"
+    - button "Share post"
+    - button "Save post"
+    - button "67 replies · 862 likes"
+- complementary "Posts discovery":
+  - text: Search Posts
+  - searchbox "Search Posts"
+  - strong: Suggested for you
+  - img "Maya Chen": MC
+  - strong:
+    - text: mayachen
+    - img "Verified": ✓
+  - text: Followed by Jim Technologies
+  - button "Following"
+  - img "Noah Williams": NW
+  - strong: noahbuilds
+  - text: Popular with founders
+  - button "Following"
+  - img "Amelia Stone": AS
+  - strong: ameliastone
+  - text: Suggested for you
+  - button "Following"
+  - img "Lina Torres": LT
+  - strong: linatorres
+  - text: Works with Jun
+  - button "Follow"

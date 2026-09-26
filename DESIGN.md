@@ -211,7 +211,10 @@ and selection and action state stay coherent across them.
 ## Definition of done for UI changes
 
 - Works in `dark`, `light`, `operator` and `high-contrast`; dark and light
-  visual baselines are regenerated in the commit that intends the change.
+  visual baselines, and the exact text baseline beside them
+  (`browser-tests/__aria__/<story>.yml`), are regenerated in the commit that
+  intends the change (`pnpm exec playwright test -g "visual baseline"
+  --workers=2 --update-snapshots=changed`, then review every changed file).
 - Uses semantic, status, type-identity and chart tokens only; the
   style-token check passes without raising any budget.
 - Uses the type scale, sentence case, and monospace only for identifiers and

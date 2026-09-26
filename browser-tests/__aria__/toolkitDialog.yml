@@ -1,0 +1,7 @@
+- main:
+  - text: Toolkit · Overlays
+  - heading "Dialog" [level=1]
+  - paragraph: Dismissible interaction layers with keyboard navigation, focus management, and focus restoration built into their contracts.
+  - region "Dialog component example":
+    - button "Open dialog"
+  - text: Theme and density inherit from the scoped toolkit root.

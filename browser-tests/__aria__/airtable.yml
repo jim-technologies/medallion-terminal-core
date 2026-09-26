@@ -1,0 +1,172 @@
+- banner:
+  - button "Open navigation"
+  - text: Bases
+  - button "JT Jim Technologies"
+  - text: Search workspace
+  - searchbox "Search workspace ⌘ K"
+  - text: ⌘ K
+  - button "Help"
+  - button "Notifications"
+  - text: J
+- text: PL
+- button "Product launch":
+  - strong: Product launch
+- navigation "Base sections":
+  - button "Data"
+  - button "Automations"
+  - button "Interfaces"
+  - button "Forms"
+- text: MC NW LO
+- button "Share"
+- complementary:
+  - button "Create"
+  - text: Views
+  - button "Search views"
+  - button "Add view"
+  - navigation:
+    - button "All launch work"
+    - button "Work by status"
+    - button "Content review"
+  - button "Team views"
+  - text: My priorities Launch calendar Budget tracker
+  - button "Extensions"
+  - button "Base guide"
+- main:
+  - button "Launch work"
+  - button "Owners"
+  - button "Workstreams"
+  - button "Add or import"
+  - strong: All launch work
+  - text: Status
+  - combobox "Status":
+    - option "All" [selected]
+    - option "Not started"
+    - option "In progress"
+    - option "Blocked"
+    - option "Done"
+  - button "Sort"
+  - button "Color"
+  - button "Share view"
+  - button "More view actions"
+  - table:
+    - rowgroup:
+      - row "Select rows Aa Project ▾ Status Owner ◎ Priority Due date $ Budget % Progress Last modified Add field":
+        - columnheader "Select rows"
+        - columnheader "Aa Project"
+        - columnheader "▾ Status"
+        - columnheader "Owner"
+        - columnheader "◎ Priority"
+        - columnheader "Due date"
+        - columnheader "$ Budget"
+        - columnheader "% Progress"
+        - columnheader "Last modified"
+        - columnheader "Add field"
+    - rowgroup:
+      - row "1 Finalize launch brief ▱ 4 In progress Maya Chen Maya Chen High Jul 22 $18,500 72% 8 min ago":
+        - cell "1"
+        - cell "Finalize launch brief ▱ 4":
+          - button "Finalize launch brief"
+          - text: ▱ 4
+        - cell "In progress"
+        - cell "Maya Chen Maya Chen": MC Maya Chen
+        - cell "High"
+        - cell "Jul 22"
+        - cell "$18,500"
+        - cell "72%"
+        - cell "8 min ago"
+        - cell
+      - row "2 Customer preview program ▱ 8 In progress Noah Williams Noah Williams High Jul 24 $26,000 58% 21 min ago":
+        - cell "2"
+        - cell "Customer preview program ▱ 8":
+          - button "Customer preview program"
+          - text: ▱ 8
+        - cell "In progress"
+        - cell "Noah Williams Noah Williams": NW Noah Williams
+        - cell "High"
+        - cell "Jul 24"
+        - cell "$26,000"
+        - cell "58%"
+        - cell "21 min ago"
+        - cell
+      - row "3 Partner enablement kit ▱ 6 Blocked Avery Brooks Avery Brooks High Jul 25 $12,800 36% 42 min ago":
+        - cell "3"
+        - cell "Partner enablement kit ▱ 6":
+          - button "Partner enablement kit"
+          - text: ▱ 6
+        - cell "Blocked"
+        - cell "Avery Brooks Avery Brooks": AB Avery Brooks
+        - cell "High"
+        - cell "Jul 25"
+        - cell "$12,800"
+        - cell "36%"
+        - cell "42 min ago"
+        - cell
+      - row "4 Produce campaign assets ▱ 15 In progress Lina Ortiz Lina Ortiz Medium Jul 28 $34,000 64% 1 hr ago":
+        - cell "4"
+        - cell "Produce campaign assets ▱ 15":
+          - button "Produce campaign assets"
+          - text: ▱ 15
+        - cell "In progress"
+        - cell "Lina Ortiz Lina Ortiz": LO Lina Ortiz
+        - cell "Medium"
+        - cell "Jul 28"
+        - cell "$34,000"
+        - cell "64%"
+        - cell "1 hr ago"
+        - cell
+      - row "5 Run sales certification ▱ 3 Not started Eli Turner Eli Turner Medium Jul 30 $9,400 8% 2 hrs ago":
+        - cell "5"
+        - cell "Run sales certification ▱ 3":
+          - button "Run sales certification"
+          - text: ▱ 3
+        - cell "Not started"
+        - cell "Eli Turner Eli Turner": ET Eli Turner
+        - cell "Medium"
+        - cell "Jul 30"
+        - cell "$9,400"
+        - cell "8%"
+        - cell "2 hrs ago"
+        - cell
+      - row "6 Validate support readiness ▱ 2 Not started Priya Shah Priya Shah High Aug 1 $7,600 14% 3 hrs ago":
+        - cell "6"
+        - cell "Validate support readiness ▱ 2":
+          - button "Validate support readiness"
+          - text: ▱ 2
+        - cell "Not started"
+        - cell "Priya Shah Priya Shah": PS Priya Shah
+        - cell "High"
+        - cell "Aug 1"
+        - cell "$7,600"
+        - cell "14%"
+        - cell "3 hrs ago"
+        - cell
+      - row "7 Complete pricing review ▱ 5 Done Owen Kim Owen Kim High Jul 18 $5,200 100% Yesterday":
+        - cell "7"
+        - cell "Complete pricing review ▱ 5":
+          - button "Complete pricing review"
+          - text: ▱ 5
+        - cell "Done"
+        - cell "Owen Kim Owen Kim": OK Owen Kim
+        - cell "High"
+        - cell "Jul 18"
+        - cell "$5,200"
+        - cell "100%"
+        - cell "Yesterday"
+        - cell
+      - row "8 Publish measurement plan ▱ 2 Done Sofia Reed Sofia Reed Low Jul 17 $3,800 100% Yesterday":
+        - cell "8"
+        - cell "Publish measurement plan ▱ 2":
+          - button "Publish measurement plan"
+          - text: ▱ 2
+        - cell "Done"
+        - cell "Sofia Reed Sofia Reed": SR Sofia Reed
+        - cell "Low"
+        - cell "Jul 17"
+        - cell "$3,800"
+        - cell "100%"
+        - cell "Yesterday"
+        - cell
+      - row "Add record":
+        - cell
+        - cell "Add record"
+  - text: 8 records

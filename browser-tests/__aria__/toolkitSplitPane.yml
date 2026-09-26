@@ -1,0 +1,6 @@
+- toolbar "Pane status":
+  - text: Keyboard-resizable pane
+  - status: 20%
+- text: Explorer
+- separator "Resize explorer and content"
+- text: Content

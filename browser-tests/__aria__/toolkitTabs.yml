@@ -1,0 +1,14 @@
+- main:
+  - text: Toolkit · Navigation
+  - heading "Tabs" [level=1]
+  - paragraph: Generic location and section navigation that remains host-owned, responsive, and fully operable from the keyboard.
+  - region "Tabs component example":
+    - tablist "Object sections":
+      - tab "Overview"
+      - tab "Properties 11"
+      - tab "Activity 4" [selected]
+      - tab "Restricted" [disabled]
+    - tabpanel "Activity 4":
+      - heading "Activity" [level=2]
+      - paragraph: Generic content supplied by the host application.
+  - text: Theme and density inherit from the scoped toolkit root.

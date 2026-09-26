@@ -1,0 +1,188 @@
+- banner:
+  - strong: Operations
+  - text: Platform
+  - button "Jim Technologies"
+  - text: Search projects, resources, objects, and applications ⌘ K
+  - button "Help"
+  - button "Notifications"
+  - text: J
+- complementary:
+  - text: Platform foundation
+  - navigation:
+    - button "Readiness map"
+    - button "Files"
+    - button "Data integration 1"
+    - button "Code repositories"
+  - text: Covered modules
+  - strong: Ontology manager
+  - strong: Object explorer
+  - strong: Operational apps
+  - strong: Analysis
+  - strong: Map
+  - strong: AI
+  - strong: Frontend boundary
+  - text: Host adapters explicit
+- main:
+  - text: Platform readiness
+  - heading "Platform capability map" [level=1]
+  - paragraph: Data, AI, and delivery presentation coverage is separated from host security, compute, storage, and execution.
+  - button "No frontend gaps"
+  - text: Capability groups
+  - strong: "16"
+  - text: Data + AI + delivery scope Exact showcases
+  - strong: "7"
+  - text: Clone-style Storybook states Core-ready
+  - strong: "9"
+  - text: Composable framework primitives Missing frontend
+  - strong: "0"
+  - text: Nothing blocks presentation work
+  - article:
+    - text: Organize & govern
+    - heading "Files & projects" [level=2]
+    - text: Showcase ready
+    - paragraph: Projects, folders, resources, discovery, sharing, and governed file organization.
+    - code: asset_catalog
+    - code: file_browser
+    - code: catalog
+    - text: "Host: Permissions, markings, durable storage"
+  - article:
+    - text: Connect & integrate
+    - heading "Data connections & sync" [level=2]
+    - text: Showcase ready
+    - paragraph: Sources, generated ingestion, syncs, schedules, exports, and connection health.
+    - code: catalog
+    - code: events
+    - code: action_form
+    - text: "Host: Connector agents, credentials, sync engines"
+  - article:
+    - text: Connect & integrate
+    - heading "Pipelines & data health" [level=2]
+    - text: Showcase ready
+    - paragraph: Graph-based transforms, dataset previews, quality checks, outputs, and delivery.
+    - code: dag
+    - code: table
+    - code: action_log
+    - text: "Host: Compute, builds, schedules, branching"
+  - article:
+    - text: Connect & integrate
+    - heading "Code repositories & workspaces" [level=2]
+    - text: Showcase ready
+    - paragraph: Repositories, IDE workspaces, refs, checks, previews, SDKs, and proposals.
+    - code: code_browser
+    - code: dag
+    - code: action_log
+    - text: "Host: Git, runtimes, builds, compute, test execution"
+  - article:
+    - text: Organize & govern
+    - heading "Data Lineage & Observability" [level=2]
+    - text: Showcase ready
+    - paragraph: Resource dependency graphs with health, freshness, usage, tracing, and drill-down.
+    - code: dag
+    - code: asset_catalog
+    - code: events
+    - text: "Host: Lineage graph, telemetry, logs, usage metadata"
+  - article:
+    - text: Connect & integrate
+    - heading "Model Assets & Simulation" [level=2]
+    - text: Core ready
+    - paragraph: Model catalogs, objectives, versions, evaluations, relationship graphs, and scenarios.
+    - code: asset_catalog
+    - code: dag
+    - code: charts
+    - text: "Host: Training, inference, registry, simulation execution"
+  - article:
+    - text: Model & operate
+    - heading "Ontology manager" [level=2]
+    - text: Showcase ready
+    - paragraph: Object, property, link, action, interface, and function type presentation.
+    - code: asset_catalog
+    - code: object_view
+    - code: action_form
+    - text: "Host: Ontology persistence and indexing"
+  - article:
+    - text: Model & operate
+    - heading "Object explorer, views & actions" [level=2]
+    - text: Showcase ready
+    - paragraph: Object search, canonical views, linked context, writeback forms, and audit state.
+    - code: object_view
+    - code: record_grid
+    - code: action_form
+    - text: "Host: Object search, transactions, policy checks"
+  - article:
+    - text: Model & operate
+    - heading "Rules, Automate & Scheduling" [level=2]
+    - text: Core ready
+    - paragraph: Business rules, event triggers, human checkpoints, schedules, and process monitoring.
+    - code: alerts
+    - code: events
+    - code: action_log
+    - text: "Host: Rules engine, orchestration, optimization, job execution"
+  - article:
+    - text: Model & operate
+    - heading "Operational apps & portals" [level=2]
+    - text: Core ready
+    - paragraph: Operational apps and curated workspaces composed from object-aware views and actions.
+    - code: Dashboard
+    - code: record_board
+    - code: action_form
+    - text: "Host: Object queries, functions, action execution"
+  - article:
+    - text: Analyze & automate
+    - heading "Analysis & insight" [level=2]
+    - text: Core ready
+    - paragraph: Point-and-click analysis, charts, tables, paths, filters, drill-down, and exports.
+    - code: charts
+    - code: table
+    - code: ctx + export
+    - text: "Host: Query planning and materialization"
+  - article:
+    - text: Analyze & automate
+    - heading "Notes & spreadsheets" [level=2]
+    - text: Core ready
+    - paragraph: Ontology-aware documents, templated reports, and bidirectional spreadsheet workflows.
+    - code: docs clone
+    - code: sheets clone
+    - code: table
+    - text: "Host: Collaboration, document persistence, dataset writeback"
+  - article:
+    - text: Analyze & automate
+    - heading "Map & Temporal Workflows" [level=2]
+    - text: Core ready
+    - paragraph: Geospatial objects, layers, routes, time playback, selections, and operational actions.
+    - code: map adapter
+    - code: timeline
+    - code: object_view
+    - text: "Host: Tiles, geocoding, routing, spatial queries"
+  - article:
+    - text: Analyze & automate
+    - heading "AI logic, chat & evaluations" [level=2]
+    - text: Core ready
+    - paragraph: Assistants, agents, generated dashboards, governed tools, progress, and evaluations.
+    - code: prompt
+    - code: Generate
+    - code: action_log
+    - text: "Host: Models, agents, tools, eval execution"
+  - article:
+    - text: Organize & govern
+    - heading "Delivery, marketplace & releases" [level=2]
+    - text: Core ready
+    - paragraph: Products, releases, installations, deployment health, channels, and fleet operations.
+    - code: asset_catalog
+    - code: events
+    - code: action_log
+    - text: "Host: Packaging, registry, rollout orchestration, telemetry"
+  - article:
+    - text: Organize & govern
+    - heading "Approvals, Governance & Admin" [level=2]
+    - text: Core ready
+    - paragraph: Approvals, access requests, sensitive-data controls, audit, retention, and administration.
+    - code: action_form
+    - code: record_grid
+    - code: action_log
+    - text: "Host: Identity, policy enforcement, cryptography, audit"
+  - heading "Production boundary stays deliberate" [level=2]
+  - paragraph: The framework owns rendering, interaction contracts, streaming UX, and action lifecycle presentation.
+  - list:
+    - listitem: Identity, roles, markings, and row-level policy
+    - listitem: Durable storage, compute, connectors, and builds
+    - listitem: Ontology indexing, transactions, audit, and deployment

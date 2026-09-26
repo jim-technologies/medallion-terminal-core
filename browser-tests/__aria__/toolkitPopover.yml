@@ -1,0 +1,7 @@
+- main:
+  - text: Toolkit · Overlays
+  - heading "Popover" [level=1]
+  - paragraph: Dismissible interaction layers with keyboard navigation, focus management, and focus restoration built into their contracts.
+  - region "Popover component example":
+    - button "View filters"
+  - text: Theme and density inherit from the scoped toolkit root.

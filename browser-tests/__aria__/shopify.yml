@@ -1,0 +1,80 @@
+- banner:
+  - strong: Store
+  - textbox "⌘ K":
+    - /placeholder: Search
+  - text: ⌘ K
+  - button "Assistant"
+  - button "Notifications"
+  - button "JT Jim Technologies":
+    - text: JT
+    - strong: Jim Technologies
+- complementary "Store navigation":
+  - navigation "Store administration":
+    - button "Home"
+    - button "Orders 5":
+      - text: Orders
+      - emphasis: "5"
+    - button "Products"
+    - button "Customers"
+    - button "Analytics"
+    - button "Discounts"
+  - text: Sales channels
+  - button "Add sales channel"
+  - navigation "Sales channels":
+    - button "Online Store"
+    - button "Shop"
+  - text: Apps
+  - button "Add application"
+  - navigation "Applications":
+    - button "Flow"
+  - button "Settings"
+- main:
+  - heading "Good morning, Jun" [level=1]
+  - paragraph: Here’s what’s happening with Jim Technologies.
+  - strong: 3 orders are ready to fulfill
+  - text: Ship today to maintain your 1.4 day average fulfillment time.
+  - button "View orders"
+  - button "Dismiss"
+  - heading "Store performance" [level=2]
+  - text: Today, Jul 18
+  - button "Today"
+  - text: Gross sales
+  - strong: $1,570
+  - text: +18% Returning customer rate
+  - strong: 31.2%
+  - text: +4.1% Orders fulfilled
+  - strong: "18"
+  - text: +12% Conversion rate
+  - strong: 3.42%
+  - text: +0.3% $1.5K $1.0K $500 $0 12am 6am 12pm Now
+  - heading "Orders" [level=2]
+  - text: Today
+  - button "View all"
+  - text: "5"
+  - strong: 5 orders
+  - text: $1,570 total
+  - list:
+    - listitem:
+      - text: Paid
+      - strong: "3"
+    - listitem:
+      - text: Payment pending
+      - strong: "1"
+    - listitem:
+      - text: Refunded
+      - strong: "1"
+  - heading "Inventory" [level=2]
+  - text: Across 2 locations
+  - button "View products"
+  - paragraph:
+    - strong: Trail Pack
+    - text: Canyon / 24L · TP-CAN-24
+  - emphasis: 12 left
+  - paragraph:
+    - strong: Weekender
+    - text: Navy · WK-NVY-42
+  - emphasis: 7 left
+  - paragraph:
+    - strong: Field Bottle
+    - text: Graphite · FB-GRA-01
+  - emphasis: Out of stock

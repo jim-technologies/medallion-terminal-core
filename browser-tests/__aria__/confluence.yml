@@ -1,0 +1,81 @@
+- banner:
+  - button "Applications"
+  - link "Wiki Wiki":
+    - /url: "#confluence"
+    - text: W
+    - strong: Wiki
+  - navigation "Wiki navigation":
+    - button "Recent⌄"
+    - button "Spaces⌄"
+    - button "Teams"
+    - button "Templates"
+  - button "Create"
+  - textbox "⌘K":
+    - /placeholder: Search
+  - text: ⌘K
+  - button "Help"
+  - button "Settings"
+  - text: J
+- complementary "Space navigation":
+  - text: JT
+  - strong: Jim Technologies
+  - text: Knowledge base
+  - button "•••"
+  - navigation "Space navigation":
+    - button "Overview"
+    - button "Blog"
+    - button "Team calendar"
+  - text: Content
+  - button "＋"
+  - navigation "Space content":
+    - button "Pages"
+    - button "Whiteboards"
+    - button "Databases"
+  - text: Page tree
+  - button "•••"
+  - button "› 2026 Operating plan"
+  - button "› Customer health system"
+  - button "› Platform launch"
+  - button "› Decision log"
+  - button "› Customer research"
+  - button "Add shortcut"
+- main:
+  - text: Spaces / Jim Technologies JT
+  - heading "Jim Technologies knowledge hub" [level=1]
+  - paragraph: Pages, live documents, decisions, and team updates in one governed space.
+  - button "Space settings"
+  - strong: Welcome back, Jun
+  - paragraph: Continue the work your team viewed most recently.
+  - button "Open operating plan"
+  - heading "Recent" [level=2]
+  - button "View all"
+  - button "2026 Operating plan Updated 2m ago · Jun LIVE DOC":
+    - strong: 2026 Operating plan
+    - text: Updated 2m ago · Jun
+    - emphasis: LIVE DOC
+  - button "Customer health system Updated 1h ago · Maya Chen PAGE":
+    - strong: Customer health system
+    - text: Updated 1h ago · Maya Chen
+    - emphasis: PAGE
+  - button "Platform launch Updated Yesterday · Jun WHITEBOARD":
+    - strong: Platform launch
+    - text: Updated Yesterday · Jun
+    - emphasis: WHITEBOARD
+  - button "Decision log Updated Jul 19 · Maya Chen PAGE":
+    - strong: Decision log
+    - text: Updated Jul 19 · Maya Chen
+    - emphasis: PAGE
+  - complementary "Space shortcuts":
+    - heading "Space shortcuts" [level=2]
+    - button "📣 Weekly updates Publish an update to the team":
+      - text: 📣
+      - strong: Weekly updates
+      - text: Publish an update to the team
+    - button "✓ Decision register 7 decisions this quarter":
+      - text: ✓
+      - strong: Decision register
+      - text: 7 decisions this quarter
+    - button "↗ Customer workspace Linked external resource":
+      - text: ↗
+      - strong: Customer workspace
+      - text: Linked external resource

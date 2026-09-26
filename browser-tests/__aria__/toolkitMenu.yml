@@ -1,0 +1,7 @@
+- main:
+  - text: Toolkit · Overlays
+  - heading "Menu" [level=1]
+  - paragraph: Dismissible interaction layers with keyboard navigation, focus management, and focus restoration built into their contracts.
+  - region "Menu component example":
+    - button "Object actions": Actions
+  - text: Theme and density inherit from the scoped toolkit root.

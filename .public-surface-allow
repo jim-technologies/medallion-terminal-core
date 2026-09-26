@@ -47,6 +47,7 @@ codename | *.md | the generic term for the object model this toolkit renders, ca
 codename | proto/* | the generic term for the object model, capitalised at the head of a schema comment | Onto%6cogy
 codename | */gen/* | generated bindings carry the schema comments through verbatim | Onto%6cogy
 codename | src/*.tsx | the generic term for the object model, as a gallery title and as test fixture data | Onto%6cogy
+codename | browser-tests/__aria__/* | the text baselines record the stories' labels verbatim, where the generic term heads a label | Onto%6cogy
 
 # ---------------------------------------------------------------------------
 # Published history. A May 2026 commit subject names the example dashboard

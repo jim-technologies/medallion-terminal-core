@@ -1,0 +1,71 @@
+- banner:
+  - textbox "Docs file name": Q3 operating plan
+  - button "Add star"
+  - button "Move file"
+  - text: Saved to Files
+  - navigation "Docs menus":
+    - button "File"
+    - button "Edit"
+    - button "View"
+    - button "Insert"
+    - button "Format"
+    - button "Tools"
+    - button "Extensions"
+    - button "Help"
+  - button "Last edit 2 min ago"
+  - button "Comments"
+  - button "Join a call"
+  - button "Ask Gemini"
+  - button "Share"
+  - text: MR LT
+  - 'button "Account: Jun"': J
+- toolbar "Docs formatting":
+  - button "Undo"
+  - button "Redo"
+  - button "Print"
+  - button "Paint format"
+  - button "100%"
+  - button "Normal text"
+  - button "Arial"
+  - button "Decrease font size": −
+  - text: "11"
+  - button "Increase font size": +
+  - button "Bold": B
+  - button "Italic": I
+  - button "Underline": U
+  - button "Text color"
+  - button "Insert link"
+  - button "Add comment"
+  - button "Insert image"
+  - button "Align"
+  - button "List"
+  - button "Editing"
+- complementary:
+  - strong: Document outline
+  - button "Q3 Operating Plan"
+  - button "Executive summary"
+  - button "Company priorities"
+  - button "Operating principles"
+- article "Q3 operating plan":
+  - text: FY26 · Strategy & operations
+  - heading "Q3 Operating Plan" [level=1]
+  - paragraph: A focused plan for durable growth, customer trust, and operating leverage.
+  - text: Jun July 17, 2026 On track
+  - heading "Executive summary" [level=2]
+  - paragraph: Q3 is about converting strong product momentum into repeatable customer outcomes. We will concentrate investment in the workflows that make small teams measurably faster, while preserving the reliability and trust expected from critical business software.
+  - strong: Q3 focus
+  - paragraph: Make connected workflows the fastest path from raw data to a confident business decision.
+  - heading "Company priorities" [level=2]
+  - list:
+    - listitem: Ship the unified workspace beta to 50 design partners.
+    - listitem: Increase activation from first data connection to a live workflow.
+    - listitem: Establish weekly operating reviews with a single source of truth.
+  - heading "Operating principles" [level=2]
+  - paragraph: Default to clarity. Every initiative has one owner, one measurable outcome, and an explicit decision date. Teams can move independently when interfaces and expectations are clear.
+  - text: Maya
+- complementary "Workspace side panel":
+  - button "Calendar": "31"
+  - button "Keep"
+  - button "Tasks"
+  - button "Contacts"
+  - button "Get add-ons"

@@ -1,0 +1,117 @@
+- banner:
+  - button "Main menu"
+  - text: Files
+  - textbox "Search in Files"
+  - button "Search options"
+  - button "Help"
+  - button "Settings"
+  - button "Apps"
+  - 'button "Account: Jun"': J
+- complementary:
+  - button "New"
+  - navigation "Files navigation":
+    - button "Home"
+    - button "My files"
+    - button "Computers"
+    - button "Shared with me"
+    - button "Recent"
+    - button "Starred"
+    - button "Spam"
+    - button "Trash"
+  - text: Storage
+  - paragraph: 8.4 GB of 30 GB used
+  - button "Get more storage"
+- main:
+  - button "My files"
+  - button "List view" [pressed]
+  - button "Grid view"
+  - button "View details"
+  - button "Type"
+  - button "People"
+  - button "Modified"
+  - strong: Ask about your files
+  - text: Get answers grounded in your files
+  - button "Summarize the Q3 plan"
+  - button "What changed this week?"
+  - button "Dismiss"
+  - heading "Suggested" [level=2]
+  - button "View all"
+  - button "Q3 operating plan Q3 OPERATING PLAN Shared with 2 people You opened this yesterday":
+    - text: Q3 operating plan
+    - strong: Q3 OPERATING PLAN
+    - text: AK MR You opened this yesterday
+  - button "Revenue forecast FY26 Shared with 2 people Lina edited this today": Revenue forecast FY26 LT AK Lina edited this today
+  - button "Investor update — July JULY Investor update Shared with 2 people You present this next week":
+    - text: Investor update — July
+    - strong: JULY
+    - text: Investor update AK JL You present this next week
+  - button "Supplier agreement — Northwind.pdf MASTER SERVICES AGREEMENT Shared with 2 people Jun mentioned you":
+    - text: Supplier agreement — Northwind.pdf
+    - strong: MASTER SERVICES AGREEMENT
+    - text: J AK Jun mentioned you
+  - heading "Folders and files" [level=2]
+  - table:
+    - rowgroup:
+      - row "Name Owner Last modified File size Actions":
+        - columnheader "Name"
+        - columnheader "Owner"
+        - columnheader "Last modified"
+        - columnheader "File size"
+        - columnheader "Actions"
+    - rowgroup:
+      - row "Brand studio Maya Rivera Jul 16 by Maya — More actions for Brand studio":
+        - cell "Brand studio"
+        - cell "Maya Rivera"
+        - cell "Jul 16 by Maya"
+        - cell "—"
+        - cell "More actions for Brand studio":
+          - button "More actions for Brand studio"
+      - row "Finance & Legal me Jul 16 by me — More actions for Finance & Legal":
+        - cell "Finance & Legal"
+        - cell "me"
+        - cell "Jul 16 by me"
+        - cell "—"
+        - cell "More actions for Finance & Legal":
+          - button "More actions for Finance & Legal"
+      - row "People operations me Jul 15 by me — More actions for People operations":
+        - cell "People operations"
+        - cell "me"
+        - cell "Jul 15 by me"
+        - cell "—"
+        - cell "More actions for People operations":
+          - button "More actions for People operations"
+      - row "Product me Jul 17 by me — More actions for Product":
+        - cell "Product"
+        - cell "me"
+        - cell "Jul 17 by me"
+        - cell "—"
+        - cell "More actions for Product":
+          - button "More actions for Product"
+      - row "Investor update — July me Jul 17 by me 3.6 MB More actions for Investor update — July":
+        - cell "Investor update — July"
+        - cell "me"
+        - cell "Jul 17 by me"
+        - cell "3.6 MB"
+        - cell "More actions for Investor update — July":
+          - button "More actions for Investor update — July"
+      - row "Q3 operating plan me Jul 17 by me 180 KB More actions for Q3 operating plan":
+        - cell "Q3 operating plan"
+        - cell "me"
+        - cell "Jul 17 by me"
+        - cell "180 KB"
+        - cell "More actions for Q3 operating plan":
+          - button "More actions for Q3 operating plan"
+      - row "Revenue forecast FY26 Lina Tran Jul 17 by Lina 417 KB More actions for Revenue forecast FY26":
+        - cell "Revenue forecast FY26"
+        - cell "Lina Tran"
+        - cell "Jul 17 by Lina"
+        - cell "417 KB"
+        - cell "More actions for Revenue forecast FY26":
+          - button "More actions for Revenue forecast FY26"
+      - row "Supplier agreement — Northwind.pdf Jun Jul 16 by Jun 1.6 MB More actions for Supplier agreement — Northwind.pdf":
+        - cell "Supplier agreement — Northwind.pdf"
+        - cell "Jun"
+        - cell "Jul 16 by Jun"
+        - cell "1.6 MB"
+        - cell "More actions for Supplier agreement — Northwind.pdf":
+          - button "More actions for Supplier agreement — Northwind.pdf"

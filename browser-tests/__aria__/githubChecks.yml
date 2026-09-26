@@ -1,0 +1,103 @@
+- banner:
+  - button "Open navigation"
+  - img "Code"
+  - link "Dashboard":
+    - /url: "#repository"
+  - textbox "Search":
+    - /placeholder: Type / to search
+  - text: /
+  - button "Create"
+  - button "Issues"
+  - button "Pull requests"
+  - button "Inbox"
+  - img "Jun": J
+- link "jim-technologies":
+  - /url: "#organization"
+- text: /
+- link "medallion-platform":
+  - /url: "#repository"
+  - strong: medallion-platform
+- text: Private
+- button "Notifications"
+- button "Fork 3"
+- button "☆ Star 28"
+- navigation "Repository":
+  - button "Code"
+  - button "Issues 18"
+  - button "Pull requests 4"
+  - button "Actions"
+  - button "Projects"
+  - button "Security"
+  - button "Insights"
+- main:
+  - 'heading "Normalize provider adapters #126" [level=1]'
+  - paragraph:
+    - text: Open
+    - strong: jun
+    - text: wants to merge 3 commits into
+    - code: main
+    - text: from
+    - code: feature/provider-contract
+  - button "Edit"
+  - navigation "Pull request sections":
+    - button "Conversation 5"
+    - button "Commits 3"
+    - button "Checks 5"
+    - button "Files changed 3"
+  - region "Checks":
+    - heading "All required checks have passed" [level=2]
+    - paragraph: 4 successful and 1 optional preview in progress
+    - button "Re-run jobs"
+    - complementary:
+      - strong: CI
+      - text: 5 jobs
+      - button "✓ Lint & typecheck 42s · ubuntu-latest":
+        - text: ✓
+        - strong: Lint & typecheck
+        - text: 42s · ubuntu-latest
+      - button "✓ Unit tests 1m 18s · ubuntu-latest":
+        - text: ✓
+        - strong: Unit tests
+        - text: 1m 18s · ubuntu-latest
+      - button "✓ Storybook 2m 44s · ubuntu-latest":
+        - text: ✓
+        - strong: Storybook
+        - text: 2m 44s · ubuntu-latest
+      - button "✓ Package 31s · ubuntu-latest":
+        - text: ✓
+        - strong: Package
+        - text: 31s · ubuntu-latest
+      - button "◌ Deploy preview 36s · jim-runner-04 · optional":
+        - text: ◌
+        - strong: Deploy preview
+        - text: 36s · jim-runner-04 · optional
+    - article:
+      - text: ✓
+      - heading "Lint & typecheck" [level=2]
+      - paragraph: Completed successfully in 42s
+      - button "Job options"
+      - text: 9e7f1ac feature/provider-contract 18 minutes ago
+      - list:
+        - listitem:
+          - text: "01"
+          - time: 00:01
+          - code: Prepare runner
+        - listitem:
+          - text: "02"
+          - time: 00:02
+          - code: Install pnpm dependencies
+        - listitem:
+          - text: "03"
+          - time: 00:03
+          - code: Run TypeScript compiler
+        - listitem:
+          - text: "04"
+          - time: 00:04
+          - code: Run Buf lint
+        - listitem:
+          - text: "05"
+          - time: 00:05
+          - code: Process completed with exit code 0
+      - strong: Artifacts
+      - text: storybook-static · 18.4 MB · expires in 7 days
+      - button "Download"

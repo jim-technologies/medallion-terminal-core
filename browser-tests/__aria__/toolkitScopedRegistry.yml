@@ -1,0 +1,9 @@
+- heading "Scoped registry" [level=1]
+- text: Static view
+- button "Sound off"
+- button "Compact"
+- button "Copy link"
+- button "Ctrl K"
+- text: "Scoped registry value:"
+- strong: "42"
+- text: idle 11:45:00

@@ -1,0 +1,10 @@
+- main:
+  - text: Toolkit · Controls
+  - heading "Compact density" [level=1]
+  - paragraph: Reusable controls and feedback primitives with shared intent, sizing, density, and accessible state behavior.
+  - region "Compact density component example":
+    - textbox "Compact input":
+      - /placeholder: Filter
+    - button "Apply"
+    - text: Live
+  - text: Theme and density inherit from the scoped toolkit root.

@@ -1,0 +1,193 @@
+- banner:
+  - button "Go back"
+  - button "Go forward"
+  - button "History"
+  - textbox "Search Jim Technologies"
+  - text: ⌘ G
+  - button "Help"
+  - text: All systems normal
+- complementary "Workspaces":
+  - img "Chat"
+  - button "Jim Technologies": JT
+  - button "Customer workspace":
+    - text: CX
+    - emphasis: "2"
+  - button "Add workspace"
+  - button "Workspace directory"
+  - text: J
+- complementary:
+  - button "Jim Technologies Business+":
+    - strong: Jim Technologies
+    - text: Business+
+  - button "New message"
+  - navigation "Chat navigation":
+    - button "Threads 4"
+    - button "Activity 9"
+    - button "Later"
+    - button "More"
+  - button "Collapse Channels": Channels
+  - button "Add channel"
+  - button "launch-room 3":
+    - strong: launch-room
+    - emphasis: "3"
+  - button "customer-signals 8":
+    - strong: customer-signals
+    - emphasis: "8"
+  - button "ops-command":
+    - strong: ops-command
+  - button "finance-forecast":
+    - strong: finance-forecast
+  - button "product":
+    - strong: product
+  - button "Collapse Direct messages": Direct messages
+  - button "Add teammates"
+  - button "Maya Chen Maya Chen 2":
+    - text: MC
+    - strong: Maya Chen
+    - emphasis: "2"
+  - button "Lina Torres Lina Torres":
+    - text: LT
+    - strong: Lina Torres
+  - button "Theo Martin Theo Martin":
+    - text: TM
+    - strong: Theo Martin
+  - button "Avery Brooks Avery Brooks":
+    - text: AB
+    - strong: Avery Brooks
+  - button "Invite people"
+- main:
+  - button "# launch-room Q3 launch coordination":
+    - strong: "# launch-room"
+    - text: Q3 launch coordination
+  - button "Huddle"
+  - button "8 members":
+    - text: J MC LT
+    - strong: "8"
+  - button "Channel details"
+  - log "launch-room messages":
+    - text: "#"
+    - heading "launch-room" [level=1]
+    - paragraph:
+      - text: This is the very beginning of
+      - strong: "#launch-room"
+      - text: . Decisions, blockers, customer readiness, and launch-day coordination.
+    - button "Add people"
+    - text: Today
+    - article:
+      - text: MC
+      - strong: Maya Chen
+      - time: 9:02 AM
+      - paragraph: Good morning! Final launch review starts at 10:00. I linked the operating brief and the open-decision register below.
+      - link "Launch operating brief.pdf PDF · 2.4 MB":
+        - /url: /files/launch-operating-brief.pdf
+        - strong: Launch operating brief.pdf
+        - text: PDF · 2.4 MB
+      - button "👀 4"
+      - button "✅ 2"
+      - button "5 replies Last reply 9:09 AM":
+        - strong: 5 replies
+        - text: Last reply 9:09 AM
+    - article:
+      - text: J
+      - strong: Jun
+      - time: 9:08 AM
+      - paragraph: I reviewed the rollout gates. Support staffing is the only item still marked at risk.
+      - button "👍 3"
+    - article:
+      - text: J
+      - strong: Jun
+      - time: 9:10 AM
+      - paragraph: I’ll resolve the owner and update the decision log before the review.
+      - button "🙌 3"
+    - article:
+      - text: LT
+      - strong: Lina Torres
+      - time: 9:14 AM
+      - paragraph: Customer communication is approved. The audience segments and translations are ready to schedule.
+      - link "Customer launch campaign Open linked resource":
+        - /url: /campaigns/customer-launch
+        - strong: Customer launch campaign
+        - text: Open linked resource
+      - button "🚀 6"
+      - button "2 replies Last reply 9:09 AM":
+        - strong: 2 replies
+        - text: Last reply 9:09 AM
+    - article:
+      - text: WB
+      - strong: Workflow Builder
+      - emphasis: APP
+      - time: 9:18 AM
+      - paragraph: Launch readiness changed from At risk → On track. 17 of 18 gates are complete.
+      - link "Open launch readiness Open linked resource":
+        - /url: /launch/readiness
+        - strong: Open launch readiness
+        - text: Open linked resource
+      - button "🎉 5"
+  - button "Bold":
+    - strong: B
+  - button "Italic":
+    - emphasis: I
+  - button "Strikethrough": S
+  - button "Insert link"
+  - button "Bulleted list": ≡
+  - button "Code": </>
+  - textbox "Message launch-room":
+    - /placeholder: "Message #launch-room"
+  - button "Add attachment"
+  - button "Record clip"
+  - button "Add emoji": ☺
+  - button "Mention someone": "@"
+  - text: Press Enter to send
+  - button "Send message" [disabled]
+  - button "Schedule message"
+- complementary "Thread":
+  - strong: Thread
+  - text: "#launch-room"
+  - button "Close thread"
+  - article:
+    - text: MC
+    - strong: Maya Chen
+    - time: 9:02 AM
+    - paragraph: Good morning! Final launch review starts at 10:00. I linked the operating brief and the open-decision register below.
+    - link "Launch operating brief.pdf PDF · 2.4 MB":
+      - /url: /files/launch-operating-brief.pdf
+      - strong: Launch operating brief.pdf
+      - text: PDF · 2.4 MB
+    - button "👀 4"
+    - button "✅ 2"
+    - button "5 replies Last reply 9:09 AM":
+      - strong: 5 replies
+      - text: Last reply 9:09 AM
+  - text: 5 replies
+  - article:
+    - text: TM
+    - strong: Theo Martin
+    - time: 9:03 AM
+    - paragraph: Finance sign-off is complete. I added the final margin sensitivity to page 11.
+    - button "✅ 2"
+  - article:
+    - text: AB
+    - strong: Avery Brooks
+    - time: 9:04 AM
+    - paragraph: Product screenshots are updated too. No copy changes needed.
+  - article:
+    - text: J
+    - strong: Jun
+    - time: 9:06 AM
+    - paragraph: Great. Let’s use this as the source of truth in the review.
+    - button "👍 3"
+  - article:
+    - text: MC
+    - strong: Maya Chen
+    - time: 9:07 AM
+    - paragraph: Pinned it to the channel and linked it from the meeting agenda.
+  - article:
+    - text: LT
+    - strong: Lina Torres
+    - time: 9:09 AM
+    - paragraph: Support leads have acknowledged the updated escalation path.
+  - textbox "Reply to thread":
+    - /placeholder: Reply…
+  - button "Add attachment"
+  - button "Add emoji": ☺
+  - button "Send reply"

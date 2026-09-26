@@ -1,0 +1,116 @@
+- complementary "Workspace navigation":
+  - strong: Workspace
+  - button "New"
+  - navigation "Workspace sections":
+    - button "Home"
+    - button "Recents"
+    - text: Build
+    - button "Workspace"
+    - text: Lakehouse
+    - button "SQL Editor"
+    - text: Data Engineering
+    - button "Jobs & Pipelines"
+    - text: Govern
+    - button "Catalog"
+    - text: AI/ML
+    - button "Playground"
+    - button "Experiments"
+    - button "Models"
+  - button "Settings"
+- banner:
+  - button "JT Jim Technologies":
+    - text: JT
+    - strong: Jim Technologies
+  - button "Search data, notebooks, queries, and jobs ⌘ K"
+  - button "Assistant"
+  - button "Help"
+  - button "Notifications"
+  - button "Jun account": J
+- main:
+  - text: Workspace / Users / jun@example.test /
+  - strong: Customer health intelligence
+  - button "Serverless"
+  - button "Share"
+  - button "Run all"
+  - button "Assistant"
+  - button "Customer health intelligence ×"
+  - button "Revenue forecast"
+  - button "New notebook tab": +
+  - text: All cells succeeded · 4.2s
+  - complementary "Workspace files":
+    - strong: Workspace
+    - button "New workspace item"
+    - textbox "Filter workspace":
+      - /placeholder: Filter
+    - button "Jim Technologies":
+      - strong: Jim Technologies
+    - button "Shared"
+    - button "Customer health intelligence"
+    - button "Revenue forecast"
+    - button "Production pipelines"
+    - button "Experiments"
+    - text: analytics-platform
+    - strong: main
+  - text: Python Default language
+  - button "Notebook options"
+  - article:
+    - button "Run intro"
+    - heading "Customer health intelligence" [level=1]
+    - paragraph: Build the governed feature view used by retention and account teams.
+    - button "Options for intro"
+  - article:
+    - button "Run load"
+    - text: "[12] 1"
+    - code: from pyspark.sql import functions as F
+    - text: "2"
+    - code
+    - text: "3"
+    - code: customers = spark.table("main.gold.customer_360")
+    - text: "4"
+    - code: usage = spark.table("main.silver.product_usage")
+    - text: "5"
+    - code: display(customers.limit(5))
+    - strong: account_name
+    - strong: arr
+    - strong: health_score
+    - text: Northwind Health 486000 94 Cascade Retail 218400 87 Brightpath Energy 624000 82 Command finished · 1.4s
+    - button "Options for load"
+  - article:
+    - button "Run features"
+    - text: "[13] 1"
+    - code: health_features = (
+    - text: "2"
+    - code: customers.join(usage, "account_id")
+    - text: "3"
+    - code: .groupBy("account_id", "account_name", "arr")
+    - text: "4"
+    - code: .agg(F.countDistinct("active_user_id").alias("active_users"),
+    - text: "5"
+    - code: F.max("event_at").alias("last_active_at"))
+    - text: "6"
+    - code: )
+    - text: "7"
+    - code: display(health_features.orderBy(F.desc("arr")))
+    - text: 0 250k 500k 750k ARR Northwind Health
+    - strong: "94"
+    - text: Cascade Retail
+    - strong: "87"
+    - text: Brightpath Energy
+    - strong: "82"
+    - text: Blue Harbor Logistics
+    - strong: "71"
+    - text: Command finished · 2.8s
+    - button "Options for features"
+  - button "Code ⌄"
+  - complementary "Assistant":
+    - text: Assistant
+    - button "Close Assistant"
+    - text: Customer health intelligence
+    - strong: 3 cells
+    - paragraph: I can explain this notebook, generate transformations, fix errors, or profile the current DataFrame.
+    - button "Explain the health feature logic"
+    - button "Add data quality checks"
+    - button "Optimize the join"
+    - textbox "Ask the assistant":
+      - /placeholder: Ask about this notebook…
+    - button "Send to Assistant"

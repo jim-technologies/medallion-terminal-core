@@ -1,0 +1,234 @@
+- banner:
+  - textbox "Sheets file name": FY26 revenue model
+  - button "Add star"
+  - button "Move file"
+  - text: Saved to Files
+  - navigation "Sheets menus":
+    - button "File"
+    - button "Edit"
+    - button "View"
+    - button "Insert"
+    - button "Format"
+    - button "Data"
+    - button "Tools"
+    - button "Extensions"
+    - button "Help"
+  - button "Last edit 2 min ago"
+  - button "Comments"
+  - button "Join a call"
+  - button "Ask Gemini"
+  - button "Share"
+  - text: MR LT
+  - 'button "Account: Jun"': J
+- toolbar "Sheets formatting":
+  - button "Undo"
+  - button "Redo"
+  - button "Print"
+  - button "Paint format"
+  - button "100%"
+  - button "Format as currency": $
+  - button "Format as percent": "%"
+  - button "Decrease decimal places": .0←
+  - button "Increase decimal places": .00→
+  - button "Arial"
+  - button "Decrease font size": −
+  - text: "11"
+  - button "Increase font size": +
+  - button "Bold": B
+  - button "Italic": I
+  - button "Underline": U
+  - button "Text color"
+  - button "Fill color"
+  - button "Insert link"
+  - button "Add comment"
+  - button "Insert chart"
+  - button "Align"
+  - button "List"
+  - button "Editing"
+- text: B4
+- button "Named ranges"
+- text: fx
+- textbox "Formula bar": $508,000
+- button "A"
+- button "B"
+- button "C"
+- button "D"
+- button "E"
+- button "F"
+- button "G"
+- button "H"
+- button "1"
+- 'button "A1: Month"': Month
+- 'button "B1: Revenue"': Revenue
+- 'button "C1: COGS"': COGS
+- 'button "D1: Gross profit"': Gross profit
+- 'button "E1: OpEx"': OpEx
+- 'button "F1: EBITDA"': EBITDA
+- 'button "G1: Margin"': Margin
+- 'button "H1: Status"': Status
+- button "2"
+- 'button "A2: Jan"': Jan
+- 'button "B2: $428,000"': $428,000
+- 'button "C2: $94,160"': $94,160
+- 'button "D2: $333,840"': $333,840
+- 'button "E2: $248,000"': $248,000
+- 'button "F2: $85,840"': $85,840
+- 'button "G2: 20.1%"': 20.1%
+- 'button "H2: Actual"': Actual
+- button "3"
+- 'button "A3: Feb"': Feb
+- 'button "B3: $462,000"': $462,000
+- 'button "C3: $101,640"': $101,640
+- 'button "D3: $360,360"': $360,360
+- 'button "E3: $252,000"': $252,000
+- 'button "F3: $108,360"': $108,360
+- 'button "G3: 23.5%"': 23.5%
+- 'button "H3: Actual"': Actual
+- button "4"
+- 'button "A4: Mar"': Mar
+- 'button "B4: $508,000"': $508,000
+- 'button "C4: $111,760"': $111,760
+- 'button "D4: $396,240"': $396,240
+- 'button "E4: $265,000"': $265,000
+- 'button "F4: $131,240"': $131,240
+- 'button "G4: 25.8%"': 25.8%
+- 'button "H4: Actual"': Actual
+- button "5"
+- 'button "A5: Apr"': Apr
+- 'button "B5: $544,000"': $544,000
+- 'button "C5: $119,680"': $119,680
+- 'button "D5: $424,320"': $424,320
+- 'button "E5: $277,000"': $277,000
+- 'button "F5: $147,320"': $147,320
+- 'button "G5: 27.1%"': 27.1%
+- 'button "H5: Forecast"': Forecast
+- button "6"
+- 'button "A6: May"': May
+- 'button "B6: $591,000"': $591,000
+- 'button "C6: $130,020"': $130,020
+- 'button "D6: $460,980"': $460,980
+- 'button "E6: $284,000"': $284,000
+- 'button "F6: $176,980"': $176,980
+- 'button "G6: 29.9%"': 29.9%
+- 'button "H6: Forecast"': Forecast
+- button "7"
+- 'button "A7: Jun"': Jun
+- 'button "B7: $648,000"': $648,000
+- 'button "C7: $142,560"': $142,560
+- 'button "D7: $505,440"': $505,440
+- 'button "E7: $296,000"': $296,000
+- 'button "F7: $209,440"': $209,440
+- 'button "G7: 32.3%"': 32.3%
+- 'button "H7: Forecast"': Forecast
+- button "8"
+- 'button "A8: Q2"': Q2
+- 'button "B8: $1,783,000"': $1,783,000
+- 'button "C8: $392,260"': $392,260
+- 'button "D8: $1,390,740"': $1,390,740
+- 'button "E8: $857,000"': $857,000
+- 'button "F8: $533,740"': $533,740
+- 'button "G8: 29.9%"': 29.9%
+- 'button "H8: Plan"': Plan
+- button "9"
+- 'button "A9: empty"'
+- 'button "B9: empty"'
+- 'button "C9: empty"'
+- 'button "D9: empty"'
+- 'button "E9: empty"'
+- 'button "F9: empty"'
+- 'button "G9: empty"'
+- 'button "H9: empty"'
+- button "10"
+- 'button "A10: empty"'
+- 'button "B10: empty"'
+- 'button "C10: empty"'
+- 'button "D10: empty"'
+- 'button "E10: empty"'
+- 'button "F10: empty"'
+- 'button "G10: empty"'
+- 'button "H10: empty"'
+- button "11"
+- 'button "A11: empty"'
+- 'button "B11: empty"'
+- 'button "C11: empty"'
+- 'button "D11: empty"'
+- 'button "E11: empty"'
+- 'button "F11: empty"'
+- 'button "G11: empty"'
+- 'button "H11: empty"'
+- button "12"
+- 'button "A12: empty"'
+- 'button "B12: empty"'
+- 'button "C12: empty"'
+- 'button "D12: empty"'
+- 'button "E12: empty"'
+- 'button "F12: empty"'
+- 'button "G12: empty"'
+- 'button "H12: empty"'
+- button "13"
+- 'button "A13: empty"'
+- 'button "B13: empty"'
+- 'button "C13: empty"'
+- 'button "D13: empty"'
+- 'button "E13: empty"'
+- 'button "F13: empty"'
+- 'button "G13: empty"'
+- 'button "H13: empty"'
+- button "14"
+- 'button "A14: empty"'
+- 'button "B14: empty"'
+- 'button "C14: empty"'
+- 'button "D14: empty"'
+- 'button "E14: empty"'
+- 'button "F14: empty"'
+- 'button "G14: empty"'
+- 'button "H14: empty"'
+- button "15"
+- 'button "A15: empty"'
+- 'button "B15: empty"'
+- 'button "C15: empty"'
+- 'button "D15: empty"'
+- 'button "E15: empty"'
+- 'button "F15: empty"'
+- 'button "G15: empty"'
+- 'button "H15: empty"'
+- button "16"
+- 'button "A16: empty"'
+- 'button "B16: empty"'
+- 'button "C16: empty"'
+- 'button "D16: empty"'
+- 'button "E16: empty"'
+- 'button "F16: empty"'
+- 'button "G16: empty"'
+- 'button "H16: empty"'
+- button "17"
+- 'button "A17: empty"'
+- 'button "B17: empty"'
+- 'button "C17: empty"'
+- 'button "D17: empty"'
+- 'button "E17: empty"'
+- 'button "F17: empty"'
+- 'button "G17: empty"'
+- 'button "H17: empty"'
+- button "18"
+- 'button "A18: empty"'
+- 'button "B18: empty"'
+- 'button "C18: empty"'
+- 'button "D18: empty"'
+- 'button "E18: empty"'
+- 'button "F18: empty"'
+- 'button "G18: empty"'
+- 'button "H18: empty"'
+- button "Add sheet"
+- button "All sheets"
+- button "Revenue model"
+- button "Assumptions"
+- button "Customers"
+- button "Scenario plan"
+- text: All changes saved in Drive
+- complementary "Workspace side panel":
+  - button "Calendar": "31"
+  - button "Keep"
+  - button "Tasks"
+  - button "Contacts"
+  - button "Get add-ons"

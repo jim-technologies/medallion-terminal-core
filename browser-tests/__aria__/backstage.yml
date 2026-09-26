@@ -1,0 +1,128 @@
+- complementary "Backstage navigation":
+  - strong: Catalog
+  - navigation "Backstage primary":
+    - button "Home"
+    - button "Catalog"
+    - button "APIs"
+    - button "Docs"
+    - button "Create"
+  - button "Support"
+  - button "Settings"
+  - button "Jun Jun jun@example.test":
+    - text: J
+    - strong: Jun
+    - text: jun@example.test
+- main:
+  - search:
+    - text: Search Backstage
+    - searchbox "Search Backstage"
+    - text: /
+  - text: Production
+  - button "Notifications"
+  - button "Help"
+  - text: J Software Catalog
+  - heading "Discover your software" [level=1]
+  - paragraph: Components, APIs, resources, systems, ownership, and operational context in one place.
+  - button "Register existing component"
+  - button "Create component"
+  - complementary "Catalog filters":
+    - heading "Personal" [level=2]
+    - button "Owned 4":
+      - text: Owned
+      - strong: "4"
+    - button "Starred 3":
+      - text: Starred
+      - strong: "3"
+    - heading "Organization" [level=2]
+    - button "All 12":
+      - text: All
+      - strong: "12"
+  - region "All entities 5":
+    - heading "All entities 5" [level=2]
+    - paragraph: Catalog metadata is synchronized from host-provided sources.
+    - text: Entity kind
+    - combobox "Entity kind":
+      - option "All"
+      - option "Component" [selected]
+      - option "API"
+      - option "Resource"
+      - option "System"
+      - option "Domain"
+      - option "Group"
+    - text: Filter catalog
+    - searchbox "Filter catalog"
+    - table:
+      - rowgroup:
+        - row "Name Kind Owner System Lifecycle Health and actions":
+          - columnheader "Name"
+          - columnheader "Kind"
+          - columnheader "Owner"
+          - columnheader "System"
+          - columnheader "Lifecycle"
+          - columnheader "Health and actions"
+      - rowgroup:
+        - row "Open Customer Gateway Component platform-experience customer-platform production Unstar Customer Gateway More actions for Customer Gateway":
+          - cell "Open Customer Gateway":
+            - button "Open Customer Gateway":
+              - strong: customer-gateway
+              - text: Public edge service for authenticated customer and partner traffic.
+          - cell "Component"
+          - cell "platform-experience":
+            - button "platform-experience"
+          - cell "customer-platform"
+          - cell "production"
+          - cell "Unstar Customer Gateway More actions for Customer Gateway":
+            - button "Unstar Customer Gateway": ★
+            - button "More actions for Customer Gateway"
+        - row "Open Web Console Component product-engineering customer-platform production Unstar Web Console More actions for Web Console":
+          - cell "Open Web Console":
+            - button "Open Web Console":
+              - strong: web-console
+              - text: Operator and customer workspace for Jim Technologies products.
+          - cell "Component"
+          - cell "product-engineering":
+            - button "product-engineering"
+          - cell "customer-platform"
+          - cell "production"
+          - cell "Unstar Web Console More actions for Web Console":
+            - button "Unstar Web Console": ★
+            - button "More actions for Web Console"
+        - row "Open Billing Service Component commerce-platform commerce production Star Billing Service More actions for Billing Service":
+          - cell "Open Billing Service":
+            - button "Open Billing Service":
+              - strong: billing-service
+              - text: Invoices, subscriptions, usage rating, and ledger posting.
+          - cell "Component"
+          - cell "commerce-platform":
+            - button "commerce-platform"
+          - cell "commerce"
+          - cell "production"
+          - cell "Star Billing Service More actions for Billing Service":
+            - button "Star Billing Service": ☆
+            - button "More actions for Billing Service"
+        - row "Open Identity Service Component security-platform customer-platform production Star Identity Service More actions for Identity Service":
+          - cell "Open Identity Service":
+            - button "Open Identity Service":
+              - strong: identity-service
+              - text: Workspace identity, sessions, service credentials, and policy claims.
+          - cell "Component"
+          - cell "security-platform":
+            - button "security-platform"
+          - cell "customer-platform"
+          - cell "production"
+          - cell "Star Identity Service More actions for Identity Service":
+            - button "Star Identity Service": ☆
+            - button "More actions for Identity Service"
+        - row "Open Notifications Worker Component platform-experience customer-platform production Star Notifications Worker More actions for Notifications Worker":
+          - cell "Open Notifications Worker":
+            - button "Open Notifications Worker":
+              - strong: notifications-worker
+              - text: Asynchronous email, push, webhook, and in-product delivery worker.
+          - cell "Component"
+          - cell "platform-experience":
+            - button "platform-experience"
+          - cell "customer-platform"
+          - cell "production"
+          - cell "Star Notifications Worker More actions for Notifications Worker":
+            - button "Star Notifications Worker": ☆
+            - button "More actions for Notifications Worker"

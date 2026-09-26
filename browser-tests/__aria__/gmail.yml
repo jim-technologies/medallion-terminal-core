@@ -1,0 +1,75 @@
+- banner:
+  - button "Main menu"
+  - link "Mail Mail":
+    - /url: "#mail"
+    - text: M
+    - strong: Mail
+  - text: Search mail
+  - textbox "Search mail /":
+    - /placeholder: Search mail
+  - text: /
+  - button "Help"
+  - button "Settings"
+  - text: J
+- complementary "Mail folders":
+  - button "Compose"
+  - navigation "Mail folders":
+    - button "Inbox 12"
+    - button "Starred"
+    - button "Snoozed"
+    - button "Sent"
+    - button "Drafts 3"
+  - text: Labels
+  - button "Customers"
+  - button "Finance"
+  - button "Projects"
+  - button "People"
+  - text: JT
+  - strong: Jim Technologies
+  - text: jun@example.test
+- main:
+  - checkbox "Select all mail"
+  - button "Refresh"
+  - button "More actions"
+  - text: 6 conversations
+  - button "Primary"
+  - button "Promotions"
+  - button "Social"
+  - button "Updates"
+  - listbox "Messages":
+    - option "□ ★ Maya Chen Northwind renewal — final review The commercial terms are approved. Can you check the implementation dates? Customers 10:42 AM":
+      - text: □ ★
+      - strong: Maya Chen
+      - text: Northwind renewal — final review The commercial terms are approved. Can you check the implementation dates?
+      - emphasis: Customers
+      - time: 10:42 AM
+    - option "□ ☆ Finance Team July cash forecast is ready Collections improved this week and the operating runway moved to 18 months. Finance 9:18 AM":
+      - text: □ ☆
+      - strong: Finance Team
+      - text: July cash forecast is ready Collections improved this week and the operating runway moved to 18 months.
+      - emphasis: Finance
+      - time: 9:18 AM
+    - option "□ ★ Lina Torres Launch readiness notes I consolidated the open risks, owners, and decisions from yesterday’s review. Projects Yesterday":
+      - text: □ ★
+      - strong: Lina Torres
+      - text: Launch readiness notes I consolidated the open risks, owners, and decisions from yesterday’s review.
+      - emphasis: Projects
+      - time: Yesterday
+    - option "□ ☆ Atlas Design Co. Invoice 1048 received Thanks, Jun. We have scheduled the payment for Friday. Finance Yesterday":
+      - text: □ ☆
+      - strong: Atlas Design Co.
+      - text: Invoice 1048 received Thanks, Jun. We have scheduled the payment for Friday.
+      - emphasis: Finance
+      - time: Yesterday
+    - option "□ ☆ Operations Digest Weekly operating summary Revenue is on plan; two customer commitments need owner confirmation. Updates Jul 19":
+      - text: □ ☆
+      - strong: Operations Digest
+      - text: Weekly operating summary Revenue is on plan; two customer commitments need owner confirmation.
+      - emphasis: Updates
+      - time: Jul 19
+    - option "□ ☆ Noah Williams Candidate debrief Sharing the panel notes and recommendation for the product role. People Jul 18":
+      - text: □ ☆
+      - strong: Noah Williams
+      - text: Candidate debrief Sharing the panel notes and recommendation for the product role.
+      - emphasis: People
+      - time: Jul 18

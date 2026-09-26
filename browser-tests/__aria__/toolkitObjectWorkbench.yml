@@ -1,0 +1,78 @@
+- toolbar "Object workbench toolbar":
+  - strong: Object workbench
+  - textbox "Search objects"
+  - button "Filter"
+  - button "New"
+  - text: Current
+  - button "Workbench settings"
+- complementary "Object explorer":
+  - text: Explorer
+  - tree "Object hierarchy":
+    - treeitem "Collapse Workspace Workspace" [expanded] [level=1]:
+      - button "Collapse Workspace"
+      - text: Workspace
+    - treeitem "Collapse Operations Operations" [expanded] [level=2]:
+      - button "Collapse Operations"
+      - text: Operations
+    - treeitem "Orders" [level=3] [selected]
+    - treeitem "Suppliers" [level=3]
+    - treeitem "Finance" [level=2]
+    - treeitem "Shared with me" [level=1]
+- separator "Resize explorer"
+- main:
+  - navigation "Breadcrumbs":
+    - list:
+      - listitem: Workspace
+      - listitem: Operations
+      - listitem: Orders
+  - heading "Orders" [level=1]
+  - paragraph: 5 objects · sorted by last updated
+  - button "Columns"
+  - table:
+    - rowgroup:
+      - row "Order Account Status Total":
+        - columnheader "Order"
+        - columnheader "Account"
+        - columnheader "Status"
+        - columnheader "Total"
+    - rowgroup:
+      - row "1048 Northwind Studio In review $18,240":
+        - cell "1048"
+        - cell "Northwind Studio"
+        - cell "In review"
+        - cell "$18,240"
+      - row "1047 Lakefront Supply Approved $9,815":
+        - cell "1047"
+        - cell "Lakefront Supply"
+        - cell "Approved"
+        - cell "$9,815"
+      - row "1046 Cedar Works Processing $12,460":
+        - cell "1046"
+        - cell "Cedar Works"
+        - cell "Processing"
+        - cell "$12,460"
+      - row "1045 Bright Path Delivered $7,290":
+        - cell "1045"
+        - cell "Bright Path"
+        - cell "Delivered"
+        - cell "$7,290"
+      - row "1044 Harbor Labs Exception $22,105":
+        - cell "1044"
+        - cell "Harbor Labs"
+        - cell "Exception"
+        - cell "$22,105"
+- separator "Resize inspector"
+- complementary "Object inspector":
+  - heading "Order 1048" [level=2]
+  - paragraph: Updated 4 minutes ago
+  - button "Object actions"
+  - term: Status
+  - definition: In review
+  - term: Owner
+  - definition: Jun
+  - term: Total
+  - definition: $18,240.00
+  - term: Delivery
+  - definition: Jul 28, 2026
+  - term: Source
+  - definition: Operations system

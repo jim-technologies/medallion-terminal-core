@@ -1,0 +1,103 @@
+- banner:
+  - button "Open navigation"
+  - img "Code"
+  - link "Dashboard":
+    - /url: "#repository"
+  - textbox "Search":
+    - /placeholder: Type / to search
+  - text: /
+  - button "Create"
+  - button "Issues"
+  - button "Pull requests"
+  - button "Inbox"
+  - img "Jun": J
+- link "jim-technologies":
+  - /url: "#organization"
+- text: /
+- link "medallion-platform":
+  - /url: "#repository"
+  - strong: medallion-platform
+- text: Private
+- button "Notifications"
+- button "Fork 3"
+- button "☆ Star 28"
+- navigation "Repository":
+  - button "Code"
+  - button "Issues 18"
+  - button "Pull requests 4"
+  - button "Actions"
+  - button "Projects"
+  - button "Security"
+  - button "Insights"
+- main:
+  - 'heading "Normalize provider adapters #126" [level=1]'
+  - paragraph:
+    - text: Open
+    - strong: jun
+    - text: wants to merge 3 commits into
+    - code: main
+    - text: from
+    - code: feature/provider-contract
+  - button "Edit"
+  - navigation "Pull request sections":
+    - button "Conversation 5"
+    - button "Commits 3"
+    - button "Checks 5"
+    - button "Files changed 3"
+  - region "Files changed":
+    - strong: 3 files changed
+    - text: +144 −9
+    - textbox "Filter changed files":
+      - /placeholder: Filter files…
+    - button "Changes from all commits"
+    - button "Review changes"
+    - complementary "Changed files":
+      - strong: Files
+      - button "Collapse file tree"
+      - strong: medallion-platform
+      - button "Open src/core/providerAdapter.ts": M src/core/providerAdapter.ts
+      - button "Open src/core/providerAdapter.test.ts": A src/core/providerAdapter.test.ts
+      - button "Open docs/integrations.md": M docs/integrations.md
+    - strong: 1 of 3 files viewed
+    - text: Mark files as viewed as you complete the review.
+    - article:
+      - strong: src/core/providerAdapter.ts
+      - text: Modified +48 −6
+      - checkbox "Viewed"
+      - text: Viewed
+      - button "More file actions"
+      - text: "@@ -18,9 +18,16 @@ export interface ProviderAdapter"
+      - region "Diff for src/core/providerAdapter.ts":
+        - text: 18 18
+        - button "Comment on line 18": +
+        - code: "export interface ProviderAdapter<TSource, TCanonical> {"
+        - text: "19"
+        - button "Comment on line 19": +
+        - code: "+ readonly provider: string"
+        - text: "20"
+        - button "Comment on line 20": +
+        - code: "+ normalize(source: TSource, options?: NormalizeOptions): TCanonical"
+        - text: "21"
+        - button "Comment on line 21": +
+        - code: "+ denormalize(value: TCanonical): TSource"
+        - text: 19 22
+        - button "Comment on line 22": +
+        - code: "}"
+        - text: "25"
+        - button "Comment on line 25": +
+        - code: "−export function normalizeProvider(value: unknown) {"
+        - text: "29"
+        - button "Comment on line 29": +
+        - code: +export function createProviderAdapter<TSource, TCanonical>(
+        - text: "30"
+        - button "Comment on line 30": +
+        - code: "+ adapter: ProviderAdapter<TSource, TCanonical>,"
+        - text: "31"
+        - button "Comment on line 31": +
+        - code: "+): Readonly<ProviderAdapter<TSource, TCanonical>> {"
+        - text: "32"
+        - button "Comment on line 32": +
+        - code: + return Object.freeze(adapter)
+        - text: 26 33
+        - button "Comment on line 33": +
+        - code: "}"

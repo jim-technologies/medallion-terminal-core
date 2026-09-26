@@ -1,0 +1,154 @@
+- complementary "Gallery sidebar":
+  - img "Gallery"
+  - navigation "Gallery navigation":
+    - button "Home"
+    - button "Search"
+    - button "Explore"
+    - button "Reels"
+    - button "Messages"
+    - button "Notifications"
+    - button "Create"
+    - button "Profile":
+      - img "Jun": J
+      - text: Profile
+  - button "More"
+- main:
+  - region "Gallery feed":
+    - region "Stories":
+      - button "Jun Your story":
+        - img "Jun": J
+        - text: Your story
+      - button "Jim Technologies Jim Tech":
+        - img "Jim Technologies": JT
+        - text: Jim Tech
+      - button "Maya Chen Maya":
+        - img "Maya Chen": MC
+        - text: Maya
+      - button "Lina Torres Lina":
+        - img "Lina Torres": LT
+        - text: Lina
+      - button "Noah Williams Noah":
+        - img "Noah Williams": NW
+        - text: Noah
+      - button "Amelia Stone Amelia":
+        - img "Amelia Stone": AS
+        - text: Amelia
+    - article:
+      - img "Jim Technologies": JT
+      - strong:
+        - text: jimtech
+        - img "Verified": ✓
+      - text: San Francisco, California
+      - button "Post options"
+      - button "Open post by Jim Technologies":
+        - img "Abstract studio planning board"
+      - button "Unlike post" [pressed]
+      - button "Comment on post"
+      - button "Share post"
+      - button "Remove from saved" [pressed]
+      - strong: 1.8K likes
+      - paragraph: "jimtech A calmer operating system for growing teams: one view for customers, projects, data, and the decisions that move the business forward."
+      - button "View all 96 comments"
+      - time: 18m ago
+    - article:
+      - img "Maya Chen": MC
+      - strong:
+        - text: mayachen
+        - img "Verified": ✓
+      - text: Half Moon Bay, California
+      - button "Post options"
+      - button "Open post by Maya Chen":
+        - img "Abstract golden coast"
+      - button "Like post"
+      - button "Comment on post"
+      - button "Share post"
+      - button "Save post"
+      - strong: 728 likes
+      - paragraph: mayachen A productive offsite, a sharper launch plan, and just enough ocean air. The customer commitments are mapped and ready for review.
+      - button "View all 31 comments"
+      - time: 42m ago
+    - article:
+      - img "Noah Williams": NW
+      - strong: noahbuilds
+      - text: Product design
+      - button "Post options"
+      - button "Open post by Noah Williams":
+        - img "Abstract mountain ridge at sunset"
+      - button "Like post"
+      - button "Comment on post"
+      - button "Share post"
+      - button "Save post"
+      - strong: 534 likes
+      - paragraph: "noahbuilds Build note: the best business software makes complex systems feel legible. Strong defaults first, escape hatches second."
+      - button "View all 48 comments"
+      - time: 1h ago
+    - article:
+      - img "Lina Torres": LT
+      - strong: linatorres
+      - text: San Francisco, California
+      - button "Post options"
+      - button "Open post by Lina Torres":
+        - img "Abstract city skyline at night"
+      - button "Like post"
+      - button "Comment on post"
+      - button "Share post"
+      - button "Save post"
+      - strong: 391 likes
+      - paragraph: linatorres Closed the week with three customer launches and a much shorter open-issues list. Proud of this team.
+      - button "View all 24 comments"
+      - time: 2h ago
+    - article:
+      - img "Amelia Stone": AS
+      - strong: ameliastone
+      - text: Founder community
+      - button "Post options"
+      - button "Like post"
+      - button "Comment on post"
+      - button "Share post"
+      - button "Save post"
+      - strong: 1.1K likes
+      - paragraph: "ameliastone Three things I wish every owner dashboard answered immediately: 1. What changed? 2. What needs a decision? 3. Who owns the next move?"
+      - button "View all 143 comments"
+      - time: 3h ago
+    - article:
+      - img "Jun": J
+      - strong:
+        - text: jun
+        - img "Verified": ✓
+      - text: Jim Technologies · Founder
+      - button "Post options"
+      - button "Open post by Jun":
+        - img "Abstract forest path"
+      - button "Unlike post" [pressed]
+      - button "Comment on post"
+      - button "Share post"
+      - button "Save post"
+      - strong: 862 likes
+      - paragraph: "jun Quiet progress compounds. We finished the frontend readiness pass today: contracts, product surfaces, accessibility, and release gates are all green."
+      - button "View all 67 comments"
+      - time: 5h ago
+  - img "Jun": J
+  - strong: jun
+  - text: jun@example.test
+  - button "Switch"
+  - strong: Suggested for you
+  - button "See all"
+  - img "Maya Chen": MC
+  - strong:
+    - text: mayachen
+    - img "Verified": ✓
+  - text: Followed by Jim Technologies
+  - button "Following"
+  - img "Noah Williams": NW
+  - strong: noahbuilds
+  - text: Popular with founders
+  - button "Following"
+  - img "Amelia Stone": AS
+  - strong: ameliastone
+  - text: Suggested for you
+  - button "Following"
+  - img "Lina Torres": LT
+  - strong: linatorres
+  - text: Works with Jun
+  - button "Follow"
+  - text: About · Help · Privacy · Terms · Locations · Verified

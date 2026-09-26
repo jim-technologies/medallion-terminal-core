@@ -1,0 +1,18 @@
+- main:
+  - text: Toolkit · Controls
+  - heading "Icon, Button, IconButton & ButtonGroup" [level=1]
+  - paragraph: Reusable controls and feedback primitives with shared intent, sizing, density, and accessible state behavior.
+  - region "Icon, Button, IconButton & ButtonGroup component example":
+    - img "Folder"
+    - img "Search"
+    - img "Settings"
+    - img "Warning"
+    - button "Create object"
+    - button "Search"
+    - button "Saving" [disabled]
+    - button "Disabled" [disabled]
+    - button "Open settings"
+    - group "View density":
+      - button "Compact"
+      - button "Comfortable"
+  - text: Theme and density inherit from the scoped toolkit root.

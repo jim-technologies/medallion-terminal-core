@@ -1,0 +1,7 @@
+- main:
+  - text: Toolkit · Overlays
+  - heading "Drawer" [level=1]
+  - paragraph: Dismissible interaction layers with keyboard navigation, focus management, and focus restoration built into their contracts.
+  - region "Drawer component example":
+    - button "Open inspector drawer"
+  - text: Theme and density inherit from the scoped toolkit root.

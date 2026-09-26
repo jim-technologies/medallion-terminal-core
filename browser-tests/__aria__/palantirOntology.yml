@@ -1,0 +1,106 @@
+- banner:
+  - strong: Operations
+  - text: Platform
+  - button "Jim Technologies"
+  - text: Search resources, objects, and applications ⌘ K
+  - button "Help"
+  - button "Notifications"
+  - text: J
+- complementary "Workspace navigation":
+  - text: Operations model
+  - navigation "Ontology workspace":
+    - button "Ontology manager"
+    - button "Object explorer"
+    - button "Data Lineage 1"
+    - button "Action Types"
+  - text: Resources
+  - button "Datasets"
+  - button "Code repositories"
+  - button "Applications"
+  - strong: Governed workspace
+  - text: Policies active
+- main:
+  - text: Ontology
+  - heading "Ontology manager" [level=1]
+  - paragraph: Model the objects, relationships, and actions that power operational applications.
+  - button "Export"
+  - button "New object type"
+  - text: Object types
+  - strong: "5"
+  - text: Across 4 domains Properties
+  - strong: "24"
+  - text: 12 indexed Link types
+  - strong: "12"
+  - text: All validated Healthy
+  - strong: 3/5
+  - text: 1 issue to review
+  - textbox:
+    - /placeholder: Search object types
+  - button "Filter object types"
+  - text: Object type Backing dataset Objects Status
+  - button "C Customer 6 properties · 3 links gold.customer_360 12,842 Healthy":
+    - text: C
+    - strong: Customer
+    - text: 6 properties · 3 links
+    - code: gold.customer_360
+    - text: 12,842 Healthy
+  - button "O Order 5 properties · 3 links gold.commercial_orders 48,105 Healthy":
+    - text: O
+    - strong: Order
+    - text: 5 properties · 3 links
+    - code: gold.commercial_orders
+    - text: 48,105 Healthy
+  - button "S Shipment 5 properties · 2 links silver.shipment_events 8,294 Needs attention":
+    - text: S
+    - strong: Shipment
+    - text: 5 properties · 2 links
+    - code: silver.shipment_events
+    - text: 8,294 Needs attention
+  - button "P Product 4 properties · 2 links gold.product_catalog 1,486 Healthy":
+    - text: P
+    - strong: Product
+    - text: 4 properties · 2 links
+    - code: gold.product_catalog
+    - text: 1,486 Healthy
+  - button "T Support case 4 properties · 2 links gold.support_cases 2,039 Draft":
+    - text: T
+    - strong: Support case
+    - text: 4 properties · 2 links
+    - code: gold.support_cases
+    - text: 2,039 Draft
+  - complementary "Customer inspector":
+    - text: C
+    - heading "Customer" [level=2]
+    - text: Object type · 18 min ago
+    - button "Object type options"
+    - paragraph: A company or individual receiving products and services.
+    - button "Schema"
+    - button "Datasets"
+    - button "Usage"
+    - text: Properties
+    - button "Add"
+    - strong: Customer ID
+    - text: string
+    - emphasis: Required
+    - emphasis: Indexed
+    - strong: Legal name
+    - text: string
+    - emphasis: Required
+    - emphasis: Indexed
+    - strong: Segment
+    - text: string
+    - emphasis: Indexed
+    - strong: Annual recurring revenue
+    - text: decimal
+    - strong: Health score
+    - text: integer
+    - emphasis: Indexed
+    - strong: Renewal date
+    - text: date Link types
+    - button "Add"
+    - strong: Orders
+    - text: many · Order
+    - strong: Contacts
+    - text: many · Contact
+    - strong: Account owner
+    - text: one · Employee

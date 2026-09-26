@@ -1,0 +1,31 @@
+- main:
+  - text: Toolkit · Iconography
+  - heading "Type glyphs" [level=1]
+  - paragraph: One first-party icon set on a 24-unit grid with 1.75-unit strokes, and the type glyph that gives each object type its identity.
+  - region "Type glyphs component example":
+    - heading "Identity slots" [level=2]
+    - list "Type identity slots":
+      - listitem: azure
+      - listitem: cyan
+      - listitem: teal
+      - listitem: green
+      - listitem: lime
+      - listitem: olive
+      - listitem: amber
+      - listitem: orange
+      - listitem: red
+      - listitem: rose
+      - listitem: magenta
+      - listitem: violet
+    - heading "Sizes" [level=2]
+    - list "Object types":
+      - listitem: Customer
+      - listitem: Person
+      - listitem: Contract
+      - listitem: Order
+      - listitem: Shipment
+      - listitem: Dataset
+    - paragraph:
+      - img "Customer"
+      - text: Standalone glyphs take a label; glyphs beside a type name stay decorative.
+  - text: Theme and density inherit from the scoped toolkit root.

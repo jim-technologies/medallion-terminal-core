@@ -1,0 +1,84 @@
+- complementary "Workspace navigation":
+  - text: I
+  - strong: Issues
+  - button "Search /"
+  - button "Create work item C"
+  - navigation "Personal work":
+    - button "My work 8"
+    - button "Activity"
+    - button "Views"
+  - text: Workspace
+  - navigation "Workspace":
+    - button "JT Jim Technologies"
+    - button "Roadmaps"
+    - button "Projects"
+  - text: Your teams
+  - navigation "Teams":
+    - button "Product"
+    - button "Platform"
+  - text: J Jun
+  - button "Settings"
+- main:
+  - text: Jim Technologies /
+  - strong: My issues
+  - button "Filter"
+  - button "More"
+  - text: J Workspace
+  - heading "My issues" [level=1]
+  - paragraph: Work assigned to you across teams and projects.
+  - button "+ Create"
+  - navigation "Issues views":
+    - button "My issues"
+    - button "Current cycle"
+    - button "Issue detail"
+  - text: ⌄
+  - strong: In progress
+  - text: "1"
+  - button "◆ ENG-482 Normalize provider-specific media metadata 5 J":
+    - text: ◆
+    - code: ENG-482
+    - strong: Normalize provider-specific media metadata
+    - emphasis: "5"
+    - text: J
+  - text: ⌄
+  - strong: Review
+  - text: "1"
+  - button "◆ ENG-479 Add policy context to file actions 3 M":
+    - text: ◆
+    - code: ENG-479
+    - strong: Add policy context to file actions
+    - emphasis: "3"
+    - text: M
+  - text: ⌄
+  - strong: Todo
+  - text: "1"
+  - button "◆ ENG-475 Improve catalog pagination states 3 L":
+    - text: ◆
+    - code: ENG-475
+    - strong: Improve catalog pagination states
+    - emphasis: "3"
+    - text: L
+  - text: ⌄
+  - strong: Backlog
+  - text: "1"
+  - button "◆ ENG-468 Document backend conformance fixtures 5 N":
+    - text: ◆
+    - code: ENG-468
+    - strong: Document backend conformance fixtures
+    - emphasis: "5"
+    - text: "N"
+  - text: ⌄
+  - strong: Done
+  - text: "2"
+  - button "◆ ENG-463 Ship operator theme contrast update 2 J":
+    - text: ◆
+    - code: ENG-463
+    - strong: Ship operator theme contrast update
+    - emphasis: "2"
+    - text: J
+  - button "◆ ENG-458 Validate action lifecycle reconnect 3 A":
+    - text: ◆
+    - code: ENG-458
+    - strong: Validate action lifecycle reconnect
+    - emphasis: "3"
+    - text: A

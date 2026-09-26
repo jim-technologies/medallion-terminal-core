@@ -1,0 +1,95 @@
+- banner:
+  - textbox "Slides file name": Q3 business review
+  - button "Add star"
+  - button "Move file"
+  - text: Saved to Files
+  - navigation "Slides menus":
+    - button "File"
+    - button "Edit"
+    - button "View"
+    - button "Insert"
+    - button "Slide"
+    - button "Arrange"
+    - button "Tools"
+    - button "Extensions"
+    - button "Help"
+  - button "Last edit 2 min ago"
+  - button "Comments"
+  - button "Join a call"
+  - button "Ask Gemini"
+  - button "Slideshow"
+  - button "Share"
+  - text: MR LT
+  - 'button "Account: Jun"': J
+- toolbar "Slides formatting":
+  - button "Undo"
+  - button "Redo"
+  - button "Print"
+  - button "Paint format"
+  - button "100%"
+  - button "Layout"
+  - button "Arial"
+  - button "Decrease font size": −
+  - text: "11"
+  - button "Increase font size": +
+  - button "Bold": B
+  - button "Italic": I
+  - button "Underline": U
+  - button "Text color"
+  - button "Insert link"
+  - button "Add comment"
+  - button "Insert image"
+  - button "Align"
+  - button "List"
+  - button "Editing"
+- complementary:
+  - button "1 BOARD UPDATE · JULY 2026 Building the operating system for growing businesses Q3 business review":
+    - text: 1 BOARD UPDATE · JULY 2026
+    - heading "Building the operating system for growing businesses" [level=2]
+    - paragraph: Q3 business review
+  - button "2 EXECUTIVE SUMMARY Momentum in the core Customers are consolidating fragmented workflows into one trusted workspace. +38% ARR growth 126% Net retention 4.8× Workflow depth":
+    - text: 2 EXECUTIVE SUMMARY
+    - heading "Momentum in the core" [level=2]
+    - paragraph: Customers are consolidating fragmented workflows into one trusted workspace.
+    - strong: +38%
+    - text: ARR growth
+    - strong: 126%
+    - text: Net retention
+    - strong: 4.8×
+    - text: Workflow depth
+  - button "3 GROWTH Revenue compounds as teams expand Net retention and multi-workflow adoption continue to strengthen. Jan Feb Mar Apr May Jun":
+    - text: 3 GROWTH
+    - heading "Revenue compounds as teams expand" [level=2]
+    - paragraph: Net retention and multi-workflow adoption continue to strengthen.
+    - text: Jan Feb Mar Apr May Jun
+  - button "4 Q3 PRIORITIES Three bets, one operating cadence Focus the roadmap on connected data, repeatable workflows, and trusted automation. 01 Connected data 02 Repeatable workflows 03 Trusted automation":
+    - text: 4 Q3 PRIORITIES
+    - heading "Three bets, one operating cadence" [level=2]
+    - paragraph: Focus the roadmap on connected data, repeatable workflows, and trusted automation.
+    - text: "01"
+    - strong: Connected data
+    - text: "02"
+    - strong: Repeatable workflows
+    - text: "03"
+    - strong: Trusted automation
+  - button "5 NEXT 90 DAYS From design partners to repeatable scale A sequenced plan with clear owners and measurable decision gates. July Design partner beta August Workflow marketplace September General availability":
+    - text: 5 NEXT 90 DAYS
+    - heading "From design partners to repeatable scale" [level=2]
+    - paragraph: A sequenced plan with clear owners and measurable decision gates.
+    - strong: July
+    - text: Design partner beta
+    - strong: August
+    - text: Workflow marketplace
+    - strong: September
+    - text: General availability
+  - button "Add slide"
+- text: BOARD UPDATE · JULY 2026
+- heading "Building the operating system for growing businesses" [level=2]
+- paragraph: Q3 business review
+- text: JIM TECHNOLOGIES · COVER Maya Click to add speaker notes
+- complementary "Workspace side panel":
+  - button "Calendar": "31"
+  - button "Keep"
+  - button "Tasks"
+  - button "Contacts"
+  - button "Get add-ons"

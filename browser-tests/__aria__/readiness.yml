@@ -1,0 +1,103 @@
+- button "Access & policy Ctrl1"
+- button "Reliability Ctrl2"
+- button "Scale Ctrl3"
+- button "Workflow Ctrl4"
+- heading "Jim Technologies · authorized workspace" [level=1]
+- text: 1 err
+- button "Off"
+- button "5s"
+- button "30s"
+- button "1m"
+- button "5m"
+- button "Refresh"
+- button "Sound off"
+- button "Compact"
+- button "Share view"
+- button "Copy link"
+- button "Ctrl K"
+- text: Context tenantjim-technologies userjun@example.test asset_idcustomer-360 asset_kinddataset
+- heading "Access posture" [level=2]
+- button "Widget actions": ⋮
+- text: Authenticated sessions 1 active Granted scopes 4 scopes Masked fields 3 fields Denied reads · 24h 2 requests Audit coverage 100 %
+- heading "Authorized source catalog" [level=2]
+- button "Widget actions": ⋮
+- text: object — 2 readiness_protected_object — Protected customer object Authorized object with field masking. readiness readiness_change_request — Change request object Approval-ready change object. readiness metric — 2 readiness_restricted_payroll — Restricted payroll metric Intentional field-policy denial. readiness readiness_resilience_probe — Resilience probe Scenario-controlled failure and recovery probe. readiness text — 2 readiness_security_notes — Security explanation Safe policy guidance for operators. readiness readiness_runbook — Operator runbook Bounded recovery instructions. readiness table — 2 readiness_policy_matrix — Effective policy matrix Resolved scopes and field-level decisions. readiness readiness_recovery_log — Recovery exercise log Recent fault-injection outcomes. readiness events — 3 readiness_access_audit — Access audit trail Metadata-only access events. readiness readiness_service_health — Service health Current dependency health. readiness readiness_workflow_audit — Workflow audit trail Approval and execution history. readiness timeseries — 1 readiness_recovery_history — Recovery history Success rate and latency during recent exercises. readiness asset_catalog — 1 readiness_paged_assets — Paged asset catalog Opaque-cursor asset pages. readiness record_set — 1 readiness_paged_records — Paged work queue Opaque-cursor operational records. readiness conversation — 1 readiness_paged_conversation — Paged incident history Backward cursor-paged conversation history. readiness graph — 1 readiness_workflow_graph — Change lifecycle graph Governed change workflow. readiness
+- heading "Protected customer object" [level=2]
+- button "Widget actions": ⋮
+- text: customer_account
+- heading "Northwind Foods" [level=3]
+- text: customer-360 healthy
+- paragraph: Authorized customer projection with server-side field masking.
+- text: tenant-scoped restricted
+- heading "Account" [level=4]
+- term: Owner
+- definition: Jun
+- term: Annual value
+- definition: $284,000
+- term: Health
+- definition: 92.00%
+- heading "Protected" [level=4]
+- term: Primary email
+- definition: ••••••@northwind.example
+- term: Tax identifier
+- definition: ••-•••4821
+- term: Banking details
+- definition: Masked by finance policy
+- heading "Relationships" [level=4]
+- button "open work Platform launch project"
+- button "contract 2026 service agreement document"
+- heading "Payroll · intentionally denied" [level=2]
+- button "Widget actions": ⋮
+- status:
+  - text: You don’t have access Ask an owner for access.
+  - group: Details
+- heading "Policy explanation" [level=2]
+- button "Widget actions": ⋮
+- article:
+  - heading "Expected denial" [level=3]
+  - text: Policy engine
+  - paragraph: The payroll widget deliberately receives HTTP 403. The server denies the source before returning any payload fields.
+  - text: least privilege
+- article:
+  - heading "Headers stay host-owned" [level=3]
+  - text: Frontend boundary
+  - paragraph: Tenant and authorization headers are supplied by the host and never serialized into templates or snapshots.
+  - text: credentials
+- heading "Effective policy" [level=2]
+- button "Widget actions": ⋮
+- table:
+  - rowgroup:
+    - row "Resource Decision Scope Fields":
+      - columnheader "Resource"
+      - columnheader "Decision"
+      - columnheader "Scope"
+      - columnheader "Fields"
+  - rowgroup:
+    - row "Customer objects Allow terminal:read 3 masked":
+      - cell "Customer objects"
+      - cell "Allow"
+      - cell "terminal:read"
+      - cell "3 masked"
+    - row "Catalog metadata Allow terminal:read Authorized only":
+      - cell "Catalog metadata"
+      - cell "Allow"
+      - cell "terminal:read"
+      - cell "Authorized only"
+    - row "Workflow actions Allow terminal:write Policy checked":
+      - cell "Workflow actions"
+      - cell "Allow"
+      - cell "terminal:write"
+      - cell "Policy checked"
+    - row "Media originals Signed URL terminal:media 15 minute TTL":
+      - cell "Media originals"
+      - cell "Signed URL"
+      - cell "terminal:media"
+      - cell "15 minute TTL"
+    - row "Payroll Deny payroll:read No identifiers returned":
+      - cell "Payroll"
+      - cell "Deny"
+      - cell "payroll:read"
+      - cell "No identifiers returned"
+- heading "Metadata-only audit trail" [level=2]
+- button "Widget actions": ⋮
+- text: 2026-07-22T17:58:00Z Catalog read allowed · request req_81M 2026-07-22T17:57:42Z Customer fields masked · policy customer.viewer 2026-07-22T17:56:18Z Payroll read denied · missing payroll:read 2026-07-22T17:54:03Z Media URL issued · expires in 15 minutes 2026-07-22T17:51:29Z Static snapshot exported · 6 widgets idle 1 err 11:45:00

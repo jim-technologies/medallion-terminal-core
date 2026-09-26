@@ -1,0 +1,85 @@
+- banner:
+  - link "Metrics Metrics":
+    - /url: "#analytics"
+    - text: M
+    - strong: Metrics
+  - navigation "Metrics products":
+    - button "Home"
+    - button "Dashboards"
+    - button "Explore"
+    - button "Alerting"
+    - button "Connections"
+  - textbox:
+    - /placeholder: Search
+  - button "Create"
+  - button "Help"
+  - text: J
+- complementary "Metrics workspace navigation":
+  - text: JT
+  - strong: Jim Technologies
+  - navigation "Workspace navigation":
+    - button "Home"
+    - button "Search"
+    - button "Dashboards"
+    - button "Explore"
+    - button "Alerting"
+    - button "Data sources"
+  - text: Starred
+  - button "Operations overview"
+  - button "Revenue quality"
+  - button "Platform health"
+- main:
+  - text: Operations
+  - heading "Operating platform overview" [level=1]
+  - button "Last 24 hours⌄"
+  - button "Refresh"
+  - button "Share"
+  - navigation "Metrics views":
+    - button "Dashboard"
+    - button "Explore"
+    - button "Alerting"
+  - strong: Requests / sec
+  - button "⋮"
+  - text: 18.4k
+  - emphasis: +12.8%
+  - strong: Error rate
+  - button "⋮"
+  - text: 0.18%
+  - emphasis: +0.03%
+  - strong: P95 latency
+  - button "⋮"
+  - text: 184 ms
+  - emphasis: Within target
+  - strong: Service throughput
+  - text: requests/sec by service
+  - button "⋮"
+  - img "BTC price chart": 67,842.10
+  - text: Core platform Data services Media
+  - strong: Service health
+  - button "⋮"
+  - strong: API gateway
+  - text: 99.99%
+  - emphasis: Healthy
+  - strong: Data service
+  - text: 99.96%
+  - emphasis: Healthy
+  - strong: Media worker
+  - text: 99.81%
+  - emphasis: Warning
+  - strong: Action service
+  - text: 99.98%
+  - emphasis: Healthy
+  - strong: Live events
+  - button "⋮"
+  - time: 10:42:18
+  - emphasis: info
+  - text: Action completed for customer-104
+  - time: 10:42:11
+  - emphasis: info
+  - text: Catalog refresh finished in 842ms
+  - time: 10:41:58
+  - emphasis: warn
+  - text: Media queue above target depth
+  - time: 10:41:44
+  - emphasis: info
+  - text: Snapshot published successfully

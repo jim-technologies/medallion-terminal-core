@@ -1,0 +1,6 @@
+- main:
+  - text: Toolkit · Overlays
+  - heading "Context menu" [level=1]
+  - paragraph: Dismissible interaction layers with keyboard navigation, focus management, and focus restoration built into their contracts.
+  - region "Context menu component example": Focus this row and press Shift+F10, or use the secondary pointer button.
+  - text: Theme and density inherit from the scoped toolkit root.

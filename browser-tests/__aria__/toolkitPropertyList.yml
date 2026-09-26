@@ -1,0 +1,11 @@
+- term: Name
+- definition: Quarterly forecast
+- term: Active
+- definition: "Yes"
+- term: Owners
+- definition: Jun, Finance
+- term: Configuration
+- definition:
+  - code: "{\"horizon\":90,\"currency\":\"USD\"}"
+- term: Description
+- definition: —

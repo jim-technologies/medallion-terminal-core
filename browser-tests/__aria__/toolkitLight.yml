@@ -1,0 +1,10 @@
+- main:
+  - text: Toolkit · Controls
+  - heading "Light · Comfortable" [level=1]
+  - paragraph: Reusable controls and feedback primitives with shared intent, sizing, density, and accessible state behavior.
+  - region "Light · Comfortable component example":
+    - textbox "Light theme input":
+      - /placeholder: Search
+    - button "Continue"
+    - status: Ready All checks passed.
+  - text: Theme and density inherit from the scoped toolkit root.

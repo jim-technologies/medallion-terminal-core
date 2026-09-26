@@ -1,0 +1,114 @@
+- banner:
+  - button "Ledger"
+  - textbox:
+    - /placeholder: Search transactions, contacts, reports, and help
+  - button "Assistant"
+  - button "Help"
+  - button "Settings"
+  - button "Notifications"
+  - button "Jim Technologies Jim Technologies": JT Jim Technologies
+- complementary "Ledger navigation":
+  - button "New"
+  - navigation "Business overview":
+    - button "Home"
+    - button "Business feed AI"
+    - button "Cash flow"
+    - button "Planner"
+  - text: BOOKMARKS
+  - button "Add bookmark"
+  - navigation "Bookmarks":
+    - button "Bank transactions 4"
+    - button "Invoices"
+    - button "Reports"
+  - text: INTUIT APPS
+  - navigation "Applications":
+    - button "Accounting"
+    - button "Customer Hub"
+    - button "Sales & get paid"
+    - button "Expenses & bills"
+    - button "Projects"
+    - button "Payroll"
+  - button "Customize"
+- main:
+  - heading "Good morning, Jun" [level=1]
+  - paragraph: Here is what needs your attention today.
+  - button "Customize layout"
+  - navigation:
+    - button "Home"
+    - button "Cash flow"
+    - button "Planner"
+  - text: BUSINESS FEED
+  - strong: Four bank transactions are ready to review
+  - paragraph: The assistant found likely categories and an invoice match.
+  - button "Review transactions"
+  - heading "Cash flow" [level=2]
+  - button "More Cash flow actions"
+  - button "View cash flow"
+  - text: LAST 6 MONTHS Cash balance
+  - strong: $174,620
+  - text: Up $16,620 this month Money in
+  - strong: $121,400
+  - text: Money out
+  - strong: $104,780
+  - img "Cash balance trend"
+  - text: Feb Mar Apr May Jun Jul
+  - heading "Tasks" [level=2]
+  - button "More Tasks actions"
+  - button "View all"
+  - paragraph:
+    - strong: Review 4 bank transactions
+    - text: Suggested categories are ready
+  - button "Review"
+  - paragraph:
+    - strong: Send 1 overdue invoice reminder
+    - text: $18,500 outstanding
+  - button "Send"
+  - paragraph:
+    - strong: Reconcile operating checking
+    - text: Through June 30
+  - button "Start"
+  - heading "Profit and loss" [level=2]
+  - button "More Profit and loss actions"
+  - button "View report"
+  - text: THIS MONTH Net profit
+  - strong: $46,240
+  - text: 12.4% from last month Income
+  - strong: $151,020
+  - text: Expenses
+  - strong: $104,780
+  - heading "Invoices" [level=2]
+  - button "More Invoices actions"
+  - button "View invoices"
+  - text: LAST 365 DAYS Open invoices
+  - strong: $55,300
+  - term: Overdue
+  - definition: $18,500
+  - term: Not due yet
+  - definition: $36,800
+  - term: Paid last 30 days
+  - definition: $15,600
+  - heading "Expenses" [level=2]
+  - button "More Expenses actions"
+  - button "View expenses"
+  - text: THIS MONTH $104.8K Total
+  - term: Payroll
+  - definition: $48,320
+  - term: Software
+  - definition: $21,840
+  - term: Marketing
+  - definition: $18,400
+  - term: Other
+  - definition: $16,220
+  - heading "Bank accounts" [level=2]
+  - button "More Bank accounts actions"
+  - button "Go to bank transactions"
+  - text: NW
+  - strong: Operating checking
+  - text: Updated 3 minutes ago
+  - strong: $174,620
+  - text: Bank balance V
+  - strong: Business card
+  - text: Updated 8 minutes ago
+  - strong: "-$12,480"
+  - text: Card balance
+  - button "Connect another account"

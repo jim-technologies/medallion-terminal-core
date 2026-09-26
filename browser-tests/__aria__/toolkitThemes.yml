@@ -1,0 +1,32 @@
+- heading "dark" [level=2]
+- text: standard
+- paragraph: Scoped surfaces, typography, intents, density, focus, and motion.
+- textbox "dark search":
+  - /placeholder: Search objects
+- button "Primary action"
+- button "Secondary"
+- button "Remove"
+- heading "operator" [level=2]
+- text: standard
+- paragraph: Scoped surfaces, typography, intents, density, focus, and motion.
+- textbox "operator search":
+  - /placeholder: Search objects
+- button "Primary action"
+- button "Secondary"
+- button "Remove"
+- heading "light" [level=2]
+- text: standard
+- paragraph: Scoped surfaces, typography, intents, density, focus, and motion.
+- textbox "light search":
+  - /placeholder: Search objects
+- button "Primary action"
+- button "Secondary"
+- button "Remove"
+- heading "high-contrast" [level=2]
+- text: standard
+- paragraph: Scoped surfaces, typography, intents, density, focus, and motion.
+- textbox "high-contrast search":
+  - /placeholder: Search objects
+- button "Primary action"
+- button "Secondary"
+- button "Remove"

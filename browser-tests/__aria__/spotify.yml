@@ -1,0 +1,185 @@
+- complementary "Music navigation and library":
+  - text: Music
+  - navigation "Music primary navigation":
+    - button "Home"
+    - button "Search"
+  - button "Your Library"
+  - button "Create playlist or folder"
+  - button "Show more of Your Library"
+  - button "Playlists"
+  - button "Artists"
+  - button "Podcasts"
+  - button "Search in Your Library"
+  - button "Recents"
+  - button "Deep Focus for Jun Playlist · Music":
+    - strong: Deep Focus for Jun
+    - text: Playlist · Music
+  - button "Jim Technologies Studio Mix Playlist · Jun":
+    - strong: Jim Technologies Studio Mix
+    - text: Playlist · Jun
+  - button "Discovery Current Playlist · Music":
+    - strong: Discovery Current
+    - text: Playlist · Music
+  - button "Morning Systems Playlist · Music":
+    - strong: Morning Systems
+    - text: Playlist · Music
+  - button "Quiet Machinery Album · Northline":
+    - strong: Quiet Machinery
+    - text: Album · Northline
+  - button "Northline Artist · Northline":
+    - strong: Northline
+    - text: Artist · Northline
+  - button "After Hours Playlist · Music":
+    - strong: After Hours
+    - text: Playlist · Music
+  - button "Useful Weather Album · Juniper Field":
+    - strong: Useful Weather
+    - text: Album · Juniper Field
+- main:
+  - button "Go back"
+  - button "Go forward"
+  - button "Install App"
+  - button "Jun account": J
+  - button "All"
+  - button "Music"
+  - button "Podcasts"
+  - button "Audiobooks"
+  - heading "Good afternoon" [level=1]
+  - region "Quick access":
+    - article:
+      - button "Deep Focus for Jun":
+        - strong: Deep Focus for Jun
+      - button "Play Deep Focus for Jun"
+    - article:
+      - button "Jim Technologies Studio Mix":
+        - strong: Jim Technologies Studio Mix
+      - button "Play Jim Technologies Studio Mix"
+    - article:
+      - button "Discovery Current":
+        - strong: Discovery Current
+      - button "Play Discovery Current"
+    - article:
+      - button "Morning Systems":
+        - strong: Morning Systems
+      - button "Play Morning Systems"
+    - article:
+      - button "Quiet Machinery":
+        - strong: Quiet Machinery
+      - button "Play Quiet Machinery"
+    - article:
+      - button "Northline":
+        - strong: Northline
+      - button "Play Northline"
+  - button "Made for Jun":
+    - heading "Made for Jun" [level=2]
+  - button "Show all"
+  - article:
+    - button "Deep Focus for Jun Instrumental focus selected around your listening":
+      - strong: Deep Focus for Jun
+      - text: Instrumental focus selected around your listening
+    - button "Play Deep Focus for Jun"
+  - article:
+    - button "Discovery Current Your weekly mix of fresh music, made for Jun":
+      - strong: Discovery Current
+      - text: Your weekly mix of fresh music, made for Jun
+    - button "Play Discovery Current"
+  - article:
+    - button "Jim Technologies Studio Mix Northline, Aster Vale, Mori & June and more":
+      - strong: Jim Technologies Studio Mix
+      - text: Northline, Aster Vale, Mori & June and more
+    - button "Play Jim Technologies Studio Mix"
+  - article:
+    - button "Morning Systems A clear start with warm electronics and soft rhythm":
+      - strong: Morning Systems
+      - text: A clear start with warm electronics and soft rhythm
+    - button "Play Morning Systems"
+  - article:
+    - button "After Hours Low light, steady tempo, no rush":
+      - strong: After Hours
+      - text: Low light, steady tempo, no rush
+    - button "Play After Hours"
+  - button "Recently played":
+    - heading "Recently played" [level=2]
+  - button "Show all"
+  - article:
+    - button "Quiet Machinery Northline · 2026":
+      - strong: Quiet Machinery
+      - text: Northline · 2026
+    - button "Play Quiet Machinery"
+  - article:
+    - button "Northline Artist":
+      - strong: Northline
+      - text: Artist
+    - button "Play Northline"
+  - article:
+    - button "Useful Weather Juniper Field · 2026":
+      - strong: Useful Weather
+      - text: Juniper Field · 2026
+    - button "Play Useful Weather"
+  - article:
+    - button "Builders at Work Practical conversations with people making useful things":
+      - strong: Builders at Work
+      - text: Practical conversations with people making useful things
+    - button "Play Builders at Work"
+  - article:
+    - button "Local Time Common Hours · 2025":
+      - strong: Local Time
+      - text: Common Hours · 2025
+    - button "Play Local Time"
+  - button "Shows to try":
+    - heading "Shows to try" [level=2]
+  - button "Show all"
+  - article:
+    - button "Builders at Work Practical conversations with people making useful things":
+      - strong: Builders at Work
+      - text: Practical conversations with people making useful things
+    - button "Play Builders at Work"
+  - article:
+    - button "Jim Technologies Studio Mix Northline, Aster Vale, Mori & June and more":
+      - strong: Jim Technologies Studio Mix
+      - text: Northline, Aster Vale, Mori & June and more
+    - button "Play Jim Technologies Studio Mix"
+  - article:
+    - button "Deep Focus for Jun Instrumental focus selected around your listening":
+      - strong: Deep Focus for Jun
+      - text: Instrumental focus selected around your listening
+    - button "Play Deep Focus for Jun"
+  - article:
+    - button "Discovery Current Your weekly mix of fresh music, made for Jun":
+      - strong: Discovery Current
+      - text: Your weekly mix of fresh music, made for Jun
+    - button "Play Discovery Current"
+- complementary:
+  - heading "Deep Focus for Jun" [level=2]
+  - button "Close Now Playing view"
+  - strong: Signal Bloom
+  - text: Northline
+  - button "Remove Signal Bloom from Liked Songs"
+  - article:
+    - text: "N"
+    - strong: About the artist
+    - heading "Northline" [level=3]
+    - paragraph: Independent music for quiet systems, open roads, and the work between milestones.
+    - button "Follow"
+  - article:
+    - strong: Next in queue
+    - button "Open queue"
+    - button "Relay Stations Aster Vale":
+      - strong: Relay Stations
+      - text: Aster Vale
+- contentinfo:
+  - button "Signal Bloom Northline":
+    - strong: Signal Bloom
+    - text: Northline
+  - button "Remove Signal Bloom from Liked Songs"
+  - button "Enable shuffle"
+  - button "Previous"
+  - button "Play"
+  - button "Next"
+  - button "Enable repeat"
+  - time: 1:24
+  - time: 3:42
+  - button "Now Playing view"
+  - button "Queue"
+  - button "Connect to a device"
+  - button "Full screen"

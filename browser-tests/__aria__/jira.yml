@@ -1,0 +1,100 @@
+- banner:
+  - button "Applications"
+  - link "Tracker Tracker":
+    - /url: "#jira"
+    - text: T
+    - strong: Tracker
+  - navigation "Tracker navigation":
+    - button "Your work⌄"
+    - button "Projects⌄"
+    - button "Filters⌄"
+    - button "Dashboards⌄"
+    - button "Teams"
+    - button "Plans"
+  - button "Create"
+  - textbox:
+    - /placeholder: Search
+  - button "Notifications"
+  - button "Help"
+  - button "Settings"
+  - text: J
+- complementary "Project navigation":
+  - text: PD
+  - strong: Platform delivery
+  - text: Software project
+  - button "•••"
+  - navigation "Project navigation":
+    - button "Timeline"
+    - button "Backlog"
+    - button "Board"
+    - button "Reports"
+    - button "Releases"
+    - button "Development"
+  - text: Project settings
+  - navigation "Project settings":
+    - button "Project settings"
+  - text: JT
+  - strong: Jim Technologies
+  - text: Company-managed
+- main:
+  - text: Projects / Platform delivery / Backlog
+  - heading "Backlog" [level=1]
+  - paragraph: Plan, prioritize, and ship the shared operating platform.
+  - button "Share"
+  - button "•••"
+  - textbox:
+    - /placeholder: Search backlog
+  - text: J MC LT
+  - button "Epic"
+  - button "Label"
+  - button "Type"
+  - button "View settings"
+  - button "⌄"
+  - strong: Platform sprint 14
+  - text: Jul 15 – Jul 28 · 8 days remaining
+  - emphasis: 21 / 34 points
+  - button "Start sprint"
+  - button "•••"
+  - button "✓ ENG-482 Normalize provider-specific media metadata PLATFORM ◆ J 5":
+    - text: ✓
+    - code: ENG-482
+    - strong: Normalize provider-specific media metadata
+    - text: PLATFORM ◆ J
+    - emphasis: "5"
+  - button "✓ ENG-479 Add policy context to file actions PLATFORM ◆ M 3":
+    - text: ✓
+    - code: ENG-479
+    - strong: Add policy context to file actions
+    - text: PLATFORM ◆ M
+    - emphasis: "3"
+  - button "✓ ENG-475 Improve catalog pagination states PLATFORM ◆ L 3":
+    - text: ✓
+    - code: ENG-475
+    - strong: Improve catalog pagination states
+    - text: PLATFORM ◆ L
+    - emphasis: "3"
+  - button "Create work item"
+  - button "⌄"
+  - strong: Backlog
+  - text: 3 work items
+  - button "Create sprint"
+  - button "•••"
+  - button "✓ ENG-468 Document backend conformance fixtures FOUNDATION ◆ N 5":
+    - text: ✓
+    - code: ENG-468
+    - strong: Document backend conformance fixtures
+    - text: FOUNDATION ◆ N
+    - emphasis: "5"
+  - button "✓ ENG-463 Ship operator theme contrast update PLATFORM ◆ J 2":
+    - text: ✓
+    - code: ENG-463
+    - strong: Ship operator theme contrast update
+    - text: PLATFORM ◆ J
+    - emphasis: "2"
+  - button "✓ ENG-458 Validate action lifecycle reconnect PLATFORM ◆ A 3":
+    - text: ✓
+    - code: ENG-458
+    - strong: Validate action lifecycle reconnect
+    - text: PLATFORM ◆ A
+    - emphasis: "3"
+  - button "Create work item"

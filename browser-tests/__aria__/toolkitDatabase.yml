@@ -1,0 +1,126 @@
+- toolbar "Database explorer toolbar":
+  - strong: Database explorer
+  - text: Generic SQL presentation
+  - searchbox "Find database objects"
+  - button "New query"
+  - text: Read-only connection
+- complementary "Database objects":
+  - text: Connections 1
+  - tree "Database hierarchy":
+    - treeitem "Collapse primary-cluster primary-cluster SQL connection · read only" [expanded] [level=1]:
+      - button "Collapse primary-cluster"
+      - text: primary-cluster SQL connection · read only
+    - treeitem "Collapse analytics analytics Database" [expanded] [level=2]:
+      - button "Collapse analytics"
+      - text: analytics Database
+    - treeitem "Collapse public public Schema · 3 tables" [expanded] [level=3]:
+      - button "Collapse public"
+      - text: public Schema · 3 tables
+    - treeitem "customers Table · 6 columns" [level=4] [selected]
+    - treeitem "orders Table · 5 columns" [level=4]
+    - treeitem "audit_events Table · 5 columns" [level=4]
+    - treeitem "Expand reporting reporting Schema · 2 views" [level=3]:
+      - button "Expand reporting"
+      - text: reporting Schema · 2 views
+  - text: Metadata synchronized 2 minutes ago
+- separator "Resize database explorer"
+- main:
+  - navigation "Breadcrumbs":
+    - list:
+      - listitem: primary-cluster
+      - listitem: analytics
+      - listitem: public
+      - listitem: customers
+  - heading "customers" [level=1]
+  - text: TABLE 12,480 estimated rows
+  - paragraph: Canonical customer accounts used by governed business workflows.
+  - text: 6 columns 18.6 MB Updated 2 minutes ago
+  - tablist "Database table sections":
+    - tab "Data" [selected]
+    - tab "Structure"
+    - tab "Indexes"
+    - tab "Query"
+  - tabpanel "Data":
+    - region "customers data":
+      - searchbox "Filter table rows"
+      - text: 8 loaded Cursor pagination remains host-owned
+      - table "Loaded rows from analytics.public.customers":
+        - caption: Loaded rows from analytics.public.customers
+        - rowgroup:
+          - row "customer_id legal_name segment city status updated_at":
+            - columnheader "customer_id":
+              - button "customer_id"
+            - columnheader "legal_name":
+              - button "legal_name"
+            - columnheader "segment":
+              - button "segment"
+            - columnheader "city":
+              - button "city"
+            - columnheader "status":
+              - button "status"
+            - columnheader "updated_at":
+              - button "updated_at"
+        - rowgroup:
+          - row "Inspect row Northwind Health Northwind Health Enterprise Seattle active 2026-07-25 18:42":
+            - cell "Inspect row Northwind Health":
+              - button "Inspect row Northwind Health": cus_1048
+            - cell "Northwind Health"
+            - cell "Enterprise"
+            - cell "Seattle"
+            - cell "active"
+            - cell "2026-07-25 18:42"
+          - row "Inspect row Atlas Works Atlas Works Growth Austin active 2026-07-25 17:18":
+            - cell "Inspect row Atlas Works":
+              - button "Inspect row Atlas Works": cus_1047
+            - cell "Atlas Works"
+            - cell "Growth"
+            - cell "Austin"
+            - cell "active"
+            - cell "2026-07-25 17:18"
+          - row "Inspect row Cobalt Logistics Cobalt Logistics Enterprise Chicago review 2026-07-25 16:04":
+            - cell "Inspect row Cobalt Logistics":
+              - button "Inspect row Cobalt Logistics": cus_1046
+            - cell "Cobalt Logistics"
+            - cell "Enterprise"
+            - cell "Chicago"
+            - cell "review"
+            - cell "2026-07-25 16:04"
+          - row "Inspect row Brightpath Energy Brightpath Energy Growth Denver active 2026-07-25 14:51":
+            - cell "Inspect row Brightpath Energy":
+              - button "Inspect row Brightpath Energy": cus_1045
+            - cell "Brightpath Energy"
+            - cell "Growth"
+            - cell "Denver"
+            - cell "active"
+            - cell "2026-07-25 14:51"
+          - row "Inspect row Harbor Labs Harbor Labs Startup Boston paused 2026-07-25 13:36":
+            - cell "Inspect row Harbor Labs":
+              - button "Inspect row Harbor Labs": cus_1044
+            - cell "Harbor Labs"
+            - cell "Startup"
+            - cell "Boston"
+            - cell "paused"
+            - cell "2026-07-25 13:36"
+      - status: 1–5 of 8 loaded · 12,480 estimated
+      - group "Loaded row pages":
+        - button "Previous row page" [disabled]: Previous
+        - text: Page 1 of 2
+        - button "Next row page": Next
+- separator "Resize database inspector"
+- complementary "Database inspector":
+  - heading "Northwind Health" [level=2]
+  - paragraph: Row · customers
+  - text: ROW Available Read only
+  - term: customer_id text
+  - definition: cus_1048
+  - term: legal_name text
+  - definition: Northwind Health
+  - term: segment text
+  - definition: Enterprise
+  - term: city text
+  - definition: Seattle
+  - term: status text
+  - definition: active
+  - term: updated_at timestamptz
+  - definition: 2026-07-25 18:42
+  - paragraph: Metadata and row values are rendered safely as host-provided data.

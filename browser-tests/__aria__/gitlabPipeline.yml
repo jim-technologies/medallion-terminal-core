@@ -1,0 +1,167 @@
+- banner:
+  - link "Code":
+    - /url: "#project"
+    - strong: Code
+  - navigation "Global":
+    - button "Projects"
+    - button "Groups"
+    - button "Activity"
+  - textbox "Search":
+    - /placeholder: Search or go to…
+  - text: /
+  - button "Create new"
+  - button "Issues"
+  - button "Merge requests"
+  - button "To-do list"
+  - img "Jun": J
+- complementary:
+  - text: JT
+  - strong: medallion-platform
+  - text: Jim Technologies
+  - textbox "Filter project navigation":
+    - /placeholder: Filter navigation
+  - navigation "Project":
+    - button "Project overview"
+    - button "Repository"
+    - button "Issues 18"
+    - button "Merge requests 4"
+    - button "CI/CD"
+    - button "Secure"
+    - button "Deploy"
+    - button "Monitor"
+    - button "Plan"
+    - button "Settings"
+  - button "Collapse sidebar"
+- main:
+  - text: JT
+  - strong: Jim Technologies / medallion-platform
+  - text: Private
+  - button "Notifications"
+  - button "☆ Star 28"
+  - navigation "Breadcrumb":
+    - link "Jim Technologies":
+      - /url: "#organization"
+    - text: /
+    - link "medallion-platform":
+      - /url: "#project"
+    - text: /
+    - link "Merge requests":
+      - /url: "#merge-requests"
+    - text: /
+    - strong: "!84"
+  - text: Open
+  - heading "Normalize provider adapters" [level=1]
+  - paragraph:
+    - text: Merge request
+    - strong: "!84"
+    - text: · opened by
+    - link "Jun":
+      - /url: "#author"
+    - text: 18 minutes ago
+  - button "Edit"
+  - button "Code"
+  - navigation "Merge request sections":
+    - button "Overview 5"
+    - button "Commits 3"
+    - button "Pipelines 1"
+    - button "Changes 3"
+  - region "Pipeline details":
+    - 'heading "Pipeline #2814" [level=2]'
+    - paragraph:
+      - text: Triggered 18 minutes ago by
+      - strong: Jun
+      - text: for
+      - code: feature/provider-contract
+    - term: Status
+    - definition: Running
+    - term: Jobs
+    - definition: 4 / 5
+    - term: Duration
+    - definition: 4m 19s
+    - button "Retry"
+    - button "Pipeline actions"
+    - region "Pipeline stages":
+      - heading "Jobs" [level=2]
+      - text: ● Passed ● Running ○ Pending
+      - strong: validate
+      - text: "1"
+      - button "✓ Lint & typecheck 42s":
+        - text: ✓
+        - strong: Lint & typecheck
+        - text: 42s
+      - strong: test
+      - text: "2"
+      - button "✓ Unit tests 1m 18s":
+        - text: ✓
+        - strong: Unit tests
+        - text: 1m 18s
+      - button "✓ Storybook 2m 44s":
+        - text: ✓
+        - strong: Storybook
+        - text: 2m 44s
+      - strong: package
+      - text: "1"
+      - button "✓ Package 31s":
+        - text: ✓
+        - strong: Package
+        - text: 31s
+      - strong: deploy
+      - text: "1"
+      - button "◌ Deploy preview 36s · optional":
+        - text: ◌
+        - strong: Deploy preview
+        - text: 36s · optional
+    - heading "Pipeline jobs" [level=2]
+    - textbox "Filter pipeline jobs":
+      - /placeholder: Filter jobs
+    - text: Status Job Stage Runner Duration
+    - button "Passed Lint & typecheck validate ubuntu-latest 42s":
+      - text: Passed
+      - strong: Lint & typecheck
+      - text: validate
+      - code: ubuntu-latest
+      - time: 42s
+    - button "Passed Unit tests test ubuntu-latest 1m 18s":
+      - text: Passed
+      - strong: Unit tests
+      - text: test
+      - code: ubuntu-latest
+      - time: 1m 18s
+    - button "Passed Storybook test ubuntu-latest 2m 44s":
+      - text: Passed
+      - strong: Storybook
+      - text: test
+      - code: ubuntu-latest
+      - time: 2m 44s
+    - button "Passed Package package ubuntu-latest 31s":
+      - text: Passed
+      - strong: Package
+      - text: package
+      - code: ubuntu-latest
+      - time: 31s
+    - button "Running Deploy preview deploy jim-runner-04 36s":
+      - text: Running
+      - strong: Deploy preview
+      - text: deploy
+      - code: jim-runner-04
+      - time: 36s
+    - complementary:
+      - text: ◌
+      - heading "Deploy preview" [level=2]
+      - paragraph: deploy · jim-runner-04
+      - button "Job actions"
+      - list:
+        - listitem:
+          - text: "1"
+          - code: Download build artifact
+        - listitem:
+          - text: "2"
+          - code: Provision preview environment
+        - listitem:
+          - text: "3"
+          - code: Publish static assets
+        - listitem:
+          - text: "4"
+          - code: Waiting for health check
+      - text: 36s
+      - button "Download log"

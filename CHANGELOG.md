@@ -164,6 +164,19 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   release sweeps) is a ratchet in
   `scripts/style-token-budget.json`: a file can never exceed its budget, and a
   stale budget fails until it is lowered.
+- **Exact text baselines beside the pixel ones.** Every visual baseline
+  test also compares the story's accessibility tree (roles, accessible
+  names and text, numbers included) with
+  `browser-tests/__aria__/${story}.yml`, with no tolerance, so a widget that
+  changes state fails the gate even when the pixels move less than the 0.3%
+  anti-aliasing tolerance. (A local revert of the typed-error rendering,
+  which brings back "Unable to load · HTTP 403 · Retry" in the payroll
+  widget, differs from the readiness baseline by 0.12% of its pixels and
+  passes the pixel check; the text check fails it.) Stories render at one
+  pinned wall-clock instant (`page.clock.setFixedTime`), so live clocks and
+  relative times are identical on every run and every day, and a Storybook
+  "failed to load the preview" page fails the test instead of being compared
+  or recorded as a baseline.
 - **Light visual baselines.** The Playwright gate renders every themed
   toolkit story and the production-readiness workspace in dark and light
   (`browser-tests/__screenshots__/${story}-${theme}.png`) and runs axe on
@@ -246,7 +259,11 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   toolbar globals reach toolkit components and Dashboards alike. Visual
   baselines were regenerated as a pure font and harness change; the toolkit
   ones moved from `${story}.png` to `${story}-dark.png` beside the new
-  `-light` files.
+  `-light` files. The production-readiness baselines are regenerated again
+  for the typed failure states: the denied payroll widget reads "You don't
+  have access" with a Details disclosure (the committed images had kept the
+  earlier "Unable to load · HTTP 403" widget inside the pixel tolerance), and
+  the dashboards' status-bar clocks show the pinned time.
 
 - **Clone showcases no longer show third-party names, logos or wordmarks.**
   Every clone header renders a neutral name and `NeutralMark` (a generic

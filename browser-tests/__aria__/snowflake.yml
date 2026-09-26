@@ -1,0 +1,127 @@
+- complementary "Warehouse navigation":
+  - text: Warehouse
+  - button "Search ⌘ K"
+  - navigation "Warehouse sections":
+    - button "Home"
+    - text: Projects
+    - button "Workspaces"
+    - text: Catalog
+    - button "Database Explorer"
+    - text: Monitoring
+    - button "Query History"
+    - text: Platform
+    - button "Ingestion"
+    - button "Transformation"
+    - button "AI & ML"
+    - button "Marketplace"
+  - text: J
+  - strong: Jun
+  - text: ACCOUNTADMIN
+- banner:
+  - strong: Jim Technologies
+  - text: ACME_US_WEST
+  - button "Help"
+  - button "Notifications"
+  - button "Copilot"
+- main:
+  - text: Projects / Workspaces /
+  - strong: Revenue intelligence
+  - button "main"
+  - button "Share"
+  - button "Run"
+  - button "ANALYST"
+  - button "ANALYTICS_WH · X-Small"
+  - text: ANALYTICS / GOLD
+  - button "Find"
+  - button "Workspace options"
+  - complementary:
+    - button "Files"
+    - button "Database"
+    - strong: Revenue intelligence
+    - button "Add file"
+    - button "More workspace actions"
+    - button "models"
+    - button "customer_health.sql Unsaved changes": customer_health.sql
+    - button "revenue_model.sql"
+    - button "analysis"
+    - button "retention_cohorts.sql"
+    - button "forecast.py"
+    - button "README.md"
+    - text: Git connected
+    - strong: main
+  - button "customer_health.sql ●"
+  - button "revenue_model.sql"
+  - button "New tab": +
+  - list:
+    - listitem: WITH account_usage AS (
+    - listitem: SELECT account_id,
+    - listitem: COUNT(DISTINCT user_id) AS active_users,
+    - listitem: MAX(event_at) AS last_active_at
+    - listitem: FROM PRODUCT.CURATED.USAGE_EVENTS
+    - listitem: WHERE event_at >= DATEADD(day, -30, CURRENT_DATE)
+    - listitem: GROUP BY 1
+    - listitem: )
+    - listitem: SELECT c.account_name, c.segment, c.arr,
+    - listitem: c.health_score, u.last_active_at
+    - listitem: FROM ANALYTICS.GOLD.CUSTOMER_360 c
+    - listitem: JOIN account_usage u USING (account_id)
+    - listitem: ORDER BY c.arr DESC;
+  - button "Explain or improve"
+  - button "Results"
+  - button "Chart"
+  - text: Query completed · 1.28s · 5 rows
+  - button "Download"
+  - table:
+    - rowgroup:
+      - row "ACCOUNT_NAME SEGMENT ARR HEALTH_SCORE LAST_ACTIVE_AT":
+        - columnheader "ACCOUNT_NAME"
+        - columnheader "SEGMENT"
+        - columnheader "ARR"
+        - columnheader "HEALTH_SCORE"
+        - columnheader "LAST_ACTIVE_AT"
+    - rowgroup:
+      - row "Northwind Health Enterprise $486,000 94 2 min ago":
+        - cell "Northwind Health"
+        - cell "Enterprise"
+        - cell "$486,000"
+        - cell "94"
+        - cell "2 min ago"
+      - row "Cascade Retail Growth $218,400 87 18 min ago":
+        - cell "Cascade Retail"
+        - cell "Growth"
+        - cell "$218,400"
+        - cell "87"
+        - cell "18 min ago"
+      - row "Brightpath Energy Enterprise $624,000 82 1 hr ago":
+        - cell "Brightpath Energy"
+        - cell "Enterprise"
+        - cell "$624,000"
+        - cell "82"
+        - cell "1 hr ago"
+      - row "Blue Harbor Logistics Growth $148,800 71 Yesterday":
+        - cell "Blue Harbor Logistics"
+        - cell "Growth"
+        - cell "$148,800"
+        - cell "71"
+        - cell "Yesterday"
+      - row "Atlas Design Co. Starter $42,000 66 2 days ago":
+        - cell "Atlas Design Co."
+        - cell "Starter"
+        - cell "$42,000"
+        - cell "66"
+        - cell "2 days ago"
+  - complementary "Query history":
+    - strong: Query history
+    - button "Close query history"
+    - button "customer_health.sql 1.28s · 5 rows Now":
+      - strong: customer_health.sql
+      - text: 1.28s · 5 rows
+      - time: Now
+    - button "revenue_model.sql 4.72s · 365 rows 18m":
+      - strong: revenue_model.sql
+      - text: 4.72s · 365 rows
+      - time: 18m
+    - button "retention_cohorts.sql SQL compilation error 2h":
+      - strong: retention_cohorts.sql
+      - text: SQL compilation error
+      - time: 2h

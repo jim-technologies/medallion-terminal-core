@@ -1,0 +1,27 @@
+- heading "Host intent bridge" [level=1]
+- text: Static view
+- button "Sound off"
+- button "Compact"
+- button "Copy link"
+- button "Ctrl K"
+- text: Context orgjim-technologies path
+- button /
+- button "⬆ Upload"
+- button "☰ Icons"
+- text: 1 on page
+- table:
+  - rowgroup:
+    - row "Entry kind Name Size Type Modified":
+      - columnheader "Entry kind"
+      - columnheader "Name"
+      - columnheader "Size"
+      - columnheader "Type"
+      - columnheader "Modified"
+  - rowgroup:
+    - row "📄 quarterly-forecast.pdf 62.5 KB application/pdf":
+      - cell "📄"
+      - cell "quarterly-forecast.pdf"
+      - cell "62.5 KB"
+      - cell "application/pdf"
+      - cell
+- text: idle 11:45:00

@@ -1,0 +1,65 @@
+- banner:
+  - link "Forecasts Forecasts":
+    - /url: "#prediction"
+    - text: F
+    - strong: Forecasts
+  - textbox:
+    - /placeholder: Search markets
+  - navigation "Forecast navigation":
+    - button "Markets"
+    - button "Live"
+    - button "Activity"
+    - button "Leaderboard"
+  - button "Jim Technologies · $12,840"
+  - text: J
+- button "Trending"
+- button "Politics"
+- button "Sports"
+- button "Crypto"
+- button "Economy"
+- button "Technology"
+- button "Culture"
+- navigation "Forecasts views":
+  - button "Discover"
+  - button "Market detail"
+  - button "Portfolio"
+- main:
+  - text: Live markets
+  - heading "What will happen next?" [level=1]
+  - button "Newest⌄"
+  - button "E Economy Dec 31 Will the Fed cut rates before October? 64% chance +6 pts Yes 64¢ No 36¢ Vol. $18.4M ◎ 4.2k traders":
+    - text: E
+    - emphasis: Economy
+    - time: Dec 31
+    - heading "Will the Fed cut rates before October?" [level=2]
+    - strong: 64%
+    - text: chance
+    - emphasis: +6 pts
+    - text: Yes 64¢ No 36¢ Vol. $18.4M ◎ 4.2k traders
+  - button "T Technology Dec 31 Will an open model lead the benchmark by year-end? 42% chance +3 pts Yes 42¢ No 58¢ Vol. $6.8M ◎ 4.2k traders":
+    - text: T
+    - emphasis: Technology
+    - time: Dec 31
+    - heading "Will an open model lead the benchmark by year-end?" [level=2]
+    - strong: 42%
+    - text: chance
+    - emphasis: +3 pts
+    - text: Yes 42¢ No 58¢ Vol. $6.8M ◎ 4.2k traders
+  - button "B Business Dec 31 Will the platform launch before August 31? 78% chance -2 pts Yes 78¢ No 22¢ Vol. $2.1M ◎ 4.2k traders":
+    - text: B
+    - emphasis: Business
+    - time: Dec 31
+    - heading "Will the platform launch before August 31?" [level=2]
+    - strong: 78%
+    - text: chance
+    - emphasis: "-2 pts"
+    - text: Yes 78¢ No 22¢ Vol. $2.1M ◎ 4.2k traders
+  - button "E Economy Dec 31 Will US CPI print below 2.5% in Q4? 37% chance +1 pts Yes 37¢ No 63¢ Vol. $9.7M ◎ 4.2k traders":
+    - text: E
+    - emphasis: Economy
+    - time: Dec 31
+    - heading "Will US CPI print below 2.5% in Q4?" [level=2]
+    - strong: 37%
+    - text: chance
+    - emphasis: +1 pts
+    - text: Yes 37¢ No 63¢ Vol. $9.7M ◎ 4.2k traders

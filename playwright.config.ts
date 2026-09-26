@@ -10,9 +10,12 @@ export default defineConfig({
   // misleading accessibility and screenshot failures as the catalog grows.
   workers: process.env.CI ? 2 : 8,
   reporter: process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'line',
-  snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
+  // Text snapshots: the exact accessibility tree of each visual baseline
+  // story (see expectBaseline in the spec).
+  snapshotPathTemplate: '{testDir}/__aria__/{arg}{ext}',
   expect: {
     toHaveScreenshot: {
+      pathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
       animations: 'disabled',
       maxDiffPixelRatio: 0.003,
     },

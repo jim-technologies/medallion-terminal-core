@@ -1,0 +1,159 @@
+- complementary "Applications":
+  - navigation "Applications":
+    - button "Inbox"
+    - button "Tickets"
+    - button "Contacts"
+    - button "Reports"
+    - button "AI tools"
+  - button "Settings"
+  - text: J
+- complementary "Inbox navigation":
+  - text: J
+  - strong: Jim Technologies
+  - button "New conversation"
+  - text: Inbox
+  - button "Your inbox 3":
+    - text: Your inbox
+    - emphasis: "3"
+  - button "All 4":
+    - text: All
+    - emphasis: "4"
+  - button "Unassigned 1":
+    - text: Unassigned
+    - emphasis: "1"
+  - text: Team inboxes
+  - button "Customer support 8":
+    - text: Customer support
+    - emphasis: "8"
+  - button "Customer success 4":
+    - text: Customer success
+    - emphasis: "4"
+  - button "Billing 2":
+    - text: Billing
+    - emphasis: "2"
+  - text: Views
+  - button "Priority 2":
+    - text: Priority
+    - emphasis: "2"
+  - button "SLA at risk 2":
+    - text: SLA at risk
+    - emphasis: "2"
+  - button "All tickets"
+  - button "Help center"
+- heading "Your inbox" [level=1]
+- button "Inbox options"
+- textbox:
+  - /placeholder: Search conversations
+- button "Open"
+- button "Newest"
+- text: "5"
+- button "Maya Chen Maya Chen 2m Unable to update delivery address The order is still unfulfilled, but the address field is locked. Priority Jun":
+  - text: MC
+  - strong: Maya Chen
+  - text: 2m
+  - strong: Unable to update delivery address
+  - text: The order is still unfulfilled, but the address field is locked.
+  - emphasis: Priority
+  - text: J
+- button "Theo Martin Theo Martin 8m Invoice needs our purchase order number Could you add PO-4881 and resend the invoice? Sarah Kim":
+  - text: TM
+  - strong: Theo Martin
+  - text: 8m
+  - strong: Invoice needs our purchase order number
+  - text: Could you add PO-4881 and resend the invoice? SK
+- button "Nina Patel Nina Patel 16m Inventory sync delayed The East warehouse stock has not changed since yesterday. Priority Jun":
+  - text: NP
+  - strong: Nina Patel
+  - text: 16m
+  - strong: Inventory sync delayed
+  - text: The East warehouse stock has not changed since yesterday.
+  - emphasis: Priority
+  - text: J
+- button "Morgan Reed Morgan Reed 1h Return label received Thanks — everything is sorted now. Avery Brooks":
+  - text: MR
+  - strong: Morgan Reed
+  - text: 1h
+  - strong: Return label received
+  - text: Thanks — everything is sorted now. AB
+- button "Lee Carter Lee Carter 2h Question about annual billing Is the discount applied automatically when we upgrade? Unassigned":
+  - text: LC
+  - strong: Lee Carter
+  - text: 2h
+  - strong: Question about annual billing
+  - text: Is the discount applied automatically when we upgrade? U
+- button "Back to conversations"
+- heading "Unable to update delivery address" [level=2]
+- text: Maya Chen · Northwind Health
+- button "Mark priority"
+- button "Conversation options"
+- button "Resolve"
+- text: Today MC
+- strong: Maya Chen
+- text: 10:31 AM
+- paragraph: "Hi! I just placed order #1057, but noticed that the delivery address is our old office."
+- strong: Fin
+- emphasis: AI Agent
+- text: 10:31 AM
+- paragraph: "I found order #1057. Because it has not entered fulfillment, a teammate can still update the shipping address."
+- text: MC
+- strong: Maya Chen
+- text: 10:33 AM
+- paragraph: Great, thank you. The new address is 420 Market Street, San Francisco, CA 94105.
+- text: J
+- strong: Jun
+- text: 10:39 AM
+- paragraph: I have the order open now. I’ll verify the change and send an updated confirmation in a moment.
+- strong: "Order #1057 linked to this conversation"
+- text: Payment succeeded · fulfillment not started · 10:40 AM
+- button "Reply"
+- button "Note"
+- text: "To: Maya Chen"
+- textbox "Use CtrlK for shortcuts"
+- button "Bold":
+  - strong: B
+- button "Italic":
+  - emphasis: I
+- button "Insert link"
+- button "Attach file"
+- button "More composer tools"
+- button "AI"
+- button "Send" [disabled]
+- complementary "Conversation details":
+  - heading "Details" [level=2]
+  - button "Close conversation details"
+  - text: MC
+  - heading "Maya Chen" [level=3]
+  - text: Northwind Health
+  - button "Email customer"
+  - button "Call customer"
+  - button "More customer actions"
+  - button "Conversation attributes"
+  - term: Assignee
+  - definition: J Jun
+  - term: Team inbox
+  - definition: Customer support
+  - term: Priority
+  - definition: Priority
+  - term: Channel
+  - definition: Messenger
+  - button "Ticket"
+  - strong: Order support
+  - text: In progress
+  - button "Customer data"
+  - term: Customer tier
+  - definition: Enterprise
+  - term: Order
+  - definition: "#1057"
+  - term: Annual revenue
+  - definition: $284,000
+  - term: Last seen
+  - definition: 2 minutes ago
+  - term: Location
+  - definition: San Francisco, CA
+  - button "Tags"
+  - text: order-change enterprise
+  - button "Add tag"
+  - button "Recent orders"
+  - text: "#1057"
+  - strong: $428.00
+  - text: Paid · Unfulfilled

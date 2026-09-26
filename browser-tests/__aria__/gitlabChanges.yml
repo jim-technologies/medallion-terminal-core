@@ -1,0 +1,139 @@
+- banner:
+  - link "Code":
+    - /url: "#project"
+    - strong: Code
+  - navigation "Global":
+    - button "Projects"
+    - button "Groups"
+    - button "Activity"
+  - textbox "Search":
+    - /placeholder: Search or go to…
+  - text: /
+  - button "Create new"
+  - button "Issues"
+  - button "Merge requests"
+  - button "To-do list"
+  - img "Jun": J
+- complementary:
+  - text: JT
+  - strong: medallion-platform
+  - text: Jim Technologies
+  - textbox "Filter project navigation":
+    - /placeholder: Filter navigation
+  - navigation "Project":
+    - button "Project overview"
+    - button "Repository"
+    - button "Issues 18"
+    - button "Merge requests 4"
+    - button "CI/CD"
+    - button "Secure"
+    - button "Deploy"
+    - button "Monitor"
+    - button "Plan"
+    - button "Settings"
+  - button "Collapse sidebar"
+- main:
+  - text: JT
+  - strong: Jim Technologies / medallion-platform
+  - text: Private
+  - button "Notifications"
+  - button "☆ Star 28"
+  - navigation "Breadcrumb":
+    - link "Jim Technologies":
+      - /url: "#organization"
+    - text: /
+    - link "medallion-platform":
+      - /url: "#project"
+    - text: /
+    - link "Merge requests":
+      - /url: "#merge-requests"
+    - text: /
+    - strong: "!84"
+  - text: Open
+  - heading "Normalize provider adapters" [level=1]
+  - paragraph:
+    - text: Merge request
+    - strong: "!84"
+    - text: · opened by
+    - link "Jun":
+      - /url: "#author"
+    - text: 18 minutes ago
+  - button "Edit"
+  - button "Code"
+  - navigation "Merge request sections":
+    - button "Overview 5"
+    - button "Commits 3"
+    - button "Pipelines 1"
+    - button "Changes 3"
+  - region "Changes":
+    - text: Source
+    - code: feature/provider-contract
+    - text: Target
+    - code: main
+    - button "Compare versions"
+    - heading "Changes" [level=2]
+    - paragraph: 3 files · +144 −9
+    - text: 1 / 3 viewed
+    - button "Hide whitespace changes"
+    - button "Submit review"
+    - complementary "Changed files":
+      - textbox "Search changed files":
+        - /placeholder: Search files
+      - button "Changed file options"
+      - button "Open src/core/providerAdapter.ts":
+        - text: M
+        - strong: providerAdapter.ts
+        - text: src/core/
+      - button "Open src/core/providerAdapter.test.ts":
+        - text: A
+        - strong: providerAdapter.test.ts
+        - text: src/core/
+      - button "Open docs/integrations.md":
+        - text: M
+        - strong: integrations.md
+        - text: docs/
+    - article:
+      - text: M
+      - strong: src/core/providerAdapter.ts
+      - text: Modified +48 −6
+      - checkbox "Viewed"
+      - text: Viewed
+      - button "File actions"
+      - text: "@@ -18,9 +18,16 @@"
+      - button "Side-by-side"
+      - button "Inline"
+      - region "Diff for src/core/providerAdapter.ts":
+        - text: 18 18
+        - button "Comment on line 18"
+        - code: "export interface ProviderAdapter<TSource, TCanonical> {"
+        - text: "19"
+        - button "Comment on line 19"
+        - code: "+ readonly provider: string"
+        - text: "20"
+        - button "Comment on line 20"
+        - code: "+ normalize(source: TSource, options?: NormalizeOptions): TCanonical"
+        - text: "21"
+        - button "Comment on line 21"
+        - code: "+ denormalize(value: TCanonical): TSource"
+        - text: 19 22
+        - button "Comment on line 22"
+        - code: "}"
+        - text: "25"
+        - button "Comment on line 25"
+        - code: "−export function normalizeProvider(value: unknown) {"
+        - text: "29"
+        - button "Comment on line 29"
+        - code: +export function createProviderAdapter<TSource, TCanonical>(
+        - text: "30"
+        - button "Comment on line 30"
+        - code: "+ adapter: ProviderAdapter<TSource, TCanonical>,"
+        - text: "31"
+        - button "Comment on line 31"
+        - code: "+): Readonly<ProviderAdapter<TSource, TCanonical>> {"
+        - text: "32"
+        - button "Comment on line 32"
+        - code: + return Object.freeze(adapter)
+        - text: 26 33
+        - button "Comment on line 33"
+        - code: "}"
+      - button "Add a comment to this file"

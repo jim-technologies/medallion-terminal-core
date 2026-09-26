@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Locator, type Page } from '@playwright/test'
 
 const cloneStories = {
   airtable: 'clones-airtable--operational-grid',
@@ -110,9 +110,15 @@ interface StoryOptions {
   density?: StoryDensity
 }
 
+// Every story renders at one wall-clock instant, so live clocks, relative
+// times ("3 min ago") and "today" markers are identical on every run and
+// every day. Timers still run in real time; only `Date` is pinned.
+const FIXED_NOW = new Date('2026-07-22T18:45:00Z')
+
 async function openStory(page: Page, id: string, { theme = 'dark', density }: StoryOptions = {}) {
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
+  await page.clock.setFixedTime(FIXED_NOW)
   const globals = [`theme:${theme}`, density && `density:${density}`].filter(Boolean).join(';')
   await page.goto(`/iframe.html?id=${id}&viewMode=story&globals=${globals}`)
   // The vendored fonts load asynchronously (font-display: swap); settle them
@@ -130,7 +136,27 @@ async function openStory(page: Page, id: string, { theme = 'dark', density }: St
     }
   }
   expect(errors, `browser errors in ${id}`).toEqual([])
+  // A dev server under load can serve its "failed to load the preview"
+  // page instead of the story; fail (and let the retry run) rather than
+  // compare, or with --update-snapshots record, that page as a baseline.
+  await expect(page.getByText(/Failed to load the Storybook preview/), `Storybook preview for ${id}`).toHaveCount(0)
   return page.locator('#storybook-root')
+}
+
+// The pixel comparison tolerates 0.3% of the frame for anti-aliasing, which
+// is enough to hide a whole widget changing state ("Unable to load" becoming
+// "You don't have access"). The accessibility-tree snapshot beside it has no
+// tolerance: every role, accessible name and text node, numbers included,
+// must equal `browser-tests/__aria__/${name}.yml`, so a copy or state
+// change fails the gate until the snapshot is regenerated on purpose. It is
+// taken after the screenshot, which waits for the page to settle.
+async function expectAriaBaseline(root: Locator, name: string) {
+  expect(await root.ariaSnapshot()).toMatchSnapshot(`${name}.yml`)
+}
+
+async function expectBaseline(root: Locator, name: string) {
+  await expect(root).toHaveScreenshot(`${name}.png`)
+  await expectAriaBaseline(root, name)
 }
 
 async function expectNoAxeViolations(page: Page) {
@@ -473,23 +499,26 @@ for (const [name, id] of Object.entries({
 })) {
   test(`${name} visual baseline`, async ({ page }) => {
     const root = await openStory(page, id)
-    await expect(root).toHaveScreenshot(`${name}.png`)
+    await expectBaseline(root, name)
   })
 }
 
 for (const name of themeInvariantToolkitStories) {
   test(`${name} visual baseline`, async ({ page }) => {
     const root = await openStory(page, toolkitStories[name])
-    await expect(root).toHaveScreenshot(`${name}.png`)
+    await expectBaseline(root, name)
   })
 }
 
-// Themed surfaces: `${story}-${theme}.png` in dark and light.
+// Themed surfaces: `${story}-${theme}.png` in dark and light. The text is
+// the same in both themes, so one `${story}.aria.yml` (checked in dark)
+// covers them.
 for (const theme of ['dark', 'light'] as const) {
   for (const [name, id] of [...themedToolkitStories, ['readiness', stories.readiness] as const]) {
     test(`${name} ${theme} visual baseline`, async ({ page }) => {
       const root = await openStory(page, id, { theme })
       await expect(root).toHaveScreenshot(`${name}-${theme}.png`)
+      if (theme === 'dark') await expectAriaBaseline(root, name)
     })
   }
 }

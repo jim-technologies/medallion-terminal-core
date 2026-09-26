@@ -1,0 +1,104 @@
+- banner:
+  - button "Apps"
+  - link "Inbox Inbox":
+    - /url: "#outlook"
+    - text: I
+    - strong: Inbox
+  - text: Search mail
+  - textbox "Search mail":
+    - /placeholder: Search
+  - button "Settings"
+  - button "Help"
+  - text: J
+- navigation "Mail commands":
+  - button "Home"
+  - button "View"
+  - button "Help"
+  - button "New mail"
+  - button "Reply"
+  - button "Archive"
+  - button "Flag"
+- complementary "Applications":
+  - button "Mail"
+  - button "Calendar"
+  - button "People"
+  - button "To Do"
+  - button "More apps"
+- complementary "Mail folders":
+  - button "New mail"
+  - strong: Favorites
+  - button "⌃"
+  - navigation "Favorite folders":
+    - button "Inbox 12"
+    - button "Sent Items"
+    - button "Drafts 3"
+  - strong: jun@example.test
+  - button "⌃"
+  - navigation "Mailbox folders":
+    - button "Flagged"
+    - button "Snoozed"
+    - button "Archive"
+    - button "Deleted Items"
+  - text: JT
+  - strong: Jim Technologies
+  - text: Work account
+- main:
+  - heading "Inbox" [level=1]
+  - button "Inbox options": ⌄
+  - button "Focused"
+  - button "Other"
+  - button "Filter"
+  - checkbox "Select all messages"
+  - button "Select"
+  - button "By date ⌄"
+  - listbox "Messages":
+    - option "MC Maya Chen Northwind renewal — final review The commercial terms are approved. Can you check the implementation dates? 10:42 AM ★" [selected]:
+      - text: MC
+      - strong: Maya Chen
+      - text: Northwind renewal — final review The commercial terms are approved. Can you check the implementation dates?
+      - time: 10:42 AM
+      - emphasis: ★
+    - option "FT Finance Team July cash forecast is ready Collections improved this week and the operating runway moved to 18 months. 9:18 AM":
+      - text: FT
+      - strong: Finance Team
+      - text: July cash forecast is ready Collections improved this week and the operating runway moved to 18 months.
+      - time: 9:18 AM
+    - option "LT Lina Torres Launch readiness notes I consolidated the open risks, owners, and decisions from yesterday’s review. Yesterday ★":
+      - text: LT
+      - strong: Lina Torres
+      - text: Launch readiness notes I consolidated the open risks, owners, and decisions from yesterday’s review.
+      - time: Yesterday
+      - emphasis: ★
+    - option "AD Atlas Design Co. Invoice 1048 received Thanks, Jun. We have scheduled the payment for Friday. Yesterday":
+      - text: AD
+      - strong: Atlas Design Co.
+      - text: Invoice 1048 received Thanks, Jun. We have scheduled the payment for Friday.
+      - time: Yesterday
+    - option "OD Operations Digest Weekly operating summary Revenue is on plan; two customer commitments need owner confirmation. Jul 19":
+      - text: OD
+      - strong: Operations Digest
+      - text: Weekly operating summary Revenue is on plan; two customer commitments need owner confirmation.
+      - time: Jul 19
+    - option "NW Noah Williams Candidate debrief Sharing the panel notes and recommendation for the product role. Jul 18":
+      - text: NW
+      - strong: Noah Williams
+      - text: Candidate debrief Sharing the panel notes and recommendation for the product role.
+      - time: Jul 18
+- region "Reading pane":
+  - button "Reply"
+  - button "Forward"
+  - button "Flag message"
+  - button "More message actions"
+  - article:
+    - heading "Northwind renewal — final review" [level=1]
+    - text: MC
+    - strong: Maya Chen
+    - text: "To: Jun <jun@example.test>"
+    - time: 10:42 AM
+    - paragraph: Hi Jun,
+    - paragraph: The commercial terms are approved. Can you check the implementation dates?
+    - paragraph: The supporting notes and the updated delivery dates are attached. Please add any final comments before the operating review.
+    - button "Operating review.pdf 1.8 MB · PDF":
+      - strong: Operating review.pdf
+      - text: 1.8 MB · PDF
+    - paragraph: Thanks, Maya

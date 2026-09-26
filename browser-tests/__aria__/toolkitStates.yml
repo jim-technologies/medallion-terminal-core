@@ -1,0 +1,6 @@
+- text: No objects yet Create an object or change the active filter.
+- button "Create object"
+- status: Loading objects Reading the latest snapshot
+- alert:
+  - text: Unable to load The source did not respond.
+  - button "Retry"

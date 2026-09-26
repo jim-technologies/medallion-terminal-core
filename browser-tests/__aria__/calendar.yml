@@ -1,0 +1,250 @@
+- banner:
+  - button "Main menu"
+  - text: Calendar
+  - button "Today"
+  - button "Previous date range"
+  - button "Next date range"
+  - heading "July 2026" [level=1]
+  - button "Search"
+  - button "Support"
+  - button "Settings menu"
+  - combobox "Calendar view":
+    - option "Day"
+    - option "Week"
+    - option "Month" [selected]
+    - option "Schedule"
+  - button "Apps"
+  - 'button "Account: Jun, jun@example.test"': J
+- complementary:
+  - button "Create"
+  - region "Mini calendar":
+    - strong: July 2026
+    - button "Previous month"
+    - button "Next month"
+    - text: S M T W T F S
+    - button "Sunday, June 28": "28"
+    - button "Monday, June 29": "29"
+    - button "Tuesday, June 30": "30"
+    - button "Wednesday, July 1": "1"
+    - button "Thursday, July 2": "2"
+    - button "Friday, July 3": "3"
+    - button "Saturday, July 4": "4"
+    - button "Sunday, July 5": "5"
+    - button "Monday, July 6": "6"
+    - button "Tuesday, July 7": "7"
+    - button "Wednesday, July 8": "8"
+    - button "Thursday, July 9": "9"
+    - button "Friday, July 10": "10"
+    - button "Saturday, July 11": "11"
+    - button "Sunday, July 12": "12"
+    - button "Monday, July 13": "13"
+    - button "Tuesday, July 14": "14"
+    - button "Wednesday, July 15": "15"
+    - button "Thursday, July 16": "16"
+    - button "Friday, July 17": "17"
+    - button "Saturday, July 18": "18"
+    - button "Sunday, July 19": "19"
+    - button "Monday, July 20": "20"
+    - button "Tuesday, July 21": "21"
+    - button "Wednesday, July 22": "22"
+    - button "Thursday, July 23": "23"
+    - button "Friday, July 24": "24"
+    - button "Saturday, July 25": "25"
+    - button "Sunday, July 26": "26"
+    - button "Monday, July 27": "27"
+    - button "Tuesday, July 28": "28"
+    - button "Wednesday, July 29": "29"
+    - button "Thursday, July 30": "30"
+    - button "Friday, July 31": "31"
+    - button "Saturday, August 1": "1"
+    - button "Sunday, August 2": "2"
+    - button "Monday, August 3": "3"
+    - button "Tuesday, August 4": "4"
+    - button "Wednesday, August 5": "5"
+    - button "Thursday, August 6": "6"
+    - button "Friday, August 7": "7"
+    - button "Saturday, August 8": "8"
+  - textbox "Search for people"
+  - button "▦ Booking pages Share your availability":
+    - text: ▦
+    - strong: Booking pages
+    - text: Share your availability
+  - strong: My calendars
+  - button "Collapse my calendars"
+  - checkbox "✓ Jun" [checked]
+  - text: ✓ Jun
+  - checkbox "✓ Jim Technologies" [checked]
+  - text: ✓ Jim Technologies
+  - checkbox "✓ Product launches" [checked]
+  - text: ✓ Product launches
+  - checkbox "✓ Tasks" [checked]
+  - text: ✓ Tasks
+  - strong: Other calendars
+  - button "Add other calendar"
+  - checkbox "✓ Birthdays" [checked]
+  - text: ✓ Birthdays
+  - checkbox "✓ Holidays in United States" [checked]
+  - text: ✓ Holidays in United States
+- main:
+  - grid "July 2026 month view":
+    - row "SUN MON TUE WED THU FRI SAT":
+      - columnheader "SUN"
+      - columnheader "MON"
+      - columnheader "TUE"
+      - columnheader "WED"
+      - columnheader "THU"
+      - columnheader "FRI"
+      - columnheader "SAT"
+    - row "Create event on Sunday, June 28 Create event on Monday, June 29 Create event on Tuesday, June 30 Create event on Wednesday, July 1 Create event on Thursday, July 2 Create event on Friday, July 3 Independence Day (observed) Create event on Saturday, July 4 Independence Day":
+      - gridcell "Create event on Sunday, June 28":
+        - button "Create event on Sunday, June 28": "28"
+      - gridcell "Create event on Monday, June 29":
+        - button "Create event on Monday, June 29": "29"
+      - gridcell "Create event on Tuesday, June 30":
+        - button "Create event on Tuesday, June 30": "30"
+      - gridcell "Create event on Wednesday, July 1":
+        - button "Create event on Wednesday, July 1": Jul 1
+      - gridcell "Create event on Thursday, July 2":
+        - button "Create event on Thursday, July 2": "2"
+      - gridcell "Create event on Friday, July 3 Independence Day (observed)":
+        - button "Create event on Friday, July 3": "3"
+        - button "Independence Day (observed)"
+      - gridcell "Create event on Saturday, July 4 Independence Day":
+        - button "Create event on Saturday, July 4": "4"
+        - button "Independence Day"
+    - row "Create event on Sunday, July 5 Create event on Monday, July 6 Create event on Tuesday, July 7 Create event on Wednesday, July 8 Create event on Thursday, July 9 Create event on Friday, July 10 Create event on Saturday, July 11":
+      - gridcell "Create event on Sunday, July 5":
+        - button "Create event on Sunday, July 5": "5"
+      - gridcell "Create event on Monday, July 6":
+        - button "Create event on Monday, July 6": "6"
+      - gridcell "Create event on Tuesday, July 7":
+        - button "Create event on Tuesday, July 7": "7"
+      - gridcell "Create event on Wednesday, July 8":
+        - button "Create event on Wednesday, July 8": "8"
+      - gridcell "Create event on Thursday, July 9":
+        - button "Create event on Thursday, July 9": "9"
+      - gridcell "Create event on Friday, July 10":
+        - button "Create event on Friday, July 10": "10"
+      - gridcell "Create event on Saturday, July 11":
+        - button "Create event on Saturday, July 11": "11"
+    - row "Create event on Sunday, July 12 Create event on Monday, July 13 Create event on Tuesday, July 14 Create event on Wednesday, July 15 Create event on Thursday, July 16 Create event on Friday, July 17 Create event on Saturday, July 18":
+      - gridcell "Create event on Sunday, July 12":
+        - button "Create event on Sunday, July 12": "12"
+      - gridcell "Create event on Monday, July 13":
+        - button "Create event on Monday, July 13": "13"
+      - gridcell "Create event on Tuesday, July 14":
+        - button "Create event on Tuesday, July 14": "14"
+      - gridcell "Create event on Wednesday, July 15":
+        - button "Create event on Wednesday, July 15": "15"
+      - gridcell "Create event on Thursday, July 16":
+        - button "Create event on Thursday, July 16": "16"
+      - gridcell "Create event on Friday, July 17":
+        - button "Create event on Friday, July 17": "17"
+      - gridcell "Create event on Saturday, July 18":
+        - button "Create event on Saturday, July 18": "18"
+    - row "Create event on Sunday, July 19 Create event on Monday, July 20 9:00 AM Weekly planning 10:30 AM Customer onboarding review 1:00 PM Focus time Create event on Tuesday, July 21 10:00 AM Product roadmap review 12:30 PM Lunch with Maya 3:00 PM Design critique Create event on Wednesday, July 22 Team offsite 9:30 AM Investor update prep 2:00 PM Supplier contract call Create event on Thursday, July 23 11:00 AM Q3 finance review 3:00 PM Launch readiness Create event on Friday, July 24 10:00 AM Customer webinar ✓ 1:00 PM Publish release notes 2:00 PM No-meeting afternoon Create event on Saturday, July 25":
+      - gridcell "Create event on Sunday, July 19":
+        - button "Create event on Sunday, July 19": "19"
+      - gridcell "Create event on Monday, July 20 9:00 AM Weekly planning 10:30 AM Customer onboarding review 1:00 PM Focus time":
+        - button "Create event on Monday, July 20": "20"
+        - button "9:00 AM Weekly planning":
+          - time: 9:00 AM
+          - text: Weekly planning
+        - button "10:30 AM Customer onboarding review":
+          - time: 10:30 AM
+          - text: Customer onboarding review
+        - button "1:00 PM Focus time":
+          - time: 1:00 PM
+          - text: Focus time
+      - gridcell "Create event on Tuesday, July 21 10:00 AM Product roadmap review 12:30 PM Lunch with Maya 3:00 PM Design critique":
+        - button "Create event on Tuesday, July 21": "21"
+        - button "10:00 AM Product roadmap review":
+          - time: 10:00 AM
+          - text: Product roadmap review
+        - button "12:30 PM Lunch with Maya":
+          - time: 12:30 PM
+          - text: Lunch with Maya
+        - button "3:00 PM Design critique":
+          - time: 3:00 PM
+          - text: Design critique
+      - gridcell "Create event on Wednesday, July 22 Team offsite 9:30 AM Investor update prep 2:00 PM Supplier contract call":
+        - button "Create event on Wednesday, July 22": "22"
+        - button "Team offsite"
+        - button "9:30 AM Investor update prep":
+          - time: 9:30 AM
+          - text: Investor update prep
+        - button "2:00 PM Supplier contract call":
+          - time: 2:00 PM
+          - text: Supplier contract call
+      - gridcell "Create event on Thursday, July 23 11:00 AM Q3 finance review 3:00 PM Launch readiness":
+        - button "Create event on Thursday, July 23": "23"
+        - button "11:00 AM Q3 finance review":
+          - time: 11:00 AM
+          - text: Q3 finance review
+        - button "3:00 PM Launch readiness":
+          - time: 3:00 PM
+          - text: Launch readiness
+      - gridcell "Create event on Friday, July 24 10:00 AM Customer webinar ✓ 1:00 PM Publish release notes 2:00 PM No-meeting afternoon":
+        - button "Create event on Friday, July 24": "24"
+        - button "10:00 AM Customer webinar":
+          - time: 10:00 AM
+          - text: Customer webinar
+        - button "✓ 1:00 PM Publish release notes":
+          - text: ✓
+          - time: 1:00 PM
+          - text: Publish release notes
+        - button "2:00 PM No-meeting afternoon":
+          - time: 2:00 PM
+          - text: No-meeting afternoon
+      - gridcell "Create event on Saturday, July 25":
+        - button "Create event on Saturday, July 25": "25"
+    - row "Create event on Sunday, July 26 Create event on Monday, July 27 9:00 AM Company breakfast Create event on Tuesday, July 28 1:00 PM Quarterly board meeting Create event on Wednesday, July 29 Create event on Thursday, July 30 Maya’s birthday Create event on Friday, July 31 3:00 PM Monthly billing close Create event on Saturday, August 1":
+      - gridcell "Create event on Sunday, July 26":
+        - button "Create event on Sunday, July 26": "26"
+      - gridcell "Create event on Monday, July 27 9:00 AM Company breakfast":
+        - button "Create event on Monday, July 27": "27"
+        - button "9:00 AM Company breakfast":
+          - time: 9:00 AM
+          - text: Company breakfast
+      - gridcell "Create event on Tuesday, July 28 1:00 PM Quarterly board meeting":
+        - button "Create event on Tuesday, July 28": "28"
+        - button "1:00 PM Quarterly board meeting":
+          - time: 1:00 PM
+          - text: Quarterly board meeting
+      - gridcell "Create event on Wednesday, July 29":
+        - button "Create event on Wednesday, July 29": "29"
+      - gridcell "Create event on Thursday, July 30 Maya’s birthday":
+        - button "Create event on Thursday, July 30": "30"
+        - button "Maya’s birthday"
+      - gridcell "Create event on Friday, July 31 3:00 PM Monthly billing close":
+        - button "Create event on Friday, July 31": "31"
+        - button "3:00 PM Monthly billing close":
+          - time: 3:00 PM
+          - text: Monthly billing close
+      - gridcell "Create event on Saturday, August 1":
+        - button "Create event on Saturday, August 1": Aug 1
+    - row "Create event on Sunday, August 2 Create event on Monday, August 3 2:00 PM Office hours Create event on Tuesday, August 4 Create event on Wednesday, August 5 Create event on Thursday, August 6 Create event on Friday, August 7 Create event on Saturday, August 8":
+      - gridcell "Create event on Sunday, August 2":
+        - button "Create event on Sunday, August 2": "2"
+      - gridcell "Create event on Monday, August 3 2:00 PM Office hours":
+        - button "Create event on Monday, August 3": "3"
+        - button "2:00 PM Office hours":
+          - time: 2:00 PM
+          - text: Office hours
+      - gridcell "Create event on Tuesday, August 4":
+        - button "Create event on Tuesday, August 4": "4"
+      - gridcell "Create event on Wednesday, August 5":
+        - button "Create event on Wednesday, August 5": "5"
+      - gridcell "Create event on Thursday, August 6":
+        - button "Create event on Thursday, August 6": "6"
+      - gridcell "Create event on Friday, August 7":
+        - button "Create event on Friday, August 7": "7"
+      - gridcell "Create event on Saturday, August 8":
+        - button "Create event on Saturday, August 8": "8"
+- complementary "Workspace side panel":
+  - button "Notes": ▰
+  - button "Tasks": ✓
+  - button "Contacts": ●
+  - button "Maps": ◆
+  - button "Get add-ons"
+  - button "Hide side panel"

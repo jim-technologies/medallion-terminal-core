@@ -1,0 +1,24 @@
+- status:
+  - text: You don’t have access Ask an owner of bucket finance for access.
+  - group: Details
+- status:
+  - text: Your session expired Your work on this page is kept. Continue to renew your session.
+  - button "Continue"
+- status:
+  - text: You’re signed out Sign in to continue.
+  - button "Sign in"
+- status: Not found Report Q3 2026 doesn’t exist or was moved.
+- status:
+  - text: Too many requests Try again in 30 seconds.
+  - button "Retry"
+- status:
+  - text: Data may be out of date Last updated 7 minutes ago.
+  - button "Refresh"
+- alert:
+  - text: Service unavailable The service did not respond. Try again shortly.
+  - group: Details
+  - button "Retry"
+- alert:
+  - text: Request not accepted The service could not accept this request.
+  - group: Details
+- status: Data may be out of date This view has not refreshed recently.

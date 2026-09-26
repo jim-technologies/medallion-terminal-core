@@ -1,0 +1,105 @@
+- banner:
+  - button "Main menu"
+  - strong: Maps
+  - textbox "Search":
+    - /placeholder: Search maps
+  - button "Search"
+  - button "Help"
+  - button "Settings"
+  - button "Apps"
+  - text: J
+- complementary "Timeline history":
+  - button "Back to maps"
+  - heading "Your Timeline" [level=1]
+  - text: Only you can see your Timeline
+  - button "Timeline options"
+  - navigation "Timeline views":
+    - button "Day"
+    - button "Trips"
+    - button "Places"
+  - button "Newer day"
+  - button "Sunday, July 12 San Francisco":
+    - strong: Sunday, July 12
+    - text: San Francisco
+  - button "Older day" [disabled]
+  - strong: "4"
+  - text: Places
+  - strong: 21.3 km
+  - text: Distance
+  - strong: 1 hr 47 min
+  - text: Travel
+  - strong: "8"
+  - text: Photos
+  - button "Home 12:00 AM – 8:42 AM Mission District, San Francisco 8 hr 42 min Confirmed":
+    - strong: Home
+    - text: 12:00 AM – 8:42 AM Mission District, San Francisco
+    - emphasis: 8 hr 42 min
+    - emphasis: Confirmed
+  - strong: Transit · 4.8 km
+  - text: 8:42 AM – 9:05 AM · 23 min
+  - button "Ferry Building 9:05 AM – 10:18 AM 1 Ferry Building, San Francisco 1 hr 13 min Confirmed":
+    - strong: Ferry Building
+    - text: 9:05 AM – 10:18 AM 1 Ferry Building, San Francisco
+    - emphasis: 1 hr 13 min
+    - emphasis: Confirmed
+  - strong: Walking · 1.5 km
+  - text: 10:18 AM – 10:37 AM · 19 min
+  - button "Coit Tower 10:37 AM – 11:22 AM 1 Telegraph Hill Blvd, San Francisco 45 min Confirmed ▶":
+    - strong: Coit Tower
+    - text: 10:37 AM – 11:22 AM 1 Telegraph Hill Blvd, San Francisco
+    - emphasis: 45 min
+    - emphasis: Confirmed
+    - emphasis: ▶
+  - strong: Walking · 1.1 km
+  - text: 11:22 AM – 11:38 AM · 16 min
+  - button "Original Joe’s 11:38 AM – 1:04 PM 601 Union Street, San Francisco 1 hr 26 min Estimated":
+    - strong: Original Joe’s
+    - text: 11:38 AM – 1:04 PM 601 Union Street, San Francisco
+    - emphasis: 1 hr 26 min
+    - emphasis: Estimated
+  - strong: Driving · 6.7 km
+  - text: 1:04 PM – 1:31 PM · 27 min
+  - button "Presidio Tunnel Tops 1:31 PM – 4:12 PM 210 Lincoln Blvd, San Francisco 2 hr 41 min Confirmed":
+    - strong: Presidio Tunnel Tops
+    - text: 1:31 PM – 4:12 PM 210 Lincoln Blvd, San Francisco
+    - emphasis: 2 hr 41 min
+    - emphasis: Confirmed
+  - strong: Driving · 7.2 km
+  - text: 4:12 PM – 4:34 PM · 22 min
+  - button "Home 4:34 PM – 11:59 PM Mission District, San Francisco 7 hr 25 min Confirmed":
+    - strong: Home
+    - text: 4:34 PM – 11:59 PM Mission District, San Francisco
+    - emphasis: 7 hr 25 min
+    - emphasis: Confirmed
+  - text: Timeline saved to this device
+- main:
+  - img "Route for selected day"
+  - button "Home"
+  - button "1"
+  - button "2 Coit Tower":
+    - text: "2"
+    - emphasis: Coit Tower
+  - button "3"
+  - button "4"
+  - button "Home"
+  - button "Map"
+  - button "Satellite"
+  - button "Center map on current location"
+  - button "+"
+  - button "−"
+  - text: OpenFreeMap · configurable
+  - button "Map data"
+  - button "Terms"
+  - complementary "Coit Tower details":
+    - button "Close place details"
+    - heading "Coit Tower" [level=2]
+    - text: Scenic spot
+    - paragraph: 1 Telegraph Hill Blvd, San Francisco
+    - button "Directions"
+    - button "Details"
+    - button "More"
+    - strong: Visited 10:37 AM – 11:22 AM
+    - text: 45 min · Sunday, July 12
+    - strong: Photos from this place
+    - button "View all"
+    - emphasis: ▶

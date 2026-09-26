@@ -1,0 +1,172 @@
+- banner:
+  - link "Trading desk Trading desk":
+    - /url: "#tws"
+    - text: T
+    - strong: Trading desk
+  - navigation "Trading desk menus":
+    - button "File"
+    - button "Account"
+    - button "New Window"
+    - button "Research"
+    - button "Analytical Tools"
+    - button "Trading Tools"
+    - button "Help"
+  - text: LIVE · NYSE OPEN
+  - button "Layout locked"
+  - text: J
+- navigation "Trading desk layouts":
+  - button "Mosaic"
+  - button "Portfolio"
+  - button "Order entry"
+  - button "Classic layout"
+  - button "Add layout": ＋
+  - text: Jim Technologies · DU•••1842
+- main:
+  - strong: Order entry
+  - button "Configure Order entry": ⚙
+  - button "Maximize Order entry": □
+  - strong: AAPL
+  - text: NASDAQ · SMART 195.84
+  - emphasis: +1.22 (+0.63%)
+  - button "BUY"
+  - button "SELL"
+  - text: Quantity
+  - textbox "Quantity": "100"
+  - text: Order type
+  - combobox "Order type":
+    - option "LMT" [selected]
+    - option "MKT"
+    - option "STP"
+  - text: Limit price
+  - textbox "Limit price": "195.60"
+  - text: Time in force
+  - combobox "Time in force":
+    - option "DAY" [selected]
+    - option "GTC"
+  - text: Estimated total
+  - strong: $19,560.00
+  - button "Submit buy order"
+  - strong: Quote details
+  - button "Configure Quote details": ⚙
+  - button "Maximize Quote details": □
+  - term: Bid
+  - definition: 195.82 × 300
+  - term: Ask
+  - definition: 195.85 × 500
+  - term: Day range
+  - definition: 193.31 — 196.44
+  - term: 52 week
+  - definition: 164.08 — 237.49
+  - term: Volume
+  - definition: 38.42M
+  - term: Market cap
+  - definition: 3.01T
+  - strong: AAPL · 5 min · SMART
+  - button "Configure AAPL · 5 min · SMART": ⚙
+  - button "Maximize AAPL · 5 min · SMART": □
+  - button "5 min⌄"
+  - button "1 D⌄"
+  - button "Studies"
+  - button "⚙"
+  - img "AAPL intraday price chart": "195.84"
+  - text: 10:00 11:00 12:00 13:00 14:00 15:00
+  - strong: Monitor
+  - button "Configure Monitor": ⚙
+  - button "Maximize Monitor": □
+  - button "US Tech"
+  - button "Indexes"
+  - button "Favorites"
+  - button "＋"
+  - table:
+    - rowgroup:
+      - row "Symbol Last Change Position Market value Unrealized P&L":
+        - columnheader "Symbol"
+        - columnheader "Last"
+        - columnheader "Change"
+        - columnheader "Position"
+        - columnheader "Market value"
+        - columnheader "Unrealized P&L"
+    - rowgroup:
+      - row "AAPL Apple Inc 195.84 +1.22 400 $78,336 +$1,942":
+        - cell "AAPL Apple Inc":
+          - strong: AAPL
+          - text: Apple Inc
+        - cell "195.84"
+        - cell "+1.22"
+        - cell "400"
+        - cell "$78,336"
+        - cell "+$1,942"
+      - row "MSFT Microsoft Corp 448.37 +0.76 125 $56,046 +$684":
+        - cell "MSFT Microsoft Corp":
+          - strong: MSFT
+          - text: Microsoft Corp
+        - cell "448.37"
+        - cell "+0.76"
+        - cell "125"
+        - cell "$56,046"
+        - cell "+$684"
+      - row "NVDA NVIDIA Corp 121.09 -0.41 300 $36,327 -$149":
+        - cell "NVDA NVIDIA Corp":
+          - strong: NVDA
+          - text: NVIDIA Corp
+        - cell "121.09"
+        - cell "-0.41"
+        - cell "300"
+        - cell "$36,327"
+        - cell "-$149"
+      - row "SPY SPDR S&P 500 ETF 548.99 +0.38 80 $43,919 +$326":
+        - cell "SPY SPDR S&P 500 ETF":
+          - strong: SPY
+          - text: SPDR S&P 500 ETF
+        - cell "548.99"
+        - cell "+0.38"
+        - cell "80"
+        - cell "$43,919"
+        - cell "+$326"
+  - strong: News
+  - button "Configure News": ⚙
+  - button "Maximize News": □
+  - button "14:31 US stocks hold gains as technology shares advance Reuters · Market update":
+    - time: 14:31
+    - strong: US stocks hold gains as technology shares advance
+    - text: Reuters · Market update
+  - button "14:18 Apple supplier checks point to stable demand Dow Jones Newswires":
+    - time: 14:18
+    - strong: Apple supplier checks point to stable demand
+    - text: Dow Jones Newswires
+  - button "13:54 Treasury yields ease after auction demand Reuters · Fixed income":
+    - time: 13:54
+    - strong: Treasury yields ease after auction demand
+    - text: Reuters · Fixed income
+  - strong: Activity
+  - button "Configure Activity": ⚙
+  - button "Maximize Activity": □
+  - button "Orders"
+  - button "Trades"
+  - button "Summary"
+  - button "Log"
+  - table:
+    - rowgroup:
+      - row "Action Quantity Symbol Type Limit price Status":
+        - columnheader "Action"
+        - columnheader "Quantity"
+        - columnheader "Symbol"
+        - columnheader "Type"
+        - columnheader "Limit price"
+        - columnheader "Status"
+    - rowgroup:
+      - row "BUY 100 AAPL LMT 195.60 PreSubmitted":
+        - cell "BUY"
+        - cell "100"
+        - cell "AAPL"
+        - cell "LMT"
+        - cell "195.60"
+        - cell "PreSubmitted"
+      - row "SELL 25 MSFT STP 439.00 Submitted":
+        - cell "SELL"
+        - cell "25"
+        - cell "MSFT"
+        - cell "STP"
+        - cell "439.00"
+        - cell "Submitted"
+  - text: Data farm connection is OK Buying power $284,218.42 Net liquidation $412,806.17 Excess liquidity $197,441.52

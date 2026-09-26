@@ -1,0 +1,127 @@
+- banner:
+  - text: WATCH
+  - navigation "Streaming navigation":
+    - button "Home"
+    - button "TV Shows"
+    - button "Movies"
+    - button "New & Popular"
+    - button "My List"
+    - button "Browse by Languages"
+  - button "Search"
+  - button "Kids"
+  - button "Notifications"
+  - button "J"
+- main:
+  - text: N SERIES
+  - heading "Field Notes" [level=1]
+  - paragraph: Some places refuse to be mapped.
+  - paragraph: A small research team follows an impossible signal along the Pacific coast, where every discovery rewrites the map they brought with them.
+  - button "Play"
+  - button "More Info"
+  - button "Remove from My List"
+  - text: TV-14
+  - button "Continue Watching for Jun Explore All":
+    - heading "Continue Watching for Jun" [level=2]
+    - text: Explore All
+  - article:
+    - button "Field Notes": Field Notes New episode 98% Match TV-14 4K HDR
+  - article:
+    - button "Night Shift": Night Shift TOP 10 95% Match TV-14 4K
+  - article:
+    - button "Harborline": Harborline 93% Match TV-14 HD
+  - article:
+    - button "Pattern Language": Pattern Language 91% Match TV-PG 4K
+  - article:
+    - button "Northbound": Northbound 87% Match PG-13 4K
+  - button "Next titles in Continue Watching for Jun"
+  - button "Top 10 in the U.S. Today Explore All":
+    - heading "Top 10 in the U.S. Today" [level=2]
+    - text: Explore All
+  - article:
+    - text: "1"
+    - button "Signal Coast": Signal Coast New season 96% Match TV-MA 4K
+  - article:
+    - text: "2"
+    - button "The Ridge": The Ridge 94% Match PG-13 4K HDR
+  - article:
+    - text: "3"
+    - button "Night Shift": Night Shift 95% Match TV-14 4K
+  - article:
+    - text: "4"
+    - button "Afterlight": Afterlight Limited series 88% Match TV-14 4K
+  - article:
+    - text: "5"
+    - button "Wild Current": Wild Current 90% Match PG 4K HDR
+  - article:
+    - text: "6"
+    - button "The Archive": The Archive 83% Match TV-MA 4K
+  - article:
+    - text: "7"
+    - button "Last Ferry": Last Ferry 85% Match R 4K
+  - button "Next titles in Top 10 in the U.S. Today"
+  - button "Because you watched Field Notes Explore All":
+    - heading "Because you watched Field Notes" [level=2]
+    - text: Explore All
+  - article:
+    - button "Signal Coast": Signal Coast New season TOP 10 96% Match TV-MA 4K
+  - article:
+    - button "Wild Current": Wild Current TOP 10 90% Match PG 4K HDR
+  - article:
+    - button "The Quiet Route": The Quiet Route 89% Match PG-13 HD
+  - article:
+    - button "Afterlight": Afterlight Limited series TOP 10 88% Match TV-14 4K
+  - article:
+    - button "Last Ferry": Last Ferry TOP 10 85% Match R 4K
+  - article:
+    - button "Driftline": Driftline 81% Match TV-14 HD
+  - button "Next titles in Because you watched Field Notes"
+  - button "New Releases Explore All":
+    - heading "New Releases" [level=2]
+    - text: Explore All
+  - article:
+    - button "Common Ground": Common Ground 86% Match TV-PG 4K
+  - article:
+    - button "The Archive": The Archive TOP 10 83% Match TV-MA 4K
+  - article:
+    - button "Signal Coast": Signal Coast New season TOP 10 96% Match TV-MA 4K
+  - article:
+    - button "The Ridge": The Ridge TOP 10 94% Match PG-13 4K HDR
+  - article:
+    - button "Field Notes": Field Notes New episode 98% Match TV-14 4K HDR
+  - article:
+    - button "Afterlight": Afterlight Limited series TOP 10 88% Match TV-14 4K
+  - button "Next titles in New Releases"
+  - button "My List Explore All":
+    - heading "My List" [level=2]
+    - text: Explore All
+  - article:
+    - button "Field Notes": Field Notes New episode 98% Match TV-14 4K HDR
+  - article:
+    - button "Signal Coast": Signal Coast New season TOP 10 96% Match TV-MA 4K
+  - article:
+    - button "Night Shift": Night Shift TOP 10 95% Match TV-14 4K
+  - article:
+    - button "Pattern Language": Pattern Language 91% Match TV-PG 4K
+  - article:
+    - button "The Quiet Route": The Quiet Route 89% Match PG-13 HD
+  - article:
+    - button "Common Ground": Common Ground 86% Match TV-PG 4K
+  - article:
+    - button "Long Weekend": Long Weekend 84% Match TV-14 HD
+  - button "Next titles in My List"
+  - button "Critically Acclaimed Explore All":
+    - heading "Critically Acclaimed" [level=2]
+    - text: Explore All
+  - article:
+    - button "City at 4 AM": City at 4 AM 82% Match PG-13 4K
+  - article:
+    - button "Common Ground": Common Ground 86% Match TV-PG 4K
+  - article:
+    - button "The Ridge": The Ridge TOP 10 94% Match PG-13 4K HDR
+  - article:
+    - button "Harborline": Harborline 93% Match TV-14 HD
+  - article:
+    - button "Northbound": Northbound 87% Match PG-13 4K
+  - article:
+    - button "Pattern Language": Pattern Language 91% Match TV-PG 4K
+  - button "Next titles in Critically Acclaimed"

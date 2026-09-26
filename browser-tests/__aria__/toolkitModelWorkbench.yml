@@ -1,0 +1,36 @@
+- toolbar "Model workbench toolbar":
+  - strong: Model workbench
+  - button "Validate"
+  - button "Publish"
+  - text: Draft v18
+- complementary "Model explorer":
+  - textbox "Filter model"
+  - tree "Model hierarchy":
+    - treeitem "Collapse Concepts Concepts" [expanded] [level=1]:
+      - button "Collapse Concepts"
+      - text: Concepts
+    - treeitem "Account 14 properties" [level=2]
+    - treeitem "Order 9 properties" [level=2] [selected]
+    - treeitem "Shipment 11 properties" [level=2]
+    - treeitem "Expand Relationships Relationships" [level=1]:
+      - button "Expand Relationships"
+      - text: Relationships
+- separator "Resize model explorer"
+- main "Model canvas placeholder":
+  - text: Account Concept Order Selected concept Shipment Concept Location Concept
+  - button "Add concept"
+  - button "Fit canvas"
+- separator "Resize concept inspector"
+- complementary "Concept inspector":
+  - heading "Order" [level=2]
+  - paragraph: Concept
+  - term: Identifier
+  - definition: order
+  - term: Display property
+  - definition: order_number
+  - term: Primary key
+  - definition: order_id
+  - term: Properties
+  - definition: "9"
+  - term: Relationships
+  - definition: "3"

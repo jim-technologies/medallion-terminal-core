@@ -1,0 +1,9 @@
+- tree "Model explorer":
+  - treeitem "Collapse Objects Objects" [expanded] [level=1]:
+    - button "Collapse Objects"
+    - text: Objects
+  - treeitem "Customers" [level=2] [selected]
+  - treeitem "Orders" [level=2]
+  - treeitem "Expand Models Models" [level=1]:
+    - button "Expand Models"
+    - text: Models

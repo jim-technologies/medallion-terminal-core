@@ -1,0 +1,14 @@
+- main:
+  - text: Toolkit · Navigation
+  - heading "Breadcrumbs" [level=1]
+  - paragraph: Generic location and section navigation that remains host-owned, responsive, and fully operable from the keyboard.
+  - region "Breadcrumbs component example":
+    - navigation "Breadcrumbs":
+      - list:
+        - listitem:
+          - link "Workspace":
+            - /url: "#workspace"
+        - listitem:
+          - button "Operations"
+        - listitem: Quarterly forecast
+  - text: Theme and density inherit from the scoped toolkit root.

@@ -1,0 +1,68 @@
+- text: C
+- navigation "Chat navigation":
+  - button "Chats": "4"
+  - button "Updates"
+  - button "Communities"
+  - button "Calls"
+- button "Settings"
+- text: J
+- complementary "Conversation list":
+  - heading "Chats" [level=1]
+  - button "New chat"
+  - button "More"
+  - textbox:
+    - /placeholder: Search or start a new chat
+  - navigation "Chat views":
+    - button "All"
+    - button "Communities"
+    - button "Media"
+  - 'button "OT Operations team Maya: The review is ready. 10:42 AM 3"':
+    - text: OT
+    - strong: Operations team
+    - text: "Maya: The review is ready."
+    - time: 10:42 AM
+    - text: "3"
+  - button "MC Maya Chen Can you check the launch dates? 9:18 AM":
+    - text: MC
+    - strong: Maya Chen
+    - text: Can you check the launch dates?
+    - time: 9:18 AM
+  - 'button "NL Northwind launch Lina: Shared a document Yesterday 1"':
+    - text: NL
+    - strong: Northwind launch
+    - text: "Lina: Shared a document"
+    - time: Yesterday
+    - text: "1"
+  - button "F Finance Forecast was updated. Yesterday":
+    - text: F
+    - strong: Finance
+    - text: Forecast was updated.
+    - time: Yesterday
+  - 'button "JT Jim Technologies social Noah: Great work everyone 🎉 Monday"':
+    - text: JT
+    - strong: Jim Technologies social
+    - text: "Noah: Great work everyone 🎉"
+    - time: Monday
+- main:
+  - text: OT
+  - strong: Operations team
+  - text: 5 participants · online
+  - button "Video call"
+  - button "Call"
+  - button "Search"
+  - button "More"
+  - time: Today
+  - paragraph: Messages are protected by your organization’s communication policy.
+  - strong: Maya Chen
+  - paragraph: The operating review is ready. I linked the customer commitments and owners.
+  - time: 10:38 AM
+  - paragraph: Perfect. I’ll review it before the team sync.
+  - time: 10:39 AM ✓✓
+  - strong: Lina Torres
+  - button "Operating review.pdf 1.8 MB · PDF"
+  - paragraph: The final launch dates are on page four.
+  - time: 10:42 AM
+  - button "Attach"
+  - button "Stickers"
+  - textbox "Type a message"
+  - button "Send"

@@ -1,0 +1,30 @@
+- toolbar "Object toolbar":
+  - strong: Object workbench
+  - textbox "Search workbench":
+    - /placeholder: Search
+  - button "Filter"
+  - text: Connected
+- complementary "Explorer":
+  - text: Explorer
+  - tree "Model explorer":
+    - treeitem "Expand Objects Objects" [level=1] [selected]:
+      - button "Expand Objects"
+      - text: Objects
+    - treeitem "Expand Models Models" [level=1]:
+      - button "Expand Models"
+      - text: Models
+- main:
+  - heading "Application content" [level=1]
+  - paragraph: AppSurface and its panes own layout only; the host owns data and routing.
+- complementary "Inspector":
+  - heading "Quarterly forecast" [level=2]
+  - paragraph: Model object
+  - button "Inspector actions"
+  - term: owner
+  - definition: Jun
+  - term: status
+  - definition: Active
+  - term: version
+  - definition: "12"
+  - term: updated
+  - definition: 2 minutes ago

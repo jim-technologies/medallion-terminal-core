@@ -1,0 +1,65 @@
+- complementary "Payments navigation":
+  - button "Jim Technologies Standard account"
+  - navigation "Commerce":
+    - button "Home"
+    - button "Payments"
+    - button "Billing"
+    - button "Disputes 1":
+      - text: Disputes
+      - emphasis: "1"
+    - button "Customers"
+    - button "Product catalog"
+  - text: More
+  - navigation "More":
+    - button "Reports"
+    - button "Data"
+    - button "Developers"
+  - button "Settings"
+- banner:
+  - textbox /:
+    - /placeholder: Search…
+  - text: /
+  - button "Help"
+  - button "Notifications"
+  - button "Create"
+  - text: J
+- main:
+  - heading "Overview" [level=1]
+  - paragraph: Friday, July 18
+  - button "Last 7 days"
+  - text: Gross volume
+  - strong: $86,420
+  - text: +12.8% Net volume
+  - strong: $82,914
+  - text: +11.9% Successful payments
+  - strong: "314"
+  - text: +8.2% Dispute rate
+  - strong: 0.38%
+  - text: "-0.06% $20K $15K $10K $5K $0 Jul 12 Jul 14 Jul 16 Jul 18"
+  - heading "Balances" [level=2]
+  - text: Updated just now
+  - button "View"
+  - text: Available to pay out
+  - strong: $48,621.00
+  - text: Expected Jul 21 Pending
+  - strong: $12,408.00
+  - text: Reserve
+  - strong: $0.00
+  - heading "Revenue recovery" [level=2]
+  - text: Last 30 days
+  - button "View Billing"
+  - text: 84%
+  - strong: $7,840
+  - text: recovered revenue 24 of 31 failed payments recovered Smart retries
+  - strong: Enabled
+  - heading "Needs attention" [level=2]
+  - text: Operational tasks
+  - button "1 dispute needs a response Evidence due Jul 23":
+    - strong: 1 dispute needs a response
+    - text: Evidence due Jul 23
+  - button "Verify business representative Complete by Aug 2":
+    - strong: Verify business representative
+    - text: Complete by Aug 2
+  - button "Confirm payout account Bank ending in 0284":
+    - strong: Confirm payout account
+    - text: Bank ending in 0284

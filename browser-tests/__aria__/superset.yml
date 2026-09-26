@@ -1,0 +1,84 @@
+- banner:
+  - link "Analytics Analytics":
+    - /url: "#superset"
+    - text: A
+    - strong: Analytics
+  - navigation "Analytics navigation":
+    - button "Dashboards⌄"
+    - button "Charts⌄"
+    - button "Datasets⌄"
+    - button "SQL⌄"
+  - button "Create"
+  - button "Settings"
+  - button "Help"
+  - text: J
+- main:
+  - text: Dashboards / Operating platform overview
+  - heading "Operating platform overview" [level=1]
+  - paragraph: Business performance for Jim Technologies · Published 4 minutes ago
+  - button "☆ Favorite"
+  - button "Refresh"
+  - button "•••"
+  - button "Edit dashboard"
+  - strong: Filters
+  - text: Time range
+  - button "Time range": Last 30 days⌄
+  - text: Region
+  - button "Region": All regions⌄
+  - text: Segment
+  - button "Segment": All customers⌄
+  - button "Clear all"
+  - strong: Net revenue
+  - button "•••"
+  - text: $842K
+  - emphasis: +12.8%
+  - strong: Gross margin
+  - button "•••"
+  - text: 68.4%
+  - emphasis: +2.1 pts
+  - strong: Active customers
+  - button "•••"
+  - text: 1,284
+  - emphasis: "+86"
+  - strong: Forecast coverage
+  - button "•••"
+  - text: 3.2×
+  - emphasis: On target
+  - strong: Revenue by segment
+  - text: Monthly net revenue · USD
+  - button "•••"
+  - text: Aug Sep Oct Nov Dec Jan
+  - strong: Pipeline by stage
+  - text: Qualified value
+  - button "•••"
+  - text: Qualified $2.8M Discovery $2.3M Proposal $1.7M Commit $1.2M
+  - strong: Customer performance
+  - text: Top accounts by net revenue
+  - button "•••"
+  - table:
+    - rowgroup:
+      - row "Customer Region Net revenue Gross margin Health":
+        - columnheader "Customer"
+        - columnheader "Region"
+        - columnheader "Net revenue"
+        - columnheader "Gross margin"
+        - columnheader "Health"
+    - rowgroup:
+      - row "Northwind Health North America $184,200 72.4% Healthy":
+        - cell "Northwind Health"
+        - cell "North America"
+        - cell "$184,200"
+        - cell "72.4%"
+        - cell "Healthy"
+      - row "Atlas Design Co. Europe $142,840 66.9% Review":
+        - cell "Atlas Design Co."
+        - cell "Europe"
+        - cell "$142,840"
+        - cell "66.9%"
+        - cell "Review"
+      - row "Contoso Retail APAC $118,620 69.7% Healthy":
+        - cell "Contoso Retail"
+        - cell "APAC"
+        - cell "$118,620"
+        - cell "69.7%"
+        - cell "Healthy"

@@ -1,0 +1,7 @@
+- main:
+  - text: Toolkit · Overlays
+  - heading "Tooltip" [level=1]
+  - paragraph: Dismissible interaction layers with keyboard navigation, focus management, and focus restoration built into their contracts.
+  - region "Tooltip component example":
+    - button "Source settings"
+  - text: Theme and density inherit from the scoped toolkit root.

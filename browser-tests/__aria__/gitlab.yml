@@ -1,0 +1,181 @@
+- banner:
+  - link "Code":
+    - /url: "#project"
+    - strong: Code
+  - navigation "Global":
+    - button "Projects"
+    - button "Groups"
+    - button "Activity"
+  - textbox "Search":
+    - /placeholder: Search or go to…
+  - text: /
+  - button "Create new"
+  - button "Issues"
+  - button "Merge requests"
+  - button "To-do list"
+  - img "Jun": J
+- complementary:
+  - text: JT
+  - strong: medallion-platform
+  - text: Jim Technologies
+  - textbox "Filter project navigation":
+    - /placeholder: Filter navigation
+  - navigation "Project":
+    - button "Project overview"
+    - button "Repository"
+    - button "Issues 18"
+    - button "Merge requests 4"
+    - button "CI/CD"
+    - button "Secure"
+    - button "Deploy"
+    - button "Monitor"
+    - button "Plan"
+    - button "Settings"
+  - button "Collapse sidebar"
+- main:
+  - text: JT
+  - strong: Jim Technologies / medallion-platform
+  - text: Private
+  - button "Notifications"
+  - button "☆ Star 28"
+  - navigation "Breadcrumb":
+    - link "Jim Technologies":
+      - /url: "#organization"
+    - text: /
+    - link "medallion-platform":
+      - /url: "#project"
+    - text: /
+    - link "Merge requests":
+      - /url: "#merge-requests"
+    - text: /
+    - strong: "!84"
+  - text: Open
+  - heading "Normalize provider adapters" [level=1]
+  - paragraph:
+    - text: Merge request
+    - strong: "!84"
+    - text: · opened by
+    - link "Jun":
+      - /url: "#author"
+    - text: 18 minutes ago
+  - button "Edit"
+  - button "Code"
+  - navigation "Merge request sections":
+    - button "Overview 5"
+    - button "Commits 3"
+    - button "Pipelines 1"
+    - button "Changes 3"
+  - strong: Required pipeline checks passed
+  - text: "Pipeline #2814 · optional preview running"
+  - button "View pipeline"
+  - strong: Approval requirements met
+  - text: 2 of 2 required approvals
+  - img "Maya Chen": MC
+  - img "Omar Rahman": OR
+  - article:
+    - img "Jun": J
+    - strong: Jun
+    - text: requested to merge
+    - code: feature/provider-contract
+    - text: into
+    - code: main
+    - button "Description actions"
+    - paragraph: Introduce a typed normalization boundary so hosts can swap providers without leaking vendor-specific fields into the presentation layer.
+    - heading "Implementation" [level=2]
+    - list:
+      - listitem: Define the provider-neutral contract at the host boundary.
+      - listitem: Retain extension metadata for lossless round trips.
+      - listitem: Run the same conformance fixture against every adapter.
+    - heading "Validation" [level=2]
+    - checkbox "Unit and conformance tests pass" [checked]
+    - text: Unit and conformance tests pass
+    - checkbox "Storybook contract examples are updated" [checked]
+    - text: Storybook contract examples are updated
+  - heading "Activity" [level=2]
+  - button "All activity"
+  - button "Comments"
+  - button "History"
+  - paragraph:
+    - strong: Jun
+    - text: changed the target branch from
+    - code: develop
+    - text: to
+    - code: main
+  - time: 1 hour ago
+  - article:
+    - img "Maya Chen": MC
+    - strong: Maya Chen
+    - text: approved this merge request
+    - time: 42 minutes ago
+    - paragraph: The contract is clear and the provider metadata remains available at the boundary.
+  - article:
+    - img "Jun": J
+    - strong: Jun
+    - text: pushed a commit
+    - time: 31 minutes ago
+    - paragraph: Add conformance fixtures for normalize and denormalize
+    - link "9e7f1ac View commit":
+      - /url: "#commit"
+      - code: 9e7f1ac
+      - text: View commit
+  - article:
+    - img "Omar Rahman": OR
+    - strong: Omar Rahman
+    - text: commented
+    - time: 12 minutes ago
+    - paragraph: The retry metadata test now covers the host-owned fallback path. Approved.
+  - strong: Ready to merge
+  - text: Required checks passed, discussions resolved, and approvals complete.
+  - checkbox "Squash commits when merge request is accepted" [checked]
+  - text: Squash commits when merge request is accepted
+  - checkbox "Delete source branch" [checked]
+  - text: Delete source branch
+  - button "Merge"
+  - button "Merge options"
+  - button "Write"
+  - button "Preview"
+  - button "Insert code"
+  - button "Attach file"
+  - textbox "Add a comment":
+    - /placeholder: Write a comment or drag your files here…
+  - text: Markdown and quick actions are supported
+  - button "Start thread"
+  - button "Comment"
+  - complementary "Merge request details":
+    - strong: Assignee
+    - button "Edit"
+    - img "Jun": J
+    - strong: Jun
+    - text: "@jun"
+    - strong: Reviewers
+    - button "Edit"
+    - img "Maya Chen": MC
+    - strong: Maya Chen
+    - text: "@mayachen"
+    - emphasis: Approved
+    - img "Omar Rahman": OR
+    - strong: Omar Rahman
+    - text: "@omar-r"
+    - emphasis: Approved
+    - strong: Labels
+    - button "Edit"
+    - text: enhancement platform
+    - strong: Milestone
+    - button "Edit"
+    - link "Platform foundation":
+      - /url: "#milestone"
+    - text: 67% complete
+    - strong: Time tracking
+    - button "Edit"
+    - paragraph: No estimate or time spent
+    - strong: Participants
+    - img "Jun": J
+    - img "Maya Chen": MC
+    - img "Omar Rahman": OR
+    - text: 3 participants
+    - strong: Linked items
+    - link "ENG-482 · Provider abstraction":
+      - /url: "#issue"
+    - strong: Notifications
+    - button "Subscribe"
+    - paragraph: "Reference: jim-technologies/medallion-platform!84"

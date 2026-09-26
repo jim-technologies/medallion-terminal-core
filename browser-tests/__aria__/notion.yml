@@ -1,0 +1,53 @@
+- complementary "Workspace pages":
+  - text: JT
+  - strong: Jim Technologies
+  - text: ⌄
+  - navigation "Workspace navigation":
+    - button "Search"
+    - button "Home"
+    - button "Inbox 4"
+  - text: Private
+  - button "+"
+  - button "◫ 2026 Operating plan"
+  - button "◎ Customer health system"
+  - button "△ Platform launch"
+  - button "✓ Decision log"
+  - button "⌕ Customer research"
+  - text: Teamspaces
+  - button "JT Jim Technologies"
+  - button "New page"
+- main:
+  - text: Jim Technologies / Operating system /
+  - strong: 2026 Operating plan
+  - navigation "Pages views":
+    - button "Document"
+    - button "Database"
+    - button "Comments"
+  - article:
+    - text: ◫ 🚀
+    - heading "2026 Operating plan" [level=1]
+    - text: J Updated 2m ago · 6 collaborators
+    - paragraph: Build a calm operating system that connects decisions to customers, data, and accountable execution.
+    - heading "Outcome" [level=2]
+    - paragraph: Business owners can understand what changed, why it matters, and what needs attention without assembling reports across disconnected tools.
+    - complementary:
+      - strong: ✓ Decision
+      - text: Use one governed object model across operations, finance, and customer workflows.
+    - heading "Current priorities" [level=2]
+    - list:
+      - listitem:
+        - checkbox "Complete workspace foundation" [checked]
+        - text: Complete workspace foundation
+      - listitem:
+        - checkbox "Validate core product archetypes" [checked]
+        - text: Validate core product archetypes
+      - listitem:
+        - checkbox "Connect the first production data source"
+        - text: Connect the first production data source
+    - heading "Operating metrics" [level=2]
+    - strong: 94%
+    - text: Milestones on track
+    - strong: 18 mo
+    - text: Runway
+    - strong: "4"
+    - text: Open decisions

@@ -1,0 +1,12 @@
+- main:
+  - text: Toolkit · Controls
+  - heading "Tag, Badge & Callout" [level=1]
+  - paragraph: Reusable controls and feedback primitives with shared intent, sizing, density, and accessible state behavior.
+  - region "Tag, Badge & Callout component example":
+    - text: Selected Approved
+    - button "Remove approved tag"
+    - text: Pending 3 errors
+    - status:
+      - text: Source needs attention The last successful synchronization completed 18 minutes ago.
+      - button "Review source"
+  - text: Theme and density inherit from the scoped toolkit root.

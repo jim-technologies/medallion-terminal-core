@@ -1,0 +1,15 @@
+- main:
+  - text: Toolkit · Controls
+  - heading "Checkbox, Radio & Switch" [level=1]
+  - paragraph: Reusable controls and feedback primitives with shared intent, sizing, density, and accessible state behavior.
+  - region "Checkbox, Radio & Switch component example":
+    - checkbox "Include linked objects Adds one relationship level" [checked]
+    - text: Include linked objects Adds one relationship level
+    - radiogroup "Row density":
+      - radio "Compact rows"
+      - text: Compact rows
+      - radio "Comfortable rows" [checked]
+      - text: Comfortable rows
+    - switch "Stream updates Receive changes as they happen" [checked]
+    - text: Stream updates Receive changes as they happen
+  - text: Theme and density inherit from the scoped toolkit root.

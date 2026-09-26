@@ -1,0 +1,10 @@
+- main:
+  - text: Toolkit · Controls
+  - heading "Combobox" [level=1]
+  - paragraph: Reusable controls and feedback primitives with shared intent, sizing, density, and accessible state behavior.
+  - region "Combobox component example":
+    - text: Environment
+    - combobox "Environment" [expanded]: stag
+    - listbox:
+      - option "Staging Pre-release validation"
+  - text: Theme and density inherit from the scoped toolkit root.

@@ -1,0 +1,123 @@
+- banner:
+  - button "Open navigation"
+  - img "Code"
+  - link "Dashboard":
+    - /url: "#repository"
+  - textbox "Search":
+    - /placeholder: Type / to search
+  - text: /
+  - button "Create"
+  - button "Issues"
+  - button "Pull requests"
+  - button "Inbox"
+  - img "Jun": J
+- link "jim-technologies":
+  - /url: "#organization"
+- text: /
+- link "medallion-platform":
+  - /url: "#repository"
+  - strong: medallion-platform
+- text: Private
+- button "Notifications"
+- button "Fork 3"
+- button "☆ Star 28"
+- navigation "Repository":
+  - button "Code"
+  - button "Issues 18"
+  - button "Pull requests 4"
+  - button "Actions"
+  - button "Projects"
+  - button "Security"
+  - button "Insights"
+- main:
+  - 'heading "Normalize provider adapters #126" [level=1]'
+  - paragraph:
+    - text: Open
+    - strong: jun
+    - text: wants to merge 3 commits into
+    - code: main
+    - text: from
+    - code: feature/provider-contract
+  - button "Edit"
+  - navigation "Pull request sections":
+    - button "Conversation 5"
+    - button "Commits 3"
+    - button "Checks 5"
+    - button "Files changed 3"
+  - region "Pull request conversation":
+    - article:
+      - img "Jun": J
+      - strong: jun
+      - text: commented
+      - time: 2 hours ago
+      - button "More comment actions"
+      - paragraph: Introduce a typed normalization boundary so hosts can swap providers without leaking vendor-specific fields into the presentation layer.
+      - heading "What changed" [level=2]
+      - list:
+        - listitem: Added a canonical provider adapter interface.
+        - listitem: Covered round-trip metadata with conformance fixtures.
+        - listitem: Documented the host-owned integration boundary.
+      - checkbox "Test every registered adapter" [checked]
+      - text: Test every registered adapter
+      - checkbox "Preserve provider metadata" [checked]
+      - text: Preserve provider metadata
+    - article:
+      - img "Maya Chen": MC
+      - strong: mayachen
+      - text: approved these changes
+      - time: 42 minutes ago
+      - text: Approved
+      - paragraph: The contract is clear and the provider metadata remains available at the boundary.
+    - img "Jun": J
+    - paragraph:
+      - strong: jun
+      - text: committed
+      - link "9e7f1ac":
+        - /url: "#commit"
+      - text: — Add conformance fixtures for normalize and denormalize
+    - time: 31 minutes ago
+    - article:
+      - img "Omar Rahman": OR
+      - strong: omar-r
+      - text: reviewed
+      - time: 12 minutes ago
+      - paragraph: The retry metadata test now covers the host-owned fallback path. Approved.
+    - heading "This branch has no conflicts with the base branch" [level=2]
+    - paragraph: All required checks passed and two approving reviews are present.
+    - button "Squash and merge"
+    - button "More merge options"
+    - img "Jun": J
+    - button "Write"
+    - button "Preview"
+    - button "Insert code"
+    - button "Attach a file"
+    - textbox "Leave a comment"
+    - text: Markdown is supported
+    - button "Close pull request"
+    - button "Comment"
+  - complementary "Pull request details":
+    - strong: Reviewers
+    - button "Edit reviewers"
+    - img "Maya Chen": MC
+    - text: mayachen
+    - img "Omar Rahman": OR
+    - text: omar-r
+    - strong: Assignees
+    - button "Edit assignees"
+    - img "Jun": J
+    - text: jun
+    - strong: Labels
+    - button "Edit labels"
+    - text: enhancement platform
+    - strong: Projects
+    - button "Edit projects"
+    - paragraph: Jim Technologies launch readiness
+    - strong: Milestone
+    - paragraph: Platform foundation
+    - text: 4 of 6 issues complete
+    - strong: Development
+    - paragraph:
+      - text: Successfully merging this pull request may close
+      - link "ENG-482":
+        - /url: "#issue"
+      - text: .

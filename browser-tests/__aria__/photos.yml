@@ -1,0 +1,96 @@
+- banner:
+  - button "Main menu"
+  - text: Photos
+  - searchbox "Search your photos"
+  - button "Search options"
+  - button "Upload"
+  - button "Help"
+  - button "Settings"
+  - button "Apps"
+  - 'button "Account: Jun"': J
+- complementary "Photos navigation":
+  - button "Create"
+  - navigation:
+    - button "Photos"
+    - button "Updates"
+    - text: Collections
+    - button "Collections"
+    - button "Albums"
+    - button "Favorites"
+    - button "People & pets"
+    - button "Places"
+    - button "Videos"
+    - button "Recently added"
+    - button "Archive"
+    - button "Locked Folder"
+    - button "Trash"
+  - strong: Storage
+  - text: 8.4 GB of 15 GB used
+- main:
+  - heading "Photos" [level=1]
+  - paragraph: Your memories, backed up and organized
+  - button "Day"
+  - button "Month"
+  - button "More density options"
+  - region "Memories":
+    - heading "Memories" [level=2]
+    - button "View all"
+    - button "Best of spring Highlights":
+      - strong: Best of spring
+      - text: Highlights
+    - button "2 years ago Jul 17, 2024":
+      - strong: 2 years ago
+      - text: Jul 17, 2024
+    - button "California coast Recent trip":
+      - strong: California coast
+      - text: Recent trip
+    - button "City evenings A look back":
+      - strong: City evenings
+      - text: A look back
+    - button "Together Maya and Jun":
+      - strong: Together
+      - text: Maya and Jun
+  - region "Today":
+    - button "Select July 17, 2026"
+    - heading "Today" [level=2]
+    - text: 5 items
+    - button "Open photo Golden coast": Golden coast
+    - button "Select Golden coast"
+    - button "Open photo Harbor walk": Harbor walk
+    - button "Select Harbor walk"
+    - button "Open video Coastal approach": 0:24
+    - button "Select Coastal approach"
+    - button "Open photo Ridge light": Ridge light
+    - button "Select Ridge light"
+    - button "Open photo Forest path": Forest path
+    - button "Select Forest path"
+  - region "July 14, 2026":
+    - button "Select July 14, 2026"
+    - heading "July 14, 2026" [level=2]
+    - text: 3 items
+    - button "Open photo Evening in the city": Evening in the city
+    - button "Select Evening in the city"
+    - button "Open photo Studio board": Studio board
+    - button "Select Studio board"
+    - button "Open video Night drive": 0:48
+    - button "Select Night drive"
+  - region "July 12, 2026":
+    - button "Select July 12, 2026"
+    - heading "July 12, 2026" [level=2]
+    - text: 3 items
+    - button "Open photo Team at the harbor": Team at the harbor
+    - button "Select Team at the harbor"
+    - button "Open photo Retreat overlook": Retreat overlook
+    - button "Select Retreat overlook"
+    - button "Open photo Workshop wall": Workshop wall
+    - button "Select Workshop wall"
+  - region "June 28, 2026":
+    - button "Select June 28, 2026"
+    - heading "June 28, 2026" [level=2]
+    - text: 3 items
+    - button "Open photo Quiet water": Quiet water
+    - button "Select Quiet water"
+    - button "Open photo Pine study": Pine study
+    - button "Select Pine study"
+    - button "Open video Sunset pass": 1:12
+    - button "Select Sunset pass"

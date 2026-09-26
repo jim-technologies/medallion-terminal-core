@@ -1,0 +1,96 @@
+- banner:
+  - link "Markets Markets":
+    - /url: "#markets"
+    - text: M
+    - strong: Markets
+  - navigation "Market products":
+    - button "Cryptocurrencies"
+    - button "Exchanges"
+    - button "NFT"
+    - button "Learn"
+  - textbox:
+    - /placeholder: Search
+  - button "⭐ Jim Technologies portfolio"
+  - text: J
+- text: Coins 18,421 Market Cap $2.48T
+- emphasis: +1.8%
+- text: 24h Vol $86.4B Dominance BTC 53.8%
+- navigation "Markets views":
+  - button "Market rankings"
+  - button "Bitcoin"
+  - button "Portfolio"
+- main:
+  - heading "Cryptocurrency prices by market cap" [level=1]
+  - paragraph: Global market rankings, prices, volume, and seven-day trends.
+  - button "Customize"
+  - button "All"
+  - button "Highlights"
+  - button "Categories"
+  - button "Chains"
+  - textbox:
+    - /placeholder: Search assets
+  - table:
+    - rowgroup:
+      - row "# Coin Price 24h Market cap Last 7 days":
+        - columnheader "#"
+        - columnheader "Coin"
+        - columnheader "Price"
+        - columnheader "24h"
+        - columnheader "Market cap"
+        - columnheader "Last 7 days"
+    - rowgroup:
+      - row "☆ 1 Open Bitcoin $67,842.10 +2.48% $1.34T":
+        - cell "☆ 1"
+        - cell "Open Bitcoin":
+          - button "Open Bitcoin":
+            - text: B
+            - strong: Bitcoin
+            - text: BTC
+        - cell "$67,842.10"
+        - cell "+2.48%"
+        - cell "$1.34T"
+        - cell
+      - row "☆ 2 Open Ethereum $3,542.18 +1.36% $425.8B":
+        - cell "☆ 2"
+        - cell "Open Ethereum":
+          - button "Open Ethereum":
+            - text: E
+            - strong: Ethereum
+            - text: ETH
+        - cell "$3,542.18"
+        - cell "+1.36%"
+        - cell "$425.8B"
+        - cell
+      - row "☆ 3 Open Solana $178.42 +4.82% $83.7B":
+        - cell "☆ 3"
+        - cell "Open Solana":
+          - button "Open Solana":
+            - text: S
+            - strong: Solana
+            - text: SOL
+        - cell "$178.42"
+        - cell "+4.82%"
+        - cell "$83.7B"
+        - cell
+      - row "☆ 4 Open BNB $612.70 -0.34% $91.1B":
+        - cell "☆ 4"
+        - cell "Open BNB":
+          - button "Open BNB":
+            - text: B
+            - strong: BNB
+            - text: BNB
+        - cell "$612.70"
+        - cell "-0.34%"
+        - cell "$91.1B"
+        - cell
+      - row "☆ 5 Open USDC $1.00 +0.01% $61.4B":
+        - cell "☆ 5"
+        - cell "Open USDC":
+          - button "Open USDC":
+            - text: U
+            - strong: USDC
+            - text: USDC
+        - cell "$1.00"
+        - cell "+0.01%"
+        - cell "$61.4B"
+        - cell
