@@ -33,8 +33,14 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   data hooks. Above 200 rows only the rows in view render; a browser test
   holds ten thousand rows under 1,500 DOM nodes at every scroll offset and
   `perf.bench.ts` times the window and the sorts.
-- `StatusTone` type; message keys for copy, values, property panels and
-  the grid (en and zh-CN).
+- **Links**: `LinkPanel` (link groups by link type with direction, target
+  type, count, previews with detail, "View all"), `LinkGraph` (a
+  deterministic one-hop radial ego graph, one sector per link type, at most
+  40 nodes with "+N", keyboard-focusable node links, pan and zoom) and
+  `SchemaGraph` (object types and link types on the layered layout, with
+  counts, selection and routed back edges). Plain SVG, no dependency.
+- `StatusTone` type; message keys for copy, values, property panels, the
+  grid, links and graphs (en and zh-CN).
 - Baselines (dark, light, and compact for the property panel) and exact
   text snapshots for every new story.
 
@@ -47,6 +53,10 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - The root entry's archetype placeholder for loading widgets is now
   `WidgetSkeleton`; `Skeleton` is the toolkit placeholder.
 - Declarations exclude every `*.fixture.ts`.
+- The `dag` widget's layered layout moved to a shared module and now breaks
+  cycles where they block the traversal (the node with the fewest unmet
+  incoming edges is released), so a cyclic graph lays out in layers instead
+  of stacking its cycle in one final rank.
 - Text sort keys compare with one shared `Intl.Collator` (a 10,000-row text
   sort went from ~500 ms to ~30 ms).
 

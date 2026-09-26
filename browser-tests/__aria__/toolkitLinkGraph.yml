@@ -1,0 +1,44 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "LinkGraph" [level=1]
+  - paragraph: "Links are first-class: grouped by link type with counts and previews, drawn as a one-hop graph around the object, and summarised for the whole ontology as a schema graph."
+  - region "LinkGraph component example":
+    - region "Link graph":
+      - heading "Link graph" [level=2]
+      - text: 1 hop · 17 objects
+      - group "Links of Northstar Labs":
+        - text: Employs Signed Placed Subject of
+        - link "Ada Morgan, Employs":
+          - /url: "#/objects/per-ada-morgan"
+          - text: Ada Morgan
+        - link "Daniel Reyes, Employs":
+          - /url: "#/objects/per-daniel-reyes"
+          - text: Daniel Reyes
+        - link "Naomie Park, Employs":
+          - /url: "#/objects/per-naomie-park"
+          - text: Naomie Park
+        - link "Northstar master agreement, Signed":
+          - /url: "#/objects/ctr-msa"
+          - text: Northstar master agre…
+        - link "ORD-4481, Placed":
+          - /url: "#/objects/ord-4481"
+          - text: ORD-4481
+        - link "ORD-4479, Placed":
+          - /url: "#/objects/ord-4479"
+          - text: ORD-4479
+        - link "ORD-4476, Placed":
+          - /url: "#/objects/ord-4476"
+          - text: ORD-4476
+        - link "ORD-4470, Placed":
+          - /url: "#/objects/ord-4470"
+          - text: ORD-4470
+        - link "8 more Placed Order":
+          - /url: "#/explore?type=order&customer=res-customer-northstar"
+          - text: +8 8 more
+        - link "Ada at Northstar, Subject of":
+          - /url: "#/objects/emp-ada"
+          - text: Ada at Northstar
+      - button "Zoom in"
+      - button "Zoom out"
+      - button "Reset view"
+  - text: Theme and density inherit from the scoped toolkit root.

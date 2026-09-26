@@ -160,6 +160,9 @@ for (const [entry, module, names] of [
       'ObjectHeader',
       'ObjectChip',
       'DataGrid',
+      'LinkPanel',
+      'LinkGraph',
+      'SchemaGraph',
     ],
   ],
   ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
@@ -212,6 +215,8 @@ for (const name of [
   'ObjectRef',
   'DataGridProps',
   'DataGridColumn',
+  'LinkGroup',
+  'SchemaGraphProps',
 ]) {
   if (!new RegExp(`\\b${name}\\b`).test(declarations)) {
     throw new Error(`Published declarations are missing ${JSON.stringify(name)}`)

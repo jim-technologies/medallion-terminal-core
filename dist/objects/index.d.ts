@@ -10,3 +10,9 @@ export { compareSortKeys, formatPropertyText, isNumericKind, propertySortKey, re
 export type { PropertyKind, ResolvedKind } from './propertyFormat';
 export { isObjectRef, typePresentation } from './types';
 export type { ObjectRef, ObjectTypeRef } from './types';
+export { LinkGraph } from './LinkGraph';
+export type { LinkGraphProps } from './LinkGraph';
+export { LinkPanel } from './LinkPanel';
+export type { LinkGroup, LinkItem, LinkPanelProps } from './LinkPanel';
+export { SchemaGraph } from './SchemaGraph';
+export type { SchemaGraphProps, SchemaGraphRelation, SchemaGraphType } from './SchemaGraph';

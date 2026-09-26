@@ -91,6 +91,10 @@ const toolkitStories = {
   toolkitDataGridLarge: 'toolkit-workbench-datagrid--ten-thousand-rows',
   toolkitDataGridActions: 'toolkit-workbench-datagrid--context-actions-and-paging',
   toolkitDataGridEmpty: 'toolkit-workbench-datagrid--empty-and-loading',
+  toolkitLinkPanel: 'toolkit-objects-links--link-panel-groups',
+  toolkitLinkGraph: 'toolkit-objects-links--one-hop-graph',
+  toolkitLinkGraphCapped: 'toolkit-objects-links--capped-graph',
+  toolkitSchemaGraph: 'toolkit-objects-links--schema-graph-types',
 } as const
 
 const stories = {

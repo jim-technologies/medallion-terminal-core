@@ -236,6 +236,19 @@ referenced by an `ObjectRef` (id, title, type, `href`).
 - `ObjectChip`: an inline object reference (link, button or text), with an
   optional `hoverCard`.
 
+- `LinkPanel`: an object's `LinkGroup`s (relation, direction, target type,
+  count, the first `LinkItem`s with their detail, and a "View all" link or
+  handler).
+- `LinkGraph`: the same groups drawn as a one-hop ego graph around the
+  object, capped at `maxNodes` (40) with "+N" nodes; nodes are links (Tab
+  or the arrow keys move between them, Enter opens one).
+- `SchemaGraph`: object types (`SchemaGraphType`, with a count and page)
+  and link types (`SchemaGraphRelation`) on the layered layout the `dag`
+  widget uses; `onSelect` receives the chosen type.
+
+Both graphs are plain SVG with no dependency: drag the background to pan,
+zoom with the buttons (or Ctrl/⌘ and the wheel), reset to the fitted view.
+
 `PropertyList` renders its values through `PropertyValue` as well, and its
 items accept `kind` and `format`.
 

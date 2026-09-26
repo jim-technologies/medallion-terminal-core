@@ -5,6 +5,7 @@
 @import "./styles/display.css";
 @import "./styles/objects.css";
 @import "./styles/data-grid.css";
+@import "./styles/links.css";
 
 /* Product-faithful Storybook showcases use isolated authored CSS. Keep their
    prose and presentation tokens out of Tailwind's published-library scan.

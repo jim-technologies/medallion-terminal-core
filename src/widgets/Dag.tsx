@@ -1,6 +1,7 @@
 import { useId, useMemo } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
+import { layeredLayout } from '../graph/layeredLayout'
 import { normalizeGraph, type GraphData, type GraphNodeData } from './platformShapes'
 import { Empty } from './states'
 
@@ -76,7 +77,9 @@ export function Dag({ data, options }: WidgetProps) {
             <path d="M0,0 L0,8 L8,4 z" fill="var(--mtc-muted-subtle)" />
           </marker>
         </defs>
-        {laid.edges.map((e, i) => (
+        {laid.edges.map(({ edge, x1, y1, x2, y2 }, i) => {
+          const e = { ...edge, x1, y1, x2, y2 }
+          return (
           <g key={`${e.from}:${e.to}:${i}`}>
             <line
               x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2}
@@ -96,8 +99,10 @@ export function Dag({ data, options }: WidgetProps) {
               </text>
             )}
           </g>
-        ))}
-        {laid.nodes.map(n => {
+          )
+        })}
+        {laid.nodes.map(({ node, x, y }) => {
+          const n = { ...node, x, y }
           const fill = n.status ? STATUS_COLOR[n.status] ?? DEFAULT_NODE : DEFAULT_NODE
           const selectable = !!opts.node_context || Object.keys(n.context).length > 0
           const selected = selectable && ctx[nodeIdKey] === n.id
@@ -157,99 +162,13 @@ function truncate(s: string, n: number): string {
   return s.length > n ? `${s.slice(0, n - 1)}…` : s
 }
 
-interface LaidOut {
-  nodes: Array<GraphNodeData & { x: number; y: number }>
-  edges: Array<{ from: string; to: string; label?: string; x1: number; y1: number; x2: number; y2: number }>
-  width: number
-  height: number
-}
-
-// Longest-path layering: rank(v) = max(rank(parents)) + 1, sources at 0.
-// Kahn traversal avoids the old fixed-point behavior where a cycle kept
-// increasing ranks until a guard fired. Any cyclic remainder lands in
-// one final layer so malformed lineage is still inspectable.
-function layout(data: GraphData | null): LaidOut | null {
-  if (!data || data.nodes.length === 0) return null
-  const { nodes, edges } = data
-
-  const ids = new Set(nodes.map((node) => node.id))
-  const validEdges = edges.filter((edge) => ids.has(edge.from) && ids.has(edge.to))
-  const indegree = new Map<string, number>()
-  const outgoing = new Map<string, string[]>()
-  const rank = new Map<string, number>()
-  for (const node of nodes) {
-    indegree.set(node.id, 0)
-    outgoing.set(node.id, [])
-    rank.set(node.id, 0)
-  }
-  for (const edge of validEdges) {
-    indegree.set(edge.to, (indegree.get(edge.to) ?? 0) + 1)
-    outgoing.get(edge.from)?.push(edge.to)
-  }
-
-  const queue = nodes.filter((node) => (indegree.get(node.id) ?? 0) === 0).map((node) => node.id)
-  const processed = new Set<string>()
-  for (let cursor = 0; cursor < queue.length; cursor++) {
-    const id = queue[cursor]
-    processed.add(id)
-    for (const child of outgoing.get(id) ?? []) {
-      rank.set(child, Math.max(rank.get(child) ?? 0, (rank.get(id) ?? 0) + 1))
-      const remaining = (indegree.get(child) ?? 0) - 1
-      indegree.set(child, remaining)
-      if (remaining === 0) queue.push(child)
-    }
-  }
-
-  if (processed.size < nodes.length) {
-    const finalRank = Math.max(0, ...[...processed].map((id) => rank.get(id) ?? 0)) + 1
-    for (const node of nodes) {
-      if (!processed.has(node.id)) {
-        rank.set(node.id, finalRank)
-      }
-    }
-  }
-
-  const ranks = new Map<number, string[]>()
-  for (const n of nodes) {
-    const r = rank.get(n.id) ?? 0
-    if (!ranks.has(r)) ranks.set(r, [])
-    ranks.get(r)!.push(n.id)
-  }
-  const maxRank = Math.max(0, ...rank.values())
-  const widestRank = Math.max(...Array.from(ranks.values(), v => v.length))
-
-  // Layered top-to-bottom: x = horizontal slot in rank, y = rank * RANK_GAP.
-  // Final SVG width = widestRank columns; height = (maxRank + 1) rows.
-  const width = PAD * 2 + widestRank * NODE_W + (widestRank - 1) * NODE_GAP
-  const height = PAD * 2 + (maxRank + 1) * NODE_H + maxRank * (RANK_GAP - NODE_H)
-
-  const positions = new Map<string, { x: number; y: number }>()
-  for (const [r, ids] of ranks) {
-    const rowW = ids.length * NODE_W + (ids.length - 1) * NODE_GAP
-    const startX = (width - rowW) / 2
-    ids.forEach((id, i) => {
-      positions.set(id, {
-        x: startX + i * (NODE_W + NODE_GAP),
-        y: PAD + r * RANK_GAP,
-      })
-    })
-  }
-
-  const laidNodes = nodes.map(n => ({ ...n, ...positions.get(n.id)! }))
-  const laidEdges = validEdges
-    .map(e => {
-      const a = positions.get(e.from)
-      const b = positions.get(e.to)
-      if (!a || !b) return null
-      return {
-        from: e.from,
-        to: e.to,
-        label: e.label,
-        x1: a.x + NODE_W / 2, y1: a.y + NODE_H,
-        x2: b.x + NODE_W / 2, y2: b.y,
-      }
-    })
-    .filter((e): e is { from: string; to: string; label: string | undefined; x1: number; y1: number; x2: number; y2: number } => e != null)
-
-  return { nodes: laidNodes, edges: laidEdges, width, height }
+function layout(data: GraphData | null) {
+  if (!data) return null
+  return layeredLayout(data.nodes, data.edges, {
+    nodeWidth: NODE_W,
+    nodeHeight: NODE_H,
+    rankGap: RANK_GAP,
+    nodeGap: NODE_GAP,
+    padding: PAD,
+  })
 }

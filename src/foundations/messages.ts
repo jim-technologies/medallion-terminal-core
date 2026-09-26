@@ -67,6 +67,16 @@ export const EN_MESSAGES = {
   'dataGrid.loading': 'Loading rows',
   'dataGrid.loadingMore': 'Loading more rows',
   'dataGrid.rowActions': 'Actions for {label}',
+  'linkPanel.title': 'Links',
+  'linkPanel.summary': '{types} link types · {objects} objects',
+  'linkPanel.viewAll': 'View all {count}',
+  'linkPanel.empty': 'No links',
+  'linkPanel.incoming': 'incoming',
+  'graph.zoomIn': 'Zoom in',
+  'graph.zoomOut': 'Zoom out',
+  'graph.reset': 'Reset view',
+  'graph.more': '{count} more',
+  'graph.moreLabel': '{count} more {relation} {type}',
 } as const
 
 /** A key in the toolkit message catalog. */
@@ -140,6 +150,16 @@ export const ZH_CN_MESSAGES: MessageCatalog = {
   'dataGrid.loading': '正在加载行',
   'dataGrid.loadingMore': '正在加载更多行',
   'dataGrid.rowActions': '{label} 的操作',
+  'linkPanel.title': '链接',
+  'linkPanel.summary': '{types} 种链接类型 · {objects} 个对象',
+  'linkPanel.viewAll': '查看全部 {count} 个',
+  'linkPanel.empty': '没有链接',
+  'linkPanel.incoming': '传入',
+  'graph.zoomIn': '放大',
+  'graph.zoomOut': '缩小',
+  'graph.reset': '重置视图',
+  'graph.more': '另外 {count} 个',
+  'graph.moreLabel': '另外 {count} 个 {relation} {type}',
 }
 
 const BUILT_IN_CATALOGS: Readonly<Record<string, MessageCatalog>> = {

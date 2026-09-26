@@ -67,6 +67,16 @@ export declare const EN_MESSAGES: {
     readonly 'dataGrid.loading': 'Loading rows';
     readonly 'dataGrid.loadingMore': 'Loading more rows';
     readonly 'dataGrid.rowActions': 'Actions for {label}';
+    readonly 'linkPanel.title': 'Links';
+    readonly 'linkPanel.summary': '{types} link types · {objects} objects';
+    readonly 'linkPanel.viewAll': 'View all {count}';
+    readonly 'linkPanel.empty': 'No links';
+    readonly 'linkPanel.incoming': 'incoming';
+    readonly 'graph.zoomIn': 'Zoom in';
+    readonly 'graph.zoomOut': 'Zoom out';
+    readonly 'graph.reset': 'Reset view';
+    readonly 'graph.more': '{count} more';
+    readonly 'graph.moreLabel': '{count} more {relation} {type}';
 };
 /** A key in the toolkit message catalog. */
 export type MessageKey = keyof typeof EN_MESSAGES;

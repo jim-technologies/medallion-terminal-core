@@ -1,0 +1,35 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "SchemaGraph" [level=1]
+  - paragraph: "Links are first-class: grouped by link type with counts and previews, drawn as a one-hop graph around the object, and summarised for the whole ontology as a schema graph."
+  - region "SchemaGraph component example":
+    - region "Ontology graph":
+      - heading "Ontology graph" [level=2]
+      - text: 7 object types · 8 link types
+      - group "Ontology graph":
+        - text: Employs Signed Placed Opened Holds At Recorded in Governs
+        - link "Customer, 71":
+          - /url: "#/ontology/types/customer"
+          - text: Customer 71
+        - link "Person, 212":
+          - /url: "#/ontology/types/person"
+          - text: Person 212
+        - link "Contract, 48":
+          - /url: "#/ontology/types/contract"
+          - text: Contract 48
+        - link "Order, 3,104":
+          - /url: "#/ontology/types/order"
+          - text: Order 3,104
+        - link "Employment, 230":
+          - /url: "#/ontology/types/employment"
+          - text: Employment 230
+        - link "Support ticket, 918":
+          - /url: "#/ontology/types/ticket"
+          - text: Support ticket 918
+        - link "Dataset, 14":
+          - /url: "#/ontology/types/dataset"
+          - text: Dataset 14
+      - button "Zoom in"
+      - button "Zoom out"
+      - button "Reset view"
+  - text: Theme and density inherit from the scoped toolkit root.

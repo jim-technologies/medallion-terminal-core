@@ -1,0 +1,134 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "LinkGraph with 40-node cap" [level=1]
+  - paragraph: "Links are first-class: grouped by link type with counts and previews, drawn as a one-hop graph around the object, and summarised for the whole ontology as a schema graph."
+  - region "LinkGraph with 40-node cap component example":
+    - region "Link graph":
+      - heading "Link graph" [level=2]
+      - text: 1 hop · 224 objects
+      - group "Links of a busy customer":
+        - text: Employs Placed Opened
+        - link "Ada Morgan, Employs":
+          - /url: "#/objects/per-ada-morgan"
+          - text: Ada Morgan
+        - link "Daniel Reyes, Employs":
+          - /url: "#/objects/per-daniel-reyes"
+          - text: Daniel Reyes
+        - link "Naomie Park, Employs":
+          - /url: "#/objects/per-naomie-park"
+          - text: Naomie Park
+        - link "ORD-5000, Placed":
+          - /url: "#/objects/ord-5000"
+          - text: ORD-5000
+        - link "ORD-5001, Placed":
+          - /url: "#/objects/ord-5001"
+          - text: ORD-5001
+        - link "ORD-5002, Placed":
+          - /url: "#/objects/ord-5002"
+          - text: ORD-5002
+        - link "ORD-5003, Placed":
+          - /url: "#/objects/ord-5003"
+          - text: ORD-5003
+        - link "ORD-5004, Placed":
+          - /url: "#/objects/ord-5004"
+          - text: ORD-5004
+        - link "ORD-5005, Placed":
+          - /url: "#/objects/ord-5005"
+          - text: ORD-5005
+        - link "ORD-5006, Placed":
+          - /url: "#/objects/ord-5006"
+          - text: ORD-5006
+        - link "ORD-5007, Placed":
+          - /url: "#/objects/ord-5007"
+          - text: ORD-5007
+        - link "ORD-5008, Placed":
+          - /url: "#/objects/ord-5008"
+          - text: ORD-5008
+        - link "ORD-5009, Placed":
+          - /url: "#/objects/ord-5009"
+          - text: ORD-5009
+        - link "ORD-5010, Placed":
+          - /url: "#/objects/ord-5010"
+          - text: ORD-5010
+        - link "ORD-5011, Placed":
+          - /url: "#/objects/ord-5011"
+          - text: ORD-5011
+        - link "ORD-5012, Placed":
+          - /url: "#/objects/ord-5012"
+          - text: ORD-5012
+        - link "ORD-5013, Placed":
+          - /url: "#/objects/ord-5013"
+          - text: ORD-5013
+        - link "ORD-5014, Placed":
+          - /url: "#/objects/ord-5014"
+          - text: ORD-5014
+        - link "ORD-5015, Placed":
+          - /url: "#/objects/ord-5015"
+          - text: ORD-5015
+        - link "ORD-5016, Placed":
+          - /url: "#/objects/ord-5016"
+          - text: ORD-5016
+        - link "ORD-5017, Placed":
+          - /url: "#/objects/ord-5017"
+          - text: ORD-5017
+        - link "ORD-5018, Placed":
+          - /url: "#/objects/ord-5018"
+          - text: ORD-5018
+        - link "ORD-5019, Placed":
+          - /url: "#/objects/ord-5019"
+          - text: ORD-5019
+        - link "ORD-5020, Placed":
+          - /url: "#/objects/ord-5020"
+          - text: ORD-5020
+        - link "ORD-5021, Placed":
+          - /url: "#/objects/ord-5021"
+          - text: ORD-5021
+        - link "ORD-5022, Placed":
+          - /url: "#/objects/ord-5022"
+          - text: ORD-5022
+        - link "ORD-5023, Placed":
+          - /url: "#/objects/ord-5023"
+          - text: ORD-5023
+        - link "ORD-5024, Placed":
+          - /url: "#/objects/ord-5024"
+          - text: ORD-5024
+        - link "ORD-5025, Placed":
+          - /url: "#/objects/ord-5025"
+          - text: ORD-5025
+        - link "ORD-5026, Placed":
+          - /url: "#/objects/ord-5026"
+          - text: ORD-5026
+        - link "185 more Placed Order":
+          - /url: "#/explore?type=order"
+          - text: +185 185 more
+        - link "Ticket 310, Opened":
+          - /url: "#/objects/tkt-310"
+          - text: Ticket 310
+        - link "Ticket 311, Opened":
+          - /url: "#/objects/tkt-311"
+          - text: Ticket 311
+        - link "Ticket 312, Opened":
+          - /url: "#/objects/tkt-312"
+          - text: Ticket 312
+        - link "Ticket 313, Opened":
+          - /url: "#/objects/tkt-313"
+          - text: Ticket 313
+        - link "Ticket 314, Opened":
+          - /url: "#/objects/tkt-314"
+          - text: Ticket 314
+        - link "Ticket 315, Opened":
+          - /url: "#/objects/tkt-315"
+          - text: Ticket 315
+        - link "Ticket 316, Opened":
+          - /url: "#/objects/tkt-316"
+          - text: Ticket 316
+        - link "Ticket 317, Opened":
+          - /url: "#/objects/tkt-317"
+          - text: Ticket 317
+        - link "Ticket 318, Opened":
+          - /url: "#/objects/tkt-318"
+          - text: Ticket 318
+      - button "Zoom in"
+      - button "Zoom out"
+      - button "Reset view"
+  - text: Theme and density inherit from the scoped toolkit root.

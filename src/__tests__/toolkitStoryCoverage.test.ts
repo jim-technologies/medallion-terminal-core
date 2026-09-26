@@ -12,6 +12,7 @@ const storyFiles = [
   '../objects/PropertyPanel.stories.tsx',
   '../objects/ObjectHeader.stories.tsx',
   '../workbench/DataGrid.stories.tsx',
+  '../objects/Links.stories.tsx',
   '../workbench/Workbench.stories.tsx',
   '../workbench/Compositions.stories.tsx',
 ].map(path => readFileSync(new URL(path, import.meta.url), 'utf8')).join('\n')
@@ -70,6 +71,9 @@ const publicComponents = [
   'ObjectHeader',
   'ObjectChip',
   'DataGrid',
+  'LinkPanel',
+  'LinkGraph',
+  'SchemaGraph',
 ]
 
 describe('application toolkit Storybook coverage', () => {

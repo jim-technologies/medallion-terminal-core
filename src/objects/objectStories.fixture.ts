@@ -3,7 +3,9 @@
  * with typed properties, its links and its activity. Names are invented;
  * nothing refers to a real organisation.
  */
+import type { LinkGroup, LinkItem } from './LinkPanel'
 import type { PropertyDefinition } from './PropertyPanel'
+import type { SchemaGraphRelation, SchemaGraphType } from './SchemaGraph'
 import type { ObjectRef, ObjectTypeRef } from './types'
 
 /** Relative times in stories are anchored here, not to the wall clock. */
@@ -78,4 +80,99 @@ export const EVERY_KIND: PropertyDefinition[] = [
   { id: 'email', label: 'email', value: 'ada.morgan@northstar.example', kind: 'email' },
   { id: 'object', label: 'object', value: { horizon_days: 90, currency: 'USD', approved: true } },
   { id: 'empty', label: 'empty', value: null },
+]
+
+const ORDERS: LinkItem[] = [
+  { id: 'ord-4481', title: 'ORD-4481', type: TYPES.order, href: '#/objects/ord-4481', detail: '$18,240.00', mono: true },
+  { id: 'ord-4479', title: 'ORD-4479', type: TYPES.order, href: '#/objects/ord-4479', detail: '$9,815.00', mono: true },
+  { id: 'ord-4476', title: 'ORD-4476', type: TYPES.order, href: '#/objects/ord-4476', detail: '$12,002.50', mono: true },
+  { id: 'ord-4470', title: 'ORD-4470', type: TYPES.order, href: '#/objects/ord-4470', detail: '$4,410.00', mono: true },
+]
+
+export const CUSTOMER_LINKS: LinkGroup[] = [
+  {
+    id: 'employs',
+    relation: 'Employs',
+    targetType: TYPES.person,
+    count: 3,
+    items: [
+      { ...PEOPLE.ada, detail: 'Technical lead' },
+      { ...PEOPLE.daniel, detail: 'Procurement' },
+      { ...PEOPLE.naomie, detail: 'Finance' },
+    ],
+  },
+  {
+    id: 'signed',
+    relation: 'Signed',
+    targetType: TYPES.contract,
+    count: 1,
+    items: [{ id: 'ctr-msa', title: 'Northstar master agreement', type: TYPES.contract, href: '#/objects/ctr-msa', detail: 'Jan 4, 2026' }],
+  },
+  {
+    id: 'placed',
+    relation: 'Placed',
+    targetType: TYPES.order,
+    count: 12,
+    items: ORDERS,
+    viewAllHref: '#/explore?type=order&customer=res-customer-northstar',
+  },
+  {
+    id: 'subject-of',
+    relation: 'Subject of',
+    direction: 'incoming',
+    targetType: TYPES.employment,
+    count: 1,
+    items: [{ id: 'emp-ada', title: 'Ada at Northstar', type: TYPES.employment, href: '#/objects/emp-ada', detail: '2024 – present' }],
+  },
+]
+
+/** A busy object: more links than the graph draws. */
+export const BUSY_LINKS: LinkGroup[] = [
+  CUSTOMER_LINKS[0]!,
+  {
+    id: 'placed',
+    relation: 'Placed',
+    targetType: TYPES.order,
+    count: 212,
+    items: Array.from({ length: 60 }, (_, index) => ({
+      id: `ord-${5000 + index}`,
+      title: `ORD-${5000 + index}`,
+      type: TYPES.order,
+      href: `#/objects/ord-${5000 + index}`,
+    })),
+    viewAllHref: '#/explore?type=order',
+  },
+  {
+    id: 'opened',
+    relation: 'Opened',
+    targetType: TYPES.ticket,
+    count: 9,
+    items: Array.from({ length: 9 }, (_, index) => ({
+      id: `tkt-${310 + index}`,
+      title: `Ticket ${310 + index}`,
+      type: TYPES.ticket,
+      href: `#/objects/tkt-${310 + index}`,
+    })),
+  },
+]
+
+export const SCHEMA_TYPES: SchemaGraphType[] = [
+  { ...TYPES.customer, count: 71, href: '#/ontology/types/customer' },
+  { ...TYPES.person, count: 212, href: '#/ontology/types/person' },
+  { ...TYPES.contract, count: 48, href: '#/ontology/types/contract' },
+  { ...TYPES.order, count: 3104, href: '#/ontology/types/order' },
+  { ...TYPES.employment, count: 230, href: '#/ontology/types/employment' },
+  { ...TYPES.ticket, count: 918, href: '#/ontology/types/ticket' },
+  { ...TYPES.dataset, count: 14, href: '#/ontology/types/dataset' },
+]
+
+export const SCHEMA_RELATIONS: SchemaGraphRelation[] = [
+  { from: 'customer', to: 'person', label: 'Employs' },
+  { from: 'customer', to: 'contract', label: 'Signed' },
+  { from: 'customer', to: 'order', label: 'Placed' },
+  { from: 'customer', to: 'ticket', label: 'Opened' },
+  { from: 'person', to: 'employment', label: 'Holds' },
+  { from: 'employment', to: 'customer', label: 'At' },
+  { from: 'order', to: 'dataset', label: 'Recorded in' },
+  { from: 'contract', to: 'order', label: 'Governs' },
 ]

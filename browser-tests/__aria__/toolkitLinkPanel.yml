@@ -1,0 +1,57 @@
+- main:
+  - text: Toolkit · Objects
+  - heading "LinkPanel" [level=1]
+  - paragraph: "Links are first-class: grouped by link type with counts and previews, drawn as a one-hop graph around the object, and summarised for the whole ontology as a schema graph."
+  - region "LinkPanel component example":
+    - region "Links":
+      - heading "Links" [level=2]
+      - text: 4 link types · 17 objects
+      - button "Show link graph"
+      - region "Employs Person":
+        - text: Employs Person 3
+        - list:
+          - listitem:
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+            - text: Technical lead
+          - listitem:
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+            - text: Procurement
+          - listitem:
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+            - text: Finance
+      - region "Signed Contract":
+        - text: Signed Contract 1
+        - list:
+          - listitem:
+            - link "Northstar master agreement":
+              - /url: "#/objects/ctr-msa"
+            - text: Jan 4, 2026
+      - region "Placed Order":
+        - text: Placed Order 12
+        - list:
+          - listitem:
+            - link "ORD-4481":
+              - /url: "#/objects/ord-4481"
+            - text: $18,240.00
+          - listitem:
+            - link "ORD-4479":
+              - /url: "#/objects/ord-4479"
+            - text: $9,815.00
+          - listitem:
+            - link "ORD-4476":
+              - /url: "#/objects/ord-4476"
+            - text: $12,002.50
+        - link "View all 12":
+          - /url: "#/explore?type=order&customer=res-customer-northstar"
+      - region "Subject of Employment":
+        - img "incoming"
+        - text: Subject of Employment 1
+        - list:
+          - listitem:
+            - link "Ada at Northstar":
+              - /url: "#/objects/emp-ada"
+            - text: 2024 – present
+  - text: Theme and density inherit from the scoped toolkit root.
