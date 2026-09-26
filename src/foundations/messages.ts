@@ -35,6 +35,18 @@ export const EN_MESSAGES = {
   'error.invalid.title': 'Request not accepted',
   'error.invalid.description': 'The service could not accept this request.',
   'error.unknown.description': 'Something went wrong while loading this.',
+  'state.accessDenied.resource': 'Ask an owner of {resource} for access.',
+  'state.notFound.resource': '{resource} doesn’t exist or was moved.',
+  'state.signedOut.title': 'You’re signed out',
+  'state.signedOut.description': 'Sign in to continue.',
+  'state.signedOut.action': 'Sign in',
+  'state.sessionExpired.title': 'Your session expired',
+  'state.sessionExpired.description': 'Your work on this page is kept. Continue to renew your session.',
+  'state.sessionExpired.action': 'Continue',
+  'state.stale.title': 'Data may be out of date',
+  'state.stale.description': 'Last updated {time}.',
+  'state.stale.generic': 'This view has not refreshed recently.',
+  'state.stale.action': 'Refresh',
 } as const
 
 /** A key in the toolkit message catalog. */
@@ -76,6 +88,18 @@ export const ZH_CN_MESSAGES: MessageCatalog = {
   'error.invalid.title': '请求未被接受',
   'error.invalid.description': '服务无法接受此请求。',
   'error.unknown.description': '加载时出现问题。',
+  'state.accessDenied.resource': '请向 {resource} 的所有者申请访问权限。',
+  'state.notFound.resource': '{resource} 不存在或已被移动。',
+  'state.signedOut.title': '您已退出登录',
+  'state.signedOut.description': '请登录后继续。',
+  'state.signedOut.action': '登录',
+  'state.sessionExpired.title': '您的会话已过期',
+  'state.sessionExpired.description': '此页面上的工作会保留。请继续以续期会话。',
+  'state.sessionExpired.action': '继续',
+  'state.stale.title': '数据可能已过时',
+  'state.stale.description': '最后更新于{time}。',
+  'state.stale.generic': '此视图最近没有刷新。',
+  'state.stale.action': '刷新',
 }
 
 const BUILT_IN_CATALOGS: Readonly<Record<string, MessageCatalog>> = {

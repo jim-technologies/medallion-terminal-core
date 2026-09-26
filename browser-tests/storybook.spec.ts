@@ -71,6 +71,7 @@ const toolkitStories = {
   toolkitTree: 'toolkit-workbench-primitives--tree-selection-and-expansion',
   toolkitPropertyList: 'toolkit-workbench-primitives--property-list-arbitrary-data',
   toolkitStates: 'toolkit-workbench-primitives--empty-loading-and-error-states',
+  toolkitAccessStates: 'toolkit-workbench-primitives--access-session-and-freshness-states',
   toolkitNarrowPane: 'toolkit-workbench-primitives--narrow-stacked-pane',
   toolkitObjectWorkbench: 'toolkit-compositions-workbenches--object-workbench-composition',
   toolkitModelWorkbench: 'toolkit-compositions-workbenches--model-workbench-composition',

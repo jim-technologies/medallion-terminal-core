@@ -35,6 +35,18 @@ export declare const EN_MESSAGES: {
     readonly 'error.invalid.title': 'Request not accepted';
     readonly 'error.invalid.description': 'The service could not accept this request.';
     readonly 'error.unknown.description': 'Something went wrong while loading this.';
+    readonly 'state.accessDenied.resource': 'Ask an owner of {resource} for access.';
+    readonly 'state.notFound.resource': '{resource} doesn’t exist or was moved.';
+    readonly 'state.signedOut.title': 'You’re signed out';
+    readonly 'state.signedOut.description': 'Sign in to continue.';
+    readonly 'state.signedOut.action': 'Sign in';
+    readonly 'state.sessionExpired.title': 'Your session expired';
+    readonly 'state.sessionExpired.description': 'Your work on this page is kept. Continue to renew your session.';
+    readonly 'state.sessionExpired.action': 'Continue';
+    readonly 'state.stale.title': 'Data may be out of date';
+    readonly 'state.stale.description': 'Last updated {time}.';
+    readonly 'state.stale.generic': 'This view has not refreshed recently.';
+    readonly 'state.stale.action': 'Refresh';
 };
 /** A key in the toolkit message catalog. */
 export type MessageKey = keyof typeof EN_MESSAGES;

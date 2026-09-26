@@ -46,6 +46,13 @@ const publicComponents = [
   'EmptyState',
   'LoadingState',
   'ErrorState',
+  'AccessDeniedState',
+  'SignedOutState',
+  'SessionExpiredState',
+  'NotFoundState',
+  'RateLimitedState',
+  'StaleState',
+  'SourceErrorState',
 ]
 
 describe('application toolkit Storybook coverage', () => {

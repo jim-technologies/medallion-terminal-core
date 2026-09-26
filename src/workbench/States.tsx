@@ -4,12 +4,12 @@ import {
   type ReactNode,
 } from 'react'
 import { useLocale, useMessage, type Translate } from '../foundations/DesignSystemProvider'
-import { formatDuration } from '../foundations/intl'
+import { formatDuration, formatRelativeTime, type DateInput } from '../foundations/intl'
 import type { MessageKey } from '../foundations/messages'
 import type { Intent } from '../foundations/types'
 import type { SourceError, SourceErrorKind } from '../core/sourceError'
 import { Button } from '../components/Button'
-import { Icon } from '../components/Icon'
+import { Icon, type IconName } from '../components/Icon'
 import { cx } from '../components/utils'
 
 /** Props for a neutral no-content state. */
@@ -217,4 +217,292 @@ export const ErrorState = forwardRef<HTMLDivElement, ErrorStateProps>(function E
       )}
     </div>
   )
+})
+
+
+/** Props shared by the access, session, availability and freshness states. */
+export interface StatusStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
+  /** Replaces the default heading. */
+  title?: ReactNode
+  /** Replaces the default explanation. */
+  description?: ReactNode
+  /**
+   * The typed failure behind the state. Its reason, code and request id go in
+   * a Details disclosure.
+   */
+  error?: SourceError
+  /** Additional host-owned actions. */
+  actions?: ReactNode
+  /** Uses the bounded compact presentation. */
+  compact?: boolean
+}
+
+interface StateFrameProps extends StatusStateProps {
+  icon: IconName
+  tone: 'neutral' | 'warning'
+  state: string
+  primaryAction?: ReactNode
+}
+
+const StateFrame = forwardRef<HTMLDivElement, StateFrameProps>(function StateFrame(
+  { icon, tone, state, title, description, error, actions, primaryAction, compact, className, ...rest },
+  ref,
+) {
+  return (
+    <div
+      role="status"
+      {...rest}
+      ref={ref}
+      className={cx('mtc-state', className)}
+      data-compact={compact}
+      data-intent={tone}
+      data-state={state}
+    >
+      <div className="mtc-state-icon" aria-hidden="true"><Icon name={icon} /></div>
+      <div className="mtc-state-title">{title}</div>
+      {description && <div className="mtc-state-description">{description}</div>}
+      {error && <StateDetails reason={error.message} code={error.code} requestId={error.requestId} />}
+      {(primaryAction || actions) && (
+        <div className="mtc-state-actions">
+          {primaryAction}
+          {actions}
+        </div>
+      )}
+    </div>
+  )
+})
+
+/** Props for a denied scope. */
+export interface AccessDeniedStateProps extends StatusStateProps {
+  /** What was denied, in words: `bucket finance`. */
+  resource?: string
+}
+
+/**
+ * A scope the person may not read (HTTP 403, `permission_denied`). Render it
+ * where the denied scope would be, so the rest of the app stays usable.
+ */
+export const AccessDeniedState = forwardRef<HTMLDivElement, AccessDeniedStateProps>(function AccessDeniedState(
+  { resource, title, description, ...rest },
+  ref,
+) {
+  const t = useMessage()
+  return (
+    <StateFrame
+      {...rest}
+      ref={ref}
+      icon="lock"
+      tone="neutral"
+      state="access-denied"
+      title={title ?? t('error.forbidden.title')}
+      description={description ?? (resource
+        ? t('state.accessDenied.resource', { resource })
+        : t('error.forbidden.description'))}
+    />
+  )
+})
+
+/** Props for a missing session. */
+export interface SignedOutStateProps extends StatusStateProps {
+  /** Starts sign-in; renders the primary action. */
+  onSignIn?: () => void
+  /** Label for the sign-in action. */
+  signInLabel?: string
+}
+
+/** No session at all: the person has to sign in before anything loads. */
+export const SignedOutState = forwardRef<HTMLDivElement, SignedOutStateProps>(function SignedOutState(
+  { onSignIn, signInLabel, title, description, ...rest },
+  ref,
+) {
+  const t = useMessage()
+  return (
+    <StateFrame
+      {...rest}
+      ref={ref}
+      icon="sign-in"
+      tone="neutral"
+      state="signed-out"
+      title={title ?? t('state.signedOut.title')}
+      description={description ?? t('state.signedOut.description')}
+      primaryAction={onSignIn && (
+        <Button size="small" intent="primary" variant="solid" onClick={onSignIn}>
+          {signInLabel ?? t('state.signedOut.action')}
+        </Button>
+      )}
+    />
+  )
+})
+
+/** Props for an expired session. */
+export interface SessionExpiredStateProps extends StatusStateProps {
+  /** Renews the session (and retries); renders the primary action. */
+  onContinue?: () => void
+  /** Label for the renew action. */
+  continueLabel?: string
+}
+
+/**
+ * The session ended mid-journey (HTTP 401). The page, its route and drafts
+ * stay; continuing renews the session instead of starting over.
+ */
+export const SessionExpiredState = forwardRef<HTMLDivElement, SessionExpiredStateProps>(function SessionExpiredState(
+  { onContinue, continueLabel, title, description, ...rest },
+  ref,
+) {
+  const t = useMessage()
+  return (
+    <StateFrame
+      {...rest}
+      ref={ref}
+      icon="hourglass"
+      tone="neutral"
+      state="session-expired"
+      title={title ?? t('state.sessionExpired.title')}
+      description={description ?? t('state.sessionExpired.description')}
+      primaryAction={onContinue && (
+        <Button size="small" intent="primary" variant="solid" onClick={onContinue}>
+          {continueLabel ?? t('state.sessionExpired.action')}
+        </Button>
+      )}
+    />
+  )
+})
+
+/** Props for a missing object. */
+export interface NotFoundStateProps extends StatusStateProps {
+  /** What is missing, in words: `bucket finance`. */
+  resource?: string
+}
+
+/** The object does not exist or moved (HTTP 404, `not_found`). */
+export const NotFoundState = forwardRef<HTMLDivElement, NotFoundStateProps>(function NotFoundState(
+  { resource, title, description, ...rest },
+  ref,
+) {
+  const t = useMessage()
+  return (
+    <StateFrame
+      {...rest}
+      ref={ref}
+      icon="search"
+      tone="neutral"
+      state="not-found"
+      title={title ?? t('error.not_found.title')}
+      description={description ?? (resource
+        ? t('state.notFound.resource', { resource })
+        : t('error.not_found.description'))}
+    />
+  )
+})
+
+/** Props for a throttled request. */
+export interface RateLimitedStateProps extends StatusStateProps {
+  /** How long the server asked to wait; defaults to the error's `Retry-After`. */
+  retryAfterMs?: number
+  /** Adds a retry action. */
+  onRetry?: () => void
+  /** Label for the retry action. */
+  retryLabel?: string
+}
+
+/** Too many requests (HTTP 429, `resource_exhausted`), with the wait if known. */
+export const RateLimitedState = forwardRef<HTMLDivElement, RateLimitedStateProps>(function RateLimitedState(
+  { retryAfterMs, onRetry, retryLabel, title, description, error, ...rest },
+  ref,
+) {
+  const t = useMessage()
+  const { locale } = useLocale()
+  const wait = retryAfterMs ?? error?.retryAfterMs
+  return (
+    <StateFrame
+      {...rest}
+      ref={ref}
+      error={error}
+      icon="clock"
+      tone="warning"
+      state="rate-limited"
+      title={title ?? t('error.rate_limited.title')}
+      description={description ?? (wait !== undefined
+        ? t('error.rate_limited.retryIn', { duration: formatDuration(wait, { locale }) })
+        : t('error.rate_limited.description'))}
+      primaryAction={onRetry && (
+        <Button size="small" onClick={onRetry}>{retryLabel ?? t('state.retry')}</Button>
+      )}
+    />
+  )
+})
+
+/** Props for a view whose data has stopped refreshing. */
+export interface StaleStateProps extends StatusStateProps {
+  /** When the data last refreshed. */
+  lastUpdated?: DateInput
+  /** Clock for the relative time; defaults to now. */
+  now?: number
+  /** Adds a refresh action. */
+  onRefresh?: () => void
+}
+
+/**
+ * The data shown may be out of date (a stream dropped or polling stalled).
+ * Use `compact` to show it beside the stale content rather than instead of it.
+ */
+export const StaleState = forwardRef<HTMLDivElement, StaleStateProps>(function StaleState(
+  { lastUpdated, now, onRefresh, title, description, ...rest },
+  ref,
+) {
+  const t = useMessage()
+  const { locale } = useLocale()
+  return (
+    <StateFrame
+      {...rest}
+      ref={ref}
+      icon="history"
+      tone="warning"
+      state="stale"
+      title={title ?? t('state.stale.title')}
+      description={description ?? (lastUpdated !== undefined
+        ? t('state.stale.description', { time: formatRelativeTime(lastUpdated, { locale, now }) })
+        : t('state.stale.generic'))}
+      primaryAction={onRefresh && (
+        <Button size="small" onClick={onRefresh}>{t('state.stale.action')}</Button>
+      )}
+    />
+  )
+})
+
+/** Props for rendering any typed failure as its state. */
+export interface SourceErrorStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
+  /** The failure to explain. */
+  error: SourceError
+  /** What failed, in words, for the access and not-found copy. */
+  resource?: string
+  /** Retries the failed request. */
+  onRetry?: () => void
+  /** Renews an expired session; falls back to `onRetry`. */
+  onRenewSession?: () => void
+  /** Uses the bounded compact presentation. */
+  compact?: boolean
+}
+
+/**
+ * Picks the state a failure deserves from its kind: an expired session,
+ * a denied or missing scope, a rate limit, or a typed error with retry.
+ */
+export const SourceErrorState = forwardRef<HTMLDivElement, SourceErrorStateProps>(function SourceErrorState(
+  { error, resource, onRetry, onRenewSession, ...rest },
+  ref,
+) {
+  switch (error.kind) {
+    case 'unauthenticated':
+      return <SessionExpiredState {...rest} ref={ref} error={error} onContinue={onRenewSession ?? onRetry} />
+    case 'forbidden':
+      return <AccessDeniedState {...rest} ref={ref} error={error} resource={resource} />
+    case 'not_found':
+      return <NotFoundState {...rest} ref={ref} error={error} resource={resource} />
+    case 'rate_limited':
+      return <RateLimitedState {...rest} ref={ref} error={error} onRetry={onRetry} />
+    default:
+      return <ErrorState {...rest} ref={ref} error={error} onRetry={onRetry} />
+  }
 })

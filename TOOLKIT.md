@@ -217,6 +217,11 @@ Popover and menu document listeners exist only while their layer is open.
   product copy for its kind (for example "You don’t have access" for a 403)
   while the server's reason, Connect code and request id sit in a Details
   disclosure.
+- `AccessDeniedState`, `SignedOutState`, `SessionExpiredState`,
+  `NotFoundState`, `RateLimitedState` and `StaleState`: the access, session,
+  availability and freshness states product UIs render in place of the scope
+  that failed, so navigation and the rest of the page keep working.
+  `SourceErrorState` picks the right one from a `SourceError`'s kind.
 
 `Toolbar`, `Sidebar`, and `Inspector` do not own routing, fetching,
 authentication, or permissions. `SplitPane` exposes a separator with ARIA
@@ -250,6 +255,22 @@ server's side of the story kept:
 | `message` | The server's reason (`payroll:read scope required`), else `HTTP 503` |
 | `requestId` | `x-request-id` / `request-id` from the response, else the id sent |
 | `retryAfterMs` | `Retry-After`, as seconds or an HTTP date |
+
+| Kind | State | Copy (en) |
+|---|---|---|
+| `unauthenticated` | `SessionExpiredState` (Continue renews; falls back to retry) | "Your session expired" |
+| `forbidden` | `AccessDeniedState` | "You don’t have access" · "Ask an owner of {resource} for access." |
+| `not_found` | `NotFoundState` | "Not found" · "{resource} doesn’t exist or was moved." |
+| `rate_limited` | `RateLimitedState` | "Too many requests" · "Try again in 30 seconds." |
+| `unavailable`, `invalid`, `unknown` | `ErrorState` with the typed error | "Service unavailable", "Request not accepted", "Unable to load" |
+
+Every state keeps the server's reason, Connect code and request id in a
+collapsed Details disclosure, takes `title`, `description` and `actions`
+overrides, and renders its copy from the message catalog. `SignedOutState`
+is for "no session at all"; a 401 mid-journey is `SessionExpiredState`,
+which keeps the route and drafts. `StaleState` takes `lastUpdated` (and a
+`now` for deterministic rendering) and has a `compact` form for showing
+beside stale content rather than instead of it.
 
 `sourceErrorFromResponse(res)` reads a Connect JSON error body (bounded) and
 headers; `toSourceError(thrown)` maps errors from generated Connect clients

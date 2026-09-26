@@ -2,15 +2,23 @@ import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { expect, fn, userEvent, within } from 'storybook/test'
 import { Badge, Button, Icon, IconButton, Input } from '../components'
+import { SourceError } from '../core/sourceError'
 import {
+  AccessDeniedState,
   AppSurface,
   EmptyState,
   ErrorState,
   Inspector,
   LoadingState,
+  NotFoundState,
   PropertyList,
+  RateLimitedState,
+  SessionExpiredState,
   Sidebar,
+  SignedOutState,
+  SourceErrorState,
   SplitPane,
+  StaleState,
   Toolbar,
   Tree,
   type TreeItem,
@@ -146,6 +154,73 @@ export const EmptyLoadingAndErrorStates: Story = {
     await expect(canvas.getByRole('status')).toHaveAttribute('aria-busy', 'true')
     await userEvent.click(canvas.getByRole('button', { name: 'Retry' }))
     await expect(retry).toHaveBeenCalled()
+  },
+}
+
+const signIn = fn()
+const renewSession = fn()
+const retryThrottled = fn()
+const refreshStale = fn()
+const retryUnavailable = fn()
+const STALE_NOW = Date.UTC(2026, 8, 25, 12, 0)
+const DENIED = new SourceError('payroll:read scope required', {
+  kind: 'forbidden',
+  status: 403,
+  code: 'permission_denied',
+  requestId: 'req_81M',
+})
+const UNAVAILABLE = new SourceError('dependency unavailable', {
+  kind: 'unavailable',
+  status: 503,
+  code: 'unavailable',
+  requestId: 'req_4Q2',
+})
+const INVALID = new SourceError('page_size must be between 1 and 100', {
+  kind: 'invalid',
+  status: 400,
+  code: 'invalid_argument',
+})
+
+export const AccessSessionAndFreshnessStates: Story = {
+  name: 'Access, session and freshness states',
+  render: () => (
+    <div className="grid min-h-screen grid-cols-1 gap-px bg-[var(--mtc-border)] md:grid-cols-3">
+      <div className="bg-[var(--mtc-surface)]"><AccessDeniedState resource="bucket finance" error={DENIED} /></div>
+      <div className="bg-[var(--mtc-surface)]"><SessionExpiredState onContinue={renewSession} /></div>
+      <div className="bg-[var(--mtc-surface)]"><SignedOutState onSignIn={signIn} /></div>
+      <div className="bg-[var(--mtc-surface)]"><NotFoundState resource="Report Q3 2026" /></div>
+      <div className="bg-[var(--mtc-surface)]"><RateLimitedState retryAfterMs={30_000} onRetry={retryThrottled} /></div>
+      <div className="bg-[var(--mtc-surface)]">
+        <StaleState lastUpdated={STALE_NOW - 7 * 60_000} now={STALE_NOW} onRefresh={refreshStale} />
+      </div>
+      <div className="bg-[var(--mtc-surface)]"><SourceErrorState error={UNAVAILABLE} onRetry={retryUnavailable} /></div>
+      <div className="bg-[var(--mtc-surface)]"><SourceErrorState error={INVALID} /></div>
+      <div className="bg-[var(--mtc-surface)]"><StaleState compact /></div>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText('Ask an owner of bucket finance for access.')).toBeVisible()
+    // Raw server detail stays behind Details until asked for.
+    const requestId = canvas.getByText('req_81M')
+    await expect(requestId).not.toBeVisible()
+    await userEvent.click(canvas.getAllByText('Details')[0]!)
+    await expect(requestId).toBeVisible()
+    await expect(canvas.getByText('payroll:read scope required')).toBeVisible()
+    await userEvent.click(canvas.getByRole('button', { name: 'Continue' }))
+    await expect(renewSession).toHaveBeenCalled()
+    await userEvent.click(canvas.getByRole('button', { name: 'Sign in' }))
+    await expect(signIn).toHaveBeenCalled()
+    await expect(canvas.getByText('Try again in 30 seconds.')).toBeVisible()
+    await expect(canvas.getByText('Last updated 7 minutes ago.')).toBeVisible()
+    await userEvent.click(canvas.getByRole('button', { name: 'Refresh' }))
+    await expect(refreshStale).toHaveBeenCalled()
+    await expect(canvas.getByText('Service unavailable')).toBeVisible()
+    await expect(canvas.getByText('Request not accepted')).toBeVisible()
+    // Leave the canvas as rendered, so the visual baseline never depends on
+    // how far this play function got before the screenshot.
+    await userEvent.click(canvas.getAllByText('Details')[0]!)
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }
 

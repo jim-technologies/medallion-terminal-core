@@ -65,6 +65,19 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   copy for the kind while the server's reason, code and request id sit in a
   Details disclosure. A 403 now reads "You don't have access" with
   `payroll:read scope required` under Details instead of "HTTP 403".
+- **Access, session and freshness states.** `AccessDeniedState`
+  (`resource` names the scope and whom to ask), `SignedOutState`
+  (`onSignIn`), `SessionExpiredState` (`onContinue` renews without leaving the
+  route), `NotFoundState`, `RateLimitedState` (the wait from `retryAfterMs` or
+  the error's `Retry-After`) and `StaleState` (`lastUpdated`, relative time,
+  `onRefresh`, a `compact` form), plus `SourceErrorState`, which picks the
+  state for a `SourceError`'s kind. Each keeps the server's reason, code and
+  request id in a Details disclosure and renders catalog copy in `en` and
+  `zh-CN`. Dashboard widgets render failed sources through
+  `SourceErrorState`, so a denied source reads "You don't have access" inside
+  its widget; compact states fill the widget body and scroll rather than clip
+  their Details and Retry. Storybook adds Toolkit/Workbench/Primitives/Access, session and
+  freshness states with dark and light baselines and a play test.
 - **`medallion-terminal-core/app`: product transport.** `createProductFetch`
   wraps `fetch` for product UIs and stays a drop-in `fetch` (plain calls and
   connect-web's `createConnectTransport({ fetch })`): every request carries
@@ -110,6 +123,10 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- **Toolkit and stylesheet budgets grow** to 20 KiB static gzip (was 16)
+  and 19 KiB (was 18): the typed failures, access and session states, and
+  the two-language catalog add about 4.7 KiB to the toolkit; tokens v2 and
+  the vendored `@font-face` rules had used the old stylesheet headroom.
 - **`useDataSource().error` is deprecated** in favour of `sourceError` and
   is removed in 0.7.0. It stays a one-line string (`permission_denied:
   payroll:read scope required`, `HTTP 503`); streamed failures lost their

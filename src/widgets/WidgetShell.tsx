@@ -8,6 +8,7 @@ import { useNow } from '../core/NowContext'
 import { evaluateAlert } from '../core/alerts'
 import { playAlertBeep } from '../core/sound'
 import { Skeleton, ErrorState } from './states'
+import { SourceErrorState } from '../workbench/States'
 import { downloadView, viewRowCount, type ExportFormat } from '../export/exportView'
 import { EXPORT_FORMATS } from '../export/serializers'
 import type { WidgetConfig } from '../types/template'
@@ -44,7 +45,8 @@ function renderBody(args: {
   // failure might be transient.
   if (resolution.error) return <ErrorState message={resolution.error} />
   if (loading) return <Skeleton component={component} />
-  if (error) return <ErrorState error={error} onRetry={onRetry} compact />
+  // Compact states fill the widget body and scroll rather than clip.
+  if (error) return <SourceErrorState error={error} onRetry={onRetry} compact className="h-full" />
   return (
     <div className="h-full motion-safe:animate-[fadeIn_200ms_ease-out]">
       <ErrorBoundary onError={onRenderError}>
