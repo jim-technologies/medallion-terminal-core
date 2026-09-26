@@ -1,5 +1,6 @@
 import {
   SourceError,
+  rememberSentRequestId,
   sourceErrorFromResponse,
   toSourceError,
 } from '../core/sourceError'
@@ -30,7 +31,14 @@ export interface ProductFetchOptions {
    * returned to the caller.
    */
   onUnauthenticated?: (error: SourceError) => void
-  /** Aborts a request after this many milliseconds; `0` or unset never does. */
+  /**
+   * How long a request may wait for the server to start responding (its
+   * response headers), in milliseconds; `0` or unset waits indefinitely.
+   * Once the headers arrive the body is never cut, so a server stream or a
+   * slow download runs for as long as it needs. A request that uploads a
+   * binary body (`Blob`, `File`, `FormData`, `ArrayBuffer` or a stream) is
+   * not bounded, because sending it takes as long as the network needs.
+   */
   timeoutMs?: number
   /** Request id generator for `x-request-id`. Defaults to a random UUID. */
   newRequestId?: () => string
@@ -44,10 +52,6 @@ export interface ProductFetchOptions {
 
 const REQUEST_ID_HEADER = 'x-request-id'
 const TRACEPARENT_HEADER = 'traceparent'
-
-// The id sent with each response this wrapper returned, so `ensureOk` can
-// report it when the server echoes none. Weak: responses are never retained.
-const sentRequestIds = new WeakMap<Response, string>()
 
 function randomHex(bytes: number): string {
   const values = new Uint8Array(bytes)
@@ -76,6 +80,17 @@ function requestMethod(input: RequestInfo | URL, init?: RequestInit): string {
   return (init?.method ?? (input instanceof Request ? input.method : 'GET')).toUpperCase()
 }
 
+// Bodies whose transfer time grows with their size: a fixed wait for the
+// response headers would cut a large upload partway.
+function uploadsBinaryBody(input: RequestInfo | URL, init?: RequestInit): boolean {
+  const body = init?.body ?? (input instanceof Request ? input.body : null)
+  return body instanceof Blob
+    || body instanceof FormData
+    || body instanceof ArrayBuffer
+    || ArrayBuffer.isView(body)
+    || body instanceof ReadableStream
+}
+
 function composeSignals(signals: readonly (AbortSignal | undefined)[]): AbortSignal | undefined {
   const present = signals.filter((signal): signal is AbortSignal => !!signal)
   if (present.length <= 1) return present[0]
@@ -88,7 +103,9 @@ function composeSignals(signals: readonly (AbortSignal | undefined)[]): AbortSig
  *
  * - carries `x-request-id` and a W3C `traceparent` unless it already has
  *   them, so a failure shown to a person can be traced to its server span;
- * - aborts on the caller's signal or after `timeoutMs`, whichever is first;
+ * - aborts on the caller's signal, or when the response headers have not
+ *   arrived within `timeoutMs`; a body that is already streaming is never
+ *   cut by the timeout;
  * - reports a 401 to `onUnauthenticated` with its typed `SourceError`;
  * - rejects with a `SourceError` (`unavailable`) on a timeout or a network
  *   failure. A caller's own abort still rejects with the platform
@@ -116,7 +133,15 @@ export function createProductFetch(options: ProductFetchOptions = {}): typeof gl
     const requestId = headers.get(REQUEST_ID_HEADER)!
     const traceparent = headers.get(TRACEPARENT_HEADER)!
     const callerSignal = init?.signal ?? (input instanceof Request ? input.signal : undefined)
-    const timeoutSignal = timeoutMs && timeoutMs > 0 ? AbortSignal.timeout(timeoutMs) : undefined
+    // Bounds only the wait for the response headers: the timer is cleared as
+    // soon as they arrive, so the signal handed to fetch (which also governs
+    // reading the body) aborts afterwards only on the caller's own abort.
+    const deadline = timeoutMs && timeoutMs > 0 && !uploadsBinaryBody(input, init)
+      ? new AbortController()
+      : undefined
+    const timer = deadline
+      ? setTimeout(() => deadline.abort(new DOMException(`No response within ${timeoutMs} ms`, 'TimeoutError')), timeoutMs)
+      : undefined
     const method = requestMethod(input, init)
     const url = requestUrl(input)
     const started = now()
@@ -134,19 +159,21 @@ export function createProductFetch(options: ProductFetchOptions = {}): typeof gl
       response = await baseFetch(input, {
         ...init,
         headers,
-        signal: composeSignals([callerSignal ?? undefined, timeoutSignal]),
+        signal: composeSignals([callerSignal ?? undefined, deadline?.signal]),
       })
     } catch (thrown) {
       // The caller cancelled: keep the platform's AbortError semantics.
       if (callerSignal?.aborted) throw thrown
-      const error = timeoutSignal?.aborted
+      const error = deadline?.signal.aborted
         ? new SourceError(`Request timed out after ${timeoutMs} ms`, { kind: 'unavailable', requestId })
         : withRequestId(toSourceError(thrown), requestId)
       report({ error })
       throw error
+    } finally {
+      clearTimeout(timer)
     }
 
-    sentRequestIds.set(response, requestId)
+    rememberSentRequestId(response, requestId)
     if (response.ok) {
       report({ status: response.status })
       return response
@@ -175,5 +202,5 @@ function withRequestId(error: SourceError, requestId: string): SourceError {
  */
 export async function ensureOk(response: Response): Promise<Response> {
   if (response.ok) return response
-  throw await sourceErrorFromResponse(response, { requestId: sentRequestIds.get(response) })
+  throw await sourceErrorFromResponse(response)
 }

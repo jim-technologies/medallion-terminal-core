@@ -889,9 +889,9 @@ For wiring this into a real product, in order:
 
    Product UIs also pass their transport. `createProductFetch()` from
    `medallion-terminal-core/app` adds `x-request-id` and a W3C `traceparent`
-   to every backend call, composes a timeout with the caller's abort signal,
-   types network failures as `SourceError`, and reports a 401 so the host can
-   show `SessionExpiredState` and renew the session:
+   to every backend call, bounds how long a call waits for the server to
+   start responding, types network failures as `SourceError`, and reports a
+   401 so the host can show `SessionExpiredState` and renew the session:
 
    ```tsx
    const productFetch = useMemo(() => createProductFetch({
@@ -902,11 +902,21 @@ For wiring this into a real product, in order:
    <Dashboard template={template} backendUrl={apiUrl} fetch={productFetch} />
    ```
 
+   `timeoutMs` covers only the wait for the response headers. Once they
+   arrive the body is never cut, so `Stream` sources and `WatchAction`
+   lifecycles stay connected for as long as the server keeps them open, and
+   binary uploads (a `Blob`, `File`, `FormData` or stream body) are not
+   bounded at all; the caller's own abort signal still ends any of them. A
+   unary call such as `Generate` must answer within `timeoutMs`, so size it
+   for the slowest one you serve.
+
    It is an ordinary `fetch`, so connect-web clients take it too
    (`createConnectTransport({ baseUrl, fetch: productFetch })`), and
    `ensureOk(response)` turns a non-2xx response into a `SourceError` for
-   plain callers. `Dashboard.fetch` serves the same requests as
-   `backendHeaders`; template-authored URLs keep the platform `fetch`.
+   plain callers. A typed error keeps the request id the transport sent even
+   when the server does not echo `x-request-id`. `Dashboard.fetch` serves the
+   same requests as `backendHeaders`; template-authored URLs keep the
+   platform `fetch`.
 
    These headers cover `ListSources`, `Get`, `Stream`, `Generate`, action
    lifecycle calls, and backend-relative file operations. They are not copied

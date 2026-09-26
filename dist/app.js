@@ -1,6 +1,6 @@
-import { a as e, c as t, i as n, l as r, n as i, o as a, r as o, s, t as c } from "./sourceError-GEQl_6YF.js";
+import { a as e, c as t, i as n, l as r, n as i, o as a, r as o, s, t as c, u as l } from "./sourceError-Bi7hpvaI.js";
 //#region src/app/productFetch.ts
-var l = "x-request-id", u = "traceparent", d = /* @__PURE__ */ new WeakMap();
+var u = "x-request-id", d = "traceparent";
 function f(e) {
 	let t = new Uint8Array(e);
 	return globalThis.crypto.getRandomValues(t), Array.from(t, (e) => e.toString(16).padStart(2, "0")).join("");
@@ -17,46 +17,52 @@ function h(e) {
 function g(e, t) {
 	return (t?.method ?? (e instanceof Request ? e.method : "GET")).toUpperCase();
 }
-function _(e) {
+function _(e, t) {
+	let n = t?.body ?? (e instanceof Request ? e.body : null);
+	return n instanceof Blob || n instanceof FormData || n instanceof ArrayBuffer || ArrayBuffer.isView(n) || n instanceof ReadableStream;
+}
+function v(e) {
 	let t = e.filter((e) => !!e);
 	return t.length <= 1 ? t[0] : AbortSignal.any(t);
 }
-function v(e = {}) {
-	let { onUnauthenticated: t, timeoutMs: n, onRequest: i, newRequestId: o = m, newTraceparent: s = p, now: f = () => performance.now() } = e;
+function y(t = {}) {
+	let { onUnauthenticated: n, timeoutMs: r, onRequest: i, newRequestId: a = m, newTraceparent: o = p, now: f = () => performance.now() } = t;
 	return async function(p, m) {
-		let v = e.fetch ?? globalThis.fetch, b = new Headers(m?.headers ?? (p instanceof Request ? p.headers : void 0));
-		b.has(l) || b.set(l, o()), b.has(u) || b.set(u, s());
-		let x = b.get(l), S = b.get(u), C = m?.signal ?? (p instanceof Request ? p.signal : void 0), w = n && n > 0 ? AbortSignal.timeout(n) : void 0, T = g(p, m), E = h(p), D = f(), O = (e) => i?.({
-			method: T,
-			url: E,
-			requestId: x,
-			traceparent: S,
-			durationMs: f() - D,
+		let y = t.fetch ?? globalThis.fetch, x = new Headers(m?.headers ?? (p instanceof Request ? p.headers : void 0));
+		x.has(u) || x.set(u, a()), x.has(d) || x.set(d, o());
+		let S = x.get(u), C = x.get(d), w = m?.signal ?? (p instanceof Request ? p.signal : void 0), T = r && r > 0 && !_(p, m) ? new AbortController() : void 0, E = T ? setTimeout(() => T.abort(new DOMException(`No response within ${r} ms`, "TimeoutError")), r) : void 0, D = g(p, m), O = h(p), k = f(), A = (e) => i?.({
+			method: D,
+			url: O,
+			requestId: S,
+			traceparent: C,
+			durationMs: f() - k,
 			...e
-		}), k;
+		}), j;
 		try {
-			k = await v(p, {
+			j = await y(p, {
 				...m,
-				headers: b,
-				signal: _([C ?? void 0, w])
+				headers: x,
+				signal: v([w ?? void 0, T?.signal])
 			});
 		} catch (e) {
-			if (C?.aborted) throw e;
-			let t = w?.aborted ? new c(`Request timed out after ${n} ms`, {
+			if (w?.aborted) throw e;
+			let t = T?.signal.aborted ? new c(`Request timed out after ${r} ms`, {
 				kind: "unavailable",
-				requestId: x
-			}) : y(r(e), x);
-			throw O({ error: t }), t;
+				requestId: S
+			}) : b(l(e), S);
+			throw A({ error: t }), t;
+		} finally {
+			clearTimeout(E);
 		}
-		if (d.set(k, x), k.ok) return O({ status: k.status }), k;
-		let A = await a(k.clone(), { requestId: x });
-		return O({
-			status: k.status,
-			error: A
-		}), k.status === 401 && t?.(A), k;
+		if (e(j, S), j.ok) return A({ status: j.status }), j;
+		let M = await s(j.clone(), { requestId: S });
+		return A({
+			status: j.status,
+			error: M
+		}), j.status === 401 && n?.(M), j;
 	};
 }
-function y(e, t) {
+function b(e, t) {
 	return e.requestId ? e : new c(e.message, {
 		kind: e.kind,
 		status: e.status,
@@ -65,9 +71,9 @@ function y(e, t) {
 		requestId: t
 	});
 }
-async function b(e) {
+async function x(e) {
 	if (e.ok) return e;
-	throw await a(e, { requestId: d.get(e) });
+	throw await s(e);
 }
 //#endregion
-export { c as SourceError, v as createProductFetch, i as describeSourceError, b as ensureOk, o as isSourceError, p as newTraceparent, n as parseRetryAfter, e as responseRequestId, a as sourceErrorFromResponse, s as sourceErrorKindForCode, t as sourceErrorKindForStatus, r as toSourceError };
+export { c as SourceError, y as createProductFetch, i as describeSourceError, x as ensureOk, o as isSourceError, p as newTraceparent, n as parseRetryAfter, a as responseRequestId, s as sourceErrorFromResponse, t as sourceErrorKindForCode, r as sourceErrorKindForStatus, l as toSourceError };

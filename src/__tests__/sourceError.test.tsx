@@ -59,6 +59,22 @@ describe('SourceError from responses', () => {
     expect(truncated).toMatchObject({ kind: 'forbidden', message: 'HTTP 403', code: undefined })
   })
 
+  it('stops reading a runaway error body instead of buffering it whole', async () => {
+    let cancelled = false
+    const chunk = new TextEncoder().encode(`{"message":"${'x'.repeat(4096)}`)
+    // An endless body: `response.text()` would never settle.
+    const endless = new ReadableStream<Uint8Array>({
+      pull: controller => controller.enqueue(chunk),
+      cancel: () => { cancelled = true },
+    })
+    const error = await sourceErrorFromResponse(new Response(endless, {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    }))
+    expect(error).toMatchObject({ kind: 'unknown', message: 'HTTP 500' })
+    expect(cancelled).toBe(true)
+  })
+
   it('uses the request id the client sent when the server echoes none', async () => {
     const error = await sourceErrorFromResponse(new Response(null, { status: 401 }), { requestId: 'client-1' })
     expect(error).toMatchObject({ kind: 'unauthenticated', requestId: 'client-1' })

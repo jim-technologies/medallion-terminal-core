@@ -55,9 +55,16 @@ export declare function responseRequestId(headers: Headers): string | undefined;
  */
 export declare function parseRetryAfter(value: string | null, now?: number): number | undefined;
 /**
+ * Records the request id sent for `response`; `sourceErrorFromResponse`
+ * falls back to it. Internal to the framework's transports.
+ */
+export declare function rememberSentRequestId(response: Response, requestId: string): void;
+/**
  * Types a failed HTTP response. Reads the Connect JSON error body
  * (`{"code":"permission_denied","message":"…"}`) when there is one; the
- * body is consumed, so pass a clone if the caller still needs it.
+ * body is consumed, so pass a clone if the caller still needs it. The
+ * request id is the response's own, else `options.requestId`, else the one
+ * `createProductFetch` sent with this response.
  */
 export declare function sourceErrorFromResponse(response: Response, options?: {
     requestId?: string;

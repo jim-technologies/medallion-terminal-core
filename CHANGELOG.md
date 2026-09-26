@@ -94,7 +94,8 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   rate_limited | unavailable | invalid | unknown`, plus `status`, Connect
   `code`, the server's reason as `message`, `requestId` and `retryAfterMs`),
   `sourceErrorFromResponse` (reads a bounded Connect JSON error body and the
-  `x-request-id` / `Retry-After` headers), `toSourceError` (generated Connect
+  `x-request-id` / `Retry-After` headers; it stops reading an error body
+  after 16 K characters and cancels the rest), `toSourceError` (generated Connect
   client errors by numeric or string code, timeouts and network failures) and
   `describeSourceError`. `useDataSource()` returns `sourceError`; widgets
   render it through `ErrorState`, which takes `error` and leads with product
@@ -125,13 +126,18 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   wraps `fetch` for product UIs and stays a drop-in `fetch` (plain calls and
   connect-web's `createConnectTransport({ fetch })`): every request carries
   `x-request-id` and a W3C `traceparent` unless it already has them, aborts on
-  the caller's signal or after `timeoutMs`, rejects with a `SourceError`
-  (`unavailable`) on a timeout or network failure (a caller's own abort keeps
-  the platform `AbortError`), reports each 401 to `onUnauthenticated` with its
-  typed error, and reports every settled request to `onRequest` for
-  telemetry. `ensureOk` turns a non-2xx response into a `SourceError` that
-  keeps the id the client sent. No React and no runtime dependencies; the
-  entry is budgeted at 4 KiB.
+  the caller's signal or when its response headers have not arrived within
+  `timeoutMs`, rejects with a `SourceError` (`unavailable`) on a timeout or
+  network failure (a caller's own abort keeps the platform `AbortError`),
+  reports each 401 to `onUnauthenticated` with its typed error, and reports
+  every settled request to `onRequest` for telemetry. The timeout never cuts
+  a body that is already streaming, so `Stream` sources, `WatchAction`
+  lifecycles and slow downloads run past it, and a binary upload (`Blob`,
+  `File`, `FormData`, `ArrayBuffer` or stream body) is not bounded at all.
+  A `SourceError` built from a response it returned keeps the id the client
+  sent when the server echoes none (in `ensureOk` and in the Dashboard's own
+  data sources alike). No React and no runtime dependencies; the entry is
+  budgeted at 4 KiB.
 - **`Dashboard.fetch` (and `MultiDashboard.fetch`)** injects the host
   transport for exactly the requests `backendHeaders` covers: `Get`,
   `Stream`, `ListSources`, `Generate`, `SubmitAction`, `WatchAction` and

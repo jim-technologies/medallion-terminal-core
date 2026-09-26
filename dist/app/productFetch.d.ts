@@ -24,7 +24,14 @@ export interface ProductFetchOptions {
      * returned to the caller.
      */
     onUnauthenticated?: (error: SourceError) => void;
-    /** Aborts a request after this many milliseconds; `0` or unset never does. */
+    /**
+     * How long a request may wait for the server to start responding (its
+     * response headers), in milliseconds; `0` or unset waits indefinitely.
+     * Once the headers arrive the body is never cut, so a server stream or a
+     * slow download runs for as long as it needs. A request that uploads a
+     * binary body (`Blob`, `File`, `FormData`, `ArrayBuffer` or a stream) is
+     * not bounded, because sending it takes as long as the network needs.
+     */
     timeoutMs?: number;
     /** Request id generator for `x-request-id`. Defaults to a random UUID. */
     newRequestId?: () => string;
@@ -43,7 +50,9 @@ export declare function newTraceparent(): string;
  *
  * - carries `x-request-id` and a W3C `traceparent` unless it already has
  *   them, so a failure shown to a person can be traced to its server span;
- * - aborts on the caller's signal or after `timeoutMs`, whichever is first;
+ * - aborts on the caller's signal, or when the response headers have not
+ *   arrived within `timeoutMs`; a body that is already streaming is never
+ *   cut by the timeout;
  * - reports a 401 to `onUnauthenticated` with its typed `SourceError`;
  * - rejects with a `SourceError` (`unavailable`) on a timeout or a network
  *   failure. A caller's own abort still rejects with the platform

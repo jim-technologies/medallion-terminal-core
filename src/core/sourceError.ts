@@ -146,9 +146,40 @@ export function parseRetryAfter(value: string | null, now = Date.now()): number 
   return at - now
 }
 
-// Error bodies are read to find the server's reason, never rendered raw,
-// so a runaway body is cut off rather than buffered whole.
+// Error bodies are read to find the server's reason, never rendered raw:
+// reading stops after this many characters and the rest of the body is
+// cancelled, so a runaway error body is never buffered whole.
 const MAX_ERROR_BODY_CHARS = 16 * 1024
+
+// The request id a transport sent for each response it returned (see
+// `createProductFetch`), so a typed error keeps it when the server echoes
+// none or CORS hides the echo. Weak: responses are never retained.
+const sentRequestIds = new WeakMap<Response, string>()
+
+/**
+ * Records the request id sent for `response`; `sourceErrorFromResponse`
+ * falls back to it. Internal to the framework's transports.
+ */
+export function rememberSentRequestId(response: Response, requestId: string): void {
+  sentRequestIds.set(response, requestId)
+}
+
+async function readBoundedText(response: Response, maxChars: number): Promise<string> {
+  if (!response.body) return ''
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  let text = ''
+  try {
+    while (text.length < maxChars) {
+      const { done, value } = await reader.read()
+      if (done) return text + decoder.decode()
+      text += decoder.decode(value, { stream: true })
+    }
+  } finally {
+    void reader.cancel().catch(() => {})
+  }
+  return text.slice(0, maxChars)
+}
 
 interface ConnectErrorBody {
   code?: unknown
@@ -158,7 +189,9 @@ interface ConnectErrorBody {
 /**
  * Types a failed HTTP response. Reads the Connect JSON error body
  * (`{"code":"permission_denied","message":"…"}`) when there is one; the
- * body is consumed, so pass a clone if the caller still needs it.
+ * body is consumed, so pass a clone if the caller still needs it. The
+ * request id is the response's own, else `options.requestId`, else the one
+ * `createProductFetch` sent with this response.
  */
 export async function sourceErrorFromResponse(
   response: Response,
@@ -169,7 +202,7 @@ export async function sourceErrorFromResponse(
   const contentType = response.headers.get('content-type') ?? ''
   if (/\bjson\b/i.test(contentType)) {
     try {
-      const text = (await response.text()).slice(0, MAX_ERROR_BODY_CHARS)
+      const text = await readBoundedText(response, MAX_ERROR_BODY_CHARS)
       const body = JSON.parse(text) as ConnectErrorBody
       if (typeof body?.code === 'string' && body.code) code = body.code
       if (typeof body?.message === 'string' && body.message.trim()) reason = body.message.trim()
@@ -181,7 +214,7 @@ export async function sourceErrorFromResponse(
     kind: code ? sourceErrorKindForCode(code) : sourceErrorKindForStatus(response.status),
     status: response.status,
     code,
-    requestId: responseRequestId(response.headers) ?? options.requestId,
+    requestId: responseRequestId(response.headers) ?? options.requestId ?? sentRequestIds.get(response),
     retryAfterMs: parseRetryAfter(response.headers.get('retry-after'), options.now),
   })
 }

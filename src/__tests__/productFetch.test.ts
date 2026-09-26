@@ -1,11 +1,14 @@
-import { describe, expect, it } from 'vitest'
+import { createServer, type RequestListener, type Server } from 'node:http'
+import type { AddressInfo } from 'node:net'
+import { afterEach, describe, expect, it } from 'vitest'
 import {
   createProductFetch,
   ensureOk,
   newTraceparent,
   type ProductRequestEvent,
 } from '../app/productFetch'
-import { SourceError } from '../core/sourceError'
+import { CONNECT_JSON_CONTENT_TYPE, parseConnectEnvelopes } from '../core/connectFraming'
+import { SourceError, sourceErrorFromResponse } from '../core/sourceError'
 
 interface Call {
   input: RequestInfo | URL
@@ -24,6 +27,46 @@ function recorder(respond: (call: Call) => Response | Promise<Response>) {
 }
 
 const headersOf = (call: Call) => new Headers(call.init?.headers)
+
+// A transport that answers after `delayMs` unless its signal aborts first,
+// the way a real fetch waits for response headers.
+function slowToRespond(delayMs: number) {
+  return recorder(call => new Promise<Response>((resolve, reject) => {
+    const signal = call.init?.signal
+    const timer = setTimeout(() => resolve(new Response('{}')), delayMs)
+    signal?.addEventListener('abort', () => {
+      clearTimeout(timer)
+      reject(signal.reason)
+    })
+  }))
+}
+
+// Loopback HTTP servers for the streaming tests: the real platform fetch
+// ties the body to the request signal, which a recorded transport cannot.
+const servers: Server[] = []
+afterEach(async () => {
+  await Promise.all(servers.splice(0).map(server => new Promise(resolve => {
+    server.closeAllConnections()
+    server.close(resolve)
+  })))
+})
+
+async function serve(handler: RequestListener): Promise<string> {
+  const server = createServer(handler)
+  servers.push(server)
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve))
+  return `http://127.0.0.1:${(server.address() as AddressInfo).port}`
+}
+
+function connectFrame(flags: number, value: unknown): Buffer {
+  const payload = Buffer.from(JSON.stringify(value))
+  const header = Buffer.alloc(5)
+  header.writeUInt8(flags, 0)
+  header.writeUInt32BE(payload.length, 1)
+  return Buffer.concat([header, payload])
+}
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 describe('createProductFetch', () => {
   it('adds a request id and a W3C traceparent without replacing the caller’s own', async () => {
@@ -99,6 +142,73 @@ describe('createProductFetch', () => {
       .rejects.toMatchObject({ name: 'SourceError', kind: 'unavailable', message: 'Request timed out after 20 ms' })
   })
 
+  it('bounds only the wait for response headers: a Connect server stream outlives the timeout', async () => {
+    // Headers at once, then one message every 100 ms for three times
+    // timeoutMs: the shape of a Stream source or a WatchAction lifecycle.
+    const url = await serve(async (_request, response) => {
+      response.writeHead(200, { 'Content-Type': CONNECT_JSON_CONTENT_TYPE })
+      response.flushHeaders()
+      for (let sequence = 1; sequence <= 6; sequence++) {
+        await sleep(100)
+        response.write(connectFrame(0, { sequence }))
+      }
+      response.end(connectFrame(0x02, {}))
+    })
+    const started = performance.now()
+    const response = await createProductFetch({ timeoutMs: 200 })(url, { method: 'POST' })
+    const messages: unknown[] = []
+    let closed = false
+    await parseConnectEnvelopes(response.body!.getReader(), {
+      onMessage: message => messages.push(message),
+      onTrailer: () => { closed = true },
+      isDisposed: () => false,
+    })
+
+    expect(performance.now() - started).toBeGreaterThan(200 * 2)
+    expect(messages).toEqual([1, 2, 3, 4, 5, 6].map(sequence => ({ sequence })))
+    expect(closed).toBe(true)
+  })
+
+  it('times out a server that sends no response headers', async () => {
+    const url = await serve(async (_request, response) => {
+      await sleep(400)
+      response.end('{}')
+    })
+    await expect(createProductFetch({ timeoutMs: 40, newRequestId: () => 'req-slow' })(url))
+      .rejects.toMatchObject({
+        name: 'SourceError',
+        kind: 'unavailable',
+        message: 'Request timed out after 40 ms',
+        requestId: 'req-slow',
+      })
+  })
+
+  it('still ends a stream on the caller’s own abort', async () => {
+    const url = await serve(async (_request, response) => {
+      response.writeHead(200, { 'Content-Type': 'text/plain' })
+      response.flushHeaders()
+      response.write('first ')
+      await sleep(1_000)
+      response.end('never')
+    })
+    const controller = new AbortController()
+    const response = await createProductFetch({ timeoutMs: 5_000 })(url, { signal: controller.signal })
+    const reader = response.body!.getReader()
+    await reader.read()
+    controller.abort()
+    await expect(reader.read()).rejects.toMatchObject({ name: 'AbortError' })
+  })
+
+  it('does not bound a binary upload, whose send time grows with its size', async () => {
+    const productFetch = createProductFetch({ fetch: slowToRespond(80).fetch, timeoutMs: 20 })
+    const upload = new Blob([new Uint8Array(1024)], { type: 'video/mp4' })
+    for (const body of [upload, new File([upload], 'clip.mp4'), new Uint8Array(8), new FormData()]) {
+      await expect(productFetch('/api/upload', { method: 'POST', body })).resolves.toMatchObject({ status: 200 })
+    }
+    await expect(productFetch('/api/rpc', { method: 'POST', body: '{}' }))
+      .rejects.toMatchObject({ name: 'SourceError', message: 'Request timed out after 20 ms' })
+  })
+
   it('keeps the platform AbortError when the caller cancels', async () => {
     const { fetch } = recorder(call => new Promise<Response>((_, reject) => {
       call.init?.signal?.addEventListener('abort', () => reject(call.init!.signal!.reason))
@@ -129,6 +239,22 @@ describe('createProductFetch', () => {
       { method: 'POST', url: '/api/ok', status: 200, requestId: 'req-0', durationMs: 5, kind: undefined },
       { method: 'GET', url: '/api/missing', status: 404, requestId: 'req-1', durationMs: 5, kind: 'not_found' },
     ])
+  })
+})
+
+describe('sent request ids', () => {
+  it('reach a typed error built from the returned response when the server echoes none', async () => {
+    // The Dashboard path: useDataSource types a failed response itself,
+    // without ensureOk and without knowing which id the transport sent.
+    const { fetch } = recorder(() => new Response(null, { status: 503 }))
+    const response = await createProductFetch({ fetch, newRequestId: () => 'req-503' })('/api/source')
+    await expect(sourceErrorFromResponse(response)).resolves.toMatchObject({ kind: 'unavailable', requestId: 'req-503' })
+  })
+
+  it('yield to the id the server echoes', async () => {
+    const { fetch } = recorder(() => new Response(null, { status: 503, headers: { 'X-Request-Id': 'server-9' } }))
+    const response = await createProductFetch({ fetch, newRequestId: () => 'req-503' })('/api/source')
+    await expect(sourceErrorFromResponse(response)).resolves.toMatchObject({ requestId: 'server-9' })
   })
 })
 
