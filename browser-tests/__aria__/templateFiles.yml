@@ -22,7 +22,6 @@
     - listitem:
       - link "Activity":
         - /url: "#/activity"
-  - text: Object types
   - list "Object types":
     - listitem:
       - link "Customer 71":
@@ -33,7 +32,6 @@
     - listitem:
       - link "Order 3.1K":
         - /url: "#/explore?type=order"
-  - text: Platform
   - list "Platform":
     - listitem:
       - link "Storage":
@@ -44,7 +42,7 @@
     - listitem:
       - link "Operations":
         - /url: "#/operations"
-  - button "Collapse navigation" [expanded]
+  - button "Expand navigation"
 - main:
   - navigation "Breadcrumbs":
     - list:
@@ -77,69 +75,62 @@
   - separator "Resize folders"
   - grid "Files in finance":
     - rowgroup:
-      - row "Name Kind Object Size Updated Owner":
+      - row "Name Object Size Updated Owner":
         - columnheader "Name"
-        - columnheader "Kind"
         - columnheader "Object"
         - columnheader "Size"
         - columnheader "Updated"
         - columnheader "Owner"
     - rowgroup:
-      - row "2026 Folder — — Sep 24, 2026, 2:12 AM Finance team":
+      - row "2026 — — Sep 24, 2026, 2:12 AM Finance team":
         - gridcell "2026":
           - link "2026":
             - /url: "#/files/finance/2026"
-        - gridcell "Folder"
         - gridcell "—"
         - gridcell "—"
         - gridcell "Sep 24, 2026, 2:12 AM":
           - time: Sep 24, 2026, 2:12 AM
         - gridcell "Finance team"
-      - row "q3-forecast.csv CSV Revenue forecast 48.2 kB Sep 24, 2026, 9:02 AM Ada Morgan" [selected]:
+      - row "q3-forecast.csv Revenue forecast 48.2 kB Sep 24, 2026, 9:02 AM Ada Morgan" [selected]:
         - gridcell "q3-forecast.csv":
           - link "q3-forecast.csv":
             - /url: "#/files/finance/q3-forecast.csv"
-        - gridcell "CSV"
         - gridcell "Revenue forecast"
         - gridcell "48.2 kB"
         - gridcell "Sep 24, 2026, 9:02 AM":
           - time: Sep 24, 2026, 9:02 AM
         - gridcell "Ada Morgan"
-      - row "northstar-msa.pdf PDF Northstar master agreement 2.4 MB Sep 22, 2026, 4:40 AM Legal":
+      - row "northstar-msa.pdf Northstar master agreement 2.4 MB Sep 22, 2026, 4:40 AM Legal":
         - gridcell "northstar-msa.pdf":
           - link "northstar-msa.pdf":
             - /url: "#/files/finance/northstar-msa.pdf"
-        - gridcell "PDF"
         - gridcell "Northstar master agreement"
         - gridcell "2.4 MB"
         - gridcell "Sep 22, 2026, 4:40 AM":
           - time: Sep 22, 2026, 4:40 AM
         - gridcell "Legal"
-      - row "renewal-notes.md Markdown — 3.1 kB Sep 21, 2026, 1:15 AM Jamie Kim":
+      - row "renewal-notes.md — 3.1 kB Sep 21, 2026, 1:15 AM Jamie Kim":
         - gridcell "renewal-notes.md":
           - link "renewal-notes.md":
             - /url: "#/files/finance/renewal-notes.md"
-        - gridcell "Markdown"
         - gridcell "—"
         - gridcell "3.1 kB"
         - gridcell "Sep 21, 2026, 1:15 AM":
           - time: Sep 21, 2026, 1:15 AM
         - gridcell "Jamie Kim"
-      - row "org-chart.png PNG image — 812 kB Sep 2, 2026, 7:30 AM Daniel Reyes":
+      - row "org-chart.png — 812 kB Sep 2, 2026, 7:30 AM Daniel Reyes":
         - gridcell "org-chart.png":
           - link "org-chart.png":
             - /url: "#/files/finance/org-chart.png"
-        - gridcell "PNG image"
         - gridcell "—"
         - gridcell "812 kB"
         - gridcell "Sep 2, 2026, 7:30 AM":
           - time: Sep 2, 2026, 7:30 AM
         - gridcell "Daniel Reyes"
-      - row "crm-mapping.json JSON — 9.8 kB Aug 28, 2026, 3:00 AM Sync CRM":
+      - row "crm-mapping.json — 9.8 kB Aug 28, 2026, 3:00 AM Sync CRM":
         - gridcell "crm-mapping.json":
           - link "crm-mapping.json":
             - /url: "#/files/finance/crm-mapping.json"
-        - gridcell "JSON"
         - gridcell "—"
         - gridcell "9.8 kB"
         - gridcell "Aug 28, 2026, 3:00 AM":

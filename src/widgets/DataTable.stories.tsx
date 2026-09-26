@@ -107,8 +107,8 @@ export const WatchlistFit: Story = {
   },
 }
 
-// Narrower than its content: the text column gives way and the numbers stay
-// whole; what still does not fit scrolls rather than cutting a value.
+// Narrower than its content: the text column gives way, ending its names in
+// an ellipsis, because that lets every column fit; the numbers stay whole.
 export const NarrowFit: Story = {
   name: 'Narrow table keeps numbers whole',
   render: args => (

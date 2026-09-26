@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type FocusEvent,
   type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
@@ -71,13 +72,20 @@ export interface DataGridColumn<Row> {
   format?: string
   /** Status tones for enum values. */
   tones?: Readonly<Record<string, StatusTone>>
-  /** Custom cell content. Keep it one line; rows have a fixed height. */
+  /**
+   * Custom cell content. Keep it one line; rows have a fixed height. It sits
+   * in a one-line box that ends in an ellipsis when the column is narrower
+   * than it; a flex layout inside needs `min-width: 0` and a truncating
+   * label to do the same.
+   */
   cell?: (row: Row, context: DataGridCellContext) => ReactNode
   /**
    * Width in pixels. Unset, the column is sized to its content (its header
-   * and the rows in view, at most 360 px), and a text column gives way when
-   * the grid is narrower than its columns; numbers, dates and Yes/No never
-   * do, so the grid scrolls rather than cut a value.
+   * and the rows in view, at most 360 px). When the grid is narrower than
+   * its columns, text columns give way, ending their values in an ellipsis,
+   * but only if that lets every column fit; otherwise every column keeps
+   * its width and the grid scrolls sideways. Numbers, dates, Yes/No and
+   * chips (enum values, lists, object links) never give way.
    */
   width?: number
   /**
@@ -185,15 +193,47 @@ type RenderedColumn<Row> =
   | { kind: 'select'; width: number }
   | { kind: 'data'; column: DataGridColumn<Row>; width: number; contentSized: boolean }
 
-// Kinds whose text must never be cut: they keep their width and the grid
-// scrolls instead.
-const RIGID_KINDS = new Set<PropertyKind>(['number', 'integer', 'currency', 'percent', 'bytes', 'date', 'datetime', 'boolean'])
+// Kinds that keep their width: numbers, dates and Yes/No read wrong when
+// shortened, and chips (enum values, lists, object links) are whole tokens.
+// The grid scrolls instead.
+const RIGID_KINDS = new Set<PropertyKind>([
+  'number', 'integer', 'currency', 'percent', 'bytes', 'date', 'datetime', 'boolean', 'enum', 'list', 'link',
+])
 
 /** Whether a content-sized column may give way: start-aligned text. */
 function isTextColumn<Row>(column: DataGridColumn<Row>, sample: unknown): boolean {
   if (column.align === 'end') return false
   if (column.cell && !column.kind && !column.format) return true
   return !RIGID_KINDS.has(resolvePropertyKind(sample, column.kind, column.format).kind)
+}
+
+/**
+ * Whether a cell's content is cut short: some part of it is wider than a box
+ * that clips it. The grid's own styles end every such cut in an ellipsis.
+ */
+function isCutShort(cell: HTMLElement): boolean {
+  for (const element of [cell, ...cell.querySelectorAll('*')]) {
+    if (element.scrollWidth > element.clientWidth + 1 && getComputedStyle(element).overflowX !== 'visible') return true
+  }
+  return false
+}
+
+/** A cell's text on one line: its values, separated by commas. */
+function cellText(cell: HTMLElement): string {
+  return (cell.innerText ?? cell.textContent ?? '')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .join(', ')
+}
+
+/** `:focus-visible`, where the engine supports it. */
+function hasVisibleFocus(element: HTMLElement): boolean {
+  try {
+    return element.matches(':focus-visible')
+  } catch {
+    return false
+  }
 }
 
 function isEditableTarget(target: EventTarget | null): boolean {
@@ -275,6 +315,9 @@ export function DataGrid<Row>({
   }))
   const [viewport, setViewport] = useState({ scrollTop: 0, height: 600, width: 0 })
   const [menu, setMenu] = useState<{ rowIndex: number; x: number; y: number } | null>(null)
+  // The full value of the keyboard-focused cell when the cell cuts it short.
+  const [valueTip, setValueTip] = useState<{ row: number; column: number; left: number; top: number; width: number; height: number } | null>(null)
+  const tipRef = useRef<HTMLDivElement>(null)
 
   const displayRows = useMemo(() => {
     if (sortMode !== 'client' || !activeSort) return rows
@@ -434,6 +477,7 @@ export function DataGrid<Row>({
   const onScroll = () => {
     const element = viewportRef.current
     if (!element) return
+    if (valueTip) setValueTip(null)
     const next = rowWindow(displayRows.length, element.scrollTop, element.clientHeight, lineHeight, overscan, virtual)
     const nextNearEnd = element.scrollTop + element.clientHeight >= endThreshold(displayRows.length)
     if (next.start !== range.start || next.end !== range.end || (onEndReached && nextNearEnd !== nearEnd)) {
@@ -528,6 +572,11 @@ export function DataGrid<Row>({
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (isEditableTarget(event.target) || menu) return
+    if (event.key === 'Escape' && valueTip) {
+      event.stopPropagation()
+      setValueTip(null)
+      return
+    }
     const { row, column } = active
     const rowCount = displayRows.length
     const pageRows = Math.max(1, Math.floor((viewportRef.current?.clientHeight ?? lineHeight * 10) / lineHeight) - 1)
@@ -620,6 +669,8 @@ export function DataGrid<Row>({
     document.addEventListener('pointerup', onUp)
   }
 
+  // A value cut short stays reachable: a pointer gets it as the cell's
+  // title, keyboard focus shows it whole over the cell.
   const cellProps = (rowIndex: number, columnIndex: number) => {
     const isActive = active.row === rowIndex && active.column === columnIndex
     const offset = pinnedOffsets.get(columnIndex)
@@ -631,10 +682,48 @@ export function DataGrid<Row>({
       'aria-colindex': columnIndex + 1,
       'data-pinned': offset !== undefined || undefined,
       style: offset !== undefined ? { left: offset } : undefined,
-      onFocus: () => {
+      onFocus: (event: FocusEvent<HTMLDivElement>) => {
         if (!isActive) setActive({ row: rowIndex, column: columnIndex })
+        const cell = event.currentTarget
+        if (entry?.kind === 'data' && hasVisibleFocus(cell) && isCutShort(cell)) {
+          const rect = cell.getBoundingClientRect()
+          setValueTip({ row: rowIndex, column: columnIndex, left: rect.left, top: rect.top, width: rect.width, height: rect.height })
+        } else {
+          setValueTip(null)
+        }
+      },
+      onBlur: () => setValueTip(null),
+      onPointerEnter: (event: PointerEvent<HTMLDivElement>) => {
+        const cell = event.currentTarget
+        if (isCutShort(cell)) cell.title = cellText(cell)
+        else cell.removeAttribute('title')
       },
     }
+  }
+
+  // Keep the value tip inside the window: it grows to the right of its
+  // cell and moves left when it would pass the edge.
+  useLayoutEffect(() => {
+    const tip = tipRef.current
+    if (!tip || !valueTip) return
+    const edge = document.documentElement.clientWidth - 8
+    const overflow = valueTip.left + tip.offsetWidth - edge
+    tip.style.left = `${Math.max(8, overflow > 0 ? valueTip.left - overflow : valueTip.left)}px`
+  }, [valueTip])
+
+  const cellContent = (column: DataGridColumn<Row>, row: Row, rowIndex: number, selected: boolean): ReactNode => {
+    const value = cellValue(column, row)
+    return column.cell
+      ? <span className="mtc-data-grid-cell-text">{column.cell(row, { value, rowIndex, selected })}</span>
+      : (
+        <PropertyValue
+          value={value}
+          kind={column.kind}
+          format={column.format}
+          tones={column.tones}
+          context="grid"
+        />
+      )
   }
 
   const rowIndices: number[] = []
@@ -775,20 +864,9 @@ export function DataGrid<Row>({
                     )
                   }
                   const { column } = entry
-                  const value = cellValue(column, row)
-                  const resolved = resolvePropertyKind(value, column.kind, column.format)
+                  const resolved = resolvePropertyKind(cellValue(column, row), column.kind, column.format)
                   const numeric = column.align === 'end' || (!column.align && !column.cell && isNumericKind(resolved.kind))
-                  const content = column.cell
-                    ? column.cell(row, { value, rowIndex, selected })
-                    : (
-                      <PropertyValue
-                        value={value}
-                        kind={column.kind}
-                        format={column.format}
-                        tones={column.tones}
-                        context="grid"
-                      />
-                    )
+                  const content = cellContent(column, row, rowIndex, selected)
                   return (
                     <div
                       key={column.id}
@@ -844,6 +922,31 @@ export function DataGrid<Row>({
         </div>
       </div>
       {footer && <div className="mtc-data-grid-footer">{footer}</div>}
+      {valueTip && (() => {
+        const entry = renderedColumns[valueTip.column]
+        const row = valueTip.row >= 0 ? displayRows[valueTip.row] : undefined
+        if (entry?.kind !== 'data' || (valueTip.row >= 0 && row === undefined)) return null
+        const numeric = entry.column.align === 'end'
+          || (!entry.column.align && !entry.column.cell && isNumericKind(resolvePropertyKind(row === undefined ? undefined : cellValue(entry.column, row), entry.column.kind, entry.column.format).kind))
+        // A visual aid only: the cell's accessible name already carries
+        // the whole value, so the tip is hidden from assistive technology.
+        const tip = (
+          <div
+            ref={tipRef}
+            aria-hidden="true"
+            inert
+            className={cx('mtc-data-grid-value-tip', density && `mtc-density-${density}`)}
+            data-header={row === undefined || undefined}
+            data-align={numeric ? 'end' : 'start'}
+            style={{ left: valueTip.left, top: valueTip.top, minWidth: valueTip.width, height: valueTip.height }}
+          >
+            {row === undefined
+              ? entry.column.header
+              : cellContent(entry.column, row, valueTip.row, selectedSet.has(keys[valueTip.row] ?? ''))}
+          </div>
+        )
+        return portal ? createPortal(tip, portal) : tip
+      })()}
       {menu && menuRow !== undefined && contextActions && (() => {
         const layer = (
           <div ref={menuRef} className="mtc-data-grid-menu-layer">

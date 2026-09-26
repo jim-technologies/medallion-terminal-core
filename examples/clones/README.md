@@ -26,6 +26,16 @@ when its visible text or an accessible name (label, title, placeholder, alt)
 says one of the referenced products, vendors or their branded features; add
 a name there when a new clone references a new product.
 
+## Type and colour
+
+A clone keeps the type sizes, letter spacing and density of the product it
+reproduces, in its own stylesheet (brand colours excepted, see Neutral
+names), because it is a fidelity reference the toolkit is judged against.
+That is why the style guard's 11 px floor and sentence-case rule do not
+apply here (`DESIGN.md`, Typography): they govern Medallion surfaces, and
+nothing outside `examples/clones` may copy a clone's sizes or colours. Clone
+stories still use `--mtc-*` frame backgrounds.
+
 ## Catalog rule
 
 Organize every showcase by vendor first, then by product or shared product

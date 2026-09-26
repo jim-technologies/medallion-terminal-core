@@ -607,7 +607,6 @@ const FILE_COLUMNS: DataGridColumn<FileRow>[] = [
     primary: true,
     pinned: true,
   },
-  { id: 'kind', header: 'Kind', accessor: row => FILE_KINDS[row.kind] },
   { id: 'semantic', header: 'Object', accessor: row => row.semanticType, kind: 'link' },
   { id: 'size', header: 'Size', accessor: row => row.size, kind: 'bytes' },
   { id: 'updated', header: 'Updated', accessor: row => row.updated, kind: 'datetime' },
@@ -640,7 +639,7 @@ function FilesTemplate() {
     </Inspector>
   )
   return (
-    <WorkspaceFrame active="files" inspector={inspector}>
+    <WorkspaceFrame active="files" railCollapsed inspector={inspector}>
       <div className="flex h-full min-h-0 flex-col">
         <PageHeader
           breadcrumbs={[{ label: 'Files', href: '#/files' }, { label: 'Shared', href: '#/files/shared' }, { label: 'finance' }]}
@@ -658,7 +657,7 @@ function FilesTemplate() {
         />
         <div className="flex min-h-[24rem] flex-1 flex-col px-4 pt-4 pb-4 md:px-6">
           <SplitPane
-            defaultSize={26}
+            defaultSize={22}
             minSize={18}
             maxSize={40}
             stackOnNarrow
@@ -780,7 +779,6 @@ const BUCKET_COLUMNS: DataGridColumn<BucketRow>[] = [
     pinned: true,
   },
   { id: 'used', header: 'Used', accessor: row => row.used, cell: row => `${formatBytes(row.used)} of ${formatBytes(row.quota)}`, sortValue: row => row.used },
-  { id: 'usage', header: 'Usage', accessor: row => row.used / row.quota, format: 'percent' },
   { id: 'objects', header: 'Objects', accessor: row => row.objects, kind: 'integer' },
   { id: 'class', header: 'Class', accessor: row => row.storageClass, kind: 'enum' },
   { id: 'versioning', header: 'Versioning', accessor: row => row.versioning, kind: 'boolean' },

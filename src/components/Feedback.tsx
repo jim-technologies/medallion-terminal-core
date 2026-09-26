@@ -41,7 +41,7 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
       data-intent={intent}
       data-size={size}
     >
-      <span>{children}</span>
+      <span className="mtc-tag-label">{children}</span>
       {onRemove && (
         <button type="button" onClick={onRemove} aria-label={removeLabel ?? t('tag.remove')} className="mtc-tag-remove">
           <Icon name="close" />
@@ -74,7 +74,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       data-size={size}
     >
       {dot && <span className="mtc-badge-dot" aria-hidden="true" />}
-      {children}
+      <span className="mtc-badge-label">{children}</span>
     </span>
   )
 })

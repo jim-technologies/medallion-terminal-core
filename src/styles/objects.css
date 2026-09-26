@@ -44,6 +44,8 @@
 .mtc-root .mtc-value-boolean[data-value="true"] .mtc-icon { color: var(--mtc-ok); }
 .mtc-root .mtc-value-list { display: inline-flex; min-width: 0; max-width: 100%; flex-wrap: wrap; align-items: center; gap: var(--mtc-space-1); }
 .mtc-root .mtc-value-list[data-context="grid"] { flex-wrap: nowrap; overflow: hidden; }
+.mtc-root .mtc-value-list[data-context="grid"] > * { min-width: 0; }
+.mtc-root .mtc-value-list[data-context="grid"] > .mtc-value-more { flex: none; }
 .mtc-root .mtc-value-chip { max-width: 100%; }
 .mtc-root .mtc-value-link { position: relative; display: inline-flex; min-width: 0; max-width: 100%; align-items: center; gap: var(--mtc-space-1); color: var(--mtc-link); }
 .mtc-root .mtc-value-link:hover .mtc-value-link-text { text-decoration: underline; text-underline-offset: 2px; }

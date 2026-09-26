@@ -124,10 +124,23 @@ describe('fitColumnWidths', () => {
     expect(fitColumnWidths([name, text(200, 72), rigid(100)], 400)).toEqual([170, 130, 100])
   })
 
-  it('never shrinks below a minimum or touches numbers, and scrolls the rest', () => {
-    const widths = fitColumnWidths([text(300, 120), rigid(140), rigid(160)], 320)
-    expect(widths).toEqual([120, 140, 160])
-    expect(sum(widths)).toBeGreaterThan(320)
+  it('keeps every natural width and scrolls when even the minimums do not fit', () => {
+    // The fixed columns fit, but not with the text column at its minimum:
+    // shrinking it would cut its value and still scroll.
+    expect(fitColumnWidths([text(300, 120), rigid(140), rigid(160)], 320)).toEqual([300, 140, 160])
+    // The fixed columns alone overflow: nothing gives way.
+    expect(fitColumnWidths([text(150, 72), rigid(200), rigid(200)], 300)).toEqual([150, 200, 200])
     expect(fitColumnWidths([rigid(200), rigid(200)], 300)).toEqual([200, 200])
+    // Both tiers together have 102 px of room: 103 px too wide scrolls,
+    // 102 px lands every shrinking column on its minimum.
+    const name = { width: 170, min: 96, shrink: true, tier: 1 }
+    expect(fitColumnWidths([name, text(100, 72), rigid(200)], 367)).toEqual([170, 100, 200])
+    expect(fitColumnWidths([name, text(100, 72), rigid(200)], 368)).toEqual([96, 72, 200])
+  })
+
+  it('never shrinks below a minimum when shrinking makes the columns fit', () => {
+    const widths = fitColumnWidths([text(300, 120), rigid(140), rigid(160)], 420)
+    expect(widths).toEqual([120, 140, 160])
+    expect(sum(widths)).toBe(420)
   })
 })

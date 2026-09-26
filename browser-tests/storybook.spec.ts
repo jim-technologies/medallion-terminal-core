@@ -91,6 +91,7 @@ const toolkitStories = {
   toolkitDataGridLarge: 'toolkit-workbench-datagrid--ten-thousand-rows',
   toolkitDataGridActions: 'toolkit-workbench-datagrid--context-actions-and-paging',
   toolkitDataGridEmpty: 'toolkit-workbench-datagrid--empty-and-loading',
+  toolkitDataGridNarrow: 'toolkit-workbench-datagrid--narrow-columns',
   toolkitLinkPanel: 'toolkit-objects-links--link-panel-groups',
   toolkitLinkGraph: 'toolkit-objects-links--one-hop-graph',
   toolkitLinkGraphCapped: 'toolkit-objects-links--capped-graph',
@@ -670,7 +671,7 @@ test('Files template previews the selected file in the inspector', async ({ page
   const root = await openStory(page, stories.templateFiles)
   const inspector = root.getByRole('complementary', { name: 'Selected file' })
   await expect(inspector.getByRole('grid', { name: 'q3-forecast.csv' })).toBeVisible()
-  await root.getByRole('grid', { name: 'Files in finance' }).getByRole('gridcell', { name: 'Markdown' }).click()
+  await root.getByRole('grid', { name: 'Files in finance' }).getByRole('gridcell', { name: '3.1 kB' }).click()
   await expect(inspector.getByRole('heading', { name: 'renewal-notes.md' })).toBeVisible()
   await expect(inspector.getByRole('grid')).toHaveCount(0)
 })
@@ -754,6 +755,83 @@ test('The flagship watchlist shows every column whole at 1440 px', async ({ page
     }
   })
   expect(fit).toEqual({ overflow: 0, hiddenHeaders: [], clipped: [] })
+})
+
+// Every grid value on the page is whole or ends in an ellipsis. A box that
+// clips its content passes only as a block container with `text-overflow:
+// ellipsis` whose overflowing content is inline (an ellipsis is never drawn
+// for a block child); anything else is a silent cut. A status dot or icon
+// squeezed to nothing counts as collapsed. Measured from layout, so a cut
+// that looks tidy in a screenshot still fails.
+async function gridValueFit(page: Page): Promise<{ cut: string[]; ellipsised: string[]; collapsed: string[] }> {
+  return page.evaluate(() => {
+    const blockContainer = new Set(['block', 'inline-block', 'flow-root', 'list-item', 'table-cell'])
+    const cut = new Set<string>()
+    const ellipsised = new Set<string>()
+    const collapsed = new Set<string>()
+    for (const cell of document.querySelectorAll<HTMLElement>('#storybook-root [role="gridcell"], #storybook-root [role="columnheader"]')) {
+      const label = `${cell.closest('[role="grid"]')?.getAttribute('aria-label')}: ${(cell.textContent ?? '').trim()}`
+      for (const element of [cell, ...cell.querySelectorAll('*')]) {
+        // Not rendered (inside a hidden pane): nothing to cut.
+        if (element.getClientRects().length === 0) continue
+        const style = getComputedStyle(element)
+        const box = element.getBoundingClientRect()
+        if ((element instanceof SVGSVGElement || element.classList.contains('mtc-badge-dot')) && box.width < 1) collapsed.add(label)
+        if (style.overflowX === 'visible' || element.scrollWidth <= element.clientWidth + 1) continue
+        const blockSpill = [...element.children].some(child => (
+          !getComputedStyle(child).display.startsWith('inline') && child.getBoundingClientRect().right > box.right + 1
+        ))
+        if (style.textOverflow === 'ellipsis' && blockContainer.has(style.display) && !blockSpill) ellipsised.add(label)
+        else cut.add(label)
+      }
+    }
+    return { cut: [...cut], ellipsised: [...ellipsised], collapsed: [...collapsed] }
+  })
+}
+
+// The reference pages never cut a value: on a desktop every value is
+// whole (a grid too wide for its pane scrolls sideways instead), and on a
+// phone a value may end in an ellipsis but is never cut.
+for (const width of [1440, 390]) {
+  test(`Page template grids show every value whole${width < 1440 ? ' or ellipsised' : ''} at ${width} px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 })
+    for (const [name, id] of Object.entries(templateStories)) {
+      await openStory(page, id)
+      const fit = await gridValueFit(page)
+      expect(fit.cut, `${name} cut values`).toEqual([])
+      expect(fit.collapsed, `${name} collapsed marks`).toEqual([])
+      if (width === 1440) expect(fit.ellipsised, `${name} values cut short`).toEqual([])
+    }
+  })
+}
+
+test('DataGrid ends a value it cuts short in an ellipsis and keeps it reachable', async ({ page }) => {
+  const root = await openStory(page, stories.toolkitDataGridNarrow)
+  const fit = await gridValueFit(page)
+  expect(fit.cut).toEqual([])
+  expect(fit.collapsed).toEqual([])
+  // The story does cut values short: text columns giving way, and every
+  // typed kind in columns set narrower than their values.
+  expect(fit.ellipsised).toEqual(expect.arrayContaining([
+    'Documents: quarterly-board-review-final.pdf',
+    'Documents: finance/board/2026/q3/quarterly-board-review-final.pdf',
+    'Documents: Signed by the audit committee',
+    'Set widths: $1,284,500.25',
+    'Set widths: Near quota',
+    'Set widths: Naomie Park',
+  ]))
+  // A pointer gets the whole value as the cell's title.
+  const note = root.getByRole('grid', { name: 'Documents' }).getByRole('gridcell', { name: 'Signed by the audit committee' })
+  await note.hover()
+  await expect(note).toHaveAttribute('title', 'Signed by the audit committee')
+  const tags = root.getByRole('grid', { name: 'Set widths' }).getByRole('gridcell', { name: /^Finance/ })
+  await tags.hover()
+  await expect(tags).toHaveAttribute('title', 'Finance, Board, +1')
+  // Keyboard focus shows it whole over the cell.
+  await note.click()
+  await page.keyboard.press('ArrowLeft')
+  await page.keyboard.press('ArrowRight')
+  await expect(page.locator('.mtc-data-grid-value-tip')).toHaveText('Signed by the audit committee')
 })
 
 test('DataGrid keeps ten thousand rows under 1,500 DOM nodes at every scroll offset', async ({ page }) => {

@@ -3,25 +3,7 @@
 // examples built on it (examples/**, except the clone showcases).
 //
 // Colour, type size and letter-spacing come from the scoped --mtc-* tokens
-// (see DESIGN.md). This script fails when production code introduces:
-//
-//   color-literal   a hex, rgb(), rgba(), hsl() or hsla() colour outside a
-//                   `--mtc-*` / Tailwind `--color-*` custom-property
-//                   declaration in src/index.css
-//   arbitrary-color a Tailwind arbitrary colour class such as bg-[#123456]
-//   font-size       text-[Npx] below 11 px or off the 11/12/13/14/16/20/24
-//                   scale
-//   tracking        an arbitrary tracking-[…] letter-spacing
-//   micro-label     an uppercase or letter-spaced label (`uppercase`,
-//                   `tracking-wide*`, `text-transform: uppercase`); labels
-//                   are sentence case (DESIGN.md)
-//   blur            a backdrop-filter blur (surfaces are flat; overlays
-//                   carry elevation, not frosted glass)
-//   story-frame     in a story (src/ or examples/, clones included), a frame `background`
-//                   string that is not a --mtc-* token: a hex, rgb()/hsl(),
-//                   a named colour such as 'black' or 'white', a gradient.
-//                   Frames use --mtc-surface / --mtc-border so every theme
-//                   previews on its own canvas
+// (see DESIGN.md); the rules are in scripts/style-token-rules.mjs.
 //
 // Existing debt is a ratchet, not a pass: scripts/style-token-budget.json
 // records the violations each file had when the guard landed (documented
@@ -32,35 +14,24 @@
 //
 // Stories, tests, fixtures and generated code are exempt from the other
 // rules: fixtures may use literal values, and generated code is not
-// authored. Stories still get the story-frame rule. The clone showcases
-// under examples/clones reproduce other products' density with their own
-// authored stylesheets, so only their stories are scanned (story-frame);
-// every other example (the custom widget, the readiness workspace) is held
-// to the production rules, so the 11 px floor covers what the examples
-// teach.
+// authored. Stories still get the story-frame rule.
+//
+// Scope of the type rules (DESIGN.md, Typography): the 11 px floor and
+// sentence-case labels govern what ships as Medallion, so every source file
+// and every example built on the toolkit (the custom widget, the readiness
+// workspace) is held to them. The clone showcases under examples/clones are
+// exempt on purpose: each reproduces another product's density at the sizes
+// that product ships, from its own authored stylesheet rather than the
+// --mtc-* tokens, so the toolkit can be judged against it. They are
+// fidelity references, not Medallion surfaces, so only their stories are
+// scanned (story-frame).
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { isStory, violations } from './style-token-rules.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const budgetPath = path.join(root, 'scripts/style-token-budget.json')
-const TYPE_SCALE = new Set([11, 12, 13, 14, 16, 20, 24])
-
-const rules = {
-  'color-literal': /#[0-9a-fA-F]{3,8}\b(?![-\w])|\b(?:rgba?|hsla?)\(/g,
-  'arbitrary-color': /\b(?:bg|text|border(?:-[trblxy])?|fill|stroke|from|via|to|ring|outline|decoration|shadow|accent|caret|divide)-\[(?:#|rgba?\(|hsla?\()/g,
-  'font-size': /\btext-\[(\d+(?:\.\d+)?)px\]/g,
-  tracking: /\btracking-\[[^\]]+\]/g,
-  'micro-label': /\b(?:uppercase|tracking-(?:wide|wider|widest))\b|text-transform:\s*uppercase/g,
-  blur: /\bbackdrop-blur\b|\bbackdrop-filter\s*:|\bbackdropFilter\b/g,
-}
-
-// Any quoted background except one --mtc-* token or a colourless keyword.
-const storyRules = {
-  'story-frame': /\bbackground(?:Color)?:\s*(['"`])(?!(?:var\(--mtc-[\w-]+\)|transparent|none|inherit)\1)[^'"`]*\1/g,
-}
-
-const isStory = relative => /\.stories\.[cm]?[jt]sx?$/.test(relative)
 
 function exempt(relative) {
   return /(?:^|\/)(?:__tests__|gen|fonts)\//.test(relative)
@@ -74,35 +45,6 @@ function* sourceFiles(dir) {
     if (entry.isDirectory()) yield* sourceFiles(absolute)
     else if (/\.(?:ts|tsx|css)$/.test(entry.name)) yield absolute
   }
-}
-
-function violations(relative, text) {
-  const found = []
-  const lines = text.split('\n')
-  const active = isStory(relative) ? storyRules : rules
-  lines.forEach((line, index) => {
-    // A custom-property declaration in the token stylesheet *is* the token.
-    const tokenDeclaration = relative === 'src/index.css'
-      && /^\s*--(?:mtc|color)-[\w-]+\s*:/.test(line)
-    for (const [rule, pattern] of Object.entries(active)) {
-      if (rule === 'color-literal' && tokenDeclaration) continue
-      for (const match of line.matchAll(pattern)) {
-        if (rule === 'font-size') {
-          const px = Number(match[1])
-          if (px >= 11 && TYPE_SCALE.has(px)) continue
-        }
-        if (rule === 'color-literal' && /^#[0-9a-fA-F]{3,8}$/.test(match[0])) {
-          // Ignore hex-looking fragments that are not colours: URL fragments
-          // and ids such as `#main` never reach here (non-hex), but numeric
-          // anchors like `#123` in copy do; require a colour-ish context.
-          const before = line.slice(0, match.index)
-          if (/[\w/]$/.test(before)) continue
-        }
-        found.push({ rule, line: index + 1, text: match[0] })
-      }
-    }
-  })
-  return found
 }
 
 const isClone = relative => relative.startsWith('examples/clones/')

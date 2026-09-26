@@ -1096,6 +1096,7 @@
   --mtc-chip-color: var(--mtc-muted-strong);
   --mtc-chip-bg: var(--mtc-panel);
   display: inline-flex;
+  max-width: 100%;
   min-height: 1.25rem;
   align-items: center;
   gap: 0.375rem;
@@ -1120,7 +1121,11 @@
 .mtc-root[data-theme="high-contrast"] :where(.mtc-tag, .mtc-badge) { --mtc-chip-border: var(--mtc-chip-color); }
 .mtc-root .mtc-tag-remove { display: inline-flex; width: 1rem; height: 1rem; align-items: center; justify-content: center; margin-right: -0.25rem; border-radius: 2px; color: inherit; }
 .mtc-root .mtc-tag-remove:hover { background: color-mix(in oklab, var(--mtc-chip-color) 16%, transparent); }
-.mtc-root .mtc-badge-dot { width: 0.375rem; height: 0.375rem; border-radius: var(--mtc-radius-round); background: currentColor; }
+.mtc-root .mtc-badge-dot { width: 0.375rem; height: 0.375rem; flex: none; border-radius: var(--mtc-radius-round); background: currentColor; }
+/* A chip narrower than its label ends it in an ellipsis; the dot and the
+   remove button keep their size. */
+.mtc-root :where(.mtc-tag-label, .mtc-badge-label) { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.mtc-root .mtc-tag-remove { flex: none; }
 
 .mtc-root .mtc-callout {
   --mtc-callout-color: var(--mtc-info-soft);

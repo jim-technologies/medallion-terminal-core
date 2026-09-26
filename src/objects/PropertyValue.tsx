@@ -122,7 +122,7 @@ function ValueView({
       return (
         <span className="mtc-value-boolean" data-value={truthy}>
           <Icon name={truthy ? 'check' : 'close'} />
-          {truthy ? t('value.yes') : t('value.no')}
+          <span className="mtc-value-boolean-label">{truthy ? t('value.yes') : t('value.no')}</span>
         </span>
       )
     }
@@ -148,7 +148,7 @@ function ValueView({
           ))}
           {rest.length > 0 && (
             <Tag
-              className="mtc-value-chip"
+              className="mtc-value-chip mtc-value-more"
               title={t('value.moreTitle', {
                 count: rest.length,
                 items: rest.map(item => formatPropertyText(item, resolvePropertyKind(item), text)).join(', '),

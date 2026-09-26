@@ -27,13 +27,20 @@ export interface DataGridColumn<Row> {
     format?: string;
     /** Status tones for enum values. */
     tones?: Readonly<Record<string, StatusTone>>;
-    /** Custom cell content. Keep it one line; rows have a fixed height. */
+    /**
+     * Custom cell content. Keep it one line; rows have a fixed height. It sits
+     * in a one-line box that ends in an ellipsis when the column is narrower
+     * than it; a flex layout inside needs `min-width: 0` and a truncating
+     * label to do the same.
+     */
     cell?: (row: Row, context: DataGridCellContext) => ReactNode;
     /**
      * Width in pixels. Unset, the column is sized to its content (its header
-     * and the rows in view, at most 360 px), and a text column gives way when
-     * the grid is narrower than its columns; numbers, dates and Yes/No never
-     * do, so the grid scrolls rather than cut a value.
+     * and the rows in view, at most 360 px). When the grid is narrower than
+     * its columns, text columns give way, ending their values in an ellipsis,
+     * but only if that lets every column fit; otherwise every column keeps
+     * its width and the grid scrolls sideways. Numbers, dates, Yes/No and
+     * chips (enum values, lists, object links) never give way.
      */
     width?: number;
     /**

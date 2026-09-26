@@ -49,6 +49,11 @@ from toolkit exports are the reference for product pages.
   (header and rows in view, at most 360 px) and fitted to the grid, instead
   of 160 px each. Pass `width` for a fixed column; `minWidth` is now also
   how far a content-sized text column gives way.
+- **Cell and chip markup gained one wrapper each.** Custom `cell` content
+  renders inside `span.mtc-data-grid-cell-text`, `Badge` children inside
+  `span.mtc-badge-label` and `Tag` children inside `span.mtc-tag-label`, so
+  each can end in an ellipsis. A host selector that expected the content as
+  a direct child of the cell or chip needs the wrapper in its path.
 - **`OperationsTray` starts collapsed on phones** (720 px and narrower)
   unless `defaultOpen` is given.
 
@@ -207,7 +212,9 @@ from toolkit exports are the reference for product pages.
 - Text sort keys compare with one shared `Intl.Collator` (a 10,000-row text
   sort went from ~500 ms to ~30 ms).
 - **Widgets follow the v2 type scale.** No widget, dashboard chrome or
-  example renders text under 11 px (the `--mtc-font-size-xs` step); SVG
+  toolkit-built example renders text under 11 px (the `--mtc-font-size-xs`
+  step; the clone showcases are fidelity references with their own type,
+  see `DESIGN.md`, Typography); SVG
   and chart axis labels are 11 px; small labels are sentence case without
   letter spacing instead of uppercase micro-caps (the catalog's "live"
   badge reads "Live"). The style guard's legacy budget for sizes and
@@ -266,8 +273,7 @@ from toolkit exports are the reference for product pages.
   carry an icon, and links use the toolkit link style.
 - `file_browser` sizes, modified times, types and names are typed,
   content-sized columns; the page templates, previews and stories drop
-  their fixed column widths, so the Operations and Storage templates show
-  every column at 1440 px and the product shell's phone layout keeps its
+  their fixed column widths, and the product shell's phone layout keeps its
   numbers whole.
 - On phones the product shell's operations tray is a summary bar above the
   status bar and the inspector sheet sits above it, so neither covers the
@@ -278,6 +284,54 @@ from toolkit exports are the reference for product pages.
   showcases, with their own authored stylesheets, keep only the story-frame
   rule) and rejects uppercase and letter-spaced labels as well.
 - The browser suite addresses the page templates by their exact story ids.
+
+- **`DataGrid` never cuts a value silently.** Text columns give way only
+  when that lets every column fit; when even their minimums leave the grid
+  too wide (a phone, a pane beside an inspector), every column keeps its
+  content width and the grid scrolls sideways, so a grid never both
+  truncates and scrolls. Chips (enum values, lists, object links) keep
+  their width like numbers, dates and Yes/No. Whatever is still narrower
+  than its content (a text column that gave way, a set or resized width)
+  ends in an ellipsis: custom `cell` content in its one-line box, chip and
+  badge labels (the status dot keeps its size), list chips before the "+N"
+  chip, and numbers, dates and Yes/No under a set width. The whole value
+  stays reachable: the cell's title for a pointer, shown whole over the
+  cell on keyboard focus (Escape hides it), and the cell's accessible name.
+- The Storage template's Buckets grid drops its Usage column, which
+  repeated Used as a percentage, and the Files template collapses the rail
+  (its folder tree navigates) and drops the Kind column (the icon carries
+  the kind; the inspector still lists it), so both show every value whole
+  at 1440 px. The Object explorer keeps every value whole and scrolls its
+  last column beside the inspector, as the explorer reference layout does.
+  At 390 px every template grid scrolls sideways with whole values.
+- Layout-measuring tests: every template grid at 1440 px and 390 px, and a
+  new `Narrow columns` DataGrid story (dark and light baselines), fail on a
+  box that clips a value unless it is a block container ending in
+  `text-overflow: ellipsis`, and on a status dot or icon squeezed to
+  nothing; at 1440 px no template value may be cut short at all. The
+  column-fit unit test now holds the scroll-instead case.
+- The style guard catches CSS `font-size` and `font` declarations and
+  inline or SVG `fontSize` values under 11 px, and Tailwind `text-[Nrem]`
+  sizes; its rules live in `scripts/style-token-rules.mjs` with unit tests.
+  The clone showcases stay outside the type rules on purpose (`DESIGN.md`,
+  Typography, and `examples/clones/README.md`): they reproduce another
+  product's density from their own stylesheets as fidelity references.
+- Re-recorded baselines. Changed by the grid fix: the Object explorer,
+  Files and Storage templates at both widths and the Connect, Operations
+  and Object type phone templates; new: `toolkitDataGridNarrow`. Stale
+  (their render had changed since they were recorded but stayed inside the
+  0.3% pixel tolerance; found by re-recording every baseline twice and
+  keeping the differences that repeat): the desktop Schema graph template
+  and `toolkitSchemaGraph` (11 px graph text, edges routed around nodes),
+  `toolkitLinkGraph`, `toolkitTextPreview` (JSON colours),
+  `toolkitPropertyList`, `toolkitPropertyPanel` (and compact),
+  `toolkitPropertyValues`, `toolkitSkeletonCopy`, `toolkitPageHeader`,
+  `toolkitScopedRegistry`, `toolkitHostIntent`, `toolkitModelWorkbench`,
+  `toolkitObjectWorkbench`, `toolkitAppSurface`, the four `toolkitShell*`
+  stories (formatted sizes), `toolkitDataGridActions`,
+  `toolkitDataGridEmpty`, `widgetFileBrowser`, `readiness`, and the Object
+  view and `toolkitObjectPage` phone baselines. Differences of a few
+  anti-aliased pixels that vary from run to run were left as they are.
 
 ### Fixed
 

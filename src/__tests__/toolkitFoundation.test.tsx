@@ -139,8 +139,8 @@ describe('design-system foundations', () => {
       </DesignSystemProvider>,
     )
 
-    expect(html).toContain('<span>US-West</span></span><span class="mtc-tag mtc-value-chip" data-intent="neutral" data-size="small"><span>EU-Central</span>')
-    expect(html).toContain('<span>Yes</span></span><span class="mtc-tag mtc-value-chip" data-intent="neutral" data-size="small"><span>No</span>')
+    expect(html).toContain('<span class="mtc-tag-label">US-West</span></span><span class="mtc-tag mtc-value-chip" data-intent="neutral" data-size="small"><span class="mtc-tag-label">EU-Central</span>')
+    expect(html).toContain('<span class="mtc-tag-label">Yes</span></span><span class="mtc-tag mtc-value-chip" data-intent="neutral" data-size="small"><span class="mtc-tag-label">No</span>')
     expect(html).toContain('<dd><span class="mtc-value-empty">—</span></dd>')
     expect(html).toContain('<summary>2 fields</summary>')
     expect(html).not.toContain('&quot;u_7&quot;')

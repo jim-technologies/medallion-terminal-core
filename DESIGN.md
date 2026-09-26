@@ -91,9 +91,11 @@ the semantic roles below. The standalone embed accepts the same presets with
 Production code uses these variables or the shared `widgets/colors.ts`
 exports. Hard-coded colours belong only in a canvas library's documented
 fallback or a Storybook fixture; `scripts/check-style-tokens.mjs` (run by
-`pnpm lint`) enforces this, the 11 px floor and sentence-case labels across
-`src/` and the examples (the clone showcases keep their own authored
-stylesheets), with a ratcheting budget for the remaining legacy sites.
+`pnpm lint`) enforces this, the 11 px floor (Tailwind sizes, CSS `font-size`
+and `font` declarations, inline and SVG `fontSize`) and sentence-case labels
+across `src/` and the examples built on the toolkit, with a ratcheting
+budget for the remaining legacy sites. The clone showcases are outside that
+scope; see Typography.
 
 **Contrast.** `themeColors.test.ts` checks every theme: text roles at 4.5:1
 on the canvas, surfaces, quiet fill and selection; `--mtc-muted-subtle` at
@@ -126,6 +128,15 @@ for status.
 - **Scale.** These are the only sizes; nothing is smaller than 11 px, in
   scaled drawings too: graph text keeps its size when a graph is fitted or
   zoomed out, and is hidden rather than shrunk in an overview.
+- **Scope.** The floor, the scale and sentence-case labels govern
+  everything that ships as Medallion: `src/`, the widgets, the page
+  templates and the examples built on the toolkit (`examples/widgets`,
+  `examples/readiness`). The clone showcases under `examples/clones` are
+  exempt on purpose: each reproduces another product's density at the sizes
+  that product ships, from its own stylesheet rather than the `--mtc-*`
+  tokens, so the toolkit can be judged against it. They are fidelity
+  references, not Medallion surfaces; take structure from the page
+  templates and never type or colour from a clone.
 
 | Token | Size / line | Weight | Use |
 |---|---|---|---|
@@ -223,7 +234,7 @@ snapshots.
 | `CodeView` | Source, logs and raw JSON | Monospace 12 px on a 20 px line, muted line numbers that are never copied, wrap with a hanging indent, highlighted lines as selection plus accent bar |
 | `ProductShell` | The frame of every product UI | 44 px top bar (product mark, scope, centred search with `Ctrl K`, account), 232 px rail (48 collapsed, a drawer on phones), page, optional 360 px inspector, 24 px status bar; flat, one border between regions |
 | `OperationsTray` | Uploads, ingests and other long work | A raised tray at the bottom end (a sheet on phones), summary header, status icon per row, a 4 px accent progress bar, Cancel, Retry and Dismiss |
-| `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, columns sized to their content and fitted to the width (text gives way, numbers and dates never cut; the grid scrolls instead), selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
+| `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, columns sized to their content and fitted to the width (text gives way with an ellipsis only when every column then fits, otherwise the grid scrolls; numbers, dates and chips never give way; a value cut short keeps its title and shows whole on keyboard focus), selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
 
 **Typed values.** `PropertyValue` decides presentation from `kind` or
 `format`: strings clamp to two lines in panels and one in grids; `id` and
@@ -252,7 +263,7 @@ Copy structure from these, not from the product clones.
 | Object view | `ObjectPage`: breadcrumbs, header with actions, tabs; Overview is `PropertyPanel` and `LinkPanel`, then `LinkGraph` and `ActivityFeed` |
 | Object type | `ObjectPage` for the type: a schema `DataGrid` (property, API name, kind, required, format) beside the link-type `LinkPanel`, a `SchemaGraph` of the direct neighbourhood, and the first objects |
 | Schema graph | `PageHeader` with Object types, Link types and Graph tabs; the full-width `SchemaGraph`; the inspector summarises the selected type |
-| Files | `PageHeader` with list or grid toggle and Upload; `SplitPane` of a folder `Tree` and the file `DataGrid` (stacked on phones); the inspector shows the file's properties and a bounded `FilePreview` |
+| Files | Rail collapsed (the folder tree is the page's navigation); `PageHeader` with list or grid toggle and Upload; `SplitPane` of a folder `Tree` and the file `DataGrid` (name, linked object, size, updated, owner; the icon carries the kind), stacked on phones; the inspector shows the file's properties, kind included, and a bounded `FilePreview` |
 | Operations | Service `StatTile`s with status, a Releases `DataGrid`, an incident `ActivityFeed` timeline, administration links as `ObjectChip`s |
 | Storage | Summary `StatTile`s, a Buckets `DataGrid` (usage, objects, class, versioning, last write, status) with an inspector; an unconfigured area is an `EmptyState` with a `Callout`, never a sentence box |
 | Connect | A Connectors `DataGrid`; the selected connector as an object: `ObjectHeader` with actions, a failure `Callout`, configuration `PropertyPanel` and sync-history timeline |

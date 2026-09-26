@@ -162,15 +162,21 @@ export interface FitColumn {
 
 /**
  * Column widths that fit the available width. Columns keep their natural
- * width when they all fit; otherwise the columns that may shrink give way,
- * lowest tier first, each in proportion to how far it can (never below its
- * minimum), and whatever still does not fit scrolls. Numbers, dates and set
- * widths never shrink, so a value is never cut mid-number.
+ * width when they all fit. When they do not, the columns that may shrink
+ * give way, lowest tier first, each in proportion to how far it can (never
+ * below its minimum), but only if that makes every column fit: when even
+ * their minimums leave the grid too wide, every column keeps its natural
+ * width and the grid scrolls, so no value is cut short on a grid that has
+ * to scroll anyway. Numbers, dates, chips and set widths never shrink.
  */
 export function fitColumnWidths(columns: readonly FitColumn[], available: number): number[] {
   const widths = columns.map(column => Math.max(0, Math.round(column.width)))
   let excess = widths.reduce((total, width) => total + width, 0) - Math.floor(available)
   if (available <= 0 || excess <= 0) return widths
+  const room = columns.reduce((total, column, index) => (
+    total + (column.shrink ? Math.max(0, widths[index]! - Math.round(column.min)) : 0)
+  ), 0)
+  if (room < excess) return widths
   const tiers = [...new Set(columns.filter(column => column.shrink).map(column => column.tier ?? 0))].sort((a, b) => a - b)
   for (const tier of tiers) {
     if (excess <= 0) break

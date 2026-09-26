@@ -68,9 +68,11 @@ export interface FitColumn {
 }
 /**
  * Column widths that fit the available width. Columns keep their natural
- * width when they all fit; otherwise the columns that may shrink give way,
- * lowest tier first, each in proportion to how far it can (never below its
- * minimum), and whatever still does not fit scrolls. Numbers, dates and set
- * widths never shrink, so a value is never cut mid-number.
+ * width when they all fit. When they do not, the columns that may shrink
+ * give way, lowest tier first, each in proportion to how far it can (never
+ * below its minimum), but only if that makes every column fit: when even
+ * their minimums leave the grid too wide, every column keeps its natural
+ * width and the grid scrolls, so no value is cut short on a grid that has
+ * to scroll anyway. Numbers, dates, chips and set widths never shrink.
  */
 export declare function fitColumnWidths(columns: readonly FitColumn[], available: number): number[];

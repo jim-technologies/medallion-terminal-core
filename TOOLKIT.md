@@ -189,7 +189,9 @@ retains a label, icon, or structural cue in addition to color.
   `typeColorFor`), `Button`, `IconButton`, `ButtonGroup`
 - `Input`, `TextArea`, `FormField`
 - `Checkbox`, `Radio`, `Switch`, `Combobox`
-- `Tag`, `Badge`, `Callout`
+- `Tag`, `Badge`, `Callout` (a tag or badge never grows past its
+  container: a label that does not fit ends in an ellipsis, and a badge's
+  dot and a tag's remove button keep their size)
 - `Tooltip`, `Popover`
 - `Menu`, `ContextMenu`
 - `Dialog`, `Drawer`
@@ -334,10 +336,21 @@ items accept `kind` and `format`.
   by drag or Alt+arrows, pin to the start and render typed values through
   `PropertyValue` unless they supply `cell`. A column without a `width` is
   sized to its content (its header and the rows in view, up to 360 px) and
-  fitted to the grid: spare width goes to the `grow` column, and when the
-  grid is too narrow its text columns give way (the primary column last,
-  down to `minWidth`) while numbers, dates and Yes/No keep their width, so
-  the grid scrolls sideways rather than cut a value. `rowHref` puts one link per row
+  fitted to the grid: spare width goes to the `grow` column. When the grid
+  is too narrow, its text columns (plain text, ids and code, links to URLs
+  and email, and custom `cell` content) give way, the primary column last
+  and none below its `minWidth` (72 px, 96 for the primary column), but
+  only if that makes every column fit. When even those minimums leave the
+  grid too wide, every column keeps its content width and the grid scrolls
+  sideways, with pinned columns in place. Numbers, dates, Yes/No and chips
+  (enum values, lists, object links) never give way. A value is never cut
+  silently: whatever is narrower than its content (a text column that gave
+  way, a set or resized `width`, text past 360 px) ends in an ellipsis, a
+  pointer gets the whole value as the cell's title, keyboard focus shows it
+  whole over the cell (Escape hides it), and the cell's accessible name is
+  always the whole value. Custom content sits in a one-line box that ends
+  in an ellipsis; a flex layout inside it needs `min-width: 0` and a
+  truncating label. `rowHref` puts one link per row
   on the primary column; `onNavigate` routes a plain click. Rows have one
   fixed height, so above 200 rows (`virtualize="auto"`) only the rows in
   view render: ten thousand rows stay under 1,500 DOM nodes.
