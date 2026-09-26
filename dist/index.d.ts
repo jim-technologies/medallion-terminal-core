@@ -3,6 +3,7 @@ export * from './foundations';
 export * from './components';
 export * from './workbench';
 export * from './objects';
+export * from './files';
 export { Dashboard } from './core/Dashboard';
 export type { DashboardProps, DashboardTemplateTrust, DashboardTheme } from './core/Dashboard';
 export { MultiDashboard, useTabFromUrl } from './core/MultiDashboard';

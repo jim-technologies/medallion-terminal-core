@@ -102,6 +102,23 @@ export declare const EN_MESSAGES: {
     readonly 'activity.empty': 'No activity yet';
     readonly 'stat.increase': 'Increase';
     readonly 'stat.decrease': 'Decrease';
+    readonly 'preview.loading': 'Loading preview';
+    readonly 'preview.unsupported.title': 'No preview for this file type';
+    readonly 'preview.unsupported.description': 'Download it to open it in another application.';
+    readonly 'preview.tooLarge.title': 'Too large to preview';
+    readonly 'preview.tooLarge.description': '{size} is over the {limit} preview limit.';
+    readonly 'preview.blocked.title': 'Preview blocked';
+    readonly 'preview.blocked.description': 'The file’s contents are not a valid {kind}, so it is not shown.';
+    readonly 'preview.unreadable': 'This file could not be read as {kind}.';
+    readonly 'preview.truncatedBytes': 'Showing the first {shown} of {total}.';
+    readonly 'preview.truncatedStart': 'Showing the first {shown}.';
+    readonly 'preview.truncatedTable': 'Showing {rows} of {totalRows} rows and {columns} of {totalColumns} columns.';
+    readonly 'preview.download': 'Download';
+    readonly 'preview.column': 'Column {index}';
+    readonly 'code.lines': '{count} lines';
+    readonly 'code.wrap': 'Wrap lines';
+    readonly 'code.copy': 'Copy code';
+    readonly 'code.truncated': 'Showing the first {shown} of {total} lines.';
 };
 /** A key in the toolkit message catalog. */
 export type MessageKey = keyof typeof EN_MESSAGES;

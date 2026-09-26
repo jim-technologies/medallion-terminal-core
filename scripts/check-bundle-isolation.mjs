@@ -25,13 +25,13 @@ const checks = [
     // 0.6.0 moved product states into the toolkit: typed SourceError, the
     // access/session/freshness states, and the en + zh-CN message catalog
     // with Intl formatters (~4.7 KiB together). 0.7.0 adds the component
-    // layer (~18 KiB): object components, the windowed data grid, link
+    // layer (~20 KiB): object components, the windowed data grid, link
     // panels and SVG graphs, navigation, search, the palette, toasts, file
     // previews and the code view. Still no chart, map, media or dashboard
     // code, and consumers tree-shake what they do not import.
     label: 'toolkit',
     entry: path.join(root, 'dist/toolkit.js'),
-    maxStaticGzipBytes: 40 * 1024,
+    maxStaticGzipBytes: 42 * 1024,
     requireDynamicImport: false,
   },
   {

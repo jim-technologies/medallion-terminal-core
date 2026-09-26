@@ -212,6 +212,8 @@ snapshots.
 | `StatTile` | Headline numbers | 20/600 tabular value with unit, change with a direction arrow (ok or danger tone), optional status and link |
 | `Toaster` | Notifications | Bottom-end stack, a 2 px tone bar, polite status (`danger` assertive), pauses on hover or focus |
 | `Pagination` | Page and cursor paging | Summary, Previous and Next, "Page n of m" when the count is known |
+| `FilePreview` | Previews of stored files | Bounded reads, signature-checked images and PDFs, sanitised Markdown with the type scale, CSV in a `DataGrid`, a neutral notice when cut, a download action when refused |
+| `CodeView` | Source, logs and raw JSON | Monospace 12 px on a 20 px line, muted line numbers that are never copied, wrap with a hanging indent, highlighted lines as selection plus accent bar |
 | `DataGrid` | Every table of objects, records, files or events | 32 px rows (28 compact, 40 comfortable), 12/500 sentence-case headers over a strong rule, typed cells, numeric columns end-aligned, selection as `--mtc-selection` plus a 2 px accent bar, one tab stop; windowed above 200 rows |
 
 **Typed values.** `PropertyValue` decides presentation from `kind` or

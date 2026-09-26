@@ -50,6 +50,15 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   `StatTile` (value, unit, delta, status, link), `Toaster`,
   `ToastProvider` and `useToast` (intents, one action, pause on hover or
   focus, polite or assertive), and `Pagination` (numbered or cursor).
+- **Files**: `FilePreview` with the Terminal's Common Files policy (a
+  conservative allowlist, bounded Range reads, CSV/TSV into a windowed
+  grid at 1,000 × 100, signature-checked PNG, JPEG, GIF, WebP and PDF from
+  blobs, native audio and video, HTML, SVG and XML as source only,
+  sanitised Markdown with typography, typed errors, too-large and blocked
+  states with a download action) and `CodeView` (line numbers that are not
+  copied, wrap, copy, highlighted lines, bounded lines). The policy is
+  exported: `planPreview`, `DEFAULT_PREVIEW_LIMITS`, `readBounded`,
+  `parseDelimited`, `hasRasterSignature`, `hasPdfSignature`.
 - `StatusTone` type; message keys for copy, values, property panels, the
   grid, links, graphs, navigation, search, paging, toasts and activity (en
   and zh-CN).

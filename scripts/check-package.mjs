@@ -174,6 +174,9 @@ for (const [entry, module, names] of [
       'ToastProvider',
       'useToast',
       'Pagination',
+      'FilePreview',
+      'CodeView',
+      'planPreview',
     ],
   ],
   ['./dashboard', dashboard, ['Dashboard', 'MultiDashboard', 'createWidgetRegistry']],
@@ -233,6 +236,8 @@ for (const name of [
   'FacetGroup',
   'ActivityItem',
   'ToastData',
+  'FilePreviewProps',
+  'CodeViewProps',
 ]) {
   if (!new RegExp(`\\b${name}\\b`).test(declarations)) {
     throw new Error(`Published declarations are missing ${JSON.stringify(name)}`)

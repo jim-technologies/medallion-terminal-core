@@ -17,6 +17,7 @@ const storyFiles = [
   '../components/Status.stories.tsx',
   '../workbench/Shell.stories.tsx',
   '../objects/Explore.stories.tsx',
+  '../files/Files.stories.tsx',
   '../workbench/Workbench.stories.tsx',
   '../workbench/Compositions.stories.tsx',
 ].map(path => readFileSync(new URL(path, import.meta.url), 'utf8')).join('\n')
@@ -87,6 +88,8 @@ const publicComponents = [
   'PageHeader',
   'FacetList',
   'ActivityFeed',
+  'FilePreview',
+  'CodeView',
 ]
 
 describe('application toolkit Storybook coverage', () => {

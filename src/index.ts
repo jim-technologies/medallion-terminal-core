@@ -6,6 +6,7 @@ export * from './foundations'
 export * from './components'
 export * from './workbench'
 export * from './objects'
+export * from './files'
 
 // Core
 export { Dashboard } from './core/Dashboard'

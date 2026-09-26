@@ -1,0 +1,13 @@
+- main:
+  - text: Toolkit · Files
+  - heading "Images and signature checks" [level=1]
+  - paragraph: "Bounded, safe previews: text read at most 1 MB, CSV at most 1,000 × 100 into a windowed grid, images and PDFs only with a valid signature, HTML and SVG never rendered, Markdown sanitised."
+  - region "Images and signature checks component example":
+    - img "chart.png"
+    - text: Preview blocked The file’s contents are not a valid PNG, so it is not shown.
+    - button "Download"
+    - text: Too large to preview 80 MB is over the 50 MB preview limit.
+    - button "Download"
+    - text: No preview for this file type Download it to open it in another application.
+    - button "Download"
+  - text: Theme and density inherit from the scoped toolkit root.

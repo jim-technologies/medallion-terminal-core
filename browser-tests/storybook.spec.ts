@@ -105,6 +105,11 @@ const toolkitStories = {
   toolkitPageHeader: 'toolkit-workbench-navigation--page-header-with-tabs',
   toolkitFacets: 'toolkit-objects-explore--facet-rail',
   toolkitActivity: 'toolkit-objects-explore--activity-feed-and-timeline',
+  toolkitCsvPreview: 'toolkit-files--csv-table',
+  toolkitMarkdownPreview: 'toolkit-files--markdown-document',
+  toolkitImagePreview: 'toolkit-files--signature-checks',
+  toolkitTextPreview: 'toolkit-files--source-and-text',
+  toolkitCodeView: 'toolkit-files--code-view-controls',
 } as const
 
 const stories = {
@@ -498,6 +503,13 @@ test('Database explorer filters, inspects, and presents schema and query workflo
   await expect(editor).toHaveValue(/FROM analytics\.public\.customers/)
   await root.getByRole('button', { name: 'Run preview' }).click()
   await expect(root.getByRole('status')).toContainText('execution remains host-owned')
+})
+
+test('FilePreview renders a valid image from a blob and refuses a renamed SVG', async ({ page }) => {
+  const root = await openStory(page, stories.toolkitImagePreview)
+  await expect(root.getByRole('img', { name: 'chart.png' })).toHaveAttribute('src', /^blob:/)
+  await expect(root.getByText('Preview blocked')).toBeVisible()
+  await expect(root.locator('img[alt="renamed.png"], svg[onload]')).toHaveCount(0)
 })
 
 test('CopyButton confirms a copy with a polite status', async ({ page }) => {

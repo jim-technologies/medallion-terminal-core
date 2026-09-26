@@ -244,6 +244,22 @@ Popover and menu document listeners exist only while their layer is open.
 - `StatTile`: a headline number with unit, `delta`, status, description,
   icon and an optional link.
 
+### Files
+
+- `FilePreview`: one file (`name`, `url`, optional `contentType` and
+  `sizeBytes`) previewed under the shared policy (`planPreview`,
+  `DEFAULT_PREVIEW_LIMITS`): text, code, JSON and Markdown read at most
+  1 MB with a Range request and a bounded read; CSV and TSV at most
+  1,000 rows × 100 columns into a `DataGrid`; PNG, JPEG, GIF, WebP and PDF
+  fetched only under 20 MB and 50 MB and shown from a blob only when their
+  bytes carry the right signature; audio and video play natively; HTML,
+  SVG and XML show as source; anything else offers `onDownload`. Pass the
+  product's `fetch` (for example a `createProductFetch`) so reads carry
+  request ids and typed errors. The file's bytes stay on the origin that
+  serves `url`.
+- `CodeView`: read-only source with line numbers, wrap, copy, highlighted
+  lines and a bounded line count (5,000).
+
 ### Object components
 
 The ontology anatomy: an object has a type (`ObjectTypeRef`: label, icon,

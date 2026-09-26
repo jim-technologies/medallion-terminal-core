@@ -1,0 +1,25 @@
+- main:
+  - text: Toolkit · Files
+  - heading "Code, JSON and bounded text" [level=1]
+  - paragraph: "Bounded, safe previews: text read at most 1 MB, CSV at most 1,000 × 100 into a windowed grid, images and PDFs only with a valid signature, HTML and SVG never rendered, Markdown sanitised."
+  - region "Code, JSON and bounded text component example":
+    - text: TypeScript 18 lines
+    - checkbox "Wrap lines"
+    - text: Wrap lines
+    - button "Copy code"
+    - status
+    - code: "import { DataGrid } from 'medallion-terminal-core/toolkit' interface Customer { id: string name: string acv: number } export function Customers({ rows }: { rows: Customer[] }) { return ( <DataGrid label=\"Customers\" columns={[{ id: 'name', header: 'Customer' }, { id: 'acv', header: 'ACV', format: 'currency:USD' }]} rows={rows} rowKey={row => row.id} /> ) }"
+    - text: JSON 8 lines
+    - checkbox "Wrap lines"
+    - text: Wrap lines
+    - button "Copy code"
+    - status
+    - code: "{ \"horizon_days\": 90, \"regions\": [ \"North America\", \"EU-Central\" ], \"approved\": true }"
+    - text: 39 lines
+    - checkbox "Wrap lines"
+    - text: Wrap lines
+    - button "Copy code"
+    - status
+    - note: Showing the first 2 kB of 218.5 kB.
+    - code: 2026-09-25T15:00:00Z INFO request 0 served in 0 ms 2026-09-25T15:01:00Z INFO request 1 served in 1 ms 2026-09-25T15:02:00Z INFO request 2 served in 2 ms 2026-09-25T15:03:00Z INFO request 3 served in 3 ms 2026-09-25T15:04:00Z INFO request 4 served in 4 ms 2026-09-25T15:05:00Z INFO request 5 served in 5 ms 2026-09-25T15:06:00Z INFO request 6 served in 6 ms 2026-09-25T15:07:00Z INFO request 7 served in 7 ms 2026-09-25T15:08:00Z INFO request 8 served in 8 ms 2026-09-25T15:09:00Z INFO request 9 served in 9 ms 2026-09-25T15:10:00Z INFO request 10 served in 10 ms 2026-09-25T15:11:00Z INFO request 11 served in 11 ms 2026-09-25T15:12:00Z INFO request 12 served in 12 ms 2026-09-25T15:13:00Z INFO request 13 served in 13 ms 2026-09-25T15:14:00Z INFO request 14 served in 14 ms 2026-09-25T15:15:00Z INFO request 15 served in 15 ms 2026-09-25T15:16:00Z INFO request 16 served in 16 ms 2026-09-25T15:17:00Z INFO request 17 served in 17 ms 2026-09-25T15:18:00Z INFO request 18 served in 18 ms 2026-09-25T15:19:00Z INFO request 19 served in 19 ms 2026-09-25T15:20:00Z INFO request 20 served in 20 ms 2026-09-25T15:21:00Z INFO request 21 served in 21 ms 2026-09-25T15:22:00Z INFO request 22 served in 22 ms 2026-09-25T15:23:00Z INFO request 23 served in 23 ms 2026-09-25T15:24:00Z INFO request 24 served in 24 ms 2026-09-25T15:25:00Z INFO request 25 served in 25 ms 2026-09-25T15:26:00Z INFO request 26 served in 26 ms 2026-09-25T15:27:00Z INFO request 27 served in 27 ms 2026-09-25T15:28:00Z INFO request 28 served in 28 ms 2026-09-25T15:29:00Z INFO request 29 served in 29 ms 2026-09-25T15:30:00Z INFO request 30 served in 30 ms 2026-09-25T15:31:00Z INFO request 31 served in 31 ms 2026-09-25T15:32:00Z INFO request 32 served in 32 ms 2026-09-25T15:33:00Z INFO request 33 served in 33 ms 2026-09-25T15:34:00Z INFO request 34 served in 34 ms 2026-09-25T15:35:00Z INFO request 35 served in 35 ms 2026-09-25T15:36:00Z INFO request 36 served in 36 ms 2026-09-25T15:37:00Z INFO request 37 served in 37 ms 2026-0
+  - text: Theme and density inherit from the scoped toolkit root.

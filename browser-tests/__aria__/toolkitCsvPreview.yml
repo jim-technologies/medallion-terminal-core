@@ -1,0 +1,142 @@
+- main:
+  - text: Toolkit · Files
+  - heading "CSV preview" [level=1]
+  - paragraph: "Bounded, safe previews: text read at most 1 MB, CSV at most 1,000 × 100 into a windowed grid, images and PDFs only with a valid signature, HTML and SVG never rendered, Markdown sanitised."
+  - region "CSV preview component example":
+    - status: Showing 1,000 of 1,200 rows and 5 of 5 columns.
+    - grid "orders.csv":
+      - rowgroup:
+        - row "order_id customer region amount placed_at":
+          - columnheader "order_id"
+          - columnheader "customer"
+          - columnheader "region"
+          - columnheader "amount"
+          - columnheader "placed_at"
+      - rowgroup:
+        - row "ORD-4001 Customer 1, Inc. EU-Central 79.19 2026-09-02":
+          - gridcell "ORD-4001"
+          - gridcell "Customer 1, Inc."
+          - gridcell "EU-Central"
+          - gridcell "79.19"
+          - gridcell "2026-09-02"
+        - row "ORD-4002 Customer 2, Inc. APAC 158.38 2026-09-03":
+          - gridcell "ORD-4002"
+          - gridcell "Customer 2, Inc."
+          - gridcell "APAC"
+          - gridcell "158.38"
+          - gridcell "2026-09-03"
+        - row "ORD-4003 Customer 3, Inc. North America 237.57 2026-09-04":
+          - gridcell "ORD-4003"
+          - gridcell "Customer 3, Inc."
+          - gridcell "North America"
+          - gridcell "237.57"
+          - gridcell "2026-09-04"
+        - row "ORD-4004 Customer 4, Inc. EU-Central 316.76 2026-09-05":
+          - gridcell "ORD-4004"
+          - gridcell "Customer 4, Inc."
+          - gridcell "EU-Central"
+          - gridcell "316.76"
+          - gridcell "2026-09-05"
+        - row "ORD-4005 Customer 5, Inc. APAC 395.95 2026-09-06":
+          - gridcell "ORD-4005"
+          - gridcell "Customer 5, Inc."
+          - gridcell "APAC"
+          - gridcell "395.95"
+          - gridcell "2026-09-06"
+        - row "ORD-4006 Customer 6, Inc. North America 475.14 2026-09-07":
+          - gridcell "ORD-4006"
+          - gridcell "Customer 6, Inc."
+          - gridcell "North America"
+          - gridcell "475.14"
+          - gridcell "2026-09-07"
+        - row "ORD-4007 Customer 7, Inc. EU-Central 554.33 2026-09-08":
+          - gridcell "ORD-4007"
+          - gridcell "Customer 7, Inc."
+          - gridcell "EU-Central"
+          - gridcell "554.33"
+          - gridcell "2026-09-08"
+        - row "ORD-4008 Customer 8, Inc. APAC 633.52 2026-09-09":
+          - gridcell "ORD-4008"
+          - gridcell "Customer 8, Inc."
+          - gridcell "APAC"
+          - gridcell "633.52"
+          - gridcell "2026-09-09"
+        - row "ORD-4009 Customer 9, Inc. North America 712.71 2026-09-10":
+          - gridcell "ORD-4009"
+          - gridcell "Customer 9, Inc."
+          - gridcell "North America"
+          - gridcell "712.71"
+          - gridcell "2026-09-10"
+        - row "ORD-4010 Customer 10, Inc. EU-Central 791.9 2026-09-11":
+          - gridcell "ORD-4010"
+          - gridcell "Customer 10, Inc."
+          - gridcell "EU-Central"
+          - gridcell "791.9"
+          - gridcell "2026-09-11"
+        - row "ORD-4011 Customer 11, Inc. APAC 871.09 2026-09-12":
+          - gridcell "ORD-4011"
+          - gridcell "Customer 11, Inc."
+          - gridcell "APAC"
+          - gridcell "871.09"
+          - gridcell "2026-09-12"
+        - row "ORD-4012 Customer 12, Inc. North America 50.28 2026-09-13":
+          - gridcell "ORD-4012"
+          - gridcell "Customer 12, Inc."
+          - gridcell "North America"
+          - gridcell "50.28"
+          - gridcell "2026-09-13"
+        - row "ORD-4013 Customer 13, Inc. EU-Central 129.47 2026-09-14":
+          - gridcell "ORD-4013"
+          - gridcell "Customer 13, Inc."
+          - gridcell "EU-Central"
+          - gridcell "129.47"
+          - gridcell "2026-09-14"
+        - row "ORD-4014 Customer 14, Inc. APAC 208.66 2026-09-15":
+          - gridcell "ORD-4014"
+          - gridcell "Customer 14, Inc."
+          - gridcell "APAC"
+          - gridcell "208.66"
+          - gridcell "2026-09-15"
+        - row "ORD-4015 Customer 15, Inc. North America 287.85 2026-09-16":
+          - gridcell "ORD-4015"
+          - gridcell "Customer 15, Inc."
+          - gridcell "North America"
+          - gridcell "287.85"
+          - gridcell "2026-09-16"
+        - row "ORD-4016 Customer 16, Inc. EU-Central 367.04 2026-09-17":
+          - gridcell "ORD-4016"
+          - gridcell "Customer 16, Inc."
+          - gridcell "EU-Central"
+          - gridcell "367.04"
+          - gridcell "2026-09-17"
+        - row "ORD-4017 Customer 17, Inc. APAC 446.23 2026-09-18":
+          - gridcell "ORD-4017"
+          - gridcell "Customer 17, Inc."
+          - gridcell "APAC"
+          - gridcell "446.23"
+          - gridcell "2026-09-18"
+        - row "ORD-4018 Customer 18, Inc. North America 525.42 2026-09-19":
+          - gridcell "ORD-4018"
+          - gridcell "Customer 18, Inc."
+          - gridcell "North America"
+          - gridcell "525.42"
+          - gridcell "2026-09-19"
+        - row "ORD-4019 Customer 19, Inc. EU-Central 604.61 2026-09-20":
+          - gridcell "ORD-4019"
+          - gridcell "Customer 19, Inc."
+          - gridcell "EU-Central"
+          - gridcell "604.61"
+          - gridcell "2026-09-20"
+        - row "ORD-4020 Customer 20, Inc. APAC 683.8 2026-09-21":
+          - gridcell "ORD-4020"
+          - gridcell "Customer 20, Inc."
+          - gridcell "APAC"
+          - gridcell "683.8"
+          - gridcell "2026-09-21"
+        - row "ORD-4021 Customer 21, Inc. North America 762.99 2026-09-22":
+          - gridcell "ORD-4021"
+          - gridcell "Customer 21, Inc."
+          - gridcell "North America"
+          - gridcell "762.99"
+          - gridcell "2026-09-22"
+  - text: Theme and density inherit from the scoped toolkit root.

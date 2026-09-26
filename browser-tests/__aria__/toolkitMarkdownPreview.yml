@@ -1,0 +1,41 @@
+- main:
+  - text: Toolkit · Files
+  - heading "Markdown preview" [level=1]
+  - paragraph: "Bounded, safe previews: text read at most 1 MB, CSV at most 1,000 × 100 into a windowed grid, images and PDFs only with a valid signature, HTML and SVG never rendered, Markdown sanitised."
+  - region "Markdown preview component example":
+    - heading "Quarterly operating review" [level=1]
+    - paragraph:
+      - text: Revenue grew
+      - strong: 12%
+      - text: against plan, led by the
+      - emphasis: enterprise
+      - text: segment.
+    - heading "Actions" [level=2]
+    - list:
+      - listitem: Renew the Northstar master agreement before Oct 18.
+      - listitem: Close the two open support escalations.
+    - blockquote:
+      - paragraph: Numbers are preliminary until finance closes the quarter.
+    - table:
+      - rowgroup:
+        - row "Segment Revenue Change":
+          - columnheader "Segment"
+          - columnheader "Revenue"
+          - columnheader "Change"
+      - rowgroup:
+        - row "Enterprise $1.28M +18%":
+          - cell "Enterprise"
+          - cell "$1.28M"
+          - cell "+18%"
+        - row "Mid-market $640K +6%":
+          - cell "Mid-market"
+          - cell "$640K"
+          - cell "+6%"
+    - paragraph:
+      - text: Inline
+      - code: code
+      - text: ", a"
+      - link "link":
+        - /url: https://example.com/report
+      - text: and a raw tag that is removed.
+  - text: Theme and density inherit from the scoped toolkit root.
