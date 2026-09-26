@@ -1,13 +1,19 @@
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState, type ReactNode } from 'react'
+import { Button, ButtonGroup } from '../../src/components/Button'
+import { FormField, Input } from '../../src/components/FormControls'
+import { StatTile } from '../../src/components/StatTile'
+import { useLocale } from '../../src/foundations/DesignSystemProvider'
+import { formatNumber } from '../../src/foundations/intl'
 import type { WidgetProps } from '../../src/types/template'
 import { getNested } from '../../src/core/getNested'
 
 // Kelly sizing widget — custom widget example.
 //
 // Proves the framework's extension story: this widget lives outside
-// src/, consumes only public types (WidgetProps), registers via
-// registerWidget('kelly', Kelly), and gets the same DataSource +
-// ctx + options plumbing as a built-in widget.
+// src/, consumes only public types (WidgetProps) and toolkit components
+// (so it follows the theme, density and type scale like a built-in
+// widget), registers via registerWidget('kelly', Kelly), and gets the same
+// DataSource + ctx + options plumbing as a built-in widget.
 //
 // Inputs (via options OR ctx, with widget overrides):
 //   - probability  : your estimated win probability (0..1)
@@ -68,6 +74,8 @@ export function kellyStake(args: {
 
 export function Kelly({ data, options }: WidgetProps) {
   const opts = (options ?? {}) as KellyOptions
+  const { locale } = useLocale()
+  const fractionLabel = useId()
 
   const [probability, setProbability] = useState(opts.probability ?? 0.55)
   const [bankroll, setBankroll] = useState(opts.bankroll ?? 10_000)
@@ -91,87 +99,84 @@ export function Kelly({ data, options }: WidgetProps) {
     [probability, liveOdds, bankroll, fraction],
   )
 
-  const edgeColor = result.edgePercent > 0 ? 'text-emerald-400' : 'text-red-400'
-  const evColor = result.ev > 0 ? 'text-emerald-400' : 'text-red-400'
+  const percent = (value: number, digits = 1) => formatNumber(value, { locale, style: 'percent', minimumFractionDigits: digits, maximumFractionDigits: digits })
+  const signed = (value: number) => `${value > 0 ? '+' : ''}${formatNumber(value, { locale, minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  const sign = (value: number) => (value > 0 ? 'ok' : value < 0 ? 'danger' : undefined)
 
   return (
-    <div className="h-full flex flex-col gap-2 text-xs">
-      <div className="grid grid-cols-2 gap-2">
-        <Field label="Your P">
-          <input
-            type="number" step={0.01} min={0} max={1}
+    <div className="flex h-full flex-col gap-3">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+        <FormField label="Your probability">
+          <Input
+            type="number" size="small" step={0.01} min={0} max={1}
             value={probability}
             onChange={e => setProbability(clamp(Number(e.target.value), 0, 1))}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded px-1.5 py-1 text-right text-zinc-100 tabular-nums outline-none focus:border-zinc-500"
+            className="text-right tabular-nums"
           />
-        </Field>
-        <Field label="Odds (decimal)">
-          <input
-            type="number" step={0.01} min={1.01}
+        </FormField>
+        <FormField label="Decimal odds">
+          <Input
+            type="number" size="small" step={0.01} min={1.01}
             value={opts.odds_path ? liveOdds.toFixed(2) : manualOdds}
             readOnly={!!opts.odds_path}
             onChange={e => {
               if (opts.odds_path) return
               setManualOdds(Math.max(1.01, Number(e.target.value)))
             }}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded px-1.5 py-1 text-right text-zinc-100 tabular-nums outline-none focus:border-zinc-500"
+            className="text-right tabular-nums"
           />
-        </Field>
-        <Field label="Bankroll">
-          <input
-            type="number" step={100} min={0}
+        </FormField>
+        <FormField label="Bankroll">
+          <Input
+            type="number" size="small" step={100} min={0}
             value={bankroll}
             onChange={e => setBankroll(Math.max(0, Number(e.target.value)))}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded px-1.5 py-1 text-right text-zinc-100 tabular-nums outline-none focus:border-zinc-500"
+            className="text-right tabular-nums"
           />
-        </Field>
-        <Field label="Fraction">
-          <div className="flex gap-1 bg-zinc-800 rounded p-0.5">
+        </FormField>
+        <div className="grid gap-1">
+          <span className="mtc-form-label" id={fractionLabel}>Fraction</span>
+          <ButtonGroup aria-labelledby={fractionLabel}>
             {(['full', 'half', 'quarter'] as const).map(f => (
-              <button
+              <Button
                 key={f}
+                size="small"
+                aria-pressed={fraction === f}
+                intent={fraction === f ? 'primary' : 'neutral'}
+                variant={fraction === f ? 'solid' : 'outline'}
                 onClick={() => setFraction(f)}
-                className={`flex-1 py-0.5 text-[10px] uppercase tracking-wider rounded ${fraction === f ? 'bg-zinc-700 text-zinc-100' : 'text-zinc-400 hover:text-zinc-200'}`}
+                aria-label={`${f} Kelly`}
               >
                 {f === 'full' ? '1×' : f === 'half' ? '½' : '¼'}
-              </button>
+              </Button>
             ))}
-          </div>
-        </Field>
-      </div>
-
-      <div className="border-t border-zinc-800 pt-2 grid grid-cols-2 gap-y-1.5 gap-x-3 font-mono tabular-nums">
-        <Out label="Edge" value={`${(result.edgePercent * 100).toFixed(1)}%`} className={edgeColor} />
-        <Out label="EV" value={`${result.ev >= 0 ? '+' : ''}${result.ev.toFixed(2)}`} className={evColor} />
-        <Out label="Kelly f*" value={`${(result.kellyFraction * 100).toFixed(1)}%`} className="text-zinc-300" />
-        <Out label="Growth/bet" value={`${(result.growthRate * 100).toFixed(2)}%`} className="text-zinc-300" />
-      </div>
-
-      <div className="mt-auto border border-zinc-700 rounded px-2 py-1.5 bg-zinc-950">
-        <div className="text-[10px] uppercase tracking-wider text-zinc-500">Stake</div>
-        <div className={`text-base font-mono tabular-nums ${result.stake > 0 ? 'text-zinc-100' : 'text-zinc-500'}`}>
-          {result.stake > 0 ? result.stake.toFixed(2) : '—'}
-          {result.stake <= 0 && <span className="text-[10px] text-zinc-500 ml-2 normal-case">no edge</span>}
+          </ButtonGroup>
         </div>
       </div>
+
+      <dl className="grid gap-1 border-t border-[color:var(--mtc-border)] pt-2 tabular-nums">
+        <Out label="Edge" tone={sign(result.edgePercent)}>{percent(result.edgePercent)}</Out>
+        <Out label="Expected value" tone={sign(result.ev)}>{signed(result.ev)}</Out>
+        <Out label="Kelly fraction">{percent(result.kellyFraction)}</Out>
+        <Out label="Growth per bet">{percent(result.growthRate, 2)}</Out>
+      </dl>
+
+      <StatTile
+        className="mt-auto"
+        label="Stake"
+        value={result.stake > 0 ? formatNumber(result.stake, { locale, minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'}
+        description={result.stake > 0 ? undefined : 'No edge at these odds'}
+      />
     </div>
   )
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Out({ label, tone, children }: { label: string; tone?: 'ok' | 'danger'; children: ReactNode }) {
+  const color = tone === 'ok' ? 'text-[color:var(--mtc-ok)]' : tone === 'danger' ? 'text-[color:var(--mtc-danger)]' : 'text-[color:var(--mtc-fg)]'
   return (
-    <div>
-      <div className="text-[10px] uppercase tracking-wider text-zinc-500 mb-0.5">{label}</div>
-      {children}
-    </div>
-  )
-}
-
-function Out({ label, value, className }: { label: string; value: string; className?: string }) {
-  return (
-    <div className="flex items-baseline justify-between">
-      <span className="text-[10px] uppercase tracking-wider text-zinc-500">{label}</span>
-      <span className={className}>{value}</span>
+    <div className="flex items-baseline justify-between gap-2">
+      <dt className="text-[color:var(--mtc-muted)]">{label}</dt>
+      <dd className={color}>{children}</dd>
     </div>
   )
 }

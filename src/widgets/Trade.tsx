@@ -213,8 +213,8 @@ export function Trade({ options, widgetId }: WidgetProps) {
     `flex-1 py-1.5 text-xs font-semibold rounded transition-colors ${
       side === s
         ? s === 'buy'
-          ? 'bg-emerald-500/20 text-emerald-400'
-          : 'bg-red-500/20 text-red-400'
+          ? 'bg-emerald-500/20 text-emerald-300'
+          : 'bg-red-500/20 text-red-300'
         : 'text-zinc-500 hover:text-zinc-300'
     }`
 

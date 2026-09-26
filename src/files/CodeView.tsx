@@ -3,6 +3,7 @@ import { CopyButton } from '../components/Display'
 import { cx, useControllableState } from '../components/utils'
 import { useLocale, useMessage } from '../foundations/DesignSystemProvider'
 import { formatNumber } from '../foundations/intl'
+import { codeLanguage, tokenizeLine } from './codeTokens'
 
 /** Props for a read-only source view. */
 export interface CodeViewProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -10,7 +11,10 @@ export interface CodeViewProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
   code: string
   /** Accessible name of the code region, such as the file path. */
   label: string
-  /** Language name shown in the toolbar. */
+  /**
+   * Language name shown in the toolbar. JSON, YAML and SQL (and their usual
+   * aliases and extensions) are also highlighted.
+   */
   language?: string
   /** Lines rendered at most; the rest is summarised (5,000 when unset). */
   maxLines?: number
@@ -34,8 +38,9 @@ export interface CodeViewProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
 /**
  * Read-only source with line numbers (CSS counters, so selecting and copying
  * text never picks them up), a wrap toggle with a hanging indent, a copy
- * action for the whole source, and a bounded line count. Text renders as
- * React text nodes; nothing is interpreted.
+ * action for the whole source, a bounded line count, and token colours for
+ * JSON, YAML and SQL (line by line, long lines plain). Text renders as React
+ * text nodes; nothing is interpreted.
  */
 export const CodeView = forwardRef<HTMLDivElement, CodeViewProps>(function CodeView(
   {
@@ -65,8 +70,10 @@ export const CodeView = forwardRef<HTMLDivElement, CodeViewProps>(function CodeV
     if (all.length > 1 && all[all.length - 1] === '') all.pop()
     return all
   }, [code])
-  const shown = lines.length > maxLines ? lines.slice(0, maxLines) : lines
+  const shown = useMemo(() => (lines.length > maxLines ? lines.slice(0, maxLines) : lines), [lines, maxLines])
   const highlighted = useMemo(() => new Set(highlightLines), [highlightLines])
+  const syntax = codeLanguage(language)
+  const tokens = useMemo(() => (syntax ? shown.map(line => tokenizeLine(line, syntax)) : null), [shown, syntax])
   return (
     <div {...rest} ref={ref} className={cx('mtc-code-view', className)} style={style}>
       <div className="mtc-code-view-toolbar">
@@ -104,7 +111,11 @@ export const CodeView = forwardRef<HTMLDivElement, CodeViewProps>(function CodeV
               className="mtc-code-line"
               data-highlight={highlighted.has(startLine + index) || undefined}
             >
-              {line}
+              {tokens
+                ? tokens[index]!.map((token, position) => (token.kind === 'plain'
+                  ? token.text
+                  : <span key={position} className="mtc-code-token" data-token={token.kind}>{token.text}</span>))
+                : line}
             </span>
           ))}
         </code>

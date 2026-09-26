@@ -84,9 +84,55 @@ export const SourceAndText: Story = {
     const canvas = within(canvasElement)
     await expect(await canvas.findByLabelText('customers.tsx')).toBeVisible()
     await expect(canvas.getByText('TypeScript')).toBeVisible()
-    await expect(await canvas.findByText('"horizon_days": 90,')).toBeVisible()
+    // JSON is highlighted: the line reads the same, its key and number are
+    // tokens.
+    const line = await canvas.findByText((_, element) => element?.classList.contains('mtc-code-line') === true && element.textContent === '  "horizon_days": 90,')
+    await expect(line).toBeVisible()
+    await expect(line.querySelector('[data-token="key"]')).toHaveTextContent('"horizon_days"')
+    await expect(line.querySelector('[data-token="number"]')).toHaveTextContent('90')
     // A reduced limit keeps the story small; the default is 1 MB.
     await expect(await canvas.findByText(/^Showing the first 2 kB of [\d.]+ kB\.$/)).toBeVisible()
+  },
+}
+
+const SQL = `-- Renewals due this quarter
+SELECT c.name, c.segment, SUM(o.amount) AS booked
+FROM customers AS c
+JOIN orders o ON o.customer_id = c."id"
+WHERE o.status = 'open' AND o.amount > 1000.50 AND c.churned IS NOT NULL
+GROUP BY c.name, c.segment
+ORDER BY booked DESC
+LIMIT 20;`
+
+const YAML = `# Pipeline settings
+name: nightly-ingest
+schedule: "0 4 * * *"
+retries: 3
+enabled: true
+owner: ~
+targets:
+  - warehouse: lake
+    tables: [orders, customers]`
+
+// JSON, YAML and SQL are highlighted line by line; other languages stay
+// plain text.
+export const CodeViewHighlighting: Story = {
+  name: 'CodeView highlighting',
+  render: () => (
+    <div className="grid gap-4">
+      <CodeView code={SQL} label="queries/renewals.sql" language="SQL" copyable={false} />
+      <CodeView code={YAML} label="pipelines/nightly.yaml" language="YAML" copyable={false} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const sql = canvas.getByLabelText('queries/renewals.sql')
+    await expect(sql.querySelector('[data-token="comment"]')).toHaveTextContent('-- Renewals due this quarter')
+    await expect([...sql.querySelectorAll('[data-token="keyword"]')].map(token => token.textContent)).toContain('SELECT')
+    await expect(sql.querySelector('[data-token="string"]')).toHaveTextContent("'open'")
+    const yaml = canvas.getByLabelText('pipelines/nightly.yaml')
+    await expect([...yaml.querySelectorAll('[data-token="key"]')].map(token => token.textContent)).toEqual(['name', 'schedule', 'retries', 'enabled', 'owner', 'targets', 'warehouse', 'tables'])
+    await expect(yaml.querySelector('[data-token="number"]')).toHaveTextContent('3')
   },
 }
 

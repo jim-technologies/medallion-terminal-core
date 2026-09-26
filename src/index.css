@@ -111,6 +111,11 @@
   --mtc-info-soft: var(--mtc-accent-soft);
   --mtc-info-bg: #162537;
   --mtc-on-solid: #080e16;
+  /* What a solid fill is mixed toward on hover: away from its text colour,
+     so hover never lowers the text's contrast (on-accent is white here, so
+     the accent darkens; on-solid is dark, so status fills lighten). */
+  --mtc-accent-hover-mix: #000000;
+  --mtc-solid-hover-mix: #ffffff;
   /* Text and marks over a media scrim (a black wash on a photo or video
      frame: captions, duration badges, viewer arrows). The scrim is dark in
      every theme, so this stays light in every theme. */
@@ -302,6 +307,7 @@
   --mtc-accent-strong: #b9c94b;
   --mtc-accent-soft: #dee9a4;
   --mtc-on-accent: #0d0e05;
+  --mtc-accent-hover-mix: #ffffff;
   --mtc-selection: #222514;
   --mtc-selection-hover: #282b17;
   --mtc-signal: #ccdc6a;
@@ -359,6 +365,7 @@
   --mtc-warning-bg: #ffefd8;
   --mtc-info-bg: #e7f1ff;
   --mtc-on-solid: #ffffff;
+  --mtc-solid-hover-mix: #000000;
   --mtc-graph-edge: #878d94;
   --mtc-grid: #e5e8ec;
   --mtc-overlay: rgb(16 22 30 / 0.4);
@@ -440,6 +447,8 @@
   --mtc-warning-bg: #352206;
   --mtc-info-bg: #132643;
   --mtc-on-solid: #000000;
+  --mtc-accent-hover-mix: #ffffff;
+  --mtc-solid-hover-mix: #ffffff;
   --mtc-graph-edge: #80878f;
   --mtc-grid: #25292f;
   --mtc-overlay: rgb(0 0 0 / 0.9);
@@ -905,7 +914,7 @@
 
 .mtc-root .mtc-button[data-size="small"] { height: var(--mtc-control-height-sm); font-size: var(--mtc-font-size-sm); }
 .mtc-root .mtc-button[data-size="large"] { height: var(--mtc-control-height-lg); font-size: var(--mtc-font-size-md); }
-.mtc-root .mtc-button[data-intent="primary"] { --mtc-action: var(--mtc-accent-strong); --mtc-action-soft: var(--mtc-accent-soft); --mtc-action-on: var(--mtc-on-accent); }
+.mtc-root .mtc-button[data-intent="primary"] { --mtc-action: var(--mtc-accent-strong); --mtc-action-soft: var(--mtc-accent-soft); --mtc-action-on: var(--mtc-on-accent); --mtc-action-hover-mix: var(--mtc-accent-hover-mix); }
 .mtc-root .mtc-button[data-intent="success"] { --mtc-action: var(--mtc-ok); --mtc-action-soft: var(--mtc-ok-soft); }
 .mtc-root .mtc-button[data-intent="warning"] { --mtc-action: var(--mtc-warning); --mtc-action-soft: var(--mtc-warning-soft); }
 .mtc-root .mtc-button[data-intent="danger"] { --mtc-action: var(--mtc-danger); --mtc-action-soft: var(--mtc-danger-soft); }
@@ -915,6 +924,10 @@
   --mtc-button-color: var(--mtc-action-on, var(--mtc-on-solid));
   --mtc-button-border: var(--mtc-action);
   --mtc-button-fill: var(--mtc-action);
+  /* Hover keeps the on-colour and moves the fill away from it. */
+  --mtc-button-hover-fill: color-mix(in oklab, var(--mtc-action) 88%, var(--mtc-action-hover-mix, var(--mtc-solid-hover-mix)));
+  --mtc-button-hover-border: var(--mtc-button-hover-fill);
+  --mtc-button-hover-color: var(--mtc-button-color);
 }
 
 .mtc-root .mtc-button[data-intent]:not([data-intent="neutral"])[data-variant="outline"] {
@@ -929,9 +942,9 @@
 }
 
 .mtc-root .mtc-button:hover:not(:disabled) {
-  border-color: color-mix(in oklab, var(--mtc-button-border) 72%, var(--mtc-fg));
-  background: color-mix(in oklab, var(--mtc-button-fill) 88%, var(--mtc-fg));
-  color: var(--mtc-fg);
+  border-color: var(--mtc-button-hover-border, color-mix(in oklab, var(--mtc-button-border) 72%, var(--mtc-fg)));
+  background: var(--mtc-button-hover-fill, color-mix(in oklab, var(--mtc-button-fill) 88%, var(--mtc-fg)));
+  color: var(--mtc-button-hover-color, var(--mtc-fg));
 }
 
 .mtc-root .mtc-button:disabled { opacity: 0.48; }

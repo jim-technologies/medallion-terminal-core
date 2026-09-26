@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Style-token guard for production source (src/**/*.{ts,tsx,css}).
+// Style-token guard for production source (src/**/*.{ts,tsx,css}) and the
+// examples built on it (examples/**, except the clone showcases).
 //
 // Colour, type size and letter-spacing come from the scoped --mtc-* tokens
 // (see DESIGN.md). This script fails when production code introduces:
@@ -11,9 +12,12 @@
 //   font-size       text-[Npx] below 11 px or off the 11/12/13/14/16/20/24
 //                   scale
 //   tracking        an arbitrary tracking-[…] letter-spacing
+//   micro-label     an uppercase or letter-spaced label (`uppercase`,
+//                   `tracking-wide*`, `text-transform: uppercase`); labels
+//                   are sentence case (DESIGN.md)
 //   blur            a backdrop-filter blur (surfaces are flat; overlays
 //                   carry elevation, not frosted glass)
-//   story-frame     in a story (src/ or examples/), a frame `background`
+//   story-frame     in a story (src/ or examples/, clones included), a frame `background`
 //                   string that is not a --mtc-* token: a hex, rgb()/hsl(),
 //                   a named colour such as 'black' or 'white', a gradient.
 //                   Frames use --mtc-surface / --mtc-border so every theme
@@ -28,7 +32,12 @@
 //
 // Stories, tests, fixtures and generated code are exempt from the other
 // rules: fixtures may use literal values, and generated code is not
-// authored. Stories still get the story-frame rule.
+// authored. Stories still get the story-frame rule. The clone showcases
+// under examples/clones reproduce other products' density with their own
+// authored stylesheets, so only their stories are scanned (story-frame);
+// every other example (the custom widget, the readiness workspace) is held
+// to the production rules, so the 11 px floor covers what the examples
+// teach.
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -42,6 +51,7 @@ const rules = {
   'arbitrary-color': /\b(?:bg|text|border(?:-[trblxy])?|fill|stroke|from|via|to|ring|outline|decoration|shadow|accent|caret|divide)-\[(?:#|rgba?\(|hsla?\()/g,
   'font-size': /\btext-\[(\d+(?:\.\d+)?)px\]/g,
   tracking: /\btracking-\[[^\]]+\]/g,
+  'micro-label': /\b(?:uppercase|tracking-(?:wide|wider|widest))\b|text-transform:\s*uppercase/g,
   blur: /\bbackdrop-blur\b|\bbackdrop-filter\s*:|\bbackdropFilter\b/g,
 }
 
@@ -95,11 +105,14 @@ function violations(relative, text) {
   return found
 }
 
-// Production source, plus the stories under examples/ for the story-frame
-// rule (their other files are showcase fixtures with authored styles).
+const isClone = relative => relative.startsWith('examples/clones/')
+
+// Production source and the examples; clone showcases only for their stories.
 const scanned = [
   ...sourceFiles(path.join(root, 'src')),
-  ...[...sourceFiles(path.join(root, 'examples'))].filter(file => isStory(file)),
+  ...[...sourceFiles(path.join(root, 'examples'))].filter(file => (
+    isStory(file) || !isClone(path.relative(root, file).split(path.sep).join('/'))
+  )),
 ]
 
 const counts = {}

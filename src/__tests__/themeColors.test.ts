@@ -187,6 +187,75 @@ describe('theme color accessibility', () => {
   }
 })
 
+// sRGB hex <-> OKLab, for `color-mix(in oklab, …)` as the stylesheet uses it.
+function toOklab(color: string): [number, number, number] {
+  const [r, g, b] = color.match(/[0-9a-f]{2}/gi)!.map(value => channel(parseInt(value, 16)))
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b)
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b)
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b)
+  return [
+    0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+  ]
+}
+
+function fromOklab([L, A, B]: [number, number, number]): string {
+  const l = (L + 0.3963377774 * A + 0.2158037573 * B) ** 3
+  const m = (L - 0.1055613458 * A - 0.0638541728 * B) ** 3
+  const s = (L - 0.0894841775 * A - 1.291485548 * B) ** 3
+  const linear = [
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
+  ]
+  return `#${linear.map(value => {
+    const clamped = Math.min(1, Math.max(0, value))
+    const encoded = clamped <= 0.0031308 ? clamped * 12.92 : 1.055 * clamped ** (1 / 2.4) - 0.055
+    return Math.round(encoded * 255).toString(16).padStart(2, '0')
+  }).join('')}`
+}
+
+/** `color-mix(in oklab, first weight%, second)`. */
+function mixOklab(first: string, second: string, weight: number): string {
+  const a = toOklab(first)
+  const b = toOklab(second)
+  return fromOklab([0, 1, 2].map(index => a[index]! * weight + b[index]! * (1 - weight)) as [number, number, number])
+}
+
+describe('solid button hover', () => {
+  const rule = (selector: string) => block(selector)
+  const hover = rule('.mtc-root .mtc-button:hover:not(:disabled)')
+  const solid = rule('.mtc-root .mtc-button[data-intent]:not([data-intent="neutral"])[data-variant="solid"]')
+  const weight = Number(solid.match(/--mtc-button-hover-fill:\s*color-mix\(in oklab, var\(--mtc-action\) (\d+)%/)![1]) / 100
+
+  it('keeps the on-colour: hover never swaps a solid button\'s text to --mtc-fg', () => {
+    expect(hover).toMatch(/color:\s*var\(--mtc-button-hover-color,/)
+    expect(solid).toMatch(/--mtc-button-hover-color:\s*var\(--mtc-button-color\)/)
+    expect(solid).toMatch(/--mtc-button-color:\s*var\(--mtc-action-on, var\(--mtc-on-solid\)\)/)
+    expect(rule('.mtc-root .mtc-button[data-intent="primary"]')).toMatch(/--mtc-action-on:\s*var\(--mtc-on-accent\)/)
+  })
+
+  for (const [themeName, theme] of Object.entries(themes)) {
+    it(`${themeName} keeps --mtc-on-accent readable on a hovered primary button`, () => {
+      const rest = hex(theme, 'accent-strong')
+      const hovered = mixOklab(rest, hex(theme, 'accent-hover-mix'), weight)
+      const text = hex(theme, 'on-accent')
+      expect(contrast(text, hovered), `${themeName} on-accent on ${hovered}`).toBeGreaterThanOrEqual(4.5)
+      expect(contrast(text, hovered)).toBeGreaterThanOrEqual(contrast(text, rest))
+    })
+
+    it(`${themeName} never lowers the contrast of a hovered status button`, () => {
+      for (const intent of ['ok', 'warning', 'danger', 'info']) {
+        const rest = hex(theme, intent)
+        const hovered = mixOklab(rest, hex(theme, 'solid-hover-mix'), weight)
+        const text = hex(theme, 'on-solid')
+        expect(contrast(text, hovered), `${themeName} ${intent}`).toBeGreaterThanOrEqual(contrast(text, rest))
+      }
+    })
+  }
+})
+
 describe('canvas-library fallbacks', () => {
   const source = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8')
 

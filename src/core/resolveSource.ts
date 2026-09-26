@@ -142,6 +142,10 @@ export function resolveSource(
       body: { source_id: source.source_id, params },
       stream: source.stream ? 'connect' : false,
       refreshIntervalMs: source.refreshIntervalMs ?? source.refreshInterval,
+      // Presentation settings travel with the request: the widget marks a
+      // backend panel stale and throttles its stream like a URL source.
+      throttleMs: source.throttleMs,
+      staleAfterMs: source.staleAfterMs,
     }
   }
 

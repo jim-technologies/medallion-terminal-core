@@ -86,6 +86,17 @@ describe('resolveSource — source_id mode', () => {
     expect(out.stream).toBe('connect')
   })
 
+  it('keeps staleAfterMs and throttleMs so a backend panel can go stale and throttle', () => {
+    const out = resolveSource(
+      { source_id: 'live_prices', stream: true, staleAfterMs: 10_000, throttleMs: 250, refreshIntervalMs: 0 },
+      {},
+      'https://api.example.com',
+    )
+    expect(out).toMatchObject({ staleAfterMs: 10_000, throttleMs: 250, stream: 'connect' })
+    // Nothing leaks into the request body.
+    expect(out.body).toEqual({ source_id: 'live_prices', params: {} })
+  })
+
   it('adds trusted host headers without putting them in template data', () => {
     const source = { source_id: 'governed_assets' }
     const out = resolveSource(

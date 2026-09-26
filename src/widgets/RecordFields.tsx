@@ -1,3 +1,6 @@
+import { Icon } from '../components/Icon'
+import type { StatusTone } from '../foundations/types'
+import { PropertyValue } from '../objects/PropertyValue'
 import { formatCompact, formatCurrency, formatPercent } from './format'
 import {
   isRecordFieldEditable,
@@ -5,7 +8,7 @@ import {
   type RecordChoiceData,
   type RecordFieldData,
 } from './recordShapes'
-import { localDate, safeUrl } from './textNormalize'
+import { safeUrl } from './textNormalize'
 
 interface RecordValueProps {
   field: RecordFieldData
@@ -24,37 +27,38 @@ function choiceFor(field: RecordFieldData, value: unknown): RecordChoiceData | u
   return field.choices.find(choice => choice.value === choiceValue(value))
 }
 
-function tone(color?: string): string {
+// Choice colours are semantic tones, never CSS: anything else is a neutral
+// chip.
+function toneOf(color?: string): StatusTone {
   switch (color?.toLowerCase()) {
     case 'info':
     case 'blue':
     case 'cyan':
     case 'purple':
-      return 'bg-sky-500/15 text-sky-300 border-sky-500/30'
+      return 'info'
     case 'ok':
     case 'green':
     case 'emerald':
-      return 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+      return 'ok'
     case 'warn':
     case 'amber':
     case 'yellow':
     case 'orange':
-      return 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+      return 'warning'
     case 'danger':
     case 'red':
-      return 'bg-red-500/15 text-red-300 border-red-500/30'
+      return 'danger'
     default:
-      return 'bg-zinc-800 text-zinc-300 border-zinc-700'
+      return 'neutral'
   }
 }
 
+// A choice renders like any enum value: a filled chip, or a status badge
+// when its choice carries a tone.
 function Chip({ field, value }: RecordValueProps) {
   const choice = choiceFor(field, value)
-  return (
-    <span className={`inline-flex max-w-full items-center border rounded px-1.5 py-0.5 text-[length:var(--mtc-font-size-xs)] ${tone(choice?.color)}`}>
-      <span className="truncate">{choice?.label ?? recordValueLabel(value)}</span>
-    </span>
-  )
+  const label = choice?.label ?? recordValueLabel(value)
+  return <PropertyValue value={label} kind="enum" tones={{ [label]: toneOf(choice?.color) }} context="grid" />
 }
 
 function formatRecordNumber(field: RecordFieldData, value: number): string {
@@ -72,15 +76,9 @@ function formatRecordNumber(field: RecordFieldData, value: number): string {
 // Shared schema-aware value renderer used by grid, board, calendar, and form.
 // It renders only semantic tones; arbitrary backend strings never become CSS.
 export function RecordValue({ field, value }: RecordValueProps) {
-  if (value == null || value === '') return <span className="text-zinc-600">—</span>
+  if (value == null || value === '') return <span className="mtc-value-empty">—</span>
 
-  if (field.type === 'boolean') {
-    return (
-      <span className={value ? 'text-emerald-400' : 'text-zinc-600'}>
-        {value ? '✓' : '—'}
-      </span>
-    )
-  }
+  if (field.type === 'boolean') return <PropertyValue value={value === true || value === 'true'} kind="boolean" context="grid" />
 
   if (
     field.type === 'single_select' ||
@@ -91,13 +89,13 @@ export function RecordValue({ field, value }: RecordValueProps) {
   }
 
   if (Array.isArray(value)) {
-    if (value.length === 0) return <span className="text-zinc-600">—</span>
+    if (value.length === 0) return <span className="mtc-value-empty">—</span>
     return (
       <span className="flex items-center gap-1 flex-wrap">
         {value.slice(0, 4).map((entry, index) => (
           <Chip key={`${recordValueLabel(entry)}:${index}`} field={field} value={entry} />
         ))}
-        {value.length > 4 && <span className="text-[length:var(--mtc-font-size-xs)] text-zinc-500">+{value.length - 4}</span>}
+        {value.length > 4 && <span className="mtc-value-secondary">+{value.length - 4}</span>}
       </span>
     )
   }
@@ -108,7 +106,9 @@ export function RecordValue({ field, value }: RecordValueProps) {
 
   if (field.type === 'date' || field.type === 'datetime' ||
       field.type === 'created_at' || field.type === 'updated_at') {
-    return <span className="tabular-nums">{String(localDate(value))}</span>
+    // Intl-formatted in the scope's locale and time zone; a bare
+    // YYYY-MM-DD stays that calendar day everywhere.
+    return <PropertyValue value={value} kind={field.type === 'date' ? 'date' : 'datetime'} context="grid" />
   }
 
   if (field.type === 'url') {
@@ -118,10 +118,11 @@ export function RecordValue({ field, value }: RecordValueProps) {
         <a
           href={url}
           {...(url.startsWith('/') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-          className="text-sky-400 hover:underline"
+          className="mtc-value-link"
           onClick={event => event.stopPropagation()}
         >
-          {url} <span aria-hidden="true">↗</span>
+          <span className="mtc-value-link-text">{url}</span>
+          {!url.startsWith('/') && <Icon name="external-link" />}
         </a>
       )
     }
