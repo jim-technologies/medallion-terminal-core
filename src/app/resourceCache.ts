@@ -95,8 +95,11 @@ export function createResourceCache({ maxEntries = 100, now = Date.now }: Resour
       } catch (error) {
         if (!controller.signal.aborted) update(current, { error: toSourceError(error) })
       } finally {
-        if (current.inflight?.controller === controller) current.inflight = undefined
-        update(current, { validating: false })
+        // A newer load (after an abort) keeps the entry validating.
+        if (current.inflight?.controller === controller) {
+          current.inflight = undefined
+          update(current, { validating: false })
+        }
         evict()
       }
     })()

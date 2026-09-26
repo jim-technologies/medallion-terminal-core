@@ -71,6 +71,33 @@ describe('resource cache', () => {
     expect(signals[1]!.aborted).toBe(false)
   })
 
+  it('keeps validating while a load that replaced an aborted one runs', async () => {
+    const cache = createResourceCache()
+    const pending = deferred<string>()
+    let calls = 0
+    const load = (signal: AbortSignal) => {
+      calls += 1
+      if (calls === 1) {
+        return new Promise<string>((_, reject) => signal.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError'))))
+      }
+      return pending.promise
+    }
+    const stop = cache.subscribe('objects', () => {})
+    void cache.fetch('objects', load)
+    stop()
+    // The abort runs in a microtask; the aborted load has not settled yet
+    // when a new reader starts the next one.
+    await Promise.resolve()
+    cache.subscribe('objects', () => {})
+    const second = cache.fetch('objects', load)
+    await flush()
+    expect(calls).toBe(2)
+    expect(cache.read('objects').validating).toBe(true)
+    pending.resolve('fresh')
+    await second
+    expect(cache.read('objects')).toMatchObject({ data: 'fresh', validating: false })
+  })
+
   it('ignores a response to a load started before a local set', async () => {
     const cache = createResourceCache()
     const pending = deferred<number>()

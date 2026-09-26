@@ -267,7 +267,7 @@ export function DataGrid<Row>({
   const [measured, setMeasured] = useState<Record<string, number>>({})
   const measuredRef = useRef(measured)
   measuredRef.current = measured
-  const measureBasis = useRef<{ rows: readonly Row[]; columns: string; fonts: number } | null>(null)
+  const measureBasis = useRef<{ rows: readonly Row[]; columns: readonly DataGridColumn<Row>[]; key: string; fonts: number } | null>(null)
   const [fontEpoch, setFontEpoch] = useState(0)
   const [active, setActive] = useState<GridPosition>(() => ({
     row: rows.length > 0 ? 0 : -1,
@@ -383,15 +383,16 @@ export function DataGrid<Row>({
   // max-content width for one synchronous reflow, read them, and put them
   // back before paint. While the rows and columns stay the same (a scroll of
   // a windowed grid) widths only grow, so columns do not jitter; new rows,
-  // new columns or a font load measure afresh.
+  // new column definitions (which may render new cell content, such as an
+  // inline editor) or a font load measure afresh.
   const columnKey = renderedColumns.map(entry => (entry.kind === 'data' && entry.contentSized ? `${entry.column.id}*` : entry.kind === 'data' ? entry.column.id : '')).join('|')
   useLayoutEffect(() => {
     const root = rootRef.current
     const element = viewportRef.current
     if (!root || !element || !columnKey.includes('*')) return
     const basis = measureBasis.current
-    const fresh = !basis || basis.rows !== rows || basis.columns !== columnKey || basis.fonts !== fontEpoch
-    measureBasis.current = { rows, columns: columnKey, fonts: fontEpoch }
+    const fresh = !basis || basis.rows !== rows || basis.columns !== columns || basis.key !== columnKey || basis.fonts !== fontEpoch
+    measureBasis.current = { rows, columns, key: columnKey, fonts: fontEpoch }
     root.dataset.measuring = 'true'
     const current = measuredRef.current
     const next: Record<string, number> = {}
@@ -415,7 +416,7 @@ export function DataGrid<Row>({
     delete root.dataset.measuring
     const keys = Object.keys(next)
     if (keys.length !== Object.keys(current).length || keys.some(key => current[key] !== next[key])) setMeasured(next)
-  }, [rows, displayRows, columnKey, range.start, range.end, fontEpoch, renderedColumns])
+  }, [rows, columns, displayRows, columnKey, range.start, range.end, fontEpoch, renderedColumns])
 
   // Web fonts change text metrics; measure again once they have loaded.
   useEffect(() => {
