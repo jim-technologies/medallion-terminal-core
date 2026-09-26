@@ -85,8 +85,10 @@ export declare function newTraceparent(): string;
  *   `cause` is the `SourceError`; `toSourceError` returns it.
  *
  * One call opts out of the wait, or sets its own, with
- * `productFetch(url, { ...init, timeoutMs: 0 })`; a connect-web call does it
- * with its own `timeoutMs` call option.
+ * `productFetch(url, { ...init, timeoutMs: 0 })`. A connect-web call can set
+ * its own positive deadline with its `timeoutMs` call option (sent as
+ * `connect-timeout-ms`, which replaces this wait); it cannot opt out, because
+ * connect-web sends no deadline for `timeoutMs: 0`.
  *
  * Responses, including error responses, are returned unchanged: transports
  * parse their own error bodies. Plain callers use `ensureOk` to turn a
