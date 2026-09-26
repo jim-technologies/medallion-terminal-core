@@ -231,6 +231,26 @@ tone is given; lists show three chips then "+N"; object references are
 nested objects open in a disclosure, never as raw JSON; empty values are an
 em dash in `--mtc-muted-subtle`.
 
+## Page templates
+
+The `Templates/Pages` stories are the reference layouts for product pages,
+composed only from the toolkit entry (a unit test rejects any other import):
+Object explorer, Object view, Object type, Schema graph, Files, Operations,
+Storage and Connect. Each has dark and light baselines at 1440 px and 390 px.
+Copy structure from these, not from the product clones.
+
+| Template | Layout |
+|---|---|
+| Workspace frame | 44 px top bar (mark, workspace scope, search launcher with `Ctrl K`, settings, account), `NavRail`, page, an `Inspector` at 1280 px and wider, 24 px status bar with the prototype badge; on phones the rail is a `Drawer` behind the menu button and search is an icon |
+| Object explorer | Rail collapsed; `FacetList` on the left (a `Drawer` behind "Filters" below 1024 px); `PageHeader`; `SearchField` with the type token; a result summary; a type-scoped `DataGrid`; the inspector previews the selection (compact header, key properties, link counts, "Open object") |
+| Object view | `ObjectPage`: breadcrumbs, header with actions, tabs; Overview is `PropertyPanel` and `LinkPanel`, then `LinkGraph` and `ActivityFeed` |
+| Object type | `ObjectPage` for the type: a schema `DataGrid` (property, API name, kind, required, format) beside the link-type `LinkPanel`, a `SchemaGraph` of the direct neighbourhood, and the first objects |
+| Schema graph | `PageHeader` with Object types, Link types and Graph tabs; the full-width `SchemaGraph`; the inspector summarises the selected type |
+| Files | `PageHeader` with list or grid toggle and Upload; `SplitPane` of a folder `Tree` and the file `DataGrid` (stacked on phones); the inspector shows the file's properties and a bounded `FilePreview` |
+| Operations | Service `StatTile`s with status, a Releases `DataGrid`, an incident `ActivityFeed` timeline, administration links as `ObjectChip`s |
+| Storage | Summary `StatTile`s, a Buckets `DataGrid` (usage, objects, class, versioning, last write, status) with an inspector; an unconfigured area is an `EmptyState` with a `Callout`, never a sentence box |
+| Connect | A Connectors `DataGrid`; the selected connector as an object: `ObjectHeader` with actions, a failure `Callout`, configuration `PropertyPanel` and sync-history timeline |
+
 ## Surface hierarchy
 
 1. Workspace canvas.

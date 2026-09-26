@@ -126,11 +126,25 @@ const widgetStories = {
   widgetRecordGrid: 'widgets-records-recordgrid--default',
 } as const
 
+// Page templates are whole pages composed only from the toolkit entry:
+// themed baselines at 1440 and phone baselines at 390, in both themes.
+const templateStories = {
+  templateObjectExplorer: 'templates-pages--object-explorer',
+  templateObjectView: 'templates-pages--object-view',
+  templateObjectType: 'templates-pages--object-type',
+  templateSchemaGraph: 'templates-pages--schema-graph',
+  templateFiles: 'templates-pages--files',
+  templateOperations: 'templates-pages--operations',
+  templateStorage: 'templates-pages--storage',
+  templateConnect: 'templates-pages--connect',
+} as const
+
 const stories = {
   dashboard: 'core-dashboard--full-demo',
   ...cloneStories,
   ...toolkitStories,
   ...widgetStories,
+  ...templateStories,
   githubFiles: 'clones-github--files-changed',
   githubChecks: 'clones-github--checks',
   gitlabChanges: 'clones-gitlab--changes',
@@ -253,6 +267,7 @@ const themedToolkitStories = [
   ...Object.entries(toolkitStories)
     .filter(([name]) => !themeInvariantToolkitStories.has(name as keyof typeof toolkitStories)),
   ...Object.entries(widgetStories),
+  ...Object.entries(templateStories),
 ]
 
 for (const [name, id] of themedToolkitStories) {
@@ -606,6 +621,49 @@ test('ProductShell moves the navigation into a drawer on phones', async ({ page 
   await expect(root.getByRole('heading', { name: 'Activity', level: 1 })).toBeVisible()
 })
 
+test('Object explorer template narrows the grid from facets and previews the selection', async ({ page }) => {
+  const root = await openStory(page, stories.templateObjectExplorer)
+  const grid = root.getByRole('grid', { name: 'Customers' })
+  await expect(grid.getByRole('row')).toHaveCount(6)
+  await root.getByRole('checkbox', { name: /At risk/ }).click()
+  await expect(root.getByRole('status').filter({ hasText: 'customers' })).toHaveText('1 of 5 customers · sorted by annual contract value')
+  await expect(grid.getByRole('row')).toHaveCount(2)
+  await grid.getByRole('gridcell', { name: 'Mid-market' }).click()
+  const preview = root.getByRole('complementary', { name: 'Selected customer' })
+  await expect(preview.getByRole('heading', { name: 'Cedar & Pine Health' })).toBeVisible()
+  await page.keyboard.press('Control+k')
+  const palette = page.getByRole('dialog', { name: 'Command palette' })
+  await page.keyboard.type('north')
+  await expect(palette.getByRole('option', { name: /Northstar Labs/ })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(palette).toHaveCount(0)
+})
+
+test('Page templates move the navigation and filters into drawers on phones', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  const root = await openStory(page, stories.templateObjectExplorer)
+  await expect(root.getByRole('navigation', { name: 'Workspace' })).toBeHidden()
+  await root.getByRole('button', { name: 'Open navigation' }).click()
+  const drawer = page.getByRole('dialog', { name: 'Navigation' })
+  await expect(drawer.getByRole('link', { name: 'Explore' })).toHaveAttribute('aria-current', 'page')
+  await drawer.getByRole('link', { name: /Files/ }).click()
+  await expect(drawer).toHaveCount(0)
+  await root.getByRole('button', { name: 'Filters' }).click()
+  const filters = page.getByRole('dialog', { name: 'Filters' })
+  await filters.getByRole('checkbox', { name: /Watch/ }).click()
+  await page.keyboard.press('Escape')
+  await expect(root.getByRole('grid', { name: 'Customers' }).getByRole('row')).toHaveCount(2)
+})
+
+test('Files template previews the selected file in the inspector', async ({ page }) => {
+  const root = await openStory(page, stories.templateFiles)
+  const inspector = root.getByRole('complementary', { name: 'Selected file' })
+  await expect(inspector.getByRole('grid', { name: 'q3-forecast.csv' })).toBeVisible()
+  await root.getByRole('grid', { name: 'Files in finance' }).getByRole('gridcell', { name: 'Markdown' }).click()
+  await expect(inspector.getByRole('heading', { name: 'renewal-notes.md' })).toBeVisible()
+  await expect(inspector.getByRole('grid')).toHaveCount(0)
+})
+
 test('CopyButton confirms a copy with a polite status', async ({ page }) => {
   const root = await openStory(page, stories.toolkitSkeletonCopy)
   const actions = root.getByRole('region', { name: 'Copy actions' })
@@ -669,7 +727,7 @@ test('Database table viewer controls visible columns, sorting, paging, and row i
   await expect(root.getByRole('heading', { name: 'Northwind Health' })).toBeVisible()
 })
 
-for (const [name, id] of Object.entries(toolkitStories)) {
+for (const [name, id] of Object.entries({ ...toolkitStories, ...templateStories })) {
   test(`${name} mobile layout stays within the viewport`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     const root = await openStory(page, id)
@@ -740,6 +798,7 @@ for (const theme of ['dark', 'light'] as const) {
 const mobileBaselineStories = {
   toolkitShell: toolkitStories.toolkitShell,
   toolkitObjectPage: toolkitStories.toolkitObjectPage,
+  ...templateStories,
 }
 
 for (const theme of ['dark', 'light'] as const) {

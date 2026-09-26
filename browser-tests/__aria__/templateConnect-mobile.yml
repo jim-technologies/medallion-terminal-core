@@ -1,0 +1,108 @@
+- banner:
+  - button "Open navigation"
+  - link "Workspace":
+    - /url: "#/"
+  - button "Search"
+  - button "Settings"
+  - img "Jamie Kim"
+- main:
+  - heading "Connect" [level=1]
+  - paragraph: Sources that sync records into the workspace.
+  - button "New connector"
+  - grid "Connectors":
+    - rowgroup:
+      - row "Connector Source Status Last sync Records Owner":
+        - columnheader "Connector"
+        - columnheader "Source"
+        - columnheader "Status"
+        - columnheader "Last sync"
+        - columnheader "Records"
+        - columnheader "Owner"
+    - rowgroup:
+      - row "CRM accounts CRM Healthy Sep 25, 2026, 9:55 AM 71,240 Sync CRM":
+        - gridcell "CRM accounts"
+        - gridcell "CRM"
+        - gridcell "Healthy"
+        - gridcell "Sep 25, 2026, 9:55 AM":
+          - time: Sep 25, 2026, 9:55 AM
+        - gridcell "71,240"
+        - gridcell "Sync CRM"
+      - row "Billing orders Billing Failing Sep 25, 2026, 8:03 AM 3,104,882 Finance team" [selected]:
+        - gridcell "Billing orders"
+        - gridcell "Billing"
+        - gridcell "Failing"
+        - gridcell "Sep 25, 2026, 8:03 AM":
+          - time: Sep 25, 2026, 8:03 AM
+        - gridcell "3,104,882"
+        - gridcell "Finance team"
+      - row "Support tickets Helpdesk Syncing Sep 25, 2026, 9:40 AM 918,210 Support ops":
+        - gridcell "Support tickets"
+        - gridcell "Helpdesk"
+        - gridcell "Syncing"
+        - gridcell "Sep 25, 2026, 9:40 AM":
+          - time: Sep 25, 2026, 9:40 AM
+        - gridcell "918,210"
+        - gridcell "Support ops"
+      - row "People directory HR system Paused Sep 18, 2026, 2:00 AM 2,140 People team":
+        - gridcell "People directory"
+        - gridcell "HR system"
+        - gridcell "Paused"
+        - gridcell "Sep 18, 2026, 2:00 AM":
+          - time: Sep 18, 2026, 2:00 AM
+        - gridcell "2,140"
+        - gridcell "People team"
+  - text: Connector
+  - code: c-billing
+  - button "Copy ID"
+  - status
+  - heading "Billing orders" [level=2]
+  - text: Failing
+  - list:
+    - listitem: Source Billing
+    - listitem: Owner Finance team
+  - button "Pause"
+  - button "Sync now"
+  - alert: The last sync failed The warehouse closed the connection while loading. The next attempt starts in 30 seconds.
+  - region "Configuration":
+    - heading "Configuration" [level=3]
+    - text: 7 of 7
+    - button "Filter properties"
+    - group "Source":
+      - term: Source
+      - definition: Billing
+      - term: Endpoint
+      - definition:
+        - link "billing.example/api/v2 (opens in a new tab)":
+          - /url: https://billing.example/api/v2
+      - term: Credential
+      - definition:
+        - code: cred-billing-readonly
+        - button "Copy"
+        - status
+    - group "Sync":
+      - term: Schedule
+      - definition: Every 15 minutes
+      - term: Mode
+      - definition: Incremental
+      - term: Target type
+      - definition:
+        - link "Order":
+          - /url: "#/ontology/types/order"
+      - term: Backfill complete
+      - definition: "Yes"
+  - region "Sync history":
+    - heading "Sync history" [level=3]
+    - list "Sync history":
+      - listitem:
+        - paragraph: Sync failed load-warehouse · connection reset · retry in 30 s
+        - time: Sep 25, 2026, 8:03 AM
+      - listitem:
+        - paragraph: Sync completed 1,284 orders · 42 s
+        - time: Sep 25, 2026, 7:48 AM
+      - listitem:
+        - paragraph: Sync completed 1,120 orders · 39 s
+        - time: Sep 25, 2026, 7:33 AM
+      - listitem:
+        - paragraph: Schema change New column discount_code · mapped to a property
+        - time: Sep 24, 2026, 3:10 PM
+- contentinfo: Prototype data en · UTC

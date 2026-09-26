@@ -1,0 +1,49 @@
+- banner:
+  - button "Open navigation"
+  - link "Workspace":
+    - /url: "#/"
+  - button "Search"
+  - button "Settings"
+  - img "Jamie Kim"
+- main:
+  - navigation "Breadcrumbs":
+    - list:
+      - listitem:
+        - link "Workspace":
+          - /url: "#/"
+      - listitem: Ontology
+  - heading "Ontology" [level=1]
+  - paragraph: Object types, link types and how they connect.
+  - button "New object type"
+  - tablist "Ontology sections":
+    - tab "Object types 7"
+    - tab "Link types 8"
+    - tab "Graph" [selected]
+  - tabpanel "Graph"
+  - group "Ontology graph":
+    - text: Employs Signed Placed Opened Holds At Recorded in Governs
+    - link "Customer, 71":
+      - /url: "#/ontology/types/customer"
+      - text: Customer 71
+    - link "Person, 212":
+      - /url: "#/ontology/types/person"
+      - text: Person 212
+    - link "Contract, 48":
+      - /url: "#/ontology/types/contract"
+      - text: Contract 48
+    - link "Order, 3,104":
+      - /url: "#/ontology/types/order"
+      - text: Order 3,104
+    - link "Employment, 230":
+      - /url: "#/ontology/types/employment"
+      - text: Employment 230
+    - link "Support ticket, 918":
+      - /url: "#/ontology/types/ticket"
+      - text: Support ticket 918
+    - link "Dataset, 14":
+      - /url: "#/ontology/types/dataset"
+      - text: Dataset 14
+  - button "Zoom in"
+  - button "Zoom out"
+  - button "Reset view"
+- contentinfo: Prototype data en · UTC

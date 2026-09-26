@@ -1,0 +1,98 @@
+- banner:
+  - button "Open navigation"
+  - link "Workspace":
+    - /url: "#/"
+  - button "Search"
+  - button "Settings"
+  - img "Jamie Kim"
+- main:
+  - heading "Operations" [level=1]
+  - paragraph: Service health, releases and incidents for this workspace.
+  - button "Refresh"
+  - text: Object API Healthy 4.18.2 p95 84 ms · fresh 1 min ago Search index Degraded 2.9.0 Lag 6 min · fresh 6 min ago Sync workers Healthy 1.31.0 12 of 12 running Object storage Healthy 3.4.1 41% used · fresh 2 min ago
+  - region "Releases":
+    - heading "Releases" [level=2]
+    - text: Last 7 days
+    - grid "Releases":
+      - rowgroup:
+        - row "Service Version Environment Status Deployed By":
+          - columnheader "Service"
+          - columnheader "Version"
+          - columnheader "Environment"
+          - columnheader "Status"
+          - columnheader "Deployed"
+          - columnheader "By"
+      - rowgroup:
+        - row "Object storage 3.4.1 Staging Queued Sep 25, 2026, 10:30 AM Deploy bot":
+          - gridcell "Object storage"
+          - gridcell "3.4.1":
+            - code: 3.4.1
+          - gridcell "Staging"
+          - gridcell "Queued"
+          - gridcell "Sep 25, 2026, 10:30 AM":
+            - time: Sep 25, 2026, 10:30 AM
+          - gridcell "Deploy bot"
+        - row "Search index 2.9.0 Production Rolling out Sep 25, 2026, 9:20 AM Deploy bot":
+          - gridcell "Search index"
+          - gridcell "2.9.0":
+            - code: 2.9.0
+          - gridcell "Production"
+          - gridcell "Rolling out"
+          - gridcell "Sep 25, 2026, 9:20 AM":
+            - time: Sep 25, 2026, 9:20 AM
+          - gridcell "Deploy bot"
+        - row "Object API 4.18.2 Production Live Sep 24, 2026, 2:05 PM Jamie Kim":
+          - gridcell "Object API"
+          - gridcell "4.18.2":
+            - code: 4.18.2
+          - gridcell "Production"
+          - gridcell "Live"
+          - gridcell "Sep 24, 2026, 2:05 PM":
+            - time: Sep 24, 2026, 2:05 PM
+          - gridcell "Jamie Kim"
+        - row "Object API 4.18.1 Production Rolled back Sep 24, 2026, 12:40 PM Jamie Kim":
+          - gridcell "Object API"
+          - gridcell "4.18.1":
+            - code: 4.18.1
+          - gridcell "Production"
+          - gridcell "Rolled back"
+          - gridcell "Sep 24, 2026, 12:40 PM":
+            - time: Sep 24, 2026, 12:40 PM
+          - gridcell "Jamie Kim"
+        - row "Sync workers 1.31.0 Production Live Sep 23, 2026, 8:12 AM Deploy bot":
+          - gridcell "Sync workers"
+          - gridcell "1.31.0":
+            - code: 1.31.0
+          - gridcell "Production"
+          - gridcell "Live"
+          - gridcell "Sep 23, 2026, 8:12 AM":
+            - time: Sep 23, 2026, 8:12 AM
+          - gridcell "Deploy bot"
+  - region "Incidents":
+    - heading "Incidents" [level=2]
+    - list "Incidents":
+      - listitem:
+        - paragraph: Index lag above 5 min Search index · paging on-call
+        - time: Sep 25, 2026, 9:48 AM
+      - listitem:
+        - paragraph: Rolled back Object API 4.18.1 Error rate 2.4% after release
+        - time: Sep 24, 2026, 12:52 PM
+      - listitem:
+        - paragraph: Certificate renewed api.workspace.example
+        - time: Sep 22, 2026, 8:00 PM
+  - region "Administration":
+    - heading "Administration" [level=2]
+    - list:
+      - listitem:
+        - link "Members":
+          - /url: "#/admin/members"
+      - listitem:
+        - link "Service accounts":
+          - /url: "#/admin/service-accounts"
+      - listitem:
+        - link "Credentials":
+          - /url: "#/admin/credentials"
+      - listitem:
+        - link "Audit log":
+          - /url: "#/admin/audit"
+- contentinfo: Prototype data en · UTC

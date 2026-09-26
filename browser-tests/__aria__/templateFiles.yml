@@ -1,0 +1,211 @@
+- banner:
+  - link "Workspace":
+    - /url: "#/"
+  - button "Research"
+  - button "Search objects, types, files Ctrl K"
+  - button "Settings"
+  - img "Jamie Kim"
+- navigation "Workspace":
+  - list:
+    - listitem:
+      - link "Home":
+        - /url: "#/"
+    - listitem:
+      - link "Explore":
+        - /url: "#/explore"
+    - listitem:
+      - link "Ontology":
+        - /url: "#/ontology"
+    - listitem:
+      - link "Files":
+        - /url: "#/files"
+    - listitem:
+      - link "Activity":
+        - /url: "#/activity"
+  - text: Object types
+  - list "Object types":
+    - listitem:
+      - link "Customer 71":
+        - /url: "#/explore?type=customer"
+    - listitem:
+      - link "Person 212":
+        - /url: "#/explore?type=person"
+    - listitem:
+      - link "Order 3.1K":
+        - /url: "#/explore?type=order"
+  - text: Platform
+  - list "Platform":
+    - listitem:
+      - link "Storage":
+        - /url: "#/storage"
+    - listitem:
+      - link "Connect":
+        - /url: "#/connect"
+    - listitem:
+      - link "Operations":
+        - /url: "#/operations"
+  - button "Collapse navigation" [expanded]
+- main:
+  - navigation "Breadcrumbs":
+    - list:
+      - listitem:
+        - link "Files":
+          - /url: "#/files"
+      - listitem:
+        - link "Shared":
+          - /url: "#/files/shared"
+      - listitem: finance
+  - heading "finance" [level=1]
+  - paragraph: Shared with the finance team · 6 items
+  - group "View":
+    - button "List view" [pressed]
+    - button "Grid view"
+  - button "Upload"
+  - tree "Folders":
+    - treeitem "Collapse Shared Shared" [expanded] [level=1]:
+      - button "Collapse Shared"
+      - text: Shared
+    - treeitem "Collapse finance finance" [expanded] [level=2] [selected]:
+      - button "Collapse finance"
+      - text: finance
+    - treeitem "2026" [level=3]
+    - treeitem "customers" [level=2]
+    - treeitem "legal" [level=2]
+    - treeitem "Expand My files My files" [level=1]:
+      - button "Expand My files"
+      - text: My files
+  - separator "Resize folders"
+  - grid "Files in finance":
+    - rowgroup:
+      - row "Name Kind Object Size Updated Owner":
+        - columnheader "Name"
+        - columnheader "Kind"
+        - columnheader "Object"
+        - columnheader "Size"
+        - columnheader "Updated"
+        - columnheader "Owner"
+    - rowgroup:
+      - row "2026 Folder — — Sep 24, 2026, 2:12 AM Finance team":
+        - gridcell "2026":
+          - link "2026":
+            - /url: "#/files/finance/2026"
+        - gridcell "Folder"
+        - gridcell "—"
+        - gridcell "—"
+        - gridcell "Sep 24, 2026, 2:12 AM":
+          - time: Sep 24, 2026, 2:12 AM
+        - gridcell "Finance team"
+      - row "q3-forecast.csv CSV Revenue forecast 48.2 kB Sep 24, 2026, 9:02 AM Ada Morgan" [selected]:
+        - gridcell "q3-forecast.csv":
+          - link "q3-forecast.csv":
+            - /url: "#/files/finance/q3-forecast.csv"
+        - gridcell "CSV"
+        - gridcell "Revenue forecast"
+        - gridcell "48.2 kB"
+        - gridcell "Sep 24, 2026, 9:02 AM":
+          - time: Sep 24, 2026, 9:02 AM
+        - gridcell "Ada Morgan"
+      - row "northstar-msa.pdf PDF Northstar master agreement 2.4 MB Sep 22, 2026, 4:40 AM Legal":
+        - gridcell "northstar-msa.pdf":
+          - link "northstar-msa.pdf":
+            - /url: "#/files/finance/northstar-msa.pdf"
+        - gridcell "PDF"
+        - gridcell "Northstar master agreement"
+        - gridcell "2.4 MB"
+        - gridcell "Sep 22, 2026, 4:40 AM":
+          - time: Sep 22, 2026, 4:40 AM
+        - gridcell "Legal"
+      - row "renewal-notes.md Markdown — 3.1 kB Sep 21, 2026, 1:15 AM Jamie Kim":
+        - gridcell "renewal-notes.md":
+          - link "renewal-notes.md":
+            - /url: "#/files/finance/renewal-notes.md"
+        - gridcell "Markdown"
+        - gridcell "—"
+        - gridcell "3.1 kB"
+        - gridcell "Sep 21, 2026, 1:15 AM":
+          - time: Sep 21, 2026, 1:15 AM
+        - gridcell "Jamie Kim"
+      - row "org-chart.png PNG image — 812 kB Sep 2, 2026, 7:30 AM Daniel Reyes":
+        - gridcell "org-chart.png":
+          - link "org-chart.png":
+            - /url: "#/files/finance/org-chart.png"
+        - gridcell "PNG image"
+        - gridcell "—"
+        - gridcell "812 kB"
+        - gridcell "Sep 2, 2026, 7:30 AM":
+          - time: Sep 2, 2026, 7:30 AM
+        - gridcell "Daniel Reyes"
+      - row "crm-mapping.json JSON — 9.8 kB Aug 28, 2026, 3:00 AM Sync CRM":
+        - gridcell "crm-mapping.json":
+          - link "crm-mapping.json":
+            - /url: "#/files/finance/crm-mapping.json"
+        - gridcell "JSON"
+        - gridcell "—"
+        - gridcell "9.8 kB"
+        - gridcell "Aug 28, 2026, 3:00 AM":
+          - time: Aug 28, 2026, 3:00 AM
+        - gridcell "Sync CRM"
+- complementary "Selected file":
+  - text: File
+  - code: finance/q3-forecast.csv
+  - button "Copy ID"
+  - status
+  - heading "q3-forecast.csv" [level=2]
+  - term: Kind
+  - definition: CSV
+  - term: Size
+  - definition: 48.2 kB
+  - term: Updated
+  - definition:
+    - time: Sep 24, 2026, 9:02 AM
+    - text: in 2 months
+  - term: Owner
+  - definition: Ada Morgan
+  - term: Object
+  - definition: Revenue forecast
+  - grid "q3-forecast.csv":
+    - rowgroup:
+      - row "month region bookings renewals churn":
+        - columnheader "month"
+        - columnheader "region"
+        - columnheader "bookings"
+        - columnheader "renewals"
+        - columnheader "churn"
+    - rowgroup:
+      - row "2026-07 North America 412000 188000 0.021":
+        - gridcell "2026-07"
+        - gridcell "North America"
+        - gridcell "412000"
+        - gridcell "188000"
+        - gridcell "0.021"
+      - row "2026-07 EU-Central 236000 94000 0.018":
+        - gridcell "2026-07"
+        - gridcell "EU-Central"
+        - gridcell "236000"
+        - gridcell "94000"
+        - gridcell "0.018"
+      - row "2026-08 North America 398500 201000 0.024":
+        - gridcell "2026-08"
+        - gridcell "North America"
+        - gridcell "398500"
+        - gridcell "201000"
+        - gridcell "0.024"
+      - row "2026-08 EU-Central 251200 88000 0.019":
+        - gridcell "2026-08"
+        - gridcell "EU-Central"
+        - gridcell "251200"
+        - gridcell "88000"
+        - gridcell "0.019"
+      - row "2026-09 North America 431900 176500 0.022":
+        - gridcell "2026-09"
+        - gridcell "North America"
+        - gridcell "431900"
+        - gridcell "176500"
+        - gridcell "0.022"
+      - row "2026-09 EU-Central 244800 97200 0.017":
+        - gridcell "2026-09"
+        - gridcell "EU-Central"
+        - gridcell "244800"
+        - gridcell "97200"
+        - gridcell "0.017"
+- contentinfo: Prototype data Ontology fresh 2 min ago en · UTC

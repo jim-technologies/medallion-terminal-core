@@ -1,0 +1,226 @@
+- banner:
+  - link "Workspace":
+    - /url: "#/"
+  - button "Research"
+  - button "Search objects, types, files Ctrl K"
+  - button "Settings"
+  - img "Jamie Kim"
+- navigation "Workspace":
+  - list:
+    - listitem:
+      - link "Home":
+        - /url: "#/"
+    - listitem:
+      - link "Explore":
+        - /url: "#/explore"
+    - listitem:
+      - link "Ontology":
+        - /url: "#/ontology"
+    - listitem:
+      - link "Files":
+        - /url: "#/files"
+    - listitem:
+      - link "Activity":
+        - /url: "#/activity"
+  - text: Object types
+  - list "Object types":
+    - listitem:
+      - link "Customer 71":
+        - /url: "#/explore?type=customer"
+    - listitem:
+      - link "Person 212":
+        - /url: "#/explore?type=person"
+    - listitem:
+      - link "Order 3.1K":
+        - /url: "#/explore?type=order"
+  - text: Platform
+  - list "Platform":
+    - listitem:
+      - link "Storage":
+        - /url: "#/storage"
+    - listitem:
+      - link "Connect":
+        - /url: "#/connect"
+    - listitem:
+      - link "Operations":
+        - /url: "#/operations"
+  - button "Collapse navigation" [expanded]
+- main:
+  - navigation "Breadcrumbs":
+    - list:
+      - listitem:
+        - link "Ontology":
+          - /url: "#/ontology"
+      - listitem:
+        - link "Customer":
+          - /url: "#/ontology/types/customer"
+      - listitem: Northstar Labs
+  - link "Customer":
+    - /url: "#/ontology/types/customer"
+  - code: res-customer-northstar
+  - button "Copy ID"
+  - status
+  - heading "Northstar Labs" [level=1]
+  - text: Active
+  - list:
+    - listitem: Updated 18 min ago by Jamie Kim
+    - listitem: Revision 14
+    - listitem: Source gold.customer_360
+  - button "Actions"
+  - button "Edit properties"
+  - button "More object actions"
+  - tablist "Object sections":
+    - tab "Overview" [selected]
+    - tab "Properties 10"
+    - tab "Links 18"
+    - tab "History 3"
+  - tabpanel "Overview":
+    - region "Properties":
+      - heading "Properties" [level=2]
+      - text: 10 of 10
+      - button "Filter properties"
+      - group "Identity":
+        - term: Customer ID
+        - definition:
+          - code: CUS-01842
+          - button "Copy"
+          - status
+        - term: Legal name
+        - definition: Northstar Laboratories, Inc.
+        - term: Website
+        - definition:
+          - link "northstar.example (opens in a new tab)":
+            - /url: https://northstar.example/
+      - group "Commercial":
+        - term: Segment
+        - definition: Enterprise
+        - term: Annual contract value
+        - definition: $284,000.00 USD
+        - term: Churn risk
+        - definition: Watch
+        - term: Churn probability
+        - definition: 18.0%
+        - term: Renewal date
+        - definition:
+          - time: Oct 18, 2026
+          - text: in 23 days
+        - term: Regions
+        - definition: North America EU-Central
+        - term: Account owner
+        - definition:
+          - link "Ada Morgan":
+            - /url: "#/objects/per-ada-morgan"
+    - region "Links":
+      - heading "Links" [level=2]
+      - text: 4 link types · 18 objects
+      - region "Employs Person":
+        - text: Employs Person 3
+        - list:
+          - listitem:
+            - link "Ada Morgan":
+              - /url: "#/objects/per-ada-morgan"
+            - text: Technical lead
+          - listitem:
+            - link "Daniel Reyes":
+              - /url: "#/objects/per-daniel-reyes"
+            - text: Procurement
+          - listitem:
+            - link "Naomie Park":
+              - /url: "#/objects/per-naomie-park"
+            - text: Finance
+      - region "Signed Contract":
+        - text: Signed Contract 1
+        - list:
+          - listitem:
+            - link "Northstar master agreement":
+              - /url: "#/objects/ctr-msa"
+            - text: Jan 4, 2026
+      - region "Placed Order":
+        - text: Placed Order 12
+        - list:
+          - listitem:
+            - link "ORD-4481":
+              - /url: "#/objects/ord-4481"
+            - text: $18,240.00
+          - listitem:
+            - link "ORD-4479":
+              - /url: "#/objects/ord-4479"
+            - text: $9,815.00
+          - listitem:
+            - link "ORD-4476":
+              - /url: "#/objects/ord-4476"
+            - text: $12,002.50
+        - link "View all 12":
+          - /url: "#/explore?type=order&customer=res-customer-northstar"
+      - region "Opened Support ticket":
+        - text: Opened Support ticket 2
+        - list:
+          - listitem:
+            - link "Export stalls above 2 GB":
+              - /url: "#/objects/tkt-318"
+            - text: Open
+          - listitem:
+            - link "SSO group mapping":
+              - /url: "#/objects/tkt-301"
+            - text: Resolved
+    - region "Link graph":
+      - heading "Link graph" [level=2]
+      - text: 1 hop
+      - group "Links of Northstar Labs":
+        - text: Employs Signed Placed Opened
+        - link "Ada Morgan, Employs":
+          - /url: "#/objects/per-ada-morgan"
+          - text: Ada Morgan
+        - link "Daniel Reyes, Employs":
+          - /url: "#/objects/per-daniel-reyes"
+          - text: Daniel Reyes
+        - link "Naomie Park, Employs":
+          - /url: "#/objects/per-naomie-park"
+          - text: Naomie Park
+        - link "Northstar master agreement, Signed":
+          - /url: "#/objects/ctr-msa"
+          - text: Northstar master agre…
+        - link "ORD-4481, Placed":
+          - /url: "#/objects/ord-4481"
+          - text: ORD-4481
+        - link "ORD-4479, Placed":
+          - /url: "#/objects/ord-4479"
+          - text: ORD-4479
+        - link "ORD-4476, Placed":
+          - /url: "#/objects/ord-4476"
+          - text: ORD-4476
+        - link "ORD-4470, Placed":
+          - /url: "#/objects/ord-4470"
+          - text: ORD-4470
+        - link "8 more Placed Order":
+          - /url: "#/explore?type=order&customer=res-customer-northstar"
+          - text: +8 8 more
+        - link "Export stalls above 2 GB, Opened":
+          - /url: "#/objects/tkt-318"
+          - text: Export stalls above 2…
+        - link "SSO group mapping, Opened":
+          - /url: "#/objects/tkt-301"
+          - text: SSO group mapping
+      - button "Zoom in"
+      - button "Zoom out"
+      - button "Reset view"
+    - region "Activity":
+      - heading "Activity" [level=2]
+      - list "Recent activity":
+        - listitem:
+          - paragraph:
+            - text: Jamie Kim updated
+            - link "Northstar Labs":
+              - /url: "#/objects/res-customer-northstar"
+            - text: Churn risk Healthy → Watch
+          - time: 18 minutes ago
+        - listitem:
+          - paragraph:
+            - text: Morgan Lee linked
+            - link "Northstar master agreement":
+              - /url: "#/objects/ctr-msa"
+          - time: 2 months ago
+        - listitem:
+          - paragraph: Sync CRM created this object
+          - time: 3 months ago
+- contentinfo: Prototype data Ontology fresh 2 min ago en · UTC

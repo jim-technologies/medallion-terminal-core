@@ -81,6 +81,13 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   resource table is `DataGrid`.
 - **`OperationsTray`**: long-running operations with status, progress,
   Cancel, Retry, Dismiss, polite announcements, floating or inline.
+- **Page templates** (`Templates/Pages`): Object explorer, Object view,
+  Object type, Schema graph, Files, Operations, Storage and Connect, built
+  only from toolkit exports inside one workspace frame, with dark and light
+  baselines at 1440 px and 390 px, interaction tests (facets, selection
+  preview, palette, phone drawers, file preview) and a unit test that
+  rejects imports from anywhere but the toolkit entry. `DESIGN.md` documents
+  each layout; products copy structure from these rather than the clones.
 - `StatusTone` type; message keys for copy, values, property panels, the
   grid, links, graphs, navigation, search, paging, toasts and activity (en
   and zh-CN).

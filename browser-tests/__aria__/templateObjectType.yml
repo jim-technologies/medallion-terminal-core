@@ -1,0 +1,283 @@
+- banner:
+  - link "Workspace":
+    - /url: "#/"
+  - button "Research"
+  - button "Search objects, types, files Ctrl K"
+  - button "Settings"
+  - img "Jamie Kim"
+- navigation "Workspace":
+  - list:
+    - listitem:
+      - link "Home":
+        - /url: "#/"
+    - listitem:
+      - link "Explore":
+        - /url: "#/explore"
+    - listitem:
+      - link "Ontology":
+        - /url: "#/ontology"
+    - listitem:
+      - link "Files":
+        - /url: "#/files"
+    - listitem:
+      - link "Activity":
+        - /url: "#/activity"
+  - text: Object types
+  - list "Object types":
+    - listitem:
+      - link "Customer 71":
+        - /url: "#/explore?type=customer"
+    - listitem:
+      - link "Person 212":
+        - /url: "#/explore?type=person"
+    - listitem:
+      - link "Order 3.1K":
+        - /url: "#/explore?type=order"
+  - text: Platform
+  - list "Platform":
+    - listitem:
+      - link "Storage":
+        - /url: "#/storage"
+    - listitem:
+      - link "Connect":
+        - /url: "#/connect"
+    - listitem:
+      - link "Operations":
+        - /url: "#/operations"
+  - button "Collapse navigation" [expanded]
+- main:
+  - navigation "Breadcrumbs":
+    - list:
+      - listitem:
+        - link "Ontology":
+          - /url: "#/ontology"
+      - listitem:
+        - link "Object types":
+          - /url: "#/ontology"
+      - listitem: Customer
+  - text: Object type
+  - code: customer
+  - button "Copy ID"
+  - status
+  - heading "Customer" [level=1]
+  - text: Active
+  - list:
+    - listitem: Version 7
+    - listitem: 24 properties
+    - listitem: 4 link types
+    - listitem: 71 objects
+    - listitem: Updated Sep 24 by Ada Morgan
+  - button "Edit schema"
+  - button "New customer"
+  - tablist "Object type sections":
+    - tab "Overview" [selected]
+    - tab "Properties 24"
+    - tab "Link types 4"
+    - tab "Objects 71"
+  - tabpanel "Overview":
+    - region "Properties":
+      - heading "Properties" [level=2]
+      - text: 8 of 24
+      - grid "Customer properties":
+        - rowgroup:
+          - row "Property API name Kind Required Format":
+            - columnheader "Property"
+            - columnheader "API name"
+            - columnheader "Kind"
+            - columnheader "Required"
+            - columnheader "Format"
+        - rowgroup:
+          - row "Customer ID customer_id id Yes Primary key":
+            - gridcell "Customer ID"
+            - gridcell "customer_id":
+              - code: customer_id
+            - gridcell "id"
+            - gridcell "Yes"
+            - gridcell "Primary key"
+          - row "Legal name legal_name string Yes Title":
+            - gridcell "Legal name"
+            - gridcell "legal_name":
+              - code: legal_name
+            - gridcell "string"
+            - gridcell "Yes"
+            - gridcell "Title"
+          - row "Segment segment enum Yes 3 values":
+            - gridcell "Segment"
+            - gridcell "segment":
+              - code: segment
+            - gridcell "enum"
+            - gridcell "Yes"
+            - gridcell "3 values"
+          - row "Annual contract value acv currency No USD":
+            - gridcell "Annual contract value"
+            - gridcell "acv":
+              - code: acv
+            - gridcell "currency"
+            - gridcell "No"
+            - gridcell "USD"
+          - row "Churn risk churn_risk enum No Toned":
+            - gridcell "Churn risk"
+            - gridcell "churn_risk":
+              - code: churn_risk
+            - gridcell "enum"
+            - gridcell "No"
+            - gridcell "Toned"
+          - row "Churn probability churn_probability percent No 0–1":
+            - gridcell "Churn probability"
+            - gridcell "churn_probability":
+              - code: churn_probability
+            - gridcell "percent"
+            - gridcell "No"
+            - gridcell "0–1"
+          - row "Renewal date renewal date No Calendar date":
+            - gridcell "Renewal date"
+            - gridcell "renewal":
+              - code: renewal
+            - gridcell "date"
+            - gridcell "No"
+            - gridcell "Calendar date"
+          - row "Account owner owner link No Person":
+            - gridcell "Account owner"
+            - gridcell "owner":
+              - code: owner
+            - gridcell "link"
+            - gridcell "No"
+            - gridcell "Person"
+    - region "Link types":
+      - heading "Link types" [level=2]
+      - text: 4 link types · 3594 objects
+      - region "Employs Person":
+        - text: Employs Person 212
+        - list:
+          - listitem:
+            - link "Customer → Person":
+              - /url: "#/ontology/links/employs"
+            - text: One to many
+      - region "Signed Contract":
+        - text: Signed Contract 48
+        - list:
+          - listitem:
+            - link "Customer → Contract":
+              - /url: "#/ontology/links/signed"
+            - text: One to many
+      - region "Placed Order":
+        - text: Placed Order 3104
+        - list:
+          - listitem:
+            - link "Customer → Order":
+              - /url: "#/ontology/links/placed"
+            - text: One to many
+      - region "At Employment":
+        - img "incoming"
+        - text: At Employment 230
+        - list:
+          - listitem:
+            - link "Employment → Customer":
+              - /url: "#/ontology/links/at"
+            - text: Many to one
+    - region "Neighbourhood":
+      - heading "Neighbourhood" [level=2]
+      - text: Direct link types
+      - group "Customer and the types it links to":
+        - text: Employs Signed Placed Opened At
+        - link "Customer, 71":
+          - /url: "#/ontology/types/customer"
+          - text: Customer 71
+        - link "Person, 212":
+          - /url: "#/ontology/types/person"
+          - text: Person 212
+        - link "Contract, 48":
+          - /url: "#/ontology/types/contract"
+          - text: Contract 48
+        - link "Order, 3,104":
+          - /url: "#/ontology/types/order"
+          - text: Order 3,104
+        - link "Employment, 230":
+          - /url: "#/ontology/types/employment"
+          - text: Employment 230
+        - link "Support ticket, 918":
+          - /url: "#/ontology/types/ticket"
+          - text: Support ticket 918
+      - button "Zoom in"
+      - button "Zoom out"
+      - button "Reset view"
+    - region "Objects":
+      - heading "Objects" [level=2]
+      - text: First 5 of 71
+      - grid "Customer objects":
+        - rowgroup:
+          - row "Name Segment Annual contract value Churn risk Renewal Owner Regions":
+            - columnheader "Name"
+            - columnheader "Segment"
+            - columnheader "Annual contract value"
+            - columnheader "Churn risk"
+            - columnheader "Renewal"
+            - columnheader "Owner"
+            - columnheader "Regions"
+        - rowgroup:
+          - row "Northstar Labs Enterprise $284,000.00 Watch Oct 18, 2026 Ada Morgan North America EU-Central":
+            - gridcell "Northstar Labs":
+              - link "Northstar Labs":
+                - /url: "#/objects/res-customer-northstar"
+            - gridcell "Enterprise"
+            - gridcell "$284,000.00"
+            - gridcell "Watch"
+            - gridcell "Oct 18, 2026":
+              - time: Oct 18, 2026
+            - gridcell "Ada Morgan":
+              - link "Ada Morgan":
+                - /url: "#/objects/per-ada-morgan"
+            - gridcell "North America EU-Central"
+          - row "Bluefin Analytics Enterprise $212,500.00 Healthy Feb 1, 2027 Daniel Reyes North America":
+            - gridcell "Bluefin Analytics":
+              - link "Bluefin Analytics":
+                - /url: "#/objects/res-customer-bluefin"
+            - gridcell "Enterprise"
+            - gridcell "$212,500.00"
+            - gridcell "Healthy"
+            - gridcell "Feb 1, 2027":
+              - time: Feb 1, 2027
+            - gridcell "Daniel Reyes":
+              - link "Daniel Reyes":
+                - /url: "#/objects/per-daniel-reyes"
+            - gridcell "North America"
+          - row "Cedar & Pine Health Mid-market $96,400.00 At risk Nov 3, 2026 Naomie Park EU-West":
+            - gridcell "Cedar & Pine Health":
+              - link "Cedar & Pine Health":
+                - /url: "#/objects/res-customer-cedar"
+            - gridcell "Mid-market"
+            - gridcell "$96,400.00"
+            - gridcell "At risk"
+            - gridcell "Nov 3, 2026":
+              - time: Nov 3, 2026
+            - gridcell "Naomie Park":
+              - link "Naomie Park":
+                - /url: "#/objects/per-naomie-park"
+            - gridcell "EU-West"
+          - row "Lumen Fieldworks Mid-market $71,800.00 Healthy Apr 12, 2027 Ada Morgan APAC North America":
+            - gridcell "Lumen Fieldworks":
+              - link "Lumen Fieldworks":
+                - /url: "#/objects/res-customer-lumen"
+            - gridcell "Mid-market"
+            - gridcell "$71,800.00"
+            - gridcell "Healthy"
+            - gridcell "Apr 12, 2027":
+              - time: Apr 12, 2027
+            - gridcell "Ada Morgan":
+              - link "Ada Morgan":
+                - /url: "#/objects/per-ada-morgan"
+            - gridcell "APAC North America"
+          - row "Quarry Point Energy Enterprise $158,900.00 Healthy Jan 20, 2027 Jamie Kim LATAM":
+            - gridcell "Quarry Point Energy":
+              - link "Quarry Point Energy":
+                - /url: "#/objects/res-customer-quarry"
+            - gridcell "Enterprise"
+            - gridcell "$158,900.00"
+            - gridcell "Healthy"
+            - gridcell "Jan 20, 2027":
+              - time: Jan 20, 2027
+            - gridcell "Jamie Kim":
+              - link "Jamie Kim":
+                - /url: "#/objects/per-jamie-kim"
+            - gridcell "LATAM"
+- contentinfo: Prototype data Ontology fresh 2 min ago en · UTC

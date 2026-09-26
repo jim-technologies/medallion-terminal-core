@@ -1,0 +1,94 @@
+- banner:
+  - button "Open navigation"
+  - link "Workspace":
+    - /url: "#/"
+  - button "Search"
+  - button "Settings"
+  - img "Jamie Kim"
+- main:
+  - heading "Explore" [level=1]
+  - paragraph: Search every object in the workspace, narrowed by type and property.
+  - button "Filters"
+  - button "Export"
+  - search "Search customers":
+    - text: Customer
+    - button "Remove Customer"
+    - searchbox "Search customers"
+  - status: 5 of 5 customers · sorted by annual contract value
+  - grid "Customers":
+    - rowgroup:
+      - row "Name Segment Annual contract value Churn risk Renewal Owner Regions":
+        - columnheader "Name"
+        - columnheader "Segment"
+        - columnheader "Annual contract value"
+        - columnheader "Churn risk"
+        - columnheader "Renewal"
+        - columnheader "Owner"
+        - columnheader "Regions"
+    - rowgroup:
+      - row "Northstar Labs Enterprise $284,000.00 Watch Oct 18, 2026 Ada Morgan North America EU-Central" [selected]:
+        - gridcell "Northstar Labs":
+          - link "Northstar Labs":
+            - /url: "#/objects/res-customer-northstar"
+        - gridcell "Enterprise"
+        - gridcell "$284,000.00"
+        - gridcell "Watch"
+        - gridcell "Oct 18, 2026":
+          - time: Oct 18, 2026
+        - gridcell "Ada Morgan":
+          - link "Ada Morgan":
+            - /url: "#/objects/per-ada-morgan"
+        - gridcell "North America EU-Central"
+      - row "Bluefin Analytics Enterprise $212,500.00 Healthy Feb 1, 2027 Daniel Reyes North America":
+        - gridcell "Bluefin Analytics":
+          - link "Bluefin Analytics":
+            - /url: "#/objects/res-customer-bluefin"
+        - gridcell "Enterprise"
+        - gridcell "$212,500.00"
+        - gridcell "Healthy"
+        - gridcell "Feb 1, 2027":
+          - time: Feb 1, 2027
+        - gridcell "Daniel Reyes":
+          - link "Daniel Reyes":
+            - /url: "#/objects/per-daniel-reyes"
+        - gridcell "North America"
+      - row "Quarry Point Energy Enterprise $158,900.00 Healthy Jan 20, 2027 Jamie Kim LATAM":
+        - gridcell "Quarry Point Energy":
+          - link "Quarry Point Energy":
+            - /url: "#/objects/res-customer-quarry"
+        - gridcell "Enterprise"
+        - gridcell "$158,900.00"
+        - gridcell "Healthy"
+        - gridcell "Jan 20, 2027":
+          - time: Jan 20, 2027
+        - gridcell "Jamie Kim":
+          - link "Jamie Kim":
+            - /url: "#/objects/per-jamie-kim"
+        - gridcell "LATAM"
+      - row "Cedar & Pine Health Mid-market $96,400.00 At risk Nov 3, 2026 Naomie Park EU-West":
+        - gridcell "Cedar & Pine Health":
+          - link "Cedar & Pine Health":
+            - /url: "#/objects/res-customer-cedar"
+        - gridcell "Mid-market"
+        - gridcell "$96,400.00"
+        - gridcell "At risk"
+        - gridcell "Nov 3, 2026":
+          - time: Nov 3, 2026
+        - gridcell "Naomie Park":
+          - link "Naomie Park":
+            - /url: "#/objects/per-naomie-park"
+        - gridcell "EU-West"
+      - row "Lumen Fieldworks Mid-market $71,800.00 Healthy Apr 12, 2027 Ada Morgan APAC North America":
+        - gridcell "Lumen Fieldworks":
+          - link "Lumen Fieldworks":
+            - /url: "#/objects/res-customer-lumen"
+        - gridcell "Mid-market"
+        - gridcell "$71,800.00"
+        - gridcell "Healthy"
+        - gridcell "Apr 12, 2027":
+          - time: Apr 12, 2027
+        - gridcell "Ada Morgan":
+          - link "Ada Morgan":
+            - /url: "#/objects/per-ada-morgan"
+        - gridcell "APAC North America"
+- contentinfo: Prototype data en · UTC

@@ -399,6 +399,19 @@ headers; `toSourceError(thrown)` maps errors from generated Connect clients
 (numeric or string `code`, `rawMessage`, `metadata`), timeouts and network
 failures. The Connect code decides the kind before the HTTP status does.
 
+## Page templates
+
+`src/templates/Pages.stories.tsx` (Storybook `Templates/Pages`) composes
+eight whole pages from nothing but the toolkit entry: Object explorer,
+Object view, Object type, Schema graph, Files, Operations, Storage and
+Connect, inside one workspace frame (top bar, `NavRail`, page, `Inspector`,
+status bar; a `Drawer` and a search icon on phones). Layout glue is utility
+classes on `--mtc-*` tokens; every control, list, grid, graph and state is
+a toolkit component, and `pageTemplates.test.ts` fails on any other import.
+They carry dark and light baselines at 1440 px and 390 px, and browser tests
+cover facet filtering, the selection preview, the palette, the phone
+drawers and the file preview. `DESIGN.md` lists each layout.
+
 ## Product shell (`medallion-terminal-core/app`)
 
 Every product UI (storage, tables, git, consoles) shares one frame and one
