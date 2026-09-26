@@ -14,3 +14,6 @@ export type { CreateWidgetRegistryOptions, WidgetComponent, WidgetRegistry, } fr
 export type { TerminalIntent, TerminalIntentHandler } from './core/TerminalIntent';
 export type { Template, Context, WidgetConfig, WidgetAlert, TemplateShortcut, DataSource, WidgetProps, } from './types/template';
 export type { WidgetAction, DispatchOptions, DashboardContextValue, DashboardEvent, EmitEvent, ActionLogEntry, AlertLogEntry, } from './core/DashboardContext';
+export type { DataSourceState } from './hooks/useDataSource';
+export { SourceError, describeSourceError, isSourceError, parseRetryAfter, responseRequestId, sourceErrorFromResponse, sourceErrorKindForCode, sourceErrorKindForStatus, toSourceError, } from './core/sourceError';
+export type { SourceErrorInit, SourceErrorKind } from './core/sourceError';

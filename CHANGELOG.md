@@ -53,6 +53,18 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   the host page's styles (serif portals). The host is created on first use,
   follows theme and density changes, and is removed when its last user
   unmounts; it returns `null` outside a scope and during server rendering.
+- **Typed transport failures (`SourceError`).** Every entry point exports
+  `SourceError` (`kind`: `unauthenticated | forbidden | not_found |
+  rate_limited | unavailable | invalid | unknown`, plus `status`, Connect
+  `code`, the server's reason as `message`, `requestId` and `retryAfterMs`),
+  `sourceErrorFromResponse` (reads a bounded Connect JSON error body and the
+  `x-request-id` / `Retry-After` headers), `toSourceError` (generated Connect
+  client errors by numeric or string code, timeouts and network failures) and
+  `describeSourceError`. `useDataSource()` returns `sourceError`; widgets
+  render it through `ErrorState`, which takes `error` and leads with product
+  copy for the kind while the server's reason, code and request id sit in a
+  Details disclosure. A 403 now reads "You don't have access" with
+  `payroll:read scope required` under Details instead of "HTTP 403".
 - **Message catalog and `Intl` formatters.** `DesignSystemProvider` takes
   `locale`, `timeZone` and `messages` (per-key overrides); nested scopes and
   Dashboards inherit what they do not set. Toolkit defaults (loading and
@@ -81,6 +93,14 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- **`useDataSource().error` is deprecated** in favour of `sourceError` and
+  is removed in 0.7.0. It stays a one-line string (`permission_denied:
+  payroll:read scope required`, `HTTP 503`); streamed failures lost their
+  `ConnectRPC: ` prefix and an HTTP failure with a Connect body now carries the
+  server's code and reason instead of the bare status.
+- **`ErrorState.message` is optional** when `error` is given, and
+  `intent` defaults from the error's kind (warning for `rate_limited` and
+  `unavailable`).
 - **`package.json` is `private` and declares `Apache-2.0`.** Distribution
   has been Git-only since 0.5.2, but nothing stopped a habitual
   `pnpm publish` from claiming the unscoped name on the public registry, and

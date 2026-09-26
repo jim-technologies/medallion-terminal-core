@@ -11,6 +11,7 @@ import { Skeleton, ErrorState } from './states'
 import { downloadView, viewRowCount, type ExportFormat } from '../export/exportView'
 import { EXPORT_FORMATS } from '../export/serializers'
 import type { WidgetConfig } from '../types/template'
+import type { SourceError } from '../core/sourceError'
 
 function formatAge(now: number, ts: number | null): string | null {
   if (!ts) return null
@@ -28,7 +29,7 @@ function formatAge(now: number, ts: number | null): string | null {
 function renderBody(args: {
   resolution: { error: string | null }
   loading: boolean
-  error: string | null
+  error: SourceError | null
   data: unknown
   options: Record<string, unknown> | undefined
   component: string
@@ -43,7 +44,7 @@ function renderBody(args: {
   // failure might be transient.
   if (resolution.error) return <ErrorState message={resolution.error} />
   if (loading) return <Skeleton component={component} />
-  if (error) return <ErrorState message={error} onRetry={onRetry} />
+  if (error) return <ErrorState error={error} onRetry={onRetry} compact />
   return (
     <div className="h-full motion-safe:animate-[fadeIn_200ms_ease-out]">
       <ErrorBoundary onError={onRenderError}>
@@ -235,7 +236,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey, registry }: Wi
     }
   }, [config.source, ctx, backendUrl, backendHeaders, refreshIntervalMs])
   const source = resolution.source
-  const { data, loading, error, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(source)
+  const { data, loading, error, sourceError, lastUpdated, connected, nextRetryAt, refresh } = useDataSource(source)
   const Component = getWidget(config.component, registry)
 
   // Snapshot capture: expose the current rendered data to the dashboard
@@ -395,7 +396,7 @@ export function WidgetShell({ config, contentHeight, snapshotKey, registry }: Wi
       )}
       <div className={compact ? 'p-2.5' : 'p-4'} style={{ height: compact ? Math.round(contentHeight * 0.92) : contentHeight }}>
         {renderBody({
-          resolution, loading, error, data,
+          resolution, loading, error: sourceError, data,
           options: config.options, component: config.component, widgetId: config.id, Component,
           onRenderError: (err) => emit({
             type: 'widget_error',

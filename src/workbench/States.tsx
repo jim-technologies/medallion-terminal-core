@@ -3,8 +3,11 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from 'react'
-import { useMessage } from '../foundations/DesignSystemProvider'
+import { useLocale, useMessage, type Translate } from '../foundations/DesignSystemProvider'
+import { formatDuration } from '../foundations/intl'
+import type { MessageKey } from '../foundations/messages'
 import type { Intent } from '../foundations/types'
+import type { SourceError, SourceErrorKind } from '../core/sourceError'
 import { Button } from '../components/Button'
 import { Icon } from '../components/Icon'
 import { cx } from '../components/utils'
@@ -96,10 +99,19 @@ function boundedSkeletonLines(lines: number): number {
 
 /** Props for a recoverable application error state. */
 export interface ErrorStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
-  /** Optional error heading. */
+  /** Optional error heading. Defaults to the typed error's title. */
   title?: ReactNode
-  /** Human-readable failure message. */
-  message: ReactNode
+  /**
+   * Human-readable failure message. Defaults to product copy for the typed
+   * error's kind; required when no `error` is given.
+   */
+  message?: ReactNode
+  /**
+   * A typed transport failure. Chooses the title, copy and intent from its
+   * kind and puts the server's reason, error code and request id in a
+   * Details disclosure rather than the headline.
+   */
+  error?: SourceError
   /** Adds a retry action when provided. */
   onRetry?: () => void
   /** Label for the generated retry action. */
@@ -108,25 +120,77 @@ export interface ErrorStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 't
   actions?: ReactNode
   /** Uses the bounded compact presentation. */
   compact?: boolean
-  /** Error severity presentation. */
+  /** Error severity presentation. Defaults from the typed error's kind. */
   intent?: Extract<Intent, 'danger' | 'warning'>
+}
+
+const ERROR_COPY: Readonly<Record<SourceErrorKind, readonly [MessageKey, MessageKey]>> = {
+  unauthenticated: ['error.unauthenticated.title', 'error.unauthenticated.description'],
+  forbidden: ['error.forbidden.title', 'error.forbidden.description'],
+  not_found: ['error.not_found.title', 'error.not_found.description'],
+  rate_limited: ['error.rate_limited.title', 'error.rate_limited.description'],
+  unavailable: ['error.unavailable.title', 'error.unavailable.description'],
+  invalid: ['error.invalid.title', 'error.invalid.description'],
+  unknown: ['state.error.title', 'error.unknown.description'],
+}
+
+/** Title and product copy for a typed failure, in the scope's language. */
+function errorCopy(error: SourceError, t: Translate, locale: string): [string, string] {
+  const [title, description] = ERROR_COPY[error.kind] ?? ERROR_COPY.unknown
+  if (error.kind === 'rate_limited' && error.retryAfterMs !== undefined) {
+    return [t(title), t('error.rate_limited.retryIn', { duration: formatDuration(error.retryAfterMs, { locale }) })]
+  }
+  return [t(title), t(description)]
+}
+
+/** Props for the raw-detail disclosure under a state. */
+interface StateDetailsProps {
+  /** The server's own words, kept out of the headline. */
+  reason?: ReactNode
+  code?: string
+  requestId?: string
+}
+
+/**
+ * The server's reason, error code and request id, collapsed by default so
+ * people read product copy first and can still quote the request id.
+ */
+function StateDetails({ reason, code, requestId }: StateDetailsProps) {
+  const t = useMessage()
+  if (!reason && !code && !requestId) return null
+  return (
+    <details className="mtc-state-details">
+      <summary>{t('state.details')}</summary>
+      {reason && <p>{reason}</p>}
+      {(code || requestId) && (
+        <dl>
+          {code && <><dt>{t('state.errorCode')}</dt><dd><code>{code}</code></dd></>}
+          {requestId && <><dt>{t('state.requestId')}</dt><dd><code>{requestId}</code></dd></>}
+        </dl>
+      )}
+    </details>
+  )
 }
 
 export const ErrorState = forwardRef<HTMLDivElement, ErrorStateProps>(function ErrorState(
   {
     title,
     message,
+    error,
     onRetry,
     retryLabel,
     actions,
     compact,
-    intent = 'danger',
+    intent,
     className,
     ...rest
   },
   ref,
 ) {
   const t = useMessage()
+  const { locale } = useLocale()
+  const [typedTitle, typedMessage] = error ? errorCopy(error, t, locale) : [undefined, undefined]
+  const tone = intent ?? (error && (error.kind === 'rate_limited' || error.kind === 'unavailable') ? 'warning' : 'danger')
   return (
     <div
       {...rest}
@@ -134,13 +198,17 @@ export const ErrorState = forwardRef<HTMLDivElement, ErrorStateProps>(function E
       role="alert"
       className={cx('mtc-state mtc-error-state', className)}
       data-compact={compact}
-      data-intent={intent}
+      data-intent={tone}
+      data-error-kind={error?.kind}
     >
       <div className="mtc-state-icon" aria-hidden="true">
-        <Icon name={intent === 'warning' ? 'warning' : 'error'} />
+        <Icon name={tone === 'warning' ? 'warning' : 'error'} />
       </div>
-      <div className="mtc-state-title">{title ?? t('state.error.title')}</div>
-      <div className="mtc-state-description">{message}</div>
+      <div className="mtc-state-title">{title ?? typedTitle ?? t('state.error.title')}</div>
+      <div className="mtc-state-description">{message ?? typedMessage}</div>
+      {error && (
+        <StateDetails reason={error.message} code={error.code} requestId={error.requestId} />
+      )}
       {(onRetry || actions) && (
         <div className="mtc-state-actions">
           {onRetry && <Button size="small" onClick={onRetry}>{retryLabel ?? t('state.retry')}</Button>}

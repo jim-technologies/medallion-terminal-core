@@ -2,6 +2,13 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import type { DataSource } from '../types/template'
 import { parseConnectEnvelopes, CONNECT_JSON_CONTENT_TYPE } from '../core/connectFraming'
 import { getNested } from '../core/getNested'
+import {
+  SourceError,
+  describeSourceError,
+  sourceErrorFromResponse,
+  sourceErrorKindForCode,
+  toSourceError,
+} from '../core/sourceError'
 
 // Resolve the proto-canonical inline / refresh names with the legacy
 // camelCase aliases that pre-rename templates emit. Removes once all
@@ -70,7 +77,17 @@ export function unwrapDataResponse(raw: unknown): unknown {
 export interface DataSourceState {
   data: unknown
   loading: boolean
+  /**
+   * One-line failure summary (`permission_denied: payroll:read scope
+   * required`, `HTTP 503`). Kept for compatibility; read `sourceError`.
+   * @deprecated since 0.6.0: use `sourceError`; removed in 0.7.0.
+   */
   error: string | null
+  /**
+   * The typed failure: kind, HTTP status, Connect code, the server's reason,
+   * request id and `Retry-After`. `null` while healthy.
+   */
+  sourceError: SourceError | null
   lastUpdated: number | null
   connected: boolean
   // Wall-clock ms at which the next reconnect attempt will fire, or null
@@ -84,7 +101,7 @@ export interface DataSourceState {
 export function useDataSource(source?: DataSource): DataSourceState {
   const [data, setData] = useState<unknown>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [sourceError, setError] = useState<SourceError | null>(null)
   const [lastUpdated, setLastUpdated] = useState<number | null>(null)
   const [connected, setConnected] = useState(false)
   const [nextRetryAt, setNextRetryAt] = useState<number | null>(null)
@@ -187,8 +204,8 @@ export function useDataSource(source?: DataSource): DataSourceState {
             body: JSON.stringify(source.body ?? {}),
             signal: ctrl.signal,
           })
-          if (!res.ok) throw new Error(`ConnectRPC: HTTP ${res.status}`)
-          if (!res.body) throw new Error('ConnectRPC: no response body')
+          if (!res.ok) throw await sourceErrorFromResponse(res)
+          if (!res.body) throw new SourceError('Stream response has no body', { kind: 'unavailable' })
 
           setConnected(true)
           setNextRetryAt(null)
@@ -205,7 +222,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
               if (trailer.error) {
                 const code = trailer.error.code ?? 'unknown'
                 const msg = trailer.error.message ?? 'stream error'
-                if (!disposed) setError(`${code}: ${msg}`)
+                if (!disposed) setError(new SourceError(msg, { kind: sourceErrorKindForCode(code), code }))
               }
             },
             isDisposed: () => disposed,
@@ -213,7 +230,7 @@ export function useDataSource(source?: DataSource): DataSourceState {
           reader.releaseLock()
         } catch (err: unknown) {
           // AbortError on cleanup is expected; surface anything else.
-          if (!disposed && err instanceof Error && !isAbortLikeError(err)) setError(err.message)
+          if (!disposed && err instanceof Error && !isAbortLikeError(err)) setError(toSourceError(err))
         } finally {
           if (!disposed) {
             setConnected(false)
@@ -246,7 +263,13 @@ export function useDataSource(source?: DataSource): DataSourceState {
         if (disposed) return
         es = new EventSource(source.url!)
         es.onopen = () => { setConnected(true); setNextRetryAt(null); setError(null); reconnectDelay.current = INITIAL_RECONNECT_DELAY }
-        es.onmessage = (e) => { try { handleData(JSON.parse(e.data)) } catch { setError('Failed to parse stream') } }
+        es.onmessage = (e) => {
+          try {
+            handleData(JSON.parse(e.data))
+          } catch {
+            setError(new SourceError('Failed to parse stream', { kind: 'unknown' }))
+          }
+        }
         es.onerror = () => {
           es?.close(); setConnected(false)
           if (!disposed) {
@@ -281,11 +304,11 @@ export function useDataSource(source?: DataSource): DataSourceState {
           body: source.body ? JSON.stringify(source.body) : undefined,
           signal: ctrl.signal,
         })
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        if (!res.ok) throw await sourceErrorFromResponse(res)
         const body = await res.json()
         if (!disposed) handleData(body)
       } catch (err: unknown) {
-        if (!disposed && err instanceof Error && !isAbortLikeError(err)) setError(err.message)
+        if (!disposed && err instanceof Error && !isAbortLikeError(err)) setError(toSourceError(err))
       } finally {
         fetching = false
         if (!disposed) setLoading(false)
@@ -313,5 +336,6 @@ export function useDataSource(source?: DataSource): DataSourceState {
     if (throttleTimer.current) clearTimeout(throttleTimer.current)
   }, [])
 
-  return { data, loading, error, lastUpdated, connected, nextRetryAt, refresh }
+  const error = useMemo(() => (sourceError ? describeSourceError(sourceError) : null), [sourceError])
+  return { data, loading, error, sourceError, lastUpdated, connected, nextRetryAt, refresh }
 }

@@ -238,9 +238,12 @@ const budgets = [
     maxGzipBytes: 10 * 1024,
   },
   {
+    // 0.6.0 spent the old 18 KiB on tokens v2 (twelve type slots, status
+    // tints, four themes) and the vendored @font-face rules; typed error
+    // states add their disclosure styles on top.
     label: 'library styles',
     path: path.resolve(root, packageJson.exports['./styles']),
-    maxGzipBytes: 18 * 1024,
+    maxGzipBytes: 19 * 1024,
   },
 ]
 

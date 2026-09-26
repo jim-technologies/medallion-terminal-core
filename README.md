@@ -209,6 +209,15 @@ visual language, theme tokens, and UI definition of done.
 }
 ```
 
+Failed sources render as typed states, not raw status lines. `useDataSource`
+returns `sourceError` (a `SourceError`: kind, HTTP status, Connect code, the
+server's reason, request id and `Retry-After`) beside the older `error`
+string, which is deprecated and goes in 0.7.0. A Connect error body such as
+`{"code":"permission_denied","message":"payroll:read scope required"}` shows as
+"You don't have access" with the reason and request id under Details, inside
+the widget; the rest of the dashboard keeps working. Expose `X-Request-Id`
+through CORS (`Access-Control-Expose-Headers`) so browsers can read it.
+
 ## Untrusted Template Policy
 
 `source_id` is the preferred integration path because the host backend

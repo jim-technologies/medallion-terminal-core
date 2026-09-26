@@ -325,15 +325,17 @@ test('Production readiness workspace composes and preserves scenario tabs', asyn
 test('Production readiness recovery scenario exposes failure and recovery states', async ({ page }) => {
   const root = await openStory(page, stories.recovery)
   const scenario = root.getByRole('combobox')
+  const probe = root.locator('#mt-widget-probe')
 
   await scenario.selectOption('empty')
   await expect(root.getByText('valid empty result')).toBeVisible()
 
+  // Failures render as typed states, never as a bare HTTP status.
   await scenario.selectOption('rate_limited')
-  await expect(root.getByText('HTTP 429')).toBeVisible()
+  await expect(probe.getByText('Too many requests')).toBeVisible()
 
   await scenario.selectOption('unavailable')
-  await expect(root.getByText('HTTP 503')).toBeVisible()
+  await expect(probe.getByText('Service unavailable')).toBeVisible()
 
   await scenario.selectOption('healthy')
   await expect(root.getByText('healthy response')).toBeVisible()

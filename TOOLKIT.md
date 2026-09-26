@@ -213,6 +213,10 @@ Popover and menu document listeners exist only while their layer is open.
 - `PropertyList`: safe presentation of arbitrary values.
 - `Tree`: stable IDs, selection, expansion, and keyboard navigation.
 - `EmptyState`, `LoadingState`, `ErrorState`: shared bounded states.
+  `ErrorState` also takes `error`, a typed `SourceError`, and then leads with
+  product copy for its kind (for example "You don’t have access" for a 403)
+  while the server's reason, Connect code and request id sit in a Details
+  disclosure.
 
 `Toolbar`, `Sidebar`, and `Inspector` do not own routing, fetching,
 authentication, or permissions. `SplitPane` exposes a separator with ARIA
@@ -232,6 +236,25 @@ database explorer composes the generic tree, panes, table presentation, tabs, in
 schema metadata, indexes, and query text surface around host-owned data. The
 focused table viewer additionally demonstrates sorting, filtering, bounded
 paging, column visibility, and row inspection without the surrounding explorer.
+
+### Typed failures
+
+`SourceError` (exported by every entry point) is a failed request with the
+server's side of the story kept:
+
+| Field | Meaning |
+|---|---|
+| `kind` | `unauthenticated`, `forbidden`, `not_found`, `rate_limited`, `unavailable`, `invalid` or `unknown` |
+| `status` | HTTP status, when a response arrived |
+| `code` | Connect error code in wire spelling (`permission_denied`) |
+| `message` | The server's reason (`payroll:read scope required`), else `HTTP 503` |
+| `requestId` | `x-request-id` / `request-id` from the response, else the id sent |
+| `retryAfterMs` | `Retry-After`, as seconds or an HTTP date |
+
+`sourceErrorFromResponse(res)` reads a Connect JSON error body (bounded) and
+headers; `toSourceError(thrown)` maps errors from generated Connect clients
+(numeric or string `code`, `rawMessage`, `metadata`), timeouts and network
+failures. The Connect code decides the kind before the HTTP status does.
 
 ## Host integration
 

@@ -331,6 +331,20 @@ export type {
   BuildDescriptorOptions,
 } from './bi/connector'
 
+// Typed transport failures
+export {
+  SourceError,
+  describeSourceError,
+  isSourceError,
+  parseRetryAfter,
+  responseRequestId,
+  sourceErrorFromResponse,
+  sourceErrorKindForCode,
+  sourceErrorKindForStatus,
+  toSourceError,
+} from './core/sourceError'
+export type { SourceErrorInit, SourceErrorKind } from './core/sourceError'
+
 // Hooks
 export { useDataSource } from './hooks/useDataSource'
 export { useBreakpoint } from './hooks/useBreakpoint'

@@ -7,3 +7,16 @@
 export * from './foundations'
 export * from './components'
 export * from './workbench'
+// Typed failures that ErrorState and the access/session states render.
+export {
+  SourceError,
+  describeSourceError,
+  isSourceError,
+  parseRetryAfter,
+  responseRequestId,
+  sourceErrorFromResponse,
+  sourceErrorKindForCode,
+  sourceErrorKindForStatus,
+  toSourceError,
+} from './core/sourceError'
+export type { SourceErrorInit, SourceErrorKind } from './core/sourceError'

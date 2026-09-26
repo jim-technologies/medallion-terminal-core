@@ -18,6 +18,23 @@ export declare const EN_MESSAGES: {
     readonly 'state.loading': 'Loading';
     readonly 'state.retry': 'Retry';
     readonly 'state.error.title': 'Unable to load';
+    readonly 'state.details': 'Details';
+    readonly 'state.requestId': 'Request ID';
+    readonly 'state.errorCode': 'Code';
+    readonly 'error.unauthenticated.title': 'Sign-in required';
+    readonly 'error.unauthenticated.description': 'Your session has ended. Sign in again to continue.';
+    readonly 'error.forbidden.title': 'You don’t have access';
+    readonly 'error.forbidden.description': 'Ask an owner for access.';
+    readonly 'error.not_found.title': 'Not found';
+    readonly 'error.not_found.description': 'It doesn’t exist or was moved.';
+    readonly 'error.rate_limited.title': 'Too many requests';
+    readonly 'error.rate_limited.description': 'Wait a moment, then try again.';
+    readonly 'error.rate_limited.retryIn': 'Try again in {duration}.';
+    readonly 'error.unavailable.title': 'Service unavailable';
+    readonly 'error.unavailable.description': 'The service did not respond. Try again shortly.';
+    readonly 'error.invalid.title': 'Request not accepted';
+    readonly 'error.invalid.description': 'The service could not accept this request.';
+    readonly 'error.unknown.description': 'Something went wrong while loading this.';
 };
 /** A key in the toolkit message catalog. */
 export type MessageKey = keyof typeof EN_MESSAGES;

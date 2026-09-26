@@ -114,6 +114,8 @@ export { parseEmbedConfig, buildEmbedUrl } from './embed/embedConfig';
 export type { EmbedConfig, EmbedTheme } from './embed/embedConfig';
 export { buildBiDescriptor, descriptorToJson, connectionFields, } from './bi/connector';
 export type { BiConnectorDescriptor, BiTable, BiColumn, BiParam, BiProtocol, BiColumnType, BiShape, SourceLike, BuildDescriptorOptions, } from './bi/connector';
+export { SourceError, describeSourceError, isSourceError, parseRetryAfter, responseRequestId, sourceErrorFromResponse, sourceErrorKindForCode, sourceErrorKindForStatus, toSourceError, } from './core/sourceError';
+export type { SourceErrorInit, SourceErrorKind } from './core/sourceError';
 export { useDataSource } from './hooks/useDataSource';
 export { useBreakpoint } from './hooks/useBreakpoint';
 export { useAnimatedNumber } from './hooks/useAnimatedNumber';

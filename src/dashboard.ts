@@ -43,3 +43,16 @@ export type {
   ActionLogEntry,
   AlertLogEntry,
 } from './core/DashboardContext'
+export type { DataSourceState } from './hooks/useDataSource'
+export {
+  SourceError,
+  describeSourceError,
+  isSourceError,
+  parseRetryAfter,
+  responseRequestId,
+  sourceErrorFromResponse,
+  sourceErrorKindForCode,
+  sourceErrorKindForStatus,
+  toSourceError,
+} from './core/sourceError'
+export type { SourceErrorInit, SourceErrorKind } from './core/sourceError'
