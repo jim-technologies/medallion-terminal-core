@@ -254,6 +254,14 @@
   color-scheme: dark;
 }
 
+/* The body-level host behind usePortalContainer: it carries the scope's
+   theme, fonts and density for portalled layers but takes no space and
+   paints nothing itself. */
+.mtc-root.mtc-portal-root {
+  min-height: 0;
+  background: none;
+}
+
 /* The operational preset: the same slate one step darker (OKLCH L - 0.02)
    with an original, softened citrine as its single accent. Solid accent
    fills carry dark text. */

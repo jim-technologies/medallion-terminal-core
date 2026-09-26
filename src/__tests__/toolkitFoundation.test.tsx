@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { Button } from '../components/Button'
 import { FormField, Input } from '../components/FormControls'
 import { Breadcrumbs } from '../components/Navigation'
-import { DesignSystemProvider } from '../foundations/DesignSystemProvider'
+import { DesignSystemProvider, usePortalContainer } from '../foundations/DesignSystemProvider'
 import { PropertyList } from '../workbench/PropertyList'
 import { SplitPane } from '../workbench/SplitPane'
 import { LoadingState } from '../workbench/States'
@@ -144,6 +144,16 @@ describe('design-system foundations', () => {
     expect(html).toContain('<dd>—</dd>')
     expect(html).toContain('<dd><code>{&quot;id&quot;:&quot;u_7&quot;,&quot;name&quot;:&quot;Ada&quot;}</code></dd>')
     expect(html).toContain('<dd>Enterprise</dd>')
+  })
+
+  it('renders no portal host during server rendering', () => {
+    function PortalProbe() {
+      return <output>{usePortalContainer() === null ? 'inline' : 'portal'}</output>
+    }
+    expect(renderToStaticMarkup(<PortalProbe />)).toContain('inline')
+    expect(renderToStaticMarkup(
+      <DesignSystemProvider><PortalProbe /></DesignSystemProvider>,
+    )).toContain('inline')
   })
 
   it('defaults the provider to standard density', () => {

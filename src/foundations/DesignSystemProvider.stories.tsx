@@ -1,6 +1,9 @@
+import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { Meta, StoryObj } from '@storybook/react'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { Badge, Button, Input } from '../components'
-import { DesignSystemProvider } from './DesignSystemProvider'
+import { DesignSystemProvider, usePortalContainer } from './DesignSystemProvider'
 import type { Density as DensityValue, PresentationTheme } from './types'
 
 const meta = {
@@ -37,6 +40,61 @@ export const DensityModes: Story = {
       ))}
     </div>
   ),
+}
+
+export const PortalContainer: Story = {
+  name: 'Portal container',
+  render: () => (
+    <DesignSystemProvider theme="light" density="compact">
+      <PortalSample />
+    </DesignSystemProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole('button', { name: 'Open portalled panel' }))
+    const panel = await waitFor(() => {
+      const element = document.querySelector<HTMLElement>('[data-testid="portalled-panel"]')
+      if (!element) throw new Error('panel not portalled yet')
+      return element
+    })
+    // The panel lives outside the story root yet keeps the scope's theme,
+    // density and fonts.
+    await expect(canvasElement.contains(panel)).toBe(false)
+    const host = panel.closest<HTMLElement>('.mtc-portal-root')
+    await expect(host?.dataset.theme).toBe('light')
+    await expect(host?.dataset.density).toBe('compact')
+    await expect(getComputedStyle(panel).fontFamily).toContain('Inter')
+    await userEvent.click(canvas.getByRole('button', { name: 'Close portalled panel' }))
+    await waitFor(() => expect(document.querySelector('[data-testid="portalled-panel"]')).toBeNull())
+  },
+}
+
+function PortalSample() {
+  const container = usePortalContainer()
+  const [open, setOpen] = useState(false)
+  return (
+    <section className="grid min-h-[16rem] content-start gap-3 bg-[var(--mtc-bg)] p-6 text-[var(--mtc-fg)]">
+      <p className="text-[length:var(--mtc-font-size-md)] text-[var(--mtc-muted)]">
+        Portalled layers render into a body-level host that carries this scope's theme.
+      </p>
+      <div>
+        <Button onClick={() => setOpen(value => !value)}>
+          {open ? 'Close portalled panel' : 'Open portalled panel'}
+        </Button>
+      </div>
+      {open && container && createPortal(
+        <div
+          data-testid="portalled-panel"
+          role="note"
+          className="mtc-popover fixed right-6 bottom-6 grid gap-1 p-3 text-[length:var(--mtc-font-size-md)]"
+        >
+          <strong>Portalled panel</strong>
+          <span className="text-[var(--mtc-muted)]">Themed outside the story root.</span>
+        </div>,
+        container,
+      )}
+    </section>
+  )
 }
 
 function FoundationSample({

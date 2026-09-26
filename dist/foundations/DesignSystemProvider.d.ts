@@ -12,10 +12,25 @@ export interface DesignSystemContextValue {
  * `null` outside any scoped root, so callers choose their own fallback.
  */
 export declare function useDesignSystem(): DesignSystemContextValue | null;
-/** Internal: lets framework-owned roots (Dashboard) publish their scope. */
-export declare function DesignSystemScope({ theme, density, children, }: DesignSystemContextValue & {
+/**
+ * A body-level element inside the nearest scoped theme, for portalled
+ * menus, popovers, trays and toasts. Content portalled there keeps the
+ * scope's tokens, fonts and density instead of falling back to host styles.
+ * Returns `null` outside a provider and until mounted (server render and the
+ * first client render), so render inline or nothing until it is set.
+ */
+export declare function usePortalContainer(): HTMLElement | null;
+/** Props shared by every scoped root. */
+interface ScopeProps {
+    theme: PresentationTheme;
+    density: Density;
     children: ReactNode;
-}): import("react").JSX.Element;
+}
+/**
+ * Publishes a scope to descendants. Framework roots (Dashboard) use it with
+ * their own theme and density.
+ */
+export declare function DesignSystemScope({ theme, density, children }: ScopeProps): import("react").JSX.Element;
 /** Props for the scoped design-system root. */
 export interface DesignSystemProviderProps extends HTMLAttributes<HTMLDivElement> {
     /** Theme applied only to this subtree. */
@@ -31,3 +46,4 @@ export interface DesignSystemProviderProps extends HTMLAttributes<HTMLDivElement
  * inherit its theme unless they are given their own.
  */
 export declare const DesignSystemProvider: import("react").ForwardRefExoticComponent<DesignSystemProviderProps & import("react").RefAttributes<HTMLDivElement>>;
+export {};

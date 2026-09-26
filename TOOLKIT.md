@@ -44,6 +44,16 @@ read browser preferences during render, so server markup and the first client
 render agree. `Dashboard` uses the same `.mtc-root` contract and applies its
 persisted personal preferences only after hydration.
 
+Portalled layers (menus, trays, toasts, hover cards) must not render into a
+bare `document.body`, where they lose the scope's tokens and fonts. Render them
+into `usePortalContainer()`, a body-level element that carries the nearest
+scope's theme and density:
+
+```tsx
+const container = usePortalContainer()
+return container ? createPortal(<Tray />, container) : null
+```
+
 ## Foundations
 
 ### Themes

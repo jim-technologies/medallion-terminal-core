@@ -46,6 +46,13 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   `TYPE_COLORS` lists the slots and `typeColorFor(typeId)` picks a stable
   fallback slot from a type id. Storybook adds Toolkit/Components/Iconography
   with dark and light baselines.
+- **`usePortalContainer()`** returns a body-level element inside the
+  nearest scope (`DesignSystemProvider` or a Dashboard) that carries its
+  theme class, `data-theme` and `data-density`, so portalled menus, trays
+  and toasts keep the scope's tokens and fonts instead of falling back to
+  the host page's styles (serif portals). The host is created on first use,
+  follows theme and density changes, and is removed when its last user
+  unmounts; it returns `null` outside a scope and during server rendering.
 - **`scripts/check-style-tokens.mjs`**, run by `pnpm lint`, fails when
   production source adds a colour literal outside a token declaration, a
   Tailwind arbitrary colour, a `text-[Npx]` below 11 px or off the scale, or
