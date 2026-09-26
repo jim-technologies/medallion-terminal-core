@@ -80,17 +80,6 @@
   border-color: #6e7681;
 }
 
-.gh-mark {
-  align-items: center;
-  background: #f0f3f6;
-  border-radius: 50%;
-  color: #25292e;
-  display: inline-flex;
-  height: 32px;
-  justify-content: center;
-  width: 32px;
-}
-
 .gh-global-context {
   color: #f0f3f6 !important;
   font-weight: 600;

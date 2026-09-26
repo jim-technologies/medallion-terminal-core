@@ -13,14 +13,14 @@ const meta = {
       description: {
         component:
           'A product-faithful Slides surface with a filmstrip, responsive presentation canvas, '
-          + 'speaker notes, collaboration, and Gemini-assisted presentation workflows.',
+          + 'speaker notes, collaboration, and AI-assisted presentation workflows.',
       },
     },
   },
   args: {
     product: 'slides',
     initialSlide: 0,
-    initialGeminiOpen: false,
+    initialAssistantOpen: false,
   },
   argTypes: {
     product: { control: false },
@@ -33,9 +33,9 @@ type Story = StoryObj<typeof meta>
 
 export const BusinessReview: Story = {}
 
-export const GeminiPresentationDesign: Story = {
+export const AssistedPresentationDesign: Story = {
   args: {
     initialSlide: 2,
-    initialGeminiOpen: true,
+    initialAssistantOpen: true,
   },
 }

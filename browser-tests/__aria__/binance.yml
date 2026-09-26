@@ -1,7 +1,6 @@
 - banner:
-  - link "Exchange Exchange":
+  - link "Exchange":
     - /url: "#terminal"
-    - text: E
     - strong: Exchange
   - navigation "Exchange products":
     - button "Buy Crypto"

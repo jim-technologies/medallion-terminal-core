@@ -107,7 +107,7 @@ describe('HubSpotShowcase', () => {
     expect(contacts).toContain('Create contact')
     expect(contacts).toContain('Northwind Health')
     expect(record).toContain('About this contact')
-    expect(record).toContain('Breeze summary')
+    expect(record).toContain('AI summary')
     expect(record).toContain('Operating brief.pdf')
     expect(pipeline).toContain('Sales pipeline')
     expect(pipeline).toContain('Contract sent')

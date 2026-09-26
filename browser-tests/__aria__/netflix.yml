@@ -1,5 +1,5 @@
 - banner:
-  - text: WATCH
+  - text: Watch
   - navigation "Streaming navigation":
     - button "Home"
     - button "TV Shows"
@@ -12,7 +12,7 @@
   - button "Notifications"
   - button "J"
 - main:
-  - text: N SERIES
+  - text: Series
   - heading "Field Notes" [level=1]
   - paragraph: Some places refuse to be mapped.
   - paragraph: A small research team follows an impossible signal along the Pacific coast, where every discovery rewrites the map they brought with them.
@@ -26,7 +26,7 @@
   - article:
     - button "Field Notes": Field Notes New episode 98% Match TV-14 4K HDR
   - article:
-    - button "Night Shift": Night Shift TOP 10 95% Match TV-14 4K
+    - button "Night Shift": "Night Shift #3 95% Match TV-14 4K"
   - article:
     - button "Harborline": Harborline 93% Match TV-14 HD
   - article:
@@ -34,8 +34,8 @@
   - article:
     - button "Northbound": Northbound 87% Match PG-13 4K
   - button "Next titles in Continue Watching for Jun"
-  - button "Top 10 in the U.S. Today Explore All":
-    - heading "Top 10 in the U.S. Today" [level=2]
+  - button "Most watched today Explore All":
+    - heading "Most watched today" [level=2]
     - text: Explore All
   - article:
     - text: "1"
@@ -58,20 +58,20 @@
   - article:
     - text: "7"
     - button "Last Ferry": Last Ferry 85% Match R 4K
-  - button "Next titles in Top 10 in the U.S. Today"
+  - button "Next titles in Most watched today"
   - button "Because you watched Field Notes Explore All":
     - heading "Because you watched Field Notes" [level=2]
     - text: Explore All
   - article:
-    - button "Signal Coast": Signal Coast New season TOP 10 96% Match TV-MA 4K
+    - button "Signal Coast": "Signal Coast New season #1 96% Match TV-MA 4K"
   - article:
-    - button "Wild Current": Wild Current TOP 10 90% Match PG 4K HDR
+    - button "Wild Current": "Wild Current #5 90% Match PG 4K HDR"
   - article:
     - button "The Quiet Route": The Quiet Route 89% Match PG-13 HD
   - article:
-    - button "Afterlight": Afterlight Limited series TOP 10 88% Match TV-14 4K
+    - button "Afterlight": "Afterlight Limited series #4 88% Match TV-14 4K"
   - article:
-    - button "Last Ferry": Last Ferry TOP 10 85% Match R 4K
+    - button "Last Ferry": "Last Ferry #7 85% Match R 4K"
   - article:
     - button "Driftline": Driftline 81% Match TV-14 HD
   - button "Next titles in Because you watched Field Notes"
@@ -81,15 +81,15 @@
   - article:
     - button "Common Ground": Common Ground 86% Match TV-PG 4K
   - article:
-    - button "The Archive": The Archive TOP 10 83% Match TV-MA 4K
+    - button "The Archive": "The Archive #6 83% Match TV-MA 4K"
   - article:
-    - button "Signal Coast": Signal Coast New season TOP 10 96% Match TV-MA 4K
+    - button "Signal Coast": "Signal Coast New season #1 96% Match TV-MA 4K"
   - article:
-    - button "The Ridge": The Ridge TOP 10 94% Match PG-13 4K HDR
+    - button "The Ridge": "The Ridge #2 94% Match PG-13 4K HDR"
   - article:
     - button "Field Notes": Field Notes New episode 98% Match TV-14 4K HDR
   - article:
-    - button "Afterlight": Afterlight Limited series TOP 10 88% Match TV-14 4K
+    - button "Afterlight": "Afterlight Limited series #4 88% Match TV-14 4K"
   - button "Next titles in New Releases"
   - button "My List Explore All":
     - heading "My List" [level=2]
@@ -97,9 +97,9 @@
   - article:
     - button "Field Notes": Field Notes New episode 98% Match TV-14 4K HDR
   - article:
-    - button "Signal Coast": Signal Coast New season TOP 10 96% Match TV-MA 4K
+    - button "Signal Coast": "Signal Coast New season #1 96% Match TV-MA 4K"
   - article:
-    - button "Night Shift": Night Shift TOP 10 95% Match TV-14 4K
+    - button "Night Shift": "Night Shift #3 95% Match TV-14 4K"
   - article:
     - button "Pattern Language": Pattern Language 91% Match TV-PG 4K
   - article:
@@ -117,7 +117,7 @@
   - article:
     - button "Common Ground": Common Ground 86% Match TV-PG 4K
   - article:
-    - button "The Ridge": The Ridge TOP 10 94% Match PG-13 4K HDR
+    - button "The Ridge": "The Ridge #2 94% Match PG-13 4K HDR"
   - article:
     - button "Harborline": Harborline 93% Match TV-14 HD
   - article:

@@ -1,5 +1,4 @@
 - complementary "Workspace navigation":
-  - text: I
   - strong: Issues
   - button "Search /"
   - button "Create work item C"

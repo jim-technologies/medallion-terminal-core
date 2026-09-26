@@ -15,7 +15,7 @@
   - button "Last edit 2 min ago"
   - button "Comments"
   - button "Join a call"
-  - button "Ask Gemini"
+  - button "Ask the assistant"
   - button "Share"
   - text: MR LT
   - 'button "Account: Jun"': J
@@ -64,8 +64,8 @@
   - paragraph: Default to clarity. Every initiative has one owner, one measurable outcome, and an explicit decision date. Teams can move independently when interfaces and expectations are clear.
   - text: Maya
 - complementary "Workspace side panel":
-  - button "Calendar": "31"
-  - button "Keep"
+  - button "Calendar"
+  - button "Notes"
   - button "Tasks"
   - button "Contacts"
   - button "Get add-ons"

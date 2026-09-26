@@ -214,7 +214,7 @@ function AirtableTopbar({
         <button className="airtable-icon-button airtable-menu-button" aria-label="Open navigation">
           <ProductShowcaseIcon name="menu" />
         </button>
-        <NeutralMark icon="database" color="#2d7ff9" />
+        <NeutralMark icon="database" />
         <span className="airtable-brand-name">Bases</span>
       </div>
       <button className="airtable-workspace-switcher">

@@ -34,6 +34,7 @@ private-repo | * | the package name consumers install from Git, the browser stor
 # ---------------------------------------------------------------------------
 codename | examples/clones/palantir/* | a clone of the Palantir product of that name, down to its CSS class names; the product is theirs | com%70ass
 codename | src/__tests__/operationalProductShowcases.test.tsx | this suite drives the Palantir clone above and names the surface it is asserting on | com%70ass
+codename | src/__tests__/cloneNeutrality.test.tsx | the clone-neutrality guard lists the referenced products' branded names so it can reject them in rendered clones | com%70ass
 codename | examples/clones/* | Palantir's object-model product is called this; the clone reproduces its navigation labels | Onto%6cogy
 
 # ---------------------------------------------------------------------------

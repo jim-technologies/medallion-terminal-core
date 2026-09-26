@@ -12,6 +12,7 @@ import {
   type CodeCollaborationData,
   type CodePipelineJob,
 } from '../shared/codeCollaborationModel'
+import { NeutralMark } from '../shared/NeutralMark'
 import './GitHubShowcase.css'
 
 export const GITHUB_SHOWCASE_VIEWS = ['pull-request', 'files-changed', 'actions'] as const
@@ -63,9 +64,7 @@ function IconButton({ icon, label }: { icon: OperationalShowcaseIconName; label:
 
 function GitHubMark() {
   return (
-    <span className="gh-mark" aria-label="Code" role="img">
-      <OperationalShowcaseIcon name="graph" size={19} />
-    </span>
+    <NeutralMark icon="code" size={32} label="Code" />
   )
 }
 

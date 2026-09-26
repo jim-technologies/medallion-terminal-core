@@ -1,8 +1,7 @@
 - banner:
   - button "Applications"
-  - link "Wiki Wiki":
+  - link "Wiki":
     - /url: "#confluence"
-    - text: W
     - strong: Wiki
   - navigation "Wiki navigation":
     - button "Recent⌄"

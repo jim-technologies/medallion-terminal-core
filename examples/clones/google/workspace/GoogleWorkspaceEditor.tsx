@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
+import { NeutralMark } from '../../shared/NeutralMark'
+import type { OperationalShowcaseIconName } from '../../shared/OperationalShowcasePrimitives'
 import './GoogleWorkspaceEditor.css'
 
 export type GoogleWorkspaceProduct = 'docs' | 'sheets' | 'slides'
@@ -50,7 +52,7 @@ export type GoogleWorkspaceContent =
 export interface GoogleWorkspaceEditorProps {
   product: GoogleWorkspaceProduct
   content?: GoogleWorkspaceContent
-  initialGeminiOpen?: boolean
+  initialAssistantOpen?: boolean
   initialCommentsOpen?: boolean
   initialCell?: string
   initialSlide?: number
@@ -196,7 +198,7 @@ export function workspaceCellName(row: number, column: number): string {
 export function GoogleWorkspaceEditor({
   product,
   content,
-  initialGeminiOpen = false,
+  initialAssistantOpen = false,
   initialCommentsOpen = false,
   initialCell = 'B4',
   initialSlide = 0,
@@ -206,14 +208,14 @@ export function GoogleWorkspaceEditor({
     ? content
     : config.defaultContent
   const [title, setTitle] = useState(resolvedContent.title)
-  const [geminiOpen, setGeminiOpen] = useState(initialGeminiOpen)
+  const [assistantOpen, setAssistantOpen] = useState(initialAssistantOpen)
   const [commentsOpen, setCommentsOpen] = useState(initialCommentsOpen)
   const [starred, setStarred] = useState(false)
   const [selectedCell, setSelectedCell] = useState(initialCell)
   const [selectedSlide, setSelectedSlide] = useState(initialSlide)
 
   useEffect(() => setTitle(resolvedContent.title), [resolvedContent.title])
-  useEffect(() => setGeminiOpen(initialGeminiOpen), [initialGeminiOpen])
+  useEffect(() => setAssistantOpen(initialAssistantOpen), [initialAssistantOpen])
   useEffect(() => setCommentsOpen(initialCommentsOpen), [initialCommentsOpen])
   useEffect(() => setSelectedCell(initialCell), [initialCell])
   useEffect(() => setSelectedSlide(initialSlide), [initialSlide])
@@ -225,7 +227,7 @@ export function GoogleWorkspaceEditor({
     >
       <header className="workspace-header">
         <div className="workspace-product-mark">
-          <WorkspaceProductIcon product={product} />
+          <NeutralMark icon={PRODUCT_MARK_ICON[product]} size={36} />
         </div>
         <div className="workspace-file-area">
           <div className="workspace-title-row">
@@ -268,9 +270,9 @@ export function GoogleWorkspaceEditor({
           </button>
           <button
             type="button"
-            className={`workspace-gemini-button ${geminiOpen ? 'is-active' : ''}`}
-            aria-label="Ask Gemini"
-            onClick={() => setGeminiOpen(open => !open)}
+            className={`workspace-assistant-button ${assistantOpen ? 'is-active' : ''}`}
+            aria-label="Ask the assistant"
+            onClick={() => setAssistantOpen(open => !open)}
           >
             <WorkspaceIcon name="sparkles" />
           </button>
@@ -326,8 +328,8 @@ export function GoogleWorkspaceEditor({
         {commentsOpen && (
           <CommentsPanel product={product} onClose={() => setCommentsOpen(false)} />
         )}
-        {geminiOpen && (
-          <GeminiPanel product={product} onClose={() => setGeminiOpen(false)} />
+        {assistantOpen && (
+          <AssistantPanel product={product} onClose={() => setAssistantOpen(false)} />
         )}
         <WorkspaceAppRail />
       </div>
@@ -570,7 +572,7 @@ function SheetsCanvas({
           </button>
         ))}
         <span />
-        <small>All changes saved in Drive</small>
+        <small>All changes saved</small>
       </div>
     </div>
   )
@@ -732,7 +734,7 @@ function CommentsPanel({
   )
 }
 
-function GeminiPanel({
+function AssistantPanel({
   product,
   onClose,
 }: {
@@ -744,43 +746,43 @@ function GeminiPanel({
       title: 'Create, refine, and summarize',
       summary: 'This plan focuses Q3 investment on connected workflows, activation, and operating clarity.',
       prompts: ['Draft an executive summary', 'Make this more concise', 'Identify open decisions'],
-      placeholder: 'Ask Gemini about this document',
+      placeholder: 'Ask the assistant about this document',
     },
     sheets: {
       title: 'Analyze and build faster',
       summary: 'Revenue grows 51% from January to June while EBITDA margin expands by 12.2 points.',
       prompts: ['Create a forecast formula', 'Build a revenue chart', 'Explain the margin change'],
-      placeholder: 'Ask Gemini about this spreadsheet',
+      placeholder: 'Ask the assistant about this spreadsheet',
     },
     slides: {
       title: 'Design and present with confidence',
       summary: 'This deck tells a clear story from momentum through Q3 priorities and execution.',
       prompts: ['Generate a new slide', 'Improve this headline', 'Create speaker notes'],
-      placeholder: 'Ask Gemini about this presentation',
+      placeholder: 'Ask the assistant about this presentation',
     },
   }[product]
 
   return (
-    <aside className="workspace-side-panel workspace-gemini-panel">
+    <aside className="workspace-side-panel workspace-assistant-panel">
       <header>
         <span><WorkspaceIcon name="sparkles" /></span>
-        <h2>Gemini</h2>
-        <button type="button" aria-label="More Gemini options"><WorkspaceIcon name="more" /></button>
-        <button type="button" aria-label="Close Gemini" onClick={onClose}><WorkspaceIcon name="close" /></button>
+        <h2>Assistant</h2>
+        <button type="button" aria-label="More assistant options"><WorkspaceIcon name="more" /></button>
+        <button type="button" aria-label="Close assistant" onClick={onClose}><WorkspaceIcon name="close" /></button>
       </header>
-      <div className="workspace-gemini-intro">
-        <span className="workspace-gemini-orb"><WorkspaceIcon name="sparkles" /></span>
+      <div className="workspace-assistant-intro">
+        <span className="workspace-assistant-orb"><WorkspaceIcon name="sparkles" /></span>
         <h3>{copy.title}</h3>
         <p>{copy.summary}</p>
       </div>
-      <div className="workspace-gemini-prompts">
+      <div className="workspace-assistant-prompts">
         {copy.prompts.map(prompt => <button type="button" key={prompt}>{prompt}<WorkspaceIcon name="arrowUpRight" /></button>)}
       </div>
-      <div className="workspace-gemini-input">
+      <div className="workspace-assistant-input">
         <textarea aria-label={copy.placeholder} placeholder={copy.placeholder} />
         <div><button type="button"><WorkspaceIcon name="add" /></button><span /><button type="button"><WorkspaceIcon name="send" /></button></div>
       </div>
-      <small className="workspace-gemini-disclaimer">Gemini can make mistakes, so double-check it.</small>
+      <small className="workspace-assistant-disclaimer">AI can make mistakes, so double-check it.</small>
     </aside>
   )
 }
@@ -788,28 +790,22 @@ function GeminiPanel({
 function WorkspaceAppRail() {
   return (
     <aside className="workspace-app-rail" aria-label="Workspace side panel">
-      <button type="button" className="is-calendar" aria-label="Calendar"><span>31</span></button>
-      <button type="button" className="is-keep" aria-label="Keep"><WorkspaceIcon name="bulb" /></button>
-      <button type="button" className="is-tasks" aria-label="Tasks"><WorkspaceIcon name="checkCircle" /></button>
-      <button type="button" className="is-contacts" aria-label="Contacts"><WorkspaceIcon name="person" /></button>
+      <button type="button" aria-label="Calendar"><WorkspaceIcon name="calendar" /></button>
+      <button type="button" aria-label="Notes"><WorkspaceIcon name="bulb" /></button>
+      <button type="button" aria-label="Tasks"><WorkspaceIcon name="checkCircle" /></button>
+      <button type="button" aria-label="Contacts"><WorkspaceIcon name="person" /></button>
       <i />
       <button type="button" aria-label="Get add-ons"><WorkspaceIcon name="plus" /></button>
     </aside>
   )
 }
 
-function WorkspaceProductIcon({ product }: { product: GoogleWorkspaceProduct }) {
-  const color = PRODUCT_CONFIG[product].color
-  return (
-    <svg className={`workspace-product-icon is-${product}`} viewBox="0 0 36 42" aria-hidden="true">
-      <path fill={color} d="M5 1h19l8 8v30a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2Z" />
-      <path fill="rgba(255,255,255,.35)" d="M24 1v8h8Z" />
-      {product === 'docs' && <path fill="#fff" d="M9 15h17v2H9zm0 5h17v2H9zm0 5h17v2H9zm0 5h12v2H9z" />}
-      {product === 'sheets' && <path fill="#fff" d="M9 14h18v19H9V14Zm2 2v3h5v-3h-5Zm7 0v3h7v-3h-7Zm-7 5v4h5v-4h-5Zm7 0v4h7v-4h-7Zm-7 6v4h5v-4h-5Zm7 0v4h7v-4h-7Z" />}
-      {product === 'slides' && <path fill="#fff" d="M8 14h20v17H8V14Zm3 3v11h14V17H11Z" />}
-    </svg>
-  )
-}
+// The neutral mark in place of the suite's file-type logos.
+const PRODUCT_MARK_ICON = {
+  docs: 'document',
+  sheets: 'chart',
+  slides: 'play',
+} satisfies Record<GoogleWorkspaceProduct, OperationalShowcaseIconName>
 
 type WorkspaceIconName =
   | 'add'

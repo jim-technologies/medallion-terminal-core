@@ -18,7 +18,7 @@ const meta = {
   },
   args: {
     product: 'docs',
-    initialGeminiOpen: false,
+    initialAssistantOpen: false,
     initialCommentsOpen: false,
   },
   argTypes: {
@@ -32,9 +32,9 @@ type Story = StoryObj<typeof meta>
 
 export const OperatingPlan: Story = {}
 
-export const GeminiAssistedWriting: Story = {
+export const AssistedWriting: Story = {
   args: {
-    initialGeminiOpen: true,
+    initialAssistantOpen: true,
   },
 }
 

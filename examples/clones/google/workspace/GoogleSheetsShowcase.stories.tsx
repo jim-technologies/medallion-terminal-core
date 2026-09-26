@@ -13,14 +13,14 @@ const meta = {
       description: {
         component:
           'A product-faithful Sheets surface with a selectable grid, formula bar, sheet tabs, '
-          + 'collaboration controls, and contextual Gemini analysis.',
+          + 'collaboration controls, and contextual AI analysis.',
       },
     },
   },
   args: {
     product: 'sheets',
     initialCell: 'B4',
-    initialGeminiOpen: false,
+    initialAssistantOpen: false,
   },
   argTypes: {
     product: { control: false },
@@ -33,9 +33,9 @@ type Story = StoryObj<typeof meta>
 
 export const RevenueModel: Story = {}
 
-export const GeminiDataAnalysis: Story = {
+export const AssistedDataAnalysis: Story = {
   args: {
     initialCell: 'F7',
-    initialGeminiOpen: true,
+    initialAssistantOpen: true,
   },
 }

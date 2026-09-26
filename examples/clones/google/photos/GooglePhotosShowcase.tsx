@@ -462,7 +462,7 @@ export function GooglePhotosShowcase({
           <button type="button" className="gphotos-icon-button gphotos-menu-button" aria-label="Main menu">
             <PhotosIcon name="menu" />
           </button>
-          <NeutralMark icon="camera" color="#1a73e8" size={32} />
+          <NeutralMark icon="camera" size={32} />
           <span>Photos</span>
         </div>
 
@@ -475,7 +475,7 @@ export function GooglePhotosShowcase({
             onFocus={() => {
               if (section !== 'photos') setSection('photos')
             }}
-            placeholder={showAskPhotos ? 'Ask Photos or search your library' : 'Search your photos'}
+            placeholder={showAskPhotos ? 'Ask or search your library' : 'Search your photos'}
             aria-label="Search your photos"
           />
           {query ? (
@@ -852,14 +852,14 @@ function SearchResults({
       <div className="gphotos-ask-summary">
         <span className="gphotos-ask-orb"><PhotosIcon name="sparkles" /></span>
         <div>
-          <small>Ask Photos</small>
+          <small>Ask your library</small>
           <strong>{items.length > 0
             ? `Here are the moments I found for “${query}”`
             : `I couldn't find photos matching “${query}”`}
           </strong>
           {items.length > 0 && <p>Results include titles, places, people, and visual tags in your library.</p>}
         </div>
-        <button type="button" className="gphotos-icon-button" aria-label="Ask Photos information">
+        <button type="button" className="gphotos-icon-button" aria-label="About asking your library">
           <PhotosIcon name="info" />
         </button>
       </div>
@@ -912,7 +912,7 @@ function CollectionsView({
           tone="rose"
           onClick={() => onNavigate('favorites')}
         />
-        <CollectionShortcut icon="archive" label="Archive" detail="Hidden from Photos" tone="blue" onClick={() => onNavigate('archive')} />
+        <CollectionShortcut icon="archive" label="Archive" detail="Hidden from your library" tone="blue" onClick={() => onNavigate('archive')} />
         <CollectionShortcut icon="trash" label="Trash" detail="Deleted items" tone="gray" onClick={() => onNavigate('trash')} />
         <CollectionShortcut icon="lock" label="Locked Folder" detail="Private" tone="slate" onClick={() => onNavigate('locked')} />
       </div>
@@ -1094,7 +1094,7 @@ function UpdatesView({ items }: { items: readonly GooglePhotosItem[] }) {
       <section>
         <h2>Suggestions</h2>
         <button type="button" className="gphotos-update-row">
-          <span className="gphotos-update-avatar"><NeutralMark icon="camera" color="#1a73e8" size={32} /></span>
+          <span className="gphotos-update-avatar"><NeutralMark icon="camera" size={32} /></span>
           <div><strong>A new memory is ready: Best of spring</strong><small>Yesterday</small></div>
           <img src="/examples/media-demo.svg#forest" alt="" />
         </button>

@@ -1,6 +1,6 @@
-- complementary "Backstage navigation":
+- complementary "Portal navigation":
   - strong: Catalog
-  - navigation "Backstage primary":
+  - navigation "Portal primary":
     - button "Home"
     - button "Catalog"
     - button "APIs"
@@ -14,8 +14,8 @@
     - text: jun@example.test
 - main:
   - search:
-    - text: Search Backstage
-    - searchbox "Search Backstage"
+    - text: Search the portal
+    - searchbox "Search the portal"
     - text: /
   - text: Production
   - button "Notifications"

@@ -38,7 +38,9 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   widget's DOM by class name should register their own widget; the 0.7.0
   resource table replaces that markup.
 - **Clone showcases.** `ProductShowcaseDefinition.shortName` is now
-  `displayName`, a neutral name.
+  `displayName`, a neutral name, and `mark` is `icon`; `NeutralMark` takes no
+  `color`; `GoogleWorkspaceEditor.initialGeminiOpen` is
+  `initialAssistantOpen`.
 
 ### Added
 
@@ -268,13 +270,31 @@ with `Intl` formatters, and a JSON payload case. The ontology components
 
 - **Clone showcases no longer show third-party names, logos or wordmarks.**
   Every clone header renders a neutral name and `NeutralMark` (a generic
-  glyph on the clone's accent) in place of the product's name and logo, and
-  product self-references in labels, placeholders and chrome copy are
-  neutral ("Files", "Tracker", "Forecasts", "Search maps", "Processing
-  fee"). Layouts are unchanged; the folders, Storybook titles and
-  `cloneVendor` / `cloneProduct` parameters still name the reference so it
-  can be found. The archetype catalog's `shortName` is now `displayName`.
-  Clone baselines were regenerated.
+  glyph on one slate square, identical in every clone; it takes no colour,
+  so no mark carries a brand colour) in place of the product's name and
+  logo. That covers the archetype clones' lettermarks on brand fills, the
+  streaming clone's red logotype, its red "N" series mark and "TOP 10"
+  poster badge, the document suite's coloured file-type icons, its
+  four-colour calendar tile and gradient assistant orb, the drive's gradient
+  assistant mark, and the maps, code, notebook, support and platform
+  clones' logo tiles. Product self-references and branded features in
+  labels, placeholders and chrome copy are neutral ("Files", "Tracker",
+  "Forecasts", "Search maps", "Processing fee", "Assistant", "Ask AI",
+  "AI summary", "Governance", "Orchestration", "Search the portal", "Docs",
+  "SQL editor", "Fraud screening", "Workflows", "Call", "Videos", "Messages",
+  "AI agent", "Most watched today", "Start a group session"), card chips read
+  "Card" instead of a payment network's logotype, the platform clone's code
+  sample and resource ids use neutral dataset paths, and the proprietary
+  typefaces are gone from the clone font stacks (system and open fonts
+  only). `src/__tests__/cloneNeutrality.test.tsx` renders all 140 clone
+  stories and fails when visible text or an accessible name says a
+  referenced product, vendor or branded feature. Layouts are unchanged; the
+  folders, Storybook titles, story names and `cloneVendor` / `cloneProduct`
+  parameters still name the reference so it can be found. The archetype
+  catalog's `shortName` is now `displayName` and its `mark` letter is an
+  `icon`, `NeutralMark` has no `color` prop, and the document suite's
+  `initialGeminiOpen` prop and stories are `initialAssistantOpen` and
+  `Assisted*`. Clone baselines were regenerated.
 
 ### Fixed
 
@@ -302,8 +322,12 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   the entries excused nothing.
 - **Logo reproductions in the clone showcases**: the drawn marks and their
   CSS (the file, calendar, photo, chat, CRM, spreadsheet, ledger, merge and
-  music logos, the lettered and script-font wordmarks, and the four-colour
-  mail mark).
+  music logos, the lettered and script-font wordmarks, the four-colour mail
+  mark, the archetype lettermarks, the streaming logotype, series mark and
+  top-ten badge, the document suite's file-type icons, calendar tile and
+  assistant gradients, and the maps pin, code, notebook, support and
+  platform logo tiles), and the proprietary typeface names in clone font
+  stacks.
 - **`installReadinessTerminalMock`** (Storybook example helper). The
   production-readiness stories inject the fixture TerminalService through
   `Dashboard.fetch` instead of replacing `window.fetch`.

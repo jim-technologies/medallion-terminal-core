@@ -46,7 +46,7 @@ describe('SlackShowcase', () => {
       .toEqual(['launch-1-reply-1'])
     expect(searchSlackMessages(conversation, 'operating brief').map(message => message.id))
       .toEqual(['launch-1'])
-    expect(searchSlackMessages(conversation, 'workflow builder').map(message => message.id))
+    expect(searchSlackMessages(conversation, 'workflows').map(message => message.id))
       .toEqual(['launch-5'])
   })
 
@@ -58,7 +58,7 @@ describe('SlackShowcase', () => {
     expect(html).toContain('Direct messages')
     expect(html).toContain('# launch-room')
     expect(html).toContain('Launch operating brief.pdf')
-    expect(html).toContain('Workflow Builder')
+    expect(html).toContain('Workflows')
     expect(html).toContain('5 replies')
     expect(html).toContain('Reply to thread')
     expect(html).toContain('Message #launch-room')

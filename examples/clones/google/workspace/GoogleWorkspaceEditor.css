@@ -12,7 +12,7 @@
   overflow: hidden;
   color: var(--workspace-text);
   background: #fff;
-  font-family: "Google Sans", "Google Sans Text", Roboto, Arial, sans-serif;
+  font-family: Roboto, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.35;
   color-scheme: light;
@@ -56,11 +56,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.workspace-product-icon {
-  width: 34px !important;
-  height: 40px !important;
 }
 
 .workspace-file-area {
@@ -171,7 +166,7 @@
 }
 
 .workspace-round-button,
-.workspace-gemini-button {
+.workspace-assistant-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,17 +181,13 @@
 }
 
 .workspace-round-button:hover,
-.workspace-gemini-button:hover,
+.workspace-assistant-button:hover,
 .workspace-round-button.is-active,
-.workspace-gemini-button.is-active {
+.workspace-assistant-button.is-active {
   background: #f1f3f4;
 }
 
-.workspace-gemini-button {
-  color: #5d55d9;
-}
-
-.workspace-gemini-button svg {
+.workspace-assistant-button svg {
   width: 22px;
   height: 22px;
 }
@@ -1563,16 +1554,16 @@
   height: 18px;
 }
 
-.workspace-gemini-panel > header > span {
+.workspace-assistant-panel > header > span {
   display: flex;
   color: #6558d3;
 }
 
-.workspace-gemini-intro {
+.workspace-assistant-intro {
   padding: 28px 6px 18px;
 }
 
-.workspace-gemini-orb {
+.workspace-assistant-orb {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1581,36 +1572,35 @@
   margin-bottom: 18px;
   border-radius: 50%;
   color: #fff;
-  background: linear-gradient(135deg, #7957d5, #477ee7 48%, #d85d99);
-  box-shadow: 0 4px 12px rgba(83, 90, 186, 0.25);
+  background: #5b6573;
 }
 
-.workspace-gemini-orb svg {
+.workspace-assistant-orb svg {
   width: 23px;
   height: 23px;
 }
 
-.workspace-gemini-intro h3 {
+.workspace-assistant-intro h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 500;
 }
 
-.workspace-gemini-intro p {
+.workspace-assistant-intro p {
   margin: 9px 0 0;
   color: #5f6368;
   font-size: 11px;
   line-height: 1.55;
 }
 
-.workspace-gemini-prompts {
+.workspace-assistant-prompts {
   display: flex;
   flex-direction: column;
   gap: 7px;
   padding: 0 6px;
 }
 
-.workspace-gemini-prompts button {
+.workspace-assistant-prompts button {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1625,17 +1615,17 @@
   cursor: pointer;
 }
 
-.workspace-gemini-prompts button:hover {
+.workspace-assistant-prompts button:hover {
   background: #f8fafd;
 }
 
-.workspace-gemini-prompts button svg {
+.workspace-assistant-prompts button svg {
   width: 15px;
   height: 15px;
   margin-left: auto;
 }
 
-.workspace-gemini-input {
+.workspace-assistant-input {
   margin: 24px 6px 10px;
   padding: 10px;
   border: 1px solid #c7c7c7;
@@ -1644,11 +1634,11 @@
   box-shadow: 0 1px 3px rgba(60, 64, 67, 0.12);
 }
 
-.workspace-gemini-input:focus-within {
+.workspace-assistant-input:focus-within {
   border-color: #6f60d8;
 }
 
-.workspace-gemini-input textarea {
+.workspace-assistant-input textarea {
   width: 100%;
   min-height: 62px;
   padding: 2px;
@@ -1658,20 +1648,20 @@
   font-size: 11px;
 }
 
-.workspace-gemini-input textarea::placeholder {
+.workspace-assistant-input textarea::placeholder {
   color: #5f6368;
 }
 
-.workspace-gemini-input > div {
+.workspace-assistant-input > div {
   display: flex;
   align-items: center;
 }
 
-.workspace-gemini-input > div span {
+.workspace-assistant-input > div span {
   flex: 1;
 }
 
-.workspace-gemini-input button {
+.workspace-assistant-input button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1684,17 +1674,17 @@
   background: #f1f3f4;
 }
 
-.workspace-gemini-input button:last-child {
+.workspace-assistant-input button:last-child {
   color: #fff;
   background: #6f60d8;
 }
 
-.workspace-gemini-input button svg {
+.workspace-assistant-input button svg {
   width: 16px;
   height: 16px;
 }
 
-.workspace-gemini-disclaimer {
+.workspace-assistant-disclaimer {
   display: block;
   color: #5f6368;
   font-size: 8px;
@@ -1812,34 +1802,6 @@
 .workspace-app-rail svg {
   width: 18px;
   height: 18px;
-}
-
-.workspace-app-rail .is-calendar span {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  width: 18px;
-  height: 19px;
-  padding-bottom: 2px;
-  border-top: 4px solid #4285f4;
-  border-right: 2px solid #ea4335;
-  border-bottom: 2px solid #34a853;
-  border-left: 2px solid #fbbc04;
-  color: #1a73e8;
-  font-size: 7px;
-  font-weight: 700;
-}
-
-.workspace-app-rail .is-keep {
-  color: #f9ab00;
-}
-
-.workspace-app-rail .is-tasks {
-  color: #1a73e8;
-}
-
-.workspace-app-rail .is-contacts {
-  color: #5f6368;
 }
 
 .workspace-app-rail > i {
@@ -1984,11 +1946,6 @@
     padding-right: 6px;
   }
 
-  .workspace-product-icon {
-    width: 29px !important;
-    height: 35px !important;
-  }
-
   .workspace-title-row input {
     width: min(210px, 45vw);
     font-size: 14px;
@@ -2003,7 +1960,7 @@
     display: none;
   }
 
-  .workspace-gemini-button {
+  .workspace-assistant-button {
     width: 34px;
     height: 34px;
   }

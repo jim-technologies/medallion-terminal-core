@@ -1,7 +1,6 @@
 - banner:
-  - link "Metrics Metrics":
+  - link "Metrics":
     - /url: "#analytics"
-    - text: M
     - strong: Metrics
   - navigation "Metrics products":
     - button "Home"

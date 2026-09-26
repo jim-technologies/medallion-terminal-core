@@ -4,6 +4,7 @@ import {
   OperationalShowcaseIcon,
   type OperationalShowcaseIconName,
 } from '../shared/OperationalShowcasePrimitives'
+import { NeutralMark } from '../shared/NeutralMark'
 import './DatabricksShowcase.css'
 
 export type DatabricksShowcaseSection = 'notebook' | 'sql' | 'jobs' | 'catalog'
@@ -309,7 +310,7 @@ export function selectDatabricksCatalogAssets(
 function DatabricksBrand() {
   return (
     <div className="dbx-brand">
-      <span><OperationalShowcaseIcon name="layers" size={22} /></span>
+      <NeutralMark icon="database" size={28} />
       <strong>Workspace</strong>
     </div>
   )
@@ -404,7 +405,7 @@ function DatabricksNotebook({ cells }: { cells: readonly DatabricksNotebookCell[
             <header><span><OperationalShowcaseIcon name="sparkles" size={16} /> Assistant</span><button aria-label="Close Assistant" onClick={() => setAssistantOpen(false)} type="button"><OperationalShowcaseIcon name="close" size={14} /></button></header>
             <div className="dbx-assistant-context"><OperationalShowcaseIcon name="document" size={13} /><span>Customer health intelligence</span><strong>3 cells</strong></div>
             <div className="dbx-assistant-message">
-              <span className="dbx-assistant-mark"><OperationalShowcaseIcon name="sparkles" size={14} /></span>
+              <NeutralMark icon="sparkles" size={24} />
               <p>I can explain this notebook, generate transformations, fix errors, or profile the current DataFrame.</p>
             </div>
             <div className="dbx-assistant-prompts">
@@ -502,7 +503,7 @@ function DatabricksJobs({
   return (
     <section className="dbx-jobs">
       <header className="dbx-page-heading">
-        <div><span>Lakeflow</span><h1>Jobs &amp; Pipelines</h1><p>Orchestrate, schedule, and monitor production data and AI workloads.</p></div>
+        <div><span>Orchestration</span><h1>Jobs &amp; Pipelines</h1><p>Orchestrate, schedule, and monitor production data and AI workloads.</p></div>
         <button className="dbx-new-button" type="button"><OperationalShowcaseIcon name="plus" size={14} /> Create</button>
       </header>
       <div className="dbx-job-stats">
@@ -578,7 +579,7 @@ function DatabricksCatalog({
   return (
     <section className="dbx-catalog">
       <header className="dbx-page-heading">
-        <div><span>Unity Catalog</span><h1>Catalog Explorer</h1><p>Discover data and AI assets with lineage, policy, and quality context.</p></div>
+        <div><span>Governance</span><h1>Catalog Explorer</h1><p>Discover data and AI assets with lineage, policy, and quality context.</p></div>
         <button className="dbx-new-button" type="button"><OperationalShowcaseIcon name="plus" size={14} /> Add data</button>
       </header>
       <div className="dbx-catalog-toolbar">

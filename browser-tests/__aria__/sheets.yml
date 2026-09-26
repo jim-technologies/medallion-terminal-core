@@ -16,7 +16,7 @@
   - button "Last edit 2 min ago"
   - button "Comments"
   - button "Join a call"
-  - button "Ask Gemini"
+  - button "Ask the assistant"
   - button "Share"
   - text: MR LT
   - 'button "Account: Jun"': J
@@ -225,10 +225,10 @@
 - button "Assumptions"
 - button "Customers"
 - button "Scenario plan"
-- text: All changes saved in Drive
+- text: All changes saved
 - complementary "Workspace side panel":
-  - button "Calendar": "31"
-  - button "Keep"
+  - button "Calendar"
+  - button "Notes"
   - button "Tasks"
   - button "Contacts"
   - button "Get add-ons"

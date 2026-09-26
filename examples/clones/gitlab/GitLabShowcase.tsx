@@ -134,7 +134,7 @@ export function GitLabShowcase({
   return (
     <div className="gitlab-showcase" data-product="gitlab" data-view={view}>
       <header className="gl-global-header">
-        <a className="gl-brand" href="#project"><NeutralMark icon="code" color="#c2410c" /><strong>Code</strong></a>
+        <a className="gl-brand" href="#project"><NeutralMark icon="code" /><strong>Code</strong></a>
         <nav aria-label="Global">
           <button type="button">Projects <OperationalShowcaseIcon name="chevron-down" size={12} /></button>
           <button type="button">Groups <OperationalShowcaseIcon name="chevron-down" size={12} /></button>

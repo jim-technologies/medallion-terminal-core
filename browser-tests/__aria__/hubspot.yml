@@ -8,7 +8,7 @@
   - button "Settings"
   - button "Notifications"
   - button "Jun Jim Technologies": J Jim Technologies
-- navigation "HubSpot sections":
+- navigation "CRM sections":
   - button "CRM"
   - button "Marketing"
   - button "Content"
@@ -31,8 +31,8 @@
     - button "Tasks"
     - button "Activity feed"
     - button "Forecast"
-  - button "Ask Breeze Summarize records and prepare follow-ups.":
-    - strong: Ask Breeze
+  - button "Ask AI Summarize records and prepare follow-ups.":
+    - strong: Ask AI
     - text: Summarize records and prepare follow-ups.
 - main:
   - text: CRM Contacts

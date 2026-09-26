@@ -69,7 +69,7 @@ describe('BackstageShowcase', () => {
     expect(catalog).toContain('Software Catalog')
     expect(catalog).toContain('customer-gateway')
     expect(overview).toContain('Latest workflow runs')
-    expect(overview).toContain('View TechDocs')
+    expect(overview).toContain('View docs')
     expect(topology).toContain('System topology')
     expect(topology).toContain('Customer Database')
     expect(kubernetes).toContain('6 / 6 pods ready')

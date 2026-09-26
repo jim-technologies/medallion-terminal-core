@@ -1,7 +1,6 @@
 - banner:
-  - link "Trading desk Trading desk":
+  - link "Trading desk":
     - /url: "#tws"
-    - text: T
     - strong: Trading desk
   - navigation "Trading desk menus":
     - button "File"
@@ -15,7 +14,7 @@
   - button "Layout locked"
   - text: J
 - navigation "Trading desk layouts":
-  - button "Mosaic"
+  - button "Layout"
   - button "Portfolio"
   - button "Order entry"
   - button "Classic layout"

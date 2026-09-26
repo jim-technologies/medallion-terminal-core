@@ -251,16 +251,6 @@
   letter-spacing: 0.01em;
 }
 
-.foundry-mark {
-  align-items: center;
-  background: linear-gradient(140deg, #3376a9, #58a5cc);
-  border-radius: 4px;
-  display: flex;
-  height: 27px;
-  justify-content: center;
-  width: 27px;
-}
-
 .foundry-product {
   border-left: 1px solid var(--foundry-border-strong);
   color: var(--foundry-muted);
@@ -3379,13 +3369,13 @@
 }
 
 .stripe-card-brand {
-  background: #23306f;
+  border: 1px solid #c0c8d2;
   border-radius: 3px;
-  color: white;
-  font-size: 5px;
-  font-style: italic;
-  font-weight: 800;
-  padding: 3px 4px;
+  color: #545969;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 600;
+  padding: 1px 3px;
 }
 
 .stripe-status {
@@ -3633,13 +3623,13 @@
 }
 
 .stripe-method-card > i {
-  background: #263270;
+  border: 1px solid #c0c8d2;
   border-radius: 4px;
-  color: white;
-  font-size: 7px;
-  font-style: italic;
-  font-weight: 800;
-  padding: 7px 6px;
+  color: #545969;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 600;
+  padding: 6px 5px;
 }
 
 .stripe-method-card > span {
@@ -3887,17 +3877,7 @@
 }
 
 .intercom-mark {
-  align-items: center;
-  background: #fff;
-  border-radius: 6px;
-  color: #17171a;
-  display: flex;
-  font-size: 15px;
-  font-weight: 850;
-  height: 31px;
-  justify-content: center;
   margin: 0 auto 14px;
-  width: 31px;
 }
 
 .intercom-rail nav {
@@ -4990,12 +4970,6 @@
   gap: 5px;
   margin: 0 18px 0 4px;
   min-width: 145px;
-}
-
-.timeline-pin-logo {
-  color: #ea4335;
-  display: flex;
-  margin-right: 2px;
 }
 
 .timeline-logo strong {
@@ -6722,10 +6696,6 @@
   .timeline-logo {
     margin-right: 5px;
     min-width: 42px;
-  }
-
-  .timeline-pin-logo {
-    margin-right: 0;
   }
 
   .timeline-search {

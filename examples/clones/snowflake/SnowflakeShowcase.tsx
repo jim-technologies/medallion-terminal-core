@@ -223,7 +223,7 @@ function snowflakeColumnType(column: string): string {
 function SnowflakeBrand() {
   return (
     <div className="snow-brand">
-      <NeutralMark icon="database" color="#1f8ac0" size={26} />
+      <NeutralMark icon="database" size={26} />
       <span>Warehouse</span>
     </div>
   )
@@ -418,7 +418,7 @@ function SnowflakeCatalog({
   return (
     <section className="snow-catalog">
       <header className="snow-section-header">
-        <div><span>Horizon Catalog</span><h1>Database Explorer</h1><p>Discover, understand, and govern account data.</p></div>
+        <div><span>Governance</span><h1>Database Explorer</h1><p>Discover, understand, and govern account data.</p></div>
         <button className="snow-primary-button" type="button"><OperationalShowcaseIcon name="plus" size={15} /> Create</button>
       </header>
       <div className="snow-catalog-toolbar">
@@ -587,7 +587,7 @@ export function SnowflakeShowcase({
           <span className="snow-topbar-spacer" />
           <button type="button" aria-label="Help"><OperationalShowcaseIcon name="help" size={17} /></button>
           <button type="button" aria-label="Notifications"><OperationalShowcaseIcon name="bell" size={17} /><i /></button>
-          <button className="snow-copilot-button" type="button"><OperationalShowcaseIcon name="sparkles" size={15} /> Copilot</button>
+          <button className="snow-copilot-button" type="button"><OperationalShowcaseIcon name="sparkles" size={15} /> Assistant</button>
         </header>
         <main>
           {section === 'workspace' ? (

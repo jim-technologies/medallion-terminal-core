@@ -1,5 +1,4 @@
 - complementary "Assistant conversations":
-  - text: A
   - button "Collapse sidebar"
   - button "New chat ⌘⇧O"
   - button "Search chats"
@@ -24,7 +23,7 @@
     - button "Canvas"
   - button "Share"
   - button "More"
-  - text: Review our frontend framework and identify the smallest next step before production. A
+  - text: Review our frontend framework and identify the smallest next step before production.
   - article:
     - paragraph: Your presentation foundation is broad enough to begin integration. The next step should be a focused production-hardening pass rather than more component breadth.
     - heading "Recommended sequence" [level=3]

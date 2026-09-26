@@ -5,12 +5,13 @@ import {
   OperationalShowcaseIcon,
   operationalShowcaseInitials,
 } from '../shared/OperationalShowcasePrimitives'
+import { NeutralMark } from '../shared/NeutralMark'
 import '../shared/OperationalShowcases.css'
 
 export type IntercomShowcaseSection = 'inbox' | 'tickets' | 'reporting'
 export type IntercomConversationState = 'Open' | 'Waiting' | 'Resolved'
 export type IntercomPriority = 'Priority' | 'Normal'
-export type IntercomChannel = 'Messenger' | 'Email' | 'WhatsApp'
+export type IntercomChannel = 'Chat' | 'Email' | 'SMS'
 
 export interface IntercomMessage {
   id: string
@@ -62,7 +63,7 @@ export const INTERCOM_SAMPLE_CONVERSATIONS: readonly IntercomConversation[] = [
     customer: 'Maya Chen',
     email: 'maya@example.test',
     company: 'Northwind Health',
-    channel: 'Messenger',
+    channel: 'Chat',
     state: 'Open',
     priority: 'Priority',
     assignee: CLONE_DEMO_IDENTITY.user,
@@ -82,7 +83,7 @@ export const INTERCOM_SAMPLE_CONVERSATIONS: readonly IntercomConversation[] = [
     },
     messages: [
       { id: 'm1', author: 'Maya Chen', authorRole: 'Customer', timestamp: '10:31 AM', body: 'Hi! I just placed order #1057, but noticed that the delivery address is our old office.' },
-      { id: 'm2', author: 'Fin', authorRole: 'AI', timestamp: '10:31 AM', body: 'I found order #1057. Because it has not entered fulfillment, a teammate can still update the shipping address.' },
+      { id: 'm2', author: 'AI agent', authorRole: 'AI', timestamp: '10:31 AM', body: 'I found order #1057. Because it has not entered fulfillment, a teammate can still update the shipping address.' },
       { id: 'm3', author: 'Maya Chen', authorRole: 'Customer', timestamp: '10:33 AM', body: 'Great, thank you. The new address is 420 Market Street, San Francisco, CA 94105.' },
       { id: 'm4', author: CLONE_DEMO_IDENTITY.user, authorRole: 'Teammate', timestamp: '10:39 AM', body: 'I have the order open now. I’ll verify the change and send an updated confirmation in a moment.' },
       { id: 'm5', author: 'Order #1057 linked to this conversation', authorRole: 'Event', timestamp: '10:40 AM', body: 'Payment succeeded · fulfillment not started' },
@@ -115,7 +116,7 @@ export const INTERCOM_SAMPLE_CONVERSATIONS: readonly IntercomConversation[] = [
     },
     messages: [
       { id: 't1', author: 'Theo Martin', authorRole: 'Customer', timestamp: '10:12 AM', body: 'Could you add purchase order PO-4881 to invoice INV-1048 and resend it to our accounts payable team?' },
-      { id: 't2', author: 'Fin', authorRole: 'AI', timestamp: '10:13 AM', body: 'I located the invoice and drafted the required update for a teammate to review.' },
+      { id: 't2', author: 'AI agent', authorRole: 'AI', timestamp: '10:13 AM', body: 'I located the invoice and drafted the required update for a teammate to review.' },
     ],
   },
   {
@@ -125,7 +126,7 @@ export const INTERCOM_SAMPLE_CONVERSATIONS: readonly IntercomConversation[] = [
     customer: 'Nina Patel',
     email: 'nina@blueharbor.example',
     company: 'Blue Harbor Logistics',
-    channel: 'Messenger',
+    channel: 'Chat',
     state: 'Waiting',
     priority: 'Priority',
     assignee: CLONE_DEMO_IDENTITY.user,
@@ -186,7 +187,7 @@ export const INTERCOM_SAMPLE_CONVERSATIONS: readonly IntercomConversation[] = [
     customer: 'Lee Carter',
     email: 'lee@cascade.example',
     company: 'Cascade Retail',
-    channel: 'WhatsApp',
+    channel: 'SMS',
     state: 'Open',
     priority: 'Normal',
     assignee: 'Unassigned',
@@ -283,7 +284,7 @@ export function IntercomShowcase({
   return (
     <div className="ready-showcase intercom-showcase">
       <aside aria-label="Applications" className="intercom-rail">
-        <div className="intercom-mark"><OperationalShowcaseIcon name="inbox" size={17} /></div>
+        <NeutralMark icon="inbox" size={28} className="intercom-mark" />
         <nav aria-label="Applications">
           <button aria-label="Inbox" className={section === 'inbox' ? 'active' : ''} onClick={() => { setSection('inbox'); setStateFilter(undefined) }}><OperationalShowcaseIcon name="inbox" /></button>
           <button aria-label="Tickets" className={section === 'tickets' ? 'active' : ''} onClick={() => { setSection('tickets'); setStateFilter('Open') }}><OperationalShowcaseIcon name="ticket" /></button>

@@ -1,8 +1,7 @@
 - banner:
   - button "Apps"
-  - link "Inbox Inbox":
+  - link "Inbox":
     - /url: "#outlook"
-    - text: I
     - strong: Inbox
   - text: Search mail
   - textbox "Search mail":

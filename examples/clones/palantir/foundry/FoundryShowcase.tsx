@@ -4,6 +4,7 @@ import {
   OperationalShowcaseAvatar,
   OperationalShowcaseIcon,
 } from '../../shared/OperationalShowcasePrimitives'
+import { NeutralMark } from '../../shared/NeutralMark'
 import '../../shared/OperationalShowcases.css'
 
 export type FoundryShowcaseSection = 'ontology' | 'objects' | 'lineage' | 'actions'
@@ -411,7 +412,7 @@ export function FoundryShowcase({
     <div className="ready-showcase foundry-showcase">
       <header className="foundry-topbar">
         <div className="foundry-brand">
-          <span className="foundry-mark"><OperationalShowcaseIcon name="layers" size={17} /></span>
+          <NeutralMark icon="layers" size={26} />
           <strong>Operations</strong>
           <span className="foundry-product">Platform</span>
         </div>

@@ -1,4 +1,3 @@
-- text: C
 - navigation "Chat navigation":
   - button "Chats": "4"
   - button "Updates"

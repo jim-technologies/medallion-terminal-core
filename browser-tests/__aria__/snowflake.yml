@@ -22,7 +22,7 @@
   - text: ACME_US_WEST
   - button "Help"
   - button "Notifications"
-  - button "Copilot"
+  - button "Assistant"
 - main:
   - text: Projects / Workspaces /
   - strong: Revenue intelligence

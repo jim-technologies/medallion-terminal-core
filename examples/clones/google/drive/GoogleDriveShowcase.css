@@ -21,7 +21,7 @@
   background: var(--gdrive-bg);
   color: var(--gdrive-text);
   color-scheme: light;
-  font-family: "Google Sans", Roboto, Arial, system-ui, sans-serif;
+  font-family: Roboto, Arial, system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.4;
 }
@@ -482,16 +482,6 @@
   border-radius: 14px;
   background: linear-gradient(100deg, #edf4ff 0%, #f7f1ff 54%, #fff 100%);
   box-shadow: 0 1px 2px rgb(60 64 67 / 0.08);
-}
-
-.gdrive-ai-mark {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #0b57d0, #a142f4 58%, #e94235);
-  color: white;
 }
 
 .gdrive-ai-copy {

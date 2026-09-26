@@ -1,7 +1,6 @@
 - banner:
-  - link "Markets Markets":
+  - link "Markets":
     - /url: "#markets"
-    - text: M
     - strong: Markets
   - navigation "Market products":
     - button "Cryptocurrencies"

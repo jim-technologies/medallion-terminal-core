@@ -36,7 +36,7 @@ describe('GooglePhotosShowcase', () => {
   it('server-renders the complete Photos application anatomy', () => {
     const html = renderToStaticMarkup(<GooglePhotosShowcase />)
 
-    expect(html).toContain('Ask Photos or search your library')
+    expect(html).toContain('Ask or search your library')
     expect(html).toContain('Memories')
     expect(html).toContain('Golden coast')
     expect(html).toContain('Collections')

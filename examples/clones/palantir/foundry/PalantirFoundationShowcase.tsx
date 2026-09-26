@@ -5,6 +5,7 @@ import {
   OperationalShowcaseIcon,
   type OperationalShowcaseIconName,
 } from '../../shared/OperationalShowcasePrimitives'
+import { NeutralMark } from '../../shared/NeutralMark'
 import '../../shared/OperationalShowcases.css'
 import './PalantirFoundationShowcase.css'
 
@@ -347,7 +348,7 @@ export const PALANTIR_SAMPLE_CONNECTIONS: readonly PalantirDataConnection[] = [
   {
     id: 'finance-warehouse',
     name: 'Finance warehouse',
-    sourceType: 'Snowflake',
+    sourceType: 'Cloud warehouse',
     direction: 'Bidirectional',
     status: 'Connected',
     lastSync: '11 min ago',
@@ -368,12 +369,12 @@ export const PALANTIR_SAMPLE_CONNECTIONS: readonly PalantirDataConnection[] = [
   },
 ]
 
-const CUSTOMER_HEALTH_CODE = `from transforms.api import Input, Output, transform_df
+const CUSTOMER_HEALTH_CODE = `from pipeline import Input, Output, transform
 
-@transform_df(
-    Output("ri.foundry.main.dataset.customer_360"),
-    customers=Input("ri.foundry.main.dataset.raw_customers"),
-    orders=Input("ri.foundry.main.dataset.commercial_orders"),
+@transform(
+    Output("datasets/customer_360"),
+    customers=Input("datasets/raw_customers"),
+    orders=Input("datasets/commercial_orders"),
 )
 def customer_health(customers, orders):
     order_health = (
@@ -516,7 +517,7 @@ export function PalantirFoundationShowcase({
     <div className="ready-showcase foundry-showcase palantir-foundation-showcase">
       <header className="foundry-topbar">
         <div className="foundry-brand">
-          <span className="foundry-mark"><OperationalShowcaseIcon name="layers" size={17} /></span>
+          <NeutralMark icon="layers" size={26} />
           <strong>Operations</strong>
           <span className="foundry-product">Platform</span>
         </div>
@@ -686,7 +687,7 @@ function PalantirCompassSurface({
     <>
       <div className="ready-page-heading foundry-page-heading">
         <div>
-          <div className="ready-eyebrow">Compass / Files</div>
+          <div className="ready-eyebrow">Files</div>
           <h1>Projects and resources</h1>
           <p>Browse, organize, secure, share, and inspect every resource through one filesystem-style surface.</p>
         </div>
@@ -743,7 +744,7 @@ function PalantirCompassSurface({
               <div><dt>Project</dt><dd>{selectedResource.project}</dd></div>
               <div><dt>Owner</dt><dd>{selectedResource.owner}</dd></div>
               <div><dt>Modified</dt><dd>{selectedResource.modifiedAt}</dd></div>
-              <div><dt>Resource ID</dt><dd>ri.foundry.main.{selectedResource.kind.toLowerCase().replace(/\s+/g, '-')}.{selectedResource.id}</dd></div>
+              <div><dt>Resource ID</dt><dd>{selectedResource.kind.toLowerCase().replace(/\s+/g, '-')}/{selectedResource.id}</dd></div>
             </dl>
             <section><h3>Tags</h3><div>{selectedResource.tags.map(tag => <span key={tag}>{tag}</span>)}</div></section>
             <section><h3>Access</h3><p><OperationalShowcaseIcon name="shield" size={13} />{CLONE_DEMO_IDENTITY.company} · Editor</p><p><OperationalShowcaseIcon name="people" size={13} />{selectedResource.shared ? 'Shared with workspace' : 'Project members only'}</p></section>

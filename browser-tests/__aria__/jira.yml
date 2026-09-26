@@ -1,8 +1,7 @@
 - banner:
   - button "Applications"
-  - link "Tracker Tracker":
+  - link "Tracker":
     - /url: "#jira"
-    - text: T
     - strong: Tracker
   - navigation "Tracker navigation":
     - button "Your work⌄"

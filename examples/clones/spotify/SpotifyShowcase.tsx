@@ -430,7 +430,7 @@ function SpotifyIcon({ name, size = 22 }: { name: SpotifyIconName; size?: number
 function SpotifyBrand() {
   return (
     <span className="spt-brand">
-      <NeutralMark icon="play" color="#1f8a4c" size={30} />
+      <NeutralMark icon="play" size={30} />
       <b>Music</b>
     </span>
   )
@@ -960,7 +960,7 @@ function SpotifySidePanelView({
         </section>
         <section>
           <div className="spt-queue-panel__next"><h3>Next up</h3><button type="button">Clear queue</button></div>
-          <p className="spt-jam-note"><span>J</span><b>Start a Jam</b><small>Invite people to add to this queue.</small></p>
+          <p className="spt-jam-note"><span>J</span><b>Start a group session</b><small>Invite people to add to this queue.</small></p>
           {queue.slice(0, 8).map((track, index) => (
             <button className="spt-queue-row" key={track.id} onClick={() => onPlay(track)} type="button">
               <span className="spt-queue-row__handle">{index + 1}</span>

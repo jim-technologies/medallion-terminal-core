@@ -315,7 +315,7 @@ function HubSpotTopbar({
     <>
       <header className="hubspot-topbar">
         <button className="hubspot-brand">
-          <NeutralMark icon="people" color="#e8663d" />
+          <NeutralMark icon="people" />
           <span>CRM</span>
         </button>
         <label className="hubspot-global-search">
@@ -344,7 +344,7 @@ function HubSpotTopbar({
           </button>
         </div>
       </header>
-      <nav className="hubspot-main-nav" aria-label="HubSpot sections">
+      <nav className="hubspot-main-nav" aria-label="CRM sections">
         {['CRM', 'Marketing', 'Content', 'Sales', 'Service', 'Automation', 'Reporting', 'Commerce', 'Data Management'].map((item, index) => (
           <button className={index === 0 ? 'is-active' : ''} key={item}>
             {item}
@@ -385,7 +385,7 @@ function HubSpotSectionNav({
       </nav>
       <button className="hubspot-breeze-card">
         <span><ProductShowcaseIcon name="sparkles" size={16} /></span>
-        <strong>Ask Breeze</strong>
+        <strong>Ask AI</strong>
         <small>Summarize records and prepare follow-ups.</small>
       </button>
     </aside>
@@ -633,7 +633,7 @@ function HubSpotRecord({
             <div className="hubspot-attachment"><ProductShowcaseIcon name="document" size={18} /><span><strong>Discovery notes.docx</strong><small>184 KB · Jul 16</small></span></div>
           </section>
           <section className="hubspot-breeze-summary">
-            <header><ProductShowcaseIcon name="sparkles" size={16} /><strong>Breeze summary</strong></header>
+            <header><ProductShowcaseIcon name="sparkles" size={16} /><strong>AI summary</strong></header>
             <p>{contact.name} is evaluating an operating workspace for cross-functional visibility. Executive review is the next milestone.</p>
             <button>Prepare follow-up</button>
           </section>

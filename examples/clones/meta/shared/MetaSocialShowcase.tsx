@@ -362,7 +362,7 @@ function InstagramShowcase(props: ProductRendererProps) {
           { view: 'feed', label: 'Home', icon: 'home' },
           { view: 'explore', label: 'Search', icon: 'search' },
           { view: 'explore', label: 'Explore', icon: 'apps' },
-          { view: 'feed', label: 'Reels', icon: 'play' },
+          { view: 'feed', label: 'Videos', icon: 'play' },
           { view: 'feed', label: 'Messages', icon: 'message' },
           { view: 'feed', label: 'Notifications', icon: 'heart' },
           { view: 'feed', label: 'Create', icon: 'plus' },
@@ -423,7 +423,7 @@ function FacebookShowcase(props: ProductRendererProps) {
         </nav>
         <div className="meta-facebook-actions">
           <NavIcon label="Menu" icon="apps" />
-          <NavIcon label="Messenger" icon="message" />
+          <NavIcon label="Messages" icon="message" />
           <NavIcon label="Notifications" icon="bell" />
           <SocialAvatar author={AUTHORS.jun} size={38} />
         </div>
@@ -615,7 +615,6 @@ function SocialLogo({ product }: { product: MetaSocialProduct }) {
     >
       <NeutralMark
         icon={product === 'instagram' ? 'camera' : product === 'facebook' ? 'people' : 'message'}
-        color={product === 'instagram' ? '#b0306a' : product === 'facebook' ? '#1f5fbf' : '#303030'}
         size={30}
       />
       <span className="meta-social-logo__name">{label}</span>

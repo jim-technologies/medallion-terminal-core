@@ -6,14 +6,23 @@ vendor-specific APIs to the published framework.
 ## Neutral names
 
 A clone reproduces a product's layout and interaction model so the toolkit
-can be judged against it. It never shows that product's name, logo or
-wordmark: headers use a neutral name and `shared/NeutralMark` (a generic
-glyph on the clone's accent), and labels, placeholders and chrome copy say
-what the surface does ("Files", "Tracker", "Search maps"), not whose it is.
-The vendor and product appear only where a reader needs them to find the
-reference: the folder, the Storybook title and the `cloneVendor` /
-`cloneProduct` parameters. Third-party names that are data inside the demo
-(a stock ticker, a connector, a message channel) stay as data.
+can be judged against it. It never shows that product's name, logo,
+wordmark, branded features or proprietary typeface: headers use a neutral
+name and `shared/NeutralMark`, a generic glyph on one slate square that is
+the same in every clone (it takes no colour, so no clone's mark carries the
+brand colour its logo is known by). Labels, placeholders and chrome copy say
+what the surface does ("Files", "Tracker", "Search maps", "Ask AI",
+"Governance"), not whose it is, and font stacks name only system and open
+fonts. The vendor and product appear only where a reader needs them to find
+the reference: the folder, the Storybook title, story names and
+descriptions, and the `cloneVendor` / `cloneProduct` parameters.
+Third-party names that are ordinary data inside the demo (a stock ticker, an
+airline on a bank line) stay as data.
+
+`src/__tests__/cloneNeutrality.test.tsx` renders every clone story and fails
+when its visible text or an accessible name (label, title, placeholder, alt)
+says one of the referenced products, vendors or their branded features; add
+a name there when a new clone references a new product.
 
 ## Catalog rule
 

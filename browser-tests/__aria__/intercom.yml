@@ -91,7 +91,7 @@
 - strong: Maya Chen
 - text: 10:31 AM
 - paragraph: "Hi! I just placed order #1057, but noticed that the delivery address is our old office."
-- strong: Fin
+- strong: AI agent
 - emphasis: AI Agent
 - text: 10:31 AM
 - paragraph: "I found order #1057. Because it has not entered fulfillment, a teammate can still update the shipping address."
@@ -135,7 +135,7 @@
   - term: Priority
   - definition: Priority
   - term: Channel
-  - definition: Messenger
+  - definition: Chat
   - button "Ticket"
   - strong: Order support
   - text: In progress

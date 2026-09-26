@@ -9,7 +9,7 @@
   --nfx-muted: #b3b3b3;
   background: var(--nfx-black);
   color: var(--nfx-text);
-  font-family: "Netflix Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .nfx-shell *,
@@ -59,13 +59,13 @@
 }
 
 .nfx-wordmark {
-  color: var(--nfx-red);
-  display: inline-block;
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: -1.8px;
+  align-items: center;
+  color: var(--nfx-text);
+  display: inline-flex;
+  font-size: 18px;
+  font-weight: 600;
+  gap: 9px;
   line-height: 1;
-  transform: scaleY(1.12);
   white-space: nowrap;
 }
 
@@ -362,13 +362,7 @@
   font-weight: 700;
   gap: 7px;
   letter-spacing: 4px;
-}
-
-.nfx-series-mark b {
-  color: var(--nfx-red);
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: -2px;
+  text-transform: uppercase;
 }
 
 .nfx-hero__content h1 {
@@ -574,14 +568,14 @@
   padding: 1px 3px;
 }
 
-.nfx-top10-badge {
-  background: var(--nfx-red);
+.nfx-rank-badge {
+  background: rgb(20 20 20 / 82%);
   border-radius: 2px;
   color: #fff;
-  font-size: 7px;
-  font-weight: 900;
-  line-height: .9;
-  padding: 3px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 3px 5px;
   position: absolute;
   right: 7px;
   text-align: center;

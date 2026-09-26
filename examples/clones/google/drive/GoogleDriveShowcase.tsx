@@ -391,7 +391,7 @@ export function GoogleDriveShowcase({
           <button className="gdrive-icon-button" aria-label="Main menu">
             <GoogleDriveIcon name="menu" />
           </button>
-          <NeutralMark icon="document" color="#1a73e8" size={36} />
+          <NeutralMark icon="document" size={36} />
           <span>Files</span>
         </div>
 
@@ -535,7 +535,7 @@ export function GoogleDriveShowcase({
 
             {aiShelfVisible && showSuggestions && (
               <div className="gdrive-ai-shelf">
-                <div className="gdrive-ai-mark"><GoogleDriveIcon name="sparkles" /></div>
+                <NeutralMark icon="sparkles" size={40} />
                 <div className="gdrive-ai-copy">
                   <strong>Ask about your files</strong>
                   <span>Get answers grounded in your files</span>

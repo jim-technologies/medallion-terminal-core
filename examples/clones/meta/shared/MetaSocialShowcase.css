@@ -81,12 +81,6 @@
   white-space: nowrap;
 }
 
-.meta-social-logo.is-facebook {
-  color: #0866ff;
-  font-size: 22px;
-  letter-spacing: -0.04em;
-}
-
 .meta-social-avatar {
   --meta-avatar-size: 34px;
   --meta-avatar-color: #5f6f82;

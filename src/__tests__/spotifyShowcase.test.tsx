@@ -85,7 +85,7 @@ describe('SpotifyShowcase', () => {
     expect(queue).toContain('Queue')
     expect(queue).toContain('Now playing')
     expect(queue).toContain('Next up')
-    expect(queue).toContain('Start a Jam')
+    expect(queue).toContain('Start a group session')
   })
 
   it('accepts host-provided catalog data without leaking sample content', () => {

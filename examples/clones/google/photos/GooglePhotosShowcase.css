@@ -13,7 +13,7 @@
   overflow: hidden;
   color: var(--gphotos-ink);
   background: var(--gphotos-surface);
-  font-family: "Google Sans", "Google Sans Text", Roboto, Arial, sans-serif;
+  font-family: Roboto, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.35;
   color-scheme: light;

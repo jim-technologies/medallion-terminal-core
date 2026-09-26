@@ -59,7 +59,7 @@
   - button "# launch-room Q3 launch coordination":
     - strong: "# launch-room"
     - text: Q3 launch coordination
-  - button "Huddle"
+  - button "Call"
   - button "8 members":
     - text: J MC LT
     - strong: "8"
@@ -113,8 +113,8 @@
         - strong: 2 replies
         - text: Last reply 9:09 AM
     - article:
-      - text: WB
-      - strong: Workflow Builder
+      - text: W
+      - strong: Workflows
       - emphasis: APP
       - time: 9:18 AM
       - paragraph: Launch readiness changed from At risk → On track. 17 of 18 gates are complete.

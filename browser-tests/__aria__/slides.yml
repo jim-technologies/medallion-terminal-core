@@ -16,7 +16,7 @@
   - button "Last edit 2 min ago"
   - button "Comments"
   - button "Join a call"
-  - button "Ask Gemini"
+  - button "Ask the assistant"
   - button "Slideshow"
   - button "Share"
   - text: MR LT
@@ -88,8 +88,8 @@
 - paragraph: Q3 business review
 - text: JIM TECHNOLOGIES · COVER Maya Click to add speaker notes
 - complementary "Workspace side panel":
-  - button "Calendar": "31"
-  - button "Keep"
+  - button "Calendar"
+  - button "Notes"
   - button "Tasks"
   - button "Contacts"
   - button "Get add-ons"

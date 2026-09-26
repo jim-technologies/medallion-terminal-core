@@ -5,6 +5,7 @@ import {
   type ReactNode,
 } from 'react'
 import { CLONE_DEMO_IDENTITY } from '../../demoIdentity'
+import { NeutralMark } from '../NeutralMark'
 import {
   OperationalShowcaseIcon,
   type OperationalShowcaseIconName,
@@ -47,7 +48,8 @@ export interface ProductShowcaseDefinition {
   accent: string
   accentSoft: string
   surface: 'light' | 'dark'
-  mark: string
+  /** Generic glyph for the neutral product mark. */
+  icon: OperationalShowcaseIconName
   views: readonly string[]
   defaultView: string
 }
@@ -55,73 +57,73 @@ export interface ProductShowcaseDefinition {
 export const PRODUCT_ARCHETYPE_CATALOG: Record<ProductShowcaseId, ProductShowcaseDefinition> = {
   'google-gmail': {
     id: 'google-gmail', vendor: 'Google', product: 'Google Gmail', displayName: 'Mail',
-    archetype: 'mail', accent: '#c5221f', accentSoft: '#fce8e6', surface: 'light', mark: 'M',
+    archetype: 'mail', accent: '#c5221f', accentSoft: '#fce8e6', surface: 'light', icon: 'mail',
     views: ['inbox', 'thread', 'compose'], defaultView: 'inbox',
   },
   'microsoft-outlook': {
     id: 'microsoft-outlook', vendor: 'Microsoft', product: 'Microsoft Outlook', displayName: 'Inbox',
-    archetype: 'mail', accent: '#0f6cbd', accentSoft: '#deecf9', surface: 'light', mark: 'I',
+    archetype: 'mail', accent: '#0f6cbd', accentSoft: '#deecf9', surface: 'light', icon: 'inbox',
     views: ['focused', 'reading-pane', 'compose'], defaultView: 'focused',
   },
   notion: {
     id: 'notion', vendor: 'Notion', product: 'Notion', displayName: 'Pages',
-    archetype: 'knowledge', accent: '#37352f', accentSoft: '#efefed', surface: 'light', mark: 'P',
+    archetype: 'knowledge', accent: '#37352f', accentSoft: '#efefed', surface: 'light', icon: 'document',
     views: ['document', 'database', 'comments'], defaultView: 'document',
   },
   'atlassian-confluence': {
     id: 'atlassian-confluence', vendor: 'Atlassian', product: 'Atlassian Confluence', displayName: 'Wiki',
-    archetype: 'knowledge', accent: '#1868db', accentSoft: '#e9f2ff', surface: 'light', mark: 'W',
+    archetype: 'knowledge', accent: '#1868db', accentSoft: '#e9f2ff', surface: 'light', icon: 'bookmark',
     views: ['space', 'page', 'page-tree'], defaultView: 'space',
   },
   linear: {
     id: 'linear', vendor: 'Linear', product: 'Linear', displayName: 'Issues',
-    archetype: 'work', accent: '#5e6ad2', accentSoft: '#262846', surface: 'dark', mark: 'I',
+    archetype: 'work', accent: '#5e6ad2', accentSoft: '#262846', surface: 'dark', icon: 'check',
     views: ['issues', 'cycle', 'issue-detail'], defaultView: 'issues',
   },
   'atlassian-jira': {
     id: 'atlassian-jira', vendor: 'Atlassian', product: 'Atlassian Jira', displayName: 'Tracker',
-    archetype: 'work', accent: '#0c66e4', accentSoft: '#e9f2ff', surface: 'light', mark: 'T',
+    archetype: 'work', accent: '#0c66e4', accentSoft: '#e9f2ff', surface: 'light', icon: 'flag',
     views: ['backlog', 'board', 'issue-detail'], defaultView: 'backlog',
   },
   binance: {
     id: 'binance', vendor: 'Binance', product: 'Binance', displayName: 'Exchange',
-    archetype: 'market', accent: '#f0b90b', accentSoft: '#332d16', surface: 'dark', mark: 'E',
+    archetype: 'market', accent: '#f0b90b', accentSoft: '#332d16', surface: 'dark', icon: 'chart',
     views: ['spot', 'open-orders', 'wallet'], defaultView: 'spot',
   },
   coingecko: {
     id: 'coingecko', vendor: 'CoinGecko', product: 'CoinGecko', displayName: 'Markets',
-    archetype: 'market', accent: '#78a53a', accentSoft: '#eef6df', surface: 'light', mark: 'M',
+    archetype: 'market', accent: '#78a53a', accentSoft: '#eef6df', surface: 'light', icon: 'money',
     views: ['markets', 'coin-detail', 'portfolio'], defaultView: 'markets',
   },
   polymarket: {
     id: 'polymarket', vendor: 'Polymarket', product: 'Polymarket', displayName: 'Forecasts',
-    archetype: 'market', accent: '#2f6fed', accentSoft: '#e8efff', surface: 'light', mark: 'F',
+    archetype: 'market', accent: '#2f6fed', accentSoft: '#e8efff', surface: 'light', icon: 'graph',
     views: ['discovery', 'market-detail', 'portfolio'], defaultView: 'discovery',
   },
   'interactive-brokers-trader-workstation': {
     id: 'interactive-brokers-trader-workstation', vendor: 'Interactive Brokers',
     product: 'Interactive Brokers Trader Workstation', displayName: 'Trading desk',
-    archetype: 'market', accent: '#d62728', accentSoft: '#351b1b', surface: 'dark', mark: 'T',
+    archetype: 'market', accent: '#d62728', accentSoft: '#351b1b', surface: 'dark', icon: 'activity',
     views: ['mosaic', 'portfolio', 'order-entry'], defaultView: 'mosaic',
   },
   'grafana-labs-grafana': {
     id: 'grafana-labs-grafana', vendor: 'Grafana Labs', product: 'Grafana Labs Grafana', displayName: 'Metrics',
-    archetype: 'analytics', accent: '#ff9830', accentSoft: '#3a2818', surface: 'dark', mark: 'M',
+    archetype: 'analytics', accent: '#ff9830', accentSoft: '#3a2818', surface: 'dark', icon: 'activity',
     views: ['dashboard', 'explore', 'alerting'], defaultView: 'dashboard',
   },
   'apache-superset': {
     id: 'apache-superset', vendor: 'Apache', product: 'Apache Superset', displayName: 'Analytics',
-    archetype: 'analytics', accent: '#20a7c9', accentSoft: '#e4f6fa', surface: 'light', mark: 'A',
+    archetype: 'analytics', accent: '#20a7c9', accentSoft: '#e4f6fa', surface: 'light', icon: 'chart',
     views: ['dashboard', 'explore', 'sql-lab'], defaultView: 'dashboard',
   },
   'meta-whatsapp': {
     id: 'meta-whatsapp', vendor: 'Meta', product: 'Meta WhatsApp', displayName: 'Chat',
-    archetype: 'conversation', accent: '#00a884', accentSoft: '#d9fdd3', surface: 'light', mark: 'C',
+    archetype: 'conversation', accent: '#00a884', accentSoft: '#d9fdd3', surface: 'light', icon: 'message',
     views: ['chat', 'communities', 'media'], defaultView: 'chat',
   },
   'openai-chatgpt': {
     id: 'openai-chatgpt', vendor: 'OpenAI', product: 'OpenAI ChatGPT', displayName: 'Assistant',
-    archetype: 'conversation', accent: '#10a37f', accentSoft: '#e8f7f2', surface: 'light', mark: 'A',
+    archetype: 'conversation', accent: '#10a37f', accentSoft: '#e8f7f2', surface: 'light', icon: 'sparkles',
     views: ['conversation', 'projects', 'canvas'], defaultView: 'conversation',
   },
 }
@@ -187,8 +189,10 @@ interface ShowcaseRendererProps {
   onSelectItem?: (id: string) => void
 }
 
+// The neutral mark beside the neutral name: never the product's logo,
+// lettermark or brand colour.
 function ProductMark({ definition }: { definition: ProductShowcaseDefinition }) {
-  return <span className="ar-product-mark" aria-label={definition.displayName} title={definition.displayName}>{definition.mark}</span>
+  return <NeutralMark icon={definition.icon} size={28} />
 }
 
 function Avatar({ name, size = 30 }: { name: string; size?: number }) {
@@ -1039,7 +1043,7 @@ function TraderWorkstationShowcase({ definition, view, setView, companyName, use
         <Avatar name={userName} size={25} />
       </header>
       <nav className="ar-tws-workspaces" aria-label="Trading desk layouts">
-        <button className={view === 'mosaic' ? 'is-active' : ''} onClick={() => setView('mosaic')}>Mosaic</button>
+        <button className={view === 'mosaic' ? 'is-active' : ''} onClick={() => setView('mosaic')}>Layout</button>
         <button className={view === 'portfolio' ? 'is-active' : ''} onClick={() => setView('portfolio')}>Portfolio</button>
         <button className={view === 'order-entry' ? 'is-active' : ''} onClick={() => setView('order-entry')}>Order entry</button>
         <button>Classic layout</button><button aria-label="Add layout">＋</button>
@@ -1318,7 +1322,7 @@ function SupersetShowcase({ definition, view, setView, companyName, userName }: 
       ) : (
         <main className="ar-superset-workbench">
           <div className="ar-superset-workbench-head">
-            <div><span>{view === 'sql-lab' ? 'SQL Lab' : 'Charts / Explore'}</span><h1>{view === 'sql-lab' ? 'Revenue analysis.sql' : 'Revenue by segment'}</h1></div>
+            <div><span>{view === 'sql-lab' ? 'SQL editor' : 'Charts / Explore'}</span><h1>{view === 'sql-lab' ? 'Revenue analysis.sql' : 'Revenue by segment'}</h1></div>
             <div><button>Save</button><button className="ar-primary">{view === 'sql-lab' ? 'Run' : 'Save chart'}</button></div>
           </div>
           <AnalyticsExplorer sql={view === 'sql-lab'} superset />

@@ -1,7 +1,6 @@
 - banner:
-  - link "Forecasts Forecasts":
+  - link "Forecasts":
     - /url: "#prediction"
-    - text: F
     - strong: Forecasts
   - textbox:
     - /placeholder: Search markets

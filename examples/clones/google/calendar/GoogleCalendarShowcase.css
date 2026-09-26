@@ -15,7 +15,7 @@
   color: var(--gcal-ink);
   display: flex;
   flex-direction: column;
-  font-family: "Google Sans", "Google Sans Text", Roboto, Arial, sans-serif;
+  font-family: Roboto, Arial, sans-serif;
   /* Self-contained: do not inherit the host root's type scale. */
   font-size: 14px;
   line-height: 1.5;

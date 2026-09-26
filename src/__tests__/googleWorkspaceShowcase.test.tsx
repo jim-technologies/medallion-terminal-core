@@ -34,7 +34,7 @@ describe('GoogleWorkspaceEditor', () => {
 
   it('server-renders the Sheets grid, formula bar, and tabs', () => {
     const html = renderToStaticMarkup(
-      <GoogleWorkspaceEditor product="sheets" initialCell="F7" initialGeminiOpen />,
+      <GoogleWorkspaceEditor product="sheets" initialCell="F7" initialAssistantOpen />,
     )
 
     expect(html).toContain('FY26 revenue model')

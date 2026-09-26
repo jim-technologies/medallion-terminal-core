@@ -5,6 +5,7 @@ import {
   type KeyboardEvent,
 } from 'react'
 import { CLONE_DEMO_IDENTITY } from '../demoIdentity'
+import { NeutralMark } from '../shared/NeutralMark'
 import './NetflixShowcase.css'
 
 export type NetflixSection = 'home' | 'shows' | 'movies' | 'new' | 'my-list'
@@ -380,7 +381,7 @@ export const NETFLIX_SAMPLE_RAILS: readonly NetflixRail[] = [
   },
   {
     id: 'trending',
-    title: 'Top 10 in the U.S. Today',
+    title: 'Most watched today',
     titleIds: ['signal-coast', 'the-ridge', 'night-shift', 'afterlight', 'wild-current', 'the-archive', 'last-ferry'],
     presentation: 'top10',
   },
@@ -509,8 +510,9 @@ function NetflixIcon({ name, size = 22 }: { name: NetflixIconName; size?: number
   )
 }
 
+// Neutral mark and name in place of the service's logotype.
 function StreamingWordmark() {
-  return <span className="nfx-wordmark">WATCH</span>
+  return <span className="nfx-wordmark"><NeutralMark icon="play" size={28} />Watch</span>
 }
 
 function artworkUrl(title: NetflixTitle): string {
@@ -655,7 +657,7 @@ function NetflixHero({
       <NetflixArtwork hero title={title} />
       <div className="nfx-hero__gradient" />
       <div className="nfx-hero__content">
-        <span className="nfx-series-mark"><b>N</b> SERIES</span>
+        <span className="nfx-series-mark">Series</span>
         <h1>{title.title}</h1>
         <p className="nfx-hero__tagline">{title.tagline}</p>
         <p>{title.synopsis}</p>
@@ -697,7 +699,7 @@ function NetflixCard({
       {isTop10 && <span className="nfx-card__rank">{rank ?? title.top10Rank}</span>}
       <button aria-label={title.title} onClick={() => onSelect(title)} type="button">
         <NetflixArtwork title={title} />
-        {title.top10Rank !== undefined && !isTop10 && <span className="nfx-top10-badge">TOP<br />10</span>}
+        {title.top10Rank !== undefined && !isTop10 && <span className="nfx-rank-badge">#{title.top10Rank}</span>}
         {presentation === 'continue' && title.progress !== undefined && (
           <span className="nfx-progress">
             <span style={{ width: `${title.progress}%` }} />
@@ -795,7 +797,7 @@ function BrowseSection({
     ? ['Bingeworthy TV Shows', 'Critically Acclaimed Series', 'Drama', 'Documentaries']
     : section === 'movies'
       ? ['Popular Movies', 'Award-Winning', 'Thrillers', 'Independent Films']
-      : ['New this week', 'Top 10 Today', 'Worth the Wait']
+      : ['New this week', 'Most watched today', 'Worth the Wait']
   return (
     <div className="nfx-browse-page">
       <div className="nfx-browse-page__heading">
@@ -840,7 +842,7 @@ function DetailModal({
           <span className="nfx-detail-modal__gradient" />
           <IconButton icon="close" label="Close title details" onClick={onClose} solid />
           <div className="nfx-detail-modal__title">
-            <span className="nfx-series-mark"><b>N</b> SERIES</span>
+            <span className="nfx-series-mark">Series</span>
             <h2>{title.title}</h2>
             <div>
               <button className="nfx-play-button" onClick={onPlay} type="button">

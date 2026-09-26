@@ -1,8 +1,7 @@
 - banner:
   - button "Main menu"
-  - link "Mail Mail":
+  - link "Mail":
     - /url: "#mail"
-    - text: M
     - strong: Mail
   - text: Search mail
   - textbox "Search mail /":

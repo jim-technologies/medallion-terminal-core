@@ -20,7 +20,7 @@
     - button "Bank transactions 4"
     - button "Invoices"
     - button "Reports"
-  - text: INTUIT APPS
+  - text: APPS
   - navigation "Applications":
     - button "Accounting"
     - button "Customer Hub"
@@ -106,7 +106,7 @@
   - strong: Operating checking
   - text: Updated 3 minutes ago
   - strong: $174,620
-  - text: Bank balance V
+  - text: Bank balance BC
   - strong: Business card
   - text: Updated 8 minutes ago
   - strong: "-$12,480"

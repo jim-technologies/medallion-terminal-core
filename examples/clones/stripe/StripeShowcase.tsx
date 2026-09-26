@@ -155,7 +155,7 @@ export function StripeShowcase({
   return (
     <div className="ready-showcase stripe-showcase">
       <aside className="stripe-sidebar" aria-label="Payments navigation">
-        <div className="stripe-brand"><NeutralMark icon="money" color="#635bff" /></div>
+        <div className="stripe-brand"><NeutralMark icon="money" /></div>
         <button className="stripe-account-switcher"><span>{accountName}</span><small>Standard account</small><OperationalShowcaseIcon name="chevron-down" size={13} /></button>
         <nav aria-label="Commerce">
           {STRIPE_NAV.map(item => (
@@ -263,7 +263,7 @@ export function StripeShowcase({
                   {filteredPayments.map(payment => (
                     <button key={payment.id} onClick={() => choosePayment(payment)}>
                       <strong>{formatOperationalCurrency(payment.amount, { cents: true })} USD</strong>
-                      <span><i className="stripe-card-brand">VISA</i>{payment.method}</span>
+                      <span><i className="stripe-card-brand">Card</i>{payment.method}</span>
                       <span>{payment.description}</span>
                       <span>{payment.email}</span>
                       <span>{payment.createdAt}</span>
@@ -300,7 +300,7 @@ export function StripeShowcase({
                   </section>
                   <section className="stripe-card stripe-detail-summary">
                     <h2>Payment method</h2>
-                    <div className="stripe-method-card"><i>VISA</i><span><strong>Visa {selectedPayment.method}</strong><small>Credit · {selectedPayment.country}</small></span><StripeStatus label={selectedPayment.risk === 'Normal' ? 'Succeeded' : 'Failed'} override={selectedPayment.risk} /></div>
+                    <div className="stripe-method-card"><i>Card</i><span><strong>Card {selectedPayment.method}</strong><small>Credit · {selectedPayment.country}</small></span><StripeStatus label={selectedPayment.risk === 'Normal' ? 'Succeeded' : 'Failed'} override={selectedPayment.risk} /></div>
                     <dl><div><dt>Cardholder</dt><dd>{selectedPayment.customer}</dd></div><div><dt>Fingerprint</dt><dd><code>Xt5uA9KpQ8jZn4</code></dd></div><div><dt>Expires</dt><dd>04 / 2029</dd></div></dl>
                   </section>
                   <section className="stripe-card stripe-detail-summary">
@@ -320,7 +320,7 @@ export function StripeShowcase({
                   </section>
                   <section className="stripe-card stripe-side-detail">
                     <h2>Risk insights</h2>
-                    <div className="stripe-risk-score"><span>18</span><div><strong>{selectedPayment.risk} risk</strong><small>Radar evaluation</small></div></div>
+                    <div className="stripe-risk-score"><span>18</span><div><strong>{selectedPayment.risk} risk</strong><small>Fraud screening</small></div></div>
                     <p>No high-risk signals were detected for this payment.</p>
                   </section>
                 </aside>

@@ -212,7 +212,7 @@ export function ShopifyShowcase({
     <div className="ready-showcase shopify-showcase">
       <header className="shopify-topbar">
         <button className="shopify-mobile-menu" aria-label="Menu"><OperationalShowcaseIcon name="menu" /></button>
-        <div className="shopify-logo"><NeutralMark icon="cart" color="#4f8a2b" /><strong>Store</strong></div>
+        <div className="shopify-logo"><NeutralMark icon="cart" /><strong>Store</strong></div>
         <label className="shopify-global-search"><OperationalShowcaseIcon name="search" size={16} /><input placeholder="Search" /><kbd>⌘ K</kbd></label>
         <div className="ready-top-actions">
           <button aria-label="Assistant"><OperationalShowcaseIcon name="sparkles" /></button>

@@ -1,7 +1,6 @@
 - banner:
-  - link "Analytics Analytics":
+  - link "Analytics":
     - /url: "#superset"
-    - text: A
     - strong: Analytics
   - navigation "Analytics navigation":
     - button "Dashboards⌄"

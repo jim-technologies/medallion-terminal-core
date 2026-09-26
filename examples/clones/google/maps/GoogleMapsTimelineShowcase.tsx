@@ -4,6 +4,7 @@ import {
   OperationalShowcaseAvatar,
   OperationalShowcaseIcon,
 } from '../../shared/OperationalShowcasePrimitives'
+import { NeutralMark } from '../../shared/NeutralMark'
 import '../../shared/OperationalShowcases.css'
 
 export type TimelineShowcaseSection = 'day' | 'trips' | 'places'
@@ -287,7 +288,7 @@ export function GoogleMapsTimelineShowcase({
     <div className="ready-showcase timeline-showcase">
       <header className="timeline-topbar">
         <button aria-label="Main menu" className="timeline-menu"><OperationalShowcaseIcon name="menu" /></button>
-        <div className="timeline-logo"><span className="timeline-pin-logo"><OperationalShowcaseIcon name="location" size={21} /></span><strong>Maps</strong></div>
+        <div className="timeline-logo"><NeutralMark icon="location" size={28} /><strong>Maps</strong></div>
         <label className="timeline-search"><input placeholder="Search maps" /><OperationalShowcaseIcon name="search" size={18} /><button aria-label="Search"><OperationalShowcaseIcon name="send" size={18} /></button></label>
         <div className="ready-top-actions"><button aria-label="Help"><OperationalShowcaseIcon name="help" /></button><button aria-label="Settings"><OperationalShowcaseIcon name="settings" /></button><button aria-label="Apps"><OperationalShowcaseIcon name="apps" /></button><OperationalShowcaseAvatar name={CLONE_DEMO_IDENTITY.user} color="#4d76b3" size={30} /></div>
       </header>

@@ -122,7 +122,7 @@ export const SLACK_SAMPLE_MEMBERS: readonly SlackMember[] = [
   },
   {
     id: 'workflow',
-    name: 'Workflow Builder',
+    name: 'Workflows',
     title: 'App',
     status: 'online',
     avatarColor: '#267d86',
@@ -490,7 +490,7 @@ export function SlackShowcase({
 
       <div className="slack-clone__workspace">
         <aside className="slack-clone__rail" aria-label="Workspaces">
-          <NeutralMark icon="message" color="#4a2c5a" size={36} label="Chat" />
+          <NeutralMark icon="message" size={36} label="Chat" />
           <button type="button" className="slack-clone__workspace-tile active" aria-label={workspaceName}>
             JT
           </button>
@@ -737,7 +737,7 @@ function ChannelHeader({
       <div className="slack-clone__channel-actions">
         <button type="button" className="slack-clone__huddle">
           <OperationalShowcaseIcon name="phone" size={15} />
-          <span>Huddle</span>
+          <span>Call</span>
           <OperationalShowcaseIcon name="chevron-down" size={12} />
         </button>
         <button type="button" className="slack-clone__member-stack" aria-label={`${channel.memberCount ?? members.length} members`}>

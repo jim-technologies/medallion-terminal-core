@@ -992,7 +992,7 @@ function ScheduleView({
       </header>
       {days.length === 0 && (
         <div className="gcal-schedule__empty">
-          <NeutralMark icon="calendar" color="#1a73e8" size={40} />
+          <NeutralMark icon="calendar" size={40} />
           <strong>No events in this range</strong>
           <span>Enjoy the open time.</span>
         </div>
@@ -1406,7 +1406,7 @@ export function GoogleCalendarShowcase({
       <header className="gcal-topbar">
         <div className="gcal-brand">
           <IconButton icon="menu" label="Main menu" />
-          <NeutralMark icon="calendar" color="#1a73e8" size={36} />
+          <NeutralMark icon="calendar" size={36} />
           <span>Calendar</span>
         </div>
         <div className="gcal-navigation">

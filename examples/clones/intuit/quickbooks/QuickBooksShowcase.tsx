@@ -163,7 +163,7 @@ function QuickBooksTopbar({
   return (
     <header className="quickbooks-topbar">
       <button className="quickbooks-brand">
-        <NeutralMark icon="money" color="#2e7d32" />
+        <NeutralMark icon="money" />
         <span>Ledger</span>
       </button>
       <label className="quickbooks-global-search">
@@ -214,7 +214,7 @@ function QuickBooksSidebar({
         <button><ProductShowcaseIcon name="invoice" size={18} /> Invoices</button>
         <button><ProductShowcaseIcon name="reports" size={18} /> Reports</button>
       </nav>
-      <div className="quickbooks-sidebar-heading">INTUIT APPS</div>
+      <div className="quickbooks-sidebar-heading">APPS</div>
       <nav aria-label="Applications">
         <button><ProductShowcaseIcon name="money" size={18} /> Accounting</button>
         <button><ProductShowcaseIcon name="contact" size={18} /> Customer Hub</button>
@@ -423,7 +423,7 @@ function QuickBooksOverview({
             <div><strong>{formatProductCurrency(174_620)}</strong><small>Bank balance</small></div>
           </div>
           <div className="quickbooks-bank-account">
-            <span className="quickbooks-bank-logo is-card">V</span>
+            <span className="quickbooks-bank-logo is-card">BC</span>
             <div><strong>Business card</strong><small>Updated 8 minutes ago</small></div>
             <div><strong>{formatProductCurrency(-12_480)}</strong><small>Card balance</small></div>
           </div>
@@ -521,7 +521,7 @@ function QuickBooksTransactions({
           <b>4</b>
         </button>
         <button>
-          <span className="quickbooks-bank-logo is-card">V</span>
+          <span className="quickbooks-bank-logo is-card">BC</span>
           <span><strong>Business card</strong><small>Card balance {formatProductCurrency(-12_480)}</small></span>
           <b>2</b>
         </button>

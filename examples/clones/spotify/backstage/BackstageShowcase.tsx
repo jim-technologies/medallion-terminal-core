@@ -279,7 +279,7 @@ export const BACKSTAGE_SAMPLE_TEMPLATES: readonly BackstageTemplate[] = [
   {
     id: 'react-application',
     title: 'React application',
-    description: 'Scaffold an accessible React application with testing, deployment, and TechDocs.',
+    description: 'Scaffold an accessible React application with testing, deployment, and docs.',
     owner: 'product-engineering',
     type: 'Website',
     tags: ['react', 'typescript', 'frontend'],
@@ -298,7 +298,7 @@ export const BACKSTAGE_SAMPLE_TEMPLATES: readonly BackstageTemplate[] = [
   },
   {
     id: 'documentation-site',
-    title: 'TechDocs site',
+    title: 'Docs site',
     description: 'Publish docs-as-code with navigation, search metadata, and catalog registration.',
     owner: 'developer-experience',
     type: 'Documentation',
@@ -382,7 +382,7 @@ const KIND_OPTIONS: readonly (BackstageEntityKind | 'All')[] = [
 function BackstageBrand() {
   return (
     <div className="bks-brand">
-      <NeutralMark icon="layers" color="#2e9e8f" />
+      <NeutralMark icon="layers" />
       <strong>Catalog</strong>
     </div>
   )
@@ -667,7 +667,7 @@ function AboutCard({ entity }: { entity: BackstageEntity }) {
         {entity.documentation && (
           <button type="button">
             <OperationalShowcaseIcon name="document" size={15} />
-            View TechDocs
+            View docs
           </button>
         )}
       </footer>
@@ -1226,7 +1226,7 @@ function BackstageDocs({
   return (
     <>
       <PageHero
-        eyebrow="TechDocs"
+        eyebrow="Docs"
         title="Documentation"
         description={`Docs like code for ${companyName} services, systems, APIs, and runbooks.`}
         tone="blue"
@@ -1239,7 +1239,7 @@ function BackstageDocs({
             <input aria-label="Search documentation" placeholder="Search docs" type="search" />
           </label>
           <h2>Documentation</h2>
-          <nav aria-label="TechDocs sites">
+          <nav aria-label="Docs sites">
             {documents.map(document => (
               <button
                 className={document.id === selected?.id ? 'is-active' : ''}
@@ -1382,9 +1382,9 @@ export function BackstageShowcase({
       data-product="spotify-backstage"
       data-view={view}
     >
-      <aside aria-label="Backstage navigation" className="bks-sidebar">
+      <aside aria-label="Portal navigation" className="bks-sidebar">
         <BackstageBrand />
-        <nav aria-label="Backstage primary">
+        <nav aria-label="Portal primary">
           {BACKSTAGE_NAV.map((item, index) => {
             const active = item.id === 'apis'
               ? view === 'catalog' && kind === 'API'
@@ -1435,9 +1435,9 @@ export function BackstageShowcase({
           >
             <OperationalShowcaseIcon name="search" size={19} />
             <label>
-              <span className="bks-sr-only">Search Backstage</span>
+              <span className="bks-sr-only">Search the portal</span>
               <input
-                aria-label="Search Backstage"
+                aria-label="Search the portal"
                 onChange={event => setGlobalQuery(event.target.value)}
                 placeholder="Search catalog, documentation, and tools"
                 type="search"
