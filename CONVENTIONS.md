@@ -60,16 +60,20 @@ documented here so the duplication does not read as accidental. A future
 
 ## Gate
 
-`flox activate -- make validate` is GREEN under the Flox-locked Node 24 /
-pnpm 11 toolchain. The gate covers the public-surface guard, `VERSION`
-parity, TypeScript 7 strict mode, Buf format/lint/build/generated drift and
-breaking checks, TerminalService conformance, 612 unit tests, 346
-browser-rendered Storybook tests, Vite 8 application/library builds,
-generated declarations, published-package contracts, focused consumer-bundle
+`flox activate -- make validate` is the gate, under the Flox-locked Node 24
+/ pnpm 11 toolchain (CI runs it with `CI=1`). It covers the public-surface
+guard, `VERSION` parity, TypeScript 7 strict mode, the style-token ratchet,
+Buf format/lint/build/generated drift and breaking checks, TerminalService
+conformance, the unit tests (including the clone-neutrality render guard),
+the browser-rendered Storybook tests, Vite 8 application/library builds,
+generated declarations, published-package contracts, consumer-bundle
 isolation, and the static Storybook build.
 
-The broad Playwright suite is also green: all 184 checks pass. It enforces
-automated accessibility across the canonical product and toolkit stories,
-interaction workflows, mobile/tablet containment, and reviewed visual
-baselines for every clone plus the focused GitHub, GitLab, Spotify Backstage,
-and production readiness states.
+The Playwright suite then enforces automated accessibility across the
+canonical product and toolkit stories, interaction workflows, mobile/tablet
+containment, and reviewed baselines for every clone, the themed toolkit
+stories (dark and light) and the production readiness workspace. Each
+baseline is a pixel image (`browser-tests/__screenshots__/`, 0.3%
+anti-aliasing tolerance) plus an exact accessibility-tree text snapshot
+(`browser-tests/__aria__/`, no tolerance), rendered at a pinned clock, so a
+changed label or state fails even when its pixels stay inside the tolerance.
