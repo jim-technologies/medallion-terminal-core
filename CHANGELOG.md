@@ -336,6 +336,14 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   `--mtc-on-scrim` now, and the arrows' scrim is 70% black like the
   badge's (`themeColors.test.ts` checks the text on it over a white image
   at 4.5:1).
+- **`pnpm build:lib` fed its own previous output back in.** `dist/` is
+  committed, and Tailwind scanned it for class names, so a utility removed
+  from `src/` (the gallery's old translucent arrow fills) survived one
+  rebuild in `dist/styles.css` and `check:dist` then failed on the next.
+  Tailwind scanned the root Markdown docs too, so a class named in prose
+  landed in the published stylesheet. The stylesheet excludes `dist/` and
+  the root `*.md` files from its sources, so one build is final and only
+  code adds utilities.
 
 ### Removed
 
@@ -357,6 +365,8 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   the entries excused nothing.
 - **The streaming clone's signature red** (`--nfx-red`, `#e50914`) on its
   poster badges and progress bars.
+- **The `.shrink` utility in `dist/styles.css`**, which only the word
+  "shrink" in the docs' prose generated; no component uses it.
 - **Logo reproductions in the clone showcases**: the drawn marks and their
   CSS (the file, calendar, photo, chat, CRM, spreadsheet, ledger, merge and
   music logos, the lettered and script-font wordmarks, the four-colour mail

@@ -4,8 +4,14 @@
 @import "tailwindcss/utilities" layer(utilities);
 
 /* Product-faithful Storybook showcases use isolated authored CSS. Keep their
-   prose and presentation tokens out of Tailwind's published-library scan. */
+   prose and presentation tokens out of Tailwind's published-library scan.
+   dist/ is committed, and scanning it would feed the previous build's class
+   names back into this one, so a utility removed from src/ would survive
+   one rebuild. The Markdown docs name classes in prose; prose must not add
+   utilities to the published stylesheet. */
 @source not "../examples/clones";
+@source not "../dist";
+@source not "../*.md";
 @source not "./__tests__/googlePhotosShowcase.test.tsx";
 @source not "./__tests__/googleWorkspaceShowcase.test.tsx";
 @source not "./__tests__/operationalProductShowcases.test.tsx";
