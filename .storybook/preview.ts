@@ -10,7 +10,10 @@ const preview: Preview = {
     // Every story renders inside the public provider, so the theme and
     // density toolbar globals reach toolkit components and Dashboards alike
     // (a Dashboard inherits the provider's theme). The canvas is the
-    // workspace background token, never a hard-coded story colour.
+    // workspace background token, never a hard-coded story colour. The
+    // canvas is its own block formatting context (`flow-root`), so a story
+    // frame's outer margin stays inside it instead of collapsing through the
+    // themed root and leaving an unthemed strip above the story.
     (Story, context) => createElement(
       DesignSystemProvider,
       {
@@ -18,7 +21,7 @@ const preview: Preview = {
         density: context.globals.density as Density,
         children: createElement(
           'div',
-          { className: 'mtc-workspace min-h-screen' },
+          { className: 'mtc-workspace min-h-screen', style: { display: 'flow-root' } },
           createElement(Story),
         ),
       },

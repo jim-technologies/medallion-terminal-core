@@ -180,20 +180,23 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   release sweeps) is a ratchet in
   `scripts/style-token-budget.json`: a file can never exceed its budget, and a
   stale budget fails until it is lowered.
-- **Exact text baselines beside the pixel ones.** Every visual baseline
-  test also compares the story's accessibility tree (roles, accessible
-  names and text, numbers included) with
-  `browser-tests/__aria__/${story}.yml`, with no tolerance, so a widget that
-  changes state fails the gate even when the pixels move less than the 0.3%
-  anti-aliasing tolerance. (A local revert of the typed-error rendering,
-  which brings back "Unable to load · HTTP 403 · Retry" in the payroll
-  widget, differs from the readiness baseline by 0.12% of its pixels and
-  passes the pixel check; the text check fails it.) Baseline stories render
-  at one pinned wall-clock instant (`page.clock.setFixedTime`), so live
-  clocks and relative times are identical on every run and every day, while
-  behaviour and axe tests keep the real clock. A Storybook "failed to load
-  the preview" page, or a story with an empty accessibility tree, fails the
-  test instead of being compared or recorded as a baseline.
+- **Exact text baselines beside the pixel ones.** Every pixel baseline test
+  also compares the story's accessibility tree (roles, accessible names and
+  text, numbers included) with `browser-tests/__aria__/${story}.yml`, with
+  no tolerance, so a widget that changes state fails the gate even when the
+  pixels move less than the 0.3% anti-aliasing tolerance. A themed story's
+  dark and light renders compare the same `${story}.yml`, so its text may
+  not change with the theme, and the dashboard's mobile and tablet
+  screenshots have their own `dashboard-${viewport}.yml`. (A local revert of
+  the typed-error rendering, which brings back "Unable to load · HTTP 403 ·
+  Retry" in the payroll widget, differs from the readiness baseline by 0.12%
+  of its pixels and passes the pixel check in both themes; the text check
+  fails it in both.) Baseline stories render at one pinned wall-clock
+  instant (`page.clock.setFixedTime`), so live clocks and relative times are
+  identical on every run and every day, while behaviour and axe tests keep
+  the real clock. A Storybook "failed to load the preview" page, or a story
+  with an empty accessibility tree, fails the test instead of being compared
+  or recorded as a baseline.
 - **Light visual baselines.** The Playwright gate renders every themed
   toolkit story and the production-readiness workspace in dark and light
   (`browser-tests/__screenshots__/${story}-${theme}.png`) and runs axe on
@@ -280,7 +283,12 @@ with `Intl` formatters, and a JSON payload case. The ontology components
   for the typed failure states: the denied payroll widget reads "You don't
   have access" with a Details disclosure (the committed images had kept the
   earlier "Unable to load · HTTP 403" widget inside the pixel tolerance), and
-  the dashboards' status-bar clocks show the pinned time.
+  the dashboards' status-bar clocks show the pinned time. The canvas is its
+  own block formatting context (`display: flow-root`), so the 16 px margin
+  of a widget story's frame stays inside the themed root instead of
+  collapsing through it and leaving an unthemed (white) strip above the
+  story in dark and light alike; a browser test checks that the theme
+  paints the canvas edges of five framed stories in both themes.
 
 - **Clone showcases no longer show third-party names, logos or wordmarks.**
   Every clone header renders a neutral name and `NeutralMark` (a generic

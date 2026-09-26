@@ -71,9 +71,13 @@ isolation, and the static Storybook build.
 
 The Playwright suite then enforces automated accessibility across the
 canonical product and toolkit stories, interaction workflows, mobile/tablet
-containment, and reviewed baselines for every clone, the themed toolkit
-stories (dark and light) and the production readiness workspace. Each
-baseline is a pixel image (`browser-tests/__screenshots__/`, 0.3%
-anti-aliasing tolerance) plus an exact accessibility-tree text snapshot
-(`browser-tests/__aria__/`, no tolerance), rendered at a pinned clock, so a
-changed label or state fails even when its pixels stay inside the tolerance.
+containment, a themed canvas edge to edge behind framed widget stories, and
+reviewed baselines for every clone, the themed toolkit stories (dark and
+light), the production readiness workspace (dark and light) and the
+dashboard at mobile and tablet widths. Each baseline is a pixel image
+(`browser-tests/__screenshots__/`, 0.3% anti-aliasing tolerance) plus an
+exact accessibility-tree text snapshot (`browser-tests/__aria__/`, no
+tolerance), rendered at a pinned clock, so a changed label or state fails
+even when its pixels stay inside the tolerance. A themed story's dark and
+light images compare the same text snapshot, so its text may not change
+with the theme.

@@ -213,8 +213,9 @@ and selection and action state stay coherent across them.
 - Works in `dark`, `light`, `operator` and `high-contrast`; dark and light
   visual baselines, and the exact text baseline beside them
   (`browser-tests/__aria__/<story>.yml`), are regenerated in the commit that
-  intends the change (`pnpm exec playwright test -g "visual baseline"
-  --workers=2 --update-snapshots=changed`, then review every changed file).
+  intends the change (`pnpm exec playwright test -g "visual baseline|Dashboard
+  (mobile|tablet) layout" --workers=2 --update-snapshots=changed`, then
+  review every changed file).
 - Uses semantic, status, type-identity and chart tokens only; the
   style-token check passes without raising any budget.
 - Uses the type scale, sentence case, and monospace only for identifiers and

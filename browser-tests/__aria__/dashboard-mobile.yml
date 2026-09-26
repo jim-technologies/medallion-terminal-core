@@ -1,0 +1,95 @@
+- heading "Medallion Terminal" [level=1]
+- text: Static view
+- button "Sound off"
+- button "Compact"
+- button "Copy link"
+- button "Ctrl K"
+- heading "BTC/USD Price (30D)" [level=2]
+- button "Widget actions": ⋮
+- application: Feb 17 Feb 22 Feb 27 Mar 3 Mar 7 Mar 13 0 20.0K 40.0K 60.0K 80.0K
+- heading "Market News" [level=2]
+- button "Widget actions": ⋮
+- article:
+  - heading "Bitcoin Breaks $73K as ETF Inflows Hit Record" [level=3]
+  - text: Market Wire · Mar 14
+  - paragraph: Bitcoin surged past $73,000 for the first time as spot ETF products saw $1.05B in single-day inflows, driven by institutional demand.
+  - text: BTC ETF
+- article:
+  - heading "Ethereum Dencun Upgrade Goes Live" [level=3]
+  - text: Protocol Desk · Mar 13
+  - paragraph: The long-awaited Dencun upgrade activated on mainnet, introducing proto-danksharding to dramatically reduce L2 transaction costs.
+  - text: ETH L2
+- article:
+  - heading "SEC Delays Decision on Solana ETF Filing" [level=3]
+  - text: Market Wire · Mar 12
+  - paragraph: The Securities and Exchange Commission extended its review period for the Solana ETF application by 45 days.
+  - text: SOL Regulation
+- article:
+  - heading "Corporate treasury Acquires Additional 12,000 BTC" [level=3]
+  - text: News Wire · Mar 11
+  - paragraph: The company purchased another 12,000 Bitcoin for approximately $821 million, bringing total holdings to 217,000 BTC.
+- heading "BTC Price" [level=2]
+- button "Widget actions": ⋮
+- text: 73,100USD ▲ 2.18%
+- heading "24h Volume" [level=2]
+- button "Widget actions": ⋮
+- text: 28.45BUSD ▲ 5.23%
+- heading "Market Cap" [level=2]
+- button "Widget actions": ⋮
+- text: 1.43TUSD ▲ 1.85%
+- heading "BTC Dominance" [level=2]
+- button "Widget actions": ⋮
+- text: 54.2% ▼ 30.00%
+- heading "Portfolio Holdings" [level=2]
+- button "Widget actions": ⋮
+- table:
+  - rowgroup:
+    - row "Asset Price 24h % Holdings Value":
+      - columnheader "Asset"
+      - columnheader "Price"
+      - columnheader "24h %"
+      - columnheader "Holdings"
+      - columnheader "Value"
+  - rowgroup:
+    - row "BTC 73,100 2.18 1.50 109,650":
+      - cell "BTC"
+      - cell "73,100"
+      - cell "2.18"
+      - cell "1.50"
+      - cell "109,650"
+    - row "ETH 3,980 -0.54 15 59,700":
+      - cell "ETH"
+      - cell "3,980"
+      - cell "-0.54"
+      - cell "15"
+      - cell "59,700"
+    - row "SOL 178.25 4.67 200 35,650":
+      - cell "SOL"
+      - cell "178.25"
+      - cell "4.67"
+      - cell "200"
+      - cell "35,650"
+    - row "DOGE 0.1834 -1.23 50,000 9,170":
+      - cell "DOGE"
+      - cell "0.1834"
+      - cell "-1.23"
+      - cell "50,000"
+      - cell "9,170"
+    - row "LINK 19.45 3.12 500 9,725":
+      - cell "LINK"
+      - cell "19.45"
+      - cell "3.12"
+      - cell "500"
+      - cell "9,725"
+    - row "AVAX 42.80 1.05 100 4,280":
+      - cell "AVAX"
+      - cell "42.80"
+      - cell "1.05"
+      - cell "100"
+      - cell "4,280"
+- heading "AI Market Summary" [level=2]
+- button "Widget actions": ⋮
+- article:
+  - heading "Bullish Momentum Continues" [level=3]
+  - paragraph: Bitcoin's 30-day rally from $52K to $73K represents a 40% gain driven primarily by institutional ETF flows and pre-halving accumulation. Key support sits at $67K (20-day EMA). On-chain metrics show exchange reserves at 5-year lows, suggesting holders are moving to cold storage. The Fear & Greed Index reads 82 (Extreme Greed) — historically a signal for short-term corrections, but macro conditions remain favorable with rate cut expectations in Q2.
+- text: idle 11:45:00

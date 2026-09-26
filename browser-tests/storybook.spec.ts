@@ -410,6 +410,35 @@ for (const viewport of [
     }))
     expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1)
     await expect(page).toHaveScreenshot(`dashboard-${viewport.name}.png`)
+    await expectAriaBaseline(root, `dashboard-${viewport.name}`)
+  })
+}
+
+// Widget stories frame themselves in a margined box on --mtc-surface. The
+// Storybook canvas is its own block formatting context, so that margin stays
+// inside the themed root: the theme paints the canvas edge to edge, with no
+// unthemed strip above the frame, in dark and light alike.
+const storyFrames = {
+  actionForm: 'widgets-actionform--governed-approval',
+  section: 'widgets-section--labelled',
+  metric: 'widgets-metric--full',
+  exportMenu: 'bi-exportmenu--table',
+  kelly: 'domain-kelly--manual-odds',
+}
+
+for (const theme of ['dark', 'light'] as const) {
+  test(`Story frames sit on a themed canvas edge to edge in the ${theme} theme`, async ({ page }) => {
+    for (const [name, id] of Object.entries(storyFrames)) {
+      await openStory(page, id, { theme })
+      const canvas = await page.evaluate(() => {
+        const edges = [[1, 1], [innerWidth / 2, 1], [innerWidth - 2, 1], [1, innerHeight - 2], [innerWidth - 2, innerHeight - 2]]
+        return {
+          rootTop: document.querySelector('.mtc-root')?.getBoundingClientRect().top,
+          unthemed: edges.filter(([x, y]) => !document.elementFromPoint(x, y)?.closest('.mtc-root')),
+        }
+      })
+      expect(canvas, `${name} canvas`).toEqual({ rootTop: 0, unthemed: [] })
+    }
   })
 }
 
@@ -517,15 +546,15 @@ for (const name of themeInvariantToolkitStories) {
   })
 }
 
-// Themed surfaces: `${story}-${theme}.png` in dark and light. The text is
-// the same in both themes, so one `${story}.aria.yml` (checked in dark)
-// covers them.
+// Themed surfaces: `${story}-${theme}.png` in dark and light. The text must
+// not change with the theme, so both themes compare their accessibility
+// tree with the one `${story}.yml`.
 for (const theme of ['dark', 'light'] as const) {
   for (const [name, id] of [...themedToolkitStories, ['readiness', stories.readiness] as const]) {
     test(`${name} ${theme} visual baseline`, async ({ page }) => {
       const root = await openStory(page, id, { theme, pinClock: true })
       await expect(root).toHaveScreenshot(`${name}-${theme}.png`)
-      if (theme === 'dark') await expectAriaBaseline(root, name)
+      await expectAriaBaseline(root, name)
     })
   }
 }
