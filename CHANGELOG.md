@@ -4,6 +4,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.4] — 2026-09-28
+
 ### Fixed
 
 - Table rows with repeated labels keep distinct selection through sorting,
