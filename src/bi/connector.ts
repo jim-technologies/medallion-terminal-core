@@ -1,9 +1,9 @@
 // BI connector descriptor — the typed, client-side contract an external
 // BI or reporting tool consumes to point at a terminal data endpoint.
 //
-// IMPORTANT SCOPE: the actual SQL/DuckDB gateway lives in a separate
-// backend service (NOT this repo). This module defines and documents
-// the CLIENT-SIDE contract:
+// IMPORTANT SCOPE: the actual SQL gateway lives in a separate backend
+// service (NOT this repo), on whatever database engine that service
+// runs. This module defines and documents the CLIENT-SIDE contract:
 //   1. the typed shape of a connection descriptor,
 //   2. a builder that derives it from a ListSources catalog +
 //      connection info, and
@@ -77,8 +77,9 @@ function normalizeBiShape(shape: unknown): BiShape | undefined {
 // The transport a BI tool uses to reach the data. Two are documented:
 //   - "connect": the ConnectRPC TerminalService (Get returns a payload
 //     the BI connector flattens — same flatten() this library exports).
-//   - "sql": a SQL/Arrow-Flight/DuckDB HTTP gateway (served by a
-//     separate backend service) for generic SQL/ODBC connectors.
+//   - "sql": a SQL or Arrow-Flight HTTP gateway (served by a separate
+//     backend service, on the engine of its choice) for generic
+//     SQL/ODBC connectors.
 export type BiProtocol = 'connect' | 'sql'
 
 // Column data type, normalized to the small set BI tools understand.
@@ -140,7 +141,7 @@ export interface BiConnectorDescriptor {
   protocol: BiProtocol
   // Base endpoint URL. For "connect": the TerminalService base (the
   // library appends /medallion.terminal.v1.TerminalService/Get). For
-  // "sql": the SQL/DuckDB gateway URL served by a separate backend service.
+  // "sql": the SQL gateway URL served by a separate backend service.
   endpoint: string
   // The ConnectRPC service name, present for protocol "connect" so a
   // connector knows the RPC path. Constant for this library.

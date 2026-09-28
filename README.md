@@ -824,8 +824,8 @@ source's canonical `Shape`), params, and the precomputed Get RPC URL.
 (endpoint, method, request body template, auth hint) for a connection
 config UI.
 
-> The actual SQL/DuckDB/Arrow gateway is a **separate backend**
-> concern. To reach full reporting-tool parity the backend must serve
+> The actual SQL or Arrow-Flight gateway is a **separate backend**
+> concern, and its database engine is that backend's choice. To reach full reporting-tool parity the backend must serve
 > either (a) the ConnectRPC `TerminalService.Get` these tools call via a
 > generic HTTP/JSON connector, or (b) a SQL/ODBC
 > or Arrow-Flight gateway over the same datasets (`protocol: 'sql'`).

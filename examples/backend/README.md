@@ -69,7 +69,10 @@ not a way to ship a long-lived secret.
 | `Generate` | Deterministic sample `WidgetAction`s and context updates |
 
 The reference state and fixtures are intentionally in memory. Restarting the
-process resets records, actions, and uploaded files.
+process resets records, actions, and uploaded files. Both entry scripts shut
+down on `SIGTERM`: they stop accepting connections, let in-flight calls finish,
+end open streams after a 5 s grace and exit 0; a derived service that buffers
+durable state flushes it inside that window.
 
 ## Embedding the server in a host or test
 

@@ -42,6 +42,25 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   grammar) and lists `pnpm` scripts only for the inner loop and single slices
   of the gate; it says that `pnpm test` is `make test-unit` alone, while
   `make test` also runs the Storybook and browser suites.
+- **The BI-connector descriptor is engine-neutral.** Its comments and the
+  README describe the `protocol: 'sql'` target as a SQL or Arrow-Flight
+  gateway on whatever database engine the backend runs, instead of naming
+  one engine for a service this library does not build. No type or value
+  changed.
+
+### Fixed
+
+- A Dashboard no longer rewrites its three stored preferences (refresh
+  interval, density, sound) on every page load: `src/core/dashboardPrefs.ts`
+  remembers the value it read or last wrote per key and skips a write of the
+  same value, so hydration and a first visit on the defaults write nothing,
+  and a changed preference is written once. A storage whose property access
+  throws now reads the defaults instead of failing the effect.
+- The reference backend's standalone entries (`server.mjs`,
+  `secure-server.mjs`) exit 0 on `SIGTERM`: they stop accepting connections,
+  let in-flight calls finish and end open streams after a 5 s grace, instead
+  of dying on the signal; forks inherit the shutdown path. A unit test runs
+  each entry and signals it.
 
 ### Removed
 

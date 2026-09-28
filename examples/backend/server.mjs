@@ -2244,4 +2244,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.log(`[medallion-ref-backend] listening on http://localhost:${PORT}`)
     console.log(`[medallion-ref-backend] sources: ${SOURCES.map(s => s.id).join(', ')}`)
   })
+  // SIGTERM (a container stop or scale-down): stop accepting connections,
+  // let in-flight calls finish, end open streams after a 5 s grace and exit
+  // 0. Everything here is in memory, so nothing needs flushing; a fork that
+  // buffers durable state flushes it before this exit.
+  process.once('SIGTERM', () => {
+    server.close(() => process.exit(0))
+    setTimeout(() => server.closeAllConnections(), 5_000).unref()
+  })
 }

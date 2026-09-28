@@ -273,7 +273,6 @@ src/
     WidgetRegistry.ts     — Lazy-loaded widget map (registerWidget for custom)
     CommandPalette.tsx    — Cmd-K modal + suggestions
     ShortcutsOverlay.tsx  — `?` cheat sheet
-    Toaster.tsx           — Toast queue
     ErrorBoundary.tsx     — Per-widget render-crash isolation
     alerts.ts             — AND/OR predicate evaluator (no eval, no parens)
     sound.ts              — WebAudio beep on warn/error alerts (opt-in)
@@ -281,6 +280,7 @@ src/
     validateTemplate.ts   — Template authoring validator
     applyActions.ts       — Merge WidgetAction[] into widgets[]
     savedViews.ts         — localStorage-backed named ctx snapshots
+    dashboardPrefs.ts     — localStorage-backed refresh/density/sound prefs; skips unchanged writes
     urlState.ts           — ctx ↔ URL query string
     connectFraming.ts     — Connect-Web envelope parser
     getNested.ts          — dot-path walker for alerts + transforms

@@ -34,3 +34,12 @@ const server = createTerminalServer({
 server.listen(port, () => {
   process.stdout.write(`[medallion-secure-backend] listening on http://localhost:${port}\n`)
 })
+
+// SIGTERM (a container stop or scale-down): stop accepting connections,
+// let in-flight calls finish, end open streams after a 5 s grace and exit
+// 0. Everything here is in memory, so nothing needs flushing; a fork that
+// buffers durable state flushes it before this exit.
+process.once('SIGTERM', () => {
+  server.close(() => process.exit(0))
+  setTimeout(() => server.closeAllConnections(), 5_000).unref()
+})

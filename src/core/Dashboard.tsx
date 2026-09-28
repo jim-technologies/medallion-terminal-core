@@ -7,6 +7,7 @@ import { HoverProvider } from './HoverContext'
 import { NowProvider } from './NowContext'
 import { applyActions } from './applyActions'
 import { readCtxFromUrl, writeCtxToUrl } from './urlState'
+import { browserPrefStorage, createPrefStore } from './dashboardPrefs'
 import { interpolate } from './resolveSource'
 import { DashboardCommandPalette, type PaletteSuggest } from './CommandPalette'
 import { ShortcutsOverlay } from './ShortcutsOverlay'
@@ -532,26 +533,28 @@ export function Dashboard({
   // ctx already lives in the URL (shareable); these knobs are personal.
   // Start from deterministic defaults so server markup always matches the
   // first client render. Personal browser preferences are applied after
-  // hydration, then persisted on subsequent changes.
+  // hydration, then persisted on subsequent changes; the store skips a
+  // write of the value it already holds (see dashboardPrefs.ts).
+  const [prefs] = useState(() => createPrefStore(browserPrefStorage()))
   const [refreshIntervalMs, setRefreshIntervalMs] = useState<number | null>(null)
   const [compact, setCompact] = useState(false)
   const [soundEnabled, setSoundEnabled] = useState(false)
   const [preferencesReady, setPreferencesReady] = useState(false)
   useEffect(() => {
-    setRefreshIntervalMs(readPref('refreshIntervalMs', null))
-    setCompact(readPref('compact', false))
-    setSoundEnabled(readPref('soundEnabled', false))
+    setRefreshIntervalMs(prefs.read<number | null>('refreshIntervalMs', null))
+    setCompact(prefs.read('compact', false))
+    setSoundEnabled(prefs.read('soundEnabled', false))
     setPreferencesReady(true)
-  }, [])
+  }, [prefs])
   useEffect(() => {
-    if (preferencesReady) writePref('refreshIntervalMs', refreshIntervalMs)
-  }, [preferencesReady, refreshIntervalMs])
+    if (preferencesReady) prefs.write('refreshIntervalMs', refreshIntervalMs)
+  }, [prefs, preferencesReady, refreshIntervalMs])
   useEffect(() => {
-    if (preferencesReady) writePref('compact', compact)
-  }, [preferencesReady, compact])
+    if (preferencesReady) prefs.write('compact', compact)
+  }, [prefs, preferencesReady, compact])
   useEffect(() => {
-    if (preferencesReady) writePref('soundEnabled', soundEnabled)
-  }, [preferencesReady, soundEnabled])
+    if (preferencesReady) prefs.write('soundEnabled', soundEnabled)
+  }, [prefs, preferencesReady, soundEnabled])
 
   const [fullscreenId, setFullscreenId] = useState<string | null>(null)
   const [focusedId, setFocusedId] = useState<string | null>(null)
@@ -1082,25 +1085,3 @@ function FullscreenOverlay({
   )
 }
 
-// localStorage helpers — namespaced and JSON-encoded so future prefs
-// can be added without churn. Quietly no-op if storage is unavailable.
-const STORAGE_PREFIX = 'medallion-terminal:'
-
-function readPref<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined' || !window.localStorage) return fallback
-  try {
-    const raw = window.localStorage.getItem(STORAGE_PREFIX + key)
-    return raw == null ? fallback : (JSON.parse(raw) as T)
-  } catch {
-    return fallback
-  }
-}
-
-function writePref(key: string, value: unknown): void {
-  if (typeof window === 'undefined' || !window.localStorage) return
-  try {
-    window.localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value))
-  } catch {
-    // Quota or denied — leave silent. Defaults are fine.
-  }
-}
