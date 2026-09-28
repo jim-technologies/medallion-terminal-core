@@ -95,7 +95,7 @@ uses only generic built-ins and a fixture restricted to a reserved
 `example.test` origin, so none of its credentials or service behavior enters
 the published package.
 
-See [`examples/readiness/README.md`](examples/readiness/README.md) for the
+See [`examples/readiness/README.md`](../examples/readiness/README.md) for the
 scenario map and focused verification commands.
 
 ## Product showcase catalog

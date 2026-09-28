@@ -382,6 +382,11 @@ lightweight-charts 5.2 (for `candlestick`), MapLibre GL JS 6.11 (for
 `geo_map`), Vitest 4.1, Storybook 10.6, Playwright 1.63,
 Protobuf + Buf 1.72, Node 24 / pnpm 11.27 (both pinned by Flox), Flox.
 
+There is no separate JavaScript linter, on purpose: `tsc` in strict mode with
+`noUnusedLocals` / `noUnusedParameters` is the TypeScript lint, the style-token
+ratchet (`scripts/check-style-tokens.mjs`) is the style lint, and Buf formats
+and lints the protos.
+
 ## Design principles
 
 1. **Convention over configuration.** Strong defaults; no axis/color knobs unless the widget needs them.
@@ -404,7 +409,7 @@ Protobuf + Buf 1.72, Node 24 / pnpm 11.27 (both pinned by Flox), Flox.
    analytical, operational, and data-platform terminals.
 8. **Backend = one ConnectRPC service.** Get/Stream/ListSources/Submit/Watch/Generate. Generated types from `proto/`.
 
-See `DESIGN.md` for theme roles, typography/density rules, the product
+See `docs/DESIGN.md` for theme roles, typography/density rules, the product
 hierarchy, and the UI definition of done.
 
 ## What this is NOT
@@ -421,6 +426,7 @@ backend service, storage, ingestion, authentication, and optional
 generation layer.
 
 For the recommended metadata/ontology/data/code backend boundaries and
-production authorization invariants, see `PLATFORM.md`. For product and visual
-guardrails, see `DESIGN.md`. For record schemas, saved views, linked values,
-mutations, and extension rules, see `RECORDS.md`.
+production authorization invariants, see `docs/PLATFORM.md`. For product and
+visual guardrails, see `docs/DESIGN.md`. For record schemas, saved views, linked
+values, mutations, and extension rules, see `docs/RECORDS.md`. The toolkit
+component reference is `docs/TOOLKIT.md`.

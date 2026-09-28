@@ -88,7 +88,7 @@ export function ObjectWorkbench() {
 The package includes scoped foundations, accessible application controls, and
 generic workbench primitives. It does not provide application installation,
 authentication, tenant policy, storage, indexing, ontology semantics, routing,
-or sandboxing. Those remain host responsibilities. See [TOOLKIT.md](TOOLKIT.md)
+or sandboxing. Those remain host responsibilities. See [docs/TOOLKIT.md](docs/TOOLKIT.md)
 for the component catalog, token contract, accessibility behavior,
 composition guidance, and migration notes.
 
@@ -180,11 +180,11 @@ presentation shell; the host still owns catalog ingestion, permissions,
 indexed search, template execution, infrastructure discovery, and docs
 publication.
 
-See [PLATFORM.md](PLATFORM.md) for the production service boundaries,
+See [docs/PLATFORM.md](docs/PLATFORM.md) for the production service boundaries,
 authorization invariants, and the remaining backend responsibilities for a
-complete ontology-driven stack. See [RECORDS.md](RECORDS.md) for the generic
+complete ontology-driven stack. See [docs/RECORDS.md](docs/RECORDS.md) for the generic
 record model, saved views, linked values, revision-safe mutations, and
-extension rules. See [DESIGN.md](DESIGN.md) for the product hierarchy,
+extension rules. See [docs/DESIGN.md](docs/DESIGN.md) for the product hierarchy,
 visual language, theme tokens, and UI definition of done.
 
 ## Wiring data
@@ -599,7 +599,7 @@ Statuses: `OK`, `REJECTED`, `FAILED`, `CANCELLED` (terminal); `ACCEPTED`, `PENDI
 
 Record create/update/delete uses the same transport, with a revision token on
 updates and deletes for optimistic concurrency. Formula, lookup, rollup, and
-timestamp fields stay backend-computed. See [RECORDS.md](RECORDS.md) for the
+timestamp fields stay backend-computed. See [docs/RECORDS.md](docs/RECORDS.md) for the
 exact parameters and production invariants.
 
 ## Alerts
@@ -864,9 +864,9 @@ For wiring this into a real product, in order:
 
    For a data-platform host, map catalog/search, ontology, lineage, repository,
    storage, query, and action services behind this adapter. See
-   [PLATFORM.md](PLATFORM.md). For CRM, project, inventory, case, or other
+   [docs/PLATFORM.md](docs/PLATFORM.md). For CRM, project, inventory, case, or other
    record-driven hosts, implement `RecordSetPayload` plus the governed action
-   conventions in [RECORDS.md](RECORDS.md).
+   conventions in [docs/RECORDS.md](docs/RECORDS.md).
 
 3. **Connect HTTP/JSON framing.** Streaming RPCs use envelopes: `[flags(1)][length(4 BE)][payload N]`. `flags & 0x02` = trailer (end-of-stream). Trailer body is JSON `{ metadata?, error? }`; non-null `error` surfaces to the client widget.
 
@@ -1004,7 +1004,12 @@ compatibility against the newest reachable release tag, the reusable
 TerminalService conformance suite, unit/integration tests, every Storybook
 story in real Chromium, both application and library builds, committed
 package artifacts, the static Storybook catalog, curated accessibility
-checks, interaction flows, and visual snapshots.
+checks, interaction flows, and visual snapshots. Each visual baseline is a
+pixel image (`browser-tests/__screenshots__/`, 0.3% anti-aliasing tolerance)
+plus an exact accessibility-tree text snapshot (`browser-tests/__aria__/`, no
+tolerance) rendered at a pinned clock, so a changed label or state fails even
+when its pixels stay inside the tolerance; a themed story's dark and light
+images compare the same text snapshot.
 
 `make audit` is the network-dependent tier the gate never runs:
 `pnpm audit --prod` checks the runtime dependencies this library ships inside
@@ -1074,8 +1079,8 @@ Public variables include `--mtc-bg`, `--mtc-surface`,
 `--mtc-type-{slot}-fg|bg` identity slots, `--mtc-chart-1` through
 `--mtc-chart-8`, `--mtc-font-sans`, and `--mtc-font-mono`. Descriptive aliases, spacing,
 typography, radius, elevation, duration, density, and intent tokens are
-documented in [TOOLKIT.md](TOOLKIT.md); the product usage rules and
-accessibility checklist live in [DESIGN.md](DESIGN.md).
+documented in [docs/TOOLKIT.md](docs/TOOLKIT.md); the product usage rules and
+accessibility checklist live in [docs/DESIGN.md](docs/DESIGN.md).
 
 ## Demo
 

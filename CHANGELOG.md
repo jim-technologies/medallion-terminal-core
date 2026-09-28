@@ -19,6 +19,25 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   high-entropy fixture in the fleet guard's self-test, as the sibling public
   repositories do.
 
+### Changed
+
+- **The reference documents live under `docs/`.** `DESIGN.md`, `TOOLKIT.md`,
+  `PLATFORM.md` and `RECORDS.md` moved to `docs/`; the root keeps `README.md`,
+  `AGENTS.md`, `CHANGELOG.md`, `MAKEFILE-CONTRACT.md` and `LICENSE`. Links,
+  the style-token check's messages and the clone README point at the new
+  paths.
+
+### Removed
+
+- `CONVENTIONS.md`, a dated conformance audit with no "Fixed" rows left
+  and whose "Conforms" rows repeated the README. What was still live moved
+  to the files it governs: why there is no separate JavaScript linter to
+  `AGENTS.md` (Tech stack), the BarChart tick-precision decision to the
+  comment on `abbreviate` in `src/widgets/BarChart.tsx`, the palette exports
+  and the scoped `@theme inline` tokens to `docs/DESIGN.md`, and the
+  pixel-plus-text baseline description to the README's Production
+  verification.
+
 ## [0.7.0] — 2026-09-26
 
 The ontology components: typed property values and panels, object headers

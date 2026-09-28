@@ -3,7 +3,7 @@
 // examples built on it (examples/**, except the clone showcases).
 //
 // Colour, type size and letter-spacing come from the scoped --mtc-* tokens
-// (see DESIGN.md); the rules are in scripts/style-token-rules.mjs.
+// (see docs/DESIGN.md); the rules are in scripts/style-token-rules.mjs.
 //
 // Existing debt is a ratchet, not a pass: scripts/style-token-budget.json
 // records the violations each file had when the guard landed (documented
@@ -18,7 +18,7 @@
 // (src/templates/*.stories.tsx), the reference for product pages, get every
 // rule besides it.
 //
-// Scope of the type rules (DESIGN.md, Typography): the 11 px floor and
+// Scope of the type rules (docs/DESIGN.md, Typography): the 11 px floor and
 // sentence-case labels govern what ships as Medallion, so every source file,
 // the page templates and every example built on the toolkit (the custom
 // widget, the readiness workspace) are held to them. The clone showcases under examples/clones are
@@ -101,7 +101,7 @@ for (const file of new Set([...Object.keys(sorted), ...Object.keys(budget)])) {
 }
 
 if (problems.length > 0) {
-  console.error('Style tokens: production source must use --mtc-* tokens (DESIGN.md).')
+  console.error('Style tokens: production source must use --mtc-* tokens (docs/DESIGN.md).')
   for (const problem of problems) console.error(`  ${problem}`)
   process.exit(1)
 }

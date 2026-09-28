@@ -2,7 +2,7 @@
 // scanned file, one line at a time.
 //
 // Colour, type size and letter-spacing come from the scoped --mtc-* tokens
-// (see DESIGN.md). A line fails when it introduces:
+// (see docs/DESIGN.md). A line fails when it introduces:
 //
 //   color-literal   a hex, rgb(), rgba(), hsl() or hsla() colour outside a
 //                   `--mtc-*` / Tailwind `--color-*` custom-property
@@ -17,7 +17,7 @@
 //   tracking        an arbitrary tracking-[…] letter-spacing
 //   micro-label     an uppercase or letter-spaced label (`uppercase`,
 //                   `tracking-wide*`, `text-transform: uppercase`); labels
-//                   are sentence case (DESIGN.md)
+//                   are sentence case (docs/DESIGN.md)
 //   blur            a backdrop-filter blur (surfaces are flat; overlays
 //                   carry elevation, not frosted glass)
 //   story-frame     in a story (src/ or examples/, clones included), a frame `background`
@@ -29,7 +29,7 @@
 // A story gets only the story-frame rule, except the page templates
 // (src/templates/): they are the reference for product pages, so they get
 // every rule, the 11 px floor and sentence-case labels included, as well as
-// the story-frame rule (DESIGN.md, Typography, Scope).
+// the story-frame rule (docs/DESIGN.md, Typography, Scope).
 
 export const TYPE_SCALE = new Set([11, 12, 13, 14, 16, 20, 24])
 

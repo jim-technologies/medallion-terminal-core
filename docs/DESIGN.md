@@ -89,7 +89,13 @@ the semantic roles below. The standalone embed accepts the same presets with
 | Signal | `--mtc-signal` | Rare attention marks; never decoration |
 
 Production code uses these variables or the shared `widgets/colors.ts`
-exports. Hard-coded colours belong only in a canvas library's documented
+exports: `PALETTE` cycles `--mtc-chart-1` … `--mtc-chart-8` for categorical
+series, `SEMANTIC` maps state names onto the status and accent tokens, and
+`TOOLTIP_STYLE` is the raised-surface tooltip chrome; heatmaps mix a semantic
+token with the panel baseline through CSS `color-mix()`, so every theme preset
+stays coherent. The tokens live on `.mtc-root`, and the Tailwind aliases are
+declared with `@theme inline` so they resolve against that scoped root rather
+than the document `:root`. Hard-coded colours belong only in a canvas library's documented
 fallback or a Storybook fixture; `scripts/check-style-tokens.mjs` (run by
 `pnpm lint`) enforces this, the 11 px floor (Tailwind sizes, CSS `font-size`
 and `font` declarations, inline and SVG `fontSize`) and sentence-case labels
