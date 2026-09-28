@@ -2,7 +2,7 @@
 # (pnpm) or guard; logic lives in scripts/.
 .DEFAULT_GOAL := help
 
-.PHONY: help help-all fmt test test-unit test-storybook test-browser validate public-surface build build-storybook generate release check-dist run
+.PHONY: help help-all fmt test test-unit test-storybook test-browser validate audit public-surface build build-storybook generate release check-dist run
 
 help: ## One-screen help (make help-all for every target)
 	@echo "Daily:"
@@ -35,6 +35,10 @@ validate: ## The gate — exactly what CI runs: deps, surface guard, version par
 	pnpm install --frozen-lockfile
 	pnpm exec playwright install chromium
 	pnpm validate
+
+audit: ## Network-dependent supply-chain audit, outside the gate (weekly in audit.yml): shipped dependencies' advisories, then a Git-history secret scan.
+	pnpm audit --prod
+	gitleaks git . --no-banner --redact
 
 public-surface: ## Guard the public surface: tracked content, paths, and unpushed commit messages (the first step of validate).
 	pnpm check:surface

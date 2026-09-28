@@ -4,6 +4,21 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Added
+
+- **`make audit` and a weekly `audit` workflow.** The runtime dependencies
+  this library ships inside its consumers' bundles (`dompurify`, `marked`,
+  `hyparquet-writer`) are checked against the advisory database with
+  `pnpm audit --prod`, and `gitleaks` scans the whole Git history; both need
+  the network, so they run outside `make validate`. `.github/workflows/audit.yml`
+  runs `flox activate -- make audit` every Monday with SHA-pinned actions,
+  `permissions: contents: read` and no secret, the same skeleton as `ci.yml`.
+  Flox pins `gitleaks` 8.30.1 in its own package group, so the default
+  group's revision (and with it the pinned fonts behind the browser
+  baselines) does not move. `.gitleaks.toml` allows exactly the synthetic
+  high-entropy fixture in the fleet guard's self-test, as the sibling public
+  repositories do.
+
 ## [0.7.0] — 2026-09-26
 
 The ontology components: typed property values and panels, object headers

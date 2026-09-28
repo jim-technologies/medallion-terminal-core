@@ -13,6 +13,11 @@
       "dejavu_fonts": {
         "pkg-path": "dejavu_fonts"
       },
+      "gitleaks": {
+        "pkg-path": "gitleaks",
+        "pkg-group": "audit",
+        "version": "8.30.1"
+      },
       "inter": {
         "pkg-path": "inter"
       },
@@ -765,6 +770,93 @@
       },
       "system": "x86_64-linux",
       "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gitleaks",
+      "broken": false,
+      "derivation": "/nix/store/qbli3j7vzi9l0ryp9gai9y3py903as1g-gitleaks-8.30.1.drv",
+      "description": "Scan git repos (or files) for secrets",
+      "install_id": "gitleaks",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+      "name": "gitleaks-8.30.1",
+      "pname": "gitleaks",
+      "rev": "e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+      "rev_count": 1079315,
+      "rev_date": "2026-09-25T08:03:29Z",
+      "scrape_date": "2026-09-26T04:58:20.927685Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.30.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/xc2752818mq2g9n4pp8jvjwmknj8izmy-gitleaks-8.30.1"
+      },
+      "system": "aarch64-darwin",
+      "group": "audit",
+      "priority": 5
+    },
+    {
+      "attr_path": "gitleaks",
+      "broken": false,
+      "derivation": "/nix/store/8b5mddmyvyysc2ign61jm3kgjx3bmfxw-gitleaks-8.30.1.drv",
+      "description": "Scan git repos (or files) for secrets",
+      "install_id": "gitleaks",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+      "name": "gitleaks-8.30.1",
+      "pname": "gitleaks",
+      "rev": "e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+      "rev_count": 1079315,
+      "rev_date": "2026-09-25T08:03:29Z",
+      "scrape_date": "2026-09-26T05:29:39.937252Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.30.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/m9plcdckz6qp0kbx563wlnnpy5zplrya-gitleaks-8.30.1"
+      },
+      "system": "aarch64-linux",
+      "group": "audit",
+      "priority": 5
+    },
+    {
+      "attr_path": "gitleaks",
+      "broken": false,
+      "derivation": "/nix/store/j9lkqzrqbfcv90pvnm1apj800vydkavl-gitleaks-8.30.1.drv",
+      "description": "Scan git repos (or files) for secrets",
+      "install_id": "gitleaks",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+      "name": "gitleaks-8.30.1",
+      "pname": "gitleaks",
+      "rev": "e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+      "rev_count": 1079315,
+      "rev_date": "2026-09-25T08:03:29Z",
+      "scrape_date": "2026-09-26T06:05:31.831836Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.30.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/sp0zq4si8ax2sllicgv9hnb8xshrqklj-gitleaks-8.30.1"
+      },
+      "system": "x86_64-linux",
+      "group": "audit",
       "priority": 5
     }
   ]

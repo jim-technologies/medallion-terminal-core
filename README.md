@@ -1006,6 +1006,14 @@ story in real Chromium, both application and library builds, committed
 package artifacts, the static Storybook catalog, curated accessibility
 checks, interaction flows, and visual snapshots.
 
+`make audit` is the network-dependent tier the gate never runs:
+`pnpm audit --prod` checks the runtime dependencies this library ships inside
+its consumers' bundles against the advisory database (a consumer's image scan
+does not see embedded JavaScript), and `gitleaks` scans the whole Git history,
+with its one reasoned exception in `.gitleaks.toml`. The weekly `audit`
+workflow runs exactly `flox activate -- make audit` and, like CI, reads no
+secret.
+
 Storybook's `Examples/Production Readiness` suite adds a connected proof for
 host-owned authorization, safe policy denial, failure/recovery states, opaque
 cursor pagination, and an idempotent confirmed action lifecycle. Its scoped

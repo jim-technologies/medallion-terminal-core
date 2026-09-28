@@ -28,6 +28,12 @@ pnpm.version = "11.27.0"
 buf.pkg-path = "buf"
 buf.version = "1.72.0"
 actionlint.pkg-path = "actionlint"
+# gitleaks backs `make audit` (the weekly audit.yml), never the gate. Its own
+# package group keeps it from moving the default group's nixpkgs revision,
+# which would change the pinned fonts and with them every browser baseline.
+gitleaks.pkg-path = "gitleaks"
+gitleaks.version = "8.30.1"
+gitleaks.pkg-group = "audit"
 lato.pkg-path = "lato"
 dejavu_fonts.pkg-path = "dejavu_fonts"
 noto-fonts-color-emoji.pkg-path = "noto-fonts-color-emoji"

@@ -360,6 +360,9 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
   (`scripts/public-surface-check`, exceptions in `.public-surface-allow`) +
   `VERSION` parity + lint + all test suites + builds + artifact checks;
   CI runs exactly `flox activate -- make validate` and nothing else
+- `make audit` — network-dependent, outside the gate: `pnpm audit --prod` and a
+  `gitleaks` Git-history scan (`.gitleaks.toml`); `.github/workflows/audit.yml`
+  runs it weekly, secretless
 
 ## Distribution
 
