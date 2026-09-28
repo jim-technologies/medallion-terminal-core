@@ -302,3 +302,24 @@ export const WithoutSession: Story = {
     )
   },
 }
+
+export const LongNavigation: Story = {
+  render: () => {
+    const router = useMemo(() => createMemoryRouter('/destinations/0'), [])
+    const sections: NavRailSection[] = [{
+      id: 'destinations',
+      label: 'Workspace destinations',
+      items: Array.from({ length: 40 }, (_, index) => ({
+        id: String(index),
+        label: `destination-${String(index).padStart(2, '0')}-with-a-long-unbroken-name`,
+        icon: 'folder',
+        href: `/destinations/${index}`,
+      })),
+    }]
+    return (
+      <ProductShell product={{ name: 'Workspace', icon: 'folder' }} router={router} session={signedIn} nav={sections}>
+        <PageHeader title="Navigation" description="Long destinations remain reachable at every viewport size." />
+      </ProductShell>
+    )
+  },
+}

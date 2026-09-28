@@ -13,8 +13,8 @@
 }
 .mtc-root .mtc-nav-rail[data-collapsed="true"] { width: 3rem; }
 .mtc-root .mtc-nav-rail-header { padding: var(--mtc-space-2); border-bottom: 1px solid var(--mtc-border); }
-.mtc-root .mtc-nav-rail-sections { display: grid; min-height: 0; flex: 1 1 auto; align-content: start; gap: var(--mtc-space-3); overflow-y: auto; padding: var(--mtc-space-2); }
-.mtc-root .mtc-nav-rail-section ul { display: grid; gap: 1px; }
+.mtc-root .mtc-nav-rail-sections { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; flex: 1 1 auto; align-content: start; gap: var(--mtc-space-3); overflow-y: auto; padding: var(--mtc-space-2); }
+.mtc-root .mtc-nav-rail-section ul { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; }
 .mtc-root .mtc-nav-rail-section-label {
   padding: var(--mtc-space-1) var(--mtc-space-2);
   color: var(--mtc-muted);

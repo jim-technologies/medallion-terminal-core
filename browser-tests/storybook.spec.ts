@@ -1246,3 +1246,52 @@ for (const theme of ['dark', 'light'] as const) {
     })
   }
 }
+
+for (const theme of ['dark', 'light'] as const) {
+  test(`navigation keeps its width with long labels and vertical scrolling in ${theme}`, async ({ page }) => {
+    const root = await openStory(page, 'toolkit-app-productshell--long-navigation', { theme })
+    const rail = root.getByRole('navigation', { name: 'Product navigation' })
+    const lastName = 'destination-39-with-a-long-unbroken-name'
+    const checkRail = async (nav: Locator) => {
+      const scroller = nav.locator('.mtc-nav-rail-sections')
+      await expect.poll(() => scroller.evaluate(element => element.scrollWidth - element.clientWidth)).toBe(0)
+      expect(await scroller.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true)
+      const last = nav.getByRole('link', { name: lastName })
+      await last.focus()
+      await expect(last).toBeFocused()
+      await expect(last).toBeInViewport()
+      const bounds = await last.evaluate(element => {
+        const item = element.getBoundingClientRect()
+        const scroll = element.closest('.mtc-nav-rail-sections')!.getBoundingClientRect()
+        return { left: item.left - scroll.left, right: scroll.right - item.right }
+      })
+      expect(bounds.left).toBeGreaterThanOrEqual(0)
+      expect(bounds.right).toBeGreaterThanOrEqual(0)
+      expect(await scroller.evaluate(element => element.scrollLeft)).toBe(0)
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
+    }
+    for (const width of [1440, 820]) {
+      await page.setViewportSize({ width, height: 700 })
+      await checkRail(rail)
+      const toggle = rail.getByRole('button', { name: 'Collapse navigation' })
+      await toggle.focus()
+      await page.keyboard.press('Enter')
+      await expect(rail).toHaveAttribute('data-collapsed', 'true')
+      await expect(rail.getByRole('button', { name: 'Expand navigation' })).toBeFocused()
+      await checkRail(rail)
+      await rail.getByRole('button', { name: 'Expand navigation' }).click()
+      await expect(rail).not.toHaveAttribute('data-collapsed')
+    }
+    await page.setViewportSize({ width: 390, height: 844 })
+    await expect(rail).toBeHidden()
+    const open = root.getByRole('button', { name: 'Open navigation' })
+    await open.click()
+    const dialog = page.getByRole('dialog')
+    await checkRail(dialog.getByRole('navigation', { name: 'Product navigation' }))
+    const accessibility = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()
+    expect(accessibility.violations).toEqual([])
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
+    await expect(open).toBeFocused()
+  })
+}

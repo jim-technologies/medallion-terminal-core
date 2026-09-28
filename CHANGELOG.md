@@ -4,6 +4,14 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.3] — 2026-09-28
+
+### Fixed
+
+- Navigation sections and destination lists stay within the rail width when
+  collapsed or displaying long names. Vertical scrolling, keyboard focus and
+  mobile drawer navigation remain available.
+
 ## [0.7.2] — 2026-09-28
 
 ### Changed
