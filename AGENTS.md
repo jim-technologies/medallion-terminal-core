@@ -369,9 +369,10 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
 Git-only. Consumers pin
 `github:jim-technologies/medallion-terminal-core#<sha of a vX.Y.Z tag>`;
 `dist/` and `src/gen` are committed and staleness-gated so an install runs
-no build. `make release` (`scripts/release.mjs`) runs the version gate in
-release mode, then creates and pushes the annotated `vVERSION` tag from a
-clean, pushed tree — nothing is published to a package registry (`package.json`
+no build. `make release` (`scripts/release.mjs`) runs the contract's guards
+(clean tree, `HEAD` contained in `origin/main`, the version gate in release
+mode, tag `vVERSION` absent), then creates and pushes the annotated `vVERSION`
+tag and exits 0 — nothing is published to a package registry (`package.json`
 is `private`, so a stray `pnpm publish` refuses), and there is no `prepack`
 hook because nothing packs.
 

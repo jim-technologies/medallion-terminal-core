@@ -26,6 +26,18 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   `AGENTS.md`, `CHANGELOG.md`, `MAKEFILE-CONTRACT.md` and `LICENSE`. Links,
   the style-token check's messages and the clone README point at the new
   paths.
+- **`MAKEFILE-CONTRACT.md` carries the fleet's public-framework release
+  row**, byte-identical across the four public repositories: `make release`
+  runs the same guards everywhere (clean tree, `HEAD` pushed to
+  `origin/main`, `VERSION` equal to the first changelog heading, tag
+  `v<VERSION>` absent), creates and pushes the annotated tag and exits 0; no
+  package ecosystem is published to unless a repository documents one, and
+  the one workflow allowed to write anywhere is a docs-publishing job
+  authenticated only by its own OIDC token (here `deploy-storybook.yml`). A
+  new paragraph states that `run` and `deploy` are not part of the contract.
+- **`make release` means exactly that row.** `scripts/release.mjs` requires
+  `HEAD` to be contained in `origin/main` (it accepted any upstream branch)
+  and, once every guard passes, tags and pushes without a second step.
 
 ### Removed
 
@@ -37,6 +49,13 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   and the scoped `@theme inline` tokens to `docs/DESIGN.md`, and the
   pixel-plus-text baseline description to the README's Production
   verification.
+- `make run`: a framework offers no `run` verb (`MAKEFILE-CONTRACT.md`).
+  The Vite dev server is `pnpm dev`, as the README's Quick Start already
+  says.
+- The `RELEASE_CONFIRM=yes` dry-run step of `make release`: the verb now
+  means what the contract row says in every public repository. The guards
+  still refuse a dirty tree, a `HEAD` outside `origin/main`, a red
+  release-mode version gate and an existing tag.
 
 ## [0.7.0] — 2026-09-26
 
