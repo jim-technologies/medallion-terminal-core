@@ -283,9 +283,9 @@ export type {
   RepositoryEntryKind,
   RepositoryFileData,
 } from './widgets/platformShapes'
-export { WidgetShell } from './widgets/WidgetShell'
-export { Placeholder } from './widgets/Placeholder'
-export { WidgetSkeleton, Empty } from './widgets/states'
+export { WidgetShell } from './core/WidgetShell'
+export { Placeholder } from './core/Placeholder'
+export { WidgetSkeleton, Empty } from './core/WidgetStates'
 export { SEMANTIC, PALETTE, resolveColor } from './widgets/colors'
 export { abbreviateAxis, formatCompact, formatStat, formatTimestamp, formatPercent, formatCurrency, formatBps } from './widgets/format'
 export { HoverContext, HoverProvider, useHover } from './core/HoverContext'

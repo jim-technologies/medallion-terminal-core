@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { WidgetSkeleton, ErrorState } from './states'
+import { WidgetSkeleton, ErrorState } from '../core/WidgetStates'
 
 const meta: Meta<typeof WidgetSkeleton> = {
   title: 'Widgets/States',

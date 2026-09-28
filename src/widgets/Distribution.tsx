@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { resolveColor, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface Slice { label: string; value: number; color?: string }
 

@@ -12,7 +12,7 @@ import {
 } from 'recharts'
 import { PALETTE, SEMANTIC, TOOLTIP_STYLE, assignSeriesColors } from './colors'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import { normalizeBars, type SingleBar } from './barNormalize'
 
 const GRID = 'var(--mtc-grid)'

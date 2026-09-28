@@ -3,7 +3,7 @@ import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 import { layeredLayout } from '../graph/layeredLayout'
 import { normalizeGraph, type GraphData, type GraphNodeData } from './platformShapes'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface DagOptions {
   node_context?: {

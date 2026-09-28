@@ -3,7 +3,7 @@ import { useDashboard } from '../core/DashboardContext'
 import { interpolate, newClientRequestId } from '../core/resolveSource'
 import { useSubmitAction } from '../hooks/useSubmitAction'
 import { isErrorStatus, isTerminalStatus } from '../hooks/useWatchAction'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import type { WidgetProps } from '../types/template'
 
 type Side = 'buy' | 'sell'

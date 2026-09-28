@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useAnimatedNumber } from '../hooks/useAnimatedNumber'
 import { formatStat } from './format'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface Stat {
   label: string

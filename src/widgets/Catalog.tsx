@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDashboard } from '../core/DashboardContext'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 // Mirrors the Source / SourceParam messages from terminal.proto.
 // Optional everywhere — backends are free to send partial entries.

@@ -6,7 +6,7 @@ import {
 } from '../core/AssetOpen'
 import { handleModalKeyDown, useModalFocus } from '../components/utils'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import {
   CursorPager,
   cursorPageTokenKey,

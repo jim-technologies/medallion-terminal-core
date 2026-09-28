@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import { formatCompact } from './format'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface Cell { row: number; col: number; value: number; label?: string }
 interface HeatmapData {

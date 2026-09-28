@@ -1,4 +1,4 @@
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import { DEFAULT_IFRAME_SANDBOX } from '../core/templateSecurity'
 import type { WidgetProps } from '../types/template'
 

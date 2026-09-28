@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface SliderOptions {
   key?: string

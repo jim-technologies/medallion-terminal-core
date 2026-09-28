@@ -13,7 +13,7 @@ import {
   recordTitle,
   type RecordFieldData,
 } from './recordShapes'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface RecordFormOptions {
   mode?: 'create' | 'edit' | 'auto'

@@ -11,7 +11,7 @@ import {
   validateActionValues,
   type ActionField,
 } from './actionFormShape'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface RuntimeOptions {
   url?: string

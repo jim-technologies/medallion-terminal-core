@@ -1,6 +1,6 @@
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface Choice { value: string; label?: string }
 

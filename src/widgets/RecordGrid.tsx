@@ -20,7 +20,7 @@ import {
   type RecordViewData,
   type WorkRecordData,
 } from './recordShapes'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import {
   CursorPager,
   cursorPageTokenKey,

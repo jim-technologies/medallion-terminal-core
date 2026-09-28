@@ -12,7 +12,7 @@ import {
   type RecordViewData,
   type WorkRecordData,
 } from './recordShapes'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface RecordBoardOptions {
   view_id?: string

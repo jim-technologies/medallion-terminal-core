@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useDashboard } from '../core/DashboardContext'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import type { WidgetProps } from '../types/template'
 import { normalizeOrderBook, type OrderLevelData } from './orderBookShape'
 

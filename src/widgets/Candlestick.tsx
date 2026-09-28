@@ -12,7 +12,7 @@ import {
   type Time,
 } from 'lightweight-charts'
 import { useHover } from '../core/HoverContext'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import type { WidgetProps } from '../types/template'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

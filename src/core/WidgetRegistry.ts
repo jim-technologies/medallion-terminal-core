@@ -1,6 +1,6 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 import type { WidgetProps } from '../types/template'
-import { Placeholder } from '../widgets/Placeholder'
+import { Placeholder } from './Placeholder'
 
 // Widget registry — every entry is React.lazy so the heavy chart libs
 // (Recharts, lightweight-charts) only land in the bundle for dashboards

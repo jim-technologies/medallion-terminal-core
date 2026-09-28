@@ -271,6 +271,9 @@ src/
     NowContext.tsx        — Ref-counted 1Hz tick (only ticks when subscribed)
     HoverContext.tsx      — Cross-chart crosshair sync
     WidgetRegistry.ts     — Lazy-loaded widget map (registerWidget for custom)
+    WidgetShell.tsx        — Title bar, action menu, focus, alerts and widget lifecycle
+    Placeholder.tsx        — Unknown-widget fallback
+    WidgetStates.tsx       — Shared empty, loading and error visuals
     CommandPalette.tsx    — Cmd-K modal + suggestions
     ShortcutsOverlay.tsx  — `?` cheat sheet
     ErrorBoundary.tsx     — Per-widget render-crash isolation
@@ -297,7 +300,6 @@ src/
   widgets/
     *.tsx                 — One file per built-in widget
     *.stories.tsx         — Storybook stories
-    states.tsx            — Shared Empty/Skeleton/ErrorState
     format.ts             — Number/time formatters (currency, percent, bps, etc)
     colors.ts             — Semantic palette + chart color rotation
     platformShapes.ts     — tolerant normalizers for platform payloads
@@ -307,8 +309,6 @@ src/
     conversationShape.ts  — participant/message/attachment normalization and selection context
     orderBookShape.ts     — shared ladder/depth normalization
     actionFormShape.ts    — generic action schema normalization + validation
-    WidgetShell.tsx       — Title bar, action menu, focus ring, alert effect,
-                            stale/retry badges, telemetry emit
 public/examples/         — Bundled example templates
   business-operations.json — owner-facing finance/sales/operations workspace
   platform-foundation.json — catalog + object + lineage + repository demo
@@ -319,6 +319,9 @@ examples/
   backend/server.mjs       — Reference Node TerminalService
   widgets/                 — Sample custom widget (Kelly sizing)
 ```
+
+Widget chrome and shared states live in `core/`; widgets import that layer.
+Only `core/WidgetRegistry.ts` loads concrete widgets, through lazy imports.
 
 ## Grid system
 

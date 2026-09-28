@@ -6,7 +6,7 @@ import {
 } from 'recharts'
 import { SEMANTIC, PALETTE, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface Node {
   name: string

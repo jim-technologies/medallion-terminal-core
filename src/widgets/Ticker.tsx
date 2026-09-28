@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 // Auto-scrolling EventPayload renderer — same data shape as the
 // `Events` widget, but laid out as a horizontal stock-ticker that

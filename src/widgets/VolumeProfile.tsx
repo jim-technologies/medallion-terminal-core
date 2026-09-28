@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface Row { price: number; volume: number }
 

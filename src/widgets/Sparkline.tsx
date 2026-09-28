@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface SparkOptions {
   // Force a color regardless of trend direction. Otherwise the line

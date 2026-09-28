@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 // Pretty-printed JSON view of whatever the source returns. Use for raw
 // data inspection: backend response debugging, AI-emitted templates,

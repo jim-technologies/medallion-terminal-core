@@ -1,4 +1,4 @@
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import type { WidgetProps } from '../types/template'
 
 // Plain image renderer. Use for AI-generated visualisations

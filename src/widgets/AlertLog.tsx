@@ -1,6 +1,6 @@
 import { useNow } from '../core/NowContext'
 import { useDashboard } from '../core/DashboardContext'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import type { WidgetProps } from '../types/template'
 
 // Live alert feed. Subscribes to the dashboard's alert ring (populated

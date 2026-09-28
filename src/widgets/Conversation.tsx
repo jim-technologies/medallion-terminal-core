@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import type { WidgetProps } from '../types/template'
-import { WidgetSkeleton } from './states'
+import { WidgetSkeleton } from '../core/WidgetStates'
 
 // Keep transcript rendering out of the package entry until mounted. The
 // registry imports ConversationImpl directly; named-export consumers receive

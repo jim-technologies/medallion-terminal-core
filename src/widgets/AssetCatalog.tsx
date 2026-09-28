@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 import { localDate, safeUrl } from './textNormalize'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import { normalizeAssetCatalog, type AssetCatalogItem } from './platformShapes'
 import {
   CursorPager,

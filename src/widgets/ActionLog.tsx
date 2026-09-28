@@ -1,6 +1,6 @@
 import { useNow } from '../core/NowContext'
 import { useDashboard } from '../core/DashboardContext'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import type { WidgetProps } from '../types/template'
 
 // Order blotter. Subscribes to the dashboard's in-memory action ring

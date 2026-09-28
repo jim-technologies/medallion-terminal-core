@@ -12,7 +12,7 @@ import {
 import { abbreviateAxis, formatTimestamp } from './format'
 import { PALETTE, TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 const GRID = 'var(--mtc-grid)'
 const AXIS = 'var(--mtc-border)'

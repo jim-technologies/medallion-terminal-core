@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useDashboard } from '../core/DashboardContext'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import type { WidgetProps } from '../types/template'
 
 // Click-a-row → set ctx[key] to the row's `key` (strike, line, etc).

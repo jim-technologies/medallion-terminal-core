@@ -19,7 +19,7 @@ import {
   type GeoFeatureCollection,
   type GeoFeatureData,
 } from './geoShape'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 export interface GeoMapOptions {
   // Canonical swappable basemap contract. Omit for the network-free

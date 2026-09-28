@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 const STATUS_DOT: Record<string, string> = {
   EVENT_STATUS_OK:      'bg-emerald-500',

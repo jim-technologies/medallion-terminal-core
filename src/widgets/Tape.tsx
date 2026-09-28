@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import { formatTimestamp } from './format'
 import type { WidgetProps } from '../types/template'
 

@@ -11,7 +11,7 @@ import {
 } from 'recharts'
 import type { WidgetProps } from '../types/template'
 import { PALETTE, TOOLTIP_STYLE } from './colors'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 const GRID = 'var(--mtc-grid)'
 const AXIS = 'var(--mtc-border)'

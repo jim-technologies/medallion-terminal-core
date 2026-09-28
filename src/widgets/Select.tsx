@@ -1,7 +1,7 @@
 import { useEffect, useId } from 'react'
 import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import { type Choice, resolveSelection } from './selectHelpers'
 
 interface SelectOptions {

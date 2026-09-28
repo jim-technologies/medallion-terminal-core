@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import type { Template, WidgetConfig } from '../types/template'
 import { useBreakpoint } from '../hooks/useBreakpoint'
-import { WidgetShell } from '../widgets/WidgetShell'
+import { WidgetShell } from './WidgetShell'
 import { DashboardContext, useDashboard, type DispatchOptions, type WidgetAction, type Severity, type DashboardEvent, type ActionLogEntry, type AlertLogEntry, type WidgetHealth } from './DashboardContext'
 import { HoverProvider } from './HoverContext'
 import { NowProvider } from './NowContext'

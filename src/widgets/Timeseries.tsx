@@ -5,7 +5,7 @@ import {
 import { useHover } from '../core/HoverContext'
 import { abbreviateAxis, makeTimestampLabel, makeTimestampTick, timeAxisMeta } from './format'
 import { PALETTE, TOOLTIP_STYLE, assignSeriesColors } from './colors'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import type { WidgetProps } from '../types/template'
 
 const ANN_COLOR: Record<string, string> = {

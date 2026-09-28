@@ -3,7 +3,7 @@ import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 import { humanSize } from './fileBrowserHelpers'
 import { normalizeRepository, type RepositoryEntryData } from './platformShapes'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import { safeUrl } from './textNormalize'
 
 interface CodeBrowserOptions {

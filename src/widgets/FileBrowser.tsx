@@ -20,7 +20,7 @@ import {
   buildActionRequest,
   newClientRequestId,
 } from '../core/resolveSource'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import {
   isFolder,
   fileEntryIdentity,

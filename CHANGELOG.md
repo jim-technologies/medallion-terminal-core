@@ -4,6 +4,18 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.2] — 2026-09-28
+
+### Changed
+
+- Dashboard chrome (`WidgetShell`, `Placeholder` and shared loading/empty
+  states) now lives in `core/`. Concrete widgets depend on core; the registry
+  loads them lazily. Public exports, templates and rendering are unchanged.
+
+### Removed
+
+- Retired the internal widget-directory paths for dashboard chrome.
+
 ## [0.7.1] — 2026-09-28
 
 ### Added

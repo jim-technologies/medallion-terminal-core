@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, type KeyboardEvent } from 'react'
 import { useDashboard, type WidgetAction } from '../core/DashboardContext'
 import { buildGenerateUrl, buildGenerateRequest } from '../core/resolveSource'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import type { Context, WidgetProps } from '../types/template'
 
 // Response shape mirrors GenerateResponse from the proto. All fields

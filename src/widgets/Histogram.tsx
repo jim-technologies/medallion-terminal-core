@@ -5,7 +5,7 @@ import {
 import { formatCompact } from './format'
 import { TOOLTIP_STYLE } from './colors'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 const DEFAULT_BINS = 20
 const GRID = 'var(--mtc-grid)'

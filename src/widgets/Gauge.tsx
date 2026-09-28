@@ -1,5 +1,5 @@
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 const COLORS: Record<string, string> = {
   ok:     'var(--mtc-ok)',

@@ -13,7 +13,7 @@ import { useDashboard } from '../core/DashboardContext'
 import type { WidgetProps } from '../types/template'
 import { abbreviateAxis, formatCompact } from './format'
 import { cumulativeDepth, normalizeOrderBook } from './orderBookShape'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 
 interface DepthChartOptions {
   max_levels?: number

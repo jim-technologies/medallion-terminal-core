@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { renderMarkdown } from '../files/markdown'
 import type { WidgetProps } from '../types/template'
-import { Empty } from './states'
+import { Empty } from '../core/WidgetStates'
 import { normalize, type TextItem } from './textNormalize'
 
 const FLASH_MS = 1500
