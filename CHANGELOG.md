@@ -4,6 +4,13 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Fixed
+
+- Table rows with repeated labels keep distinct selection through sorting,
+  filtering and pagination. Refreshes reselect only an unambiguous configured
+  context value; duplicate identities are never inferred. Tick flashes compare
+  only scalar keys unique in both successive payloads.
+
 ## [0.7.3] — 2026-09-28
 
 ### Fixed

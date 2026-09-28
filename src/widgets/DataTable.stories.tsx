@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import { Button } from '../components/Button'
+import { DashboardContext, DEFAULT_DASHBOARD_CONTEXT } from '../core/DashboardContext'
 import type { Meta, StoryObj } from '@storybook/react'
 import { expect, waitFor } from 'storybook/test'
 import { DataTable } from './DataTable'
@@ -131,3 +134,66 @@ export const NarrowFit: Story = {
     await expect(fit.clipped.filter(text => /\d/.test(text ?? ''))).toEqual([])
   },
 }
+
+function RowIdentityExample() {
+  const [rows, setRows] = useState([
+    { Label: 'Repeated', Id: 'run-1', Rank: 4 },
+    { Label: 'Repeated', Id: 'run-2', Rank: 1 },
+    { Label: 'Other', Id: 'run-3', Rank: 3 },
+    { Label: 'Repeated', Id: 'run-4', Rank: 2 },
+  ])
+  const [ctx, setCtx] = useState<Record<string, string>>({})
+  return (
+    <DashboardContext.Provider value={{ ...DEFAULT_DASHBOARD_CONTEXT, ctx, setCtx: (key, value) => setCtx(prior => ({ ...prior, [key]: value })) }}>
+      <div className="flex h-full flex-col gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setRows(prior => [...prior].reverse().map(row => ({ ...row })))}>Refresh rows</Button>
+          <Button onClick={() => setRows([
+            { Label: 'Repeated', Id: 'shared', Rank: 1 },
+            { Label: 'Repeated', Id: 'shared', Rank: 2 },
+            { Label: 'Other', Id: 'different', Rank: 3 },
+          ])}>Duplicate context values</Button>
+          <Button onClick={() => {
+            const row = { Label: 'Repeated', Id: 'shared', Rank: 1 }
+            setRows([row, row])
+          }}>Repeated object</Button>
+          <Button onClick={() => setCtx({ run: 'different' })}>External context</Button>
+        </div>
+        <output aria-label="Selected row context">{ctx.run ?? 'none'}</output>
+        <div className="min-h-0 flex-1">
+          <DataTable data={rows} options={{ row_context: { key: 'run', field: 'Id' }, search: true, pageSize: 2 }} />
+        </div>
+      </div>
+    </DashboardContext.Provider>
+  )
+}
+
+export const RowIdentity: Story = { render: () => <RowIdentityExample /> }
+
+function FlashIdentityExample() {
+  const initial = [
+    { Label: 'unique', Amount: 10 },
+    { Label: 'duplicate', Amount: 20 },
+    { Label: 'duplicate', Amount: 30 },
+    { Label: 1, Amount: 40 },
+    { Label: '1', Amount: 50 },
+    { Label: undefined, Amount: 60 },
+  ]
+  const [rows, setRows] = useState(initial)
+  const [enabled, setEnabled] = useState(true)
+  return (
+    <div className="flex h-full flex-col gap-2">
+      <div className="flex flex-wrap gap-2">
+        <Button onClick={() => setRows(prior => prior.map(row => ({ ...row, Amount: row.Amount + 1 })))}>Advance values</Button>
+        <Button onClick={() => setRows(prior => prior.filter(row => row.Label !== 'unique'))}>Remove unique</Button>
+        <Button onClick={() => setRows(prior => [{ Label: 'unique', Amount: 99 }, ...prior])}>Restore unique</Button>
+        <Button onClick={() => setRows(prior => prior.filter(row => row.Label !== 'duplicate' || row.Amount < 30))}>Resolve duplicate</Button>
+        <Button onClick={() => setRows(prior => [...prior, { Label: 'unique', Amount: 500 }])}>Duplicate unique</Button>
+        <Button onClick={() => setEnabled(prior => !prior)}>Toggle flashes</Button>
+      </div>
+      <div className="min-h-0 flex-1"><DataTable data={rows} options={{ tick_flash: enabled }} /></div>
+    </div>
+  )
+}
+
+export const FlashIdentity: Story = { render: () => <FlashIdentityExample /> }

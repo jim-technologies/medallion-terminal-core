@@ -23,6 +23,12 @@ interface RowContext {
   field?: string    // column whose cell value becomes the new ctx value (default: first column)
 }
 
+interface SourceRow {
+  key: string
+  values: Record<string, unknown>
+  flashKey?: string
+}
+
 export function DataTable({ data, options }: WidgetProps) {
   const { ctx, setCtx } = useDashboard()
   const pageSize = (options?.pageSize as number) || DEFAULT_PAGE_SIZE
@@ -47,7 +53,8 @@ export function DataTable({ data, options }: WidgetProps) {
   //   "compact"           → 1.2K / 3.4M
   // Plus a signed sub-tag on numeric formats colors the cell (green/red).
   const authorFormats = (options?.column_formats as Record<string, string> | undefined) ?? {}
-  const { columns, rows, labels, formats } = useMemo(() => normalize(data), [data])
+  const table = useMemo(() => normalize(data), [data])
+  const { columns, rows, labels, formats } = table
   // Backend-declared formats (from TablePayload) are the base; author
   // options.column_formats override them per column.
   const columnFormats = useMemo(() => ({ ...formats, ...authorFormats }), [formats, authorFormats])
@@ -56,58 +63,78 @@ export function DataTable({ data, options }: WidgetProps) {
   const [page, setPage] = useState(0)
   const [query, setQuery] = useState('')
 
-  // Row identity for flash tracking. Use the first column value — that
-  // matches how a watchlist is structured (symbol leading the row).
-  // Falls back to row index when the first column is missing.
-  const rowKey = (row: Record<string, unknown>, i: number): string => {
-    const k = columns[0] != null ? row[columns[0]] : undefined
-    return k == null ? `_idx_${i}` : String(k)
+  const contextField = rowContext?.field ?? columns[0]
+  const contextValue = rowContext ? ctx[rowContext.key] : undefined
+  const [selection, setSelection] = useState({
+    table, epoch: 0, contextKey: rowContext?.key, contextField, contextValue,
+    rowKey: null as string | null,
+  })
+  if (selection.table !== table || selection.contextKey !== rowContext?.key ||
+      selection.contextField !== contextField || selection.contextValue !== contextValue) {
+    setSelection({
+      table, epoch: selection.epoch + Number(selection.table !== table),
+      contextKey: rowContext?.key, contextField, contextValue, rowKey: null,
+    })
   }
 
-  // Track previous numeric values per row key; when any column changes,
-  // record a flash direction (by the first changed numeric column) and
-  // clear after FLASH_MS. Skipped entirely when tick_flash is off.
-  const prevValues = useRef<Map<string, Record<string, number>>>(new Map())
-  const [flashes, setFlashes] = useState<Map<string, 'up' | 'down'>>(new Map())
+  // Occurrences, not cell values, identify rows within one payload. The epoch
+  // prevents React from carrying row state into an unrelated refreshed payload.
+  const sourceRows = useMemo(() => {
+    const flashKeys = rows.map(row => {
+      const value = row[columns[0]!]
+      return typeof value === 'string' || typeof value === 'boolean' ||
+        (typeof value === 'number' && Number.isFinite(value))
+        ? JSON.stringify([columns[0], typeof value, value]) : undefined
+    })
+    const counts = new Map<string, number>()
+    for (const key of flashKeys) if (key !== undefined) counts.set(key, (counts.get(key) ?? 0) + 1)
+    return rows.map((values, index) => ({
+      values, key: `${selection.epoch}:${index}`,
+      flashKey: counts.get(flashKeys[index]!) === 1 ? flashKeys[index] : undefined,
+    }))
+  }, [rows, columns, selection.epoch])
+
+  const prevValues = useRef(new Map<string, Record<string, number>>())
+  const [flashes, setFlashes] = useState(new Map<string, { direction: 'up' | 'down'; expires: number }>())
   useEffect(() => {
-    if (!tickFlash) return
-    const additions = new Map<string, 'up' | 'down'>()
-    for (let i = 0; i < rows.length; i++) {
-      const r = rows[i]
-      const key = rowKey(r, i)
-      const prev = prevValues.current.get(key)
+    const previous = prevValues.current
+    const current = new Map<string, Record<string, number>>()
+    const additions = new Map<string, { direction: 'up' | 'down'; expires: number }>()
+    const now = Date.now()
+    if (tickFlash) for (const row of sourceRows) {
+      if (row.flashKey === undefined) continue
+      const prev = previous.get(row.flashKey)
       const curr: Record<string, number> = {}
-      let direction: 'up' | 'down' | null = null
+      let direction: 'up' | 'down' | undefined
       for (const col of columns) {
-        const v = r[col]
-        if (typeof v === 'number') {
-          curr[col] = v
-          if (direction == null && prev && prev[col] != null && prev[col] !== v) {
-            direction = v > prev[col] ? 'up' : 'down'
+        const value = row.values[col]
+        if (typeof value === 'number') {
+          curr[col] = value
+          if (direction === undefined && prev && prev[col] != null && prev[col] !== value) {
+            direction = value > prev[col] ? 'up' : 'down'
           }
         }
       }
-      prevValues.current.set(key, curr)
-      if (direction) additions.set(key, direction)
+      current.set(row.flashKey, curr)
+      if (direction) additions.set(row.flashKey, { direction, expires: now + FLASH_MS })
     }
-    if (additions.size === 0) return
-    setFlashes(prev => {
-      const next = new Map(prev)
-      for (const [k, dir] of additions) next.set(k, dir)
-      return next
+    prevValues.current = current
+    setFlashes(prior => {
+      const next = new Map([...prior].filter(([key, flash]) =>
+        previous.has(key) && current.has(key) && flash.expires > now))
+      for (const [key, flash] of additions) next.set(key, flash)
+      return next.size === 0 && prior.size === 0 ? prior : next
     })
-    const t = setTimeout(() => {
-      setFlashes(prev => {
-        const next = new Map(prev)
-        for (const [k, dir] of additions) {
-          if (next.get(k) === dir) next.delete(k)
-        }
-        return next
-      })
-    }, FLASH_MS)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- columns/rowKey are derived from rows
-  }, [rows, tickFlash])
+  }, [sourceRows, columns, tickFlash])
+  useEffect(() => {
+    if (flashes.size === 0) return
+    let expires = Infinity
+    for (const flash of flashes.values()) expires = Math.min(expires, flash.expires)
+    const timer = setTimeout(() => {
+      setFlashes(prior => new Map([...prior].filter(([, flash]) => flash.expires > Date.now())))
+    }, Math.max(0, expires - Date.now()))
+    return () => clearTimeout(timer)
+  }, [flashes])
 
   // Pre-compute min/max per heat column over the full row set so coloring
   // is stable across pages and sort.
@@ -127,11 +154,13 @@ export function DataTable({ data, options }: WidgetProps) {
     return out
   }, [rows, heatColumns])
 
-  const handleRowClick = (row: Record<string, unknown>) => {
+  const handleRowClick = (row: SourceRow) => {
     if (!rowContext) return
-    const field = rowContext.field ?? columns[0]
-    const value = row[field]
-    if (value != null) setCtx(rowContext.key, String(value))
+    const value = row.values[contextField!]
+    if (value != null) {
+      setSelection({ ...selection, rowKey: row.key, contextValue: String(value) })
+      setCtx(rowContext.key, String(value))
+    }
   }
 
   // Filter first (cheaper to sort fewer rows). Case-insensitive
@@ -140,20 +169,20 @@ export function DataTable({ data, options }: WidgetProps) {
   // widget that filters at the backend.
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return rows
-    return rows.filter(row =>
+    if (!q) return sourceRows
+    return sourceRows.filter(row =>
       columns.some(col => {
-        const v = row[col]
+        const v = row.values[col]
         return v != null && String(v).toLowerCase().includes(q)
       }),
     )
-  }, [rows, columns, query])
+  }, [sourceRows, columns, query])
 
   const sorted = useMemo(() => {
     if (!sortKey) return filtered
     return [...filtered].sort((a, b) => {
-      const va = a[sortKey]
-      const vb = b[sortKey]
+      const va = a.values[sortKey]
+      const vb = b.values[sortKey]
       if (va == null && vb == null) return 0
       if (va == null) return 1
       if (vb == null) return -1
@@ -176,7 +205,7 @@ export function DataTable({ data, options }: WidgetProps) {
   const exportCsv = () => {
     const lines = [
       columns.map(csvEscape).join(','),
-      ...sorted.map(r => columns.map(c => csvEscape(r[c])).join(',')),
+      ...sorted.map(r => columns.map(c => csvEscape(r.values[c])).join(',')),
     ]
     const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
@@ -190,7 +219,7 @@ export function DataTable({ data, options }: WidgetProps) {
   // Columns size to their content and fit the widget: the first (label)
   // column takes any spare width, so numbers stay next to their headers, and
   // gives way first when the widget is narrow.
-  const gridColumns: DataGridColumn<Record<string, unknown>>[] = columns.map((col, index) => {
+  const gridColumns: DataGridColumn<SourceRow>[] = columns.map((col, index) => {
     const fmt = columnFormats[col]
     // Numeric formats right-align so digits line up under tabular-nums.
     const numeric = !!fmt && fmt !== 'sparkline' && /^(currency|percent|bps|compact)(:|$)/.test(fmt)
@@ -200,15 +229,15 @@ export function DataTable({ data, options }: WidgetProps) {
       width: fmt === 'sparkline' ? SPARKLINE_COLUMN_WIDTH : undefined,
       grow: index === 0,
       align: numeric || (!fmt && rows.some(row => typeof row[col] === 'number')) ? 'end' : 'start',
-      cell: row => <TableCell value={row[col]} format={fmt} heat={heatRanges[col]} />,
+      cell: row => <TableCell value={row.values[col]} format={fmt} heat={heatRanges[col]} />,
     }
   })
-  const selectedRowKey = rowContext
-    ? display.find(row => {
-      const value = row[rowContext.field ?? columns[0]!]
-      return value != null && String(value) === ctx[rowContext.key]
-    })
-    : undefined
+  const contextMatches = rowContext ? sourceRows.filter(row => {
+    const value = row.values[contextField!]
+    return value != null && String(value) === contextValue
+  }) : []
+  const selectedRowKey = contextMatches.find(row => row.key === selection.rowKey)?.key ??
+    (contextMatches.length === 1 ? contextMatches[0]!.key : undefined)
 
   return (
     <div className="flex flex-col h-full gap-2 mtc-data-table">
@@ -237,13 +266,13 @@ export function DataTable({ data, options }: WidgetProps) {
         className="min-h-0 flex-1"
         columns={gridColumns}
         rows={display}
-        rowKey={(row, i) => rowKey(row, i)}
-        rowLabel={row => String(row[columns[0]!] ?? '')}
+        rowKey={row => row.key}
+        rowLabel={row => String(row.values[columns[0]!] ?? '')}
         selection={rowContext ? 'single' : 'none'}
-        selectedKeys={selectedRowKey ? [rowKey(selectedRowKey, display.indexOf(selectedRowKey))] : []}
+        selectedKeys={selectedRowKey ? [selectedRowKey] : []}
         onSelectionChange={keys => {
-          const index = display.findIndex((row, i) => rowKey(row, i) === keys[0])
-          if (index >= 0) handleRowClick(display[index]!)
+          const row = display.find(row => row.key === keys[0])
+          if (row) handleRowClick(row)
         }}
         sort={sortKey ? { columnId: sortKey, direction: sortAsc ? 'ascending' : 'descending' } : null}
         onSortChange={next => {
@@ -253,8 +282,8 @@ export function DataTable({ data, options }: WidgetProps) {
         }}
         sortMode="server"
         rowProps={(row) => {
-          const flash = flashes.get(rowKey(row, display.indexOf(row)))
-          return { 'data-flash': flash }
+          const flash = row.flashKey === undefined ? undefined : flashes.get(row.flashKey)
+          return { 'data-flash': flash?.direction }
         }}
         footer={showPagination ? (
           <Pagination
