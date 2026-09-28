@@ -341,13 +341,35 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
 
 ## Dev commands (run inside `flox activate`)
 
-- `pnpm dev` — vite (http://localhost:5173)
+The `make` verbs are the grammar (`MAKEFILE-CONTRACT.md`); `make help-all`
+lists every target.
+
+- `make validate` — the single gate verb: frozen-lockfile install + pinned
+  Chromium + public-surface guard (`scripts/public-surface-check`, exceptions
+  in `.public-surface-allow`) + `VERSION` parity + lint + all test suites +
+  builds + artifact checks; CI runs exactly `flox activate -- make validate`
+  and nothing else
+- `make test` — the unit, Storybook-in-Chromium and Playwright browser suites
+  (`make test-unit`, `make test-storybook`, `make test-browser`); `pnpm test`
+  is `make test-unit` alone
+- `make fmt` — `buf format --write` (TypeScript is gated by `tsc`, not a
+  rewriter)
+- `make build` — standalone app + library bundle (`pnpm build`,
+  `pnpm build:lib`); `make build-storybook` — the static Storybook catalog
+- `make generate` — regenerate the proto-derived types in `src/gen`
+- `make audit` — network-dependent, outside the gate: `pnpm audit --prod` and a
+  `gitleaks` Git-history scan (`.gitleaks.toml`); `.github/workflows/audit.yml`
+  runs it weekly, secretless
+- `make release` — tag and push `vVERSION` (see Distribution)
+
+The inner loop and single slices of the gate are `pnpm` scripts:
+
+- `pnpm dev` — vite (http://localhost:5173); a framework has no `make run`
 - `pnpm backend` — reference TerminalService on :3001
-- `pnpm lint` — `tsc --noEmit` + buf format/lint/build + regen proto types and check
-- `pnpm test` — vitest
-- `pnpm build` — standalone app
-- `pnpm build:lib` — library bundle (JS + CSS + .d.ts), committed under `dist/`
 - `pnpm storybook` — storybook (http://localhost:6006)
+- `pnpm lint` — `tsc --noEmit` + style-token ratchet + buf format/lint/build +
+  regenerated proto types checked against `src/gen`
+- `pnpm build:lib` — library bundle (JS + CSS + .d.ts), committed under `dist/`
 - `pnpm check:breaking` — `buf breaking` against the newest reachable `v*` tag
   (`scripts/check-breaking.mjs`)
 - `pnpm check:conformance` — reference-clone conformance (`scripts/check-reference-conformance.mjs`)
@@ -355,14 +377,6 @@ Use in templates: `"component": "my_widget"`. The template validator accepts cus
 - `pnpm check:package` — published-package contract: `private` + Apache-2.0, only `dist` + `proto`,
   renderer peers optional
 - `pnpm check:bundles` — per-entry gzip budgets (`scripts/check-bundle-isolation.mjs`)
-- `make validate` — the single gate verb (see `MAKEFILE-CONTRACT.md`):
-  frozen-lockfile install + pinned Chromium + public-surface guard
-  (`scripts/public-surface-check`, exceptions in `.public-surface-allow`) +
-  `VERSION` parity + lint + all test suites + builds + artifact checks;
-  CI runs exactly `flox activate -- make validate` and nothing else
-- `make audit` — network-dependent, outside the gate: `pnpm audit --prod` and a
-  `gitleaks` Git-history scan (`.gitleaks.toml`); `.github/workflows/audit.yml`
-  runs it weekly, secretless
 
 ## Distribution
 

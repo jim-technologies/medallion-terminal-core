@@ -979,7 +979,7 @@ For wiring this into a real product, in order:
 10. **Release artifacts.** This package commits `dist/` and `src/gen` so
     consumers install it straight from a Git tag with no build step (see
     [Installing](#installing)). Rebuild with `pnpm build:lib` and
-    `pnpm gen:proto`; the gate runs `pnpm check:dist` (or `make check-dist`)
+    `pnpm gen:proto`; the gate runs `pnpm check:dist`
     and the generated-type check so committed artifacts cannot go stale.
 
 ## Production verification

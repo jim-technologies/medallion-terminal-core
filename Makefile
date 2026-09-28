@@ -2,7 +2,7 @@
 # (pnpm) or guard; logic lives in scripts/.
 .DEFAULT_GOAL := help
 
-.PHONY: help help-all fmt test test-unit test-storybook test-browser validate audit public-surface build build-storybook generate release check-dist
+.PHONY: help help-all fmt test test-unit test-storybook test-browser validate audit public-surface build build-storybook generate release
 
 help: ## One-screen help (make help-all for every target)
 	@echo "Daily:"
@@ -51,9 +51,6 @@ build-storybook: ## Build the static Storybook catalog (the docs/pages artifact)
 
 generate: ## Regenerate proto-derived types (validate fails if committed output is stale).
 	pnpm gen:proto
-
-check-dist: ## Rebuild library dist and fail if committed artifacts are stale.
-	pnpm check:dist
 
 release: ## Tag and push vVERSION from a clean tree whose HEAD is on origin/main (Git-only distribution; no registry publish).
 	node scripts/release.mjs

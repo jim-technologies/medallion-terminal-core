@@ -38,6 +38,10 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - **`make release` means exactly that row.** `scripts/release.mjs` requires
   `HEAD` to be contained in `origin/main` (it accepted any upstream branch)
   and, once every guard passes, tags and pushes without a second step.
+- **AGENTS.md "Dev commands" leads with the `make` verbs** (the contract's
+  grammar) and lists `pnpm` scripts only for the inner loop and single slices
+  of the gate; it says that `pnpm test` is `make test-unit` alone, while
+  `make test` also runs the Storybook and browser suites.
 
 ### Removed
 
@@ -56,6 +60,9 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   means what the contract row says in every public repository. The guards
   still refuse a dirty tree, a `HEAD` outside `origin/main`, a red
   release-mode version gate and an existing tag.
+- `make check-dist`, a second verb for one slice of `make validate` (the
+  contract counts two verbs for the same work as a defect). `pnpm check:dist`
+  remains for a quick local check, and the gate still runs it.
 
 ## [0.7.0] — 2026-09-26
 
