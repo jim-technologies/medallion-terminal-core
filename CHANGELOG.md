@@ -4,6 +4,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.1] — 2026-09-28
+
 ### Added
 
 - **`make audit` and a weekly `audit` workflow.** The runtime dependencies
