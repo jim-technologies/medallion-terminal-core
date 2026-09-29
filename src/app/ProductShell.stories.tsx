@@ -307,8 +307,11 @@ export const LongNavigation: Story = {
   render: () => {
     const router = useMemo(() => createMemoryRouter('/destinations/0'), [])
     const sections: NavRailSection[] = [{
+      id: 'workspace',
+      items: [{ id: 'overview', label: 'Overview', icon: 'home', href: '/' }],
+    }, {
       id: 'destinations',
-      label: 'Workspace destinations',
+      label: 'Workspace_destinations_with_a_long_unbroken_section_name',
       items: Array.from({ length: 40 }, (_, index) => ({
         id: String(index),
         label: `destination-${String(index).padStart(2, '0')}-with-a-long-unbroken-name`,

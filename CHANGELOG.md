@@ -4,6 +4,14 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.5] — 2026-09-29
+
+### Fixed
+
+- Long unbroken navigation section headings wrap within the expanded rail.
+  Collapsed labels, vertical scrolling, keyboard navigation and mobile drawers
+  retain their existing behavior.
+
 ## [0.7.4] — 2026-09-28
 
 ### Fixed

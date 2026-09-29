@@ -185,8 +185,7 @@ interface StoryOptions {
 // Baseline stories render at one wall-clock instant, so live clocks,
 // relative times ("3 min ago") and "today" markers are identical on every
 // run and every day. Timers still run in real time; only `Date` is pinned.
-// Behaviour and axe tests keep the real clock: the pinned one delays the
-// Storybook a11y addon's own axe run until it overlaps the gate's.
+// Behaviour and axe tests keep the real clock.
 const FIXED_NOW = new Date('2026-07-22T18:45:00Z')
 
 async function openStory(page: Page, id: string, { theme = 'dark', density, pinClock = false }: StoryOptions = {}) {
@@ -209,16 +208,14 @@ async function openStory(page: Page, id: string, { theme = 'dark', density, pinC
       if (attempt >= 3 || !String(error).includes('Execution context was destroyed')) throw error
     }
   }
-  // A story's play function runs after the first render; compare and
-  // interact only once it has finished, so a baseline never captures a
-  // half-played story.
+  // Wait through play and afterEach: the accessibility addon owns axe until
+  // afterEach finishes, so an earlier phase can overlap the explicit audit.
   // The preview's "preparing" overlay must be gone too: a page screenshot
   // taken under it records a spinner instead of the story.
   await page.waitForFunction(() => {
     const preview = (window as unknown as { __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } } }).__STORYBOOK_PREVIEW__
     const phase = preview?.currentRender?.phase
-    return phase !== undefined
-      && ['played', 'completing', 'completed', 'afterEach', 'finished', 'errored', 'aborted'].includes(phase)
+    return phase === 'finished'
       && document.body.classList.contains('sb-show-main')
       && !document.body.classList.contains('sb-show-preparing-story')
   })
@@ -1248,13 +1245,22 @@ for (const theme of ['dark', 'light'] as const) {
 }
 
 for (const theme of ['dark', 'light'] as const) {
-  test(`navigation keeps its width with long labels and vertical scrolling in ${theme}`, async ({ page }) => {
+  test(`navigation keeps its width with long labels and vertical scrolling in ${theme}`, async ({ page }, testInfo) => {
     const root = await openStory(page, 'toolkit-app-productshell--long-navigation', { theme })
     const rail = root.getByRole('navigation', { name: 'Product navigation' })
     const lastName = 'destination-39-with-a-long-unbroken-name'
     const checkRail = async (nav: Locator) => {
       const scroller = nav.locator('.mtc-nav-rail-sections')
+      await expect(nav.getByRole('list')).toHaveCount(2)
       await expect.poll(() => scroller.evaluate(element => element.scrollWidth - element.clientWidth)).toBe(0)
+      const overflow = await nav.evaluate(element => [element, ...element.querySelectorAll('*')]
+        .filter(node => {
+          const style = getComputedStyle(node)
+          return ['auto', 'scroll'].includes(style.overflowX) || ['auto', 'scroll'].includes(style.overflowY)
+        })
+        .map(node => node.scrollWidth - node.clientWidth))
+      expect(overflow.length).toBeGreaterThan(0)
+      expect(overflow.every(width => width === 0)).toBe(true)
       expect(await scroller.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true)
       const last = nav.getByRole('link', { name: lastName })
       await last.focus()
@@ -1263,11 +1269,14 @@ for (const theme of ['dark', 'light'] as const) {
       const bounds = await last.evaluate(element => {
         const item = element.getBoundingClientRect()
         const scroll = element.closest('.mtc-nav-rail-sections')!.getBoundingClientRect()
-        return { left: item.left - scroll.left, right: scroll.right - item.right }
+        return { left: item.left - scroll.left, right: scroll.right - item.right, top: item.top - scroll.top, bottom: scroll.bottom - item.bottom }
       })
       expect(bounds.left).toBeGreaterThanOrEqual(0)
       expect(bounds.right).toBeGreaterThanOrEqual(0)
+      expect(bounds.top).toBeGreaterThanOrEqual(0)
+      expect(bounds.bottom).toBeGreaterThanOrEqual(0)
       expect(await scroller.evaluate(element => element.scrollLeft)).toBe(0)
+      expect(await scroller.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
       expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
     }
     for (const width of [1440, 820]) {
@@ -1279,6 +1288,10 @@ for (const theme of ['dark', 'light'] as const) {
       await expect(rail).toHaveAttribute('data-collapsed', 'true')
       await expect(rail.getByRole('button', { name: 'Expand navigation' })).toBeFocused()
       await checkRail(rail)
+      await expect(rail.getByRole('link', { name: lastName })).toHaveAttribute('title', lastName)
+      const screenshot = testInfo.outputPath(`collapsed-navigation-${width}.png`)
+      await page.screenshot({ path: screenshot })
+      await testInfo.attach(`collapsed-navigation-${width}`, { path: screenshot, contentType: 'image/png' })
       await rail.getByRole('button', { name: 'Expand navigation' }).click()
       await expect(rail).not.toHaveAttribute('data-collapsed')
     }

@@ -17,6 +17,7 @@
 .mtc-root .mtc-nav-rail-section ul { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; }
 .mtc-root .mtc-nav-rail-section-label {
   padding: var(--mtc-space-1) var(--mtc-space-2);
+  overflow-wrap: anywhere;
   color: var(--mtc-muted);
   font-size: var(--mtc-font-size-xs);
   font-weight: var(--mtc-font-weight-medium);
