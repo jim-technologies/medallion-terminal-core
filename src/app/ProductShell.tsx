@@ -17,6 +17,7 @@ import { ToastProvider } from '../components/Toast'
 import { DesignSystemProvider, useDesignSystem, useMessage } from '../foundations/DesignSystemProvider'
 import type { MessageCatalog } from '../foundations/messages'
 import type { Density, PresentationTheme } from '../foundations/types'
+import { useBreakpoint } from '../hooks/useBreakpoint'
 import { NavRail, type NavRailItem, type NavRailSection } from '../workbench/NavRail'
 import { LoadingState, SignedOutState } from '../workbench/States'
 import { createEmbedChannel, type EmbedChannel } from './embed'
@@ -269,10 +270,30 @@ function StandaloneFrame(props: FrameProps) {
   } = props
   const t = useMessage()
   const { pathname } = useLocation()
+  const mobile = useBreakpoint() === 'mobile'
   const [collapsed, setCollapsed] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [paletteOpen, setPaletteOpen] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
+  const searchRef = useRef<HTMLButtonElement | null>(null)
+  const searchHadFocus = useRef(false)
+  const paletteFromSearch = useRef(false)
+  const attachSearch = useCallback((button: HTMLButtonElement | null) => {
+    if (!button) searchHadFocus.current = searchRef.current === document.activeElement
+    searchRef.current = button
+    if (button && searchHadFocus.current) {
+      searchHadFocus.current = false
+      button.focus()
+    }
+  }, [])
+  const changePaletteOpen = useCallback((open: boolean) => {
+    if (open) paletteFromSearch.current = searchRef.current === document.activeElement
+    setPaletteOpen(open)
+    if (!open && paletteFromSearch.current) searchRef.current?.focus()
+  }, [])
+  useEffect(() => {
+    if (!search) searchHadFocus.current = false
+  }, [search])
 
   const navigate = useCallback((item: NavRailItem) => {
     if (!item.href) return
@@ -309,6 +330,16 @@ function StandaloneFrame(props: FrameProps) {
       className={drawer ? 'mtc-shell-drawer-rail' : 'mtc-shell-rail'}
     />
   )
+  const searchControl = search && (
+    <button ref={attachSearch} type="button" className="mtc-shell-search" aria-label={search.placeholder ?? t('shell.search')} onClick={event => {
+      event.currentTarget.focus()
+      changePaletteOpen(true)
+    }}>
+      <Icon name="search" />
+      <span className="mtc-shell-search-text">{search.placeholder ?? t('shell.search')}</span>
+      <Kbd aria-hidden="true">Ctrl K</Kbd>
+    </button>
+  )
 
   return (
     <div
@@ -323,46 +354,46 @@ function StandaloneFrame(props: FrameProps) {
       }}>
         {t('shell.skip')}
       </a>
-      <header className="mtc-shell-topbar">
-        {nav && (
-          <IconButton
-            icon={<Icon name="menu" />}
-            aria-label={t('shell.menu')}
-            variant="ghost"
-            className="mtc-shell-menu"
-            onClick={() => setDrawerOpen(true)}
-          />
-        )}
-        <a
-          className="mtc-shell-product"
-          href={router.href(product.home ?? '/')}
-          onClick={event => {
-            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) return
-            event.preventDefault()
-            router.navigate(product.home ?? '/')
-          }}
-        >
-          <span className="mtc-shell-mark" aria-hidden="true"><Icon name={product.icon ?? 'object'} /></span>
-          <span>{product.name}</span>
-        </a>
-        {scope && <div className="mtc-shell-scope">{scope}</div>}
-        {search && (
-          <button type="button" className="mtc-shell-search" onClick={() => setPaletteOpen(true)}>
-            <Icon name="search" />
-            <span className="mtc-shell-search-text">{search.placeholder ?? t('shell.search')}</span>
-            <Kbd aria-hidden="true">Ctrl K</Kbd>
-          </button>
-        )}
-        <div className="mtc-shell-actions">
-          {actions}
-          {account?.authenticated && (
-            <Menu
-              label={t('shell.account')}
-              align="end"
-              trigger={<Avatar name={account.displayName ?? account.subject ?? '?'} decorative />}
-              items={menuItems.length > 0 ? menuItems : [{ id: 'who', label: account.displayName ?? account.subject ?? '', disabled: true }]}
+      <header className="mtc-shell-topbar" data-search={search ? 'true' : undefined}>
+        <div className="mtc-shell-identity">
+          {nav && (
+            <IconButton
+              icon={<Icon name="menu" />}
+              aria-label={t('shell.menu')}
+              variant="ghost"
+              className="mtc-shell-menu"
+              onClick={() => setDrawerOpen(true)}
             />
           )}
+          <a
+            className="mtc-shell-product"
+            title={product.name}
+            href={router.href(product.home ?? '/')}
+            onClick={event => {
+              if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) return
+              event.preventDefault()
+              router.navigate(product.home ?? '/')
+            }}
+          >
+            <span className="mtc-shell-mark" aria-hidden="true"><Icon name={product.icon ?? 'object'} /></span>
+            <span className="mtc-shell-product-name">{product.name}</span>
+          </a>
+          {scope && <div className="mtc-shell-scope">{scope}</div>}
+        </div>
+        {!mobile && searchControl}
+        <div className="mtc-shell-actions">
+          {actions && <div className="mtc-shell-product-actions">{actions}</div>}
+          {mobile && searchControl}
+          <div className="mtc-shell-account" aria-hidden={!account?.authenticated || undefined}>
+            {account?.authenticated && (
+              <Menu
+                label={t('shell.account')}
+                align="end"
+                trigger={<Avatar name={account.displayName ?? account.subject ?? '?'} decorative />}
+                items={menuItems.length > 0 ? menuItems : [{ id: 'who', label: account.displayName ?? account.subject ?? '', disabled: true }]}
+              />
+            )}
+          </div>
         </div>
       </header>
       {nav && <div className="mtc-shell-rail-slot">{rail(false)}</div>}
@@ -379,7 +410,7 @@ function StandaloneFrame(props: FrameProps) {
       {search && (
         <CommandPalette
           open={paletteOpen}
-          onOpenChange={setPaletteOpen}
+          onOpenChange={changePaletteOpen}
           query={search.query}
           onQueryChange={search.onQueryChange}
           groups={search.groups}

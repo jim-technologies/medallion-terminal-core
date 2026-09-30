@@ -4,7 +4,7 @@
   - button "Open navigation"
   - link "Storage":
     - /url: /buckets
-  - button
+  - button "Search files"
   - button "Account"
 - main:
   - navigation "Breadcrumbs":

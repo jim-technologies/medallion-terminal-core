@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
-import { Button, Icon, StatusBadge, TypeGlyph, type CommandGroup } from '../components'
+import { Button, Icon, Menu, StatusBadge, TypeGlyph, type CommandGroup } from '../components'
 import { ObjectHeader } from '../objects'
 import { DataGrid, EmptyState, PageHeader, PropertyList, type NavRailSection } from '../workbench'
 import {
@@ -115,7 +115,7 @@ const signedIn: SessionPort = {
   signOut: fn(),
 }
 
-function StorageShell({ initialPath = '/b/finance', operations = OPERATIONS, session = signedIn }: { initialPath?: string; operations?: Operation[]; session?: SessionPort }) {
+function StorageShell({ initialPath = '/b/finance', operations = OPERATIONS, session = signedIn, productName = 'Storage', actions, scope = <Button size="small" endIcon={<Icon name="chevron-down" />}>Northstar workspace</Button> }: { initialPath?: string; operations?: Operation[]; session?: SessionPort | null; productName?: string; actions?: ReactNode; scope?: ReactNode }) {
   const router = useMemo(() => createMemoryRouter(initialPath), [initialPath])
   const [query, setQuery] = useState('')
   const [ops, setOps] = useState(operations)
@@ -128,12 +128,13 @@ function StorageShell({ initialPath = '/b/finance', operations = OPERATIONS, ses
   }], [query])
   return (
     <ProductShell
-      product={{ name: 'Storage', icon: 'bucket', home: '/buckets' }}
+      product={{ name: productName, icon: 'bucket', home: '/buckets' }}
       router={router}
-      session={session}
+      session={session ?? undefined}
       nav={NAV}
-      scope={<Button size="small" endIcon={<Icon name="chevron-down" />}>Northstar workspace</Button>}
+      scope={scope}
       search={{ placeholder: 'Search files', query, onQueryChange: setQuery, groups, onSelect: item => { document.title = `Opened ${item.id}` } }}
+      actions={actions}
       status={(
         <>
           <StatusBadge tone="warning">Prototype data</StatusBadge>
@@ -167,6 +168,35 @@ function StorageShell({ initialPath = '/b/finance', operations = OPERATIONS, ses
 export const StandaloneShell: Story = {
   name: 'Standalone',
   render: () => <StorageShell />,
+}
+
+export const ResponsiveProductIdentity: Story = {
+  render: () => (
+    <StorageShell
+      productName="Northstar Enterprise Storage"
+      operations={[]}
+      actions={<Menu label="Appearance" trigger={<Icon name="settings" />} items={[{ id: 'system', label: 'Use system theme', onSelect: fn() }]} />}
+    />
+  ),
+}
+
+export const SearchWithWorkspace: Story = {
+  render: () => <StorageShell productName="Northstar Tables" operations={[]} scope={<span className="min-w-0 truncate" title="Workspace ws_northstar_customer_operations">ws_northstar_customer_operations</span>} />,
+}
+
+export const SearchWithoutAccount: Story = {
+  render: () => <StorageShell productName="Northstar Git" operations={[]} session={null} scope={<span className="min-w-0 truncate" title="Workspace ws_northstar">ws_northstar</span>} />,
+}
+
+export const SearchWithActions: Story = {
+  render: () => (
+    <StorageShell
+      productName="Northstar Storage"
+      operations={[]}
+      scope={null}
+      actions={<Menu label="Appearance" trigger={<Icon name="settings" />} items={[{ id: 'system', label: 'Use system theme', onSelect: fn() }]} />}
+    />
+  ),
 }
 
 function expiringPort(): SessionPort {

@@ -633,6 +633,133 @@ test('ProductShell moves the navigation into a drawer on phones', async ({ page 
   await expect(root.getByRole('heading', { name: 'Activity', level: 1 })).toBeVisible()
 })
 
+for (const theme of ['dark', 'light'] as const) {
+  test(`ProductShell keeps long product names and controls within narrow headers in ${theme}`, async ({ page }, testInfo) => {
+    const productName = 'Northstar Enterprise Storage'
+    const root = await openStory(page, 'toolkit-app-productshell--responsive-product-identity', { theme })
+    const header = root.getByRole('banner')
+    const product = header.getByRole('link', { name: productName, exact: true })
+    const search = header.getByRole('button', { name: 'Search files', exact: true })
+    const appearance = header.getByRole('button', { name: 'Appearance', exact: true })
+    const account = header.getByRole('button', { name: 'Account', exact: true })
+    const menu = header.getByRole('button', { name: 'Open navigation', exact: true })
+    await expect(account).toBeVisible()
+    for (const width of [1440, 768, 767, 390, 320]) {
+      await page.setViewportSize({ width, height: 844 })
+      await expect(product).toHaveAttribute('title', productName)
+      await expect(product).toHaveText(productName)
+      for (const control of [product, search, appearance, account, ...(width < 768 ? [menu] : [])]) {
+        await expect(control).toBeVisible()
+        await expect(control).toBeInViewport({ ratio: 1 })
+      }
+      const bounds = await header.evaluate(element => [...element.querySelectorAll('a, button')]
+        .filter(child => child.getBoundingClientRect().width > 0)
+        .map(child => { const rect = child.getBoundingClientRect(); return { left: rect.left, right: rect.right } }))
+      for (let index = 1; index < bounds.length; index++) expect(bounds[index]!.left).toBeGreaterThanOrEqual(bounds[index - 1]!.right)
+      expect(await header.evaluate(element => element.scrollWidth - element.clientWidth)).toBe(0)
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
+      const label = product.locator('.mtc-shell-product-name')
+      if (width === 320) expect(await label.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true)
+      if (width === 320 || width === 1440) {
+        const screenshot = testInfo.outputPath(`product-header-${width}-${theme}.png`)
+        await header.screenshot({ path: screenshot })
+        await testInfo.attach(`product-header-${width}`, { path: screenshot, contentType: 'image/png' })
+      }
+    }
+    await search.focus()
+    await page.keyboard.press('Enter')
+    await expect(page.getByRole('dialog', { name: 'Command palette' }).getByRole('combobox')).toBeFocused()
+    await page.keyboard.press('Escape')
+    await expect(search).toBeFocused()
+    await appearance.click()
+    await expect(page.getByRole('menuitem', { name: 'Use system theme' })).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(appearance).toBeFocused()
+    await account.click()
+    await expect(page.getByRole('menuitem', { name: 'Sign out' })).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(account).toBeFocused()
+    await menu.click()
+    await expect(page.getByRole('dialog', { name: productName, exact: true })).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(menu).toBeFocused()
+    for (const [from, to] of [[768, 767], [767, 768]] as const) {
+      await page.setViewportSize({ width: from, height: 844 })
+      await search.focus()
+      await page.setViewportSize({ width: to, height: 844 })
+      await expect(search).toBeFocused()
+      await page.keyboard.press('Enter')
+      const paletteInput = page.getByRole('dialog', { name: 'Command palette' }).getByRole('combobox')
+      await expect(paletteInput).toBeFocused()
+      await page.setViewportSize({ width: from, height: 844 })
+      await expect(paletteInput).toBeFocused()
+      await page.keyboard.press('Escape')
+      await expect(search).toBeFocused()
+      await product.focus()
+      await page.keyboard.press('Control+k')
+      await expect(paletteInput).toBeFocused()
+      await page.setViewportSize({ width: to, height: 844 })
+      await page.keyboard.press('Escape')
+      await expect(product).toBeFocused()
+    }
+  })
+
+  test(`ProductShell search has one shared position across product headers in ${theme}`, async ({ page }) => {
+    const fixtures = [
+      { story: 'search-with-workspace', account: true, actions: false },
+      { story: 'search-without-account', account: false, actions: false },
+      { story: 'search-with-actions', account: true, actions: true },
+    ]
+    const positions = new Map<number, { x: number; width: number }>()
+    for (const fixture of fixtures) {
+      const root = await openStory(page, `toolkit-app-productshell--${fixture.story}`, { theme })
+      const header = root.getByRole('banner')
+      const search = header.getByRole('button', { name: 'Search files', exact: true })
+      await expect(root.getByRole('grid', { name: 'Files in finance' })).toBeVisible()
+      if (!fixture.account) {
+        await expect(header.locator('.mtc-shell-account')).toHaveAttribute('aria-hidden', 'true')
+        await expect(header.getByRole('button', { name: 'Account' })).toHaveCount(0)
+      }
+      for (const width of [1440, 1280, 768, 390, 320]) {
+        await page.setViewportSize({ width, height: 844 })
+        await expect(search).toHaveCount(1)
+        await expect(search).toBeInViewport({ ratio: 1 })
+        if (width >= 768) {
+          await expect.poll(async () => {
+            const box = (await search.boundingBox())!
+            return Math.abs(box.x + box.width / 2 - width / 2)
+          }).toBeLessThanOrEqual(0.5)
+        }
+        const box = (await search.boundingBox())!
+        const previous = positions.get(width)
+        if (previous) {
+          expect(Math.abs(box.x - previous.x)).toBeLessThanOrEqual(0.5)
+          expect(Math.abs(box.width - previous.width)).toBeLessThanOrEqual(0.5)
+        } else positions.set(width, { x: box.x, width: box.width })
+        const controls = await header.evaluate(element => [...element.querySelectorAll('a, button')]
+          .filter(child => child.getBoundingClientRect().width > 0)
+          .map(child => { const rect = child.getBoundingClientRect(); return { left: rect.left, right: rect.right } }))
+        for (let index = 1; index < controls.length; index++) expect(controls[index]!.left).toBeGreaterThanOrEqual(controls[index - 1]!.right)
+        expect(controls[0]!.left).toBeGreaterThanOrEqual(0)
+        expect(controls.at(-1)!.right).toBeLessThanOrEqual(width)
+        expect(await header.evaluate(element => element.scrollWidth - element.clientWidth)).toBe(0)
+        expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
+        await search.focus()
+        await page.keyboard.press('Tab')
+        if (width >= 768 && fixture.actions) await expect(header.getByRole('button', { name: 'Appearance' })).toBeFocused()
+        else if (fixture.account) await expect(header.getByRole('button', { name: 'Account' })).toBeFocused()
+        else expect(await header.evaluate(element => element.contains(document.activeElement))).toBe(false)
+        if (width < 768) {
+          await search.focus()
+          await page.keyboard.press('Shift+Tab')
+          if (fixture.actions) await expect(header.getByRole('button', { name: 'Appearance' })).toBeFocused()
+          else await expect(header.getByRole('link')).toBeFocused()
+        }
+      }
+    }
+  })
+}
+
 test('Object explorer template narrows the grid from facets and previews the selection', async ({ page }) => {
   const root = await openStory(page, stories.templateObjectExplorer)
   const grid = root.getByRole('grid', { name: 'Customers' })

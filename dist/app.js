@@ -4,45 +4,46 @@ import { r as u } from "./types-DZxjyhu_.js";
 import { _ as d, a as f, c as p, d as m, h, i as g, l as _, m as v, n as y, o as b, r as x, s as S, t as C, u as w } from "./sourceError-CTpw8oGk.js";
 import { i as T, n as E, r as D } from "./Overlays-BqanRm2f.js";
 import { t as O } from "./NavRail-DwdEw9a-.js";
-import { createContext as k, forwardRef as A, useCallback as j, useContext as M, useEffect as N, useId as ee, useMemo as P, useRef as F, useState as I, useSyncExternalStore as L } from "react";
+import { t as ee } from "./useBreakpoint-CvBnDyn0.js";
+import { createContext as k, forwardRef as te, useCallback as A, useContext as j, useEffect as M, useId as N, useMemo as P, useRef as F, useState as I, useSyncExternalStore as L } from "react";
 import { Fragment as R, jsx as z, jsxs as B } from "react/jsx-runtime";
-import { createPortal as V } from "react-dom";
+import { createPortal as ne } from "react-dom";
 //#region src/app/productFetch.ts
-var H = "x-request-id", U = "traceparent", te = "connect-timeout-ms";
-function W(e) {
+var V = "x-request-id", H = "traceparent", re = "connect-timeout-ms";
+function U(e) {
 	let t = new Uint8Array(e);
 	return globalThis.crypto.getRandomValues(t), Array.from(t, (e) => e.toString(16).padStart(2, "0")).join("");
 }
-function ne() {
-	return `00-${W(16)}-${W(8)}-01`;
+function W() {
+	return `00-${U(16)}-${U(8)}-01`;
 }
-function re() {
-	return typeof globalThis.crypto?.randomUUID == "function" ? globalThis.crypto.randomUUID() : W(16);
+function G() {
+	return typeof globalThis.crypto?.randomUUID == "function" ? globalThis.crypto.randomUUID() : U(16);
 }
-function ie(e) {
+function K(e) {
 	return typeof e == "string" ? e : e instanceof URL ? e.href : e.url;
 }
-function ae(e, t) {
+function q(e, t) {
 	return (t?.method ?? (e instanceof Request ? e.method : "GET")).toUpperCase();
 }
-function oe(e, t) {
+function J(e, t) {
 	let n = t?.body ?? (e instanceof Request ? e.body : null);
 	return n instanceof Blob || n instanceof FormData || n instanceof ReadableStream;
 }
-function se(e, t, n, r) {
-	let i = r?.timeoutMs === void 0 ? t.has(te) || oe(n, r) ? void 0 : e : r.timeoutMs;
+function ie(e, t, n, r) {
+	let i = r?.timeoutMs === void 0 ? t.has(re) || J(n, r) ? void 0 : e : r.timeoutMs;
 	return i && i > 0 ? i : void 0;
 }
-function ce(e) {
+function ae(e) {
 	let t = e.filter((e) => !!e);
 	return t.length <= 1 ? t[0] : AbortSignal.any(t);
 }
-function le(e = {}) {
-	let { onUnauthenticated: t, timeoutMs: n, onRequest: r, newRequestId: i = re, newTraceparent: a = ne, now: o = () => performance.now() } = e;
+function oe(e = {}) {
+	let { onUnauthenticated: t, timeoutMs: n, onRequest: r, newRequestId: i = G, newTraceparent: a = W, now: o = () => performance.now() } = e;
 	return async function(s, c) {
 		let l = e.fetch ?? globalThis.fetch, u = new Headers(c?.headers ?? (s instanceof Request ? s.headers : void 0));
-		u.has(H) || u.set(H, i()), u.has(U) || u.set(U, a());
-		let d = u.get(H), p = u.get(U), m = c?.signal ?? (s instanceof Request ? s.signal : void 0), h = se(n, u, s, c), g = h ? new AbortController() : void 0, _ = g ? setTimeout(() => g.abort(new DOMException(`No response within ${h} ms`, "TimeoutError")), h) : void 0, v = ae(s, c), y = ie(s), b = o(), x = (e) => r?.({
+		u.has(V) || u.set(V, i()), u.has(H) || u.set(H, a());
+		let d = u.get(V), p = u.get(H), m = c?.signal ?? (s instanceof Request ? s.signal : void 0), h = ie(n, u, s, c), g = h ? new AbortController() : void 0, _ = g ? setTimeout(() => g.abort(new DOMException(`No response within ${h} ms`, "TimeoutError")), h) : void 0, v = q(s, c), y = K(s), b = o(), x = (e) => r?.({
 			method: v,
 			url: y,
 			requestId: d,
@@ -54,14 +55,14 @@ function le(e = {}) {
 			D = await l(s, {
 				...E,
 				headers: u,
-				signal: ce([m ?? void 0, g?.signal])
+				signal: ae([m ?? void 0, g?.signal])
 			});
 		} catch (e) {
 			if (m?.aborted) throw e;
 			let t = g?.signal.aborted ? new C(`Request timed out after ${h} ms`, {
 				kind: "unavailable",
 				requestId: d
-			}) : ue(w(e), d);
+			}) : se(w(e), d);
 			throw x({ error: t }), t;
 		} finally {
 			clearTimeout(_);
@@ -74,7 +75,7 @@ function le(e = {}) {
 		}), D.status === 401 && t?.(O), D;
 	};
 }
-function ue(e, t) {
+function se(e, t) {
 	return e.requestId ? e : new C(e.message, {
 		kind: e.kind,
 		status: e.status,
@@ -83,13 +84,13 @@ function ue(e, t) {
 		requestId: t
 	});
 }
-async function de(e) {
+async function ce(e) {
 	if (e.ok) return e;
 	throw await S(e);
 }
 //#endregion
 //#region src/app/router.ts
-function G(e) {
+function Y(e) {
 	let t = new URL(e, "http://app.local");
 	return {
 		pathname: t.pathname,
@@ -97,13 +98,13 @@ function G(e) {
 		hash: t.hash
 	};
 }
-function fe(e) {
+function le(e) {
 	let t = e.replace(/\/+$/, "");
 	return t === "" || t.startsWith("/") ? t : `/${t}`;
 }
-function pe({ base: e = "", window: t = globalThis.window } = {}) {
-	let n = fe(e), r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e()), a = (e) => n && (e === n || e.startsWith(`${n}/`)) ? e.slice(n.length) || "/" : e, o = () => i(), s = (e) => {
-		let { pathname: t, search: r, hash: i } = G(e);
+function ue({ base: e = "", window: t = globalThis.window } = {}) {
+	let n = le(e), r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e()), a = (e) => n && (e === n || e.startsWith(`${n}/`)) ? e.slice(n.length) || "/" : e, o = () => i(), s = (e) => {
+		let { pathname: t, search: r, hash: i } = Y(e);
 		return `${n}${t}${r}${i}`;
 	};
 	return {
@@ -130,12 +131,12 @@ function pe({ base: e = "", window: t = globalThis.window } = {}) {
 		href: s
 	};
 }
-function me(e = "/") {
-	let t = [G(e)], n = 0, r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e());
+function de(e = "/") {
+	let t = [Y(e)], n = 0, r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e());
 	return {
 		location: () => t[n],
 		navigate(e, r) {
-			let a = G(e);
+			let a = Y(e);
 			r?.replace ? t[n] = a : (t.splice(n + 1, t.length, a), n = t.length - 1), i();
 		},
 		back() {
@@ -145,43 +146,43 @@ function me(e = "/") {
 			return r.add(e), () => r.delete(e);
 		},
 		href: (e) => {
-			let { pathname: t, search: n, hash: r } = G(e);
+			let { pathname: t, search: n, hash: r } = Y(e);
 			return `${t}${n}${r}`;
 		}
 	};
 }
-function K(e) {
+function fe(e) {
 	try {
 		return decodeURIComponent(e);
 	} catch {
 		return null;
 	}
 }
-function q(e, t) {
+function pe(e, t) {
 	let n = e.split("/").filter(Boolean), r = t.split("/").filter(Boolean), i = {};
 	for (let e = 0; e < n.length; e++) {
 		let t = n[e];
 		if (t.startsWith("*")) {
-			let n = r.slice(e).map(K);
+			let n = r.slice(e).map(fe);
 			return n.some((e) => e === null) ? null : (i[t.slice(1) || "splat"] = n.join("/"), i);
 		}
 		let a = r[e];
 		if (a === void 0) return null;
 		if (t.startsWith(":")) {
-			let e = K(a);
+			let e = fe(a);
 			if (e === null) return null;
 			i[t.slice(1)] = e;
 		} else if (t !== a) return null;
 	}
 	return r.length === n.length ? i : null;
 }
-function he(e, t) {
+function me(e, t) {
 	let n = t;
 	return `/${e.split("/").filter(Boolean).map((e) => e.startsWith("*") ? (n[e.slice(1) || "splat"] ?? "").split("/").filter(Boolean).map(encodeURIComponent).join("/") : e.startsWith(":") ? encodeURIComponent(n[e.slice(1)] ?? "") : e).filter(Boolean).join("/")}`;
 }
-function ge(e, t) {
+function he(e, t) {
 	for (let [n, r] of Object.entries(e)) {
-		let e = q(r, t);
+		let e = pe(r, t);
 		if (e) return {
 			id: n,
 			params: e
@@ -191,37 +192,37 @@ function ge(e, t) {
 }
 //#endregion
 //#region src/app/routing.tsx
-var _e = k(null);
-function ve({ router: e, children: t }) {
-	return /* @__PURE__ */ z(_e.Provider, {
+var ge = k(null);
+function _e({ router: e, children: t }) {
+	return /* @__PURE__ */ z(ge.Provider, {
 		value: e,
 		children: t
 	});
 }
-function J() {
-	let e = M(_e);
+function X() {
+	let e = j(ge);
 	if (!e) throw Error("useRouter must be used inside a RouterProvider or ProductShell");
 	return e;
 }
-function ye(e, t) {
+function ve(e, t) {
 	return e.pathname === t.pathname && e.search === t.search && e.hash === t.hash;
 }
-function Y() {
-	let e = J(), t = P(() => (t) => e.subscribe(t), [e]), n = P(() => {
+function Z() {
+	let e = X(), t = P(() => (t) => e.subscribe(t), [e]), n = P(() => {
 		let t = e.location();
 		return () => {
 			let n = e.location();
-			return ye(t, n) || (t = n), t;
+			return ve(t, n) || (t = n), t;
 		};
 	}, [e]);
 	return L(t, n, n);
 }
-function be(e) {
-	let { pathname: t } = Y();
-	return P(() => ge(e, t), [e, t]);
+function ye(e) {
+	let { pathname: t } = Z();
+	return P(() => he(e, t), [e, t]);
 }
-var xe = A(function({ to: e, replace: t, onClick: n, ...r }, i) {
-	let a = J();
+var be = te(function({ to: e, replace: t, onClick: n, ...r }, i) {
+	let a = X();
 	return /* @__PURE__ */ z("a", {
 		...r,
 		ref: i,
@@ -233,14 +234,14 @@ var xe = A(function({ to: e, replace: t, onClick: n, ...r }, i) {
 });
 //#endregion
 //#region src/app/session.ts
-function Se(e) {
+function xe(e) {
 	if (typeof e == "number" && Number.isFinite(e)) return e < 0xe8d4a51000 ? e * 1e3 : e;
 	if (typeof e == "string" && e !== "") {
 		let t = Date.parse(e);
 		return Number.isNaN(t) ? void 0 : t;
 	}
 }
-function Ce(e) {
+function Se(e) {
 	let t = e && typeof e == "object" ? e : {}, n = (e, n) => {
 		let r = t[e] ?? t[n];
 		return typeof r == "string" && r !== "" ? r : void 0;
@@ -250,11 +251,11 @@ function Ce(e) {
 		subject: n("subject", "sub"),
 		displayName: n("displayName", "display_name"),
 		workspaceId: n("workspaceId", "workspace_id"),
-		expiresAt: Se(t.expiresAt ?? t.expires_at),
+		expiresAt: xe(t.expiresAt ?? t.expires_at),
 		signInUrl: n("signInUrl", "sign_in_url")
 	};
 }
-function we({ sessionUrl: e = "/auth/session", fetch: t, renew: n, signInHref: r, assign: i = (e) => globalThis.location.assign(e), signOut: a }) {
+function Ce({ sessionUrl: e = "/auth/session", fetch: t, renew: n, signInHref: r, assign: i = (e) => globalThis.location.assign(e), signOut: a }) {
 	let o = async (n) => {
 		let r = await (t ?? globalThis.fetch)(e, {
 			credentials: "same-origin",
@@ -263,7 +264,7 @@ function we({ sessionUrl: e = "/auth/session", fetch: t, renew: n, signInHref: r
 		});
 		if (r.status === 401) return { authenticated: !1 };
 		if (!r.ok) throw Error(`Session check failed: HTTP ${r.status}`);
-		return Ce(await r.json());
+		return Se(await r.json());
 	};
 	return {
 		load: o,
@@ -280,8 +281,8 @@ function we({ sessionUrl: e = "/auth/session", fetch: t, renew: n, signInHref: r
 		signOut: a
 	};
 }
-var Te = "mtc:session-renewed", Ee = "mtc:session-renew-failed";
-function De({ url: e, origin: t, timeoutMs: n = 15e3, window: r = globalThis.window }) {
+var we = "mtc:session-renewed", Te = "mtc:session-renew-failed";
+function Ee({ url: e, origin: t, timeoutMs: n = 15e3, window: r = globalThis.window }) {
 	let i = t ?? r.location.origin;
 	return new Promise((t, a) => {
 		let o = r.document.createElement("iframe");
@@ -298,27 +299,27 @@ function De({ url: e, origin: t, timeoutMs: n = 15e3, window: r = globalThis.win
 }
 //#endregion
 //#region src/app/useSessionController.ts
-var Oe = 6e4, ke = 2147483647;
-function Ae(e, t, { now: n = Date.now, document: r, setTimeout: i = (e, t) => globalThis.setTimeout(e, t), clearTimeout: a = (e) => globalThis.clearTimeout(e) }) {
+var De = 6e4, Oe = 2147483647;
+function ke(e, t, { now: n = Date.now, document: r, setTimeout: i = (e, t) => globalThis.setTimeout(e, t), clearTimeout: a = (e) => globalThis.clearTimeout(e) }) {
 	let o, s = () => {
 		o !== void 0 && a(o), o = void 0;
 	}, c = () => {
 		if (s(), r.hidden) return;
-		let a = e - Oe - n();
+		let a = e - De - n();
 		if (a <= 0) {
 			t();
 			return;
 		}
 		o = i(() => {
-			o = void 0, a > ke ? c() : t();
-		}, Math.min(a, ke));
+			o = void 0, a > Oe ? c() : t();
+		}, Math.min(a, Oe));
 	};
 	return c(), r.addEventListener("visibilitychange", c), () => {
 		s(), r.removeEventListener("visibilitychange", c);
 	};
 }
-function je(e, t = {}) {
-	let n = t.now ?? Date.now, r = t.document ?? (typeof document > "u" ? void 0 : document), [i, a] = I(e ? "loading" : "authenticated"), [o, s] = I(null), c = F(null), l = j(() => {
+function Ae(e, t = {}) {
+	let n = t.now ?? Date.now, r = t.document ?? (typeof document > "u" ? void 0 : document), [i, a] = I(e ? "loading" : "authenticated"), [o, s] = I(null), c = F(null), l = A(() => {
 		if (!e) return Promise.resolve(!0);
 		if (c.current) return c.current;
 		let t = e.renew().then((e) => (s(e), a("authenticated"), !0), () => (a("expired"), !1)).finally(() => {
@@ -326,7 +327,7 @@ function je(e, t = {}) {
 		});
 		return c.current = t, t;
 	}, [e]);
-	N(() => {
+	M(() => {
 		if (!e) return;
 		let t = new AbortController();
 		return e.load(t.signal).then((e) => {
@@ -336,8 +337,8 @@ function je(e, t = {}) {
 		}), () => t.abort();
 	}, [e]);
 	let { setTimeout: u, clearTimeout: d } = t;
-	return N(() => {
-		if (e && i === "authenticated" && o?.expiresAt && r) return Ae(o.expiresAt, () => void l(), {
+	return M(() => {
+		if (e && i === "authenticated" && o?.expiresAt && r) return ke(o.expiresAt, () => void l(), {
 			now: n,
 			document: r,
 			setTimeout: u,
@@ -356,19 +357,19 @@ function je(e, t = {}) {
 		status: i,
 		session: o,
 		renew: l,
-		reportUnauthenticated: j(() => {
+		reportUnauthenticated: A(() => {
 			l();
 		}, [l])
 	};
 }
 //#endregion
 //#region src/app/resourceCache.ts
-var Me = Object.freeze({ validating: !1 });
-function Ne({ maxEntries: e = 100, now: t = Date.now } = {}) {
+var je = Object.freeze({ validating: !1 });
+function Me({ maxEntries: e = 100, now: t = Date.now } = {}) {
 	let n = /* @__PURE__ */ new Map(), r = (e) => {
 		let t = n.get(e);
 		return t ? n.delete(e) : t = {
-			snapshot: Me,
+			snapshot: je,
 			listeners: /* @__PURE__ */ new Set(),
 			version: 0
 		}, n.set(e, t), t;
@@ -408,7 +409,7 @@ function Ne({ maxEntries: e = 100, now: t = Date.now } = {}) {
 		}, i(o, { validating: !0 }), l;
 	};
 	return {
-		read: (e) => n.get(e)?.snapshot ?? Me,
+		read: (e) => n.get(e)?.snapshot ?? je,
 		subscribe(e, t) {
 			let n = r(e);
 			return n.listeners.add(t), () => {
@@ -433,20 +434,20 @@ function Ne({ maxEntries: e = 100, now: t = Date.now } = {}) {
 }
 //#endregion
 //#region src/app/useResource.tsx
-var Pe = k(null), Fe;
-function Ie({ cache: e, children: t }) {
-	return /* @__PURE__ */ z(Pe.Provider, {
+var Ne = k(null), Pe;
+function Fe({ cache: e, children: t }) {
+	return /* @__PURE__ */ z(Ne.Provider, {
 		value: e,
 		children: t
 	});
 }
-function Le() {
-	return M(Pe) ?? (Fe ??= Ne());
+function Ie() {
+	return j(Ne) ?? (Pe ??= Me());
 }
-function Re(e) {
+function Le(e) {
 	return typeof e == "string" ? e : JSON.stringify(e);
 }
-function ze({ document: e, intervalMs: t, onVisible: n = !0, isStale: r, revalidate: i, setTimeout: a = (e, t) => globalThis.setTimeout(e, t), clearTimeout: o = (e) => globalThis.clearTimeout(e) }) {
+function Re({ document: e, intervalMs: t, onVisible: n = !0, isStale: r, revalidate: i, setTimeout: a = (e, t) => globalThis.setTimeout(e, t), clearTimeout: o = (e) => globalThis.clearTimeout(e) }) {
 	let s, c = () => {
 		s !== void 0 && o(s), s = void 0;
 	}, l = () => {
@@ -460,11 +461,11 @@ function ze({ document: e, intervalMs: t, onVisible: n = !0, isStale: r, revalid
 		c(), e.removeEventListener("visibilitychange", u);
 	};
 }
-var Be = { validating: !1 }, Ve = () => () => {};
-function He(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisible: i = !0, document: a } = {}) {
-	let o = Le(), s = e === null ? null : Re(e), c = F(t);
+var ze = { validating: !1 }, Be = () => () => {};
+function Ve(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisible: i = !0, document: a } = {}) {
+	let o = Ie(), s = e === null ? null : Le(e), c = F(t);
 	c.current = t;
-	let l = j((e) => s === null ? Ve() : o.subscribe(s, e), [o, s]), u = L(l, () => s === null ? Be : o.read(s), () => s === null ? Be : o.read(s)), d = j(() => s === null ? Promise.resolve() : o.fetch(s, (e) => c.current(e)), [o, s]), f = j(() => {
+	let l = A((e) => s === null ? Be() : o.subscribe(s, e), [o, s]), u = L(l, () => s === null ? ze : o.read(s), () => s === null ? ze : o.read(s)), d = A(() => s === null ? Promise.resolve() : o.fetch(s, (e) => c.current(e)), [o, s]), f = A(() => {
 		if (s === null) return !1;
 		let { updatedAt: e } = o.read(s);
 		return e === void 0 || Date.now() - e >= n;
@@ -473,7 +474,7 @@ function He(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		s,
 		n
 	]);
-	N(() => {
+	M(() => {
 		s !== null && f() && d();
 	}, [
 		s,
@@ -481,8 +482,8 @@ function He(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		d
 	]);
 	let p = a ?? (typeof document > "u" ? void 0 : document);
-	N(() => {
-		if (s !== null && p) return ze({
+	M(() => {
+		if (s !== null && p) return Re({
 			document: p,
 			intervalMs: r,
 			onVisible: i,
@@ -497,7 +498,7 @@ function He(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		f,
 		d
 	]);
-	let m = j((e) => {
+	let m = A((e) => {
 		s !== null && o.set(s, e);
 	}, [o, s]), h = s === null ? "idle" : u.data === void 0 ? u.error ? "error" : "loading" : "success";
 	return {
@@ -512,18 +513,18 @@ function He(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 }
 //#endregion
 //#region src/app/telemetry.ts
-function Ue(e) {
+function He(e) {
 	try {
 		return new URL(e, "http://app.local").pathname;
 	} catch {
 		return e.split("?")[0] ?? e;
 	}
 }
-function We(e) {
+function Ue(e) {
 	return (t) => e.record({
 		type: "request",
 		method: t.method,
-		path: Ue(t.url),
+		path: He(t.url),
 		status: t.status,
 		code: t.error ? t.error.code ?? t.error.kind : void 0,
 		requestId: t.requestId,
@@ -532,13 +533,13 @@ function We(e) {
 }
 //#endregion
 //#region src/app/embed.ts
-var Ge = /* @__PURE__ */ new Set([
+var We = /* @__PURE__ */ new Set([
 	"dark",
 	"light",
 	"operator",
 	"high-contrast"
 ]);
-function Ke(e) {
+function Ge(e) {
 	if (!e || typeof e != "object") return null;
 	let t = e;
 	return t.version === 1 ? t.type === "mtc:navigate" ? typeof t.path == "string" && /^\/(?![/\\])/.test(t.path) ? {
@@ -548,12 +549,12 @@ function Ke(e) {
 	} : null : t.type === "mtc:init" ? {
 		type: "mtc:init",
 		version: 1,
-		theme: typeof t.theme == "string" && Ge.has(t.theme) ? t.theme : void 0,
+		theme: typeof t.theme == "string" && We.has(t.theme) ? t.theme : void 0,
 		locale: typeof t.locale == "string" ? t.locale : void 0,
 		timeZone: typeof t.timeZone == "string" ? t.timeZone : void 0
 	} : null : null;
 }
-function qe({ allowedOrigins: e, window: t = globalThis.window }) {
+function Ke({ allowedOrigins: e, window: t = globalThis.window }) {
 	let n = null;
 	try {
 		n = t.document.referrer ? new URL(t.document.referrer).origin : null;
@@ -569,7 +570,7 @@ function qe({ allowedOrigins: e, window: t = globalThis.window }) {
 		subscribe(e) {
 			let n = (n) => {
 				if (!r || n.origin !== r || n.source !== t.parent) return;
-				let i = Ke(n.data);
+				let i = Ge(n.data);
 				i && e(i);
 			};
 			return t.addEventListener("message", n), () => t.removeEventListener("message", n);
@@ -578,28 +579,28 @@ function qe({ allowedOrigins: e, window: t = globalThis.window }) {
 }
 //#endregion
 //#region src/app/OperationsTray.tsx
-var Je = {
+var qe = {
 	queued: "clock",
 	running: "spinner",
 	succeeded: "success",
 	failed: "error",
 	cancelled: "close"
-}, X = /* @__PURE__ */ new Set([
+}, Q = /* @__PURE__ */ new Set([
 	"succeeded",
 	"failed",
 	"cancelled"
-]), Ye = "(max-width: 720px)";
-function Xe() {
-	return typeof window > "u" || typeof window.matchMedia != "function" || !window.matchMedia(Ye).matches;
+]), Je = "(max-width: 720px)";
+function Ye() {
+	return typeof window > "u" || typeof window.matchMedia != "function" || !window.matchMedia(Je).matches;
 }
-function Z({ operations: e, title: r, onCancel: o, onRetry: c, onDismiss: u, onClearFinished: d, open: f, defaultOpen: p, onOpenChange: m, placement: h = "floating" }) {
-	let g = n(), _ = ee(), v = t(), [y] = I(() => p ?? Xe()), [b, x] = l({
+function Xe({ operations: e, title: r, onCancel: o, onRetry: c, onDismiss: u, onClearFinished: d, open: f, defaultOpen: p, onOpenChange: m, placement: h = "floating" }) {
+	let g = n(), _ = N(), v = t(), [y] = I(() => p ?? Ye()), [b, x] = l({
 		value: f,
 		defaultValue: y,
 		onChange: m
 	}), S = F(/* @__PURE__ */ new Map()), [C, w] = I("");
-	N(() => {
-		let t = e.filter((e) => X.has(e.status) && S.current.get(e.id) !== e.status);
+	M(() => {
+		let t = e.filter((e) => Q.has(e.status) && S.current.get(e.id) !== e.status);
 		S.current = new Map(e.map((e) => [e.id, e.status])), t.length > 0 && w(t.map((e) => `${e.label}: ${g(`ops.status.${e.status}`)}`).join(". "));
 	}, [e, g]);
 	let T = P(() => {
@@ -619,7 +620,7 @@ function Z({ operations: e, title: r, onCancel: o, onRetry: c, onDismiss: u, onC
 		T.queued > 0 && g("ops.queued", { count: T.queued }),
 		T.failed > 0 && g("ops.failed", { count: T.failed }),
 		T.succeeded > 0 && g("ops.done", { count: T.succeeded })
-	].filter(Boolean).join(" · "), D = e.some((e) => X.has(e.status)), O = /* @__PURE__ */ B("section", {
+	].filter(Boolean).join(" · "), D = e.some((e) => Q.has(e.status)), O = /* @__PURE__ */ B("section", {
 		className: "mtc-operations-tray",
 		"aria-label": r ?? g("ops.title"),
 		"data-open": b || void 0,
@@ -664,13 +665,13 @@ function Z({ operations: e, title: r, onCancel: o, onRetry: c, onDismiss: u, onC
 				id: _,
 				className: "mtc-operations-list",
 				children: e.map((e) => {
-					let t = X.has(e.status), n = e.progress === void 0 ? void 0 : Math.round(Math.min(1, Math.max(0, e.progress)) * 100);
+					let t = Q.has(e.status), n = e.progress === void 0 ? void 0 : Math.round(Math.min(1, Math.max(0, e.progress)) * 100);
 					return /* @__PURE__ */ B("li", {
 						className: "mtc-operation",
 						"data-status": e.status,
 						children: [
 							/* @__PURE__ */ z(a, {
-								name: Je[e.status],
+								name: qe[e.status],
 								className: "mtc-operation-icon",
 								label: g(`ops.status.${e.status}`)
 							}),
@@ -740,24 +741,24 @@ function Z({ operations: e, title: r, onCancel: o, onRetry: c, onDismiss: u, onC
 			})] })
 		]
 	});
-	return h === "floating" && v ? V(O, v) : O;
+	return h === "floating" && v ? ne(O, v) : O;
 }
 //#endregion
 //#region src/app/ProductShell.tsx
 var Ze = k(null);
 function Qe() {
-	let e = M(Ze);
+	let e = j(Ze);
 	if (!e) throw Error("useProductShell must be used inside a ProductShell");
 	return e;
 }
-function Q(e) {
+function $(e) {
 	let { pathname: t, search: n, hash: r } = e.location();
 	return `${t}${n}${r}`;
 }
 function $e(t) {
-	let { router: n, session: r, telemetry: i, mode: a = "standalone", embedOrigins: o = [], theme: s, density: l, locale: u, timeZone: d, messages: f } = t, p = a === "embed", h = P(() => p && typeof window < "u" ? qe({ allowedOrigins: o }) : null, [p]), g = e(), [_, v] = I({}), y = je(r);
-	N(() => n.subscribe(() => {
-		let e = Q(n);
+	let { router: n, session: r, telemetry: i, mode: a = "standalone", embedOrigins: o = [], theme: s, density: l, locale: u, timeZone: d, messages: f } = t, p = a === "embed", h = P(() => p && typeof window < "u" ? Ke({ allowedOrigins: o }) : null, [p]), g = e(), [_, v] = I({}), y = Ae(r);
+	M(() => n.subscribe(() => {
+		let e = $(n);
 		i?.record({
 			type: "navigation",
 			path: e,
@@ -771,7 +772,7 @@ function $e(t) {
 		n,
 		i,
 		h
-	]), N(() => {
+	]), M(() => {
 		y.status !== "loading" && (i?.record({
 			type: "session",
 			status: y.status,
@@ -784,7 +785,7 @@ function $e(t) {
 		y.status,
 		i,
 		h
-	]), N(() => {
+	]), M(() => {
 		if (!h) return;
 		let e = h.subscribe((e) => {
 			e.type === "mtc:navigate" ? n.navigate(e.path) : v({
@@ -797,7 +798,7 @@ function $e(t) {
 			type: "mtc:ready",
 			version: 1,
 			product: t.product.name,
-			path: Q(n)
+			path: $(n)
 		}), e;
 	}, [
 		h,
@@ -822,16 +823,16 @@ function $e(t) {
 		timeZone: _.timeZone ?? d,
 		messages: f,
 		className: "mtc-product-shell-root",
-		children: /* @__PURE__ */ z(ve, {
+		children: /* @__PURE__ */ z(_e, {
 			router: n,
 			children: /* @__PURE__ */ z(Ze.Provider, {
 				value: b,
-				children: /* @__PURE__ */ z(m, { children: p ? /* @__PURE__ */ z(rt, {
+				children: /* @__PURE__ */ z(m, { children: p ? /* @__PURE__ */ z(it, {
 					channel: h,
 					...t,
 					session: r,
 					controller: y
-				}) : /* @__PURE__ */ z(nt, {
+				}) : /* @__PURE__ */ z(rt, {
 					...t,
 					session: r,
 					controller: y
@@ -841,7 +842,7 @@ function $e(t) {
 	});
 }
 function et({ controller: e, session: t, router: n, children: i }) {
-	return e.status === "loading" ? /* @__PURE__ */ z(o, {}) : e.status === "signed-out" ? /* @__PURE__ */ z(r, { onSignIn: t ? () => t.signIn(Q(n), e.session ?? void 0) : void 0 }) : /* @__PURE__ */ z(R, { children: i });
+	return e.status === "loading" ? /* @__PURE__ */ z(o, {}) : e.status === "signed-out" ? /* @__PURE__ */ z(r, { onSignIn: t ? () => t.signIn($(n), e.session ?? void 0) : void 0 }) : /* @__PURE__ */ z(R, { children: i });
 }
 function tt({ controller: e, session: t, router: r }) {
 	let a = n(), [o, s] = I(!1);
@@ -849,7 +850,7 @@ function tt({ controller: e, session: t, router: r }) {
 	let c = async () => {
 		s(!0);
 		let n = await e.renew();
-		s(!1), n || t?.signIn(Q(r), e.session ?? void 0);
+		s(!1), n || t?.signIn($(r), e.session ?? void 0);
 	};
 	return /* @__PURE__ */ z(E, {
 		open: !0,
@@ -870,121 +871,154 @@ function tt({ controller: e, session: t, router: r }) {
 		})
 	});
 }
-function $(e) {
-	return /* @__PURE__ */ z(Z, {
+function nt(e) {
+	return /* @__PURE__ */ z(Xe, {
 		operations: e.operations ?? [],
 		onCancel: e.onCancelOperation,
 		onRetry: e.onRetryOperation,
 		onDismiss: e.onDismissOperation
 	});
 }
-function nt(e) {
-	let { product: t, nav: r, activeNavId: i, scope: o, search: c, actions: l, accountMenu: u, status: f, inspector: p, router: m, controller: g, session: _ } = e, y = n(), { pathname: b } = Y(), [x, S] = I(!1), [C, w] = I(!1), [E, k] = I(!1), A = F(null), M = j((e) => {
-		e.href && (m.navigate(e.href), w(!1));
-	}, [m]), N = P(() => (r ?? []).map((e) => ({
+function rt(e) {
+	let { product: t, nav: r, activeNavId: i, scope: o, search: c, actions: l, accountMenu: u, status: f, inspector: p, router: m, controller: g, session: _ } = e, y = n(), { pathname: b } = Z(), x = ee() === "mobile", [S, C] = I(!1), [w, E] = I(!1), [k, te] = I(!1), j = F(null), N = F(null), L = F(!1), R = F(!1), ne = A((e) => {
+		e || (L.current = N.current === document.activeElement), N.current = e, e && L.current && (L.current = !1, e.focus());
+	}, []), V = A((e) => {
+		e && (R.current = N.current === document.activeElement), te(e), !e && R.current && N.current?.focus();
+	}, []);
+	M(() => {
+		c || (L.current = !1);
+	}, [c]);
+	let H = A((e) => {
+		e.href && (m.navigate(e.href), E(!1));
+	}, [m]), re = P(() => (r ?? []).map((e) => ({
 		...e,
 		items: e.items.map((e) => ({
 			...e,
 			href: e.href ? m.href(e.href) : void 0
 		}))
-	})), [r, m]), ee = i ?? (r ?? []).flatMap((e) => e.items).filter((e) => e.href && (b === e.href || b.startsWith(e.href === "/" ? "/" : `${e.href}/`))).sort((e, t) => (t.href?.length ?? 0) - (e.href?.length ?? 0))[0]?.id, L = (e) => {
+	})), [r, m]), U = i ?? (r ?? []).flatMap((e) => e.items).filter((e) => e.href && (b === e.href || b.startsWith(e.href === "/" ? "/" : `${e.href}/`))).sort((e, t) => (t.href?.length ?? 0) - (e.href?.length ?? 0))[0]?.id, W = (e) => {
 		let t = r?.flatMap((e) => e.items).find((t) => t.id === e.id);
-		t && M(t);
-	}, R = g.session, V = [...u ?? [], ..._?.signOut ? [{
+		t && H(t);
+	}, G = g.session, K = [...u ?? [], ..._?.signOut ? [{
 		id: "sign-out",
 		label: y("shell.signOut"),
 		icon: /* @__PURE__ */ z(a, { name: "sign-out" }),
 		onSelect: () => void _.signOut?.()
-	}] : []], H = (e) => /* @__PURE__ */ z(O, {
+	}] : []], q = (e) => /* @__PURE__ */ z(O, {
 		label: y("shell.navigation"),
-		sections: N,
-		activeId: ee,
-		onNavigate: L,
-		collapsed: !e && x,
-		onCollapsedChange: e ? void 0 : S,
+		sections: re,
+		activeId: U,
+		onNavigate: W,
+		collapsed: !e && S,
+		onCollapsedChange: e ? void 0 : C,
 		className: e ? "mtc-shell-drawer-rail" : "mtc-shell-rail"
+	}), J = c && /* @__PURE__ */ B("button", {
+		ref: ne,
+		type: "button",
+		className: "mtc-shell-search",
+		"aria-label": c.placeholder ?? y("shell.search"),
+		onClick: (e) => {
+			e.currentTarget.focus(), V(!0);
+		},
+		children: [
+			/* @__PURE__ */ z(a, { name: "search" }),
+			/* @__PURE__ */ z("span", {
+				className: "mtc-shell-search-text",
+				children: c.placeholder ?? y("shell.search")
+			}),
+			/* @__PURE__ */ z(d, {
+				"aria-hidden": "true",
+				children: "Ctrl K"
+			})
+		]
 	});
 	return /* @__PURE__ */ B("div", {
 		className: "mtc-shell",
 		"data-inspector": p ? "open" : void 0,
 		"data-operations": e.operations?.length ? "true" : void 0,
-		"data-rail": r ? x ? "collapsed" : "expanded" : "none",
+		"data-rail": r ? S ? "collapsed" : "expanded" : "none",
 		children: [
 			/* @__PURE__ */ z("a", {
 				className: "mtc-shell-skip",
 				href: "#mtc-main",
 				onClick: (e) => {
-					e.preventDefault(), A.current?.focus();
+					e.preventDefault(), j.current?.focus();
 				},
 				children: y("shell.skip")
 			}),
 			/* @__PURE__ */ B("header", {
 				className: "mtc-shell-topbar",
+				"data-search": c ? "true" : void 0,
 				children: [
-					r && /* @__PURE__ */ z(s, {
-						icon: /* @__PURE__ */ z(a, { name: "menu" }),
-						"aria-label": y("shell.menu"),
-						variant: "ghost",
-						className: "mtc-shell-menu",
-						onClick: () => w(!0)
-					}),
-					/* @__PURE__ */ B("a", {
-						className: "mtc-shell-product",
-						href: m.href(t.home ?? "/"),
-						onClick: (e) => {
-							e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || (e.preventDefault(), m.navigate(t.home ?? "/"));
-						},
-						children: [/* @__PURE__ */ z("span", {
-							className: "mtc-shell-mark",
-							"aria-hidden": "true",
-							children: /* @__PURE__ */ z(a, { name: t.icon ?? "object" })
-						}), /* @__PURE__ */ z("span", { children: t.name })]
-					}),
-					o && /* @__PURE__ */ z("div", {
-						className: "mtc-shell-scope",
-						children: o
-					}),
-					c && /* @__PURE__ */ B("button", {
-						type: "button",
-						className: "mtc-shell-search",
-						onClick: () => k(!0),
+					/* @__PURE__ */ B("div", {
+						className: "mtc-shell-identity",
 						children: [
-							/* @__PURE__ */ z(a, { name: "search" }),
-							/* @__PURE__ */ z("span", {
-								className: "mtc-shell-search-text",
-								children: c.placeholder ?? y("shell.search")
+							r && /* @__PURE__ */ z(s, {
+								icon: /* @__PURE__ */ z(a, { name: "menu" }),
+								"aria-label": y("shell.menu"),
+								variant: "ghost",
+								className: "mtc-shell-menu",
+								onClick: () => E(!0)
 							}),
-							/* @__PURE__ */ z(d, {
-								"aria-hidden": "true",
-								children: "Ctrl K"
+							/* @__PURE__ */ B("a", {
+								className: "mtc-shell-product",
+								title: t.name,
+								href: m.href(t.home ?? "/"),
+								onClick: (e) => {
+									e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || (e.preventDefault(), m.navigate(t.home ?? "/"));
+								},
+								children: [/* @__PURE__ */ z("span", {
+									className: "mtc-shell-mark",
+									"aria-hidden": "true",
+									children: /* @__PURE__ */ z(a, { name: t.icon ?? "object" })
+								}), /* @__PURE__ */ z("span", {
+									className: "mtc-shell-product-name",
+									children: t.name
+								})]
+							}),
+							o && /* @__PURE__ */ z("div", {
+								className: "mtc-shell-scope",
+								children: o
 							})
 						]
 					}),
+					!x && J,
 					/* @__PURE__ */ B("div", {
 						className: "mtc-shell-actions",
-						children: [l, R?.authenticated && /* @__PURE__ */ z(T, {
-							label: y("shell.account"),
-							align: "end",
-							trigger: /* @__PURE__ */ z(h, {
-								name: R.displayName ?? R.subject ?? "?",
-								decorative: !0
+						children: [
+							l && /* @__PURE__ */ z("div", {
+								className: "mtc-shell-product-actions",
+								children: l
 							}),
-							items: V.length > 0 ? V : [{
-								id: "who",
-								label: R.displayName ?? R.subject ?? "",
-								disabled: !0
-							}]
-						})]
+							x && J,
+							/* @__PURE__ */ z("div", {
+								className: "mtc-shell-account",
+								"aria-hidden": !G?.authenticated || void 0,
+								children: G?.authenticated && /* @__PURE__ */ z(T, {
+									label: y("shell.account"),
+									align: "end",
+									trigger: /* @__PURE__ */ z(h, {
+										name: G.displayName ?? G.subject ?? "?",
+										decorative: !0
+									}),
+									items: K.length > 0 ? K : [{
+										id: "who",
+										label: G.displayName ?? G.subject ?? "",
+										disabled: !0
+									}]
+								})
+							})
+						]
 					})
 				]
 			}),
 			r && /* @__PURE__ */ z("div", {
 				className: "mtc-shell-rail-slot",
-				children: H(!1)
+				children: q(!1)
 			}),
 			/* @__PURE__ */ z("main", {
 				id: "mtc-main",
-				ref: A,
+				ref: j,
 				tabIndex: -1,
 				className: "mtc-shell-main",
 				children: /* @__PURE__ */ z(et, { ...e })
@@ -998,17 +1032,17 @@ function nt(e) {
 				children: f
 			}),
 			r && /* @__PURE__ */ z(D, {
-				open: C,
-				onOpenChange: w,
+				open: w,
+				onOpenChange: E,
 				title: t.name,
 				side: "left",
 				width: 288,
 				className: "mtc-shell-drawer",
-				children: H(!0)
+				children: q(!0)
 			}),
 			c && /* @__PURE__ */ z(v, {
-				open: E,
-				onOpenChange: k,
+				open: k,
+				onOpenChange: V,
 				query: c.query,
 				onQueryChange: c.onQueryChange,
 				groups: c.groups,
@@ -1016,14 +1050,14 @@ function nt(e) {
 				loading: c.loading,
 				placeholder: c.placeholder
 			}),
-			/* @__PURE__ */ z($, { ...e }),
+			/* @__PURE__ */ z(nt, { ...e }),
 			/* @__PURE__ */ z(tt, { ...e })
 		]
 	});
 }
-function rt(e) {
+function it(e) {
 	let { channel: t } = e, n = F(null);
-	return N(() => {
+	return M(() => {
 		let e = n.current;
 		if (!e || !t || typeof ResizeObserver > "u") return;
 		let r = -1, i = new ResizeObserver(() => {
@@ -1044,10 +1078,10 @@ function rt(e) {
 				className: "mtc-shell-main",
 				children: /* @__PURE__ */ z(et, { ...e })
 			}),
-			/* @__PURE__ */ z($, { ...e }),
+			/* @__PURE__ */ z(nt, { ...e }),
 			/* @__PURE__ */ z(tt, { ...e })
 		]
 	});
 }
 //#endregion
-export { Z as OperationsTray, $e as ProductShell, Oe as RENEW_LEAD_MS, Ie as ResourceCacheProvider, xe as RouterLink, ve as RouterProvider, Te as SESSION_RENEWED, Ee as SESSION_RENEW_FAILED, C as SourceError, he as buildPath, qe as createEmbedChannel, pe as createHistoryRouter, we as createHttpSessionPort, me as createMemoryRouter, le as createProductFetch, Ne as createResourceCache, y as describeSourceError, de as ensureOk, x as isSourceError, q as matchPath, ge as matchRoutes, ne as newTraceparent, Ke as parseEmbedHostMessage, g as parseRetryAfter, Ce as parseSessionBody, De as renewViaFrame, We as requestTelemetry, Re as resourceKey, b as responseRequestId, S as sourceErrorFromResponse, p as sourceErrorKindForCode, _ as sourceErrorKindForStatus, w as toSourceError, Y as useLocation, Qe as useProductShell, He as useResource, Le as useResourceCache, be as useRoute, J as useRouter, je as useSessionController };
+export { Xe as OperationsTray, $e as ProductShell, De as RENEW_LEAD_MS, Fe as ResourceCacheProvider, be as RouterLink, _e as RouterProvider, we as SESSION_RENEWED, Te as SESSION_RENEW_FAILED, C as SourceError, me as buildPath, Ke as createEmbedChannel, ue as createHistoryRouter, Ce as createHttpSessionPort, de as createMemoryRouter, oe as createProductFetch, Me as createResourceCache, y as describeSourceError, ce as ensureOk, x as isSourceError, pe as matchPath, he as matchRoutes, W as newTraceparent, Ge as parseEmbedHostMessage, g as parseRetryAfter, Se as parseSessionBody, Ee as renewViaFrame, Ue as requestTelemetry, Le as resourceKey, b as responseRequestId, S as sourceErrorFromResponse, p as sourceErrorKindForCode, _ as sourceErrorKindForStatus, w as toSourceError, Z as useLocation, Qe as useProductShell, Ve as useResource, Ie as useResourceCache, ye as useRoute, X as useRouter, Ae as useSessionController };

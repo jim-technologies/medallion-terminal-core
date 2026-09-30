@@ -4,6 +4,18 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.6] — 2026-09-30
+
+### Fixed
+
+- Product headers fit narrow phones while retaining navigation, search, actions
+  and account controls. Long names truncate with their full accessible name
+  and tooltip preserved; icon-only mobile search keeps its accessible label.
+- Search stays centered on desktop across product names and workspace scopes.
+  On phones it occupies a stable position before the account, after product
+  actions, with keyboard order matching the visible controls and focus retained
+  across layout changes.
+
 ## [0.7.5] — 2026-09-29
 
 ### Fixed
