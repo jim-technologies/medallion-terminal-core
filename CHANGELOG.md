@@ -4,6 +4,14 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.7] — 2026-10-13
+
+### Fixed
+
+- Keyboard navigation keeps grid columns visible when their table scrolls
+  horizontally, including beside pinned columns. Headers and rows continue to
+  share one scroll area; headers never create a separate scrollbar.
+
 ## [0.7.6] — 2026-09-30
 
 ### Fixed

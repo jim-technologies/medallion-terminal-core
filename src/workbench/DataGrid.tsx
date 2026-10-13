@@ -548,9 +548,18 @@ export function DataGrid<Row>({
   useLayoutEffect(() => {
     if (!focusPending.current) return
     focusPending.current = false
-    viewportRef.current
-      ?.querySelector<HTMLElement>(`[data-cell="${active.row}:${active.column}"]`)
-      ?.focus({ preventScroll: true })
+    const element = viewportRef.current
+    const cell = element?.querySelector<HTMLElement>(`[data-cell="${active.row}:${active.column}"]`)
+    if (!element || !cell) return
+    cell.focus({ preventScroll: true })
+    if (pinnedOffsets.has(active.column)) return
+    const pinnedWidth = [...pinnedOffsets].reduce((width, [index, offset]) => Math.max(width, offset + renderedColumns[index]!.width), 0)
+    const viewportBounds = element.getBoundingClientRect()
+    const cellBounds = cell.getBoundingClientRect()
+    const start = viewportBounds.left + pinnedWidth
+    const end = viewportBounds.left + element.clientWidth
+    if (cellBounds.right > end) element.scrollLeft += cellBounds.right - end
+    else if (cellBounds.left < start && cellBounds.right < end) element.scrollLeft -= start - cellBounds.left
   })
 
   // When an inline editor closes, focus returns to its cell, unless it has
