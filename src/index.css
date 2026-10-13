@@ -1270,13 +1270,13 @@
   white-space: nowrap;
 }
 .mtc-root .mtc-tab-count { color: var(--mtc-muted); font-size: var(--mtc-font-size-xs); font-variant-numeric: tabular-nums; }
-.mtc-root .mtc-tab::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: transparent; content: ""; }
+.mtc-root .mtc-tab::after { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; background: transparent; content: ""; }
 .mtc-root .mtc-tab:hover:not(:disabled) { color: var(--mtc-fg); background: var(--mtc-panel-hover); }
 .mtc-root .mtc-tab[aria-selected="true"] { color: var(--mtc-fg); }
 .mtc-root .mtc-tab[aria-selected="true"]::after { background: var(--mtc-accent); }
 .mtc-root .mtc-tab:disabled { opacity: 0.45; }
 .mtc-root .mtc-tabs[data-orientation="vertical"] .mtc-tab { width: 100%; justify-content: flex-start; text-align: left; }
-.mtc-root .mtc-tabs[data-orientation="vertical"] .mtc-tab::after { top: 0; right: -1px; bottom: 0; left: auto; width: 2px; height: auto; }
+.mtc-root .mtc-tabs[data-orientation="vertical"] .mtc-tab::after { top: 0; right: 0; bottom: 0; left: auto; width: 2px; height: auto; }
 .mtc-root .mtc-tabs-panels { min-width: 0; min-height: 0; flex: 1; }
 .mtc-root .mtc-tab-panel { min-width: 0; min-height: 0; height: 100%; padding: var(--mtc-space-3) 0; }
 

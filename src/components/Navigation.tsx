@@ -73,6 +73,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
     const next = enabled[(currentIndex + delta + enabled.length) % enabled.length]
     if (!next) return
     tabRefs.current.get(next.id)?.focus()
+    tabRefs.current.get(next.id)?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
     if (activationMode === 'automatic') onValueChange(next.id)
   }
 
@@ -88,6 +89,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
       const target = event.key === 'Home' ? enabled[0] : enabled[enabled.length - 1]
       if (target) {
         tabRefs.current.get(target.id)?.focus()
+        tabRefs.current.get(target.id)?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
         if (activationMode === 'automatic') onValueChange(target.id)
       }
     } else if ((event.key === 'Enter' || event.key === ' ') && activationMode === 'manual') {

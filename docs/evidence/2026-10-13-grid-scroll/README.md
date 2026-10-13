@@ -28,8 +28,25 @@ The viewport owns `overflow: auto`. Wide fixed and typed columns still
 scroll horizontally; fitting text columns do not. `core-before.json` records
 the measurements. No header overflow styling was changed.
 
-The library entry bundle check measured 46.22 → 46.34 KiB static gzip for
-the toolkit (+0.12 KiB for keyboard visibility), 24.95 KiB unchanged for app,
+The strip above an inspector table did reproduce an unnecessary scrollbar:
+horizontal tabs had a 32 px client height and 33 px scroll height, and vertical
+tabs had a one-pixel width overflow. Their absolute selection indicator sat
+one pixel outside the tab box (`bottom: -1px` or `right: -1px`). Placing that
+indicator inside the box removes the overflow itself. No scrolling axis is
+hidden; long horizontal lists retain horizontal scrolling and vertical lists
+retain vertical scrolling. All four new tab regression tests failed on the
+old styling with precisely one pixel of overflow before the fix.
+
+The phone check also found that native focus leaves a partially visible tab
+in place: on a 320 px phone, End focused Activity at x=232–315 in a strip
+ending at x=287, without moving its horizontal offset. Roving tab focus now
+reveals the target with nearest scrolling. Four tab tests pass at the same
+five widths in both themes, preserving disabled-tab skipping, selection,
+panel associations and visible focus. On phones, the existing vertical-tab
+layout becomes horizontal; the assertion follows its rendered scroll axis.
+
+The library entry bundle check measured 46.22 → 46.37 KiB static gzip for
+the toolkit (+0.15 KiB for keyboard visibility), 24.95 KiB unchanged for app,
 4.55 KiB unchanged for asset-open and 49.81 → 49.82 KiB for dashboard.
 All existing entry budgets pass. No dependency or style change was needed.
 

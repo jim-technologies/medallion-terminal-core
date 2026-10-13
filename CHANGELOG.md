@@ -11,6 +11,9 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - Keyboard navigation keeps grid columns visible when their table scrolls
   horizontally, including beside pinned columns. Headers and rows continue to
   share one scroll area; headers never create a separate scrollbar.
+- Section-tab indicators stay inside their tab boxes, avoiding a one-pixel
+  scrollbar on the wrong axis while retaining scrolling for long tab lists.
+  Keyboard navigation reveals the selected tab fully within a narrow strip.
 
 ## [0.7.6] — 2026-09-30
 
