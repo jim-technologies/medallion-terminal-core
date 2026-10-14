@@ -1,3 +1,4 @@
+import { type MarkdownOptions } from './markdown';
 import { type PreviewLimits } from './previewPolicy';
 /** The file to preview. Bytes stay on the product origin that serves `url`. */
 export interface FilePreviewFile {
@@ -21,6 +22,8 @@ export interface FilePreviewProps {
     onDownload?: () => void;
     /** Height of scrolling previews (CSS or pixels). */
     height?: number | string;
+    /** Link and image resolvers for Markdown files (`renderMarkdown`). */
+    markdown?: MarkdownOptions;
     className?: string;
 }
 /**
@@ -33,4 +36,4 @@ export interface FilePreviewProps {
  * video play natively; HTML, SVG and XML show as source; everything else
  * offers a download. Markdown is sanitised.
  */
-export declare function FilePreview({ file, fetch: transport, limits: overrides, onDownload, height, className }: FilePreviewProps): import("react").JSX.Element;
+export declare function FilePreview({ file, fetch: transport, limits: overrides, onDownload, height, markdown, className }: FilePreviewProps): import("react").JSX.Element;

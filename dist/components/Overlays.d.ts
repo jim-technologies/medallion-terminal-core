@@ -1,5 +1,6 @@
 import { type CSSProperties, type HTMLAttributes, type ReactElement, type ReactNode, type RefObject } from 'react';
-import type { Intent } from '../foundations/types';
+import type { ComponentSize, Intent } from '../foundations/types';
+import { type ButtonVariant } from './Button';
 /** Props for a text tooltip attached to one trigger. */
 export interface TooltipProps {
     /** Text or compact explanatory content shown on hover and focus. */
@@ -35,6 +36,12 @@ export interface PopoverProps {
     placement?: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end';
     /** Disables the trigger. */
     disabled?: boolean;
+    /**
+     * Draws the built-in trigger as a `Button` of this variant (and
+     * `triggerSize`), so it matches the buttons beside it.
+     */
+    triggerVariant?: ButtonVariant;
+    triggerSize?: ComponentSize;
     /** Additional class for the positioning wrapper. */
     className?: string;
 }
@@ -42,7 +49,7 @@ export interface PopoverProps {
  * Non-modal anchored content. The built-in trigger keeps the API semantic and
  * avoids nested interactive elements.
  */
-export declare function Popover({ trigger, triggerAriaLabel, children, title, open: controlledOpen, defaultOpen, onOpenChange, placement, disabled, className, }: PopoverProps): import("react").JSX.Element;
+export declare function Popover({ trigger, triggerAriaLabel, children, title, open: controlledOpen, defaultOpen, onOpenChange, placement, disabled, triggerVariant, triggerSize, className, }: PopoverProps): import("react").JSX.Element;
 /** One command or separator in a Menu or ContextMenu. */
 export interface MenuItem {
     /** Stable item key. */
@@ -59,6 +66,12 @@ export interface MenuItem {
     separator?: boolean;
     /** Optional destructive emphasis. */
     intent?: Extract<Intent, 'neutral' | 'danger'>;
+    /**
+     * One choice of a set (a theme, a sort order): the item is a
+     * `menuitemradio` and the menu draws the check. Every item in a menu with
+     * a checked item gets the check column, so labels align.
+     */
+    checked?: boolean;
     /** Invoked once when the enabled command is selected. */
     onSelect?: () => void;
 }

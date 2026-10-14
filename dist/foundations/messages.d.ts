@@ -1,7 +1,7 @@
 /**
- * The toolkit's user-facing strings, keyed. English is the default; hosts
- * select a built-in catalog with `DesignSystemProvider locale` and override
- * any key with `messages`. Placeholders are `{name}`.
+ * The toolkit's user-facing strings, keyed. English is built in; hosts pass
+ * another catalog (or override any key) with `DesignSystemProvider
+ * messages`. Placeholders are `{name}`.
  */
 export declare const EN_MESSAGES: {
     readonly 'button.working': 'Working';
@@ -22,7 +22,7 @@ export declare const EN_MESSAGES: {
     readonly 'state.requestId': 'Request ID';
     readonly 'state.errorCode': 'Code';
     readonly 'error.unauthenticated.title': 'Sign-in required';
-    readonly 'error.unauthenticated.description': 'Your session has ended. Sign in again to continue.';
+    readonly 'error.unauthenticated.description': 'Sign in again.';
     readonly 'error.forbidden.title': 'You don’t have access';
     readonly 'error.forbidden.description': 'Ask an owner for access.';
     readonly 'error.not_found.title': 'Not found';
@@ -34,14 +34,12 @@ export declare const EN_MESSAGES: {
     readonly 'error.unavailable.description': 'The service did not respond. Try again shortly.';
     readonly 'error.invalid.title': 'Request not accepted';
     readonly 'error.invalid.description': 'The service could not accept this request.';
-    readonly 'error.unknown.description': 'Something went wrong while loading this.';
-    readonly 'state.accessDenied.resource': 'Ask an owner of {resource} for access.';
+    readonly 'error.unknown.description': 'Could not load.';
     readonly 'state.notFound.resource': '{resource} doesn’t exist or was moved.';
     readonly 'state.signedOut.title': 'You’re signed out';
-    readonly 'state.signedOut.description': 'Sign in to continue.';
     readonly 'state.signedOut.action': 'Sign in';
     readonly 'state.sessionExpired.title': 'Your session expired';
-    readonly 'state.sessionExpired.description': 'Your work on this page is kept. Continue to renew your session.';
+    readonly 'state.sessionExpired.description': 'Your work is kept.';
     readonly 'state.sessionExpired.action': 'Continue';
     readonly 'state.stale.title': 'Data may be out of date';
     readonly 'state.stale.description': 'Last updated {time}.';
@@ -126,6 +124,7 @@ export declare const EN_MESSAGES: {
     readonly 'shell.search': 'Search';
     readonly 'shell.account': 'Account';
     readonly 'shell.signOut': 'Sign out';
+    readonly 'shell.inspector': 'Inspector';
     readonly 'ops.title': 'Operations';
     readonly 'ops.running': '{count} running';
     readonly 'ops.queued': '{count} queued';
@@ -148,13 +147,12 @@ export declare const EN_MESSAGES: {
 export type MessageKey = keyof typeof EN_MESSAGES;
 /** A complete catalog: every key, translated. */
 export type MessageCatalog = Readonly<Record<MessageKey, string>>;
-/** Simplified Chinese, matching the Terminal's `zh-CN` product catalog. */
-export declare const ZH_CN_MESSAGES: MessageCatalog;
 /**
- * The built-in catalog for a BCP 47 locale, by language (`zh-CN`, `zh-Hans`
- * and `zh` all select Simplified Chinese); English otherwise.
+ * The built-in catalog for a locale. Only English is built in; another
+ * language is passed as `messages` (the Simplified Chinese catalog ships
+ * separately as `medallion-terminal-core/messages-zh`).
  */
-export declare function builtInMessages(locale: string): MessageCatalog;
+export declare function builtInMessages(_locale: string): MessageCatalog;
 /** Values substituted into `{name}` placeholders. */
 export type MessageValues = Readonly<Record<string, string | number>>;
 /** Fills `{name}` placeholders; unknown names are left as written. */

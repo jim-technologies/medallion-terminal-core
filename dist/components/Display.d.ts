@@ -85,6 +85,25 @@ export interface MetaRowProps extends HTMLAttributes<HTMLUListElement> {
 /** A wrapping row of small, muted metadata items. */
 export declare const MetaRow: import("react").ForwardRefExoticComponent<MetaRowProps & import("react").RefAttributes<HTMLUListElement>>;
 /** Props for a titled content panel. */
+/** Props for content read by assistive technology only. */
+export interface VisuallyHiddenProps extends HTMLAttributes<HTMLSpanElement> {
+}
+/**
+ * Keeps its children in the accessibility tree and out of sight: a label for
+ * an icon-only control, a status announcement, a hidden file input.
+ */
+export declare const VisuallyHidden: import("react").ForwardRefExoticComponent<VisuallyHiddenProps & import("react").RefAttributes<HTMLSpanElement>>;
+/** Props for a run of body text. */
+export interface TextProps extends HTMLAttributes<HTMLElement> {
+    /** The element; a paragraph by default. */
+    as?: 'p' | 'span' | 'div';
+    /** `muted` for notes and hints beside the content they explain. */
+    tone?: 'default' | 'muted';
+    /** `sm` for notes; the body size otherwise. */
+    size?: 'sm' | 'md';
+}
+/** Body text in the type scale, so a note is the same note on every page. */
+export declare const Text: import("react").ForwardRefExoticComponent<TextProps & import("react").RefAttributes<HTMLElement>>;
 export interface PanelProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
     /** Panel title (14 px, semibold). */
     title: ReactNode;

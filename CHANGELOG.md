@@ -4,6 +4,64 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.8] — 2026-10-13
+
+### Added
+
+- `Button href` renders a link that looks like the button (`target`, `rel`,
+  `download`; inert while disabled). `MenuItem.checked` makes an item one
+  choice of a set: a `menuitemradio` with the check drawn by the menu in one
+  aligned column. `Popover triggerVariant` and `triggerSize` draw its built-in
+  trigger as a `Button`. A native `Select` sits in the input's frame and takes
+  `FormField`'s wiring. `Text` sets body text and notes in the type scale;
+  `VisuallyHidden` wraps content for assistive technology only.
+  `NavRail variant="embedded"` fills a host sidebar or drawer.
+- `ProductShell pageTitle` sets `document.title` to `{page} · {product}`
+  (the product name alone when unset). The inspector landmark is named
+  (`shell.inspector`). The search hint reads `⌘ K` on Apple platforms.
+- `renderMarkdown` is exported with `resolveHref` and `resolveImage` hooks,
+  which `FilePreview markdown` passes through.
+- `DataGrid scrollKey` resets the scroll position when a listing changes;
+  `empty={null}` renders no empty row; `height="auto"` fits the rows at the
+  density's row height. The `height` documentation says `'100%'` needs a
+  bounded parent. A grid filling a `Panel` body drops its own border.
+- `SourceErrorState message` replaces the kind's default explanation.
+- `SessionController.reload` and `error`: a session check that fails for any
+  reason other than 401 (no endpoint, 5xx, network) is the new `error`
+  status, rendered as `ErrorState` with Retry, never "You're signed out".
+- `SessionPort.canSignIn` says whether `signIn` has somewhere to go;
+  `signIn` returns false when it does not. `createHttpSessionPort` answers
+  from `signInUrl` or a host `signInHref`, and the shell offers Sign in only
+  then.
+- The shell's rail and inspector widths are the `--mtc-rail-width` (14.5rem)
+  and `--mtc-inspector-width` (22.5rem) tokens, now also the defaults of
+  `Sidebar` and `Inspector`. `--mtc-shell-status-height` is the status bar's
+  height (0 without one).
+
+### Changed
+
+- A product without sign-in shows no identity chrome: the account slot
+  renders only for a signed-in person with something to show (a menu when
+  there are commands, else the avatar alone naming them), and the disabled
+  principal row is gone. Without a session port `SourceErrorState` renders a
+  401 as an error with Retry instead of an expired session, and no session
+  telemetry is recorded.
+- The Simplified Chinese catalog moved out of the toolkit into its own entry,
+  `medallion-terminal-core/messages-zh`; `builtInMessages` is English for
+  every locale and a host passes `ZH_CN_MESSAGES` as `messages`. A nested
+  scope inherits its parent's catalog, host language included. The bundle
+  check fails any toolkit or shell chunk that reaches the Chinese strings.
+  In an embedded shell the product's own `locale` wins over the host's
+  `mtc:init`.
+- The status bar renders only when `status` is set; the inspector sheet,
+  operations tray and toasts read `--mtc-shell-status-height` and toasts
+  stack above the tray's summary. Every phone media query switches at 767px
+  like the shell. The unused `data-rail` and `data-inspector` hooks are gone.
+- Terser state copy: "Sign in again.", "Could not load." and "Your work is
+  kept."; the signed-out state has no default description and a denied
+  resource is named on its own (`state.signedOut.description` and
+  `state.accessDenied.resource` are removed from the catalog).
+
 ## [0.7.7] — 2026-10-13
 
 ### Fixed

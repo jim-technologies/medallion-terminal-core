@@ -19,6 +19,15 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     startIcon?: ReactNode;
     /** Decorative or labeled content after the button label. */
     endIcon?: ReactNode;
+    /**
+     * Renders a link (`<a>`) that looks like the button, for Download and
+     * Open in a new tab; `target`, `rel` and `download` apply to it. The ref
+     * is then the anchor.
+     */
+    href?: string;
+    target?: string;
+    rel?: string;
+    download?: string | boolean;
 }
 /** Semantic, ref-forwarding action button with consistent busy handling. */
 export declare const Button: import("react").ForwardRefExoticComponent<ButtonProps & import("react").RefAttributes<HTMLButtonElement>>;

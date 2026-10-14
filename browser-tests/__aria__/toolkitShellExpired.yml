@@ -5,7 +5,7 @@
     - /url: /buckets
   - button "Northstar workspace"
   - button "Search files"
-  - button "Account"
+  - img "Jamie Kim"
 - navigation "Product navigation":
   - list:
     - listitem:
@@ -64,7 +64,7 @@
         - gridcell "912 kB"
         - gridcell "Sep 2, 2026":
           - time: Sep 2, 2026
-- complementary:
+- complementary "Inspector":
   - text: File
   - code: finance/q3-forecast.csv
   - button "Copy ID"
@@ -81,5 +81,5 @@
 - contentinfo: Prototype data Catalog fresh 2 min ago en · UTC
 - dialog "Your session expired":
   - heading "Your session expired" [level=2]
-  - paragraph: Your work on this page is kept. Continue to renew your session.
+  - paragraph: Your work is kept.
   - button "Continue"

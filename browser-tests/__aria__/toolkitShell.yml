@@ -64,7 +64,7 @@
         - gridcell "912 kB"
         - gridcell "Sep 2, 2026":
           - time: Sep 2, 2026
-- complementary:
+- complementary "Inspector":
   - text: File
   - code: finance/q3-forecast.csv
   - button "Copy ID"

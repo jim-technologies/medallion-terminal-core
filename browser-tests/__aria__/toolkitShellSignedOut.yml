@@ -22,9 +22,9 @@
   - button "Collapse navigation" [expanded]
 - main:
   - status:
-    - text: You’re signed out Sign in to continue.
+    - text: You’re signed out
     - button "Sign in"
-- complementary:
+- complementary "Inspector":
   - text: File
   - code: finance/q3-forecast.csv
   - button "Copy ID"

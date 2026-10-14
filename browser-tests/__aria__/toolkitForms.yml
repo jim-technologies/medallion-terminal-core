@@ -1,15 +1,22 @@
 - main:
   - text: Toolkit · Controls
-  - heading "Input, TextArea & FormField" [level=1]
+  - heading "Input, TextArea, Select & FormField" [level=1]
   - paragraph: Reusable controls and feedback primitives with shared intent, sizing, density, and accessible state behavior.
-  - region "Input, TextArea & FormField component example":
+  - region "Input, TextArea, Select & FormField component example":
     - text: Object name
     - textbox "Object name":
       - /placeholder: Quarterly forecast
     - text: Visible to workspace members Description
     - textbox "Description":
       - /placeholder: Describe this object
-    - text: Identifier
+    - text: Time zone
+    - combobox "Time zone":
+      - option "UTC"
+      - option "Singapore" [selected]
+      - option "Los Angeles"
+    - text: For dates on this page Identifier
     - textbox "Identifier" [invalid]: Invalid Value
     - alert: Use lowercase letters and dashes
+    - paragraph: Changes apply when you save.
+    - text: Form fields are validated on save.
   - text: Theme and density inherit from the scoped toolkit root.

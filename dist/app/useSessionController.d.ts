@@ -1,6 +1,11 @@
+import { type SourceError } from '../core/sourceError';
 import type { SessionInfo, SessionPort } from './session';
-/** Where the session stands. */
-export type SessionStatus = 'loading' | 'authenticated' | 'signed-out' | 'expired';
+/**
+ * Where the session stands. `error` is a session check that failed for a
+ * reason other than being signed out (no endpoint, 5xx, network); it is
+ * retried, never read as signed out.
+ */
+export type SessionStatus = 'loading' | 'authenticated' | 'signed-out' | 'expired' | 'error';
 /** Renew this long before the product token expires. */
 export declare const RENEW_LEAD_MS = 60000;
 /** The page visibility the scheduler reads. */
@@ -26,8 +31,12 @@ export declare function scheduleRenewal(expiresAt: number, renew: () => void, { 
 export interface SessionController {
     status: SessionStatus;
     session: SessionInfo | null;
+    /** Why the session check failed, while `status` is `error`. */
+    error: SourceError | null;
     /** Renews now; resolves true when the session is good again. */
     renew: () => Promise<boolean>;
+    /** Loads the session again after a failed check. */
+    reload: () => void;
     /** Call on any 401 (wire to `createProductFetch({ onUnauthenticated })`). */
     reportUnauthenticated: () => void;
 }
@@ -36,5 +45,7 @@ export interface SessionController {
  * 401, and never polls: no timer runs while the page is hidden, and a page
  * that comes back near or past expiry renews at once. A failed renewal
  * moves to `expired`, which the shell shows over the page (drafts kept).
+ * A session check that fails for any reason other than 401 is `error`, so
+ * a backend without the endpoint never reads as signed out.
  */
 export declare function useSessionController(port: SessionPort | undefined, environment?: SessionEnvironment): SessionController;

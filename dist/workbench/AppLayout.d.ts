@@ -32,7 +32,7 @@ export interface SidebarProps extends HTMLAttributes<HTMLElement> {
     header?: ReactNode;
     /** Fixed content below the scrolling pane. */
     footer?: ReactNode;
-    /** CSS width or numeric pixel width. */
+    /** CSS width or numeric pixel width; the rail width (`--mtc-rail-width`) when unset. */
     width?: number | string;
     /** Visually and semantically hides the sidebar. */
     collapsed?: boolean;
@@ -53,7 +53,7 @@ export interface InspectorProps extends Omit<HTMLAttributes<HTMLElement>, 'title
     actions?: ReactNode;
     /** Fixed content below the scrolling pane. */
     footer?: ReactNode;
-    /** CSS width or numeric pixel width. */
+    /** CSS width or numeric pixel width; the shell's inspector width (`--mtc-inspector-width`) when unset. */
     width?: number | string;
     /** Visually and semantically hides the inspector when false. */
     open?: boolean;

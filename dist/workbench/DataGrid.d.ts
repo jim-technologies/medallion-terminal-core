@@ -142,13 +142,25 @@ export interface DataGridProps<Row> {
     totalRows?: number;
     /** Shows skeleton rows (no rows yet) or a loading-more row. */
     loading?: boolean;
-    /** Shown when there are no rows and nothing is loading. */
+    /** Shown when there are no rows and nothing is loading; `null` shows nothing. */
     empty?: ReactNode;
+    /**
+     * Resets the scroll position when it changes: pass the identity of the
+     * listing (a folder path, a query) so a new listing starts at the top.
+     */
+    scrollKey?: string | number;
     /** Row density; the scope's when unset. */
     density?: Density;
     /** Fixed row height in pixels; the density's when unset. */
     rowHeight?: number;
-    /** Viewport height (CSS or pixels); fills the parent by default. */
+    /**
+     * Viewport height (CSS or pixels). The default `'100%'` fills the parent,
+     * which must be bounded (a `flex-1 min-h-0` column or an explicit height)
+     * for the header to stick and the rows to window; in an unbounded parent
+     * the grid grows to all its rows and the page scrolls instead. `'auto'`
+     * asks for that on purpose: the grid fits its rows at the density's row
+     * height, for short lists in an inspector or a panel.
+     */
     height?: number | string;
     /** Renders only the rows in view (`auto`: above 200 rows). */
     virtualize?: boolean | 'auto';
@@ -170,4 +182,4 @@ export interface DataGridProps<Row> {
  * stay under 1,500 DOM nodes. Cells render typed values with
  * `PropertyValue` unless a column supplies its own content.
  */
-export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, editingCell, onEditCancel, onEndReached, totalRows, loading, empty, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;
+export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, editingCell, onEditCancel, onEndReached, totalRows, loading, empty, scrollKey, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;

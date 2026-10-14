@@ -80,7 +80,9 @@ export interface AccessDeniedStateProps extends StatusStateProps {
 }
 /**
  * A scope the person may not read (HTTP 403, `permission_denied`). Render it
- * where the denied scope would be, so the rest of the app stays usable.
+ * where the denied scope would be, so the rest of the app stays usable. The
+ * title carries the meaning; a `resource` names what was denied and is the
+ * whole description.
  */
 export declare const AccessDeniedState: import("react").ForwardRefExoticComponent<AccessDeniedStateProps & import("react").RefAttributes<HTMLDivElement>>;
 /** Props for a missing session. */
@@ -90,7 +92,10 @@ export interface SignedOutStateProps extends StatusStateProps {
     /** Label for the sign-in action. */
     signInLabel?: string;
 }
-/** No session at all: the person has to sign in before anything loads. */
+/**
+ * No session at all: the person has to sign in before anything loads. The
+ * title and the Sign in button say it all; there is no default description.
+ */
 export declare const SignedOutState: import("react").ForwardRefExoticComponent<SignedOutStateProps & import("react").RefAttributes<HTMLDivElement>>;
 /** Props for an expired session. */
 export interface SessionExpiredStateProps extends StatusStateProps {
@@ -142,6 +147,8 @@ export interface SourceErrorStateProps extends Omit<HTMLAttributes<HTMLDivElemen
     error: SourceError;
     /** What failed, in words, for the access and not-found copy. */
     resource?: string;
+    /** Replaces the kind's default explanation. */
+    message?: ReactNode;
     /** Retries the failed request. */
     onRetry?: () => void;
     /** Renews an expired session; falls back to `onRetry`. */
@@ -152,5 +159,7 @@ export interface SourceErrorStateProps extends Omit<HTMLAttributes<HTMLDivElemen
 /**
  * Picks the state a failure deserves from its kind: an expired session,
  * a denied or missing scope, a rate limit, or a typed error with retry.
+ * A 401 is an expired session only inside a shell with a session port;
+ * without one there is nothing to renew, so it is an error with Retry.
  */
 export declare const SourceErrorState: import("react").ForwardRefExoticComponent<SourceErrorStateProps & import("react").RefAttributes<HTMLDivElement>>;

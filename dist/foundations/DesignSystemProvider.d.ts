@@ -40,13 +40,14 @@ export declare function useMessage(): Translate;
 /** Locale inputs a scope accepts; unset values inherit the enclosing scope. */
 interface LocaleProps {
     /**
-     * BCP 47 locale. Selects the built-in catalog (`en`, or `zh-CN` for any
-     * Chinese locale) and the formatting locale.
+     * BCP 47 locale for the `Intl` formatters and the subtree's `lang`. The
+     * built-in catalog is English; another language is passed as `messages`
+     * (`ZH_CN_MESSAGES` from `medallion-terminal-core/messages-zh`).
      */
     locale?: string;
     /** IANA time zone for formatted dates, e.g. `UTC`. */
     timeZone?: string;
-    /** Per-key overrides layered over the built-in catalog. */
+    /** A catalog, or per-key overrides, layered over the inherited one. */
     messages?: Partial<MessageCatalog>;
 }
 /** Props shared by every scoped root. */

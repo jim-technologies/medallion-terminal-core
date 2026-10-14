@@ -30,8 +30,8 @@ export interface OperationsTrayProps {
     open?: boolean;
     /**
      * Initial expansion when uncontrolled: open on larger screens, collapsed
-     * to its summary on phones (720 px and narrower), where the sheet would
-     * cover the page.
+     * to its summary on phones (below 768 px), where the sheet would cover
+     * the page.
      */
     defaultOpen?: boolean;
     onOpenChange?: (open: boolean) => void;

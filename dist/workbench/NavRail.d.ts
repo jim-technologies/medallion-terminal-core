@@ -39,6 +39,12 @@ export interface NavRailProps extends Omit<HTMLAttributes<HTMLElement>, 'onChang
     header?: ReactNode;
     /** Content below the sections. */
     footer?: ReactNode;
+    /**
+     * `standalone` (default) is the shell's rail: its own width, border and
+     * surface. `embedded` fills a host sidebar or drawer: full width, no
+     * border, transparent.
+     */
+    variant?: 'standalone' | 'embedded';
 }
 /**
  * The shell's left rail: sections of destinations with an icon or type

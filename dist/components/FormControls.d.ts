@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, type ReactElement, type ReactNode, type TextareaHTMLAttributes } from 'react';
+import { type InputHTMLAttributes, type ReactElement, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
 import type { ComponentSize, Density } from '../foundations/types';
 /** Props for a tokenized text input. */
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
@@ -20,6 +20,21 @@ export interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
     invalid?: boolean;
 }
 export declare const TextArea: import("react").ForwardRefExoticComponent<TextAreaProps & import("react").RefAttributes<HTMLTextAreaElement>>;
+/** Props for a tokenized native select. */
+export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+    /** Visual control size. */
+    size?: ComponentSize;
+    /** Optional density override for this control. */
+    density?: Density;
+    /** Marks the control invalid without replacing a supplied ARIA value. */
+    invalid?: boolean;
+}
+/**
+ * A native `<select>` in the input's frame with the toolkit's chevron, for a
+ * short fixed choice (a sort order, a time zone); `Combobox` is the searching
+ * one. It takes `id` and ARIA props from `FormField` like any control.
+ */
+export declare const Select: import("react").ForwardRefExoticComponent<SelectProps & import("react").RefAttributes<HTMLSelectElement>>;
 /** Props for labels, help text, and validation around one form control. */
 export interface FormFieldProps {
     /** Visible field label. */
