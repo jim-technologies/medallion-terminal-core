@@ -15,9 +15,12 @@ import {
   IconButton,
   Input,
   Radio,
+  Select,
   Switch,
   Tag,
+  Text,
   TextArea,
+  VisuallyHidden,
   type ComboboxOption,
 } from '.'
 
@@ -76,7 +79,7 @@ export const IconAndButtons: Story = {
 }
 
 export const InputTextAreaAndFormField: Story = {
-  name: 'Input, TextArea & FormField',
+  name: 'Input, TextArea, Select & FormField',
   render: () => (
     <form className="grid gap-4" onSubmit={event => event.preventDefault()}>
       <FormField label="Object name" description="Visible to workspace members" required>
@@ -85,11 +88,27 @@ export const InputTextAreaAndFormField: Story = {
       <FormField label="Description">
         <TextArea rows={4} placeholder="Describe this object" />
       </FormField>
+      <FormField label="Time zone" description="For dates on this page">
+        <Select defaultValue="UTC">
+          <option value="UTC">UTC</option>
+          <option value="Asia/Singapore">Singapore</option>
+          <option value="America/Los_Angeles">Los Angeles</option>
+        </Select>
+      </FormField>
       <FormField label="Identifier" error="Use lowercase letters and dashes">
         <Input value="Invalid Value" readOnly />
       </FormField>
+      <Text tone="muted" size="sm">Changes apply when you save.</Text>
+      <VisuallyHidden>Form fields are validated on save.</VisuallyHidden>
     </form>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const select = canvas.getByRole('combobox', { name: 'Time zone' })
+    await expect(select).toHaveAccessibleDescription('For dates on this page')
+    await userEvent.selectOptions(select, 'Asia/Singapore')
+    await expect(select).toHaveValue('Asia/Singapore')
+  },
 }
 
 export const CheckboxRadioAndSwitch: Story = {

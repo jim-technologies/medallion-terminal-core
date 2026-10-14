@@ -9,7 +9,7 @@ import { formatBytes } from '../foundations/intl'
 import { DataGrid, type DataGridColumn } from '../workbench/DataGrid'
 import { EmptyState, ErrorState, LoadingState } from '../workbench/States'
 import { CodeView } from './CodeView'
-import { renderMarkdown } from './markdown'
+import { renderMarkdown, type MarkdownOptions } from './markdown'
 import {
   DEFAULT_PREVIEW_LIMITS,
   contentRangeTotal,
@@ -47,6 +47,8 @@ export interface FilePreviewProps {
   onDownload?: () => void
   /** Height of scrolling previews (CSS or pixels). */
   height?: number | string
+  /** Link and image resolvers for Markdown files (`renderMarkdown`). */
+  markdown?: MarkdownOptions
   className?: string
 }
 
@@ -85,7 +87,7 @@ interface TableRow {
  * video play natively; HTML, SVG and XML show as source; everything else
  * offers a download. Markdown is sanitised.
  */
-export function FilePreview({ file, fetch: transport, limits: overrides, onDownload, height = 480, className }: FilePreviewProps) {
+export function FilePreview({ file, fetch: transport, limits: overrides, onDownload, height = 480, markdown, className }: FilePreviewProps) {
   const t = useMessage()
   const { locale } = useLocale()
   const limits = useMemo(() => ({ ...DEFAULT_PREVIEW_LIMITS, ...overrides }), [overrides])
@@ -143,7 +145,7 @@ export function FilePreview({ file, fetch: transport, limits: overrides, onDownl
             }
           }
           if (plan.kind === 'markdown') {
-            return { state: 'markdown', html: await renderMarkdown(text), truncated, total }
+            return { state: 'markdown', html: await renderMarkdown(text, markdown), truncated, total }
           }
           if (plan.kind === 'json' && !truncated) {
             try {

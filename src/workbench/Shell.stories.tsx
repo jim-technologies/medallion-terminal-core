@@ -65,6 +65,10 @@ export const NavRailSections: Story = {
         />
         <NavRail label="Workspace (collapsed)" sections={SECTIONS} activeId="explore" collapsed />
         <main className="min-w-0 flex-1 p-6 text-[var(--mtc-muted)]">Page content</main>
+        {/* Embedded: the host's sidebar owns the width, border and surface. */}
+        <aside className="w-64 border-l border-[var(--mtc-border)] bg-[var(--mtc-panel)]">
+          <NavRail label="Views" variant="embedded" sections={SECTIONS} activeId="home" />
+        </aside>
       </div>
     )
   },

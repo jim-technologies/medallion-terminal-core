@@ -187,14 +187,18 @@ retains a label, icon, or structural cue in addition to color.
 ### Controls
 
 - `Icon` (`ICON_NAMES` lists the set), `TypeGlyph` (with `TYPE_COLORS` and
-  `typeColorFor`), `Button`, `IconButton`, `ButtonGroup`
-- `Input`, `TextArea`, `FormField`
+  `typeColorFor`), `Button` (`href` renders a link that looks like the
+  button, for Download and Open in a new tab), `IconButton`, `ButtonGroup`
+- `Input`, `TextArea`, `Select` (a native select in the input's frame, for
+  a short fixed choice), `FormField`
 - `Checkbox`, `Radio`, `Switch`, `Combobox`
 - `Tag`, `Badge`, `Callout` (a tag or badge never grows past its
   container: a label that does not fit ends in an ellipsis, and a badge's
   dot and a tag's remove button keep their size)
-- `Tooltip`, `Popover`
-- `Menu`, `ContextMenu`
+- `Tooltip`, `Popover` (`triggerVariant` and `triggerSize` draw its built-in
+  trigger as a `Button`)
+- `Menu`, `ContextMenu` (`MenuItem.checked` makes an item one choice of a
+  set, a `menuitemradio` with the check drawn by the menu)
 - `Dialog`, `Drawer`
 - `Tabs`, `Breadcrumbs`
 
@@ -217,6 +221,8 @@ Popover and menu document listeners exist only while their layer is open.
 - `Skeleton`: a line, block, circle or paragraph placeholder.
 - `CopyButton`: copies a value; inject `clipboard` in tests.
 - `MetaRow`: a wrapping row of muted metadata items.
+- `Text`: body text in the type scale (`tone="muted"`, `size="sm"` for a
+  note); `VisuallyHidden`: content for assistive technology only.
 - `Panel`: titled, bordered content frame with header actions and footer.
 - `HoverCard`: a non-modal preview on hover and focus, portalled into the
   scope so it keeps the theme and escapes clipping ancestors.
@@ -226,7 +232,7 @@ Popover and menu document listeners exist only while their layer is open.
 - `NavRail`: the shell's navigation rail (`NavRailSection`s of
   `NavRailItem`s with an icon or type glyph and a count), `activeId` for
   `aria-current`, a collapse toggle (`onCollapsedChange`), links with an
-  optional `onNavigate`.
+  optional `onNavigate`; `variant="embedded"` fills a host sidebar or drawer.
 - `PageHeader`: breadcrumbs, title (or custom heading children such as an
   `ObjectHeader`), description, actions and a `tabs` slot; `sticky`.
 - `SearchField`: a search landmark with scope `tokens` (removable, Backspace
@@ -259,7 +265,9 @@ Popover and menu document listeners exist only while their layer is open.
   SVG and XML show as source; anything else offers `onDownload`. Pass the
   product's `fetch` (for example a `createProductFetch`) so reads carry
   request ids and typed errors. The file's bytes stay on the origin that
-  serves `url`.
+  serves `url`. `markdown={{ resolveHref, resolveImage }}` rewrites
+  repository-relative links and images before rendering; `renderMarkdown`
+  takes the same options for Markdown rendered outside a preview.
 - `CodeView`: read-only source with line numbers, wrap, copy, highlighted
   lines and a bounded line count (5,000).
 

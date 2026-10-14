@@ -15,6 +15,7 @@ export {
   FormField,
   Input,
   Radio,
+  Select,
   Switch,
   TextArea,
 } from './FormControls'
@@ -25,6 +26,7 @@ export type {
   FormFieldProps,
   InputProps,
   RadioProps,
+  SelectProps,
   SwitchProps,
   TextAreaProps,
 } from './FormControls'
@@ -37,6 +39,8 @@ export {
   Panel,
   Skeleton,
   StatusBadge,
+  Text,
+  VisuallyHidden,
   initialsOf,
 } from './Display'
 export type {
@@ -49,6 +53,8 @@ export type {
   PanelProps,
   SkeletonProps,
   StatusBadgeProps,
+  TextProps,
+  VisuallyHiddenProps,
 } from './Display'
 export { HoverCard } from './HoverCard'
 export type { HoverCardProps } from './HoverCard'

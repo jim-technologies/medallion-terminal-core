@@ -963,6 +963,10 @@
 }
 
 .mtc-root .mtc-button:disabled { opacity: 0.48; }
+/* A link drawn as a button (`Button href`): no underline, and inert when
+   disabled, as a button would be. */
+.mtc-root a.mtc-button { text-decoration: none; }
+.mtc-root a.mtc-button[aria-disabled="true"] { opacity: 0.48; pointer-events: none; }
 .mtc-root .mtc-button-label { overflow: hidden; text-overflow: ellipsis; }
 .mtc-root .mtc-button-spinner,
 .mtc-root .mtc-state-spinner { animation: mtc-spin 900ms linear infinite; }
@@ -1004,6 +1008,15 @@
 .mtc-root .mtc-input:disabled { background: var(--mtc-panel); color: var(--mtc-muted); opacity: 0.7; }
 .mtc-root .mtc-input[aria-invalid="true"] { border-color: var(--mtc-danger); box-shadow: 0 0 0 2px color-mix(in oklab, var(--mtc-danger) 26%, transparent); }
 .mtc-root .mtc-textarea { min-height: 5rem; height: auto; padding-block: var(--mtc-density-padding-y); resize: vertical; }
+/* A native select in the input's frame; the chevron is the toolkit's. */
+.mtc-root .mtc-select { position: relative; display: block; min-width: 0; }
+.mtc-root .mtc-select-control { padding-right: calc(var(--mtc-density-padding-x) + 1.25rem); appearance: none; cursor: pointer; }
+.mtc-root .mtc-select-icon { position: absolute; top: 50%; right: var(--mtc-space-2); width: 0.875rem; height: 0.875rem; color: var(--mtc-muted); pointer-events: none; translate: 0 -50%; }
+.mtc-root .mtc-select-control:disabled + .mtc-select-icon { opacity: 0.7; }
+/* Body text and notes in the type scale. */
+.mtc-root .mtc-text { margin: 0; color: var(--mtc-fg-soft); font-size: var(--mtc-font-size-md); line-height: var(--mtc-line-height-normal); }
+.mtc-root .mtc-text[data-tone="muted"] { color: var(--mtc-muted); }
+.mtc-root .mtc-text[data-size="sm"] { font-size: var(--mtc-font-size-sm); }
 
 .mtc-root .mtc-form-field { display: grid; gap: var(--mtc-space-1); min-width: 0; }
 .mtc-root .mtc-form-label { color: var(--mtc-fg-soft); font-size: var(--mtc-font-size-sm); font-weight: var(--mtc-font-weight-medium); }
@@ -1218,6 +1231,8 @@
 .mtc-root .mtc-menu-item[data-intent="danger"] { color: var(--mtc-danger-soft); }
 .mtc-root .mtc-menu-item:disabled { opacity: 0.42; }
 .mtc-root .mtc-menu-icon { display: inline-flex; width: 1rem; justify-content: center; color: var(--mtc-muted-strong); }
+.mtc-root .mtc-menu-check { display: inline-flex; width: 1rem; flex: 0 0 auto; justify-content: center; color: var(--mtc-accent); }
+.mtc-root .mtc-menu-check .mtc-icon { width: 0.875rem; height: 0.875rem; }
 .mtc-root .mtc-menu-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mtc-root .mtc-menu-shortcut { margin-left: var(--mtc-space-4); color: var(--mtc-muted); font-size: var(--mtc-font-size-xs); }
 .mtc-root .mtc-menu-separator { height: 1px; margin: var(--mtc-space-1); background: var(--mtc-border); }

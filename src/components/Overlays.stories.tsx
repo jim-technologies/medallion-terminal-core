@@ -67,7 +67,8 @@ export const PopoverControl: Story = {
   name: 'Popover',
   render: () => (
     <Popover
-      trigger={<span className="mtc-button">View filters</span>}
+      trigger="View filters"
+      triggerVariant="outline"
       triggerAriaLabel="View filters"
       title="Active filters"
     >
@@ -112,6 +113,43 @@ export const MenuControl: Story = {
     await userEvent.keyboard('{Enter}')
     await expect(inspectAction).toHaveBeenCalled()
     await expect(trigger).toHaveFocus()
+  },
+}
+
+const themeChosen = fn()
+
+// One choice of a set: the items are radios and the menu draws the check.
+export const ChoiceMenu: Story = {
+  name: 'Menu with a checked choice',
+  render: function Render() {
+    const [theme, setTheme] = useState('system')
+    const choose = (next: string) => () => {
+      themeChosen(next)
+      setTheme(next)
+    }
+    return (
+      <Menu
+        label="Appearance"
+        trigger={<Icon name="settings" />}
+        items={[
+          { id: 'system', label: 'System', checked: theme === 'system', onSelect: choose('system') },
+          { id: 'light', label: 'Light', checked: theme === 'light', onSelect: choose('light') },
+          { id: 'dark', label: 'Dark', checked: theme === 'dark', onSelect: choose('dark') },
+        ]}
+      />
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole('button', { name: 'Appearance' }))
+    const menu = await canvas.findByRole('menu', { name: 'Appearance' })
+    await expect(within(menu).getByRole('menuitemradio', { name: 'System' })).toHaveAttribute('aria-checked', 'true')
+    await expect(within(menu).getByRole('menuitemradio', { name: 'Dark' })).toHaveAttribute('aria-checked', 'false')
+    await userEvent.click(within(menu).getByRole('menuitemradio', { name: 'Dark' }))
+    await expect(themeChosen).toHaveBeenCalledWith('dark')
+    await userEvent.click(canvas.getByRole('button', { name: 'Appearance' }))
+    await expect(within(await canvas.findByRole('menu', { name: 'Appearance' })).getByRole('menuitemradio', { name: 'Dark' }))
+      .toHaveAttribute('aria-checked', 'true')
   },
 }
 

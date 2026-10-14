@@ -3,6 +3,7 @@ import {
   type ButtonHTMLAttributes,
   type HTMLAttributes,
   type ReactNode,
+  type Ref,
 } from 'react'
 import { useMessage } from '../foundations/DesignSystemProvider'
 import type { ComponentSize, Density, Intent } from '../foundations/types'
@@ -29,6 +30,15 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   startIcon?: ReactNode
   /** Decorative or labeled content after the button label. */
   endIcon?: ReactNode
+  /**
+   * Renders a link (`<a>`) that looks like the button, for Download and
+   * Open in a new tab; `target`, `rel` and `download` apply to it. The ref
+   * is then the anchor.
+   */
+  href?: string
+  target?: string
+  rel?: string
+  download?: string | boolean
 }
 
 /** Semantic, ref-forwarding action button with consistent busy handling. */
@@ -46,28 +56,59 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     className,
     children,
     type = 'button',
+    href,
+    target,
+    rel,
+    download,
     ...rest
   },
   ref,
 ) {
   const t = useMessage()
+  const content = (
+    <>
+      {loading
+        ? <Icon name="spinner" className="mtc-button-spinner" />
+        : startIcon}
+      <span className="mtc-button-label">{loading ? loadingLabel ?? t('button.working') : children}</span>
+      {!loading && endIcon}
+    </>
+  )
+  const shared = {
+    'aria-busy': loading || undefined,
+    className: cx('mtc-button', density && `mtc-density-${density}`, className),
+    'data-intent': intent,
+    'data-variant': variant,
+    'data-size': size,
+  }
+  if (href !== undefined) {
+    // A link cannot be disabled: it drops its destination instead and says so.
+    const inert = disabled || loading
+    return (
+      <a
+        {...(rest as HTMLAttributes<HTMLAnchorElement>)}
+        {...shared}
+        ref={ref as unknown as Ref<HTMLAnchorElement>}
+        href={inert ? undefined : href}
+        target={target}
+        rel={rel ?? (target === '_blank' ? 'noopener noreferrer' : undefined)}
+        download={download}
+        aria-disabled={inert || undefined}
+        tabIndex={inert ? -1 : rest.tabIndex}
+      >
+        {content}
+      </a>
+    )
+  }
   return (
     <button
       {...rest}
       ref={ref}
       type={type}
       disabled={disabled || loading}
-      aria-busy={loading || undefined}
-      className={cx('mtc-button', density && `mtc-density-${density}`, className)}
-      data-intent={intent}
-      data-variant={variant}
-      data-size={size}
+      {...shared}
     >
-      {loading
-        ? <Icon name="spinner" className="mtc-button-spinner" />
-        : startIcon}
-      <span className="mtc-button-label">{loading ? loadingLabel ?? t('button.working') : children}</span>
-      {!loading && endIcon}
+      {content}
     </button>
   )
 })

@@ -77,6 +77,12 @@ export interface ProductShellProps {
   actions?: ReactNode
   /** Account menu items; "Sign out" is added when the session can. */
   accountMenu?: readonly MenuItem[]
+  /**
+   * The current page's title: `document.title` becomes
+   * `{pageTitle} · {product.name}`, or the product name alone when unset,
+   * so tabs and history tell pages apart.
+   */
+  pageTitle?: string
   /** Status bar content (freshness, environment, locale). */
   status?: ReactNode
   /** Inspector column for the current selection; hidden when absent. */
@@ -172,6 +178,13 @@ export function ProductShell(props: ProductShellProps) {
     telemetry?.record({ type: 'session', status: session.status, at: Date.now() })
     if (session.status === 'expired') channel?.post({ type: 'mtc:session-expired', version: 1 })
   }, [sessionPort, session.status, telemetry, channel])
+
+  // The document title names the page, then the product.
+  const { pageTitle, product: { name: productName } } = props
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    document.title = pageTitle ? `${pageTitle} · ${productName}` : productName
+  }, [pageTitle, productName])
 
   useEffect(() => {
     if (!channel) return

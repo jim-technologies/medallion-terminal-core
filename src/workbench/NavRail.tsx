@@ -47,6 +47,12 @@ export interface NavRailProps extends Omit<HTMLAttributes<HTMLElement>, 'onChang
   header?: ReactNode
   /** Content below the sections. */
   footer?: ReactNode
+  /**
+   * `standalone` (default) is the shell's rail: its own width, border and
+   * surface. `embedded` fills a host sidebar or drawer: full width, no
+   * border, transparent.
+   */
+  variant?: 'standalone' | 'embedded'
 }
 
 /**
@@ -65,6 +71,7 @@ export const NavRail = forwardRef<HTMLElement, NavRailProps>(function NavRail(
     onCollapsedChange,
     header,
     footer,
+    variant = 'standalone',
     className,
     ...rest
   },
@@ -78,6 +85,7 @@ export const NavRail = forwardRef<HTMLElement, NavRailProps>(function NavRail(
       aria-label={label}
       className={cx('mtc-nav-rail', className)}
       data-collapsed={collapsed || undefined}
+      data-variant={variant === 'embedded' ? variant : undefined}
     >
       {header && <div className="mtc-nav-rail-header">{header}</div>}
       <div className="mtc-nav-rail-sections">

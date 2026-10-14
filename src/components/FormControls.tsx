@@ -11,6 +11,7 @@ import {
   type InputHTMLAttributes,
   type ReactElement,
   type ReactNode,
+  type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from 'react'
 import { useMessage } from '../foundations/DesignSystemProvider'
@@ -65,6 +66,41 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
       className={cx('mtc-input mtc-textarea', density && `mtc-density-${density}`, className)}
       data-size={size}
     />
+  )
+})
+
+/** Props for a tokenized native select. */
+export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+  /** Visual control size. */
+  size?: ComponentSize
+  /** Optional density override for this control. */
+  density?: Density
+  /** Marks the control invalid without replacing a supplied ARIA value. */
+  invalid?: boolean
+}
+
+/**
+ * A native `<select>` in the input's frame with the toolkit's chevron, for a
+ * short fixed choice (a sort order, a time zone); `Combobox` is the searching
+ * one. It takes `id` and ARIA props from `FormField` like any control.
+ */
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
+  { size = 'medium', density, invalid, className, children, ...rest },
+  ref,
+) {
+  return (
+    <span className={cx('mtc-select', density && `mtc-density-${density}`, className)} data-size={size}>
+      <select
+        {...rest}
+        ref={ref}
+        aria-invalid={invalid || rest['aria-invalid'] || undefined}
+        className="mtc-input mtc-select-control"
+        data-size={size}
+      >
+        {children}
+      </select>
+      <Icon name="chevron-down" className="mtc-select-icon" aria-hidden="true" />
+    </span>
   )
 })
 

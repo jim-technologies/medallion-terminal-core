@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  type Ref,
   useEffect,
   useId,
   useRef,
@@ -245,6 +246,46 @@ export const MetaRow = forwardRef<HTMLUListElement, MetaRowProps>(function MetaR
 })
 
 /** Props for a titled content panel. */
+/** Props for content read by assistive technology only. */
+export interface VisuallyHiddenProps extends HTMLAttributes<HTMLSpanElement> {}
+
+/**
+ * Keeps its children in the accessibility tree and out of sight: a label for
+ * an icon-only control, a status announcement, a hidden file input.
+ */
+export const VisuallyHidden = forwardRef<HTMLSpanElement, VisuallyHiddenProps>(function VisuallyHidden(
+  { className, ...rest },
+  ref,
+) {
+  return <span {...rest} ref={ref} className={cx('mtc-visually-hidden', className)} />
+})
+
+/** Props for a run of body text. */
+export interface TextProps extends HTMLAttributes<HTMLElement> {
+  /** The element; a paragraph by default. */
+  as?: 'p' | 'span' | 'div'
+  /** `muted` for notes and hints beside the content they explain. */
+  tone?: 'default' | 'muted'
+  /** `sm` for notes; the body size otherwise. */
+  size?: 'sm' | 'md'
+}
+
+/** Body text in the type scale, so a note is the same note on every page. */
+export const Text = forwardRef<HTMLElement, TextProps>(function Text(
+  { as: Tag = 'p', tone = 'default', size = 'md', className, ...rest },
+  ref,
+) {
+  return (
+    <Tag
+      {...rest}
+      ref={ref as Ref<HTMLParagraphElement>}
+      className={cx('mtc-text', className)}
+      data-tone={tone === 'muted' ? tone : undefined}
+      data-size={size === 'sm' ? size : undefined}
+    />
+  )
+})
+
 export interface PanelProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
   /** Panel title (14 px, semibold). */
   title: ReactNode

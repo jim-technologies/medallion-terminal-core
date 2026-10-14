@@ -14,8 +14,8 @@ import {
   type RefObject,
 } from 'react'
 import { useMessage } from '../foundations/DesignSystemProvider'
-import type { Intent } from '../foundations/types'
-import { IconButton } from './Button'
+import type { ComponentSize, Intent } from '../foundations/types'
+import { IconButton, type ButtonVariant } from './Button'
 import { Icon } from './Icon'
 import {
   cx,
@@ -121,6 +121,12 @@ export interface PopoverProps {
   placement?: 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end'
   /** Disables the trigger. */
   disabled?: boolean
+  /**
+   * Draws the built-in trigger as a `Button` of this variant (and
+   * `triggerSize`), so it matches the buttons beside it.
+   */
+  triggerVariant?: ButtonVariant
+  triggerSize?: ComponentSize
   /** Additional class for the positioning wrapper. */
   className?: string
 }
@@ -139,6 +145,8 @@ export function Popover({
   onOpenChange,
   placement = 'bottom-start',
   disabled,
+  triggerVariant,
+  triggerSize = 'medium',
   className,
 }: PopoverProps) {
   const id = useId()
@@ -159,7 +167,10 @@ export function Popover({
       <button
         ref={triggerRef}
         type="button"
-        className="mtc-popover-trigger"
+        className={cx('mtc-popover-trigger', triggerVariant && 'mtc-button')}
+        data-intent={triggerVariant && 'neutral'}
+        data-variant={triggerVariant}
+        data-size={triggerVariant && triggerSize}
         aria-label={triggerAriaLabel}
         aria-haspopup="dialog"
         aria-expanded={open}
@@ -173,7 +184,7 @@ export function Popover({
           }
         }}
       >
-        {trigger}
+        {triggerVariant ? <span className="mtc-button-label">{trigger}</span> : trigger}
       </button>
       {open && (
         <div
@@ -208,6 +219,12 @@ export interface MenuItem {
   separator?: boolean
   /** Optional destructive emphasis. */
   intent?: Extract<Intent, 'neutral' | 'danger'>
+  /**
+   * One choice of a set (a theme, a sort order): the item is a
+   * `menuitemradio` and the menu draws the check. Every item in a menu with
+   * a checked item gets the check column, so labels align.
+   */
+  checked?: boolean
   /** Invoked once when the enabled command is selected. */
   onSelect?: () => void
 }
@@ -387,9 +404,11 @@ export function MenuPopup({
   style,
 }: MenuPopupProps) {
   const ref = useRef<HTMLDivElement>(null)
+  // Radio items align their labels with the plain ones through a check column.
+  const checkable = items.some(item => item.checked !== undefined)
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
-      const buttons = ref.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not([disabled])')
+      const buttons = ref.current?.querySelectorAll<HTMLButtonElement>('.mtc-menu-item:not([disabled])')
       const target = [...(buttons ?? [])].find(button => Number(button.dataset.index) === initialIndex) ?? buttons?.[0]
       target?.focus()
     })
@@ -398,7 +417,7 @@ export function MenuPopup({
 
   const focusIndex = (from: number, delta: 1 | -1) => {
     const next = nextMenuIndex(items, from, delta)
-    ref.current?.querySelector<HTMLButtonElement>(`[role="menuitem"][data-index="${next}"]`)?.focus()
+    ref.current?.querySelector<HTMLButtonElement>(`.mtc-menu-item[data-index="${next}"]`)?.focus()
   }
 
   return (
@@ -438,7 +457,8 @@ export function MenuPopup({
         <button
           key={item.id}
           type="button"
-          role="menuitem"
+          role={item.checked === undefined ? 'menuitem' : 'menuitemradio'}
+          aria-checked={item.checked}
           disabled={item.disabled}
           data-index={index}
           data-intent={item.intent ?? 'neutral'}
@@ -449,6 +469,7 @@ export function MenuPopup({
             onClose(true)
           }}
         >
+          {checkable && <span className="mtc-menu-check" aria-hidden="true">{item.checked && <Icon name="check" />}</span>}
           {item.icon && <span className="mtc-menu-icon" aria-hidden="true">{item.icon}</span>}
           <span className="mtc-menu-label">{item.label}</span>
           {item.shortcut && <kbd className="mtc-menu-shortcut">{item.shortcut}</kbd>}
