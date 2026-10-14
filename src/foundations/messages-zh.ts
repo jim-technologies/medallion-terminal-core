@@ -128,6 +128,7 @@ export const ZH_CN_MESSAGES: MessageCatalog = {
   'shell.search': '搜索',
   'shell.account': '账户',
   'shell.signOut': '退出登录',
+  'shell.inspector': '检查器',
   'ops.title': '操作',
   'ops.running': '{count} 个进行中',
   'ops.queued': '{count} 个排队中',

@@ -259,6 +259,11 @@
   --mtc-density-padding-y: 0.375rem;
   --mtc-density-gap: 0.5rem;
 
+  /* The two side-panel widths every surface shares: the navigation rail or
+     an explorer sidebar, and the inspector, in the shell and in AppSurface. */
+  --mtc-rail-width: 14.5rem;
+  --mtc-inspector-width: 22.5rem;
+
   min-height: 100%;
   background: var(--mtc-bg);
   color: var(--mtc-fg);
@@ -1331,7 +1336,7 @@
   flex-direction: column;
   transition: width var(--mtc-duration-normal), transform var(--mtc-duration-normal);
 }
-.mtc-root .mtc-sidebar { width: var(--mtc-sidebar-width); }
+.mtc-root .mtc-sidebar { width: var(--mtc-sidebar-width, var(--mtc-rail-width)); }
 .mtc-root .mtc-sidebar[data-side="left"] { border-right: 1px solid var(--mtc-border); }
 .mtc-root .mtc-sidebar[data-side="right"] { border-left: 1px solid var(--mtc-border); }
 .mtc-root .mtc-sidebar[data-collapsed="true"] { width: 0; border: 0; visibility: hidden; }
@@ -1434,7 +1439,7 @@
   flex-direction: column;
 }
 .mtc-root .mtc-state[data-compact="true"] { min-height: 5rem; padding: var(--mtc-space-3); justify-content: safe center; overflow: auto; }
-.mtc-root .mtc-state-icon { display: inline-flex; color: var(--mtc-muted-strong); font-size: 1.5rem; }
+.mtc-root .mtc-state-icon { display: inline-flex; color: var(--mtc-muted-strong); font-size: var(--mtc-font-size-3xl); }
 .mtc-root .mtc-state-title { color: var(--mtc-fg-soft); font-size: var(--mtc-font-size-md); font-weight: var(--mtc-font-weight-semibold); }
 .mtc-root .mtc-state-description { max-width: 30rem; color: var(--mtc-muted); font-size: var(--mtc-font-size-sm); line-height: var(--mtc-line-height-normal); }
 .mtc-root .mtc-state-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--mtc-space-2); margin-top: var(--mtc-space-1); }
@@ -1450,7 +1455,7 @@
 .mtc-root .mtc-state-skeleton { display: grid; width: min(18rem, 100%); gap: var(--mtc-space-2); }
 .mtc-root .mtc-state-skeleton span { height: 0.5rem; border-radius: var(--mtc-radius-sm); background: var(--mtc-panel); animation: mtc-pulse 1.6s ease-in-out infinite; }
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .mtc-root .mtc-modal-backdrop { padding: var(--mtc-space-2); }
   .mtc-root .mtc-dialog { max-height: calc(100vh - var(--mtc-space-4)); }
   .mtc-root .mtc-split-pane[data-stack-narrow="true"] { display: flex; overflow: auto; flex-direction: column; }

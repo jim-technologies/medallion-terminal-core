@@ -118,6 +118,13 @@ function currentPath(router: Router): string {
   return `${pathname}${search}${hash}`
 }
 
+/** Whether the keyboard has a Command key (macOS, iOS, iPadOS). */
+function applePlatform(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const platform = (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData?.platform ?? navigator.platform
+  return /Mac|iPhone|iPad|iPod/i.test(platform ?? '')
+}
+
 /**
  * The frame every product UI shares (storage, tables, git, consoles): a
  * 44 px top bar (product, scope, search, actions, account), a navigation
@@ -305,6 +312,8 @@ function StandaloneFrame(props: FrameProps) {
   useEffect(() => {
     if (!search) searchHadFocus.current = false
   }, [search])
+  // The palette opens on Ctrl K and ⌘ K; the hint names the one at hand.
+  const [shortcut] = useState(() => (applePlatform() ? '⌘ K' : 'Ctrl K'))
 
   const navigate = useCallback((item: NavRailItem) => {
     if (!item.href) return
@@ -352,17 +361,12 @@ function StandaloneFrame(props: FrameProps) {
     }}>
       <Icon name="search" />
       <span className="mtc-shell-search-text">{search.placeholder ?? t('shell.search')}</span>
-      <Kbd aria-hidden="true">Ctrl K</Kbd>
+      <Kbd aria-hidden="true">{shortcut}</Kbd>
     </button>
   )
 
   return (
-    <div
-      className="mtc-shell"
-      data-inspector={inspector ? 'open' : undefined}
-      data-operations={props.operations?.length ? 'true' : undefined}
-      data-rail={nav ? (collapsed ? 'collapsed' : 'expanded') : 'none'}
-    >
+    <div className="mtc-shell" data-operations={props.operations?.length ? 'true' : undefined}>
       <a className="mtc-shell-skip" href="#mtc-main" onClick={event => {
         event.preventDefault()
         mainRef.current?.focus()
@@ -419,8 +423,8 @@ function StandaloneFrame(props: FrameProps) {
       <main id="mtc-main" ref={mainRef} tabIndex={-1} className="mtc-shell-main">
         <PageContent {...props} />
       </main>
-      {inspector && <aside className="mtc-shell-inspector">{inspector}</aside>}
-      <footer className="mtc-shell-status">{status}</footer>
+      {inspector && <aside className="mtc-shell-inspector" aria-label={t('shell.inspector')}>{inspector}</aside>}
+      {status && <footer className="mtc-shell-status">{status}</footer>}
       {nav && (
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} title={product.name} side="left" width={288} className="mtc-shell-drawer">
           {rail(true)}

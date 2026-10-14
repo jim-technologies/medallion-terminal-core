@@ -38,8 +38,8 @@ export interface OperationsTrayProps {
   open?: boolean
   /**
    * Initial expansion when uncontrolled: open on larger screens, collapsed
-   * to its summary on phones (720 px and narrower), where the sheet would
-   * cover the page.
+   * to its summary on phones (below 768 px), where the sheet would cover
+   * the page.
    */
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
@@ -60,8 +60,8 @@ const STATUS_ICON: Record<OperationStatus, IconName> = {
 
 const FINISHED = new Set<OperationStatus>(['succeeded', 'failed', 'cancelled'])
 
-// Matches the stylesheet's bottom-sheet breakpoint.
-const PHONE_QUERY = '(max-width: 720px)'
+// Matches the stylesheet's bottom-sheet breakpoint, the shell's phone width.
+const PHONE_QUERY = '(max-width: 767px)'
 
 function opensExpanded(): boolean {
   return typeof window === 'undefined' || typeof window.matchMedia !== 'function' || !window.matchMedia(PHONE_QUERY).matches

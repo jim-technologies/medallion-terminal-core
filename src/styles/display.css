@@ -98,6 +98,8 @@
 .mtc-root .mtc-panel-actions { display: flex; flex: 0 0 auto; align-items: center; gap: var(--mtc-space-1); margin-left: auto; }
 .mtc-root .mtc-panel-body { min-width: 0; min-height: 0; flex: 1 1 auto; }
 .mtc-root .mtc-panel-body[data-padded="true"] { padding: var(--mtc-space-3); }
+/* A grid filling a panel body borrows the panel's border and corners. */
+.mtc-root .mtc-panel-body > .mtc-data-grid { border: 0; border-radius: 0; }
 .mtc-root .mtc-panel-footer { flex: 0 0 auto; padding: var(--mtc-space-2) var(--mtc-space-3); border-top: 1px solid var(--mtc-border); }
 
 .mtc-root .mtc-hover-card-trigger { display: inline-flex; min-width: 0; max-width: 100%; }

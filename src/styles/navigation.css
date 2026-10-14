@@ -3,7 +3,7 @@
 
 .mtc-root .mtc-nav-rail {
   display: flex;
-  width: 14.5rem;
+  width: var(--mtc-rail-width);
   min-height: 0;
   height: 100%;
   flex: 0 0 auto;
@@ -203,7 +203,7 @@
 }
 .mtc-root .mtc-command-context { margin-left: auto; overflow: hidden; font-family: var(--mtc-font-mono); text-overflow: ellipsis; white-space: nowrap; }
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .mtc-root .mtc-page-header { padding-right: var(--mtc-space-4); padding-left: var(--mtc-space-4); }
   .mtc-root .mtc-command-backdrop { padding-top: var(--mtc-space-4); }
 }

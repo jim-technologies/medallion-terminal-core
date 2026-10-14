@@ -189,13 +189,25 @@ export interface DataGridProps<Row> {
   totalRows?: number
   /** Shows skeleton rows (no rows yet) or a loading-more row. */
   loading?: boolean
-  /** Shown when there are no rows and nothing is loading. */
+  /** Shown when there are no rows and nothing is loading; `null` shows nothing. */
   empty?: ReactNode
+  /**
+   * Resets the scroll position when it changes: pass the identity of the
+   * listing (a folder path, a query) so a new listing starts at the top.
+   */
+  scrollKey?: string | number
   /** Row density; the scope's when unset. */
   density?: Density
   /** Fixed row height in pixels; the density's when unset. */
   rowHeight?: number
-  /** Viewport height (CSS or pixels); fills the parent by default. */
+  /**
+   * Viewport height (CSS or pixels). The default `'100%'` fills the parent,
+   * which must be bounded (a `flex-1 min-h-0` column or an explicit height)
+   * for the header to stick and the rows to window; in an unbounded parent
+   * the grid grows to all its rows and the page scrolls instead. `'auto'`
+   * asks for that on purpose: the grid fits its rows at the density's row
+   * height, for short lists in an inspector or a panel.
+   */
   height?: number | string
   /** Renders only the rows in view (`auto`: above 200 rows). */
   virtualize?: boolean | 'auto'
@@ -321,6 +333,7 @@ export function DataGrid<Row>({
   totalRows,
   loading = false,
   empty,
+  scrollKey,
   density,
   rowHeight,
   height = '100%',
@@ -431,7 +444,8 @@ export function DataGrid<Row>({
   const virtual = virtualize === 'auto' ? displayRows.length > 200 : virtualize
   const range = rowWindow(displayRows.length, viewport.scrollTop, viewport.height, lineHeight, overscan, virtual)
   const skeleton = loading && displayRows.length === 0
-  const showEmpty = !loading && displayRows.length === 0
+  // `empty={null}` suppresses the empty row: the host shows its own state.
+  const showEmpty = !loading && displayRows.length === 0 && empty !== null
   const extraRows = skeleton ? SKELETON_ROWS : loading && displayRows.length > 0 ? 1 : 0
   const bodyHeight = showEmpty ? EMPTY_HEIGHT : (displayRows.length + extraRows) * lineHeight
 
@@ -453,6 +467,14 @@ export function DataGrid<Row>({
     if (sort === undefined) setInternalSort(next)
     onSortChange?.(next)
   }
+
+  // A new listing in the same grid starts at the top.
+  useEffect(() => {
+    const element = viewportRef.current
+    if (!element || scrollKey === undefined) return
+    element.scrollTop = 0
+    setViewport(current => (current.scrollTop === 0 ? current : { ...current, scrollTop: 0 }))
+  }, [scrollKey])
 
   // Track the viewport so the rendered window follows scrolling and resizes.
   useLayoutEffect(() => {

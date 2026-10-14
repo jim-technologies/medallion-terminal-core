@@ -86,7 +86,7 @@ export interface SidebarProps extends HTMLAttributes<HTMLElement> {
   header?: ReactNode
   /** Fixed content below the scrolling pane. */
   footer?: ReactNode
-  /** CSS width or numeric pixel width. */
+  /** CSS width or numeric pixel width; the rail width (`--mtc-rail-width`) when unset. */
   width?: number | string
   /** Visually and semantically hides the sidebar. */
   collapsed?: boolean
@@ -100,7 +100,7 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(function Sidebar(
     label,
     header,
     footer,
-    width = 280,
+    width,
     collapsed = false,
     side = 'left',
     className,
@@ -111,7 +111,7 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(function Sidebar(
   ref,
 ) {
   const sidebarStyle = {
-    '--mtc-sidebar-width': typeof width === 'number' ? `${width}px` : width,
+    ...(width !== undefined && { '--mtc-sidebar-width': typeof width === 'number' ? `${width}px` : width }),
     ...style,
   } as CSSProperties
   return (
@@ -144,7 +144,7 @@ export interface InspectorProps extends Omit<HTMLAttributes<HTMLElement>, 'title
   actions?: ReactNode
   /** Fixed content below the scrolling pane. */
   footer?: ReactNode
-  /** CSS width or numeric pixel width. */
+  /** CSS width or numeric pixel width; the shell's inspector width (`--mtc-inspector-width`) when unset. */
   width?: number | string
   /** Visually and semantically hides the inspector when false. */
   open?: boolean
@@ -158,7 +158,7 @@ export const Inspector = forwardRef<HTMLElement, InspectorProps>(function Inspec
     subtitle,
     actions,
     footer,
-    width = 320,
+    width,
     open = true,
     className,
     children,
@@ -168,7 +168,7 @@ export const Inspector = forwardRef<HTMLElement, InspectorProps>(function Inspec
   ref,
 ) {
   const inspectorStyle = {
-    '--mtc-inspector-width': typeof width === 'number' ? `${width}px` : width,
+    ...(width !== undefined && { '--mtc-inspector-width': typeof width === 'number' ? `${width}px` : width }),
     ...style,
   } as CSSProperties
   return (

@@ -259,6 +259,56 @@ export const EmptyAndLoading: Story = {
   ),
 }
 
+// `scrollKey` names the listing: a new one starts at the top without the
+// host reaching into the grid. `height="auto"` fits a short list to its rows.
+export const ListingsAndAutoHeight: Story = {
+  name: 'Listings and auto height',
+  render: function Render() {
+    const [listing, setListing] = useState('finance')
+    return (
+      <div className="grid gap-4">
+        <div className="flex gap-2">
+          {['finance', 'media'].map(name => (
+            <button key={name} type="button" className="mtc-button" data-variant="outline" data-size="small" aria-pressed={listing === name} onClick={() => setListing(name)}>
+              <span className="mtc-button-label">{name}</span>
+            </button>
+          ))}
+        </div>
+        <DataGrid
+          label={`Files in ${listing}`}
+          columns={eventColumns}
+          rows={EVENTS}
+          rowKey={row => String(row.id)}
+          scrollKey={listing}
+          height={300}
+        />
+        <DataGrid
+          label="Recent files"
+          columns={eventColumns}
+          rows={EVENTS.slice(0, 3)}
+          rowKey={row => String(row.id)}
+          height="auto"
+        />
+        <DataGrid label="No empty state" columns={eventColumns} rows={[]} rowKey={row => String(row.id)} empty={null} height="auto" />
+      </div>
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const grid = canvas.getByRole('grid', { name: 'Files in finance' })
+    grid.scrollTop = 2_000
+    await waitFor(() => expect(grid.scrollTop).toBeGreaterThan(0))
+    await userEvent.click(canvas.getByRole('button', { name: 'media' }))
+    await expect(canvas.getByRole('grid', { name: 'Files in media' })).toHaveProperty('scrollTop', 0)
+    // Auto height: the grid is exactly its header and three rows tall.
+    const recent = canvas.getByRole('grid', { name: 'Recent files' })
+    await expect(recent.scrollHeight).toBe(recent.clientHeight)
+    await expect(recent.querySelectorAll('[aria-rowindex]').length).toBe(4)
+    const empty = canvas.getByRole('grid', { name: 'No empty state' })
+    await expect(within(empty).queryByText('No rows')).toBeNull()
+  },
+}
+
 interface DocumentRow {
   id: string
   name: string

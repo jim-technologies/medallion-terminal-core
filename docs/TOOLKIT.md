@@ -491,9 +491,11 @@ const productFetch = createProductFetch({ onRequest: requestTelemetry(telemetry)
   opening the `CommandPalette` with Ctrl/⌘ K, `actions`, the account menu
   with Sign out), the `NavRail` (collapsible; a drawer below 768 px), the
   page, an optional `inspector` (a bottom sheet on phones), a 24 px `status`
-  bar, toasts (`useToast` works inside) and the `OperationsTray`. The rail
+  bar only when `status` is set, toasts (`useToast` works inside; they stack
+  above the status bar and the tray) and the `OperationsTray`. The rail
   marks the item whose path best matches the location unless `activeNavId`
-  is given.
+  is given. Rail and inspector widths are the `--mtc-rail-width` and
+  `--mtc-inspector-width` tokens, shared with `Sidebar` and `Inspector`.
 - **Router port.** `Router` has `location`, `navigate`, `back`,
   `subscribe` and `href`. `createHistoryRouter({ base })` uses the History
   API; `createMemoryRouter(path)` serves tests, stories and frames; a host

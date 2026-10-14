@@ -1,5 +1,7 @@
 /* Feedback (0.7.0): toasts, activity feeds and timelines, stat tiles. */
 
+/* Inside a product shell the bottom offset grows past the status bar and the
+   operations tray (shell.css). */
 .mtc-root .mtc-toaster { position: fixed; z-index: 95; right: var(--mtc-space-4); bottom: var(--mtc-space-4); width: min(24rem, calc(100vw - 2rem)); }
 .mtc-root .mtc-toaster[data-placement="top-end"] { top: var(--mtc-space-4); bottom: auto; }
 .mtc-root .mtc-toaster ol { display: grid; gap: var(--mtc-space-2); }

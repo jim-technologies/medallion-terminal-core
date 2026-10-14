@@ -2,13 +2,20 @@
    optional inspector and a 24 px status bar, plus the operations tray.
    Flat surfaces; elevation only on the tray and overlays. */
 
+/* The status bar's height, read by everything pinned above the bottom edge
+   (inspector sheet, operations tray, toasts). It is 0 until a shell renders
+   a status bar; the tray and toasts are portalled beside the shell, so the
+   value is set from the document root rather than the shell. */
+.mtc-root { --mtc-shell-status-height: 0px; }
+:root:has(.mtc-shell-status) .mtc-root { --mtc-shell-status-height: 1.5rem; }
+
 .mtc-root.mtc-product-shell-root { height: 100%; min-height: 100vh; }
 .mtc-root .mtc-shell {
   display: grid;
   height: 100vh;
   min-height: 0;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-rows: 2.75rem minmax(0, 1fr) 1.5rem;
+  grid-template-rows: 2.75rem minmax(0, 1fr) auto;
   grid-template-areas:
     "top top top"
     "rail main inspector"
@@ -72,9 +79,10 @@
 .mtc-root .mtc-shell-actions .mtc-menu-trigger { border-radius: var(--mtc-radius-round); }
 .mtc-root .mtc-shell-rail-slot { min-height: 0; grid-area: rail; }
 .mtc-root .mtc-shell-main { position: relative; min-width: 0; min-height: 0; overflow: auto; grid-area: main; outline: none; }
-.mtc-root .mtc-shell-inspector { width: 22.5rem; min-height: 0; overflow: auto; border-left: 1px solid var(--mtc-border); background: var(--mtc-surface); grid-area: inspector; }
+.mtc-root .mtc-shell-inspector { width: var(--mtc-inspector-width); min-height: 0; overflow: auto; border-left: 1px solid var(--mtc-border); background: var(--mtc-surface); grid-area: inspector; }
 .mtc-root .mtc-shell-status {
   display: flex;
+  height: var(--mtc-shell-status-height);
   min-width: 0;
   align-items: center;
   gap: var(--mtc-space-4);
@@ -106,7 +114,7 @@
     position: fixed;
     z-index: 70;
     right: 0;
-    bottom: 1.5rem;
+    bottom: var(--mtc-shell-status-height);
     left: 0;
     width: auto;
     max-height: 60vh;
@@ -116,14 +124,14 @@
   }
   /* The operations tray's summary bar sits under the inspector sheet, so
      neither covers the other until the tray is opened. */
-  .mtc-root .mtc-shell[data-operations="true"] .mtc-shell-inspector { bottom: calc(1.5rem + 2.25rem); }
+  .mtc-root .mtc-shell[data-operations="true"] .mtc-shell-inspector { bottom: calc(var(--mtc-shell-status-height) + 2.25rem); }
 }
 
 .mtc-root .mtc-operations-tray {
   position: fixed;
   z-index: 75;
   right: var(--mtc-space-4);
-  bottom: calc(1.5rem + var(--mtc-space-3));
+  bottom: calc(var(--mtc-shell-status-height) + var(--mtc-space-3));
   display: flex;
   width: min(24rem, calc(100vw - 2rem));
   max-height: min(28rem, 60vh);
@@ -162,8 +170,14 @@
 .mtc-root .mtc-operation-actions { display: flex; flex: 0 0 auto; gap: var(--mtc-space-1); }
 .mtc-root .mtc-operations-footer { display: flex; flex: 0 0 auto; justify-content: flex-end; padding: var(--mtc-space-1) var(--mtc-space-2); border-top: 1px solid var(--mtc-border); }
 
-@media (max-width: 720px) {
-  .mtc-root .mtc-operations-tray[data-placement="floating"] { right: 0; bottom: 0; left: 0; width: 100%; border-radius: var(--mtc-radius-lg) var(--mtc-radius-lg) 0 0; }
-  /* Above the shell's status bar, which stays visible. */
-  .mtc-root:has(.mtc-shell-status) .mtc-operations-tray[data-placement="floating"] { bottom: 1.5rem; }
+/* Toasts stack above the status bar and, while the tray is out, above its
+   collapsed summary bar (2.25rem plus its own offset). */
+.mtc-root .mtc-toaster:not([data-placement="top-end"]) { bottom: calc(var(--mtc-shell-status-height) + var(--mtc-space-4)); }
+:root:has(.mtc-shell[data-operations="true"]) .mtc-root .mtc-toaster:not([data-placement="top-end"]) {
+  bottom: calc(var(--mtc-shell-status-height) + var(--mtc-space-3) + 2.25rem + var(--mtc-space-3));
+}
+
+@media (max-width: 767px) {
+  /* A bottom sheet, above the shell's status bar, which stays visible. */
+  .mtc-root .mtc-operations-tray[data-placement="floating"] { right: 0; bottom: var(--mtc-shell-status-height); left: 0; width: 100%; border-radius: var(--mtc-radius-lg) var(--mtc-radius-lg) 0 0; }
 }

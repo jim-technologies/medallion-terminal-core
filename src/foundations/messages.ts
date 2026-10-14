@@ -126,6 +126,7 @@ export const EN_MESSAGES = {
   'shell.search': 'Search',
   'shell.account': 'Account',
   'shell.signOut': 'Sign out',
+  'shell.inspector': 'Inspector',
   'ops.title': 'Operations',
   'ops.running': '{count} running',
   'ops.queued': '{count} queued',
