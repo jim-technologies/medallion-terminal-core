@@ -7,7 +7,6 @@
   - img "Jamie Kim"
 - main:
   - heading "Explore" [level=1]
-  - paragraph: Search every object in the workspace, narrowed by type and property.
   - button "Filters"
   - button "Export"
   - search "Search customers":

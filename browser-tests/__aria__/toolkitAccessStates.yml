@@ -15,10 +15,10 @@
   - text: Data may be out of date Last updated 7 minutes ago.
   - button "Refresh"
 - alert:
-  - text: Service unavailable The service did not respond. Try again shortly.
+  - text: Service unavailable No response. Try again.
   - group: Details
   - button "Retry"
 - alert:
-  - text: Request not accepted The service could not accept this request.
+  - text: Request not accepted Request rejected.
   - group: Details
-- status: Data may be out of date This view has not refreshed recently.
+- status: Data may be out of date Not refreshed recently.

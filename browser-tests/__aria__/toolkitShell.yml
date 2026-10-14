@@ -6,7 +6,7 @@
   - button "Northstar workspace"
   - button "Search files"
   - button "Account"
-- navigation "Product navigation":
+- navigation "Navigation":
   - list:
     - listitem:
       - link "Buckets":

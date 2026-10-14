@@ -264,7 +264,6 @@ function ObjectExplorer() {
         <div className="min-w-0 flex-1">
           <PageHeader
             title="Explore"
-            description="Search every object in the workspace, narrowed by type and property."
             actions={(
               <>
                 <div className="lg:hidden">
@@ -514,7 +513,6 @@ function SchemaGraphTemplate() {
       <PageHeader
         breadcrumbs={[{ label: 'Workspace', href: '#/' }, { label: 'Ontology' }]}
         title="Ontology"
-        description="Object types, link types and how they connect."
         actions={<Button intent="primary" variant="solid" startIcon={<Icon name="add" />}>New object type</Button>}
         tabs={(
           <Tabs
@@ -718,7 +716,6 @@ function OperationsTemplate() {
     <WorkspaceFrame active="operations">
       <PageHeader
         title="Operations"
-        description="Service health, releases and incidents for this workspace."
         actions={<Button startIcon={<Icon name="refresh" />}>Refresh</Button>}
       />
       <Section>
@@ -814,7 +811,6 @@ function StorageTemplate() {
     <WorkspaceFrame active="storage" inspector={inspector}>
       <PageHeader
         title="Storage"
-        description="Buckets and volumes this workspace reads and writes."
         actions={(
           <>
             <Button startIcon={<Icon name="add" />}>New bucket</Button>
@@ -844,11 +840,11 @@ function StorageTemplate() {
             compact
             icon={<Icon name="database" />}
             title="No volumes configured"
-            description="Block volumes appear here once a storage node is registered."
+            description="No storage node registered."
             actions={<Button startIcon={<Icon name="plug" />}>Register a node</Button>}
           />
           <Callout intent="info" title="Configuration">
-            Nodes are registered by an administrator in Connect. Buckets keep working without volumes.
+            Nodes are registered in Connect. Buckets keep working without volumes.
           </Callout>
         </Panel>
       </Section>
@@ -896,7 +892,6 @@ function ConnectTemplate() {
     <WorkspaceFrame active="connect">
       <PageHeader
         title="Connect"
-        description="Sources that sync records into the workspace."
         actions={<Button intent="primary" variant="solid" startIcon={<Icon name="add" />}>New connector</Button>}
       />
       <Section>

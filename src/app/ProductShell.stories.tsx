@@ -336,7 +336,7 @@ export const EmbeddedPage: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await expect(await canvas.findByRole('grid', { name: 'Files in finance' })).toBeVisible()
-    await expect(canvas.queryByRole('navigation', { name: 'Product navigation' })).toBeNull()
+    await expect(canvas.queryByRole('navigation', { name: 'Navigation' })).toBeNull()
   },
 }
 

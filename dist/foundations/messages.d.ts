@@ -31,9 +31,9 @@ export declare const EN_MESSAGES: {
     readonly 'error.rate_limited.description': 'Wait a moment, then try again.';
     readonly 'error.rate_limited.retryIn': 'Try again in {duration}.';
     readonly 'error.unavailable.title': 'Service unavailable';
-    readonly 'error.unavailable.description': 'The service did not respond. Try again shortly.';
+    readonly 'error.unavailable.description': 'No response. Try again.';
     readonly 'error.invalid.title': 'Request not accepted';
-    readonly 'error.invalid.description': 'The service could not accept this request.';
+    readonly 'error.invalid.description': 'Request rejected.';
     readonly 'error.unknown.description': 'Could not load.';
     readonly 'state.notFound.resource': '{resource} doesn’t exist or was moved.';
     readonly 'state.signedOut.title': 'You’re signed out';
@@ -43,7 +43,7 @@ export declare const EN_MESSAGES: {
     readonly 'state.sessionExpired.action': 'Continue';
     readonly 'state.stale.title': 'Data may be out of date';
     readonly 'state.stale.description': 'Last updated {time}.';
-    readonly 'state.stale.generic': 'This view has not refreshed recently.';
+    readonly 'state.stale.generic': 'Not refreshed recently.';
     readonly 'state.stale.action': 'Refresh';
     readonly 'copy.label': 'Copy';
     readonly 'copy.copied': 'Copied';
@@ -103,12 +103,12 @@ export declare const EN_MESSAGES: {
     readonly 'stat.decrease': 'Decrease';
     readonly 'preview.loading': 'Loading preview';
     readonly 'preview.unsupported.title': 'No preview for this file type';
-    readonly 'preview.unsupported.description': 'Download it to open it in another application.';
+    readonly 'preview.unsupported.description': 'Download to open.';
     readonly 'preview.tooLarge.title': 'Too large to preview';
     readonly 'preview.tooLarge.description': '{size} is over the {limit} preview limit.';
     readonly 'preview.blocked.title': 'Preview blocked';
-    readonly 'preview.blocked.description': 'The file’s contents are not a valid {kind}, so it is not shown.';
-    readonly 'preview.unreadable': 'This file could not be read as {kind}.';
+    readonly 'preview.blocked.description': 'Not a valid {kind}.';
+    readonly 'preview.unreadable': 'Not readable as {kind}.';
     readonly 'preview.truncatedBytes': 'Showing the first {shown} of {total}.';
     readonly 'preview.truncatedStart': 'Showing the first {shown}.';
     readonly 'preview.truncatedTable': 'Showing {rows} of {totalRows} rows and {columns} of {totalColumns} columns.';
@@ -120,7 +120,7 @@ export declare const EN_MESSAGES: {
     readonly 'code.truncated': 'Showing the first {shown} of {total} lines.';
     readonly 'shell.skip': 'Skip to content';
     readonly 'shell.menu': 'Open navigation';
-    readonly 'shell.navigation': 'Product navigation';
+    readonly 'shell.navigation': 'Navigation';
     readonly 'shell.search': 'Search';
     readonly 'shell.account': 'Account';
     readonly 'shell.signOut': 'Sign out';

@@ -5,7 +5,7 @@
     - /url: /buckets
   - button "Northstar workspace"
   - button "Search files"
-- navigation "Product navigation":
+- navigation "Navigation":
   - list:
     - listitem:
       - link "Buckets":

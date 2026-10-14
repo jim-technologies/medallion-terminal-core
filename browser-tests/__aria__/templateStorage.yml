@@ -47,7 +47,6 @@
   - button "Collapse navigation" [expanded]
 - main:
   - heading "Storage" [level=1]
-  - paragraph: Buckets and volumes this workspace reads and writes.
   - button "New bucket"
   - button "Open in Storage"
   - text: Buckets 4 Used 12.6 TB of 28 TB Near quota media 1
@@ -108,9 +107,9 @@
         - gridcell "Read-only"
   - region "Volumes":
     - heading "Volumes" [level=2]
-    - text: No volumes configured Block volumes appear here once a storage node is registered.
+    - text: No volumes configured No storage node registered.
     - button "Register a node"
-    - status: Configuration Nodes are registered by an administrator in Connect. Buckets keep working without volumes.
+    - status: Configuration Nodes are registered in Connect. Buckets keep working without volumes.
 - complementary "Selected bucket":
   - text: Bucket
   - code: b-media

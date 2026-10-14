@@ -47,7 +47,6 @@
   - button "Collapse navigation" [expanded]
 - main:
   - heading "Operations" [level=1]
-  - paragraph: Service health, releases and incidents for this workspace.
   - button "Refresh"
   - text: Object API Healthy 4.18.2 p95 84 ms · fresh 1 min ago Search index Degraded 2.9.0 Lag 6 min · fresh 6 min ago Sync workers Healthy 1.31.0 12 of 12 running Object storage Healthy 3.4.1 41% used · fresh 2 min ago
   - region "Releases":

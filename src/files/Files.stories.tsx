@@ -63,7 +63,7 @@ export const SignatureChecks: Story = {
     const canvas = within(canvasElement)
     await expect(await canvas.findByRole('img', { name: 'chart.png' })).toHaveAttribute('src', expect.stringMatching(/^blob:/))
     await expect(await canvas.findByText('Preview blocked')).toBeVisible()
-    await expect(canvas.getByText('The file’s contents are not a valid PNG, so it is not shown.')).toBeVisible()
+    await expect(canvas.getByText('Not a valid PNG.')).toBeVisible()
     await expect(canvas.getByText('80 MB is over the 50 MB preview limit.')).toBeVisible()
     await expect(canvas.getByText('No preview for this file type')).toBeVisible()
     await userEvent.click(canvas.getAllByRole('button', { name: 'Download' })[0]!)

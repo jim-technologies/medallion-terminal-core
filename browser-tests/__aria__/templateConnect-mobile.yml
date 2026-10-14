@@ -7,7 +7,6 @@
   - img "Jamie Kim"
 - main:
   - heading "Connect" [level=1]
-  - paragraph: Sources that sync records into the workspace.
   - button "New connector"
   - grid "Connectors":
     - rowgroup:

@@ -54,7 +54,7 @@ describe('access, session and freshness states', () => {
   it('says how old stale data is against an explicit clock', () => {
     const now = Date.UTC(2026, 8, 25, 12, 0)
     expect(html(<StaleState lastUpdated={now - 7 * 60_000} now={now} />)).toContain('Last updated 7 minutes ago.')
-    expect(html(<StaleState />)).toContain('This view has not refreshed recently.')
+    expect(html(<StaleState />)).toContain('Not refreshed recently.')
   })
 
   it('names a missing object', () => {

@@ -4,7 +4,7 @@
   - link "Tables":
     - /url: /
   - button "Sales base"
-- navigation "Product navigation":
+- navigation "Navigation":
   - list:
     - listitem:
       - link "Bases":

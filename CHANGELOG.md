@@ -4,6 +4,20 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.7.9] — 2026-10-14
+
+### Changed
+
+- Terser copy where the title already says it: "No response. Try again.",
+  "Request rejected.", "Not refreshed recently.", "Download to open.",
+  "Not a valid {kind}." and "Not readable as {kind}." replace the sentences
+  that restated their states, and the shell's navigation landmark is named
+  "Navigation". The Simplified Chinese catalog follows.
+- The page templates keep a description only when it adds a fact the title
+  lacks: Explore, Ontology, Operations, Storage and Connect drop the sentence
+  that listed what the page shows, the empty Volumes panel says "No storage
+  node registered." and no template names an administrator.
+
 ## [0.7.8] — 2026-10-13
 
 ### Added

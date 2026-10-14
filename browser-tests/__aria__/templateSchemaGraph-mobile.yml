@@ -13,7 +13,6 @@
           - /url: "#/"
       - listitem: Ontology
   - heading "Ontology" [level=1]
-  - paragraph: Object types, link types and how they connect.
   - button "New object type"
   - tablist "Ontology sections":
     - tab "Object types 7"

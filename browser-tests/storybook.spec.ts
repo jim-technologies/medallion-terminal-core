@@ -595,7 +595,7 @@ test('RecordGrid is a keyboard grid: one tab stop, arrow keys, header sort', asy
 
 test('ProductShell routes from the rail, marks the current page and opens search with Ctrl+K', async ({ page }) => {
   const root = await openStory(page, stories.toolkitShell)
-  const nav = root.getByRole('navigation', { name: 'Product navigation' })
+  const nav = root.getByRole('navigation', { name: 'Navigation' })
   await expect(nav.getByRole('link', { name: /finance/ })).toHaveAttribute('aria-current', 'page')
   await nav.getByRole('link', { name: /Buckets/ }).click()
   await expect(root.getByRole('heading', { name: 'Buckets', level: 1 })).toBeVisible()
@@ -625,7 +625,7 @@ test('ProductShell keeps the page under the expired-session dialog and renews on
 test('ProductShell moves the navigation into a drawer on phones', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   const root = await openStory(page, stories.toolkitShell)
-  await expect(root.getByRole('navigation', { name: 'Product navigation' })).toBeHidden()
+  await expect(root.getByRole('navigation', { name: 'Navigation' })).toBeHidden()
   await root.getByRole('button', { name: 'Open navigation' }).click()
   const drawer = page.getByRole('dialog', { name: 'Storage' })
   await drawer.getByRole('link', { name: /Activity/ }).click()
@@ -1380,7 +1380,7 @@ for (const theme of ['dark', 'light'] as const) {
 for (const theme of ['dark', 'light'] as const) {
   test(`navigation keeps its width with long labels and vertical scrolling in ${theme}`, async ({ page }, testInfo) => {
     const root = await openStory(page, 'toolkit-app-productshell--long-navigation', { theme })
-    const rail = root.getByRole('navigation', { name: 'Product navigation' })
+    const rail = root.getByRole('navigation', { name: 'Navigation' })
     const lastName = 'destination-39-with-a-long-unbroken-name'
     const checkRail = async (nav: Locator) => {
       const scroller = nav.locator('.mtc-nav-rail-sections')
@@ -1433,7 +1433,7 @@ for (const theme of ['dark', 'light'] as const) {
     const open = root.getByRole('button', { name: 'Open navigation' })
     await open.click()
     const dialog = page.getByRole('dialog')
-    await checkRail(dialog.getByRole('navigation', { name: 'Product navigation' }))
+    await checkRail(dialog.getByRole('navigation', { name: 'Navigation' }))
     const accessibility = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()
     expect(accessibility.violations).toEqual([])
     await page.keyboard.press('Escape')
