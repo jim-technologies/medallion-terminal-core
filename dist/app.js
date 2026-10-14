@@ -799,7 +799,7 @@ function nt(e) {
 	]);
 	let { pageTitle: x, product: { name: S } } = e;
 	N(() => {
-		typeof document < "u" && (document.title = x ? `${x} · ${S}` : S);
+		typeof document < "u" && x !== void 0 && (document.title = `${x} · ${S}`);
 	}, [x, S]), N(() => {
 		if (!h) return;
 		let n = h.subscribe((e) => {

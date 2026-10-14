@@ -179,11 +179,12 @@ export function ProductShell(props: ProductShellProps) {
     if (session.status === 'expired') channel?.post({ type: 'mtc:session-expired', version: 1 })
   }, [sessionPort, session.status, telemetry, channel])
 
-  // The document title names the page, then the product.
+  // The document title names the page, then the product. A shell given no
+  // pageTitle leaves the title to its pages, which may set it themselves.
   const { pageTitle, product: { name: productName } } = props
   useEffect(() => {
-    if (typeof document === 'undefined') return
-    document.title = pageTitle ? `${pageTitle} · ${productName}` : productName
+    if (typeof document === 'undefined' || pageTitle === undefined) return
+    document.title = `${pageTitle} · ${productName}`
   }, [pageTitle, productName])
 
   useEffect(() => {
