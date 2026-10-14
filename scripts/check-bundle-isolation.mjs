@@ -19,6 +19,10 @@ const forbiddenBrowserImports = [
   '@ffmpeg/util',
   'heic2any',
 ]
+// The Simplified Chinese catalog is its own entry (`messages-zh`); an
+// English-only consumer of the toolkit or the shell must never bundle it.
+// `state.loading` in that catalog marks it.
+const chineseCatalogMarker = '正在加载'
 
 const checks = [
   {
@@ -49,6 +53,14 @@ const checks = [
     label: 'asset-open',
     entry: path.join(root, 'dist/asset-open.js'),
     maxStaticGzipBytes: 12 * 1024,
+    requireDynamicImport: false,
+  },
+  {
+    // 140 strings and nothing else: no component reaches it, it reaches no
+    // component.
+    label: 'messages-zh',
+    entry: path.join(root, 'dist/messages-zh.js'),
+    maxStaticGzipBytes: 4 * 1024,
     requireDynamicImport: false,
   },
   {
@@ -89,10 +101,14 @@ for (const check of checks) {
     result.outputFiles.map(file => [path.normalize(file.path), file.contents]),
   )
   const reachable = staticOutputClosure(entryOutput[0], result.metafile.outputs)
+  const decoder = new TextDecoder()
   const staticGzipBytes = [...reachable].reduce((total, outputName) => {
     const absolute = path.normalize(path.resolve(root, outputName))
     const contents = outputFiles.get(absolute)
     if (!contents) throw new Error(`${check.label}: missing output bytes for ${outputName}`)
+    if (check.label !== 'messages-zh' && decoder.decode(contents).includes(chineseCatalogMarker)) {
+      throw new Error(`${check.label}: static bundle reaches the Simplified Chinese catalog (${outputName})`)
+    }
     return total + gzipSync(contents).byteLength
   }, 0)
 

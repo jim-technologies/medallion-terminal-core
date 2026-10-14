@@ -184,7 +184,8 @@ export function ProductShell(props: ProductShellProps) {
     <DesignSystemProvider
       theme={hostSettings.theme ?? theme ?? enclosing?.theme ?? 'dark'}
       density={density ?? enclosing?.density}
-      locale={hostSettings.locale ?? locale}
+      // The product's own locale wins; the host's `mtc:init` fills it in.
+      locale={locale ?? hostSettings.locale}
       timeZone={hostSettings.timeZone ?? timeZone}
       messages={messages}
       className="mtc-product-shell-root"

@@ -141,13 +141,14 @@ export function useMessage(): Translate {
 /** Locale inputs a scope accepts; unset values inherit the enclosing scope. */
 interface LocaleProps {
   /**
-   * BCP 47 locale. Selects the built-in catalog (`en`, or `zh-CN` for any
-   * Chinese locale) and the formatting locale.
+   * BCP 47 locale for the `Intl` formatters and the subtree's `lang`. The
+   * built-in catalog is English; another language is passed as `messages`
+   * (`ZH_CN_MESSAGES` from `medallion-terminal-core/messages-zh`).
    */
   locale?: string
   /** IANA time zone for formatted dates, e.g. `UTC`. */
   timeZone?: string
-  /** Per-key overrides layered over the built-in catalog. */
+  /** A catalog, or per-key overrides, layered over the inherited one. */
   messages?: Partial<MessageCatalog>
 }
 
@@ -178,12 +179,12 @@ export function DesignSystemScope({
   const resolvedLocale = locale ?? parent?.locale ?? DEFAULT_LOCALE
   const resolvedTimeZone = timeZone ?? parent?.timeZone
   const inheritedMessages = parent?.messages
+  // A nested scope inherits its parent's catalog, host language included;
+  // only the outermost scope starts from the built-in English.
   const catalog = useMemo<MessageCatalog>(() => {
-    const base = locale === undefined && inheritedMessages
-      ? inheritedMessages
-      : builtInMessages(resolvedLocale)
+    const base = inheritedMessages ?? builtInMessages(resolvedLocale)
     return messages ? { ...base, ...messages } : base
-  }, [locale, resolvedLocale, inheritedMessages, messages])
+  }, [resolvedLocale, inheritedMessages, messages])
   const value = useMemo<ScopeValue>(() => ({
     theme,
     density,

@@ -11,9 +11,10 @@ export type {
   LocaleSettings,
   Translate,
 } from './DesignSystemProvider'
+// The Simplified Chinese catalog is its own entry (`messages-zh`), so an
+// English-only product never bundles it.
 export {
   EN_MESSAGES,
-  ZH_CN_MESSAGES,
   builtInMessages,
   formatMessage,
 } from './messages'

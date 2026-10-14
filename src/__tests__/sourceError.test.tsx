@@ -10,6 +10,7 @@ import {
   toSourceError,
 } from '../core/sourceError'
 import { DesignSystemProvider } from '../foundations/DesignSystemProvider'
+import { ZH_CN_MESSAGES } from '../foundations/messages-zh'
 import { ErrorState } from '../workbench/States'
 
 function connectError(status: number, body: unknown, headers: Record<string, string> = {}) {
@@ -182,9 +183,9 @@ describe('ErrorState with a typed error', () => {
     expect(html).toContain('data-intent="warning"')
   })
 
-  it('translates the typed copy with the scope locale', () => {
+  it('translates the typed copy with the scope catalog', () => {
     const html = renderToStaticMarkup(
-      <DesignSystemProvider locale="zh-CN"><ErrorState error={denied} /></DesignSystemProvider>,
+      <DesignSystemProvider locale="zh-CN" messages={ZH_CN_MESSAGES}><ErrorState error={denied} /></DesignSystemProvider>,
     )
     expect(html).toContain('您没有访问权限')
     expect(html).toContain('请求 ID')

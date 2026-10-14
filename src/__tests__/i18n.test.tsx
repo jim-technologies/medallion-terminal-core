@@ -11,18 +11,15 @@ import {
 } from '../foundations/intl'
 import {
   EN_MESSAGES,
-  ZH_CN_MESSAGES,
   builtInMessages,
   formatMessage,
 } from '../foundations/messages'
+import { ZH_CN_MESSAGES } from '../foundations/messages-zh'
 import { ErrorState, LoadingState } from '../workbench/States'
 
 describe('message catalog', () => {
-  it('selects the built-in catalog by language', () => {
-    for (const locale of ['zh-CN', 'zh-Hans', 'zh', 'ZH_cn']) {
-      expect(builtInMessages(locale)).toBe(ZH_CN_MESSAGES)
-    }
-    for (const locale of ['en', 'en-GB', 'fr-FR', '']) {
+  it('builds in English only; other languages are passed as messages', () => {
+    for (const locale of ['zh-CN', 'zh-Hans', 'zh', 'en', 'en-GB', 'fr-FR', '']) {
       expect(builtInMessages(locale)).toBe(EN_MESSAGES)
     }
   })
@@ -45,9 +42,9 @@ describe('message catalog', () => {
 })
 
 describe('locale on the design-system scope', () => {
-  it('renders the built-in Chinese strings and marks the subtree language', () => {
+  it('renders a passed Chinese catalog and marks the subtree language', () => {
     const html = renderToStaticMarkup(
-      <DesignSystemProvider locale="zh-CN">
+      <DesignSystemProvider locale="zh-CN" messages={ZH_CN_MESSAGES}>
         <LoadingState />
         <ErrorState message="HTTP 503" onRetry={() => {}} />
       </DesignSystemProvider>,
@@ -56,6 +53,15 @@ describe('locale on the design-system scope', () => {
     expect(html).toContain('正在加载')
     expect(html).toContain('无法加载')
     expect(html).toContain('重试')
+  })
+
+  it('keeps English chrome for a Chinese locale unless a catalog is passed', () => {
+    const html = renderToStaticMarkup(
+      <DesignSystemProvider locale="zh-CN"><LoadingState /></DesignSystemProvider>,
+    )
+    expect(html).toContain('lang="zh-CN"')
+    expect(html).toContain('Loading')
+    expect(html).not.toContain('正在加载')
   })
 
   it('layers host overrides over the catalog and inherits them in nested scopes', () => {
@@ -69,6 +75,15 @@ describe('locale on the design-system scope', () => {
     )
     expect(html).toContain('Fetching records')
     expect(html).toContain('placeholder="Select…"')
+  })
+
+  it('keeps the host language in a nested scope that sets its own locale', () => {
+    const html = renderToStaticMarkup(
+      <DesignSystemProvider locale="zh-CN" messages={ZH_CN_MESSAGES}>
+        <DesignSystemProvider locale="zh-CN" theme="light"><LoadingState /></DesignSystemProvider>
+      </DesignSystemProvider>,
+    )
+    expect(html).toContain('正在加载')
   })
 
   it('keeps English defaults and omits lang outside an explicit locale', () => {

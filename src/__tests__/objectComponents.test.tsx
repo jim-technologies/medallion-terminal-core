@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { Avatar, initialsOf, MetaRow, Panel, StatusBadge } from '../components/Display'
 import { DesignSystemProvider } from '../foundations/DesignSystemProvider'
+import { ZH_CN_MESSAGES } from '../foundations/messages-zh'
 import { ObjectChip } from '../objects/ObjectChip'
 import { ObjectHeader } from '../objects/ObjectHeader'
 import { PropertyPanel } from '../objects/PropertyPanel'
@@ -49,7 +50,7 @@ describe('PropertyValue', () => {
 
   it('translates words through the scope catalog', () => {
     const markup = html(
-      <DesignSystemProvider locale="zh-CN"><PropertyValue value={true} /></DesignSystemProvider>,
+      <DesignSystemProvider locale="zh-CN" messages={ZH_CN_MESSAGES}><PropertyValue value={true} /></DesignSystemProvider>,
     )
     expect(markup).toContain('是')
   })

@@ -36,6 +36,11 @@
       "import": "./dist/app.js",
       "default": "./dist/app.js"
     },
+    "./messages-zh": {
+      "types": "./dist/messages-zh.d.ts",
+      "import": "./dist/messages-zh.js",
+      "default": "./dist/messages-zh.js"
+    },
     "./proto": {
       "types": "./dist/proto.d.ts"
     },

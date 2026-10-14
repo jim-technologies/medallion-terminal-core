@@ -147,10 +147,11 @@ what they do not set:
 </DesignSystemProvider>
 ```
 
-- Built-in catalogs: `EN_MESSAGES` (the default) and `ZH_CN_MESSAGES`,
-  selected by language (`zh`, `zh-CN` and `zh-Hans` all pick Simplified
-  Chinese). `MessageKey` types the keys; overrides are
-  `Partial<MessageCatalog>`.
+- The built-in catalog is `EN_MESSAGES`. Simplified Chinese ships as its own
+  entry, `ZH_CN_MESSAGES` from `medallion-terminal-core/messages-zh`, passed
+  as `messages` so an English-only product never bundles it. `MessageKey`
+  types the keys; overrides are `Partial<MessageCatalog>`. A nested scope
+  inherits its parent's catalog.
 - `useMessage()` returns `t(key, values)` for host components that want the
   same strings; placeholders are `{name}`.
 - A component prop (`retryLabel`, `placeholder`, `label`) still wins over the

@@ -6,6 +6,7 @@ import { Badge, Button, Combobox, Input } from '../components'
 import { ErrorState, LoadingState, PropertyList } from '../workbench'
 import { DesignSystemProvider, useLocale, usePortalContainer } from './DesignSystemProvider'
 import { formatBytes, formatDateTime, formatDuration, formatNumber, formatRelativeTime } from './intl'
+import { ZH_CN_MESSAGES } from './messages-zh'
 import type { Density as DensityValue, PresentationTheme } from './types'
 
 const meta = {
@@ -72,7 +73,8 @@ export const PortalContainer: Story = {
 }
 
 // The zh-CN column renders CJK glyphs from system fonts (only Latin is
-// vendored), so this story is asserted by its play test, not by pixels.
+// vendored), so this story is asserted by its play test, not by pixels. The
+// Chinese catalog is passed in: it is its own entry, not built in.
 export const LocaleAndMessages: Story = {
   name: 'Locale and messages',
   render: () => (
@@ -80,7 +82,7 @@ export const LocaleAndMessages: Story = {
       <DesignSystemProvider locale="en" timeZone="UTC">
         <LocaleSample />
       </DesignSystemProvider>
-      <DesignSystemProvider locale="zh-CN" timeZone="Asia/Shanghai">
+      <DesignSystemProvider locale="zh-CN" timeZone="Asia/Shanghai" messages={ZH_CN_MESSAGES}>
         <LocaleSample />
       </DesignSystemProvider>
     </div>

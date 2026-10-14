@@ -83,6 +83,10 @@ const assetOpen = await import(
   `${pathToFileURL(path.resolve(root, packageJson.exports['./asset-open'].import)).href}`
   + `?package-check=${Date.now()}`
 )
+const messagesZh = await import(
+  `${pathToFileURL(path.resolve(root, packageJson.exports['./messages-zh'].import)).href}`
+  + `?package-check=${Date.now()}`
+)
 const requiredExports = [
   'Dashboard',
   'MultiDashboard',
@@ -145,7 +149,7 @@ for (const [entry, module, names] of [
       'TypeGlyph',
       'usePortalContainer',
       'useMessage',
-      'ZH_CN_MESSAGES',
+      'EN_MESSAGES',
       'formatDateTime',
       'StatusBadge',
       'Kbd',
@@ -208,6 +212,8 @@ for (const [entry, module, names] of [
     assetOpen,
     ['AssetOpenProvider', 'useAssetOpen', 'assetKindMatches', 'assetApplicationSupports'],
   ],
+  // The Chinese catalog is an entry of its own, never part of the toolkit.
+  ['./messages-zh', messagesZh, ['ZH_CN_MESSAGES']],
 ]) {
   for (const name of names) {
     if (!(name in module)) {
@@ -311,10 +317,12 @@ const budgets = [
   },
   {
     // 0.7.0: the product shell, router, session, embed and telemetry ports
-    // and the operations tray join the product transport.
+    // and the operations tray join the product transport. 0.7.8 adds the
+    // failed session check (ErrorState with Retry), `canSignIn`, the page
+    // title and the platform-aware shortcut hint (~0.5 KiB).
     label: 'app entry',
     path: path.resolve(root, packageJson.exports['./app'].import),
-    maxGzipBytes: 10 * 1024,
+    maxGzipBytes: 11 * 1024,
   },
   {
     label: 'asset-open entry',

@@ -60,6 +60,7 @@ export default defineConfig({
         dashboard: resolve(import.meta.dirname, 'src/dashboard.ts'),
         'asset-open': resolve(import.meta.dirname, 'src/asset-open.ts'),
         app: resolve(import.meta.dirname, 'src/app.ts'),
+        'messages-zh': resolve(import.meta.dirname, 'src/messages-zh.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,

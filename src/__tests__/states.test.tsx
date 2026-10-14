@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { SourceError, type SourceErrorKind } from '../core/sourceError'
 import { DesignSystemProvider } from '../foundations/DesignSystemProvider'
+import { ZH_CN_MESSAGES } from '../foundations/messages-zh'
 import {
   AccessDeniedState,
   NotFoundState,
@@ -56,9 +57,9 @@ describe('access, session and freshness states', () => {
     expect(html(<NotFoundState resource="Report Q3" />)).toContain('Report Q3 doesn’t exist or was moved.')
   })
 
-  it('translates every state with the scope locale', () => {
+  it('translates every state with the scope catalog', () => {
     const markup = html(
-      <DesignSystemProvider locale="zh-CN">
+      <DesignSystemProvider locale="zh-CN" messages={ZH_CN_MESSAGES}>
         <AccessDeniedState resource="finance" />
         <SessionExpiredState onContinue={() => {}} />
         <StaleState lastUpdated={0} now={5 * 60_000} />
