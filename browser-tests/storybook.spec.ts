@@ -710,14 +710,15 @@ for (const theme of ['dark', 'light'] as const) {
       { story: 'search-without-account', account: false, actions: false },
       { story: 'search-with-actions', account: true, actions: true },
     ]
-    const positions = new Map<number, { x: number; width: number }>()
+    const positions = new Map<string, { x: number; width: number }>()
     for (const fixture of fixtures) {
       const root = await openStory(page, `toolkit-app-productshell--${fixture.story}`, { theme })
       const header = root.getByRole('banner')
       const search = header.getByRole('button', { name: 'Search files', exact: true })
       await expect(root.getByRole('grid', { name: 'Files in finance' })).toBeVisible()
+      // Without a session there is no account slot at all, not an empty one.
       if (!fixture.account) {
-        await expect(header.locator('.mtc-shell-account')).toHaveAttribute('aria-hidden', 'true')
+        await expect(header.locator('.mtc-shell-account')).toHaveCount(0)
         await expect(header.getByRole('button', { name: 'Account' })).toHaveCount(0)
       }
       for (const width of [1440, 1280, 768, 390, 320]) {
@@ -731,11 +732,16 @@ for (const theme of ['dark', 'light'] as const) {
           }).toBeLessThanOrEqual(0.5)
         }
         const box = (await search.boundingBox())!
-        const previous = positions.get(width)
+        // On desktop the search is centred whatever the header holds. On
+        // phones it sits before the account slot, and a header without one
+        // (no session) has no slot at all, so the position is shared among
+        // headers with the same account presence.
+        const key = width >= 768 ? String(width) : `${width}:${fixture.account}`
+        const previous = positions.get(key)
         if (previous) {
           expect(Math.abs(box.x - previous.x)).toBeLessThanOrEqual(0.5)
           expect(Math.abs(box.width - previous.width)).toBeLessThanOrEqual(0.5)
-        } else positions.set(width, { x: box.x, width: box.width })
+        } else positions.set(key, { x: box.x, width: box.width })
         const controls = await header.evaluate(element => [...element.querySelectorAll('a, button')]
           .filter(child => child.getBoundingClientRect().width > 0)
           .map(child => { const rect = child.getBoundingClientRect(); return { left: rect.left, right: rect.right } }))
