@@ -11,8 +11,10 @@ import {
   SourceErrorState,
   StaleState,
 } from '../workbench/States'
+import { SessionPortContext } from '../workbench/sessionContext'
 
 const html = (node: React.ReactNode) => renderToStaticMarkup(node)
+const withSession = (node: React.ReactNode) => html(<SessionPortContext.Provider value>{node}</SessionPortContext.Provider>)
 
 describe('access, session and freshness states', () => {
   it('names the denied scope and keeps the request id under Details', () => {
@@ -70,7 +72,7 @@ describe('access, session and freshness states', () => {
 
 describe('SourceErrorState', () => {
   const states: [SourceErrorKind, string][] = [
-    ['unauthenticated', 'data-state="session-expired"'],
+    ['unauthenticated', 'data-error-kind="unauthenticated"'],
     ['forbidden', 'data-state="access-denied"'],
     ['not_found', 'data-state="not-found"'],
     ['rate_limited', 'data-state="rate-limited"'],
@@ -87,9 +89,29 @@ describe('SourceErrorState', () => {
     })
   }
 
+  it('treats a 401 as an expired session only inside a shell with a session port', () => {
+    const error = new SourceError('expired', { kind: 'unauthenticated' })
+    const anonymous = html(<SourceErrorState error={error} onRetry={() => {}} />)
+    expect(anonymous).toContain('data-error-kind="unauthenticated"')
+    expect(anonymous).toContain('Retry</span></button>')
+    expect(anonymous).not.toContain('data-state="session-expired"')
+    const inShell = withSession(<SourceErrorState error={error} onRetry={() => {}} />)
+    expect(inShell).toContain('data-state="session-expired"')
+    expect(inShell).toContain('Continue</span></button>')
+  })
+
   it('renews an expired session through the retry action when no renewal is wired', () => {
     const error = new SourceError('expired', { kind: 'unauthenticated' })
-    expect(html(<SourceErrorState error={error} onRetry={() => {}} />)).toContain('Continue</span></button>')
-    expect(html(<SourceErrorState error={error} />)).not.toContain('<button')
+    expect(withSession(<SourceErrorState error={error} onRetry={() => {}} />)).toContain('Continue</span></button>')
+    expect(withSession(<SourceErrorState error={error} />)).not.toContain('<button')
+  })
+
+  it('lets a host message replace the default explanation of any kind', () => {
+    const denied = new SourceError('scope', { kind: 'forbidden' })
+    expect(html(<SourceErrorState error={denied} message="No read access to this repository." />))
+      .toContain('No read access to this repository.')
+    const broken = new SourceError('boom', { kind: 'unavailable' })
+    expect(html(<SourceErrorState error={broken} message="The gateway didn’t answer." />))
+      .toContain('The gateway didn’t answer.')
   })
 })

@@ -11,6 +11,7 @@ import type { SourceError, SourceErrorKind } from '../core/sourceError'
 import { Button } from '../components/Button'
 import { Icon, type IconName } from '../components/Icon'
 import { cx } from '../components/utils'
+import { useHasSessionPort } from './sessionContext'
 
 /** Props for a neutral no-content state. */
 export interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
@@ -477,6 +478,8 @@ export interface SourceErrorStateProps extends Omit<HTMLAttributes<HTMLDivElemen
   error: SourceError
   /** What failed, in words, for the access and not-found copy. */
   resource?: string
+  /** Replaces the kind's default explanation. */
+  message?: ReactNode
   /** Retries the failed request. */
   onRetry?: () => void
   /** Renews an expired session; falls back to `onRetry`. */
@@ -488,21 +491,26 @@ export interface SourceErrorStateProps extends Omit<HTMLAttributes<HTMLDivElemen
 /**
  * Picks the state a failure deserves from its kind: an expired session,
  * a denied or missing scope, a rate limit, or a typed error with retry.
+ * A 401 is an expired session only inside a shell with a session port;
+ * without one there is nothing to renew, so it is an error with Retry.
  */
 export const SourceErrorState = forwardRef<HTMLDivElement, SourceErrorStateProps>(function SourceErrorState(
-  { error, resource, onRetry, onRenewSession, ...rest },
+  { error, resource, message, onRetry, onRenewSession, ...rest },
   ref,
 ) {
+  const hasSession = useHasSessionPort()
   switch (error.kind) {
     case 'unauthenticated':
-      return <SessionExpiredState {...rest} ref={ref} error={error} onContinue={onRenewSession ?? onRetry} />
+      return hasSession
+        ? <SessionExpiredState {...rest} ref={ref} error={error} description={message} onContinue={onRenewSession ?? onRetry} />
+        : <ErrorState {...rest} ref={ref} error={error} message={message} onRetry={onRetry} />
     case 'forbidden':
-      return <AccessDeniedState {...rest} ref={ref} error={error} resource={resource} />
+      return <AccessDeniedState {...rest} ref={ref} error={error} resource={resource} description={message} />
     case 'not_found':
-      return <NotFoundState {...rest} ref={ref} error={error} resource={resource} />
+      return <NotFoundState {...rest} ref={ref} error={error} resource={resource} description={message} />
     case 'rate_limited':
-      return <RateLimitedState {...rest} ref={ref} error={error} onRetry={onRetry} />
+      return <RateLimitedState {...rest} ref={ref} error={error} description={message} onRetry={onRetry} />
     default:
-      return <ErrorState {...rest} ref={ref} error={error} onRetry={onRetry} />
+      return <ErrorState {...rest} ref={ref} error={error} message={message} onRetry={onRetry} />
   }
 })

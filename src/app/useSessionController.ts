@@ -1,8 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { toSourceError, type SourceError } from '../core/sourceError'
 import type { SessionInfo, SessionPort } from './session'
 
-/** Where the session stands. */
-export type SessionStatus = 'loading' | 'authenticated' | 'signed-out' | 'expired'
+/**
+ * Where the session stands. `error` is a session check that failed for a
+ * reason other than being signed out (no endpoint, 5xx, network); it is
+ * retried, never read as signed out.
+ */
+export type SessionStatus = 'loading' | 'authenticated' | 'signed-out' | 'expired' | 'error'
 
 /** Renew this long before the product token expires. */
 export const RENEW_LEAD_MS = 60_000
@@ -70,8 +75,12 @@ export function scheduleRenewal(
 export interface SessionController {
   status: SessionStatus
   session: SessionInfo | null
+  /** Why the session check failed, while `status` is `error`. */
+  error: SourceError | null
   /** Renews now; resolves true when the session is good again. */
   renew: () => Promise<boolean>
+  /** Loads the session again after a failed check. */
+  reload: () => void
   /** Call on any 401 (wire to `createProductFetch({ onUnauthenticated })`). */
   reportUnauthenticated: () => void
 }
@@ -81,12 +90,16 @@ export interface SessionController {
  * 401, and never polls: no timer runs while the page is hidden, and a page
  * that comes back near or past expiry renews at once. A failed renewal
  * moves to `expired`, which the shell shows over the page (drafts kept).
+ * A session check that fails for any reason other than 401 is `error`, so
+ * a backend without the endpoint never reads as signed out.
  */
 export function useSessionController(port: SessionPort | undefined, environment: SessionEnvironment = {}): SessionController {
   const now = environment.now ?? Date.now
   const doc = environment.document ?? (typeof document === 'undefined' ? undefined : document)
   const [status, setStatus] = useState<SessionStatus>(port ? 'loading' : 'authenticated')
   const [session, setSession] = useState<SessionInfo | null>(null)
+  const [error, setError] = useState<SourceError | null>(null)
+  const [attempt, setAttempt] = useState(0)
   const inflight = useRef<Promise<boolean> | null>(null)
 
   const renew = useCallback(() => {
@@ -112,18 +125,27 @@ export function useSessionController(port: SessionPort | undefined, environment:
   useEffect(() => {
     if (!port) return
     const controller = new AbortController()
+    // A retry after a failed check shows the loading state again.
+    setStatus(current => (current === 'error' ? 'loading' : current))
     port.load(controller.signal).then(
       next => {
         if (controller.signal.aborted) return
         setSession(next)
+        setError(null)
         setStatus(next.authenticated ? 'authenticated' : 'signed-out')
       },
-      () => {
-        if (!controller.signal.aborted) setStatus('signed-out')
+      reason => {
+        if (controller.signal.aborted) return
+        setError(toSourceError(reason))
+        setStatus('error')
       },
     )
     return () => controller.abort()
-  }, [port])
+  }, [port, attempt])
+
+  const reload = useCallback(() => {
+    setAttempt(count => count + 1)
+  }, [])
 
   // One timer for the next renewal, only while the page is visible.
   const { setTimeout: set, clearTimeout: clear } = environment
@@ -136,5 +158,5 @@ export function useSessionController(port: SessionPort | undefined, environment:
     void renew()
   }, [renew])
 
-  return { status, session, renew, reportUnauthenticated }
+  return { status, session, error, renew, reload, reportUnauthenticated }
 }

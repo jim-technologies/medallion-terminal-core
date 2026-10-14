@@ -114,7 +114,8 @@ describe('session port', () => {
     await port.renew()
     expect(renew).toHaveBeenCalledOnce()
     expect(calls).toEqual(['/auth/session', '/auth/session'])
-    port.signIn('/b/finance?x=1', session)
+    expect(port.canSignIn?.(session)).toBe(true)
+    expect(port.signIn('/b/finance?x=1', session)).toBe(true)
     expect(assign).toHaveBeenCalledWith('https://app.example/auth?return_to=%2Fb%2Ffinance%3Fx%3D1')
   })
 
@@ -126,6 +127,32 @@ describe('session port', () => {
     })
     expect(await port.load()).toEqual({ authenticated: false })
     await expect(port.renew()).rejects.toThrow('did not sign in')
+  })
+
+  it('has nowhere to sign in without a sign-in URL or a host builder', async () => {
+    const assign = vi.fn()
+    const port = createHttpSessionPort({
+      fetch: (async () => new Response(JSON.stringify({ authenticated: false }), { status: 200 })) as unknown as typeof fetch,
+      renew: async () => {},
+      assign,
+    })
+    const session = await port.load()
+    expect(port.canSignIn?.(session)).toBe(false)
+    expect(port.signIn('/b/finance', session)).toBe(false)
+    expect(assign).not.toHaveBeenCalled()
+    const withBuilder = createHttpSessionPort({ renew: async () => {}, assign, signInHref: () => '/auth/start' })
+    expect(withBuilder.canSignIn?.(session)).toBe(true)
+    expect(withBuilder.signIn('/b/finance', session)).toBe(true)
+    expect(assign).toHaveBeenCalledWith('/auth/start')
+  })
+
+  it('reports a session check that fails for any reason other than 401 as an error, not signed out', async () => {
+    const port = createHttpSessionPort({
+      fetch: (async () => new Response('', { status: 404 })) as unknown as typeof fetch,
+      renew: async () => {},
+      assign: () => {},
+    })
+    await expect(port.load()).rejects.toThrow('HTTP 404')
   })
 })
 

@@ -513,7 +513,12 @@ const productFetch = createProductFetch({ onRequest: requestTelemetry(telemetry)
   timer while the page is hidden. A failed renewal keeps the page mounted
   under a "session expired" dialog; Continue renews or leaves for sign-in
   with the current path as `return_to`. Signed-out users see
-  `SignedOutState`.
+  `SignedOutState`, with Sign in only when the port has somewhere to go
+  (`canSignIn`; `signIn` returns false otherwise). A session check that
+  fails for any other reason (no endpoint, 5xx, network) is an `ErrorState`
+  with Retry, never "signed out". Omit `session` when there is no sign-in:
+  no account slot, no Sign out, no signed-out or expired states, no renewal
+  timers, and a 401 renders as an error with Retry.
 - **Telemetry port.** `TelemetryPort.record` receives `navigation`,
   `request` (method, path without its query, status, code, request id,
   duration; from `requestTelemetry(port)` on the product fetch) and

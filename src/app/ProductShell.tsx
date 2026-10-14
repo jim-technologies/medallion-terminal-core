@@ -19,7 +19,8 @@ import type { MessageCatalog } from '../foundations/messages'
 import type { Density, PresentationTheme } from '../foundations/types'
 import { useBreakpoint } from '../hooks/useBreakpoint'
 import { NavRail, type NavRailItem, type NavRailSection } from '../workbench/NavRail'
-import { LoadingState, SignedOutState } from '../workbench/States'
+import { SessionPortContext } from '../workbench/sessionContext'
+import { ErrorState, LoadingState, SignedOutState } from '../workbench/States'
 import { createEmbedChannel, type EmbedChannel } from './embed'
 import { OperationsTray, type Operation } from './OperationsTray'
 import type { Router } from './router'
@@ -158,11 +159,12 @@ export function ProductShell(props: ProductShellProps) {
     channel?.post({ type: 'mtc:navigated', version: 1, path })
   }), [router, telemetry, channel])
 
+  // Session summaries exist only where there is a session to summarise.
   useEffect(() => {
-    if (session.status === 'loading') return
+    if (!sessionPort || session.status === 'loading') return
     telemetry?.record({ type: 'session', status: session.status, at: Date.now() })
     if (session.status === 'expired') channel?.post({ type: 'mtc:session-expired', version: 1 })
-  }, [session.status, telemetry, channel])
+  }, [sessionPort, session.status, telemetry, channel])
 
   useEffect(() => {
     if (!channel) return
@@ -189,11 +191,13 @@ export function ProductShell(props: ProductShellProps) {
     >
       <RouterProvider router={router}>
         <ShellContext.Provider value={context}>
-          <ToastProvider>
-            {embedded
-              ? <EmbeddedFrame channel={channel} {...props} session={sessionPort} controller={session} />
-              : <StandaloneFrame {...props} session={sessionPort} controller={session} />}
-          </ToastProvider>
+          <SessionPortContext.Provider value={sessionPort !== undefined}>
+            <ToastProvider>
+              {embedded
+                ? <EmbeddedFrame channel={channel} {...props} session={sessionPort} controller={session} />
+                : <StandaloneFrame {...props} session={sessionPort} controller={session} />}
+            </ToastProvider>
+          </SessionPortContext.Provider>
         </ShellContext.Provider>
       </RouterProvider>
     </DesignSystemProvider>
@@ -206,8 +210,14 @@ interface FrameProps extends ProductShellProps {
 
 function PageContent({ controller, session: port, router, children }: FrameProps) {
   if (controller.status === 'loading') return <LoadingState />
+  if (controller.status === 'error') {
+    return <ErrorState error={controller.error ?? undefined} onRetry={controller.reload} />
+  }
   if (controller.status === 'signed-out') {
-    return <SignedOutState onSignIn={port ? () => port.signIn(currentPath(router), controller.session ?? undefined) : undefined} />
+    // Sign in only leads somewhere when the port says so.
+    const session = controller.session ?? undefined
+    const canSignIn = port !== undefined && (port.canSignIn?.(session) ?? true)
+    return <SignedOutState onSignIn={canSignIn ? () => port.signIn(currentPath(router), session) : undefined} />
   }
   return <>{children}</>
 }
@@ -319,6 +329,10 @@ function StandaloneFrame(props: FrameProps) {
     ...(accountMenu ?? []),
     ...(port?.signOut ? [{ id: 'sign-out', label: t('shell.signOut'), icon: <Icon name="sign-out" />, onSelect: () => void port.signOut?.() }] : []),
   ]
+  // The account slot exists only for a signed-in person with something to
+  // show: a menu when there are commands, else the avatar alone naming them.
+  const principal = account?.displayName ?? account?.subject
+  const showAccount = Boolean(account?.authenticated && (principal || menuItems.length > 0))
   const rail = (drawer: boolean) => (
     <NavRail
       label={t('shell.navigation')}
@@ -384,16 +398,20 @@ function StandaloneFrame(props: FrameProps) {
         <div className="mtc-shell-actions">
           {actions && <div className="mtc-shell-product-actions">{actions}</div>}
           {mobile && searchControl}
-          <div className="mtc-shell-account" aria-hidden={!account?.authenticated || undefined}>
-            {account?.authenticated && (
-              <Menu
-                label={t('shell.account')}
-                align="end"
-                trigger={<Avatar name={account.displayName ?? account.subject ?? '?'} decorative />}
-                items={menuItems.length > 0 ? menuItems : [{ id: 'who', label: account.displayName ?? account.subject ?? '', disabled: true }]}
-              />
-            )}
-          </div>
+          {showAccount && (
+            <div className="mtc-shell-account">
+              {menuItems.length > 0 ? (
+                <Menu
+                  label={t('shell.account')}
+                  align="end"
+                  trigger={<Avatar name={principal ?? t('shell.account')} decorative />}
+                  items={menuItems}
+                />
+              ) : (
+                <Avatar name={principal ?? ''} />
+              )}
+            </div>
+          )}
         </div>
       </header>
       {nav && <div className="mtc-shell-rail-slot">{rail(false)}</div>}

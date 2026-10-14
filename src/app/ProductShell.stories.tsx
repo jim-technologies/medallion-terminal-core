@@ -8,6 +8,7 @@ import {
   OperationsTray,
   ProductShell,
   RENEW_LEAD_MS,
+  createHttpSessionPort,
   createMemoryRouter,
   useRoute,
   useRouter,
@@ -265,6 +266,60 @@ export const SignedOut: Story = {
     const canvas = within(canvasElement)
     await userEvent.click(await canvas.findByRole('button', { name: 'Sign in' }))
     await expect(signIn).toHaveBeenCalledWith('/b/finance', expect.objectContaining({ signInUrl: 'https://app.example/auth/sign-in' }))
+  },
+}
+
+// `/auth/session` answers signed out without a sign-in URL: there is nowhere
+// to send anyone, so the state has no button rather than a silent one.
+export const SignedOutWithoutSignIn: Story = {
+  name: 'Signed out, nowhere to sign in',
+  render: () => (
+    <StorageShell
+      operations={[]}
+      session={useMemo(() => createHttpSessionPort({
+        fetch: (async () => new Response(JSON.stringify({ authenticated: false }), { status: 200 })) as unknown as typeof fetch,
+        renew: async () => {},
+        assign: fn(),
+      }), [])}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(await canvas.findByText('You’re signed out')).toBeVisible()
+    await expect(canvas.queryByRole('button', { name: 'Sign in' })).toBeNull()
+  },
+}
+
+// The backend has no session endpoint (404): that is a failed check with
+// Retry, never "signed out". The second check succeeds.
+export const SessionCheckFailed: Story = {
+  name: 'Session check failed',
+  render: () => (
+    <StorageShell
+      operations={[]}
+      session={useMemo(() => {
+        let attempts = 0
+        return createHttpSessionPort({
+          fetch: (async () => {
+            attempts += 1
+            return attempts === 1
+              ? new Response('', { status: 404 })
+              : new Response(JSON.stringify({ authenticated: true, displayName: 'Jamie Kim' }), { status: 200 })
+          }) as unknown as typeof fetch,
+          renew: async () => {},
+          assign: fn(),
+        })
+      }, [])}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const alert = await canvas.findByRole('alert')
+    await expect(alert).toHaveTextContent('Unable to load')
+    await expect(canvas.queryByText('You’re signed out')).toBeNull()
+    await userEvent.click(within(alert).getByRole('button', { name: 'Retry' }))
+    await expect(await canvas.findByRole('grid', { name: 'Files in finance' })).toBeVisible()
+    await expect(canvas.getByRole('img', { name: 'Jamie Kim' })).toBeVisible()
   },
 }
 

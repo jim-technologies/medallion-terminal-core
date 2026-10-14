@@ -26,8 +26,16 @@ export interface SessionPort {
   load(signal?: AbortSignal): Promise<SessionInfo>
   /** Renews silently and returns the renewed session; rejects when it cannot. */
   renew(): Promise<SessionInfo>
-  /** Leaves for sign-in, returning to `returnTo` (an app path) afterwards. */
-  signIn(returnTo: string, session?: SessionInfo): void
+  /**
+   * Leaves for sign-in, returning to `returnTo` (an app path) afterwards.
+   * Returns false when there is nowhere to go.
+   */
+  signIn(returnTo: string, session?: SessionInfo): boolean | void
+  /**
+   * Whether `signIn` has somewhere to go; the shell offers Sign in only when
+   * it does. A port without it is taken to know.
+   */
+  canSignIn?(session?: SessionInfo): boolean
   /** Ends the session. */
   signOut?(): Promise<void> | void
 }
@@ -105,8 +113,13 @@ export function createHttpSessionPort({
       const href = signInHref
         ? signInHref(returnTo, session)
         : session?.signInUrl && `${session.signInUrl}${session.signInUrl.includes('?') ? '&' : '?'}return_to=${encodeURIComponent(returnTo)}`
-      if (href) assign(href)
+      if (!href) return false
+      assign(href)
+      return true
     },
+    // Without a sign-in URL from runtime config (and no host builder) there
+    // is nowhere to send anyone, so the shell shows no Sign in button.
+    canSignIn: session => signInHref !== undefined || Boolean(session?.signInUrl),
     signOut,
   }
 }

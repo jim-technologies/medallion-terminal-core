@@ -20,7 +20,7 @@ export type TelemetryEvent =
     requestId: string
     durationMs: number
   }
-  | { type: 'session'; status: 'authenticated' | 'signed-out' | 'expired' | 'renewed'; at: number }
+  | { type: 'session'; status: 'authenticated' | 'signed-out' | 'expired' | 'renewed' | 'error'; at: number }
 
 /** Where summaries go. */
 export interface TelemetryPort {
