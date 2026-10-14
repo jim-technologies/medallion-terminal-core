@@ -259,6 +259,42 @@ export const EmptyAndLoading: Story = {
   ),
 }
 
+function PaginationGrid({ label, height, initialRows }: { label: string; height?: number | 'auto'; initialRows: number }) {
+  const [loaded, setLoaded] = useState(initialRows)
+  const [requests, setRequests] = useState(0)
+  const maximum = 400
+  return (
+    <DataGrid
+      label={label}
+      columns={[{ id: 'name', header: 'Name', grow: true }]}
+      rows={Array.from({ length: loaded }, (_, index) => ({ id: index, name: `Row ${index + 1}` }))}
+      rowKey={row => String(row.id)}
+      height={height}
+      virtualize
+      onEndReached={() => {
+        if (loaded >= maximum) return
+        setRequests(current => current + 1)
+        setLoaded(current => Math.min(maximum, current + 40))
+      }}
+      footer={<span>{loaded} loaded; {requests} requests</span>}
+    />
+  )
+}
+
+export const PaginationViewports: Story = {
+  name: 'Pagination viewports',
+  render: () => (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <PaginationGrid label="Content-sized rows" height="auto" initialRows={40} />
+      <PaginationGrid label="Bounded rows" height={360} initialRows={4} />
+      <PaginationGrid label="Unbounded parent rows" initialRows={40} />
+      <div style={{ height: 360 }}>
+        <PaginationGrid label="Bounded parent rows" initialRows={4} />
+      </div>
+    </div>
+  ),
+}
+
 // `scrollKey` names the listing: a new one starts at the top without the
 // host reaching into the grid. `height="auto"` fits a short list to its rows.
 export const ListingsAndAutoHeight: Story = {

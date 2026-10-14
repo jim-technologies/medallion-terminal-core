@@ -1,5 +1,11 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const storybookPort = Number(process.env.STORYBOOK_PORT ?? 6006)
+if (!Number.isInteger(storybookPort) || storybookPort < 1 || storybookPort > 65535) {
+  throw new Error('STORYBOOK_PORT must be a valid port number')
+}
+const storybookUrl = `http://127.0.0.1:${storybookPort}`
+
 export default defineConfig({
   testDir: './browser-tests',
   fullyParallel: true,
@@ -22,7 +28,7 @@ export default defineConfig({
   },
   use: {
     ...devices['Desktop Chrome'],
-    baseURL: 'http://127.0.0.1:6006',
+    baseURL: storybookUrl,
     colorScheme: 'dark',
     locale: 'en-US',
     timezoneId: 'America/Los_Angeles',
@@ -33,8 +39,8 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'pnpm storybook --ci --no-open',
-    url: 'http://127.0.0.1:6006/index.json',
+    command: `pnpm exec storybook dev -p ${storybookPort} --ci --no-open --exact-port`,
+    url: `${storybookUrl}/index.json`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

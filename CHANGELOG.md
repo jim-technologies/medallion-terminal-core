@@ -4,6 +4,12 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Fixed
+
+- Content-sized DataGrid rows no longer drain paginated sources. Automatic
+  pagination requires a bounded viewport; underfilled and scrolling grids
+  continue to request the next page.
+
 ## [0.7.9] — 2026-10-14
 
 ### Changed

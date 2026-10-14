@@ -385,8 +385,11 @@ items accept `kind` and `format`.
   the primary column; `onNavigate` routes a plain click. Rows have one
   fixed height, so above 200 rows (`virtualize="auto"`) only the rows in
   view render: ten thousand rows stay under 1,500 DOM nodes.
-  `onEndReached` fires once per page as the last rows scroll into view
-  (with `totalRows` when known); `loading` shows skeleton rows or a
+  `onEndReached` fires once per page as the last rows scroll into a bounded
+  viewport, including filling an underfilled viewport. Give the grid an
+  explicit height or a bounded parent; `height="auto"` disables the callback
+  because the page, rather than the grid, scrolls. Pass `totalRows` when known.
+  `loading` shows skeleton rows or a
   loading-more row; `empty` replaces the default empty state; `rowProps`
   adds stable `data-*` hooks.
 - `Tree`: stable IDs, selection, expansion, and keyboard navigation.
