@@ -27,16 +27,20 @@ describe('access, session and freshness states', () => {
     const markup = html(<AccessDeniedState resource="bucket finance" error={denied} />)
     expect(markup).toContain('data-state="access-denied"')
     expect(markup).toContain('You don’t have access')
-    expect(markup).toContain('Ask an owner of bucket finance for access.')
+    // The resource is the whole description: the title already says the rest.
+    expect(markup).toContain('<div class="mtc-state-description">bucket finance</div>')
     expect(markup).toContain('<code>req_81M</code>')
     expect(html(<AccessDeniedState />)).toContain('Ask an owner for access.')
   })
 
   it('offers sign-in and session renewal only when the host can do them', () => {
-    expect(html(<SignedOutState />)).not.toContain('<button')
+    const signedOut = html(<SignedOutState />)
+    expect(signedOut).not.toContain('<button')
+    expect(signedOut).not.toContain('mtc-state-description')
     expect(html(<SignedOutState onSignIn={() => {}} />)).toContain('Sign in</span></button>')
     const expired = html(<SessionExpiredState onContinue={() => {}} />)
     expect(expired).toContain('Your session expired')
+    expect(expired).toContain('Your work is kept.')
     expect(expired).toContain('Continue</span></button>')
   })
 
@@ -65,7 +69,7 @@ describe('access, session and freshness states', () => {
         <StaleState lastUpdated={0} now={5 * 60_000} />
       </DesignSystemProvider>,
     )
-    expect(markup).toContain('请向 finance 的所有者申请访问权限。')
+    expect(markup).toContain('您没有访问权限')
     expect(markup).toContain('您的会话已过期')
     expect(markup).toContain('最后更新于5分钟前。')
   })

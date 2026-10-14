@@ -281,7 +281,9 @@ export interface AccessDeniedStateProps extends StatusStateProps {
 
 /**
  * A scope the person may not read (HTTP 403, `permission_denied`). Render it
- * where the denied scope would be, so the rest of the app stays usable.
+ * where the denied scope would be, so the rest of the app stays usable. The
+ * title carries the meaning; a `resource` names what was denied and is the
+ * whole description.
  */
 export const AccessDeniedState = forwardRef<HTMLDivElement, AccessDeniedStateProps>(function AccessDeniedState(
   { resource, title, description, ...rest },
@@ -296,9 +298,7 @@ export const AccessDeniedState = forwardRef<HTMLDivElement, AccessDeniedStatePro
       tone="neutral"
       state="access-denied"
       title={title ?? t('error.forbidden.title')}
-      description={description ?? (resource
-        ? t('state.accessDenied.resource', { resource })
-        : t('error.forbidden.description'))}
+      description={description ?? resource ?? t('error.forbidden.description')}
     />
   )
 })
@@ -311,7 +311,10 @@ export interface SignedOutStateProps extends StatusStateProps {
   signInLabel?: string
 }
 
-/** No session at all: the person has to sign in before anything loads. */
+/**
+ * No session at all: the person has to sign in before anything loads. The
+ * title and the Sign in button say it all; there is no default description.
+ */
 export const SignedOutState = forwardRef<HTMLDivElement, SignedOutStateProps>(function SignedOutState(
   { onSignIn, signInLabel, title, description, ...rest },
   ref,
@@ -325,7 +328,7 @@ export const SignedOutState = forwardRef<HTMLDivElement, SignedOutStateProps>(fu
       tone="neutral"
       state="signed-out"
       title={title ?? t('state.signedOut.title')}
-      description={description ?? t('state.signedOut.description')}
+      description={description}
       primaryAction={onSignIn && (
         <Button size="small" intent="primary" variant="solid" onClick={onSignIn}>
           {signInLabel ?? t('state.signedOut.action')}

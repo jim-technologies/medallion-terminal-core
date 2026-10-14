@@ -200,7 +200,7 @@ export const AccessSessionAndFreshnessStates: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await expect(canvas.getByText('Ask an owner of bucket finance for access.')).toBeVisible()
+    await expect(canvas.getByText('bucket finance')).toBeVisible()
     // Raw server detail stays behind Details until asked for.
     const requestId = canvas.getByText('req_81M')
     await expect(requestId).not.toBeVisible()

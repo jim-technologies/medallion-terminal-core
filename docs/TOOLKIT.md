@@ -437,7 +437,7 @@ server's side of the story kept:
 | Kind | State | Copy (en) |
 |---|---|---|
 | `unauthenticated` | `SessionExpiredState` (Continue renews; falls back to retry) | "Your session expired" |
-| `forbidden` | `AccessDeniedState` | "You don’t have access" · "Ask an owner of {resource} for access." |
+| `forbidden` | `AccessDeniedState` | "You don’t have access" · the `resource`, or "Ask an owner for access." |
 | `not_found` | `NotFoundState` | "Not found" · "{resource} doesn’t exist or was moved." |
 | `rate_limited` | `RateLimitedState` | "Too many requests" · "Try again in 30 seconds." |
 | `unavailable`, `invalid`, `unknown` | `ErrorState` with the typed error | "Service unavailable", "Request not accepted", "Unable to load" |
