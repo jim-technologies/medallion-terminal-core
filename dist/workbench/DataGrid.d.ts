@@ -136,7 +136,7 @@ export interface DataGridProps<Row> {
     editingCell?: DataGridEditingCell | null;
     /** Closes the open editor without saving. */
     onEditCancel?: () => void;
-    /** Called once per page in a bounded viewport; ignored with `height="auto"`. */
+    /** Called once per page when the grid has a bounded scrolling viewport. */
     onEndReached?: () => void;
     /** Known total, when larger than the rows loaded so far. */
     totalRows?: number;
@@ -160,7 +160,7 @@ export interface DataGridProps<Row> {
      * the grid grows to all its rows and the page scrolls instead. `'auto'`
      * asks for that on purpose: the grid fits its rows at the density's row
      * height, for short lists in an inspector or a panel. Automatic pagination
-     * requires a bounded viewport and is disabled with `'auto'`.
+     * requires a bounded viewport; a CSS height cap also permits paging with `'auto'`.
      */
     height?: number | string;
     /** Renders only the rows in view (`auto`: above 200 rows). */

@@ -259,18 +259,20 @@ export const EmptyAndLoading: Story = {
   ),
 }
 
-function PaginationGrid({ label, height, initialRows }: { label: string; height?: number | 'auto'; initialRows: number }) {
+function PaginationGrid({ label, height, initialRows, className }: { label: string; height?: number | 'auto'; initialRows: number; className?: string }) {
   const [loaded, setLoaded] = useState(initialRows)
   const [requests, setRequests] = useState(0)
   const maximum = 400
   return (
     <DataGrid
       label={label}
+      className={className}
       columns={[{ id: 'name', header: 'Name', grow: true }]}
       rows={Array.from({ length: loaded }, (_, index) => ({ id: index, name: `Row ${index + 1}` }))}
       rowKey={row => String(row.id)}
       height={height}
       virtualize
+      overscan={8}
       onEndReached={() => {
         if (loaded >= maximum) return
         setRequests(current => current + 1)
@@ -291,6 +293,7 @@ export const PaginationViewports: Story = {
       <div style={{ height: 360 }}>
         <PaginationGrid label="Bounded parent rows" initialRows={4} />
       </div>
+      <PaginationGrid label="Capped content rows" className="max-h-[min(40rem,60dvh)]" height="auto" initialRows={40} />
     </div>
   ),
 }

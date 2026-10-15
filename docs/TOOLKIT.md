@@ -387,8 +387,9 @@ items accept `kind` and `format`.
   view render: ten thousand rows stay under 1,500 DOM nodes.
   `onEndReached` fires once per page as the last rows scroll into a bounded
   viewport, including filling an underfilled viewport. Give the grid an
-  explicit height or a bounded parent; `height="auto"` disables the callback
-  because the page, rather than the grid, scrolls. Pass `totalRows` when known.
+  explicit height, a bounded parent, or a CSS `max-height` cap on its root.
+  Content-sized grids without a cap do not request pages automatically.
+  Pass `totalRows` when known.
   `loading` shows skeleton rows or a
   loading-more row; `empty` replaces the default empty state; `rowProps`
   adds stable `data-*` hooks.
