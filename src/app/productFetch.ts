@@ -210,11 +210,17 @@ export function createProductFetch(options: ProductFetchOptions = {}): ProductFe
     // The per-call setting is the transport's, not the platform fetch's.
     const { timeoutMs: _callTimeoutMs, ...fetchInit } = init ?? {}
     let response: Response
+    let headerSignal: AbortSignal | undefined
+    const keepSignalActive = () => {}
     try {
+      const signal = composeSignals([callerSignal ?? undefined, deadline?.signal])
+      // Keep the native composite subscribed until headers settle; native body cancellation remains unchanged.
+      headerSignal = callerSignal && deadline ? signal : undefined
+      headerSignal?.addEventListener('abort', keepSignalActive, { once: true })
       response = await baseFetch(input, {
         ...fetchInit,
         headers,
-        signal: composeSignals([callerSignal ?? undefined, deadline?.signal]),
+        signal,
       })
     } catch (thrown) {
       // The caller cancelled: keep the platform's AbortError semantics.
@@ -225,6 +231,7 @@ export function createProductFetch(options: ProductFetchOptions = {}): ProductFe
       report({ error })
       throw error
     } finally {
+      headerSignal?.removeEventListener('abort', keepSignalActive)
       clearTimeout(timer)
     }
 

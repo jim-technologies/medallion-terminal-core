@@ -2,7 +2,7 @@ import { Code, ConnectError, createClient } from '@connectrpc/connect'
 import { createConnectTransport } from '@connectrpc/connect-web'
 import { createServer, type RequestListener, type Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi, type Mock } from 'vitest'
 import {
   createProductFetch,
   ensureOk,
@@ -227,6 +227,24 @@ describe('createProductFetch', () => {
     await expect(reader.read()).rejects.toMatchObject({ name: 'AbortError' })
   })
 
+  it('keeps caller body cancellation after the response-header timer is cleared', async () => {
+    const url = await serve(async (_request, response) => {
+      response.writeHead(200, { 'Content-Type': 'text/plain' })
+      response.flushHeaders()
+      response.write('first ')
+      await sleep(1_000)
+      response.end('never')
+    })
+    const controller = new AbortController()
+    const response = await createProductFetch({ timeoutMs: 200 })(url, { signal: controller.signal })
+    const reader = response.body!.getReader()
+    expect(new TextDecoder().decode((await reader.read()).value)).toBe('first ')
+    await sleep(250)
+    expect(controller.signal.aborted).toBe(false)
+    controller.abort()
+    await expect(reader.read()).rejects.toMatchObject({ name: 'AbortError' })
+  })
+
   it('does not bound an open-ended upload, whose send time grows with its size', async () => {
     const productFetch = createProductFetch({ fetch: slowToRespond(80).fetch, timeoutMs: 20 })
     const upload = new Blob([new Uint8Array(1024)], { type: 'video/mp4' })
@@ -271,6 +289,80 @@ describe('createProductFetch', () => {
     const pending = createProductFetch({ fetch, timeoutMs: 10_000 })('/api/slow', { signal: controller.signal })
     controller.abort()
     await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+  })
+
+  it.each(['success', 'http error', 'sync error', 'network error', 'timeout', 'caller abort', 'pre-aborted caller'] as const)(
+    'releases its header-only signal subscription after %s', async outcome => {
+      const nativeAny = AbortSignal.any.bind(AbortSignal)
+      let added: Mock<AbortSignal['addEventListener']> | undefined
+      let removed: Mock<AbortSignal['removeEventListener']> | undefined
+      const composition = vi.spyOn(AbortSignal, 'any').mockImplementation(signals => {
+        const signal = nativeAny(signals)
+        added = vi.spyOn(signal, 'addEventListener')
+        removed = vi.spyOn(signal, 'removeEventListener')
+        return signal
+      })
+      try {
+        const controller = new AbortController()
+        if (outcome === 'pre-aborted caller') controller.abort()
+        const original = new Response(null, { status: outcome === 'http error' ? 503 : 200 })
+        const { fetch } = recorder(({ init }) => {
+          expect(added?.mock.calls).toHaveLength(1)
+          if (outcome === 'sync error') throw new TypeError('network failure')
+          if (outcome === 'network error') return Promise.reject(new TypeError('network failure'))
+          if (outcome === 'success' || outcome === 'http error') return original
+          const signal = init!.signal!
+          return new Promise<Response>((_, reject) => {
+            if (signal.aborted) reject(signal.reason)
+            else signal.onabort = () => reject(signal.reason)
+          })
+        })
+        const pending = createProductFetch({ fetch, timeoutMs: outcome === 'timeout' ? 10 : 10_000 })(
+          '/api/headers', { signal: controller.signal },
+        )
+        if (outcome === 'caller abort') controller.abort()
+        if (outcome === 'success' || outcome === 'http error') await expect(pending).resolves.toBe(original)
+        else if (outcome === 'caller abort' || outcome === 'pre-aborted caller') {
+          await expect(pending).rejects.toBe(controller.signal.reason)
+        } else await expect(pending).rejects.toBeInstanceOf(SourceError)
+        expect(composition).toHaveBeenCalledOnce()
+        expect(added?.mock.calls[0]?.[0]).toBe('abort')
+        expect(added?.mock.calls[0]?.[2]).toEqual({ once: true })
+        expect(removed?.mock.calls).toEqual([['abort', added?.mock.calls[0]?.[1]]])
+        if (outcome === 'timeout') expect(controller.signal.aborted).toBe(false)
+      } finally {
+        vi.restoreAllMocks()
+      }
+    },
+  )
+
+  it('does not accumulate header subscriptions on one long-lived caller', async () => {
+    const caller = new AbortController()
+    const callerAdd = vi.spyOn(caller.signal, 'addEventListener')
+    const nativeAny = AbortSignal.any.bind(AbortSignal)
+    const subscriptions: { added: Mock<AbortSignal['addEventListener']>, removed: Mock<AbortSignal['removeEventListener']> }[] = []
+    vi.spyOn(AbortSignal, 'any').mockImplementation(signals => {
+      const signal = nativeAny(signals)
+      subscriptions.push({ added: vi.spyOn(signal, 'addEventListener'), removed: vi.spyOn(signal, 'removeEventListener') })
+      return signal
+    })
+    try {
+      const { fetch } = recorder(() => new Response(null))
+      const productFetch = createProductFetch({ fetch, timeoutMs: 10_000 })
+      for (let index = 0; index < 20; index++) await productFetch('/api/headers', { signal: caller.signal })
+      expect(callerAdd).not.toHaveBeenCalled()
+      expect(subscriptions).toHaveLength(20)
+      for (const { added, removed } of subscriptions) {
+        expect(added.mock.calls).toHaveLength(1)
+        expect(removed.mock.calls).toEqual([['abort', added.mock.calls[0]![1]]])
+      }
+      const direct = await createProductFetch({ fetch })('/api/direct', { signal: caller.signal })
+      expect(direct.ok).toBe(true)
+      expect(callerAdd).not.toHaveBeenCalled()
+      expect(subscriptions).toHaveLength(20)
+    } finally {
+      vi.restoreAllMocks()
+    }
   })
 
   it('reports every settled request for telemetry', async () => {

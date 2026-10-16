@@ -65,9 +65,9 @@ export default defineConfig({
       name: 'firefox',
       // Serialize Firefox workers in CI after native page-setup crashes.
       workers: process.env.CI ? 1 : undefined,
-      testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour)\.spec\.ts/,
+      testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch)\.spec\.ts/,
       use: { browserName: 'firefox' },
     },
-    { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour)\.spec\.ts/, use: { browserName: 'webkit' } },
+    { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch)\.spec\.ts/, use: { browserName: 'webkit' } },
   ],
 })

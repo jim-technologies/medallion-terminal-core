@@ -915,6 +915,12 @@ For wiring this into a real product, in order:
    `productFetch(url, { ...init, timeoutMs: 0 })` waits indefinitely and a
    positive value replaces the transport's, even for an upload.
 
+   A temporary subscriber keeps the native caller/deadline composite active
+   while response headers are pending. It is removed when that wait settles;
+   caller cancellation of a later body read still uses the same native signal.
+   This addresses observed WebKit subscriber sensitivity without assuming a
+   garbage-collection cause or adding persistent caller listeners.
+
    It is an ordinary `fetch`, so connect-web clients take it too
    (`createConnectTransport({ baseUrl, fetch: productFetch })`). connect-web
    serialises every message, JSON or binary, to a `Uint8Array`, so its unary
