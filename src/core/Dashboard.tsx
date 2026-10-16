@@ -13,6 +13,7 @@ import { DashboardCommandPalette, type PaletteSuggest } from './CommandPalette'
 import { ShortcutsOverlay } from './ShortcutsOverlay'
 import { Toaster, type ToastData } from '../components/Toast'
 import { validateTemplate, type ValidationIssue } from './validateTemplate'
+import { isEditableTarget } from '../components/utils'
 import {
   DEFAULT_UNTRUSTED_TEMPLATE_POLICY,
   validateTemplateTrust,
@@ -810,11 +811,7 @@ export function Dashboard({
   // so authors can override `j`/`k` if they really want to.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey) return
-      const tag = (e.target as HTMLElement | null)?.tagName
-      const inEditable = tag === 'INPUT' || tag === 'TEXTAREA' ||
-        (e.target as HTMLElement | null)?.isContentEditable
-      if (inEditable) return
+      if (e.defaultPrevented || e.isComposing || e.metaKey || e.ctrlKey || e.altKey || isEditableTarget(e.target)) return
 
       // Template-defined shortcut first.
       const shortcut = template.shortcuts?.find(s => s.key === e.key)

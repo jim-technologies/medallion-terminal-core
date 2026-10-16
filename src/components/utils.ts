@@ -11,6 +11,12 @@ export function cx(...values: Array<string | false | null | undefined>): string 
   return values.filter(Boolean).join(' ')
 }
 
+export function isEditableTarget(target: EventTarget | null): boolean {
+  return target instanceof HTMLElement && (target.isContentEditable
+    || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)
+    || target.closest('[role="textbox"]') !== null)
+}
+
 export function useControllableState<T>({
   value,
   defaultValue,

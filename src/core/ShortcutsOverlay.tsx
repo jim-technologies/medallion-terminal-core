@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { isEditableTarget } from '../components/utils'
 import type { TemplateShortcut } from '../types/template'
 
 const SHORTCUTS: Array<{ keys: string; description: string }> = [
@@ -30,11 +31,8 @@ export function ShortcutsOverlay({ templateShortcuts }: { templateShortcuts?: Te
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // Don't intercept `?` typed into a real input/textarea.
-      const tag = (e.target as HTMLElement | null)?.tagName
-      const inEditable = tag === 'INPUT' || tag === 'TEXTAREA' ||
-        (e.target as HTMLElement | null)?.isContentEditable
-      if (e.key === '?' && !inEditable) {
+      if (e.defaultPrevented || e.isComposing) return
+      if (e.key === '?' && !isEditableTarget(e.target)) {
         e.preventDefault()
         setOpen(o => !o)
       } else if (e.key === 'Escape') {

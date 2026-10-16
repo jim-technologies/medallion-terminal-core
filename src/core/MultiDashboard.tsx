@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { isEditableTarget } from '../components/utils'
 import {
   Dashboard,
   type DashboardProps,
@@ -15,7 +16,7 @@ import type { Template } from '../types/template'
 function useTabHotkeys(tabCount: number, onSelect: (i: number) => void) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (!(e.metaKey || e.ctrlKey)) return
+      if (e.defaultPrevented || e.isComposing || isEditableTarget(e.target) || !(e.metaKey || e.ctrlKey)) return
       const n = Number(e.key)
       if (Number.isFinite(n) && n >= 1 && n <= 9 && n <= tabCount) {
         e.preventDefault()

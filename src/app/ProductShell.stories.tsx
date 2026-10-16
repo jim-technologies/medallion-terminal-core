@@ -411,3 +411,12 @@ export const LongNavigation: Story = {
     )
   },
 }
+
+export const EditableShortcuts: Story = {
+  render: () => <StorageShell actions={<>
+    <input aria-label="Draft name" />
+    <textarea aria-label="Draft notes" />
+    <select aria-label="Draft choice"><option>One</option><option>Two</option></select>
+    <div aria-label="Draft editor" role="textbox" contentEditable suppressContentEditableWarning>Draft</div>
+  </>} />,
+}

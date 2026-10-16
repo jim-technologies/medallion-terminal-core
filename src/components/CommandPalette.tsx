@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom'
 import { useMessage, usePortalContainer } from '../foundations/DesignSystemProvider'
 import { Kbd } from './Display'
 import { Icon } from './Icon'
-import { handleModalKeyDown, useModalFocus } from './utils'
+import { handleModalKeyDown, isEditableTarget, useModalFocus } from './utils'
 
 /** One result or command. */
 export interface CommandItem {
@@ -59,7 +59,7 @@ export interface CommandPaletteProps {
   emptyLabel?: ReactNode
   /** Content under the results; defaults to the keyboard hints. */
   footer?: ReactNode
-  /** Toggle with Ctrl/⌘ K from anywhere on the page. */
+  /** Toggle with Ctrl/⌘ K outside editable controls. */
   hotkey?: boolean
 }
 
@@ -106,6 +106,7 @@ export function CommandPalette({
   useEffect(() => {
     if (!hotkey) return
     const onKey = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.isComposing || isEditableTarget(event.target)) return
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
         onOpenChange(!open)
