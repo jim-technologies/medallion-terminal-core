@@ -389,6 +389,14 @@ items accept `kind` and `format`.
   viewport, including filling an underfilled viewport. Give the grid an
   explicit height, a bounded parent, or a CSS `max-height` cap on its root.
   Content-sized grids without a cap do not request pages automatically.
+  Requests are deduplicated by `scrollKey`, `pagingKey` and loaded row count.
+  `scrollKey` names the listing and resets its position. Optional `pagingKey`
+  names a first-page or dataset generation using `Object.is` identity: for
+  example, pass a cached first-page response object. A fresh first page can
+  then retry pagination at the same row count without resetting scroll or
+  column preferences. Keep that identity stable across appended pages and
+  errors; merged rows, loading flags and error objects would re-arm requests
+  without a new first page.
   A grid that owns vertical scrolling contains wheel motion at its edges.
   A content-sized grid lets vertical wheel and trackpad motion reach the
   page, even when its columns scroll horizontally.

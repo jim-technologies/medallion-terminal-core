@@ -58,7 +58,7 @@ export default defineConfig({
   // viewport cannot silently override the explicit regression viewport.
   projects: [
     { name: 'chromium' },
-    { name: 'firefox', testMatch: /(?:data-grid-behaviour|keyboard-behaviour|scroll-restoration|grid-preferences)\.spec\.ts/, use: { browserName: 'firefox' } },
-    { name: 'webkit', testMatch: /(?:data-grid-behaviour|keyboard-behaviour|scroll-restoration|grid-preferences)\.spec\.ts/, use: { browserName: 'webkit' } },
+    { name: 'firefox', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences)\.spec\.ts/, use: { browserName: 'firefox' } },
+    { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences)\.spec\.ts/, use: { browserName: 'webkit' } },
   ],
 })

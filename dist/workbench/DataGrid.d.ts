@@ -138,6 +138,13 @@ export interface DataGridProps<Row> {
     onEditCancel?: () => void;
     /** Called once per page when the grid has a bounded scrolling viewport. */
     onEndReached?: () => void;
+    /**
+     * Identity of the first page or dataset generation, compared with Object.is.
+     * A new identity permits paging again at the same loaded row count without
+     * resetting scroll or column preferences. Keep it stable across later pages
+     * and failures; do not pass the merged rows or a loading/error state.
+     */
+    pagingKey?: unknown;
     /** Known total, when larger than the rows loaded so far. */
     totalRows?: number;
     /** Shows skeleton rows (no rows yet) or a loading-more row. */
@@ -185,4 +192,4 @@ export interface DataGridProps<Row> {
  * stay under 1,500 DOM nodes. Cells render typed values with
  * `PropertyValue` unless a column supplies its own content.
  */
-export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, editingCell, onEditCancel, onEndReached, totalRows, loading, empty, scrollKey, stateKey, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;
+export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, editingCell, onEditCancel, onEndReached, pagingKey, totalRows, loading, empty, scrollKey, stateKey, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;

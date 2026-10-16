@@ -1,0 +1,69 @@
+{
+  "scope": "Final readable paging implementation focused checks; not a full repository or product gate. No backend/protobuf/durable data changes.",
+  "source_sha256": {
+    "src/workbench/DataGrid.tsx": "b59d761b2dbbb6225500c7e2841115b03b7baca050bd95ac23b19ba9b539889a",
+    "browser-tests/data-grid-pagination.spec.ts": "ed4514c535c7cc6ad2b759c747760bebe82560e3d08d1d2ce02b299e7fde01e9",
+    "scripts/check-bundle-isolation.mjs": "1a800b1055a633d508e5d1cbeae9f282810673b042280d7a545a45906750893a"
+  },
+  "final_focused": {
+    "log_source": "logs/kit-paging-budget-focused-v6.log",
+    "log_sha256": "2decc8ab67786491d3f6a25e3ac25b0c8f082e507d34ec6ad51808d4d94e3601",
+    "exit_code": 0,
+    "passed": 21,
+    "failed": 0,
+    "per_engine": {
+      "chromium": 7,
+      "firefox": 7,
+      "webkit": 7
+    },
+    "workers": 1,
+    "retries": 0,
+    "runtime_seconds": 108.169,
+    "inline_restoration": "All3 assert entire inline CSS serialization unchanged, including important flex-basis and an unrelated important custom property."
+  },
+  "toolkit_static_closure": {
+    "measured_kib_gzip_reported": 47.02,
+    "previous_budget_kib": 47.0,
+    "new_budget_kib": 47.25,
+    "allowance_increase_bytes": 256,
+    "note": "Intentional bounded allowance for paging generation API and correctness; does not pass the old47.00KiB budget. Timing ceiling and rowcount fixtures unchanged."
+  },
+  "earlier_failed_checks": [
+    {
+      "log_source": "logs/kit-paging-full-validate.log",
+      "log_sha256": "8f2bb768b0519f150bbccfd8e054a9f97f4dafcb83368d7310aabe52a72d57b9",
+      "exit_code": 2,
+      "toolkit_kib_gzip_reported": 47.08,
+      "note": "Surface33/unit1030/Storybook435/build/dist/package passed; bundle ceiling failed; browser stage not reached."
+    },
+    {
+      "log_source": "logs/kit-paging-budget-focused-v2.log",
+      "log_sha256": "eea64425b0e71cfa0afb45e78a9e18fb0781f9e26926c6df1c3da66ab6d659d6",
+      "exit_code": 1,
+      "toolkit_kib_gzip_reported": 47.06,
+      "note": "Short build/budget check stopped before browser stage."
+    },
+    {
+      "log_source": "logs/kit-paging-budget-focused-v3.log",
+      "log_sha256": "5f42120af8efcfea8c8c70f2beef8348a3a5f24d143c8b9b5f81d3cb562180e5",
+      "exit_code": 1,
+      "toolkit_kib_gzip_reported": 47.05,
+      "note": "Short build/budget check stopped before browser stage."
+    },
+    {
+      "log_source": "logs/kit-paging-budget-focused-v4.log",
+      "log_sha256": "ce29551897fd496607d1961fe726150439197d67e83d3a6b4ef8e1e1cc2b7c9a",
+      "exit_code": 1,
+      "toolkit_kib_gzip_reported": 47.02,
+      "note": "Short build/budget check stopped before browser stage."
+    },
+    {
+      "log_source": "logs/kit-paging-budget-focused-v5.log",
+      "log_sha256": "03d4e945adb1ff23d8c4d47b5b2b6e46c7c348edd281bd64ac35575f68049150",
+      "exit_code": 1,
+      "toolkit_kib_gzip_reported": 47.02,
+      "note": "Short build/budget check stopped before browser stage."
+    }
+  ],
+  "browser_version_note": "Playwright package1.63.0/projects recorded; actual browser.version strings not recorded. Linux WebKitGTK scope only."
+}

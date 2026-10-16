@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { StrictMode, useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { StoryFrame } from '../../.storybook/StoryFrame'
@@ -298,15 +298,14 @@ export const EmptyAndLoading: Story = {
   ),
 }
 
-function PaginationGrid({ label, height, initialRows, className }: { label: string; height?: number | 'auto'; initialRows: number; className?: string }) {
+function PaginationGrid({ label, height, initialRows, className, maximum = 400, pageSize = 40, columnWidth }: { label: string; height?: number | 'auto'; initialRows: number; className?: string; maximum?: number; pageSize?: number; columnWidth?: number }) {
   const [loaded, setLoaded] = useState(initialRows)
   const [requests, setRequests] = useState(0)
-  const maximum = 400
   return (
     <DataGrid
       label={label}
       className={className}
-      columns={[{ id: 'name', header: 'Name', grow: true }]}
+      columns={[{ id: 'name', header: 'Name', grow: true, width: columnWidth }]}
       rows={Array.from({ length: loaded }, (_, index) => ({ id: index, name: `Row ${index + 1}` }))}
       rowKey={row => String(row.id)}
       height={height}
@@ -315,7 +314,7 @@ function PaginationGrid({ label, height, initialRows, className }: { label: stri
       onEndReached={() => {
         if (loaded >= maximum) return
         setRequests(current => current + 1)
-        setLoaded(current => Math.min(maximum, current + 40))
+        setLoaded(current => Math.min(maximum, current + pageSize))
       }}
       footer={<span>{loaded} loaded; {requests} requests</span>}
     />
@@ -335,6 +334,70 @@ export const PaginationViewports: Story = {
       <PaginationGrid label="Capped content rows" className="max-h-[min(40rem,60dvh)]" height="auto" initialRows={40} />
     </div>
   ),
+}
+
+export const FractionalPaging: Story = {
+  render: () => <div data-fractional-host style={{ height: 900, display: 'grid', gridTemplateRows: '44px minmax(0, 1fr) 24px' }}>
+    <header>Host shell</header>
+    <main style={{ overflow: 'auto', minHeight: 0 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+        <header style={{ height: 106.5, flex: '0 0 auto' }}>Folder heading</header>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '16px 24px 24px', flex: '1 1 auto', minHeight: 0, height: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 256 }}>
+            <PaginationGrid label="Fractional bounded rows" initialRows={6000} maximum={10000} pageSize={200} columnWidth={300} />
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>Host status</footer>
+  </div>,
+}
+
+export const PagingAcrossListings: Story = {
+  render: function Render() {
+    const [listing, setListing] = useState('finance')
+    const [loaded, setLoaded] = useState(40)
+    const [requests, setRequests] = useState(0)
+    return <>
+      <button type="button" onClick={() => { setListing('media'); setLoaded(40); setRequests(0) }}>Switch listing</button>
+      <DataGrid label={`Paged ${listing} rows`} scrollKey={listing} height={320} virtualize totalRows={120}
+        columns={[{ id: 'name', header: 'Name', width: 300, grow: true }]}
+        rows={Array.from({ length: loaded }, (_, index) => ({ id: index, name: `${listing} row ${index + 1}` }))}
+        rowKey={row => String(row.id)}
+        onEndReached={() => { setRequests(current => current + 1); setLoaded(current => Math.min(120, current + 40)) }}
+        footer={<span>{loaded} loaded; {requests} requests</span>} />
+    </>
+  },
+}
+
+export const PagingGenerations: Story = {
+  render: function Render() {
+    const [page, setPage] = useState({ generation: 0 })
+    const [loaded, setLoaded] = useState(40)
+    const [attempts, setAttempts] = useState(0)
+    const [failed, setFailed] = useState(false)
+    const [render, setRender] = useState(0)
+    return <>
+      <button type="button" onClick={() => setRender(current => current + 1)}>Render same first page</button>
+      <button type="button" onClick={() => { setPage(current => ({ generation: current.generation + 1 })); setFailed(false) }}>Retry first page</button>
+      <p role="status">{attempts} attempts; {render} rerenders</p>
+      {failed && <p role="alert">The second page failed</p>}
+      <DataGrid label="Generation rows" scrollKey="one-listing" pagingKey={page} height={320} virtualize totalRows={80}
+        columns={[{ id: 'name', header: 'Name', width: 300, grow: true }]}
+        rows={Array.from({ length: loaded }, (_, index) => ({ id: index, name: `Generation row ${index + 1}` }))}
+        rowKey={row => String(row.id)}
+        onEndReached={() => {
+          setAttempts(current => current + 1)
+          if (page.generation === 0) setFailed(true)
+          else setLoaded(80)
+        }}
+        footer={<span>{loaded} loaded</span>} />
+    </>
+  },
+}
+
+export const StrictModePaging: Story = {
+  render: () => <StrictMode><PaginationGrid label="StrictMode rows" height={360} initialRows={4} columnWidth={300} /></StrictMode>,
 }
 
 // `scrollKey` names the listing: a new one starts at the top without the

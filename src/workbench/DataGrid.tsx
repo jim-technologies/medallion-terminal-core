@@ -187,6 +187,13 @@ export interface DataGridProps<Row> {
   onEditCancel?: () => void
   /** Called once per page when the grid has a bounded scrolling viewport. */
   onEndReached?: () => void
+  /**
+   * Identity of the first page or dataset generation, compared with Object.is.
+   * A new identity permits paging again at the same loaded row count without
+   * resetting scroll or column preferences. Keep it stable across later pages
+   * and failures; do not pass the merged rows or a loading/error state.
+   */
+  pagingKey?: unknown
   /** Known total, when larger than the rows loaded so far. */
   totalRows?: number
   /** Shows skeleton rows (no rows yet) or a loading-more row. */
@@ -341,6 +348,7 @@ export function DataGrid<Row>({
   editingCell,
   onEditCancel,
   onEndReached,
+  pagingKey,
   totalRows,
   loading = false,
   empty,
@@ -368,7 +376,7 @@ export function DataGrid<Row>({
   const focusPending = useRef(false)
   const revealPending = useRef(false)
   const anchorKey = useRef<string | null>(null)
-  const endRequestedAt = useRef(-1)
+  const endRequestedAt = useRef<readonly [scrollKey: typeof scrollKey, pagingKey: unknown, count: number] | null>(null)
 
   const [internalSort, setInternalSort] = useState<DataGridSort | null>(defaultSort)
   const activeSort = sort !== undefined ? sort : internalSort
@@ -708,22 +716,34 @@ export function DataGrid<Row>({
 
   // Ask for the next page once per page when its last rows are in view.
   useEffect(() => {
-    if (!onEndReached || viewport.height <= 0 || loading || displayRows.length === 0) return
-    if (totalRows !== undefined && displayRows.length >= totalRows) return
-    if (!nearEnd || endRequestedAt.current === displayRows.length) return
+    const count = displayRows.length
+    if (!onEndReached || viewport.height <= 0 || loading || count === 0) return
+    if (totalRows !== undefined && count >= totalRows) return
+    const request = [scrollKey, pagingKey, count] as const
+    if (!nearEnd || endRequestedAt.current?.every((value, index) => Object.is(value, request[index]))) return
     const element = viewportRef.current
-    if (!element || element.clientHeight <= 0) return
+    if (!element) return
+    const viewportHeight = element.clientHeight
+    if (viewportHeight <= 0) return
+    // A listing reset may have moved the DOM before the viewport state updates.
+    if (element.scrollTop + viewportHeight < endThreshold(count)) return
     // A bounded grid constrains its flex viewport even with a larger basis;
     // an unbounded grid grows instead. Restore before paging.
-    const previousBasis = element.style.flexBasis
-    const viewportHeight = element.clientHeight
-    element.style.flexBasis = `${element.scrollHeight + viewportHeight}px`
-    const bounded = element.clientHeight <= viewportHeight
-    element.style.flexBasis = previousBasis
-    if (!bounded) return
-    endRequestedAt.current = displayRows.length
-    onEndReached()
-  }, [onEndReached, viewport.height, loading, displayRows.length, totalRows, nearEnd])
+    const style = element.style
+    const previousStyle = style.cssText
+    let bounded = false
+    try {
+      style.flexBasis = `${element.scrollHeight + viewportHeight}px`
+      // Subpixel flex reflow can round the integer clientHeight up by one.
+      bounded = element.clientHeight <= viewportHeight + 1
+    } finally {
+      style.cssText = previousStyle
+    }
+    if (bounded) {
+      endRequestedAt.current = request
+      onEndReached()
+    }
+  }, [onEndReached, viewport.height, loading, displayRows.length, totalRows, nearEnd, scrollKey, pagingKey])
 
   const focusCell = (position: GridPosition) => {
     const element = viewportRef.current

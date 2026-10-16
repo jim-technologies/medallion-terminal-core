@@ -1,0 +1,13 @@
+{
+  "before": {
+    "clientHeight": 647,
+    "rectHeight": 647.46875,
+    "scrollTop": 191384,
+    "scrollHeight": 192032
+  },
+  "during": {
+    "clientHeight": 648,
+    "rectHeight": 647.5
+  },
+  "strictBounded": false
+}

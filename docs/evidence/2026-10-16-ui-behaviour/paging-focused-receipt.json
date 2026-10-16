@@ -1,0 +1,54 @@
+{
+  "scope": "Focused browser receipts, not the full repository gate or product integration gates. No external services or durable data changes.",
+  "baseline_commit": "e5471055d6de4b11a0a9d50ec3808a3ad28d19de",
+  "baseline_runtime_source_sha256": "2fb93a151f8607f25441660e2e47a19c55ec4eeffb8bb8fda666dd62eaddc97c",
+  "focused_runtime_source_sha256": "5b2905701a71d551e69cc16edfc7e57ca48de214862fe5cc3d8ea56161089bc9",
+  "playwright_package_version": "1.63.0",
+  "browser_version_note": "These receipts identify projects/package version, not independently recorded actual browser.version strings. Linux WebKitGTK scope only.",
+  "raw_geometry": [
+    {
+      "file": "paging-before-webkit.json",
+      "source": "kit-paging-identity-before/results/data-grid-pagination-a-fra-37de4-ed-grid-loads-the-next-page-webkit/fractional-paging-geometry.json",
+      "sha256": "32b170690f8c49545573b478dad9e405ae2fb6e4c23db41b6cf3dc901493623c"
+    },
+    {
+      "file": "paging-after-webkit.json",
+      "source": "kit-paging-after/results/data-grid-pagination-a-fra-37de4-ed-grid-loads-the-next-page-webkit/fractional-paging-geometry.json",
+      "sha256": "f392033a4cae1300b9de69b0aa9054be7e60a0974afd069ccb90ed4bd0aa0c5b"
+    }
+  ],
+  "runs": [
+    {
+      "name": "listing-before",
+      "log_source": "logs/kit-paging-before.log",
+      "log_sha256": "a9aab4b232be32e23a7fcea8faf4ea76ea62ee2c82e5e68f78a1cd0726d3e489",
+      "exit": 1,
+      "unique_passed": 9,
+      "unique_failed": 3,
+      "note": "Old paging runtime. Same-count scrollKey reuse fails in all3engines. Initial direct fixed-height fractional fixture passed; it does not reproduce the nested-flex bug."
+    },
+    {
+      "name": "identity-before",
+      "log_source": "logs/kit-paging-identity-before.log",
+      "log_sha256": "9c519039abe722c128dfdf73d58bf5fd9aeeb850b0de9c131d1f63905386c591",
+      "exit": 1,
+      "unique_passed": 5,
+      "unique_failed": 4,
+      "note": "Old paging runtime with erased pagingKey type/comment only. Objectgeneration retry fails inall3; exactnestedflex fractional paging failsWebKit; StrictMode initial-shortpage passesall3."
+    },
+    {
+      "name": "paging-focused-after",
+      "log_source": "logs/kit-paging-after.log",
+      "log_sha256": "f81e462765b53a91ef464e471bc26fe52bcf5faffe04f34125d9b1b7cf420a99",
+      "exit": 0,
+      "unique_passed": 21,
+      "unique_failed": 0,
+      "note": "Candidate paging runtime before equivalent size/readability cleanup. Seven cases perengine: bounded/unbounded controlsat1440/390, fractionalpaging, listingreuse, objectgeneration retry+noautoretry+preservedscroll, StrictModeonce, exactbasispriority. Workers1,retries0."
+    }
+  ],
+  "focused_after_assertions": {
+    "fractional": "All3 engines assert6200 loaded;1requests after starting6000. WebKit oldbehavior remained6000/0. Rawaftergeometry scrollHeight198432 corresponds6200*32+header32; footer result is the passing browser assertion, not an extra captured rawfield.",
+    "generation": "All3 assert one failed attempt survives rerenders; fresh objectidentity leads80loaded/2attempts and preserves scroll within1px.",
+    "basis": "All3 assert prior100px flex-basis with important priority remains after paging."
+  }
+}

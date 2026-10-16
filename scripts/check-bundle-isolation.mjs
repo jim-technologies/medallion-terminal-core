@@ -37,7 +37,9 @@ const checks = [
     // or dashboard code, and consumers tree-shake what they do not import.
     label: 'toolkit',
     entry: path.join(root, 'dist/toolkit.js'),
-    maxStaticGzipBytes: 47 * 1024,
+    // Paging generation identity and synchronous layout-probe restoration
+    // add a small static cost; retain a bounded allowance for that API.
+    maxStaticGzipBytes: 47.25 * 1024,
     requireDynamicImport: false,
   },
   {
