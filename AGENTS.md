@@ -348,7 +348,7 @@ The `make` verbs are the grammar (`MAKEFILE-CONTRACT.md`); `make help-all`
 lists every target.
 
 - `make validate` — the single gate verb: frozen-lockfile install + pinned
-  Chromium + public-surface guard (`scripts/public-surface-check`, exceptions
+  Chromium, Firefox and WebKit + public-surface guard (`scripts/public-surface-check`, exceptions
   in `.public-surface-allow`) + `VERSION` parity + lint + all test suites +
   builds + artifact checks; CI runs exactly `flox activate -- make validate`
   and nothing else

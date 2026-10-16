@@ -985,7 +985,7 @@ For wiring this into a real product, in order:
 ## Production verification
 
 Run the same gate as CI — it installs dependencies with a frozen lockfile
-and Playwright's pinned Chromium itself (a no-op after the first run):
+and Playwright's pinned Chromium, Firefox and WebKit (a no-op after the first run):
 
 ```bash
 make validate
@@ -1004,7 +1004,8 @@ compatibility against the newest reachable release tag, the reusable
 TerminalService conformance suite, unit/integration tests, every Storybook
 story in real Chromium, both application and library builds, committed
 package artifacts, the static Storybook catalog, curated accessibility
-checks, interaction flows, and visual snapshots. Each visual baseline is a
+checks, interaction flows, and visual snapshots. Grid scroll-ownership and
+keyboard regressions additionally run in Firefox and WebKit. Each visual baseline is a
 pixel image (`browser-tests/__screenshots__/`, 0.3% anti-aliasing tolerance)
 plus an exact accessibility-tree text snapshot (`browser-tests/__aria__/`, no
 tolerance) rendered at a pinned clock, so a changed label or state fails even

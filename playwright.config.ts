@@ -46,5 +46,9 @@ export default defineConfig({
   },
   // Keep the device descriptor in the shared `use` block so its default
   // viewport cannot silently override the explicit regression viewport.
-  projects: [{ name: 'chromium' }],
+  projects: [
+    { name: 'chromium' },
+    { name: 'firefox', testMatch: /data-grid-behaviour\.spec\.ts/, use: { browserName: 'firefox' } },
+    { name: 'webkit', testMatch: /data-grid-behaviour\.spec\.ts/, use: { browserName: 'webkit' } },
+  ],
 })

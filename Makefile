@@ -32,7 +32,7 @@ test-browser: ## Run the Playwright browser suite against Storybook.
 
 validate: ## The gate — exactly what CI runs: deps, surface guard, version parity, lint, tests, builds, artifact checks.
 	pnpm install --frozen-lockfile
-	pnpm exec playwright install chromium
+	pnpm exec playwright install chromium firefox webkit
 	pnpm validate
 
 audit: ## Network-dependent supply-chain audit, outside the gate (weekly in audit.yml): shipped dependencies' advisories, then a Git-history secret scan.

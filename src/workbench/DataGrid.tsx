@@ -375,6 +375,7 @@ export function DataGrid<Row>({
     column: selection === 'multi' ? 1 : 0,
   }))
   const [viewport, setViewport] = useState({ scrollTop: 0, height: 600, width: 0 })
+  const [scrollableY, setScrollableY] = useState(false)
   const [menu, setMenu] = useState<{ rowIndex: number; x: number; y: number } | null>(null)
   // The full value of the keyboard-focused cell when the cell cuts it short.
   const [valueTip, setValueTip] = useState<{ row: number; column: number; left: number; top: number; width: number; height: number } | null>(null)
@@ -481,19 +482,22 @@ export function DataGrid<Row>({
   useLayoutEffect(() => {
     const element = viewportRef.current
     if (!element) return
-    const measure = () => setViewport(current => (
-      current.height === element.clientHeight
+    const measure = () => {
+      setScrollableY(element.scrollHeight > element.clientHeight)
+      setViewport(current => (
+        current.height === element.clientHeight
         && current.scrollTop === element.scrollTop
         && current.width === element.clientWidth
         ? current
         : { scrollTop: element.scrollTop, height: element.clientHeight, width: element.clientWidth }
-    ))
+      ))
+    }
     measure()
     if (typeof ResizeObserver === 'undefined') return
     const observer = new ResizeObserver(measure)
     observer.observe(element)
     return () => observer.disconnect()
-  }, [])
+  }, [bodyHeight])
 
   // Measure the content-sized columns: give their header and rendered cells
   // max-content width for one synchronous reflow, read them, and put them
@@ -926,6 +930,7 @@ export function DataGrid<Row>({
         aria-multiselectable={selection === 'multi' || undefined}
         aria-busy={loading || undefined}
         className="mtc-data-grid-viewport"
+        data-scrollable-y={scrollableY || undefined}
         onKeyDown={onKeyDown}
         onScroll={onScroll}
       >

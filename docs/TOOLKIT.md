@@ -389,6 +389,9 @@ items accept `kind` and `format`.
   viewport, including filling an underfilled viewport. Give the grid an
   explicit height, a bounded parent, or a CSS `max-height` cap on its root.
   Content-sized grids without a cap do not request pages automatically.
+  A grid that owns vertical scrolling contains wheel motion at its edges.
+  A content-sized grid lets vertical wheel and trackpad motion reach the
+  page, even when its columns scroll horizontally.
   Pass `totalRows` when known.
   `loading` shows skeleton rows or a
   loading-more row; `empty` replaces the default empty state; `rowProps`

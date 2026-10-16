@@ -15,7 +15,8 @@
   font-size: var(--mtc-font-size-md);
   line-height: var(--mtc-line-height-md);
 }
-.mtc-root .mtc-data-grid-viewport { position: relative; min-height: 0; flex: 1 1 auto; overflow: auto; overscroll-behavior: contain; }
+.mtc-root .mtc-data-grid-viewport { position: relative; min-height: 0; flex: 1 1 auto; overflow: auto; overscroll-behavior-x: contain; }
+.mtc-root .mtc-data-grid-viewport[data-scrollable-y="true"] { overscroll-behavior-y: contain; }
 .mtc-root .mtc-data-grid-head { position: sticky; z-index: 3; top: 0; min-width: var(--mtc-grid-min-width); }
 .mtc-root .mtc-data-grid-body { position: relative; min-width: var(--mtc-grid-min-width); }
 .mtc-root .mtc-data-grid-row {

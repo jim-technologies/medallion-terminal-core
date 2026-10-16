@@ -147,6 +147,32 @@ const eventColumns: DataGridColumn<EventRow>[] = [
   { id: 'at', header: 'Recorded', kind: 'datetime' },
 ]
 
+export const ScrollOwnership: Story = {
+  name: 'Scroll ownership',
+  args: { count: 50, bounded: false },
+  render: ({ count, bounded }) => (
+    <div style={{ maxWidth: 720 }}>
+      <DataGrid
+        label="Scroll ownership rows"
+        columns={[
+          { id: 'sequence', header: 'Event', kind: 'id', width: 200, pinned: true },
+          { id: 'kind', header: 'Description', width: 440 },
+          { id: 'amount', header: 'Amount', format: 'currency:USD', width: 180 },
+        ]}
+        rows={Array.from({ length: Number(count) }, (_, index) => ({
+          ...EVENTS[index % EVENTS.length]!,
+          id: index,
+          kind: `Order placed — 東京 / café / ${'long-name-'.repeat(12)}`,
+        }))}
+        rowKey={row => String(row.id)}
+        height={bounded ? 320 : 'auto'}
+        selection="multi"
+      />
+      <p style={{ marginTop: 900 }}>The page continues below the grid.</p>
+    </div>
+  ),
+}
+
 export const TenThousandRows: Story = {
   name: 'Ten thousand rows',
   render: () => (
