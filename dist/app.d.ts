@@ -29,6 +29,8 @@ export { createEmbedChannel, parseEmbedHostMessage } from './app/embed';
 export type { EmbedChannel, EmbedChannelOptions, EmbedChildMessage, EmbedHostMessage, } from './app/embed';
 export { OperationsTray } from './app/OperationsTray';
 export type { Operation, OperationStatus, OperationsTrayProps } from './app/OperationsTray';
+export { ScrollRestorationProvider, useScrollRestoration } from './workbench/ScrollRestoration';
+export type { ScrollRestorationProviderProps } from './workbench/ScrollRestoration';
 export { ProductShell, useProductShell } from './app/ProductShell';
 export type { ProductIdentity, ProductSearch, ProductShellContextValue, ProductShellProps, } from './app/ProductShell';
 export { SourceError, describeSourceError, isSourceError, parseRetryAfter, responseRequestId, sourceErrorFromResponse, sourceErrorKindForCode, sourceErrorKindForStatus, toSourceError, } from './core/sourceError';

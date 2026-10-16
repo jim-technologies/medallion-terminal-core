@@ -149,6 +149,8 @@ export interface DataGridProps<Row> {
      * listing (a folder path, a query) so a new listing starts at the top.
      */
     scrollKey?: string | number;
+    /** Opt-in key for resized column widths in this browser tab; use a distinct key per logical grid. */
+    stateKey?: string;
     /** Row density; the scope's when unset. */
     density?: Density;
     /** Fixed row height in pixels; the density's when unset. */
@@ -183,4 +185,4 @@ export interface DataGridProps<Row> {
  * stay under 1,500 DOM nodes. Cells render typed values with
  * `PropertyValue` unless a column supplies its own content.
  */
-export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, editingCell, onEditCancel, onEndReached, totalRows, loading, empty, scrollKey, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;
+export declare function DataGrid<Row>({ label, columns, rows, rowKey, rowLabel, selection, selectedKeys, defaultSelectedKeys, onSelectionChange, sort, defaultSort, onSortChange, sortMode, onRowActivate, rowHref, onNavigate, contextActions, onCellEdit, editingCell, onEditCancel, onEndReached, totalRows, loading, empty, scrollKey, stateKey, density, rowHeight, height, virtualize, overscan, footer, rowProps, className, }: DataGridProps<Row>): import("react").JSX.Element;

@@ -1,5 +1,6 @@
 import { type KeyboardEvent as ReactKeyboardEvent, type RefObject } from 'react';
 export declare function cx(...values: Array<string | false | null | undefined>): string;
+export declare function isEditableTarget(target: EventTarget | null): boolean;
 export declare function useControllableState<T>({ value, defaultValue, onChange, }: {
     value: T | undefined;
     defaultValue: T;

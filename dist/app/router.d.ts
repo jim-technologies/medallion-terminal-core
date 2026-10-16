@@ -10,6 +10,8 @@ export interface RouterLocation {
     pathname: string;
     search: string;
     hash: string;
+    /** Identity of this history entry, when the router can preserve it across refresh. */
+    entryKey?: string;
 }
 /** The routing port. */
 export interface Router {
