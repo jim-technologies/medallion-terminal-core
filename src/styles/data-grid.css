@@ -73,20 +73,26 @@
   z-index: 84;
   display: flex;
   box-sizing: border-box;
+  width: max-content;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
   align-items: center;
   gap: var(--mtc-space-2);
-  padding: 0 var(--mtc-density-padding-x);
+  padding: var(--mtc-space-1) var(--mtc-density-padding-x);
+  overflow: auto;
   border-radius: var(--mtc-radius-xs);
   background: var(--mtc-surface-raised);
   box-shadow: var(--mtc-elevation-2), inset 0 0 0 2px var(--mtc-accent);
   color: var(--mtc-fg);
   font-size: var(--mtc-font-size-md);
   line-height: var(--mtc-line-height-md);
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
   pointer-events: none;
 }
 .mtc-root .mtc-data-grid-value-tip[data-align="end"] { justify-content: flex-end; font-variant-numeric: tabular-nums; }
 .mtc-root .mtc-data-grid-value-tip[data-header="true"] { color: var(--mtc-muted); font-size: var(--mtc-font-size-sm); font-weight: var(--mtc-font-weight-medium); }
+.mtc-root .mtc-data-grid-value-tip[data-mono="true"] { font-family: var(--mtc-font-mono); }
 .mtc-root .mtc-data-grid-cell[data-align="end"] { justify-content: flex-end; font-variant-numeric: tabular-nums; text-align: end; }
 .mtc-root .mtc-data-grid-cell[data-pinned="true"] { position: sticky; z-index: 1; }
 .mtc-root .mtc-data-grid-cell:focus-visible { z-index: 2; outline: 2px solid var(--mtc-accent); outline-offset: -2px; }
@@ -117,7 +123,8 @@
 .mtc-root .mtc-data-grid-resize:hover { box-shadow: inset -2px 0 0 var(--mtc-accent); }
 .mtc-root .mtc-data-grid-select { justify-content: center; padding: 0; }
 .mtc-root .mtc-data-grid-select input { width: 0.875rem; height: 0.875rem; margin: 0; accent-color: var(--mtc-accent-strong); cursor: pointer; }
-.mtc-root .mtc-data-grid-row-link { display: flex; min-width: 0; max-width: 100%; align-items: center; gap: var(--mtc-space-2); color: inherit; }
+.mtc-root .mtc-data-grid-row-link { -webkit-user-drag: none; -webkit-user-select: text; user-select: text; display: flex; min-width: 0; max-width: 100%; align-items: center; gap: var(--mtc-space-2); color: inherit; }
+.mtc-root .mtc-data-grid-row-link span { -webkit-user-select: text; user-select: text; }
 .mtc-root .mtc-data-grid-row-link:hover { text-decoration: underline; text-underline-offset: 2px; }
 .mtc-root .mtc-data-grid-status-row .mtc-data-grid-cell,
 .mtc-root .mtc-data-grid-empty-row .mtc-data-grid-cell { grid-column: 1 / -1; color: var(--mtc-muted); font-size: var(--mtc-font-size-sm); }

@@ -15,7 +15,7 @@ import {
 import { createPortal } from 'react-dom'
 import { Skeleton } from '../components/Display'
 import { Icon } from '../components/Icon'
-import { navigateOnPlainClick } from '../components/navigation'
+import { isPlainClick, navigateOnPlainClick } from '../components/navigation'
 import { MenuPopup, useDismissableLayer, type MenuItem } from '../components/Overlays'
 import { cx, focusableElements, handleModalKeyDown } from '../components/utils'
 import {
@@ -304,6 +304,12 @@ function isEditableTarget(target: EventTarget | null): boolean {
   return target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)
 }
 
+function isTextSelectionClick(event: MouseEvent<HTMLElement>): boolean {
+  const selected = event.currentTarget.ownerDocument.getSelection()
+  return event.detail > 0 && isPlainClick(event) && selected !== null && !selected.isCollapsed
+    && event.currentTarget.contains(selected.anchorNode) && event.currentTarget.contains(selected.focusNode)
+}
+
 /**
  * A dense, windowed data grid on the WAI-ARIA grid pattern: one tab stop,
  * arrows, Home/End (Ctrl for the corners), PageUp/PageDown, Enter to open,
@@ -391,7 +397,7 @@ export function DataGrid<Row>({
   const [scrollableY, setScrollableY] = useState(false)
   const [menu, setMenu] = useState<{ rowIndex: number; x: number; y: number } | null>(null)
   // The full value of the keyboard-focused cell when the cell cuts it short.
-  const [valueTip, setValueTip] = useState<{ row: number; column: number; left: number; top: number; width: number; height: number } | null>(null)
+  const [valueTip, setValueTip] = useState<{ row: number; column: number; left: number; top: number; width: number; height: number; text: string } | null>(null)
   const tipRef = useRef<HTMLDivElement>(null)
   const editorRef = useRef<HTMLDivElement>(null)
   const onEditCancelRef = useRef(onEditCancel)
@@ -572,7 +578,19 @@ export function DataGrid<Row>({
   const onScroll = () => {
     const element = viewportRef.current
     if (!element) return
-    if (valueTip) setValueTip(null)
+    if (valueTip) {
+      const cell = element.querySelector<HTMLElement>(`[data-cell="${valueTip.row}:${valueTip.column}"]`)
+      const bounds = cell?.getBoundingClientRect()
+      const viewportBounds = element.getBoundingClientRect()
+      if (!cell || document.activeElement !== cell || !bounds || bounds.bottom <= Math.max(0, viewportBounds.top)
+        || bounds.top >= Math.min(innerHeight, viewportBounds.bottom) || bounds.right <= viewportBounds.left || bounds.left >= viewportBounds.right) {
+        setValueTip(null)
+      } else {
+        setValueTip(current => current?.row === valueTip.row && current.column === valueTip.column
+          ? { ...current, left: bounds.left, top: bounds.top, width: bounds.width, height: bounds.height }
+          : current)
+      }
+    }
     const next = rowWindow(displayRows.length, element.scrollTop, element.clientHeight, lineHeight, overscan, virtual)
     const nextNearEnd = element.scrollTop + element.clientHeight >= endThreshold(displayRows.length)
     if (next.start !== range.start || next.end !== range.end || (onEndReached && nextNearEnd !== nearEnd)) {
@@ -849,7 +867,7 @@ export function DataGrid<Row>({
 
   const onRowClick = (event: MouseEvent<HTMLDivElement>, rowIndex: number) => {
     const key = keys[rowIndex]
-    if (!key || selection === 'none') return
+    if (!key || selection === 'none' || isTextSelectionClick(event)) return
     const target = event.target as HTMLElement
     if (target.closest('a, button, input, select, textarea')) return
     if (selection === 'multi' && (event.shiftKey || event.metaKey || event.ctrlKey)) {
@@ -901,7 +919,7 @@ export function DataGrid<Row>({
         const cell = event.currentTarget
         if (entry?.kind === 'data' && hasVisibleFocus(cell) && isCutShort(cell)) {
           const rect = cell.getBoundingClientRect()
-          setValueTip({ row: rowIndex, column: columnIndex, left: rect.left, top: rect.top, width: rect.width, height: rect.height })
+          setValueTip({ row: rowIndex, column: columnIndex, left: rect.left, top: rect.top, width: rect.width, height: rect.height, text: cellText(cell) })
         } else {
           setValueTip(null)
         }
@@ -923,6 +941,7 @@ export function DataGrid<Row>({
     const edge = document.documentElement.clientWidth - 8
     const overflow = valueTip.left + tip.offsetWidth - edge
     tip.style.left = `${Math.max(8, overflow > 0 ? valueTip.left - overflow : valueTip.left)}px`
+    tip.style.top = `${Math.max(8, Math.min(valueTip.top, document.documentElement.clientHeight - 8 - tip.offsetHeight))}px`
   }, [valueTip])
 
   const cellContent = (column: DataGridColumn<Row>, row: Row, rowIndex: number, selected: boolean, editing = false): ReactNode => {
@@ -966,6 +985,7 @@ export function DataGrid<Row>({
       <div
         ref={viewportRef}
         role="grid"
+        tabIndex={-1}
         aria-label={label}
         aria-rowcount={(totalRows ?? displayRows.length) + 1}
         aria-colcount={renderedColumns.length}
@@ -1103,10 +1123,17 @@ export function DataGrid<Row>({
                       {href && columnIndex === primaryIndex && !editing ? (
                         <a
                           href={href}
+                          draggable={false}
                           tabIndex={-1}
                           data-row-link="true"
                           className="mtc-data-grid-row-link"
-                          onClick={navigateOnPlainClick(onNavigate ? linkEvent => onNavigate(row, linkEvent) : undefined)}
+                          onClick={event => {
+                            if (isTextSelectionClick(event)) {
+                              event.preventDefault()
+                              return
+                            }
+                            navigateOnPlainClick<HTMLAnchorElement>(onNavigate ? linkEvent => onNavigate(row, linkEvent) : undefined)?.(event)
+                          }}
                         >
                           {content}
                         </a>
@@ -1162,11 +1189,10 @@ export function DataGrid<Row>({
             className={cx('mtc-data-grid-value-tip', density && `mtc-density-${density}`)}
             data-header={row === undefined || undefined}
             data-align={numeric ? 'end' : 'start'}
-            style={{ left: valueTip.left, top: valueTip.top, minWidth: valueTip.width, height: valueTip.height }}
+            data-mono={entry.column.kind === 'id' || entry.column.kind === 'code' || undefined}
+            style={{ left: valueTip.left, top: valueTip.top, minWidth: `min(${valueTip.width}px, calc(100vw - 16px))`, minHeight: valueTip.height }}
           >
-            {row === undefined
-              ? entry.column.header
-              : cellContent(entry.column, row, valueTip.row, selectedSet.has(keys[valueTip.row] ?? ''))}
+            {valueTip.text}
           </div>
         )
         return portal ? createPortal(tip, portal) : tip

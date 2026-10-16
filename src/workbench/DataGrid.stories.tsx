@@ -174,6 +174,18 @@ export const ScrollOwnership: StoryObj<{ count: number; bounded: boolean; stateK
   ),
 }
 
+export const LinkedTextSelection: Story = {
+  render: () => {
+    const [opened, setOpened] = useState(0)
+    return <>
+      <DataGrid label="Linked rows" columns={[{ id: 'name', header: 'Name', width: 300 }, { id: 'kind', header: 'Kind', width: 160 }]}
+        rows={[{ id: 'roadmap', name: 'Platform roadmap', kind: 'Document' }]} rowKey={row => row.id}
+        selection="single" rowHref={() => '/iframe.html?id=toolkit-workbench-datagrid--linked-text-selection&viewMode=story&opened=1'} onNavigate={() => setOpened(count => count + 1)} height="auto" />
+      <p role="status">Opened {opened} times</p>
+    </>
+  },
+}
+
 export const TenThousandRows: Story = {
   name: 'Ten thousand rows',
   render: () => (

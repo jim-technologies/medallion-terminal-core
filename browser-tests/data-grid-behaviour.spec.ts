@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
+import { writeFile } from 'node:fs/promises'
+import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test'
 
 async function openGrid(page: Page, args = '', theme = 'dark') {
   await page.goto(`/iframe.html?id=toolkit-workbench-datagrid--scroll-ownership&viewMode=story&globals=theme:${theme}&args=${args}`)
@@ -99,7 +100,9 @@ test('10,001 virtualized rows remain painted while scrolling', async ({ page }, 
     probe.running = false
     return probe
   })
-  await testInfo.attach('scroll-metrics.json', { body: JSON.stringify(metrics), contentType: 'application/json' })
+  const metricsPath = testInfo.outputPath('scroll-metrics.json')
+  await writeFile(metricsPath, JSON.stringify(metrics))
+  await testInfo.attach('scroll-metrics.json', { path: metricsPath, contentType: 'application/json' })
   expect(metrics.frames).toBeGreaterThan(10)
   expect(metrics.blankFrames).toBe(0)
   if (metrics.longTasksSupported) expect(metrics.durations.filter(duration => duration > 50)).toEqual([])
@@ -115,18 +118,107 @@ for (const count of [0, 1, 50, 10001]) {
   })
 }
 
-test('long values remain available by hover and keyboard at doubled scale', async ({ page }) => {
+test('long values remain available by hover and keyboard at 200 percent reflow', async ({ page }, testInfo) => {
+  // A 1440×900 desktop at 200% browser zoom has a 720×450 CSS viewport.
   await page.setViewportSize({ width: 720, height: 450 })
   const grid = await openGrid(page, 'count:50;bounded:true')
-  await page.locator('.mtc-root').first().evaluate(element => { (element as HTMLElement).style.zoom = '2' })
   const cell = grid.locator('[data-cell="0:2"]')
   await cell.hover()
   await expect(cell).toHaveAttribute('title', /東京 \/ café \/ long-name-/)
-  await grid.locator('[data-cell="0:1"]').focus()
+  await page.locator('body').click({ position: { x: 4, y: 4 } })
+  await page.keyboard.press('Tab')
+  await writeFile(testInfo.outputPath('keyboard-entry.json'), JSON.stringify(await page.evaluate(() => ({ tag: document.activeElement?.tagName, role: document.activeElement?.getAttribute('role'), className: document.activeElement?.className, focused: document.hasFocus() }))))
+  await expect(grid.locator(':focus')).toHaveAttribute('data-cell', '0:1')
   await page.keyboard.press('ArrowRight')
   await expect(grid.locator(':focus')).toHaveAttribute('data-cell', '0:2')
-  await expect(page.locator('.mtc-data-grid-value-tip')).toBeVisible()
+  const tip = page.locator('.mtc-data-grid-value-tip')
+  await expect(tip).toBeVisible()
+  const tipBox = (await tip.boundingBox())!
+  const geometry = await tip.evaluate(element => ({
+    rect: element.getBoundingClientRect().toJSON(), left: (element as HTMLElement).style.left,
+    maxWidth: getComputedStyle(element).maxWidth, boxSizing: getComputedStyle(element).boxSizing,
+    viewport: innerWidth, clientWidth: document.documentElement.clientWidth, scrollX,
+  }))
+  await writeFile(testInfo.outputPath('tip-metrics.json'), JSON.stringify(geometry))
+  expect(tipBox.x).toBeGreaterThanOrEqual(8)
+  expect(tipBox.x + tipBox.width).toBeLessThanOrEqual(720 - 8)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
+  await page.screenshot({ path: testInfo.outputPath('focus-tip.png') })
   await page.keyboard.press('Escape')
   await expect(page.locator('.mtc-data-grid-value-tip')).toHaveCount(0)
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
+})
+
+async function dragLinkedText(page: Page, cell: Locator, padding: boolean, testInfo: TestInfo) {
+  const box = await cell.locator('.mtc-value-text').evaluate(node => {
+    const range = document.createRange()
+    range.selectNodeContents(node)
+    const rect = range.getBoundingClientRect()
+    return { left: rect.left, right: rect.right, y: rect.top + rect.height / 2 }
+  })
+  await page.evaluate(() => {
+    const events: string[] = []
+    Object.assign(window, { pointerProbe: events })
+    for (const name of ['mousedown', 'dragstart', 'selectstart', 'selectionchange', 'mouseup', 'click']) {
+      document.addEventListener(name, event => events.push(`${name}:${event.defaultPrevented}:${window.getSelection()?.toString()}`))
+    }
+  })
+  const start = padding ? (await cell.boundingBox())!.x + 2 : box.left + 1
+  await page.mouse.move(start, box.y)
+  await page.mouse.down()
+  if (padding) {
+    await page.waitForTimeout(100)
+    for (let step = 1; step <= 12; step++) {
+      await page.mouse.move(start + (box.right - 1 - start) * step / 12, box.y)
+      await page.waitForTimeout(16)
+    }
+  } else await page.mouse.move(box.right - 1, box.y, { steps: 12 })
+  await page.mouse.up()
+  const metrics = await cell.locator('a').evaluate((element, geometry) => ({
+    events: (window as Window & { pointerProbe: string[] }).pointerProbe,
+    selected: window.getSelection()?.toString(), draggable: element.draggable, geometry,
+    userSelect: getComputedStyle(element).userSelect, userDrag: getComputedStyle(element).getPropertyValue('-webkit-user-drag'),
+  }), { box, padding })
+  await writeFile(testInfo.outputPath('pointer-metrics.json'), JSON.stringify(metrics))
+  return metrics.selected?.trim()
+}
+
+test('inside-link text dragging follows native browser selection', async ({ page, browserName }, testInfo) => {
+  test.fail(browserName === 'webkit' && process.platform === 'linux', 'Linux WebKitGTK also refuses inside-anchor selection in neutral static HTML; padding-start selection is covered separately.')
+  await page.goto('/iframe.html?id=toolkit-workbench-datagrid--linked-text-selection&viewMode=story')
+  const cell = page.getByRole('grid', { name: 'Linked rows' }).locator('[data-cell="0:0"]')
+  expect(await dragLinkedText(page, cell, false, testInfo)).toBe('Platform roadmap')
+  await expect(page.getByRole('status')).toHaveText('Opened 0 times')
+  await expect(page.getByRole('grid', { name: 'Linked rows' }).getByRole('row', { selected: true })).toHaveCount(0)
+})
+
+test('cell-padding text drag selects linked values without navigating', async ({ page }, testInfo) => {
+  await page.goto('/iframe.html?id=toolkit-workbench-datagrid--linked-text-selection&viewMode=story')
+  const cell = page.getByRole('grid', { name: 'Linked rows' }).locator('[data-cell="0:0"]')
+  expect(await dragLinkedText(page, cell, true, testInfo)).toBe('Platform roadmap')
+  await expect(page.getByRole('status')).toHaveText('Opened 0 times')
+  await expect(page.getByRole('grid', { name: 'Linked rows' }).getByRole('row', { selected: true })).toHaveCount(0)
+})
+
+test('row links preserve plain, keyboard, double-click, modified and middle activation', async ({ page }) => {
+  await page.goto('/iframe.html?id=toolkit-workbench-datagrid--linked-text-selection&viewMode=story')
+  const grid = page.getByRole('grid', { name: 'Linked rows' })
+  const cell = grid.locator('[data-cell="0:0"]')
+  const link = cell.locator('a')
+  await link.click()
+  await expect(page.getByRole('status')).toHaveText('Opened 1 times')
+  await cell.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('status')).toHaveText('Opened 2 times')
+  await grid.locator('[data-cell="0:1"]').dblclick()
+  await expect(page.getByRole('status')).toHaveText('Opened 3 times')
+  await expect(link).toHaveAttribute('href', /opened=1$/)
+  for (const mode of ['modified', 'middle']) {
+    const popupPromise = page.context().waitForEvent('page')
+    if (mode === 'modified') await link.click({ modifiers: ['ControlOrMeta'] })
+    else await link.click({ button: 'middle' })
+    const popup = await popupPromise
+    await popup.close()
+    await expect(page.getByRole('status')).toHaveText('Opened 3 times')
+  }
 })
