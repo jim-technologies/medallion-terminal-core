@@ -8,6 +8,7 @@ if (!Number.isInteger(storybookPort) || storybookPort < 1 || storybookPort > 655
   throw new Error('STORYBOOK_PORT must be a valid port number')
 }
 const storybookUrl = `http://127.0.0.1:${storybookPort}`
+const performancePhase = process.env.STORYBOOK_PERFORMANCE_PHASE === '1'
 const historyFixturePort = Number(process.env.HISTORY_FIXTURE_PORT ?? 6216)
 if (!Number.isInteger(historyFixturePort) || historyFixturePort < 1 || historyFixturePort > 65535 || historyFixturePort === storybookPort) throw new Error('HISTORY_FIXTURE_PORT must be a distinct valid port')
 
@@ -44,9 +45,11 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: [{
-    command: `pnpm exec storybook dev -p ${storybookPort} --ci --no-open --exact-port`,
+    command: performancePhase
+      ? `rm -rf storybook-performance && pnpm exec storybook build --output-dir storybook-performance && pnpm exec vite preview --outDir storybook-performance --host 127.0.0.1 --port ${storybookPort} --strictPort`
+      : `pnpm exec storybook dev -p ${storybookPort} --ci --no-open --exact-port`,
     url: `${storybookUrl}/index.json`,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !performancePhase && !process.env.CI,
     timeout: 120_000,
   }, {
     command: `pnpm exec vite --host 127.0.0.1 --port ${historyFixturePort} --strictPort`,
@@ -58,7 +61,13 @@ export default defineConfig({
   // viewport cannot silently override the explicit regression viewport.
   projects: [
     { name: 'chromium' },
-    { name: 'firefox', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour)\.spec\.ts/, use: { browserName: 'firefox' } },
+    {
+      name: 'firefox',
+      // Serialize Firefox workers in CI after native page-setup crashes.
+      workers: process.env.CI ? 1 : undefined,
+      testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour)\.spec\.ts/,
+      use: { browserName: 'firefox' },
+    },
     { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour)\.spec\.ts/, use: { browserName: 'webkit' } },
   ],
 })

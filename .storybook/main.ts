@@ -1,5 +1,7 @@
 import type { StorybookConfig } from '@storybook/react-vite'
 
+const performancePhase = process.env.STORYBOOK_PERFORMANCE_PHASE === '1'
+
 const config: StorybookConfig = {
   stories: [
     '../src/**/*.stories.@(ts|tsx)',
@@ -7,8 +9,12 @@ const config: StorybookConfig = {
   ],
   addons: ['@storybook/addon-a11y', '@storybook/addon-vitest'],
   features: {
-    developmentModeForBuild: true,
+    developmentModeForBuild: !performancePhase,
+    highlight: !performancePhase,
   },
+  viteFinal: config => performancePhase
+    ? { ...config, build: { ...config.build, sourcemap: 'hidden' } }
+    : config,
   framework: {
     name: '@storybook/react-vite',
     options: {},

@@ -9,6 +9,12 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - Linked StatTile labels, units and context use stronger metadata text on
   hover to preserve readable contrast in the light theme.
 
+### Changed
+
+- Byte and explicit-zone date formatting reuse up to 64 native formatters
+  per kind. Locale, zone and style changes retain their native formatting;
+  dates without an explicit zone continue to observe the runtime default.
+
 ## [0.7.10] — 2026-10-15
 
 ### Fixed

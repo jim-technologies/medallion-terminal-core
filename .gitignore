@@ -4,6 +4,7 @@ node_modules
 # with `pnpm build:lib` and commit the result when src/ changes.
 dist-app
 storybook-static
+storybook-performance
 playwright-report
 test-results
 blob-report

@@ -1,5 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
-import { writeFile } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
+import { readFile, writeFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test'
 
 async function openGrid(page: Page, args = '', theme = 'dark') {
@@ -15,6 +17,68 @@ async function openGrid(page: Page, args = '', theme = 'dark') {
   })
   return grid
 }
+
+test('typed grid reuses byte and explicit-zone date formatters across sorting', async ({ page }, testInfo) => {
+  await page.addInitScript(() => {
+    const probe = { bytes: 0, dates: 0, number: Intl.NumberFormat, date: Intl.DateTimeFormat }
+    Object.defineProperty(window, '__mtcIntlReuseProbe', { value: probe })
+    Intl.NumberFormat = new Proxy(Intl.NumberFormat, {
+      construct(target, args, newTarget) {
+        const options = args[1] as Intl.NumberFormatOptions | undefined
+        if (args[0] === 'en' && options?.style === 'unit' && options.unit === 'kilobyte') probe.bytes++
+        return Reflect.construct(target, args, newTarget)
+      },
+    })
+    Intl.DateTimeFormat = new Proxy(Intl.DateTimeFormat, {
+      construct(target, args, newTarget) {
+        const options = args[1] as Intl.DateTimeFormatOptions | undefined
+        if (args[0] === 'en' && options?.timeZone === 'UTC' && options.dateStyle === 'medium' && options.timeStyle === undefined) probe.dates++
+        return Reflect.construct(target, args, newTarget)
+      },
+    })
+  })
+  await page.goto('/iframe.html?id=toolkit-workbench-datagrid--context-actions-and-paging&viewMode=story')
+  const grid = page.getByRole('grid', { name: 'Reports', exact: true })
+  await expect(grid).toBeVisible()
+  await page.waitForFunction(() => {
+    const preview = (window as unknown as { __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } } }).__STORYBOOK_PREVIEW__
+    return preview?.currentRender?.phase === 'finished'
+      && document.body.classList.contains('sb-show-main')
+      && !document.body.classList.contains('sb-show-preparing-story')
+  })
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('menu')).toHaveCount(0)
+  const samples = []
+  for (const phase of ['initial', 'descending']) {
+    if (phase === 'descending') {
+      const header = grid.getByRole('columnheader', { name: /^Size/ })
+      await header.click()
+      await expect(header).toHaveAttribute('aria-sort', 'ascending')
+      await header.click()
+      await expect(header).toHaveAttribute('aria-sort', 'descending')
+    }
+    const row = grid.locator('[data-row-index="0"]')
+    const name = (await row.locator('[data-column-id="name"]').textContent())!
+    const number = Number(name.match(/report-(\d+)\.csv/)![1])
+    const expected = await page.evaluate(n => {
+      const probe = (window as unknown as { __mtcIntlReuseProbe: { number: typeof Intl.NumberFormat; date: typeof Intl.DateTimeFormat } }).__mtcIntlReuseProbe
+      return {
+        size: new probe.number('en', { style: 'unit', unit: 'kilobyte', unitDisplay: 'short', maximumFractionDigits: 1 }).format((12_000 + n * 733) / 1000),
+        modified: new probe.date('en', { timeZone: 'UTC', dateStyle: 'medium', timeStyle: undefined }).format(new Date(Date.UTC(2026, 8, 1 + n % 24))),
+      }
+    }, number)
+    const actual = { size: await row.locator('[data-column-id="size"]').textContent(), modified: await row.locator('[data-column-id="modified"]').textContent() }
+    samples.push({ phase, number, actual, expected })
+    expect(actual).toEqual(expected)
+  }
+  expect(samples[0]!.number).not.toBe(samples[1]!.number)
+  const constructions = await page.evaluate(() => {
+    const { bytes, dates } = (window as unknown as { __mtcIntlReuseProbe: { bytes: number; dates: number } }).__mtcIntlReuseProbe
+    return { bytes, dates }
+  })
+  await testInfo.attach('typed-grid-formatter-reuse.json', { body: JSON.stringify({ samples, constructions }, null, 2), contentType: 'application/json' })
+  expect(constructions).toEqual({ bytes: 1, dates: 1 })
+})
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 2560, height: 1440 }, { width: 390, height: 844 }]) {
   for (const theme of ['dark', 'light']) {
@@ -73,6 +137,13 @@ test('grid arrow/page keys and selection keep page stationary', async ({ page })
 
 test('10,001 virtualized rows keep sampled DOM coverage while scrolling', { tag: '@performance' }, async ({ page, browserName }, testInfo) => {
   const grid = await openGrid(page, 'count:10001;bounded:true')
+  const features = await page.evaluate(() => {
+    const runtime = window as unknown as { FEATURES?: { highlight?: boolean; developmentModeForBuild?: boolean }; __STORYBOOK_HIGHLIGHT_INITIALIZED?: boolean }
+    return { highlight: runtime.FEATURES?.highlight, developmentModeForBuild: runtime.FEATURES?.developmentModeForBuild, highlighterInitialized: Boolean(runtime.__STORYBOOK_HIGHLIGHT_INITIALIZED) }
+  })
+  await testInfo.attach('storybook-performance-features.json', { body: JSON.stringify(features), contentType: 'application/json' })
+  expect(features).toEqual({ highlight: false, developmentModeForBuild: false, highlighterInitialized: false })
+  await expect(grid).toHaveAttribute('aria-rowcount', '10002')
   const box = (await grid.boundingBox())!
   await page.mouse.move(box.x + 300, box.y + 100)
   await page.mouse.wheel(0, 120)
@@ -114,6 +185,53 @@ test('10,001 virtualized rows keep sampled DOM coverage while scrolling', { tag:
   const metricsPath = testInfo.outputPath('scroll-metrics.json')
   await writeFile(metricsPath, JSON.stringify(metrics))
   await testInfo.attach('scroll-metrics.json', { path: metricsPath, contentType: 'application/json' })
+  const loadedAssets = await page.evaluate(() => performance.getEntriesByType('resource')
+    .map(entry => new URL(entry.name)).filter(url => url.origin === location.origin && url.pathname.startsWith('/assets/') && url.pathname.endsWith('.js'))
+    .map(url => url.pathname))
+  const artifacts = []
+  const generatedHelpers = []
+  // These two generated toolchain helpers have no original source maps.
+  const knownGeneratedHelpers: Record<string, string> = {
+    '97cd730ec57b186cda02f34226d3cf8fd283b7d5ad62fb53a94cebfeb4e0d3de': 'Vite preload helper',
+    '4625e101449061a5fae04634001143ffaba4e22a6141f1f77ed6d342b4e9db4e': 'Rolldown interop helper',
+  }
+  for (const pathname of [...new Set(loadedAssets)]) {
+    const path = resolve('storybook-performance', pathname.slice(1))
+    const chunk = await readFile(path)
+    const chunkSha256 = createHash('sha256').update(chunk).digest('hex')
+    const servedChunk = await page.request.get(pathname)
+    expect(servedChunk.ok()).toBe(true)
+    expect(await servedChunk.body()).toEqual(chunk)
+    let map: Buffer
+    try {
+      map = await readFile(`${path}.map`)
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
+      const facade = chunk.toString().match(/^import\{\w+ as (\w+)\}from"(\.\/iframe-[\w-]+\.js)";\1\(\);$/)
+      const role = facade ? 'entry facade' : knownGeneratedHelpers[chunkSha256]
+      expect(role, `known generated mapless asset: ${pathname}`).toBeDefined()
+      const imports = [...chunk.toString().matchAll(/from"(\.\/[^"\n]+\.js)"/g)]
+        .map(match => new URL(match[1]!, new URL(pathname, page.url())).pathname)
+      for (const target of imports) expect(loadedAssets).toContain(target)
+      if (facade) await readFile(`${resolve('storybook-performance', imports[0]!.slice(1))}.map`)
+      generatedHelpers.push({ pathname, role, bytes: chunk.length, chunkSha256, imports, servedBytesEqual: true })
+      continue
+    }
+    const servedMap = await page.request.get(`${pathname}.map`)
+    expect(servedMap.ok()).toBe(true)
+    expect(await servedMap.body()).toEqual(map)
+    const sources = (JSON.parse(map.toString()) as { sources: string[] }).sources
+    expect(sources.filter(source => /\/react(?:-jsx(?:-dev)?-runtime|-dom(?:-client)?)?\.development\.js$/.test(source))).toEqual([])
+    if (sources.some(source => /(?:\/DataGrid\.tsx|\/react(?:-jsx-runtime)?\.production\.js|\/react-dom-client\.production\.js)$/.test(source))) {
+      artifacts.push({ pathname, chunkSha256, mapSha256: createHash('sha256').update(map).digest('hex'), sources })
+    }
+  }
+  const sources = artifacts.flatMap(artifact => artifact.sources)
+  for (const target of [/\/DataGrid\.tsx$/, /\/react\.production\.js$/, /\/react-jsx-runtime\.production\.js$/, /\/react-dom-client\.production\.js$/]) {
+    expect(sources.some(source => target.test(source)), `loaded preview contains ${target}`).toBe(true)
+  }
+  await testInfo.attach('storybook-production-artifacts.json', { body: JSON.stringify(artifacts), contentType: 'application/json' })
+  await testInfo.attach('storybook-generated-helpers.json', { body: JSON.stringify(generatedHelpers), contentType: 'application/json' })
   expect(metrics.frames).toBeGreaterThan(10)
   expect(metrics.blankFrames).toBe(0)
   if (browserName === 'chromium') expect(metrics.longTasksSupported).toBe(true)

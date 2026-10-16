@@ -56,8 +56,8 @@
     "gen:proto": "PATH=\"$PWD/node_modules/.bin:$PATH\" buf generate",
     "format": "buf format --write",
     "test": "vitest run --project=unit",
-    "test:storybook": "vitest run --project=storybook",
-    "test:browser": "PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/behavior playwright test --grep-invert @performance --output test-results/behavior && PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/performance playwright test --grep @performance --workers 1 --retries 0 --output test-results/performance",
+    "test:storybook": "STORYBOOK_PERFORMANCE_PHASE=0 vitest run --project=storybook",
+    "test:browser": "STORYBOOK_PERFORMANCE_PHASE=0 PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/behavior playwright test --grep-invert @performance --output test-results/behavior && STORYBOOK_PERFORMANCE_PHASE=1 PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/performance playwright test --grep @performance --workers 1 --retries 0 --output test-results/performance",
     "bench": "vitest bench --run",
     "build": "tsc -b && vite build",
     "build:lib": "vite build --config vite.config.lib.ts && tsc -p tsconfig.build.json",
@@ -73,7 +73,7 @@
     "storybook": "storybook dev -p 6006",
     "check:storybook": "node scripts/check-storybook.mjs",
     "check:conformance": "node scripts/check-reference-conformance.mjs",
-    "build:storybook": "storybook build && pnpm check:storybook",
+    "build:storybook": "STORYBOOK_PERFORMANCE_PHASE=0 storybook build && pnpm check:storybook",
     "validate": "pnpm check:surface && pnpm check:version && pnpm lint && pnpm check:breaking && pnpm check:conformance && pnpm test && pnpm test:storybook && pnpm build && pnpm check:dist && pnpm check:package && pnpm check:bundles && pnpm build:storybook && pnpm test:browser"
   },
   "peerDependencies": {

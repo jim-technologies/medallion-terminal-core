@@ -28,6 +28,9 @@ export function formatNumber(
 }
 
 const BYTE_UNITS = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte', 'petabyte'] as const
+const MAX_FORMATTERS = 64
+const byteFormatters = new Map<string, Intl.NumberFormat>()
+const dateTimeFormatters = new Map<string, Intl.DateTimeFormat>()
 
 /**
  * A byte count in SI units (1 kB = 1,000 bytes) with at most one decimal:
@@ -41,12 +44,22 @@ export function formatBytes(bytes: number, { locale = 'en' }: LocaleOptions = {}
     value /= 1000
     unit += 1
   }
-  return new Intl.NumberFormat(locale, {
-    style: 'unit',
-    unit: BYTE_UNITS[unit],
-    unitDisplay: unit === 0 ? 'long' : 'short',
-    maximumFractionDigits: unit === 0 ? 0 : 1,
-  }).format(value)
+  // Untyped JavaScript options retain native coercion and validation.
+  const key = typeof locale === 'string' ? JSON.stringify([locale, unit]) : undefined
+  let formatter = key === undefined ? undefined : byteFormatters.get(key)
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, {
+      style: 'unit',
+      unit: BYTE_UNITS[unit],
+      unitDisplay: unit === 0 ? 'long' : 'short',
+      maximumFractionDigits: unit === 0 ? 0 : 1,
+    })
+    if (key !== undefined) {
+      if (byteFormatters.size === MAX_FORMATTERS) byteFormatters.delete(byteFormatters.keys().next().value!)
+      byteFormatters.set(key, formatter)
+    }
+  }
+  return formatter.format(value)
 }
 
 /** Options for `formatDateTime`. */
@@ -69,11 +82,23 @@ export function formatDateTime(
 ): string {
   const date = toDate(value)
   if (!date) return String(value)
-  return new Intl.DateTimeFormat(locale, {
-    timeZone,
-    dateStyle: dateStyle === 'none' ? undefined : dateStyle,
-    timeStyle: timeStyle === 'none' ? undefined : timeStyle,
-  }).format(date)
+  // An omitted zone must keep observing the runtime's current default.
+  const key = typeof locale === 'string' && typeof timeZone === 'string'
+    && typeof dateStyle === 'string' && typeof timeStyle === 'string'
+    ? JSON.stringify([locale, timeZone, dateStyle, timeStyle]) : undefined
+  let formatter = key === undefined ? undefined : dateTimeFormatters.get(key)
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(locale, {
+      timeZone,
+      dateStyle: dateStyle === 'none' ? undefined : dateStyle,
+      timeStyle: timeStyle === 'none' ? undefined : timeStyle,
+    })
+    if (key !== undefined) {
+      if (dateTimeFormatters.size === MAX_FORMATTERS) dateTimeFormatters.delete(dateTimeFormatters.keys().next().value!)
+      dateTimeFormatters.set(key, formatter)
+    }
+  }
+  return formatter.format(date)
 }
 
 // Thresholds in seconds at which relative time moves to a coarser unit.

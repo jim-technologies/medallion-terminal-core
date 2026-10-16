@@ -756,3 +756,28 @@ Run the repository-defined full gate with:
 ```bash
 flox activate -- make validate
 ```
+
+The browser gate runs ordinary checks against development Storybook, then
+builds a fresh, isolated production catalog for the single-worker timing
+phase. Only that phase disables Storybook's development React mode and
+DOM-scanning debug highlighter. Hidden source maps verify the actually
+loaded preview's DataGrid, production React and JSX chunks after capture.
+The accessibility addon, render readiness barrier, tracing, 10,001 rows,
+wheel input and 50 ms Chromium ceiling stay enabled. Vitest, visual checks
+and the normal built catalog retain their development mode and highlighter.
+The production catalog uses Storybook's supported
+[`features.developmentModeForBuild`](https://storybook.js.org/docs/api/main-config/main-config-features#developmentmodeforbuild)
+and [`features.highlight`](https://storybook.js.org/docs/api/main-config/main-config-features#highlight)
+settings. This qualifies the production-built Storybook harness; it does
+not qualify development Storybook at 50 ms or establish an application
+speedup. No library or application option changes.
+
+CI schedules one Firefox worker after observed native page-setup crashes.
+This is a scheduling policy; the native fault's cause remains unresolved.
+Chromium and WebKit retain the global worker limit.
+
+For a focused timing run, set the same phase flag explicitly:
+
+```bash
+STORYBOOK_PERFORMANCE_PHASE=1 flox activate -- pnpm exec playwright test --grep @performance --workers 1 --retries 0
+```
