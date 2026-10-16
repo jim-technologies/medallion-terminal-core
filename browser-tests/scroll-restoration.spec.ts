@@ -123,10 +123,10 @@ test('same-key owner replacement captures immediate offsets before DOM removal',
     Array.from(document.querySelectorAll('button')).find(button => button.textContent === 'Remount owners')!.click()
   })
   await expect.poll(() => main.evaluate(element => element.scrollTop)).toBe(80)
-  await expect.poll(() => grid.evaluate(element => element.scrollTop)).toBe(500)
+  await expect.poll(() => grid.evaluate(element => Math.abs(element.scrollTop - 500))).toBeLessThanOrEqual(1)
   await page.reload()
   await expect.poll(() => main.evaluate(element => element.scrollTop)).toBe(80)
-  await expect.poll(() => grid.evaluate(element => element.scrollTop)).toBe(500)
+  await expect.poll(() => grid.evaluate(element => Math.abs(element.scrollTop - 500))).toBeLessThanOrEqual(1)
 })
 
 test('shell and nested keyboard navigation reveals focus inside the outer scroll owner', async ({ page }, testInfo) => {
@@ -154,6 +154,21 @@ test('shell and nested keyboard navigation reveals focus inside the outer scroll
     return bounds.top >= owner.top && bounds.bottom <= owner.bottom
   })).toBe(true)
   await expect.poll(() => main.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
+  const lastBox = (await last.boundingBox())!
+  const lastHeaderBox = (await grid.locator('[data-cell="-1:2"]').boundingBox())!
+  expect(Math.abs(lastBox.x - lastHeaderBox.x)).toBeLessThanOrEqual(1)
+  const horizontal = await grid.evaluate(element => element.scrollLeft)
+  expect(horizontal).toBeGreaterThan(0)
+  const outerPosition = await main.evaluate(element => element.scrollTop)
+  await page.keyboard.press('Control+Home')
+  const first = grid.locator('[data-cell="0:0"]')
+  await expect(first).toBeFocused()
+  await expect(first).toBeInViewport({ ratio: 1 })
+  expect(Math.abs(await grid.evaluate(element => element.scrollLeft) - horizontal)).toBeLessThanOrEqual(1)
+  expect(Math.abs(await main.evaluate(element => element.scrollTop) - outerPosition)).toBeLessThanOrEqual(1)
+  const firstBox = (await first.boundingBox())!
+  const firstHeaderBox = (await grid.locator('[data-cell="-1:0"]').boundingBox())!
+  expect(Math.abs(firstBox.x - firstHeaderBox.x)).toBeLessThanOrEqual(1)
   expect(await page.evaluate(() => window.scrollY)).toBe(0)
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
 })

@@ -17,7 +17,7 @@ function Pages() {
   return <>
     <PageHeader title="History scroll" />
     <div style={{ height: 560 }} />
-    <DataGrid label="History rows" scrollKey="history-list" columns={[{ id: 'id', header: 'ID', width: 200 }, { id: 'name', header: 'Name', width: 1800 }, { id: 'kind', header: 'Kind', width: 180 }]}
+    <DataGrid label="History rows" scrollKey="history-list" columns={[{ id: 'id', header: 'ID', width: 200, pinned: true }, { id: 'name', header: 'Name', width: 1800 }, { id: 'kind', header: 'Kind', width: 180 }]}
       rows={loaded ? Array.from({ length: 10_001 }, (_, id) => ({ id, name: `Entry ${id}`, kind: 'Record' })) : []}
       rowKey={row => String(row.id)} height={320} loading={!loaded} />
     <div style={{ height: 1400 }} />
