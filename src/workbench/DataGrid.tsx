@@ -45,6 +45,7 @@ import {
   type GridPosition,
 } from './dataGridModel'
 import { EmptyState } from './States'
+import { readColumnWidths, saveColumnWidths } from './gridPreferences'
 
 export type { DataGridSort } from './dataGridModel'
 
@@ -196,6 +197,8 @@ export interface DataGridProps<Row> {
    * listing (a folder path, a query) so a new listing starts at the top.
    */
   scrollKey?: string | number
+  /** Opt-in key for resized column widths in this browser tab; use a distinct key per logical grid. */
+  stateKey?: string
   /** Row density; the scope's when unset. */
   density?: Density
   /** Fixed row height in pixels; the density's when unset. */
@@ -335,6 +338,7 @@ export function DataGrid<Row>({
   loading = false,
   empty,
   scrollKey,
+  stateKey,
   density,
   rowHeight,
   height = '100%',
@@ -363,7 +367,14 @@ export function DataGrid<Row>({
   const [internalSelection, setInternalSelection] = useState<readonly string[]>(defaultSelectedKeys ?? [])
   const selectedList = selectedKeys ?? internalSelection
   const selectedSet = useMemo(() => new Set(selectedList), [selectedList])
-  const [widths, setWidths] = useState<Record<string, number>>({})
+  const [widths, setWidths] = useState<Record<string, number>>(() => Object.create(null))
+  const widthsRef = useRef(widths)
+  widthsRef.current = widths
+  useLayoutEffect(() => {
+    const restored = readColumnWidths(stateKey)
+    widthsRef.current = restored
+    setWidths(restored)
+  }, [stateKey])
   // Content widths of the content-sized columns, measured after render.
   const [measured, setMeasured] = useState<Record<string, number>>({})
   const measuredRef = useRef(measured)
@@ -730,7 +741,10 @@ export function DataGrid<Row>({
     const entry = renderedColumns[columnIndex]
     if (!entry || entry.kind !== 'data') return
     const next = Math.max(entry.column.minWidth ?? RESIZE_MIN_WIDTH, entry.width + delta)
-    setWidths(current => ({ ...current, [entry.column.id]: next }))
+    const resized = { ...widthsRef.current, [entry.column.id]: next }
+    widthsRef.current = resized
+    setWidths(resized)
+    saveColumnWidths(stateKey, resized)
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -831,9 +845,12 @@ export function DataGrid<Row>({
     const min = entry.column.minWidth ?? RESIZE_MIN_WIDTH
     const id = entry.column.id
     const onMove = (move: globalThis.PointerEvent) => {
-      setWidths(current => ({ ...current, [id]: Math.max(min, startWidth + move.clientX - startX) }))
+      const resized = { ...widthsRef.current, [id]: Math.max(min, startWidth + move.clientX - startX) }
+      widthsRef.current = resized
+      setWidths(resized)
     }
     const onUp = () => {
+      saveColumnWidths(stateKey, widthsRef.current)
       document.removeEventListener('pointermove', onMove)
       document.removeEventListener('pointerup', onUp)
     }

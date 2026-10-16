@@ -147,13 +147,14 @@ const eventColumns: DataGridColumn<EventRow>[] = [
   { id: 'at', header: 'Recorded', kind: 'datetime' },
 ]
 
-export const ScrollOwnership: Story = {
+export const ScrollOwnership: StoryObj<{ count: number; bounded: boolean; stateKey: string }> = {
   name: 'Scroll ownership',
-  args: { count: 50, bounded: false },
-  render: ({ count, bounded }) => (
+  args: { count: 50, bounded: false, stateKey: 'scroll-ownership' },
+  render: ({ count, bounded, stateKey }) => (
     <div style={{ maxWidth: 720 }}>
       <DataGrid
         label="Scroll ownership rows"
+        stateKey={stateKey || undefined}
         columns={[
           { id: 'sequence', header: 'Event', kind: 'id', width: 200, pinned: true },
           { id: 'kind', header: 'Description', width: 440 },

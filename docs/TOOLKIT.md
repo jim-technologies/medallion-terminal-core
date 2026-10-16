@@ -392,6 +392,9 @@ items accept `kind` and `format`.
   A grid that owns vertical scrolling contains wheel motion at its edges.
   A content-sized grid lets vertical wheel and trackpad motion reach the
   page, even when its columns scroll horizontally.
+  `stateKey` opts a logical grid into remembering resized column widths for
+  this browser tab. Give different grids different keys; a grid without one
+  keeps its widths only while mounted. Stored widths load after hydration.
   Pass `totalRows` when known.
   `loading` shows skeleton rows or a
   loading-more row; `empty` replaces the default empty state; `rowProps`
