@@ -360,6 +360,7 @@ export function DataGrid<Row>({
   const viewportRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const focusPending = useRef(false)
+  const revealPending = useRef(false)
   const anchorKey = useRef<string | null>(null)
   const endRequestedAt = useRef(-1)
 
@@ -596,6 +597,20 @@ export function DataGrid<Row>({
     const cell = element?.querySelector<HTMLElement>(`[data-cell="${active.row}:${active.column}"]`)
     if (!element || !cell) return
     cell.focus({ preventScroll: true })
+    if (revealPending.current) {
+      revealPending.current = false
+      let owner: HTMLElement | null = element.parentElement
+      while (owner && !(owner.scrollHeight > owner.clientHeight && /auto|scroll|overlay/.test(getComputedStyle(owner).overflowY))) owner = owner.parentElement
+      owner ??= document.scrollingElement as HTMLElement | null
+      if (owner) {
+        const bounds = cell.getBoundingClientRect()
+        const ownerBounds = owner.getBoundingClientRect()
+        const top = owner === document.scrollingElement ? 0 : Math.max(0, ownerBounds.top + owner.clientTop)
+        const bottom = owner === document.scrollingElement ? document.documentElement.clientHeight : Math.min(document.documentElement.clientHeight, ownerBounds.top + owner.clientTop + owner.clientHeight)
+        if (bounds.top < top) owner.scrollTop += bounds.top - top
+        else if (bounds.bottom > bottom) owner.scrollTop += bounds.bottom - bottom
+      }
+    }
     if (pinnedOffsets.has(active.column)) return
     const pinnedWidth = [...pinnedOffsets].reduce((width, [index, offset]) => Math.max(width, offset + renderedColumns[index]!.width), 0)
     const viewportBounds = element.getBoundingClientRect()
@@ -702,6 +717,7 @@ export function DataGrid<Row>({
       }
     }
     focusPending.current = true
+    revealPending.current = true
     setActive(position)
   }
 

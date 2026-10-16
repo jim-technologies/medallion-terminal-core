@@ -128,3 +128,32 @@ test('same-key owner replacement captures immediate offsets before DOM removal',
   await expect.poll(() => main.evaluate(element => element.scrollTop)).toBe(80)
   await expect.poll(() => grid.evaluate(element => element.scrollTop)).toBe(500)
 })
+
+test('shell and nested keyboard navigation reveals focus inside the outer scroll owner', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(`${historyFixture}?pane=list`)
+  const main = page.getByRole('main')
+  const grid = page.getByRole('grid', { name: 'History rows' })
+  await expect(grid).not.toHaveAttribute('aria-busy', 'true')
+  await grid.locator('[data-cell="0:0"]').focus()
+  await main.evaluate(element => { element.scrollTop = 0 })
+  await page.keyboard.press('Control+End')
+  const last = grid.locator('[data-cell="10000:2"]')
+  await expect(last).toBeFocused()
+  await writeFile(testInfo.outputPath('keyboard-owner-metrics.json'), JSON.stringify(await last.evaluate(element => ({
+    cell: element.getBoundingClientRect().toJSON(),
+    owners: Array.from((function* () { let owner = element.parentElement; while (owner) { yield owner; owner = owner.parentElement } })()).map(owner => ({
+      tag: owner.tagName, className: owner.className, rect: owner.getBoundingClientRect().toJSON(),
+      top: owner.scrollTop, left: owner.scrollLeft, height: owner.clientHeight, overflow: getComputedStyle(owner).overflowY,
+    })), viewport: { width: innerWidth, height: innerHeight },
+  }))))
+  await expect(last).toBeInViewport({ ratio: 1 })
+  await expect.poll(() => last.evaluate(element => {
+    const bounds = element.getBoundingClientRect()
+    const owner = element.closest('main')!.getBoundingClientRect()
+    return bounds.top >= owner.top && bounds.bottom <= owner.bottom
+  })).toBe(true)
+  await expect.poll(() => main.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
+  expect(await page.evaluate(() => window.scrollY)).toBe(0)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
+})
