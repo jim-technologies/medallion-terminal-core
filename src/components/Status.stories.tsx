@@ -33,6 +33,7 @@ export const StatTiles: Story = {
       <StatTile
         label="Placed"
         value="12"
+        unit="orders"
         icon={<TypeGlyph icon="order" color="orange" size={16} />}
         href="#/explore?type=order"
         description="Orders linked"

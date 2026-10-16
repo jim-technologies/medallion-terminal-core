@@ -7,6 +7,12 @@ async function openGrid(page: Page, args = '', theme = 'dark') {
   const grid = page.getByRole('grid', { name: 'Scroll ownership rows' })
   await expect(grid).toBeVisible()
   await page.evaluate(() => document.fonts.ready)
+  await page.waitForFunction(() => {
+    const preview = (window as unknown as { __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } } }).__STORYBOOK_PREVIEW__
+    return preview?.currentRender?.phase === 'finished'
+      && document.body.classList.contains('sb-show-main')
+      && !document.body.classList.contains('sb-show-preparing-story')
+  })
   return grid
 }
 
@@ -65,7 +71,7 @@ test('grid arrow/page keys and selection keep page stationary', async ({ page })
   expect(await page.evaluate(() => window.scrollY)).toBe(top)
 })
 
-test('10,001 virtualized rows remain painted while scrolling', async ({ page }, testInfo) => {
+test('10,001 virtualized rows keep sampled DOM coverage while scrolling', { tag: '@performance' }, async ({ page, browserName }, testInfo) => {
   const grid = await openGrid(page, 'count:10001;bounded:true')
   const box = (await grid.boundingBox())!
   await page.mouse.move(box.x + 300, box.y + 100)
@@ -73,11 +79,12 @@ test('10,001 virtualized rows remain painted while scrolling', async ({ page }, 
   await expect.poll(() => grid.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
   await page.evaluate(() => {
     const element = document.querySelector<HTMLElement>('[aria-label="Scroll ownership rows"]')!
-    const probe = { running: true, frames: 0, blankFrames: 0, durations: [] as number[], longTasksSupported: PerformanceObserver.supportedEntryTypes.includes('longtask') }
+    const probe = { running: true, frames: 0, blankFrames: 0, durations: [] as number[], longTasksSupported: PerformanceObserver.supportedEntryTypes.includes('longtask'), observer: null as PerformanceObserver | null }
     ;(window as unknown as { scrollProbe: typeof probe }).scrollProbe = probe
     if (probe.longTasksSupported) {
       const observer = new PerformanceObserver(list => probe.durations.push(...list.getEntries().map(entry => entry.duration)))
       observer.observe({ type: 'longtask' })
+      probe.observer = observer
     }
     const sample = () => {
       if (!probe.running) return
@@ -96,15 +103,20 @@ test('10,001 virtualized rows remain painted while scrolling', async ({ page }, 
     await page.waitForTimeout(18)
   }
   const metrics = await page.evaluate(() => {
-    const probe = (window as unknown as { scrollProbe: { running: boolean; frames: number; blankFrames: number; durations: number[]; longTasksSupported: boolean } }).scrollProbe
+    const probe = (window as unknown as { scrollProbe: { running: boolean; frames: number; blankFrames: number; durations: number[]; longTasksSupported: boolean; observer: PerformanceObserver | null } }).scrollProbe
     probe.running = false
-    return probe
+    if (probe.observer) {
+      probe.durations.push(...probe.observer.takeRecords().map(entry => entry.duration))
+      probe.observer.disconnect()
+    }
+    return { running: probe.running, frames: probe.frames, blankFrames: probe.blankFrames, durations: probe.durations, longTasksSupported: probe.longTasksSupported }
   })
   const metricsPath = testInfo.outputPath('scroll-metrics.json')
   await writeFile(metricsPath, JSON.stringify(metrics))
   await testInfo.attach('scroll-metrics.json', { path: metricsPath, contentType: 'application/json' })
   expect(metrics.frames).toBeGreaterThan(10)
   expect(metrics.blankFrames).toBe(0)
+  if (browserName === 'chromium') expect(metrics.longTasksSupported).toBe(true)
   if (metrics.longTasksSupported) expect(metrics.durations.filter(duration => duration > 50)).toEqual([])
   expect(await grid.locator('*').count()).toBeLessThan(1500)
 })

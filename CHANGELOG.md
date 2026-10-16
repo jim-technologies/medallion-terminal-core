@@ -4,6 +4,11 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Fixed
+
+- Linked StatTile labels, units and context use stronger metadata text on
+  hover to preserve readable contrast in the light theme.
+
 ## [0.7.10] — 2026-10-15
 
 ### Fixed

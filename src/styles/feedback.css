@@ -90,6 +90,8 @@
 .mtc-root .mtc-stat-tile-value { display: flex; align-items: baseline; gap: var(--mtc-space-1); font-size: var(--mtc-font-size-2xl); font-weight: var(--mtc-font-weight-semibold); font-variant-numeric: tabular-nums; line-height: var(--mtc-line-height-2xl); }
 .mtc-root .mtc-stat-tile-unit { color: var(--mtc-muted); font-size: var(--mtc-font-size-sm); font-weight: var(--mtc-font-weight-normal); }
 .mtc-root .mtc-stat-tile-foot { display: flex; min-width: 0; flex-wrap: wrap; align-items: center; gap: var(--mtc-space-1) var(--mtc-space-2); color: var(--mtc-muted); font-size: var(--mtc-font-size-sm); }
+.mtc-root .mtc-stat-tile[data-interactive="true"]:hover > :is(.mtc-stat-tile-top, .mtc-stat-tile-foot),
+.mtc-root .mtc-stat-tile[data-interactive="true"]:hover > .mtc-stat-tile-value > .mtc-stat-tile-unit { color: var(--mtc-muted-strong); }
 .mtc-root .mtc-stat-tile-delta { display: inline-flex; align-items: center; gap: 0.125rem; font-variant-numeric: tabular-nums; }
 .mtc-root .mtc-stat-tile-delta[data-tone="ok"] { color: var(--mtc-ok); }
 .mtc-root .mtc-stat-tile-delta[data-tone="danger"] { color: var(--mtc-danger); }

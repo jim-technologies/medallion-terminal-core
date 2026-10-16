@@ -8,6 +8,6 @@
     - text: +4.2% vs. last Friday p95 latency Degraded 182 ms
     - img "Increase"
     - text: +38 ms Storage Healthy 2.3 TB Of 5 TB · 46%
-    - link "Placed 12 Orders linked":
+    - link "Placed 12 orders Orders linked":
       - /url: "#/explore?type=order"
   - text: Theme and density inherit from the scoped toolkit root.
