@@ -759,10 +759,13 @@ export function DataGrid<Row>({
   }, [])
   useDismissableLayer(menu !== null, menuRef, closeMenu)
 
+  const headerWidth = (columnIndex: number, fallback: number) => viewportRef.current
+    ?.querySelector<HTMLElement>(`[data-cell="-1:${columnIndex}"]`)?.getBoundingClientRect().width ?? fallback
+
   const resizeColumn = (columnIndex: number, delta: number) => {
     const entry = renderedColumns[columnIndex]
     if (!entry || entry.kind !== 'data') return
-    const next = Math.max(entry.column.minWidth ?? RESIZE_MIN_WIDTH, entry.width + delta)
+    const next = Math.max(entry.column.minWidth ?? RESIZE_MIN_WIDTH, headerWidth(columnIndex, entry.width) + delta)
     const resized = { ...widthsRef.current, [entry.column.id]: next }
     widthsRef.current = resized
     setWidths(resized)
@@ -863,7 +866,7 @@ export function DataGrid<Row>({
     const startX = event.clientX
     const entry = renderedColumns[columnIndex]
     if (!entry || entry.kind !== 'data') return
-    const startWidth = entry.width
+    const startWidth = headerWidth(columnIndex, entry.width)
     const min = entry.column.minWidth ?? RESIZE_MIN_WIDTH
     const id = entry.column.id
     const onMove = (move: globalThis.PointerEvent) => {

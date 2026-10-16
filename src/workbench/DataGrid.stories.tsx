@@ -491,3 +491,11 @@ export const NarrowColumns: Story = {
     await waitFor(() => expect(tip()).toHaveTextContent(DOCUMENTS[0]!.path))
   },
 }
+
+export const GrowingColumnWidths: Story = {
+  render: () => <div style={{ width: 900 }}>
+    <DataGrid label="Growing columns" stateKey="growing-columns"
+      columns={[{ id: 'name', header: 'Name', width: 120, grow: true }, { id: 'kind', header: 'Kind', width: 160 }]}
+      rows={[{ id: 'roadmap', name: 'Platform roadmap', kind: 'Document' }]} rowKey={row => row.id} height={160} />
+  </div>,
+}

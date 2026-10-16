@@ -29,3 +29,28 @@ test('different grid state keys do not share widths and unkeyed grids do not per
   await page.reload()
   await expect.poll(async () => (await header.boundingBox())!.width).toBe(200)
 })
+
+for (const mode of ['keyboard', 'pointer']) test(`growing columns resize from their visible width with ${mode}`, async ({ page }) => {
+  await page.goto('/iframe.html?id=toolkit-workbench-datagrid--growing-column-widths&viewMode=story')
+  const grid = page.getByRole('grid', { name: 'Growing columns' })
+  const header = grid.locator('[data-cell="-1:0"]')
+  const initial = (await header.boundingBox())!.width
+  expect(initial).toBeGreaterThan(500)
+  if (mode === 'keyboard') {
+    await header.focus()
+    await page.keyboard.press('Alt+ArrowRight')
+  } else {
+    const grip = (await header.locator('.mtc-data-grid-resize').boundingBox())!
+    await page.mouse.move(grip.x + grip.width / 2, grip.y + grip.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(grip.x + grip.width / 2 + 16, grip.y + grip.height / 2, { steps: 4 })
+    await page.mouse.up()
+  }
+  await expect.poll(async () => Math.abs((await header.boundingBox())!.width - initial - 16)).toBeLessThanOrEqual(1)
+  await page.reload()
+  await expect.poll(async () => Math.abs((await header.boundingBox())!.width - initial - 16)).toBeLessThanOrEqual(1)
+  await header.focus()
+  await page.keyboard.press('Alt+ArrowLeft')
+  await page.keyboard.press('Alt+ArrowLeft')
+  await expect.poll(async () => Math.abs((await header.boundingBox())!.width - initial)).toBeLessThanOrEqual(1)
+})
