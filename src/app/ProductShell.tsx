@@ -21,6 +21,7 @@ import { useBreakpoint } from '../hooks/useBreakpoint'
 import { NavRail, type NavRailItem, type NavRailSection } from '../workbench/NavRail'
 import { SessionPortContext } from '../workbench/sessionContext'
 import { ErrorState, LoadingState, SignedOutState } from '../workbench/States'
+import { ScrollRestorationProvider } from '../workbench/ScrollRestoration'
 import { createEmbedChannel, type EmbedChannel } from './embed'
 import { OperationsTray, type Operation } from './OperationsTray'
 import type { Router } from './router'
@@ -301,7 +302,8 @@ function StandaloneFrame(props: FrameProps) {
     session: port,
   } = props
   const t = useMessage()
-  const { pathname } = useLocation()
+  const location = useLocation()
+  const { pathname } = location
   const mobile = useBreakpoint() === 'mobile'
   const [collapsed, setCollapsed] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -380,6 +382,7 @@ function StandaloneFrame(props: FrameProps) {
   )
 
   return (
+    <ScrollRestorationProvider storageKey={location.entryKey ?? router.href(`${pathname}${location.search}${location.hash}`)} mainRef={mainRef}>
     <div className="mtc-shell" data-operations={props.operations?.length ? 'true' : undefined}>
       <a className="mtc-shell-skip" href="#mtc-main" onClick={event => {
         event.preventDefault()
@@ -459,11 +462,14 @@ function StandaloneFrame(props: FrameProps) {
       <Tray {...props} />
       <ExpiredDialog {...props} />
     </div>
+    </ScrollRestorationProvider>
   )
 }
 
 function EmbeddedFrame(props: FrameProps & { channel: EmbedChannel | null }) {
   const { channel } = props
+  const location = useLocation()
+  const mainRef = useRef<HTMLElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   // Report the content height so the host can size the frame.
   useEffect(() => {
@@ -480,12 +486,14 @@ function EmbeddedFrame(props: FrameProps & { channel: EmbedChannel | null }) {
     return () => observer.disconnect()
   }, [channel])
   return (
+    <ScrollRestorationProvider storageKey={location.entryKey ?? props.router.href(`${location.pathname}${location.search}${location.hash}`)} mainRef={mainRef}>
     <div ref={rootRef} className="mtc-shell-embedded">
-      <main id="mtc-main" className="mtc-shell-main">
+      <main id="mtc-main" ref={mainRef} className="mtc-shell-main">
         <PageContent {...props} />
       </main>
       <Tray {...props} />
       <ExpiredDialog {...props} />
     </div>
+    </ScrollRestorationProvider>
   )
 }

@@ -51,7 +51,7 @@ describe('routers', () => {
     const stop = router.subscribe(() => seen.push(router.location().pathname))
     router.navigate('/b/finance?view=grid')
     router.navigate('/b/media', { replace: true })
-    expect(router.location()).toEqual({ pathname: '/b/media', search: '', hash: '' })
+    expect(router.location()).toEqual({ pathname: '/b/media', search: '', hash: '', entryKey: expect.any(String) })
     router.back()
     expect(router.location().pathname).toBe('/buckets')
     stop()
@@ -61,7 +61,13 @@ describe('routers', () => {
 
   it('maps app paths through a base on the History API', () => {
     const listeners = new Map<string, () => void>()
-    const history = { pushState: vi.fn(), replaceState: vi.fn(), back: vi.fn() }
+    let state: unknown = { hostState: 'keep' }
+    const history = {
+      get state() { return state },
+      pushState: vi.fn((next: unknown) => { state = next }),
+      replaceState: vi.fn((next: unknown) => { state = next }),
+      back: vi.fn(),
+    }
     const fakeWindow = {
       location: { pathname: '/embed/b/finance', search: '?x=1', hash: '' },
       history,
@@ -69,14 +75,15 @@ describe('routers', () => {
       removeEventListener: (type: string) => listeners.delete(type),
     } as unknown as Window
     const router = createHistoryRouter({ base: 'embed/', window: fakeWindow })
-    expect(router.location()).toEqual({ pathname: '/b/finance', search: '?x=1', hash: '' })
+    expect(router.location()).toEqual({ pathname: '/b/finance', search: '?x=1', hash: '', entryKey: expect.any(String) })
+    expect(state).toMatchObject({ hostState: 'keep' })
     expect(router.href('/b/media?y=2')).toBe('/embed/b/media?y=2')
     const listener = vi.fn()
     const stop = router.subscribe(listener)
     router.navigate('/b/media')
-    expect(history.pushState).toHaveBeenCalledWith(null, '', '/embed/b/media')
+    expect(history.pushState).toHaveBeenCalledWith({ __mtcEntry: expect.any(String) }, '', '/embed/b/media')
     router.navigate('/b/media', { replace: true })
-    expect(history.replaceState).toHaveBeenCalledWith(null, '', '/embed/b/media')
+    expect(history.replaceState).toHaveBeenCalledWith(state, '', '/embed/b/media')
     listeners.get('popstate')?.()
     expect(listener).toHaveBeenCalledTimes(3)
     stop()

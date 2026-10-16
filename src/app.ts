@@ -68,6 +68,8 @@ export type {
 } from './app/embed'
 export { OperationsTray } from './app/OperationsTray'
 export type { Operation, OperationStatus, OperationsTrayProps } from './app/OperationsTray'
+export { ScrollRestorationProvider, useScrollRestoration } from './workbench/ScrollRestoration'
+export type { ScrollRestorationProviderProps } from './workbench/ScrollRestoration'
 export { ProductShell, useProductShell } from './app/ProductShell'
 export type {
   ProductIdentity,

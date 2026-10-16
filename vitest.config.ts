@@ -5,6 +5,9 @@ import { playwright } from '@vitest/browser-playwright'
 import { defineConfig, mergeConfig } from 'vitest/config'
 import viteConfig from './vite.config.ts'
 
+// Flox's Nix ldd disagrees with the host ELF loader; real browser launches remain the gate.
+if (process.platform === 'linux' && process.env.FLOX_ENV) process.env.PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS ??= '1'
+
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Unit tests deliberately stay in Node. Storybook stories form a separate

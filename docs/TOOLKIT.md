@@ -521,6 +521,34 @@ const productFetch = createProductFetch({ onRequest: requestTelemetry(telemetry)
   table (`'/b/:bucket/f/*path'`) with typed params (`RouteParams`),
   `matchPath` and `buildPath` convert both ways, and `RouterLink` renders an
   anchor that routes in place on a plain click.
+  History and memory routers also identify individual entries through
+  `RouterLocation.entryKey`. Replacing an entry keeps its key and the
+  caller's history state; pushing creates a new key. A primitive host history
+  state is left untouched and uses location-based restoration instead.
+  `ProductShell` remembers its main scroll owner and nested grids by entry,
+  including both axes, Back/Forward and refresh. Selection-only URL updates
+  should replace the entry; a grid's `scrollKey` still resets a changed
+  listing. UI positions are kept in bounded session storage (50 entries,
+  100 owners per entry), with no effect on backend state.
+
+  Hosts with their own shell can use the same DOM-free scope:
+
+  ```tsx
+  const mainRef = useRef<HTMLElement>(null)
+  <ScrollRestorationProvider storageKey={locationKey} mainRef={mainRef}>
+    <main ref={mainRef}>...</main>
+  </ScrollRestorationProvider>
+  ```
+
+  Import it from `/toolkit` or `/app`. `mainRef` accepts the host's existing
+  `RefObject<HTMLElement | null>` without replacing it. Use a history-entry
+  key when available, otherwise pathname plus the listing's search state;
+  omit selection-only replacements from a host adapter's location key.
+  Pending restoration follows asynchronous content for up to ten seconds,
+  then keeps the reachable offset. Wheel, touch, pointer or keyboard input
+  cancels it immediately. Blocked or full browser storage leaves scrolling
+  usable. Old package versions ignore the presentation-only stored entries,
+  so rollback needs no data migration.
 - **Session port.** `SessionPort` has `load`, `renew`, `signIn` and an
   optional `signOut`. `createHttpSessionPort` reads `/auth/session`
   (`authenticated`, `subject`, `displayName`, `workspaceId`, `expiresAt`,

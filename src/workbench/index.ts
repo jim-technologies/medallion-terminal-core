@@ -7,6 +7,8 @@ export type {
 } from './AppLayout'
 export { SplitPane } from './SplitPane'
 export type { SplitPaneProps } from './SplitPane'
+export { ScrollRestorationProvider, useScrollRestoration } from './ScrollRestoration'
+export type { ScrollRestorationProviderProps } from './ScrollRestoration'
 export { Tree } from './Tree'
 export type { TreeItem, TreeProps } from './Tree'
 export { DataGrid } from './DataGrid'

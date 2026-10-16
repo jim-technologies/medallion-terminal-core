@@ -1,15 +1,17 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { StrictMode, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Button, Icon, Menu, StatusBadge, TypeGlyph, type CommandGroup } from '../components'
 import { ObjectHeader } from '../objects'
-import { DataGrid, EmptyState, PageHeader, PropertyList, type NavRailSection } from '../workbench'
+import { DataGrid, EmptyState, PageHeader, PropertyList, ScrollRestorationProvider, type NavRailSection } from '../workbench'
 import {
   OperationsTray,
   ProductShell,
   RENEW_LEAD_MS,
   createHttpSessionPort,
+  createHistoryRouter,
   createMemoryRouter,
+  useLocation,
   useRoute,
   useRouter,
   type Operation,
@@ -169,6 +171,84 @@ function StorageShell({ initialPath = '/b/finance', operations = OPERATIONS, ses
 export const StandaloneShell: Story = {
   name: 'Standalone',
   render: () => <StorageShell />,
+}
+
+function HistoryScrollPages({ delay = 500 }: { delay?: number }) {
+  const location = useLocation()
+  const [loaded, setLoaded] = useState(false)
+  useEffect(() => {
+    setLoaded(false)
+    const timer = setTimeout(() => setLoaded(true), delay)
+    return () => clearTimeout(timer)
+  }, [location.search, delay])
+  if (new URLSearchParams(location.search).get('pane') === 'detail') return <PageHeader title="Detail" />
+  return (
+    <>
+      <PageHeader title="History scroll" />
+      <div style={{ height: 240 }} />
+      <DataGrid
+        label="History rows"
+        scrollKey="history-list"
+        columns={[{ id: 'id', header: 'ID', width: 200 }, { id: 'name', header: 'Name', width: 1800 }]}
+        rows={loaded ? Array.from({ length: 10_001 }, (_, id) => ({ id, name: `Entry ${id}` })) : []}
+        rowKey={row => String(row.id)}
+        height={320}
+        loading={!loaded}
+      />
+      <div style={{ height: 1400 }} />
+    </>
+  )
+}
+
+export const HistoryScroll: StoryObj<{ loadDelay: number }> = {
+  name: 'History scroll',
+  decorators: [Story => <StrictMode><Story /></StrictMode>],
+  args: { loadDelay: 500 },
+  render: ({ loadDelay }) => {
+    const router = useMemo(() => createHistoryRouter(), [])
+    const navigate = (pane: string, replace = false) => {
+      const url = new URL(window.location.href)
+      url.searchParams.set('pane', pane)
+      router.navigate(`${url.pathname}${url.search}`, { replace })
+    }
+    return (
+      <ProductShell
+        product={{ name: 'History' }}
+        router={router}
+        actions={<>
+          <Button onClick={() => navigate('detail')}>Open detail</Button>
+          <Button onClick={() => navigate('list')}>Open list</Button>
+          <Button onClick={() => navigate('list', true)}>Replace list</Button>
+        </>}
+      >
+        <HistoryScrollPages delay={Number(loadDelay)} />
+      </ProductShell>
+    )
+  },
+}
+
+export const ExternalScrollOwner: Story = {
+  decorators: [Story => <StrictMode><Story /></StrictMode>],
+  render: () => {
+    const mainRef = useRef<HTMLElement>(null)
+    const [instance, setInstance] = useState(0)
+    return (<>
+      <Button onClick={() => setInstance(value => value + 1)}>Remount owners</Button>
+      <ScrollRestorationProvider key={instance} storageKey="external-scroll" mainRef={mainRef}>
+        <main ref={mainRef} style={{ height: 480, overflow: 'auto' }}>
+          <DataGrid
+            label="External rows"
+            scrollKey="rows"
+            columns={[{ id: 'id', header: 'ID' }]}
+            rows={Array.from({ length: 10_001 }, (_, id) => ({ id }))}
+            rowKey={row => String(row.id)}
+            height={320}
+          />
+          <div style={{ height: 1200 }} />
+        </main>
+      </ScrollRestorationProvider>
+    </>)
+  },
 }
 
 export const ResponsiveProductIdentity: Story = {

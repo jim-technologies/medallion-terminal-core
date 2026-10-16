@@ -1,10 +1,15 @@
 import { defineConfig, devices } from '@playwright/test'
 
+// Flox's Nix ldd disagrees with the host ELF loader; real browser launches remain the gate.
+if (process.platform === 'linux' && process.env.FLOX_ENV) process.env.PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS ??= '1'
+
 const storybookPort = Number(process.env.STORYBOOK_PORT ?? 6006)
 if (!Number.isInteger(storybookPort) || storybookPort < 1 || storybookPort > 65535) {
   throw new Error('STORYBOOK_PORT must be a valid port number')
 }
 const storybookUrl = `http://127.0.0.1:${storybookPort}`
+const historyFixturePort = Number(process.env.HISTORY_FIXTURE_PORT ?? 6216)
+if (!Number.isInteger(historyFixturePort) || historyFixturePort < 1 || historyFixturePort > 65535 || historyFixturePort === storybookPort) throw new Error('HISTORY_FIXTURE_PORT must be a distinct valid port')
 
 export default defineConfig({
   testDir: './browser-tests',
@@ -38,17 +43,22 @@ export default defineConfig({
     viewport: { width: 1440, height: 1000 },
     trace: 'retain-on-failure',
   },
-  webServer: {
+  webServer: [{
     command: `pnpm exec storybook dev -p ${storybookPort} --ci --no-open --exact-port`,
     url: `${storybookUrl}/index.json`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
-  },
+  }, {
+    command: `pnpm exec vite --host 127.0.0.1 --port ${historyFixturePort} --strictPort`,
+    url: `http://127.0.0.1:${historyFixturePort}/browser-tests/fixtures/history.html`,
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  }],
   // Keep the device descriptor in the shared `use` block so its default
   // viewport cannot silently override the explicit regression viewport.
   projects: [
     { name: 'chromium' },
-    { name: 'firefox', testMatch: /data-grid-behaviour\.spec\.ts/, use: { browserName: 'firefox' } },
-    { name: 'webkit', testMatch: /data-grid-behaviour\.spec\.ts/, use: { browserName: 'webkit' } },
+    { name: 'firefox', testMatch: /(?:data-grid-behaviour|keyboard-behaviour|scroll-restoration|grid-preferences)\.spec\.ts/, use: { browserName: 'firefox' } },
+    { name: 'webkit', testMatch: /(?:data-grid-behaviour|keyboard-behaviour|scroll-restoration|grid-preferences)\.spec\.ts/, use: { browserName: 'webkit' } },
   ],
 })

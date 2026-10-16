@@ -25,7 +25,7 @@ export function useRouter(): Router {
 }
 
 function sameLocation(a: RouterLocation, b: RouterLocation): boolean {
-  return a.pathname === b.pathname && a.search === b.search && a.hash === b.hash
+  return a.pathname === b.pathname && a.search === b.search && a.hash === b.hash && a.entryKey === b.entryKey
 }
 
 /** The current location; re-renders on every change. */

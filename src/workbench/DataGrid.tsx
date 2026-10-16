@@ -45,6 +45,7 @@ import {
   type GridPosition,
 } from './dataGridModel'
 import { EmptyState } from './States'
+import { useScrollRestoration } from './ScrollRestoration'
 import { readColumnWidths, saveColumnWidths } from './gridPreferences'
 
 export type { DataGridSort } from './dataGridModel'
@@ -482,12 +483,17 @@ export function DataGrid<Row>({
   }
 
   // A new listing in the same grid starts at the top.
-  useEffect(() => {
+  useLayoutEffect(() => {
     const element = viewportRef.current
     if (!element || scrollKey === undefined) return
     element.scrollTop = 0
     setViewport(current => (current.scrollTop === 0 ? current : { ...current, scrollTop: 0 }))
   }, [scrollKey])
+
+  useScrollRestoration(viewportRef, `grid:${JSON.stringify([stateKey ?? label, scrollKey ?? null])}`, () => {
+    const element = viewportRef.current
+    if (element) setViewport({ scrollTop: element.scrollTop, height: element.clientHeight, width: element.clientWidth })
+  })
 
   // Track the viewport so the rendered window follows scrolling and resizes.
   useLayoutEffect(() => {

@@ -11,6 +11,8 @@ export interface RouterLocation {
   pathname: string
   search: string
   hash: string
+  /** Identity of this history entry, when the router can preserve it across refresh. */
+  entryKey?: string
 }
 
 /** The routing port. */
@@ -37,6 +39,10 @@ function normaliseBase(base: string): string {
   return trimmed === '' || trimmed.startsWith('/') ? trimmed : `/${trimmed}`
 }
 
+function newHistoryKey(): string {
+  return Array.from(globalThis.crypto.getRandomValues(new Uint32Array(4)), value => value.toString(16).padStart(8, '0')).join('')
+}
+
 /** Options for `createHistoryRouter`. */
 export interface HistoryRouterOptions {
   /** Path prefix the app is served under, such as `/embed`. */
@@ -59,7 +65,21 @@ export function createHistoryRouter({ base = '', window: win = globalThis.window
       ? pathname.slice(prefix.length) || '/'
       : pathname
   )
-  const onPopState = () => notify()
+  const entryKey = () => {
+    const state: unknown = win.history.state
+    // A host's primitive history state cannot carry a namespaced key.
+    if (state != null && (typeof state !== 'object' || Array.isArray(state))) return undefined
+    const record = state as Record<string, unknown> | null | undefined
+    if (typeof record?.__mtcEntry === 'string') return record.__mtcEntry
+    const key = newHistoryKey()
+    win.history.replaceState({ ...record, __mtcEntry: key }, '')
+    return key
+  }
+  let currentKey = entryKey()
+  const onPopState = () => {
+    currentKey = entryKey()
+    notify()
+  }
   const href = (to: string) => {
     const { pathname, search, hash } = parse(to)
     return `${prefix}${pathname}${search}${hash}`
@@ -67,12 +87,13 @@ export function createHistoryRouter({ base = '', window: win = globalThis.window
   return {
     location() {
       const { pathname, search, hash } = win.location
-      return { pathname: strip(pathname), search, hash }
+      return { pathname: strip(pathname), search, hash, entryKey: currentKey }
     },
     navigate(to, options) {
       const target = href(to)
-      if (options?.replace) win.history.replaceState(null, '', target)
-      else win.history.pushState(null, '', target)
+      if (options?.replace) win.history.replaceState(win.history.state, '', target)
+      else win.history.pushState({ __mtcEntry: newHistoryKey() }, '', target)
+      currentKey = entryKey()
       notify()
     },
     back() {
@@ -92,14 +113,14 @@ export function createHistoryRouter({ base = '', window: win = globalThis.window
 
 /** A router over an in-memory history, for tests, stories and frames. */
 export function createMemoryRouter(initial = '/'): Router {
-  const entries: RouterLocation[] = [parse(initial)]
+  const entries: RouterLocation[] = [{ ...parse(initial), entryKey: newHistoryKey() }]
   let index = 0
   const listeners = new Set<() => void>()
   const notify = () => listeners.forEach(listener => listener())
   return {
     location: () => entries[index]!,
     navigate(to, options) {
-      const next = parse(to)
+      const next = { ...parse(to), entryKey: options?.replace ? entries[index]!.entryKey : newHistoryKey() }
       if (options?.replace) entries[index] = next
       else {
         entries.splice(index + 1, entries.length, next)
