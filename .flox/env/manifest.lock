@@ -18,6 +18,11 @@
         "pkg-group": "audit",
         "version": "8.30.1"
       },
+      "gsettings-desktop-schemas": {
+        "pkg-path": "gsettings-desktop-schemas",
+        "pkg-group": "browser-runtime",
+        "version": "50.1"
+      },
       "inter": {
         "pkg-path": "inter"
       },
@@ -38,7 +43,7 @@
       }
     },
     "hook": {
-      "on-activate": "  mkdir -p \"$FLOX_ENV_CACHE/fontconfig/cache\"\n  cat > \"$FLOX_ENV_CACHE/fontconfig/fonts.conf\" <<EOF\n<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n  <dir>$FLOX_ENV/share/fonts</dir>\n  <cachedir>$FLOX_ENV_CACHE/fontconfig/cache</cachedir>\n  <match target=\"font\">\n    <edit name=\"antialias\" mode=\"assign\"><bool>true</bool></edit>\n    <edit name=\"hinting\" mode=\"assign\"><bool>true</bool></edit>\n    <edit name=\"hintstyle\" mode=\"assign\"><const>hintslight</const></edit>\n    <edit name=\"rgba\" mode=\"assign\"><const>none</const></edit>\n    <edit name=\"embeddedbitmap\" mode=\"assign\"><bool>false</bool></edit>\n  </match>\n  <alias><family>sans-serif</family><prefer><family>DejaVu Sans</family></prefer></alias>\n  <alias><family>serif</family><prefer><family>DejaVu Serif</family></prefer></alias>\n  <alias><family>monospace</family><prefer><family>DejaVu Sans Mono</family></prefer></alias>\n  <alias><family>emoji</family><prefer><family>Noto Color Emoji</family></prefer></alias>\n</fontconfig>\nEOF\n  export FONTCONFIG_FILE=\"$FLOX_ENV_CACHE/fontconfig/fonts.conf\"\n"
+      "on-activate": "  for browser_schema_dir in \"$FLOX_ENV\"/share/gsettings-schemas/gsettings-desktop-schemas-*/glib-2.0/schemas; do\n    if test -f \"$browser_schema_dir/gschemas.compiled\"; then\n      export GSETTINGS_SCHEMA_DIR=\"$browser_schema_dir\"\n      break\n    fi\n  done\n  mkdir -p \"$FLOX_ENV_CACHE/fontconfig/cache\"\n  cat > \"$FLOX_ENV_CACHE/fontconfig/fonts.conf\" <<EOF\n<?xml version=\"1.0\"?>\n<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">\n<fontconfig>\n  <dir>$FLOX_ENV/share/fonts</dir>\n  <cachedir>$FLOX_ENV_CACHE/fontconfig/cache</cachedir>\n  <match target=\"font\">\n    <edit name=\"antialias\" mode=\"assign\"><bool>true</bool></edit>\n    <edit name=\"hinting\" mode=\"assign\"><bool>true</bool></edit>\n    <edit name=\"hintstyle\" mode=\"assign\"><const>hintslight</const></edit>\n    <edit name=\"rgba\" mode=\"assign\"><const>none</const></edit>\n    <edit name=\"embeddedbitmap\" mode=\"assign\"><bool>false</bool></edit>\n  </match>\n  <alias><family>sans-serif</family><prefer><family>DejaVu Sans</family></prefer></alias>\n  <alias><family>serif</family><prefer><family>DejaVu Serif</family></prefer></alias>\n  <alias><family>monospace</family><prefer><family>DejaVu Sans Mono</family></prefer></alias>\n  <alias><family>emoji</family><prefer><family>Noto Color Emoji</family></prefer></alias>\n</fontconfig>\nEOF\n  export FONTCONFIG_FILE=\"$FLOX_ENV_CACHE/fontconfig/fonts.conf\"\n"
     },
     "profile": {},
     "options": {
@@ -857,6 +862,100 @@
       },
       "system": "x86_64-linux",
       "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "gsettings-desktop-schemas",
+      "broken": false,
+      "derivation": "/nix/store/dpx69sn06m1bfnyliabfga40lly608qk-gsettings-desktop-schemas-50.1.drv",
+      "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
+      "install_id": "gsettings-desktop-schemas",
+      "license": "LGPL-2.1-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "name": "gsettings-desktop-schemas-50.1",
+      "pname": "gsettings-desktop-schemas",
+      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "rev_count": 1090327,
+      "rev_date": "2026-10-11T15:54:36Z",
+      "scrape_date": "2026-10-13T05:00:30.542862Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "50.1",
+      "outputs_to_install": [
+        "out",
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/ba0gnxvncf9xrakxhsjpniswdqmc0nia-gsettings-desktop-schemas-50.1"
+      },
+      "system": "aarch64-darwin",
+      "group": "browser-runtime",
+      "priority": 5
+    },
+    {
+      "attr_path": "gsettings-desktop-schemas",
+      "broken": false,
+      "derivation": "/nix/store/4ghxsnhm7z4cxa4hkswf1s18kx9pmw0q-gsettings-desktop-schemas-50.1.drv",
+      "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
+      "install_id": "gsettings-desktop-schemas",
+      "license": "LGPL-2.1-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "name": "gsettings-desktop-schemas-50.1",
+      "pname": "gsettings-desktop-schemas",
+      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "rev_count": 1090327,
+      "rev_date": "2026-10-11T15:54:36Z",
+      "scrape_date": "2026-10-13T05:33:19.913383Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "50.1",
+      "outputs_to_install": [
+        "out",
+        "out",
+        "out",
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/g3y8lgvx34xaqnjx839bq298nxnk08bz-gsettings-desktop-schemas-50.1"
+      },
+      "system": "aarch64-linux",
+      "group": "browser-runtime",
+      "priority": 5
+    },
+    {
+      "attr_path": "gsettings-desktop-schemas",
+      "broken": false,
+      "derivation": "/nix/store/hkici1x7asa6aqgi15y94m7qq874gvsb-gsettings-desktop-schemas-50.1.drv",
+      "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
+      "install_id": "gsettings-desktop-schemas",
+      "license": "LGPL-2.1-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "name": "gsettings-desktop-schemas-50.1",
+      "pname": "gsettings-desktop-schemas",
+      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "rev_count": 1090327,
+      "rev_date": "2026-10-11T15:54:36Z",
+      "scrape_date": "2026-10-13T06:09:58.342570Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "50.1",
+      "outputs_to_install": [
+        "out",
+        "out",
+        "out",
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/r0qrx78hday3gr8dznxnniaf98c8lzjl-gsettings-desktop-schemas-50.1"
+      },
+      "system": "x86_64-linux",
+      "group": "browser-runtime",
       "priority": 5
     }
   ]
