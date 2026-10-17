@@ -47,6 +47,8 @@ message KindInfo {
   repeated string operations = 3;
   // Form projection of the spec, for SPEC_SOURCE_CONTROL_PLANE kinds.
   repeated FieldSpec spec_fields = 4;
+  // Grid columns in order; each is the label of a Resource property.
+  repeated string columns = 5;
 }
 
 // An operation type as served. RISK_NEVER operations are never served.

@@ -139,6 +139,9 @@ message ActionOffer {
   bool enabled = 5;
   // Why not, when not enabled.
   string disabled_reason = 6;
+  // Request fields this object fills, by proto field name, as ProtoJSON
+  // scalars: the operation's target field, e.g. {"namespace": "bronze"}.
+  map<string, string> request_defaults = 7;
 }
 
 // A typed edge to another object.

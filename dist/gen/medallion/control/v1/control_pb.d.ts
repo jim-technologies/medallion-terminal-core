@@ -69,6 +69,12 @@ export type KindInfo = Message<"medallion.control.v1.KindInfo"> & {
      * @generated from field: repeated medallion.control.v1.FieldSpec spec_fields = 4;
      */
     specFields: FieldSpec[];
+    /**
+     * Grid columns in order; each is the label of a Resource property.
+     *
+     * @generated from field: repeated string columns = 5;
+     */
+    columns: string[];
 };
 /**
  * A kind as served.
@@ -100,6 +106,12 @@ export type KindInfoJson = {
      * @generated from field: repeated medallion.control.v1.FieldSpec spec_fields = 4;
      */
     specFields?: FieldSpecJson[];
+    /**
+     * Grid columns in order; each is the label of a Resource property.
+     *
+     * @generated from field: repeated string columns = 5;
+     */
+    columns?: string[];
 };
 /**
  * Describes the message medallion.control.v1.KindInfo.

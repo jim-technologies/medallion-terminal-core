@@ -646,6 +646,15 @@ export type ActionOffer = Message<"medallion.control.v1.ActionOffer"> & {
      * @generated from field: string disabled_reason = 6;
      */
     disabledReason: string;
+    /**
+     * Request fields this object fills, by proto field name, as ProtoJSON
+     * scalars: the operation's target field, e.g. {"namespace": "bronze"}.
+     *
+     * @generated from field: map<string, string> request_defaults = 7;
+     */
+    requestDefaults: {
+        [key: string]: string;
+    };
 };
 /**
  * An operation offered on one object, already evaluated for this caller.
@@ -689,6 +698,15 @@ export type ActionOfferJson = {
      * @generated from field: string disabled_reason = 6;
      */
     disabledReason?: string;
+    /**
+     * Request fields this object fills, by proto field name, as ProtoJSON
+     * scalars: the operation's target field, e.g. {"namespace": "bronze"}.
+     *
+     * @generated from field: map<string, string> request_defaults = 7;
+     */
+    requestDefaults?: {
+        [key: string]: string;
+    };
 };
 /**
  * Describes the message medallion.control.v1.ActionOffer.
