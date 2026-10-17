@@ -304,6 +304,7 @@ function StandaloneFrame(props: FrameProps) {
   const t = useMessage()
   const location = useLocation()
   const { pathname } = location
+  const href = router.href(`${pathname}${location.search}${location.hash}`)
   const mobile = useBreakpoint() === 'mobile'
   const [collapsed, setCollapsed] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -382,7 +383,7 @@ function StandaloneFrame(props: FrameProps) {
   )
 
   return (
-    <ScrollRestorationProvider storageKey={location.entryKey ?? router.href(`${pathname}${location.search}${location.hash}`)} mainRef={mainRef}>
+    <ScrollRestorationProvider storageKey={location.entryKey ?? href} href={href} mainRef={mainRef}>
     <div className="mtc-shell" data-operations={props.operations?.length ? 'true' : undefined}>
       <a className="mtc-shell-skip" href="#mtc-main" onClick={event => {
         event.preventDefault()
@@ -469,6 +470,7 @@ function StandaloneFrame(props: FrameProps) {
 function EmbeddedFrame(props: FrameProps & { channel: EmbedChannel | null }) {
   const { channel } = props
   const location = useLocation()
+  const href = props.router.href(`${location.pathname}${location.search}${location.hash}`)
   const mainRef = useRef<HTMLElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   // Report the content height so the host can size the frame.
@@ -486,7 +488,7 @@ function EmbeddedFrame(props: FrameProps & { channel: EmbedChannel | null }) {
     return () => observer.disconnect()
   }, [channel])
   return (
-    <ScrollRestorationProvider storageKey={location.entryKey ?? props.router.href(`${location.pathname}${location.search}${location.hash}`)} mainRef={mainRef}>
+    <ScrollRestorationProvider storageKey={location.entryKey ?? href} href={href} mainRef={mainRef}>
     <div ref={rootRef} className="mtc-shell-embedded">
       <main id="mtc-main" ref={mainRef} className="mtc-shell-main">
         <PageContent {...props} />

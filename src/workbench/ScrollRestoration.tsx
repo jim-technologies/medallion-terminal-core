@@ -32,7 +32,9 @@ function storedEntries(): [string, Positions][] {
   }
 }
 
-function createScope(storageKey: string) {
+// An entry reached by an in-page fragment move starts where the browser
+// scrolled its owners; any other new entry starts at the top.
+function createScope(storageKey: string, fragmentMove: boolean) {
   const positions: Positions = Object.create(null)
   const identity = {}
   let loaded = false
@@ -59,7 +61,8 @@ function createScope(storageKey: string) {
     activeScopes.set(storageKey, identity)
     if (owners.has(key) || owners.size >= MAX_OWNERS) return () => {}
     if (!(key in positions) && Object.keys(positions).length >= MAX_OWNERS) delete positions[Object.keys(positions)[0]!]
-    let pending: Position | null = positions[key] ?? { top: 0, left: 0 }
+    let pending: Position | null = positions[key]
+      ?? (fragmentMove ? { top: element.scrollTop, left: element.scrollLeft } : { top: 0, left: 0 })
     let frame = 0
     let timeout: ReturnType<typeof setTimeout> | undefined
     const capture = () => {
@@ -124,7 +127,19 @@ function createScope(storageKey: string) {
       if (!owners.size && activeScopes.get(storageKey) === identity) activeScopes.delete(storageKey)
     }
   }
-  return { register, persist, freeze: () => { persist(); frozen = true }, resume: () => { frozen = false } }
+  return {
+    register,
+    persist,
+    fragmentMove,
+    // A fragment move may already have scrolled the owners for the next
+    // entry; the outgoing entry then keeps what their last scroll recorded.
+    freeze: (recapture = true) => {
+      frozen = !recapture
+      persist()
+      frozen = true
+    },
+    resume: () => { frozen = false },
+  }
 }
 
 const ScrollContext = createContext<ReturnType<typeof createScope> | null>(null)
@@ -133,7 +148,7 @@ const ScrollContext = createContext<ReturnType<typeof createScope> | null>(null)
 // Capture the outgoing entry in React's pre-mutation lifecycle instead.
 class ScrollEntryBoundary extends Component<{ scope: ReturnType<typeof createScope>; children: ReactNode }> {
   getSnapshotBeforeUpdate(previous: Readonly<{ scope: ReturnType<typeof createScope> }>) {
-    if (previous.scope !== this.props.scope) previous.scope.freeze()
+    if (previous.scope !== this.props.scope) previous.scope.freeze(!this.props.scope.fragmentMove)
     return null
   }
   componentDidMount() { this.props.scope.resume() }
@@ -146,14 +161,27 @@ class ScrollEntryBoundary extends Component<{ scope: ReturnType<typeof createSco
 export interface ScrollRestorationProviderProps {
   /** Stable history-entry identity; host adapters may use pathname plus search. */
   storageKey: string
+  /**
+   * The entry's location, such as pathname, search and hash. A new entry
+   * that changes only the fragment (an in-page `#anchor` link) keeps the
+   * browser's scroll; any other new entry starts at the top.
+   */
+  href?: string
   /** The host's existing scroll owner; its ref is never replaced. */
   mainRef?: RefObject<HTMLElement | null>
   children: ReactNode
 }
 
 /** Restores registered scroll owners as content arrives; real input cancels a pending restore. */
-export function ScrollRestorationProvider({ storageKey, mainRef, children }: ScrollRestorationProviderProps) {
-  const scope = useMemo(() => createScope(storageKey), [storageKey])
+export function ScrollRestorationProvider({ storageKey, href, mainRef, children }: ScrollRestorationProviderProps) {
+  // Only a new entry compares its location with the last committed one:
+  // a fragment move changes nothing before the `#`.
+  const lastHref = useRef(href)
+  const scope = useMemo(() => createScope(
+    storageKey,
+    lastHref.current !== href && lastHref.current?.split('#')[0] === href?.split('#')[0],
+  ), [storageKey])
+  useEffect(() => { lastHref.current = href }, [href])
   useLayoutEffect(() => {
     if (mainRef?.current) return scope.register('main', mainRef.current)
   }, [scope, mainRef])

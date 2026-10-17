@@ -46,6 +46,24 @@ test('same URL history entries keep separate positions and replacement preserves
 
 const frames = (page: Page) => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
 
+test('an in-page fragment link keeps its anchor scroll and Back restores the list', async ({ page }) => {
+  await page.goto(`${historyFixture}?pane=list`)
+  const main = page.getByRole('main')
+  const grid = page.getByRole('grid', { name: 'History rows' })
+  await expect(grid).not.toHaveAttribute('aria-busy', 'true')
+  await main.evaluate(element => { element.scrollTop = 40 })
+  await frames(page)
+  await page.getByRole('link', { name: 'Jump to target', exact: true }).click()
+  await expect(page).toHaveURL(/#history-target$/)
+  await frames(page)
+  const target = page.getByRole('heading', { name: 'Target', exact: true })
+  await expect(target).toBeInViewport()
+  expect(await main.evaluate(element => element.scrollTop)).toBeGreaterThan(1000)
+  await page.goBack()
+  await expect(page).not.toHaveURL(/#history-target$/)
+  await expect.poll(() => main.evaluate(element => element.scrollTop)).toBe(40)
+})
+
 test('the focus value tip follows keyboard reveal in the shell and closes under its top bar', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto(`${historyFixture}?pane=tips`)

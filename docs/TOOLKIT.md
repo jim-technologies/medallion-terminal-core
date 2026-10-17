@@ -534,7 +534,9 @@ const productFetch = createProductFetch({ onRequest: requestTelemetry(telemetry)
   caller's history state; pushing creates a new key. A primitive host history
   state is left untouched and uses location-based restoration instead.
   `ProductShell` remembers its main scroll owner and nested grids by entry,
-  including both axes, Back/Forward and refresh. Selection-only URL updates
+  including both axes, Back/Forward and refresh. A new entry starts at the
+  top, except after an in-page `#anchor` link, which keeps the browser's
+  scroll. Selection-only URL updates
   should replace the entry; a grid's `scrollKey` still resets a changed
   listing. UI positions are kept in bounded session storage (50 entries,
   100 owners per entry), with no effect on backend state.
@@ -543,7 +545,7 @@ const productFetch = createProductFetch({ onRequest: requestTelemetry(telemetry)
 
   ```tsx
   const mainRef = useRef<HTMLElement>(null)
-  <ScrollRestorationProvider storageKey={locationKey} mainRef={mainRef}>
+  <ScrollRestorationProvider storageKey={locationKey} href={href} mainRef={mainRef}>
     <main ref={mainRef}>...</main>
   </ScrollRestorationProvider>
   ```
@@ -552,6 +554,9 @@ const productFetch = createProductFetch({ onRequest: requestTelemetry(telemetry)
   `RefObject<HTMLElement | null>` without replacing it. Use a history-entry
   key when available, otherwise pathname plus the listing's search state;
   omit selection-only replacements from a host adapter's location key.
+  Optional `href` is the entry's pathname, search and hash: a new entry that
+  changes only the fragment keeps the browser's scroll, and Back returns to
+  the earlier position.
   Pending restoration follows asynchronous content for up to ten seconds,
   then keeps the reachable offset. Wheel, touch, pointer or keyboard input
   cancels it immediately. Blocked or full browser storage leaves scrolling
