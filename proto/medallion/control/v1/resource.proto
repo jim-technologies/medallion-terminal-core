@@ -1,0 +1,320 @@
+syntax = "proto3";
+
+package medallion.control.v1;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "medallion/control/v1/options.proto";
+
+// A stable pointer to any control-plane object.
+message ResourceRef {
+  // Workspace the object belongs to.
+  string workspace_id = 1;
+  // API group, e.g. "os.example".
+  string group = 2;
+  // Plural, e.g. "operations".
+  string plural = 3;
+  // Object name, unique within workspace, group and plural.
+  string name = 4;
+}
+
+// Where the observed facts came from and how fresh they are.
+message Provenance {
+  // Owning provider, e.g. "os".
+  string provider = 1;
+  // Source of the spec for SPEC_SOURCE_GIT kinds, e.g.
+  // "deploy:files/config.yaml#feeds.tape".
+  string spec_source_path = 2;
+  // When status was observed.
+  google.protobuf.Timestamp observed_at = 3;
+}
+
+// Identity, versioning and placement of an object.
+message ObjectMeta {
+  // Pointer to this object.
+  ResourceRef ref = 1;
+  // Opaque, never reused.
+  string uid = 2;
+  // Increments on every spec change; an Operation has exactly one.
+  int64 generation = 3;
+  // Selector labels.
+  map<string, string> labels = 4;
+  // Owners, for grouping and cascading views.
+  repeated ResourceRef owner_refs = 5;
+  // Rendered tree path, e.g. "Platform/Data/Feeds/markets/tape".
+  string tree_path = 6;
+  // Source and freshness.
+  Provenance provenance = 7;
+  // Creation time.
+  google.protobuf.Timestamp created_at = 8;
+  // Who asked for the current generation: "user:<id>" or
+  // "service_account:<id>".
+  string requested_by = 9;
+}
+
+// A Kubernetes-style condition.
+message Condition {
+  // Truth value of a condition.
+  enum Truth {
+    // Unknown.
+    TRUTH_UNSPECIFIED = 0;
+    // Holds.
+    TRUTH_TRUE = 1;
+    // Does not hold.
+    TRUTH_FALSE = 2;
+  }
+  // e.g. "Ready", "Fresh", "Planned", "Blocked".
+  string type = 1;
+  // Value.
+  Truth status = 2;
+  // CamelCase machine reason, e.g. "DenyWindow".
+  string reason = 3;
+  // One terse sentence.
+  string message = 4;
+  // When status last changed.
+  google.protobuf.Timestamp last_transition_time = 5;
+  // Generation this condition describes.
+  int64 observed_generation = 6;
+}
+
+// The workflow run that carried a generation or an observation.
+message RunRef {
+  // Store namespace.
+  string namespace = 1;
+  // Workflow id, e.g. "op:maintain-bronze-20261017".
+  string workflow_id = 2;
+  // Run id, e.g. "g000001".
+  string run_id = 3;
+}
+
+// Observed state common to every kind.
+message Status {
+  // Last generation the controller finished acting on.
+  int64 observed_generation = 1;
+  // Short phase for lists, e.g. "Failing", "AwaitingApproval".
+  string phase = 2;
+  // Conditions.
+  repeated Condition conditions = 3;
+  // Run for the current generation or the latest observation.
+  RunRef run = 4;
+  // Kind-specific typed status (KindOptions.status_type).
+  google.protobuf.Any detail = 5;
+}
+
+// Emphasis a host gives a property value.
+enum Tone {
+  // No emphasis.
+  TONE_UNSPECIFIED = 0;
+  // Healthy or done.
+  TONE_POSITIVE = 1;
+  // Needs attention.
+  TONE_WARNING = 2;
+  // Failing.
+  TONE_CRITICAL = 3;
+}
+
+// One labelled value of a server-side display projection.
+message Property {
+  // Label, e.g. "Last success".
+  string label = 1;
+  // Value as text; RFC 3339 for AGE and TIMESTAMP, seconds for DURATION.
+  string value = 2;
+  // How the value renders.
+  DisplayFormat format = 3;
+  // Emphasis.
+  Tone tone = 4;
+}
+
+// An operation offered on one object, already evaluated for this caller.
+message ActionOffer {
+  // Fully-qualified operation method.
+  string operation = 1;
+  // Label.
+  string label = 2;
+  // Risk class.
+  Risk risk = 3;
+  // Confirmation rule.
+  Approval approval = 4;
+  // Whether the caller may request it now.
+  bool enabled = 5;
+  // Why not, when not enabled.
+  string disabled_reason = 6;
+}
+
+// A typed edge to another object.
+message Link {
+  // Edge type, e.g. "scheduled_by", "run_of", "writes".
+  string type = 1;
+  // Target object.
+  ResourceRef target = 2;
+  // Target tree path, for navigation.
+  string target_path = 3;
+}
+
+// One object: identity, typed desired state, observed state and its display
+// projection. Hosts never decode `spec` or `status.detail`; they render
+// `properties`, `actions` and `links`, and show the raw message as JSON.
+message Resource {
+  // "<group>/<version>".
+  string api_version = 1;
+  // Kind name.
+  string kind = 2;
+  // Metadata.
+  ObjectMeta metadata = 3;
+  // Typed spec; empty for SPEC_SOURCE_NONE kinds.
+  google.protobuf.Any spec = 4;
+  // Observed state.
+  Status status = 5;
+  // Display projection of spec and status, in order.
+  repeated Property properties = 6;
+  // Operations on this object.
+  repeated ActionOffer actions = 7;
+  // Edges to other objects.
+  repeated Link links = 8;
+}
+
+// A dry-run result bound to exact bytes.
+message Plan {
+  // SHA-256 over the operation, the target, the deterministic apply request,
+  // the digest of the dry-run response and the provider descriptor digest.
+  string digest = 1;
+  // Operation method.
+  string operation = 2;
+  // The typed request that will be applied (plan-only field set to execute).
+  google.protobuf.Any apply_request = 3;
+  // The typed dry-run response.
+  google.protobuf.Any dry_run_response = 4;
+  // Objects the apply would touch.
+  repeated ResourceRef impact = 5;
+  // Windows, exclusions, freezes and claims that block apply right now.
+  repeated Condition blockers = 6;
+  // When computed.
+  google.protobuf.Timestamp planned_at = 7;
+  // After this an approval is refused and a new operation is required.
+  google.protobuf.Timestamp expires_at = 8;
+  // Display projection of the dry-run response.
+  repeated Property summary = 9;
+}
+
+// Spec of the built-in Operation kind: immutable after create, one
+// generation, lifecycle in OperationStatus.
+message OperationSpec {
+  // Operation method, declared with (medallion.control.v1.operation).
+  string operation = 1;
+  // Typed request for that method; the plan-only field is control-managed.
+  google.protobuf.Any request = 2;
+  // Why this is being done; required.
+  string reason = 3;
+  // Do not apply before this time.
+  google.protobuf.Timestamp not_before = 4;
+}
+
+// Operation lifecycle phase.
+enum OperationPhase {
+  // Unset.
+  OPERATION_PHASE_UNSPECIFIED = 0;
+  // Dry-run in progress.
+  OPERATION_PHASE_PLANNING = 1;
+  // Plan ready; waiting for an approval bound to its digest.
+  OPERATION_PHASE_AWAITING_APPROVAL = 2;
+  // Approved; waiting for its runner, a window or a claim.
+  OPERATION_PHASE_QUEUED = 3;
+  // Apply executing.
+  OPERATION_PHASE_RUNNING = 4;
+  // Apply finished successfully.
+  OPERATION_PHASE_SUCCEEDED = 5;
+  // Apply failed; the evidence is in the run.
+  OPERATION_PHASE_FAILED = 6;
+  // The evidence of the outcome was lost (its runner vanished before its
+  // result was read); never retried automatically.
+  OPERATION_PHASE_INDETERMINATE = 7;
+  // The approver declined, or approval was refused.
+  OPERATION_PHASE_REJECTED = 8;
+  // Cancelled before or between activities.
+  OPERATION_PHASE_CANCELLED = 9;
+  // The plan expired before approval.
+  OPERATION_PHASE_EXPIRED = 10;
+}
+
+// Typed status detail of the Operation kind.
+message OperationStatus {
+  // Phase.
+  OperationPhase phase = 1;
+  // Plan.
+  Plan plan = 2;
+  // Approval decision, once given.
+  ApprovalRecord approval = 3;
+  // Cancel request, once made.
+  CancelRecord cancel = 4;
+  // Runner Job name, for RUNNER_KUBERNETES_JOB.
+  string job_name = 5;
+  // Typed apply response.
+  google.protobuf.Any result = 6;
+}
+
+// An approval decision, delivered once into the operation's run.
+message ApprovalRecord {
+  // Equals Plan.digest.
+  string plan_digest = 1;
+  // True approves, false rejects.
+  bool approved = 2;
+  // Human principal, "user:<id>".
+  string approver = 3;
+  // Required free text.
+  string reason = 4;
+  // When decided.
+  google.protobuf.Timestamp decided_at = 5;
+}
+
+// A request to stop a run at its next activity boundary, delivered once.
+message CancelRecord {
+  // Principal.
+  string requested_by = 1;
+  // Required free text.
+  string reason = 2;
+  // When requested.
+  google.protobuf.Timestamp requested_at = 3;
+}
+
+// What a freeze holds.
+enum FreezeScope {
+  // Unset; treated as FREEZE_SCOPE_LAKE_WRITES.
+  FREEZE_SCOPE_UNSPECIFIED = 0;
+  // Operations that write the owner's durable data.
+  FREEZE_SCOPE_LAKE_WRITES = 1;
+  // Every operation that is not a read.
+  FREEZE_SCOPE_PANEL = 2;
+}
+
+// Spec of the built-in Freeze kind, a singleton. Engaging applies at once;
+// releasing is planned and needs a human approval of its digest.
+message FreezeSpec {
+  // Whether changes are frozen.
+  bool engaged = 1;
+  // What is frozen.
+  FreezeScope scope = 2;
+  // Why; required.
+  string reason = 3;
+}
+
+// The form projection of one request or spec field, so hosts build forms
+// without the owner's full descriptor set.
+message FieldSpec {
+  // Proto field name.
+  string name = 1;
+  // ProtoJSON name.
+  string json_name = 2;
+  // Scalar type ("string", "bool", "uint32", "double", ...), "enum",
+  // "message" or a well-known type such as "google.protobuf.Timestamp".
+  string type = 3;
+  // Enum value names, for "enum".
+  repeated string enum_values = 4;
+  // Whether the field is repeated.
+  bool repeated = 5;
+  // The field's proto comment.
+  string doc = 6;
+  // Whether a value is required.
+  bool required = 7;
+  // Message type, for "message".
+  string message_type = 8;
+}
