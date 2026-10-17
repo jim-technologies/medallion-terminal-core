@@ -997,6 +997,11 @@ and Playwright's pinned Chromium, Firefox and WebKit (a no-op after the first ru
 make validate
 ```
 
+Browser tooling is pinned to Playwright 1.64.1. CI uses one browser worker,
+following [Playwright’s stability guidance](https://playwright.dev/docs/ci#workers).
+This scheduling policy preserves case assertions and concurrency within each case;
+it does not establish the cause or cure of a native browser failure.
+
 `make validate` is the single gate verb (see
 [`MAKEFILE-CONTRACT.md`](MAKEFILE-CONTRACT.md)) and is exactly what CI runs.
 It gates the public surface — no private hostnames, repository references,

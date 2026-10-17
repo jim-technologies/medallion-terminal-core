@@ -17,10 +17,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  // Keep the local Storybook dev server below its transform/concurrency limit.
-  // Unbounded local workers can turn transient Storybook error pages into
-  // misleading accessibility and screenshot failures as the catalog grows.
-  workers: process.env.CI ? 2 : 8,
+  // Playwright recommends one CI worker for stability; local concurrency stays bounded.
+  workers: process.env.CI ? 1 : 8,
   reporter: process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'line',
   // Text snapshots: the exact accessibility tree of each visual baseline
   // story (see expectBaseline in the spec).
@@ -34,6 +32,7 @@ export default defineConfig({
   },
   use: {
     ...devices['Desktop Chrome'],
+    screen: undefined,
     baseURL: storybookUrl,
     colorScheme: 'dark',
     locale: 'en-US',
