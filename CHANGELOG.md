@@ -4,9 +4,11 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
-Release this section as 0.8.0, a minor version: it adds public API
-(`ScrollRestorationProvider`, `useScrollRestoration`, `DataGrid pagingKey`
-and `stateKey`, `RouterLocation.entryKey`).
+## [0.8.0] — 2026-10-17
+
+A minor release: it adds public API (`ScrollRestorationProvider`,
+`useScrollRestoration`, `DataGrid pagingKey` and `stateKey`,
+`RouterLocation.entryKey`).
 
 ### Added
 
