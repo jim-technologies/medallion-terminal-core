@@ -1,5 +1,5 @@
 import { writeFile } from 'node:fs/promises'
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 const historyFixture = `http://127.0.0.1:${process.env.HISTORY_FIXTURE_PORT ?? 6216}/browser-tests/fixtures/history.html`
 
@@ -42,6 +42,34 @@ test('same URL history entries keep separate positions and replacement preserves
   await page.evaluate(() => history.replaceState({ ...history.state, hostState: 'keep' }, ''))
   await page.getByRole('button', { name: 'Replace list', exact: true }).click()
   expect(await page.evaluate(() => history.state.hostState)).toBe('keep')
+})
+
+const frames = (page: Page) => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+
+test('the focus value tip follows keyboard reveal in the shell and closes under its top bar', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto(`${historyFixture}?pane=tips`)
+  const main = page.getByRole('main')
+  const grid = page.getByRole('grid', { name: 'Tip rows' })
+  await grid.locator('[data-cell="0:1"]').focus()
+  for (let row = 1; row <= 40; row++) await page.keyboard.press('ArrowDown')
+  await expect(grid.locator('[data-cell="40:1"]')).toBeFocused()
+  expect(await main.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
+  for (let row = 39; row >= 5; row--) await page.keyboard.press('ArrowUp')
+  const cell = grid.locator('[data-cell="5:1"]')
+  await expect(cell).toBeFocused()
+  await frames(page)
+  const placed = await cell.evaluate(element => {
+    const tip = document.querySelector('.mtc-data-grid-value-tip')?.getBoundingClientRect()
+    return { cell: element.getBoundingClientRect().toJSON(), main: element.closest('main')!.getBoundingClientRect().toJSON(), tipTop: tip?.top ?? null }
+  })
+  expect(Math.abs(placed.cell.top - placed.main.top)).toBeLessThanOrEqual(1)
+  expect(placed.tipTop).not.toBeNull()
+  expect(Math.abs(placed.tipTop! - placed.cell.top)).toBeLessThanOrEqual(2)
+  // Under the top bar: still inside the window, hidden by the shell's main panel.
+  await main.evaluate((element, by) => { element.scrollTop += by }, Math.ceil(placed.cell.height) + 1)
+  await expect(page.locator('.mtc-data-grid-value-tip')).toHaveCount(0)
+  await expect(cell).toBeFocused()
 })
 
 test('denied browser storage leaves navigation and scrolling usable', async ({ page }) => {

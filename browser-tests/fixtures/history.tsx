@@ -5,6 +5,8 @@ import { Button, DataGrid, PageHeader } from '../../src/toolkit'
 import '../../src/fonts/fonts.css'
 import '../../src/index.css'
 
+const TIP_ROWS = Array.from({ length: 60 }, (_, id) => ({ id, note: `Entry ${id} — 東京 / café / ${'long-name-'.repeat(8)}`, kind: 'Record' }))
+
 function Pages() {
   const location = useLocation()
   const [loaded, setLoaded] = useState(false)
@@ -13,7 +15,13 @@ function Pages() {
     const timer = setTimeout(() => setLoaded(true), Number(new URLSearchParams(location.search).get('delay') ?? 500))
     return () => clearTimeout(timer)
   }, [location.search])
-  if (new URLSearchParams(location.search).get('pane') === 'detail') return <PageHeader title="Detail" />
+  const pane = new URLSearchParams(location.search).get('pane')
+  if (pane === 'detail') return <PageHeader title="Detail" />
+  if (pane === 'tips') return <>
+    <PageHeader title="Value tips" />
+    <DataGrid label="Tip rows" columns={[{ id: 'id', header: 'ID', width: 120 }, { id: 'note', header: 'Note', width: 240 }, { id: 'kind', header: 'Kind', width: 120 }]}
+      rows={TIP_ROWS} rowKey={row => String(row.id)} height="auto" />
+  </>
   return <>
     <PageHeader title="History scroll" />
     <div style={{ height: 560 }} />

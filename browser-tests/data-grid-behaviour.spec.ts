@@ -279,6 +279,45 @@ test('long values remain available by hover and keyboard at 200 percent reflow',
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0)
 })
 
+// Where the focus value tip sits against where it should: on its cell, kept
+// 8px inside the window as the tip's placement does.
+function tipPlacement(cell: Locator) {
+  return cell.evaluate(element => {
+    const tip = document.querySelector('.mtc-data-grid-value-tip')
+    const bounds = element.getBoundingClientRect()
+    if (!tip) return { open: false, cellTop: bounds.top, cellBottom: bounds.bottom, offset: 0 }
+    const placed = tip.getBoundingClientRect()
+    const expected = Math.max(8, Math.min(bounds.top, document.documentElement.clientHeight - 8 - placed.height))
+    return { open: true, cellTop: bounds.top, cellBottom: bounds.bottom, offset: Math.abs(placed.top - expected) }
+  })
+}
+
+test('the focus value tip follows its cell as the page scrolls and closes once it leaves', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  const grid = await openGrid(page, 'count:50')
+  await page.locator('body').click({ position: { x: 4, y: 4 } })
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('ArrowRight')
+  const cell = grid.locator('[data-cell="0:2"]')
+  await expect(cell).toBeFocused()
+  await expect(page.locator('.mtc-data-grid-value-tip')).toBeVisible()
+  expect((await tipPlacement(cell)).offset).toBeLessThanOrEqual(2)
+  const start = (await tipPlacement(cell)).cellTop
+  expect(start).toBeGreaterThan(120)
+  const box = (await grid.boundingBox())!
+  await page.mouse.move(box.x + 300, Math.min(box.y + box.height / 2, 850))
+  await page.mouse.wheel(0, 80)
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+  await expect.poll(async () => {
+    const placement = await tipPlacement(cell)
+    return placement.cellTop < start && placement.cellBottom > 0 && placement.open && placement.offset <= 2
+  }).toBe(true)
+  await page.mouse.wheel(0, 600)
+  await expect.poll(async () => (await tipPlacement(cell)).cellBottom).toBeLessThanOrEqual(0)
+  await expect(page.locator('.mtc-data-grid-value-tip')).toHaveCount(0)
+  await expect(cell).toBeFocused()
+})
+
 async function dragLinkedText(page: Page, cell: Locator, padding: boolean, testInfo: TestInfo) {
   const box = await cell.locator('.mtc-value-text').evaluate(node => {
     const range = document.createRange()

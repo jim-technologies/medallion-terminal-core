@@ -583,22 +583,36 @@ export function DataGrid<Row>({
   const endThreshold = (count: number) => (count - Math.max(1, Math.floor(overscan / 2))) * lineHeight
   const nearEnd = viewport.scrollTop + viewport.height >= endThreshold(displayRows.length)
 
+  // The value tip is fixed to the window. It follows its cell through any
+  // scroll (the grid's, a shell panel's, the page's) or resize, and closes
+  // once the cell loses focus or its middle is out of view: outside the
+  // window, clipped by a scroller, or under a header or top bar (the tip
+  // itself takes no pointer hits). An updater, so a reveal right after
+  // focus moved the cell sees the tip that focus just opened.
+  const followValueTip = useCallback(() => setValueTip(current => {
+    const cell = current && viewportRef.current?.querySelector<HTMLElement>(`[data-cell="${current.row}:${current.column}"]`)
+    if (!current || !cell || document.activeElement !== cell) return null
+    const { left, top, width, height } = cell.getBoundingClientRect()
+    if (!cell.contains(document.elementFromPoint(left + width / 2, top + height / 2))) return null
+    return left === current.left && top === current.top && width === current.width && height === current.height
+      ? current
+      : { ...current, left, top, width, height }
+  }), [])
+  const tipOpen = valueTip !== null
+  useEffect(() => {
+    if (!tipOpen) return
+    const options = { capture: true, passive: true }
+    document.addEventListener('scroll', followValueTip, options)
+    window.addEventListener('resize', followValueTip, options)
+    return () => {
+      document.removeEventListener('scroll', followValueTip, options)
+      window.removeEventListener('resize', followValueTip, options)
+    }
+  }, [tipOpen, followValueTip])
+
   const onScroll = () => {
     const element = viewportRef.current
     if (!element) return
-    if (valueTip) {
-      const cell = element.querySelector<HTMLElement>(`[data-cell="${valueTip.row}:${valueTip.column}"]`)
-      const bounds = cell?.getBoundingClientRect()
-      const viewportBounds = element.getBoundingClientRect()
-      if (!cell || document.activeElement !== cell || !bounds || bounds.bottom <= Math.max(0, viewportBounds.top)
-        || bounds.top >= Math.min(innerHeight, viewportBounds.bottom) || bounds.right <= viewportBounds.left || bounds.left >= viewportBounds.right) {
-        setValueTip(null)
-      } else {
-        setValueTip(current => current?.row === valueTip.row && current.column === valueTip.column
-          ? { ...current, left: bounds.left, top: bounds.top, width: bounds.width, height: bounds.height }
-          : current)
-      }
-    }
     const next = rowWindow(displayRows.length, element.scrollTop, element.clientHeight, lineHeight, overscan, virtual)
     const nextNearEnd = element.scrollTop + element.clientHeight >= endThreshold(displayRows.length)
     if (next.start !== range.start || next.end !== range.end || (onEndReached && nextNearEnd !== nearEnd)) {
@@ -633,18 +647,23 @@ export function DataGrid<Row>({
         const ownerBounds = owner.getBoundingClientRect()
         const top = owner === document.scrollingElement ? 0 : Math.max(0, ownerBounds.top + owner.clientTop)
         const bottom = owner === document.scrollingElement ? document.documentElement.clientHeight : Math.min(document.documentElement.clientHeight, ownerBounds.top + owner.clientTop + owner.clientHeight)
-        if (bounds.top < top) owner.scrollTop += bounds.top - top
-        else if (bounds.bottom > bottom) owner.scrollTop += bounds.bottom - bottom
+        // Whole pixels outward: Firefox and WebKit round a fractional
+        // scrollTop and would leave part of the cell cut off.
+        if (bounds.top < top) owner.scrollTop += Math.floor(bounds.top - top)
+        else if (bounds.bottom > bottom) owner.scrollTop += Math.ceil(bounds.bottom - bottom)
       }
     }
-    if (pinnedOffsets.has(active.column)) return
-    const pinnedWidth = [...pinnedOffsets].reduce((width, [index, offset]) => Math.max(width, offset + renderedColumns[index]!.width), 0)
-    const viewportBounds = element.getBoundingClientRect()
-    const cellBounds = cell.getBoundingClientRect()
-    const start = viewportBounds.left + pinnedWidth
-    const end = viewportBounds.left + element.clientWidth
-    if (cellBounds.right > end) element.scrollLeft += cellBounds.right - end
-    else if (cellBounds.left < start && cellBounds.right < end) element.scrollLeft -= start - cellBounds.left
+    if (!pinnedOffsets.has(active.column)) {
+      const pinnedWidth = [...pinnedOffsets].reduce((width, [index, offset]) => Math.max(width, offset + renderedColumns[index]!.width), 0)
+      const viewportBounds = element.getBoundingClientRect()
+      const cellBounds = cell.getBoundingClientRect()
+      const start = viewportBounds.left + pinnedWidth
+      const end = viewportBounds.left + element.clientWidth
+      if (cellBounds.right > end) element.scrollLeft += cellBounds.right - end
+      else if (cellBounds.left < start && cellBounds.right < end) element.scrollLeft -= start - cellBounds.left
+    }
+    // Focus placed the cell's value tip before these reveals moved the cell.
+    followValueTip()
   })
 
   // When an inline editor closes, focus returns to its cell, unless it has
