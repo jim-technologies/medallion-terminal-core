@@ -143,6 +143,100 @@
       "priority": 5
     },
     {
+      "attr_path": "gsettings-desktop-schemas",
+      "broken": false,
+      "derivation": "/nix/store/dpx69sn06m1bfnyliabfga40lly608qk-gsettings-desktop-schemas-50.1.drv",
+      "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
+      "install_id": "gsettings-desktop-schemas",
+      "license": "LGPL-2.1-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "name": "gsettings-desktop-schemas-50.1",
+      "pname": "gsettings-desktop-schemas",
+      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "rev_count": 1090327,
+      "rev_date": "2026-10-11T15:54:36Z",
+      "scrape_date": "2026-10-13T05:00:30.542862Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "50.1",
+      "outputs_to_install": [
+        "out",
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/ba0gnxvncf9xrakxhsjpniswdqmc0nia-gsettings-desktop-schemas-50.1"
+      },
+      "system": "aarch64-darwin",
+      "group": "browser-runtime",
+      "priority": 5
+    },
+    {
+      "attr_path": "gsettings-desktop-schemas",
+      "broken": false,
+      "derivation": "/nix/store/4ghxsnhm7z4cxa4hkswf1s18kx9pmw0q-gsettings-desktop-schemas-50.1.drv",
+      "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
+      "install_id": "gsettings-desktop-schemas",
+      "license": "LGPL-2.1-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "name": "gsettings-desktop-schemas-50.1",
+      "pname": "gsettings-desktop-schemas",
+      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "rev_count": 1090327,
+      "rev_date": "2026-10-11T15:54:36Z",
+      "scrape_date": "2026-10-13T05:33:19.913383Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "50.1",
+      "outputs_to_install": [
+        "out",
+        "out",
+        "out",
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/g3y8lgvx34xaqnjx839bq298nxnk08bz-gsettings-desktop-schemas-50.1"
+      },
+      "system": "aarch64-linux",
+      "group": "browser-runtime",
+      "priority": 5
+    },
+    {
+      "attr_path": "gsettings-desktop-schemas",
+      "broken": false,
+      "derivation": "/nix/store/hkici1x7asa6aqgi15y94m7qq874gvsb-gsettings-desktop-schemas-50.1.drv",
+      "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
+      "install_id": "gsettings-desktop-schemas",
+      "license": "LGPL-2.1-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "name": "gsettings-desktop-schemas-50.1",
+      "pname": "gsettings-desktop-schemas",
+      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "rev_count": 1090327,
+      "rev_date": "2026-10-11T15:54:36Z",
+      "scrape_date": "2026-10-13T06:09:58.342570Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "50.1",
+      "outputs_to_install": [
+        "out",
+        "out",
+        "out",
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/r0qrx78hday3gr8dznxnniaf98c8lzjl-gsettings-desktop-schemas-50.1"
+      },
+      "system": "x86_64-linux",
+      "group": "browser-runtime",
+      "priority": 5
+    },
+    {
       "attr_path": "nodejs_24",
       "broken": false,
       "derivation": "/nix/store/j062ph4sqspapzz4bz4knx0icy2kfgjy-nodejs-24.20.0.drv",
@@ -862,100 +956,6 @@
       },
       "system": "x86_64-linux",
       "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "gsettings-desktop-schemas",
-      "broken": false,
-      "derivation": "/nix/store/dpx69sn06m1bfnyliabfga40lly608qk-gsettings-desktop-schemas-50.1.drv",
-      "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
-      "install_id": "gsettings-desktop-schemas",
-      "license": "LGPL-2.1-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "name": "gsettings-desktop-schemas-50.1",
-      "pname": "gsettings-desktop-schemas",
-      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "rev_count": 1090327,
-      "rev_date": "2026-10-11T15:54:36Z",
-      "scrape_date": "2026-10-13T05:00:30.542862Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "50.1",
-      "outputs_to_install": [
-        "out",
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/ba0gnxvncf9xrakxhsjpniswdqmc0nia-gsettings-desktop-schemas-50.1"
-      },
-      "system": "aarch64-darwin",
-      "group": "browser-runtime",
-      "priority": 5
-    },
-    {
-      "attr_path": "gsettings-desktop-schemas",
-      "broken": false,
-      "derivation": "/nix/store/4ghxsnhm7z4cxa4hkswf1s18kx9pmw0q-gsettings-desktop-schemas-50.1.drv",
-      "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
-      "install_id": "gsettings-desktop-schemas",
-      "license": "LGPL-2.1-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "name": "gsettings-desktop-schemas-50.1",
-      "pname": "gsettings-desktop-schemas",
-      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "rev_count": 1090327,
-      "rev_date": "2026-10-11T15:54:36Z",
-      "scrape_date": "2026-10-13T05:33:19.913383Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "50.1",
-      "outputs_to_install": [
-        "out",
-        "out",
-        "out",
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/g3y8lgvx34xaqnjx839bq298nxnk08bz-gsettings-desktop-schemas-50.1"
-      },
-      "system": "aarch64-linux",
-      "group": "browser-runtime",
-      "priority": 5
-    },
-    {
-      "attr_path": "gsettings-desktop-schemas",
-      "broken": false,
-      "derivation": "/nix/store/hkici1x7asa6aqgi15y94m7qq874gvsb-gsettings-desktop-schemas-50.1.drv",
-      "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
-      "install_id": "gsettings-desktop-schemas",
-      "license": "LGPL-2.1-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "name": "gsettings-desktop-schemas-50.1",
-      "pname": "gsettings-desktop-schemas",
-      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "rev_count": 1090327,
-      "rev_date": "2026-10-11T15:54:36Z",
-      "scrape_date": "2026-10-13T06:09:58.342570Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "50.1",
-      "outputs_to_install": [
-        "out",
-        "out",
-        "out",
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/r0qrx78hday3gr8dznxnniaf98c8lzjl-gsettings-desktop-schemas-50.1"
-      },
-      "system": "x86_64-linux",
-      "group": "browser-runtime",
       "priority": 5
     }
   ]
