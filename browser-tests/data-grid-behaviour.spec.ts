@@ -4,17 +4,24 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test'
 
-async function openGrid(page: Page, args = '', theme = 'dark') {
-  await page.goto(`/iframe.html?id=toolkit-workbench-datagrid--scroll-ownership&viewMode=story&globals=theme:${theme}&args=${args}`)
-  const grid = page.getByRole('grid', { name: 'Scroll ownership rows' })
-  await expect(grid).toBeVisible()
-  await page.evaluate(() => document.fonts.ready)
+// Wait for the render before asserting on it: a story on a busy dev server
+// can take longer than an expect timeout to appear. This wait is bounded by
+// the test timeout and survives the preview reloading itself.
+async function waitForStoryRender(page: Page) {
   await page.waitForFunction(() => {
     const preview = (window as unknown as { __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } } }).__STORYBOOK_PREVIEW__
     return preview?.currentRender?.phase === 'finished'
       && document.body.classList.contains('sb-show-main')
       && !document.body.classList.contains('sb-show-preparing-story')
   })
+}
+
+async function openGrid(page: Page, args = '', theme = 'dark') {
+  await page.goto(`/iframe.html?id=toolkit-workbench-datagrid--scroll-ownership&viewMode=story&globals=theme:${theme}&args=${args}`)
+  await waitForStoryRender(page)
+  const grid = page.getByRole('grid', { name: 'Scroll ownership rows' })
+  await expect(grid).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
   return grid
 }
 
@@ -38,14 +45,9 @@ test('typed grid reuses byte and explicit-zone date formatters across sorting', 
     })
   })
   await page.goto('/iframe.html?id=toolkit-workbench-datagrid--context-actions-and-paging&viewMode=story')
+  await waitForStoryRender(page)
   const grid = page.getByRole('grid', { name: 'Reports', exact: true })
   await expect(grid).toBeVisible()
-  await page.waitForFunction(() => {
-    const preview = (window as unknown as { __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } } }).__STORYBOOK_PREVIEW__
-    return preview?.currentRender?.phase === 'finished'
-      && document.body.classList.contains('sb-show-main')
-      && !document.body.classList.contains('sb-show-preparing-story')
-  })
   await page.keyboard.press('Escape')
   await expect(page.getByRole('menu')).toHaveCount(0)
   const samples = []

@@ -14,6 +14,8 @@ if (!Number.isInteger(historyFixturePort) || historyFixturePort < 1 || historyFi
 
 export default defineConfig({
   testDir: './browser-tests',
+  // Runs after the web servers are up and before any worker starts.
+  globalSetup: './browser-tests/global-setup.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
