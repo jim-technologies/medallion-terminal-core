@@ -59,7 +59,7 @@ export interface CommandPaletteProps {
   emptyLabel?: ReactNode
   /** Content under the results; defaults to the keyboard hints. */
   footer?: ReactNode
-  /** Toggle with Ctrl/⌘ K outside editable controls. */
+  /** Toggle with Ctrl/⌘ K from anywhere but another editable control. */
   hotkey?: boolean
 }
 
@@ -106,7 +106,9 @@ export function CommandPalette({
   useEffect(() => {
     if (!hotkey) return
     const onKey = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || event.isComposing || isEditableTarget(event.target)) return
+      // Editors keep Ctrl/⌘ K, except the palette's own field: it closes.
+      if (event.defaultPrevented || event.isComposing
+        || (isEditableTarget(event.target) && !dialogRef.current?.contains(event.target as Node))) return
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
         onOpenChange(!open)

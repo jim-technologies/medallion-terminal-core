@@ -45,6 +45,34 @@ for (const label of ['Draft name', 'Draft notes', 'Draft choice', 'Draft editor'
   })
 }
 
+test('Ctrl+K inside the shell palette closes it and returns focus to search', async ({ page }) => {
+  await page.goto('/iframe.html?id=toolkit-app-productshell--editable-shortcuts&viewMode=story')
+  const search = page.getByRole('button', { name: 'Search files', exact: true })
+  await search.click()
+  const palette = page.getByRole('dialog')
+  await expect(palette).toBeVisible()
+  await expect(palette.getByRole('combobox')).toBeFocused()
+  const pressed = page.evaluate(() => new Promise<boolean>(resolve => {
+    document.addEventListener('keydown', event => setTimeout(() => resolve(event.defaultPrevented)), { once: true })
+  }))
+  await page.keyboard.press('Control+k')
+  expect(await pressed).toBe(true)
+  await expect(palette).toHaveCount(0)
+  await expect(search).toBeFocused()
+})
+
+test('Ctrl+K inside the Dashboard palette closes it and returns focus to the grid', async ({ page }) => {
+  await page.goto('/iframe.html?id=core-behaviour--keyboard-ownership&viewMode=story')
+  const cell = page.getByRole('grid', { name: 'Table data' }).locator('[data-cell="0:0"]')
+  await cell.click()
+  await page.keyboard.press('Control+k')
+  const palette = page.getByRole('dialog', { name: 'Dashboard commands', exact: true })
+  await expect(palette.getByRole('combobox')).toBeFocused()
+  await page.keyboard.press('Control+k')
+  await expect(palette).toHaveCount(0)
+  await expect(cell).toBeFocused()
+})
+
 test('Escape closes the palette above fullscreen without closing both layers', async ({ page }) => {
   await page.goto('/iframe.html?id=core-behaviour--keyboard-ownership&viewMode=story')
   await page.getByRole('grid', { name: 'Table data' }).locator('[data-cell="0:0"]').click()
