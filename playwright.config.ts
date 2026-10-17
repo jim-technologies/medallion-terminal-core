@@ -12,6 +12,12 @@ const performancePhase = process.env.STORYBOOK_PERFORMANCE_PHASE === '1'
 const historyFixturePort = Number(process.env.HISTORY_FIXTURE_PORT ?? 6216)
 if (!Number.isInteger(historyFixturePort) || historyFixturePort < 1 || historyFixturePort > 65535 || historyFixturePort === storybookPort) throw new Error('HISTORY_FIXTURE_PORT must be a distinct valid port')
 
+// Flox activation sets LD_AUDIT to its loader-audit library, and every browser
+// process inherits it. With it, Firefox content processes intermittently die
+// on SIGSEGV during page creation ("browserContext.newPage: Target crashed").
+// Firefox runs on the host loader and needs no Flox library.
+const firefoxEnv = { ...process.env, LD_AUDIT: undefined }
+
 export default defineConfig({
   testDir: './browser-tests',
   // Runs after the web servers are up and before any worker starts.
@@ -64,10 +70,8 @@ export default defineConfig({
     { name: 'chromium' },
     {
       name: 'firefox',
-      // Serialize Firefox workers in CI after native page-setup crashes.
-      workers: process.env.CI ? 1 : undefined,
       testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch)\.spec\.ts/,
-      use: { browserName: 'firefox' },
+      use: { browserName: 'firefox', launchOptions: { env: firefoxEnv } },
     },
     { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch)\.spec\.ts/, use: { browserName: 'webkit' } },
   ],

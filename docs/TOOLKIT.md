@@ -777,9 +777,12 @@ settings. This qualifies the production-built Storybook harness; it does
 not qualify development Storybook at 50 ms or establish an application
 speedup. No library or application option changes.
 
-CI schedules one Firefox worker after observed native page-setup crashes.
-This is a scheduling policy; the native fault's cause remains unresolved.
-Chromium and WebKit retain the global worker limit.
+Firefox launches with `LD_AUDIT` removed from its environment. `flox
+activate` sets it to Flox's loader-audit library, and Firefox content
+processes that inherit it intermittently die on SIGSEGV during page creation
+("browserContext.newPage: Target crashed"). Firefox uses the host loader and
+no Flox library; Chromium and WebKit keep the inherited environment and every
+project shares the global worker limit.
 
 For a focused timing run, set the same phase flag explicitly:
 
