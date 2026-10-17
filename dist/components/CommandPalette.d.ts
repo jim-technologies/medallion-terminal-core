@@ -44,7 +44,7 @@ export interface CommandPaletteProps {
     emptyLabel?: ReactNode;
     /** Content under the results; defaults to the keyboard hints. */
     footer?: ReactNode;
-    /** Toggle with Ctrl/⌘ K outside editable controls. */
+    /** Toggle with Ctrl/⌘ K from anywhere but another editable control. */
     hotkey?: boolean;
 }
 /**

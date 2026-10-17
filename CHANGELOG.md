@@ -4,13 +4,63 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+Release this section as 0.8.0, a minor version: it adds public API
+(`ScrollRestorationProvider`, `useScrollRestoration`, `DataGrid pagingKey`
+and `stateKey`, `RouterLocation.entryKey`).
+
+### Added
+
+- `ScrollRestorationProvider` and `useScrollRestoration`, exported from
+  `/toolkit` and `/app`, restore registered scroll owners per history
+  entry: both axes, Back/Forward and refresh. A pending restore follows
+  asynchronous content for up to ten seconds, and wheel, touch, pointer or
+  key input cancels it. Positions live in bounded session storage (50
+  entries, 100 owners each); blocked storage leaves scrolling usable. Its
+  optional `href` lets an in-page `#anchor` link keep the browser's scroll,
+  and Back then returns to the earlier position. `ProductShell` restores its
+  main panel and nested grids this way; a `DataGrid` registers under its
+  `stateKey` (or label) and `scrollKey`.
+- `RouterLocation.entryKey` identifies one history entry. The history
+  router keeps it as `__mtcEntry` in the caller's `history.state`:
+  replacing an entry keeps its key and state, pushing creates a new key,
+  and a primitive host state is left untouched. The memory router keys its
+  entries too.
+- `DataGrid stateKey` remembers resized column widths for this browser tab
+  under that key; without one, widths last while the grid is mounted.
+- `DataGrid pagingKey` names a first-page or dataset generation, compared
+  with `Object.is`. A new generation can request the next page again at the
+  same loaded row count without resetting scroll or column widths.
+
 ### Fixed
 
+- A content-sized `DataGrid` passes vertical wheel and trackpad scrolling
+  on to the page or panel around it, even when its columns scroll
+  horizontally. A grid that scrolls vertically still contains its edges.
+- Keyboard movement in a grid reveals the focused cell inside the nearest
+  outer scroller (a shell panel or the page), by whole pixels. The focused
+  cell's full-value tip follows the cell through any scroll or resize and
+  closes once the cell leaves view, including under the shell's top bar.
+- Dashboard widget and workspace shortcuts, Ctrl/⌘ K and the `?` shortcut
+  help leave text inputs, text areas, selects and `role="textbox"` editors
+  alone, and ignore key events another handler consumed or an input method
+  is composing. Ctrl/⌘ K inside the open palette's own search field still
+  closes it.
+- Grid rows keep native text selection: a drag across a row or its link
+  selects text without opening the link or selecting the row. The grid
+  viewport is `tabIndex={-1}`, so the roving cell stays the grid's single
+  Tab stop in Firefox.
+- Resizing a growing column starts from its visible width.
+- Paged grids keep requesting pages across fractional flex heights and
+  listing changes.
+- `productFetch` keeps caller and deadline cancellation working in WebKit
+  while response headers are pending.
 - Linked StatTile labels, units and context use stronger metadata text on
   hover to preserve readable contrast in the light theme.
 
 ### Changed
 
+- The focused cell's value tip shows the cell's text and wraps within the
+  window instead of running past its edge.
 - Byte and explicit-zone date formatting reuse up to 64 native formatters
   per kind. Locale, zone and style changes retain their native formatting;
   dates without an explicit zone continue to observe the runtime default.

@@ -112,3 +112,30 @@ the product's `pagingKey` prop wiring; existing tab-local UI entries require
 no migration. Release note: keep paged grids advancing across fractional
 flex heights, listing changes and accepted first-page refreshes, with
 explicit retry generations.
+
+## Review follow-up
+
+Review found four gaps, each now covered by a three-engine browser
+regression that fails on the previous branch head:
+
+- Ctrl/⌘ K inside the open palette's own search field closes it again and
+  returns focus to the opener, in ProductShell and the Dashboard. Other
+  editable fields still keep the keys.
+- The focused cell's value tip follows its cell through page, panel and
+  grid scrolling, and through the outer reveal of keyboard movement. It
+  closes once the cell leaves view, including under the shell's top bar.
+  The reveal moves by whole pixels: Firefox and WebKit rounded a fractional
+  offset and left part of the cell cut off.
+- An in-page `#anchor` link inside ProductShell keeps its anchor scroll in
+  Firefox and WebKit, and Back returns to the earlier position in all three
+  engines. `ScrollRestorationProvider href` tells the scope that only the
+  fragment changed; pushing the same URL still starts at the top.
+- `CHANGELOG.md` lists every behaviour and API change on this branch.
+
+These fixes take the toolkit's static closure from 47.20 to 47.33 KiB gzip,
+past the 47.25 KiB allowance; it is now 47.5 KiB. A hit test for the tip's
+visibility replaced a clip-rectangle walk to keep the increase small.
+
+Release note: the new exports (`ScrollRestorationProvider`,
+`useScrollRestoration`, `DataGrid pagingKey` and `stateKey`,
+`RouterLocation.entryKey`) make the next release 0.8.0, a minor version.

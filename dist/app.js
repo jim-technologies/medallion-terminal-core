@@ -1,11 +1,11 @@
 import { D as e, E as t, S as n, c as r, d as i, f as a, g as o, i as s, m as c, r as l, w as u } from "./States-BUjeBrSp.js";
 import { a as d } from "./utils-8rNbW-NI.js";
 import { r as f } from "./types-C1HPXTFC.js";
-import { _ as p, a as m, c as h, d as g, h as _, i as v, l as y, m as b, n as x, o as S, r as C, s as w, t as T, u as E } from "./sourceError-BrKDv5nE.js";
-import { a as D, i as O, n as k, o as A, t as j } from "./ScrollRestoration-oP-t5sWS.js";
-import { t as ee } from "./NavRail-_P3K7iv_.js";
-import { t as te } from "./useBreakpoint-CvBnDyn0.js";
-import { createContext as M, forwardRef as N, useCallback as P, useContext as F, useEffect as I, useId as L, useMemo as R, useRef as z, useState as B, useSyncExternalStore as ne } from "react";
+import { _ as p, a as m, c as h, d as g, h as _, i as v, l as y, m as b, n as x, o as S, r as C, s as w, t as T, u as E } from "./sourceError-ivx_3EcC.js";
+import { a as D, i as O, n as k, o as A, t as ee } from "./ScrollRestoration-B0xP6-wB.js";
+import { t as te } from "./NavRail-_P3K7iv_.js";
+import { t as ne } from "./useBreakpoint-CvBnDyn0.js";
+import { createContext as j, forwardRef as M, useCallback as N, useContext as P, useEffect as F, useId as I, useMemo as L, useRef as R, useState as z, useSyncExternalStore as B } from "react";
 import { Fragment as V, jsx as H, jsxs as U } from "react/jsx-runtime";
 import { createPortal as re } from "react-dom";
 //#region src/app/productFetch.ts
@@ -14,16 +14,16 @@ function K(e) {
 	let t = new Uint8Array(e);
 	return globalThis.crypto.getRandomValues(t), Array.from(t, (e) => e.toString(16).padStart(2, "0")).join("");
 }
-function q() {
+function ae() {
 	return `00-${K(16)}-${K(8)}-01`;
 }
-function J() {
+function q() {
 	return typeof globalThis.crypto?.randomUUID == "function" ? globalThis.crypto.randomUUID() : K(16);
 }
-function Y(e) {
+function J(e) {
 	return typeof e == "string" ? e : e instanceof URL ? e.href : e.url;
 }
-function ae(e, t) {
+function Y(e, t) {
 	return (t?.method ?? (e instanceof Request ? e.method : "GET")).toUpperCase();
 }
 function oe(e, t) {
@@ -39,11 +39,11 @@ function ce(e) {
 	return t.length <= 1 ? t[0] : AbortSignal.any(t);
 }
 function le(e = {}) {
-	let { onUnauthenticated: t, timeoutMs: n, onRequest: r, newRequestId: i = J, newTraceparent: a = q, now: o = () => performance.now() } = e;
+	let { onUnauthenticated: t, timeoutMs: n, onRequest: r, newRequestId: i = q, newTraceparent: a = ae, now: o = () => performance.now() } = e;
 	return async function(s, c) {
 		let l = e.fetch ?? globalThis.fetch, u = new Headers(c?.headers ?? (s instanceof Request ? s.headers : void 0));
 		u.has(W) || u.set(W, i()), u.has(G) || u.set(G, a());
-		let d = u.get(W), f = u.get(G), p = c?.signal ?? (s instanceof Request ? s.signal : void 0), h = se(n, u, s, c), g = h ? new AbortController() : void 0, _ = g ? setTimeout(() => g.abort(new DOMException(`No response within ${h} ms`, "TimeoutError")), h) : void 0, v = ae(s, c), y = Y(s), b = o(), x = (e) => r?.({
+		let d = u.get(W), f = u.get(G), p = c?.signal ?? (s instanceof Request ? s.signal : void 0), h = se(n, u, s, c), g = h ? new AbortController() : void 0, _ = g ? setTimeout(() => g.abort(new DOMException(`No response within ${h} ms`, "TimeoutError")), h) : void 0, v = Y(s, c), y = J(s), b = o(), x = (e) => r?.({
 			method: v,
 			url: y,
 			requestId: d,
@@ -215,7 +215,7 @@ function ve(e, t) {
 }
 //#endregion
 //#region src/app/routing.tsx
-var ye = M(null);
+var ye = j(null);
 function be({ router: e, children: t }) {
 	return /* @__PURE__ */ H(ye.Provider, {
 		value: e,
@@ -223,7 +223,7 @@ function be({ router: e, children: t }) {
 	});
 }
 function xe() {
-	let e = F(ye);
+	let e = P(ye);
 	if (!e) throw Error("useRouter must be used inside a RouterProvider or ProductShell");
 	return e;
 }
@@ -231,20 +231,20 @@ function Se(e, t) {
 	return e.pathname === t.pathname && e.search === t.search && e.hash === t.hash && e.entryKey === t.entryKey;
 }
 function Q() {
-	let e = xe(), t = R(() => (t) => e.subscribe(t), [e]), n = R(() => {
+	let e = xe(), t = L(() => (t) => e.subscribe(t), [e]), n = L(() => {
 		let t = e.location();
 		return () => {
 			let n = e.location();
 			return Se(t, n) || (t = n), t;
 		};
 	}, [e]);
-	return ne(t, n, n);
+	return B(t, n, n);
 }
 function Ce(e) {
 	let { pathname: t } = Q();
-	return R(() => ve(e, t), [e, t]);
+	return L(() => ve(e, t), [e, t]);
 }
-var we = N(function({ to: e, replace: t, onClick: n, ...r }, i) {
+var we = M(function({ to: e, replace: t, onClick: n, ...r }, i) {
 	let a = xe();
 	return /* @__PURE__ */ H("a", {
 		...r,
@@ -343,7 +343,7 @@ function Ne(e, t, { now: n = Date.now, document: r, setTimeout: i = (e, t) => gl
 	};
 }
 function Pe(e, t = {}) {
-	let n = t.now ?? Date.now, r = t.document ?? (typeof document > "u" ? void 0 : document), [i, a] = B(e ? "loading" : "authenticated"), [o, s] = B(null), [c, l] = B(null), [u, d] = B(0), f = z(null), p = P(() => {
+	let n = t.now ?? Date.now, r = t.document ?? (typeof document > "u" ? void 0 : document), [i, a] = z(e ? "loading" : "authenticated"), [o, s] = z(null), [c, l] = z(null), [u, d] = z(0), f = R(null), p = N(() => {
 		if (!e) return Promise.resolve(!0);
 		if (f.current) return f.current;
 		let t = e.renew().then((e) => (s(e), a("authenticated"), !0), () => (a("expired"), !1)).finally(() => {
@@ -351,7 +351,7 @@ function Pe(e, t = {}) {
 		});
 		return f.current = t, t;
 	}, [e]);
-	I(() => {
+	F(() => {
 		if (!e) return;
 		let t = new AbortController();
 		return a((e) => e === "error" ? "loading" : e), e.load(t.signal).then((e) => {
@@ -360,10 +360,10 @@ function Pe(e, t = {}) {
 			t.signal.aborted || (l(E(e)), a("error"));
 		}), () => t.abort();
 	}, [e, u]);
-	let m = P(() => {
+	let m = N(() => {
 		d((e) => e + 1);
 	}, []), { setTimeout: h, clearTimeout: g } = t;
-	return I(() => {
+	return F(() => {
 		if (e && i === "authenticated" && o?.expiresAt && r) return Ne(o.expiresAt, () => void p(), {
 			now: n,
 			document: r,
@@ -385,7 +385,7 @@ function Pe(e, t = {}) {
 		error: c,
 		renew: p,
 		reload: m,
-		reportUnauthenticated: P(() => {
+		reportUnauthenticated: N(() => {
 			p();
 		}, [p])
 	};
@@ -462,7 +462,7 @@ function Ie({ maxEntries: e = 100, now: t = Date.now } = {}) {
 }
 //#endregion
 //#region src/app/useResource.tsx
-var Le = M(null), Re;
+var Le = j(null), Re;
 function ze({ cache: e, children: t }) {
 	return /* @__PURE__ */ H(Le.Provider, {
 		value: e,
@@ -470,7 +470,7 @@ function ze({ cache: e, children: t }) {
 	});
 }
 function Be() {
-	return F(Le) ?? (Re ??= Ie());
+	return P(Le) ?? (Re ??= Ie());
 }
 function Ve(e) {
 	return typeof e == "string" ? e : JSON.stringify(e);
@@ -491,9 +491,9 @@ function He({ document: e, intervalMs: t, onVisible: n = !0, isStale: r, revalid
 }
 var Ue = { validating: !1 }, We = () => () => {};
 function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisible: i = !0, document: a } = {}) {
-	let o = Be(), s = e === null ? null : Ve(e), c = z(t);
+	let o = Be(), s = e === null ? null : Ve(e), c = R(t);
 	c.current = t;
-	let l = P((e) => s === null ? We() : o.subscribe(s, e), [o, s]), u = ne(l, () => s === null ? Ue : o.read(s), () => s === null ? Ue : o.read(s)), d = P(() => s === null ? Promise.resolve() : o.fetch(s, (e) => c.current(e)), [o, s]), f = P(() => {
+	let l = N((e) => s === null ? We() : o.subscribe(s, e), [o, s]), u = B(l, () => s === null ? Ue : o.read(s), () => s === null ? Ue : o.read(s)), d = N(() => s === null ? Promise.resolve() : o.fetch(s, (e) => c.current(e)), [o, s]), f = N(() => {
 		if (s === null) return !1;
 		let { updatedAt: e } = o.read(s);
 		return e === void 0 || Date.now() - e >= n;
@@ -502,7 +502,7 @@ function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		s,
 		n
 	]);
-	I(() => {
+	F(() => {
 		s !== null && f() && d();
 	}, [
 		s,
@@ -510,7 +510,7 @@ function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		d
 	]);
 	let p = a ?? (typeof document > "u" ? void 0 : document);
-	I(() => {
+	F(() => {
 		if (s !== null && p) return He({
 			document: p,
 			intervalMs: r,
@@ -526,7 +526,7 @@ function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		f,
 		d
 	]);
-	let m = P((e) => {
+	let m = N((e) => {
 		s !== null && o.set(s, e);
 	}, [o, s]), h = s === null ? "idle" : u.data === void 0 ? u.error ? "error" : "loading" : "success";
 	return {
@@ -622,16 +622,16 @@ function et() {
 	return typeof window > "u" || typeof window.matchMedia != "function" || !window.matchMedia($e).matches;
 }
 function tt({ operations: n, title: r, onCancel: i, onRetry: s, onDismiss: l, onClearFinished: u, open: f, defaultOpen: p, onOpenChange: m, placement: h = "floating" }) {
-	let g = t(), _ = L(), v = e(), [y] = B(() => p ?? et()), [b, x] = d({
+	let g = t(), _ = I(), v = e(), [y] = z(() => p ?? et()), [b, x] = d({
 		value: f,
 		defaultValue: y,
 		onChange: m
-	}), S = z(/* @__PURE__ */ new Map()), [C, w] = B("");
-	I(() => {
+	}), S = R(/* @__PURE__ */ new Map()), [C, w] = z("");
+	F(() => {
 		let e = n.filter((e) => Qe.has(e.status) && S.current.get(e.id) !== e.status);
 		S.current = new Map(n.map((e) => [e.id, e.status])), e.length > 0 && w(e.map((e) => `${e.label}: ${g(`ops.status.${e.status}`)}`).join(". "));
 	}, [n, g]);
-	let T = R(() => {
+	let T = L(() => {
 		let e = {
 			queued: 0,
 			running: 0,
@@ -773,9 +773,9 @@ function tt({ operations: n, title: r, onCancel: i, onRetry: s, onDismiss: l, on
 }
 //#endregion
 //#region src/app/ProductShell.tsx
-var nt = M(null);
+var nt = j(null);
 function rt() {
-	let e = F(nt);
+	let e = P(nt);
 	if (!e) throw Error("useProductShell must be used inside a ProductShell");
 	return e;
 }
@@ -789,8 +789,8 @@ function it() {
 	return /Mac|iPhone|iPad|iPod/i.test(e ?? "");
 }
 function at(e) {
-	let { router: t, session: r, telemetry: a, mode: o = "standalone", embedOrigins: s = [], theme: c, density: l, locale: d, timeZone: f, messages: p } = e, m = o === "embed", h = R(() => m && typeof window < "u" ? Xe({ allowedOrigins: s }) : null, [m]), _ = u(), [v, y] = B({}), b = Pe(r);
-	I(() => t.subscribe(() => {
+	let { router: t, session: r, telemetry: a, mode: o = "standalone", embedOrigins: s = [], theme: c, density: l, locale: d, timeZone: f, messages: p } = e, m = o === "embed", h = L(() => m && typeof window < "u" ? Xe({ allowedOrigins: s }) : null, [m]), _ = u(), [v, y] = z({}), b = Pe(r);
+	F(() => t.subscribe(() => {
 		let e = $(t);
 		a?.record({
 			type: "navigation",
@@ -805,7 +805,7 @@ function at(e) {
 		t,
 		a,
 		h
-	]), I(() => {
+	]), F(() => {
 		r && b.status !== "loading" && (a?.record({
 			type: "session",
 			status: b.status,
@@ -821,9 +821,9 @@ function at(e) {
 		h
 	]);
 	let { pageTitle: x, product: { name: S } } = e;
-	I(() => {
+	F(() => {
 		typeof document < "u" && x !== void 0 && (document.title = `${x} · ${S}`);
-	}, [x, S]), I(() => {
+	}, [x, S]), F(() => {
 		if (!h) return;
 		let n = h.subscribe((e) => {
 			e.type === "mtc:navigate" ? t.navigate(e.path) : y({
@@ -843,7 +843,7 @@ function at(e) {
 		t,
 		e.product.name
 	]);
-	let C = R(() => ({
+	let C = L(() => ({
 		router: t,
 		session: b,
 		telemetry: a,
@@ -895,7 +895,7 @@ function ot({ controller: e, session: t, router: n, children: i }) {
 	return /* @__PURE__ */ H(V, { children: i });
 }
 function st({ controller: e, session: n, router: r }) {
-	let i = t(), [o, s] = B(!1);
+	let i = t(), [o, s] = z(!1);
 	if (e.status !== "expired") return null;
 	let c = async () => {
 		s(!0);
@@ -930,45 +930,45 @@ function ct(e) {
 	});
 }
 function lt(e) {
-	let { product: n, nav: r, activeNavId: i, scope: a, search: s, actions: l, accountMenu: u, status: d, inspector: f, router: m, controller: h, session: g } = e, v = t(), y = Q(), { pathname: x } = y, S = te() === "mobile", [C, w] = B(!1), [T, E] = B(!1), [O, k] = B(!1), M = z(null), N = z(null), F = z(!1), L = z(!1), ne = P((e) => {
-		e || (F.current = N.current === document.activeElement), N.current = e, e && F.current && (F.current = !1, e.focus());
-	}, []), V = P((e) => {
-		e && (L.current = N.current === document.activeElement), k(e), !e && L.current && N.current?.focus();
+	let { product: n, nav: r, activeNavId: i, scope: a, search: s, actions: l, accountMenu: u, status: d, inspector: f, router: m, controller: h, session: g } = e, v = t(), y = Q(), { pathname: x } = y, S = m.href(`${x}${y.search}${y.hash}`), C = ne() === "mobile", [w, T] = z(!1), [E, O] = z(!1), [k, j] = z(!1), M = R(null), P = R(null), I = R(!1), B = R(!1), V = N((e) => {
+		e || (I.current = P.current === document.activeElement), P.current = e, e && I.current && (I.current = !1, e.focus());
+	}, []), re = N((e) => {
+		e && (B.current = P.current === document.activeElement), j(e), !e && B.current && P.current?.focus();
 	}, []);
-	I(() => {
-		s || (F.current = !1);
+	F(() => {
+		s || (I.current = !1);
 	}, [s]);
-	let [re] = B(() => it() ? "⌘ K" : "Ctrl K"), W = P((e) => {
-		e.href && (m.navigate(e.href), E(!1));
-	}, [m]), G = R(() => (r ?? []).map((e) => ({
+	let [W] = z(() => it() ? "⌘ K" : "Ctrl K"), G = N((e) => {
+		e.href && (m.navigate(e.href), O(!1));
+	}, [m]), ie = L(() => (r ?? []).map((e) => ({
 		...e,
 		items: e.items.map((e) => ({
 			...e,
 			href: e.href ? m.href(e.href) : void 0
 		}))
-	})), [r, m]), ie = i ?? (r ?? []).flatMap((e) => e.items).filter((e) => e.href && (x === e.href || x.startsWith(e.href === "/" ? "/" : `${e.href}/`))).sort((e, t) => (t.href?.length ?? 0) - (e.href?.length ?? 0))[0]?.id, K = (e) => {
+	})), [r, m]), K = i ?? (r ?? []).flatMap((e) => e.items).filter((e) => e.href && (x === e.href || x.startsWith(e.href === "/" ? "/" : `${e.href}/`))).sort((e, t) => (t.href?.length ?? 0) - (e.href?.length ?? 0))[0]?.id, ae = (e) => {
 		let t = r?.flatMap((e) => e.items).find((t) => t.id === e.id);
-		t && W(t);
+		t && G(t);
 	}, q = h.session, J = [...u ?? [], ...g?.signOut ? [{
 		id: "sign-out",
 		label: v("shell.signOut"),
 		icon: /* @__PURE__ */ H(o, { name: "sign-out" }),
 		onSelect: () => void g.signOut?.()
-	}] : []], Y = q?.displayName ?? q?.subject, ae = !!(q?.authenticated && (Y || J.length > 0)), oe = (e) => /* @__PURE__ */ H(ee, {
+	}] : []], Y = q?.displayName ?? q?.subject, oe = !!(q?.authenticated && (Y || J.length > 0)), se = (e) => /* @__PURE__ */ H(te, {
 		label: v("shell.navigation"),
-		sections: G,
-		activeId: ie,
-		onNavigate: K,
-		collapsed: !e && C,
-		onCollapsedChange: e ? void 0 : w,
+		sections: ie,
+		activeId: K,
+		onNavigate: ae,
+		collapsed: !e && w,
+		onCollapsedChange: e ? void 0 : T,
 		className: e ? "mtc-shell-drawer-rail" : "mtc-shell-rail"
-	}), se = s && /* @__PURE__ */ U("button", {
-		ref: ne,
+	}), ce = s && /* @__PURE__ */ U("button", {
+		ref: V,
 		type: "button",
 		className: "mtc-shell-search",
 		"aria-label": s.placeholder ?? v("shell.search"),
 		onClick: (e) => {
-			e.currentTarget.focus(), V(!0);
+			e.currentTarget.focus(), re(!0);
 		},
 		children: [
 			/* @__PURE__ */ H(o, { name: "search" }),
@@ -978,12 +978,13 @@ function lt(e) {
 			}),
 			/* @__PURE__ */ H(p, {
 				"aria-hidden": "true",
-				children: re
+				children: W
 			})
 		]
 	});
-	return /* @__PURE__ */ H(j, {
-		storageKey: y.entryKey ?? m.href(`${x}${y.search}${y.hash}`),
+	return /* @__PURE__ */ H(ee, {
+		storageKey: y.entryKey ?? S,
+		href: S,
 		mainRef: M,
 		children: /* @__PURE__ */ U("div", {
 			className: "mtc-shell",
@@ -1009,7 +1010,7 @@ function lt(e) {
 									"aria-label": v("shell.menu"),
 									variant: "ghost",
 									className: "mtc-shell-menu",
-									onClick: () => E(!0)
+									onClick: () => O(!0)
 								}),
 								/* @__PURE__ */ U("a", {
 									className: "mtc-shell-product",
@@ -1033,7 +1034,7 @@ function lt(e) {
 								})
 							]
 						}),
-						!S && se,
+						!C && ce,
 						/* @__PURE__ */ U("div", {
 							className: "mtc-shell-actions",
 							children: [
@@ -1041,8 +1042,8 @@ function lt(e) {
 									className: "mtc-shell-product-actions",
 									children: l
 								}),
-								S && se,
-								ae && /* @__PURE__ */ H("div", {
+								C && ce,
+								oe && /* @__PURE__ */ H("div", {
 									className: "mtc-shell-account",
 									children: J.length > 0 ? /* @__PURE__ */ H(A, {
 										label: v("shell.account"),
@@ -1060,7 +1061,7 @@ function lt(e) {
 				}),
 				r && /* @__PURE__ */ H("div", {
 					className: "mtc-shell-rail-slot",
-					children: oe(!1)
+					children: se(!1)
 				}),
 				/* @__PURE__ */ H("main", {
 					id: "mtc-main",
@@ -1079,17 +1080,17 @@ function lt(e) {
 					children: d
 				}),
 				r && /* @__PURE__ */ H(D, {
-					open: T,
-					onOpenChange: E,
+					open: E,
+					onOpenChange: O,
 					title: n.name,
 					side: "left",
 					width: 288,
 					className: "mtc-shell-drawer",
-					children: oe(!0)
+					children: se(!0)
 				}),
 				s && /* @__PURE__ */ H(b, {
-					open: O,
-					onOpenChange: V,
+					open: k,
+					onOpenChange: re,
 					query: s.query,
 					onQueryChange: s.onQueryChange,
 					groups: s.groups,
@@ -1104,9 +1105,9 @@ function lt(e) {
 	});
 }
 function ut(e) {
-	let { channel: t } = e, n = Q(), r = z(null), i = z(null);
-	return I(() => {
-		let e = i.current;
+	let { channel: t } = e, n = Q(), r = e.router.href(`${n.pathname}${n.search}${n.hash}`), i = R(null), a = R(null);
+	return F(() => {
+		let e = a.current;
 		if (!e || !t || typeof ResizeObserver > "u") return;
 		let n = -1, r = new ResizeObserver(() => {
 			let r = Math.ceil(e.scrollHeight);
@@ -1117,16 +1118,17 @@ function ut(e) {
 			}));
 		});
 		return r.observe(e), () => r.disconnect();
-	}, [t]), /* @__PURE__ */ H(j, {
-		storageKey: n.entryKey ?? e.router.href(`${n.pathname}${n.search}${n.hash}`),
-		mainRef: r,
+	}, [t]), /* @__PURE__ */ H(ee, {
+		storageKey: n.entryKey ?? r,
+		href: r,
+		mainRef: i,
 		children: /* @__PURE__ */ U("div", {
-			ref: i,
+			ref: a,
 			className: "mtc-shell-embedded",
 			children: [
 				/* @__PURE__ */ H("main", {
 					id: "mtc-main",
-					ref: r,
+					ref: i,
 					className: "mtc-shell-main",
 					children: /* @__PURE__ */ H(ot, { ...e })
 				}),
@@ -1137,4 +1139,4 @@ function ut(e) {
 	});
 }
 //#endregion
-export { tt as OperationsTray, at as ProductShell, je as RENEW_LEAD_MS, ze as ResourceCacheProvider, we as RouterLink, be as RouterProvider, Oe as SESSION_RENEWED, ke as SESSION_RENEW_FAILED, j as ScrollRestorationProvider, T as SourceError, _e as buildPath, Xe as createEmbedChannel, pe as createHistoryRouter, De as createHttpSessionPort, me as createMemoryRouter, le as createProductFetch, Ie as createResourceCache, x as describeSourceError, de as ensureOk, C as isSourceError, ge as matchPath, ve as matchRoutes, q as newTraceparent, Ye as parseEmbedHostMessage, v as parseRetryAfter, Ee as parseSessionBody, Ae as renewViaFrame, qe as requestTelemetry, Ve as resourceKey, S as responseRequestId, w as sourceErrorFromResponse, h as sourceErrorKindForCode, y as sourceErrorKindForStatus, E as toSourceError, Q as useLocation, rt as useProductShell, Ge as useResource, Be as useResourceCache, Ce as useRoute, xe as useRouter, k as useScrollRestoration, Pe as useSessionController };
+export { tt as OperationsTray, at as ProductShell, je as RENEW_LEAD_MS, ze as ResourceCacheProvider, we as RouterLink, be as RouterProvider, Oe as SESSION_RENEWED, ke as SESSION_RENEW_FAILED, ee as ScrollRestorationProvider, T as SourceError, _e as buildPath, Xe as createEmbedChannel, pe as createHistoryRouter, De as createHttpSessionPort, me as createMemoryRouter, le as createProductFetch, Ie as createResourceCache, x as describeSourceError, de as ensureOk, C as isSourceError, ge as matchPath, ve as matchRoutes, ae as newTraceparent, Ye as parseEmbedHostMessage, v as parseRetryAfter, Ee as parseSessionBody, Ae as renewViaFrame, qe as requestTelemetry, Ve as resourceKey, S as responseRequestId, w as sourceErrorFromResponse, h as sourceErrorKindForCode, y as sourceErrorKindForStatus, E as toSourceError, Q as useLocation, rt as useProductShell, Ge as useResource, Be as useResourceCache, Ce as useRoute, xe as useRouter, k as useScrollRestoration, Pe as useSessionController };
