@@ -4,6 +4,17 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.8.1] — 2026-10-20
+
+### Fixed
+
+- Native media previews check browser support and distinguish transport errors
+  from unsupported codecs. Hosts can inject silent session renewal; a retry
+  restores playback position and paused or playing state.
+- AVIF images are admitted by signature. Large raster images and PDFs use a
+  bounded signature probe before rendering their original URL, avoiding a
+  whole-file preview buffer. Active document types remain source-only.
+
 ## [0.8.0] — 2026-10-17
 
 A minor release: it adds public API (`ScrollRestorationProvider`,

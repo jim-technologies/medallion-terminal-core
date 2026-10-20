@@ -566,8 +566,10 @@ test('Database explorer filters, inspects, and presents schema and query workflo
 test('FilePreview renders a valid image from a blob and refuses a renamed SVG', async ({ page }) => {
   const root = await openStory(page, stories.toolkitImagePreview)
   await expect(root.getByRole('img', { name: 'chart.png' })).toHaveAttribute('src', /^blob:/)
-  await expect(root.getByText('Preview blocked')).toBeVisible()
-  await expect(root.locator('img[alt="renamed.png"], svg[onload]')).toHaveCount(0)
+  await expect(root.getByText('Preview blocked', { exact: true })).toHaveCount(2)
+  await expect(root.getByText('Not a valid PNG.', { exact: true })).toBeVisible()
+  await expect(root.getByText('Not a valid PDF.', { exact: true })).toBeVisible()
+  await expect(root.locator('img[alt="renamed.png"], iframe, svg[onload]')).toHaveCount(0)
 })
 
 test('FileBrowser lists entries in a keyboard grid with stable data hooks', async ({ page }) => {

@@ -9,6 +9,10 @@ if (!Number.isInteger(storybookPort) || storybookPort < 1 || storybookPort > 655
 }
 const storybookUrl = `http://127.0.0.1:${storybookPort}`
 const performancePhase = process.env.STORYBOOK_PERFORMANCE_PHASE === '1'
+const browserWorkers = Number(process.env.PLAYWRIGHT_WORKERS ?? (process.env.CI ? '1' : '8'))
+if (!Number.isSafeInteger(browserWorkers) || browserWorkers < 1 || browserWorkers > 8) {
+  throw new Error('PLAYWRIGHT_WORKERS must be an integer from 1 to 8')
+}
 const historyFixturePort = Number(process.env.HISTORY_FIXTURE_PORT ?? 6216)
 if (!Number.isInteger(historyFixturePort) || historyFixturePort < 1 || historyFixturePort > 65535 || historyFixturePort === storybookPort) throw new Error('HISTORY_FIXTURE_PORT must be a distinct valid port')
 
@@ -26,7 +30,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   // Playwright recommends one CI worker for stability; local concurrency stays bounded.
-  workers: process.env.CI ? 1 : 8,
+  workers: browserWorkers,
   reporter: process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'line',
   // Text snapshots: the exact accessibility tree of each visual baseline
   // story (see expectBaseline in the spec).
@@ -70,9 +74,9 @@ export default defineConfig({
     { name: 'chromium' },
     {
       name: 'firefox',
-      testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch)\.spec\.ts/,
+      testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch|media-preview)\.spec\.ts/,
       use: { browserName: 'firefox', launchOptions: { env: firefoxEnv } },
     },
-    { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch)\.spec\.ts/, use: { browserName: 'webkit' } },
+    { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch|media-preview)\.spec\.ts/, use: { browserName: 'webkit' } },
   ],
 })

@@ -3,6 +3,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { StoryFrame } from '../../.storybook/StoryFrame'
 import { CodeView, FilePreview } from '.'
 import { TYPESCRIPT, fakeFileFetch } from './fileStories.fixture'
+import { LargePreviewsFixture, MediaPlaybackFixture } from './mediaStories.fixture'
 
 const meta = {
   title: 'Toolkit/Files',
@@ -49,26 +50,48 @@ export const MarkdownDocument: Story = {
 
 const downloaded = fn()
 
+const signatureFileFetch: typeof globalThis.fetch = async (input, init) => {
+  const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+  if (url.endsWith('/contract-scan.pdf')) {
+    const bytes = new TextEncoder().encode('<html><h1>Source document</h1></html>')
+    return new Response(bytes.slice(0, 16), {
+      status: 206,
+      headers: { 'content-type': 'application/pdf', 'content-range': 'bytes 0-15/80000000' },
+    })
+  }
+  return fakeFileFetch(input, init)
+}
+
 export const SignatureChecks: Story = {
   name: 'Images and signature checks',
   render: () => (
     <div className="grid gap-4 md:grid-cols-2">
       <FilePreview file={{ name: 'chart.png', url: '/files/chart.png' }} fetch={fakeFileFetch} />
       <FilePreview file={{ name: 'renamed.png', url: '/files/renamed.png' }} fetch={fakeFileFetch} onDownload={() => downloaded('renamed.png')} />
-      <FilePreview file={{ name: 'contract-scan.pdf', url: '/files/contract-scan.pdf', sizeBytes: 80_000_000 }} fetch={fakeFileFetch} onDownload={() => downloaded('contract-scan.pdf')} />
+      <FilePreview file={{ name: 'contract-scan.pdf', url: '/files/contract-scan.pdf', sizeBytes: 80_000_000 }} fetch={signatureFileFetch} onDownload={() => downloaded('contract-scan.pdf')} />
       <FilePreview file={{ name: 'installer.exe', url: '/files/installer.exe' }} fetch={fakeFileFetch} onDownload={() => downloaded('installer.exe')} />
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await expect(await canvas.findByRole('img', { name: 'chart.png' })).toHaveAttribute('src', expect.stringMatching(/^blob:/))
-    await expect(await canvas.findByText('Preview blocked')).toBeVisible()
+    await waitFor(() => expect(canvas.getAllByText('Preview blocked')).toHaveLength(2))
     await expect(canvas.getByText('Not a valid PNG.')).toBeVisible()
-    await expect(canvas.getByText('80 MB is over the 50 MB preview limit.')).toBeVisible()
+    await expect(canvas.getByText('Not a valid PDF.')).toBeVisible()
     await expect(canvas.getByText('No preview for this file type')).toBeVisible()
     await userEvent.click(canvas.getAllByRole('button', { name: 'Download' })[0]!)
     await expect(downloaded).toHaveBeenCalledWith('renamed.png')
   },
+}
+
+export const MediaPlayback: Story = {
+  name: 'Media playback and host renewal',
+  render: () => <MediaPlaybackFixture />,
+}
+
+export const LargePreviews: Story = {
+  name: 'Large raster and PDF signature checks',
+  render: () => <LargePreviewsFixture />,
 }
 
 export const SourceAndText: Story = {

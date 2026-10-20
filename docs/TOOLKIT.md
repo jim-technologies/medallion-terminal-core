@@ -259,15 +259,22 @@ Popover and menu document listeners exist only while their layer is open.
   `sizeBytes`) previewed under the shared policy (`planPreview`,
   `DEFAULT_PREVIEW_LIMITS`): text, code, JSON and Markdown read at most
   1 MB with a Range request and a bounded read; CSV and TSV at most
-  1,000 rows × 100 columns into a `DataGrid`; PNG, JPEG, GIF, WebP and PDF
-  fetched only under 20 MB and 50 MB and shown from a blob only when their
-  bytes carry the right signature; audio and video play natively; HTML,
+  1,000 rows × 100 columns into a `DataGrid`; PNG, JPEG, GIF, WebP, AVIF and PDF
+  shown only when their bytes carry the right signature. Images under 20 MB
+  and PDFs under 50 MB use a bounded blob; larger files use their original
+  URL after a 16-byte signature probe and a safe response content type.
+  Audio and video play natively after a browser capability check; HTML,
   SVG and XML show as source; anything else offers `onDownload`. Pass the
   product's `fetch` (for example a `createProductFetch`) so reads carry
   request ids and typed errors. The file's bytes stay on the origin that
   serves `url`. `markdown={{ resolveHref, resolveImage }}` rewrites
   repository-relative links and images before rendering; `renderMarkdown`
   takes the same options for Markdown rendered outside a preview.
+  Pass the host's `session` port to renew an expired media request silently.
+  A media error first probes a one-byte Range: a 401 can renew once and reload
+  while preserving playback position and paused/playing intent; a successful
+  probe identifies a browser playback failure and offers Download. Other HTTP
+  failures remain transport errors. The kit names no authentication endpoint.
 - `CodeView`: read-only source with line numbers, wrap, copy, highlighted
   lines and a bounded line count (5,000).
 
