@@ -399,29 +399,87 @@ for (const initiallyPlaying of [true, false]) {
     state.probeStatus = 401
     state.renewalBarrier = hold.promise
     try {
+      await media.evaluate(element => {
+        const player = element as HTMLMediaElement
+        const nativeTime = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'currentTime')!
+        const ownTime = Object.getOwnPropertyDescriptor(player, 'currentTime')
+        const ownLoad = Object.getOwnPropertyDescriptor(player, 'load')
+        const nativeLoad = player.load
+        const bookmark = { time: nativeTime.get!.call(player) as number, paused: player.paused }
+        let pending = true
+        let observingTimeEvent = false
+        const trackTime = () => {
+          if (!pending || player.error) return
+          bookmark.time = nativeTime.get!.call(player) as number
+          observingTimeEvent = true
+          queueMicrotask(() => { observingTimeEvent = false })
+        }
+        const trackPlay = () => { if (pending) bookmark.paused = false }
+        const trackPause = () => { if (pending && !player.error) bookmark.paused = true }
+        const recovered = () => {
+          if (pending) return
+          player.setAttribute('data-recovery-seek-time', String(nativeTime.get!.call(player)))
+          player.removeEventListener('timeupdate', trackTime, true)
+          player.removeEventListener('seeking', trackTime, true)
+          player.removeEventListener('play', trackPlay, true)
+          player.removeEventListener('pause', trackPause, true)
+          player.removeEventListener('seeked', recovered)
+          if (ownTime) Object.defineProperty(player, 'currentTime', ownTime)
+          else Reflect.deleteProperty(player, 'currentTime')
+          if (ownLoad) Object.defineProperty(player, 'load', ownLoad)
+          else Reflect.deleteProperty(player, 'load')
+        }
+        Object.defineProperty(player, 'currentTime', {
+          configurable: true,
+          enumerable: nativeTime.enumerable,
+          get() {
+            const time = nativeTime.get!.call(player) as number
+            // Observe the exact native value read by a bookmark event handler.
+            if (pending && observingTimeEvent && Number.isFinite(time)) bookmark.time = time
+            return time
+          },
+          set(time: number) {
+            player.setAttribute(pending ? 'data-pending-seek-target' : 'data-recovery-target', String(time))
+            nativeTime.set!.call(player, time)
+          },
+        })
+        Object.defineProperty(player, 'load', {
+          configurable: true,
+          writable: true,
+          value() {
+            player.setAttribute('data-recovery-bookmark-time', String(bookmark.time))
+            player.setAttribute('data-recovery-bookmark-paused', String(bookmark.paused))
+            pending = false
+            return nativeLoad.call(player)
+          },
+        })
+        player.addEventListener('timeupdate', trackTime, true)
+        player.addEventListener('seeking', trackTime, true)
+        player.addEventListener('play', trackPlay, true)
+        player.addEventListener('pause', trackPause, true)
+        player.addEventListener('seeked', recovered)
+      })
       await media.dispatchEvent('error')
       await expect.poll(() => state.renewals).toBe(1)
       expect(state.probes).toBe(1)
       await page.getByRole('button', { name: initiallyPlaying ? 'Pause sample' : 'Play sample' }).click()
       await expect.poll(() => media.evaluate(element => (element as HTMLMediaElement).paused)).toBe(initiallyPlaying)
       await seek(media, initiallyPlaying ? 2.25 : 0.5)
-      const latest = await media.evaluate(element => {
-        const player = element as HTMLMediaElement
-        return { time: player.currentTime, paused: player.paused }
-      })
-      expect(latest.paused).toBe(initiallyPlaying)
-      await media.evaluate(element => {
-        const player = element as HTMLMediaElement
-        player.removeAttribute('data-recovery-seek-time')
-        player.addEventListener('seeked', () => player.setAttribute('data-recovery-seek-time', String(player.currentTime)), { once: true })
-      })
       hold.release()
       await expect.poll(() => media.getAttribute('data-recovery-seek-time')).not.toBeNull()
-      expect(Number(await media.getAttribute('data-recovery-seek-time'))).toBeCloseTo(latest.time, 1)
+      const recovery = await media.evaluate(element => ({
+        requestedSeek: Number(element.getAttribute('data-pending-seek-target')),
+        target: Number(element.getAttribute('data-recovery-target')),
+        bookmark: Number(element.getAttribute('data-recovery-bookmark-time')),
+        paused: element.getAttribute('data-recovery-bookmark-paused'),
+      }))
+      expect(recovery.requestedSeek).toBe(initiallyPlaying ? 2.25 : 0.5)
+      expect(recovery.target).toBe(recovery.bookmark)
+      expect(recovery.paused).toBe(String(initiallyPlaying))
       await expect(page.locator('.mtc-file-preview [aria-busy="true"]')).toHaveCount(0)
       await expect.poll(() => media.evaluate(element => (element as HTMLMediaElement).paused)).toBe(initiallyPlaying)
       if (initiallyPlaying) {
-        expect(await media.evaluate(element => (element as HTMLMediaElement).currentTime)).toBeCloseTo(latest.time, 1)
+        expect(await media.evaluate(element => (element as HTMLMediaElement).currentTime)).toBeCloseTo(recovery.bookmark, 1)
       } else {
         const restored = await media.evaluate(element => (element as HTMLMediaElement).currentTime)
         await expect.poll(() => media.evaluate(element => (element as HTMLMediaElement).currentTime)).toBeGreaterThan(restored + 0.1)
