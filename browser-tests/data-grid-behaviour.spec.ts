@@ -194,8 +194,8 @@ test('10,001 virtualized rows keep sampled DOM coverage while scrolling', { tag:
   const generatedHelpers = []
   // These two generated toolchain helpers have no original source maps.
   const knownGeneratedHelpers: Record<string, string> = {
-    '97cd730ec57b186cda02f34226d3cf8fd283b7d5ad62fb53a94cebfeb4e0d3de': 'Vite preload helper',
-    '4625e101449061a5fae04634001143ffaba4e22a6141f1f77ed6d342b4e9db4e': 'Rolldown interop helper',
+    'd46def845798064af638b851b2e3650610090f4b7741b0c64fe5c4d9deceff02': 'Vite preload helper',
+    '70042c850830e3be55f1ddd39d263ae2a8921f9b5583c1e5d9029f298dd9c326': 'Rolldown interop helper',
   }
   for (const pathname of [...new Set(loadedAssets)]) {
     const path = resolve('storybook-performance', pathname.slice(1))

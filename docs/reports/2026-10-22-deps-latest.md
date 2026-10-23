@@ -59,3 +59,13 @@ availability.
 Release this refreshed library before repinning and publishing consumer
 updates. Dependencies already inlined into a consumer's immutable library
 bundle do not change merely because its application lockfile is refreshed.
+
+The first isolated full attempt passed 1045 unit, 435 Storybook and all 884
+behavior browser tests. Its three performance cases then refused changed
+generated-helper fingerprints. The two mapless files were reviewed against
+Vite 8.3.5's preload helper and Rolldown 1.2.15's interop runtime, and their
+exact SHA256 expectations were refreshed. The allowlist still contains only
+those two helpers; served-byte equality, source-map provenance, production
+React checks and every scrolling threshold remain enforced. Captured samples
+had zero blank frames in all three browsers and no recorded long tasks;
+the failed attempt remains a failure until the entire gate passes again.
