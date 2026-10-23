@@ -396,9 +396,9 @@ hook because nothing packs.
 ## Tech stack
 
 React 19.3 + TypeScript 7.0. Vite 8, Tailwind 4.3, Recharts 3.10,
-lightweight-charts 5.2 (for `candlestick`), MapLibre GL JS 6.11 (for
-`geo_map`), Vitest 4.1, Storybook 10.6, Playwright 1.63,
-Protobuf + Buf 1.72, Node 24 / pnpm 11.27 (both pinned by Flox), Flox.
+lightweight-charts 5.2 (for `candlestick`), MapLibre GL JS 6.15 (for
+`geo_map`), Vitest 5.0, Storybook 10.6, Playwright 1.64,
+Protobuf + Buf 1.73, Node 24 / pnpm 12.9 (both pinned by Flox), Flox.
 
 There is no separate JavaScript linter, on purpose: `tsc` in strict mode with
 `noUnusedLocals` / `noUnusedParameters` is the TypeScript lint, the style-token

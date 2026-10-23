@@ -1,10 +1,3 @@
-## Flox Environment Manifest -----------------------------------------
-##
-##   _Everything_ you need to know about the _manifest_ is here:
-##
-##   https://flox.dev/docs/reference/command-reference/manifest.toml/
-##
-## -------------------------------------------------------------------
 schema-version = "1.12.0"
 
 
@@ -18,16 +11,17 @@ schema-version = "1.12.0"
 # the fonts and linters below, which stay on whatever nixpkgs revision the
 # default group lands on.
 nodejs.pkg-path = "nodejs_24"
-nodejs.version = "24.20.0"
+nodejs.version = "24.21.0"
 nodejs.pkg-group = "node"
 # pnpm must equal package.json `packageManager` (scripts/check-version.mjs
-# asserts it): pnpm 11 otherwise downloads the declared version behind
+# asserts it): pnpm otherwise downloads the declared version behind
 # Flox's back and Flox stops being the sole toolchain provider.
 pnpm.pkg-path = "pnpm"
-pnpm.version = "11.27.0"
+pnpm.version = "12.9.0"
 buf.pkg-path = "buf"
-buf.version = "1.72.0"
+buf.version = "1.73.0"
 actionlint.pkg-path = "actionlint"
+actionlint.version = "1.7.12"
 # gitleaks backs `make audit` (the weekly audit.yml), never the gate. Its own
 # package group keeps it from moving the default group's nixpkgs revision,
 # which would change the pinned fonts and with them every browser baseline.
@@ -38,9 +32,13 @@ gsettings-desktop-schemas.pkg-path = "gsettings-desktop-schemas"
 gsettings-desktop-schemas.version = "50.1"
 gsettings-desktop-schemas.pkg-group = "browser-runtime"
 lato.pkg-path = "lato"
+lato.version = "2.0"
 dejavu_fonts.pkg-path = "dejavu_fonts"
+dejavu_fonts.version = "2.37"
 noto-fonts-color-emoji.pkg-path = "noto-fonts-color-emoji"
+noto-fonts-color-emoji.version = "2.051"
 inter.pkg-path = "inter"
+inter.version = "4.1"
 # gum.pkg-path = "gum"
 # gum.version = "^0.14.5"
 
@@ -143,7 +141,7 @@ EOF
 
 ## Other Environment Options -----------------------------------------
 [options]
-# The catalog publishes no nodejs_24 >= 24.18, pnpm 11.27 or buf 1.72 for
+# The catalog does not offer the selected Node/pnpm/Buf toolchain for
 # x86_64-darwin; keep one current lock across the systems that have them.
 systems = [
   "aarch64-darwin",

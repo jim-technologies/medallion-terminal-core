@@ -1,4 +1,4 @@
-//#region src/foundations/messages-zh.ts
+// src/foundations/messages-zh.ts
 var e = {
 	"button.working": "处理中",
 	"breadcrumbs.label": "路径导航",
@@ -139,5 +139,4 @@ var e = {
 	"ops.status.cancelled": "已取消",
 	"objectPage.sections": "对象分区"
 };
-//#endregion
 export { e as ZH_CN_MESSAGES };

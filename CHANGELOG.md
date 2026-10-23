@@ -4,6 +4,13 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Changed
+
+- Refresh dependency and Flox toolchain pins, including pnpm 12, Vitest 5,
+  Storybook 10.6.3 and the current Vite, React and renderer patches. Keep
+  Node 24 and its matching types, and require the one-day package release age
+  during ordinary and frozen installs.
+
 ## [0.8.0] — 2026-10-17
 
 A minor release: it adds public API (`ScrollRestorationProvider`,

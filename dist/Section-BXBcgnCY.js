@@ -1,0 +1,15 @@
+import { t as e } from "./rolldown-runtime-CGnMp29N.js";
+import { jsx as t, jsxs as n } from "react/jsx-runtime";
+// src/widgets/Section.tsx
+var r = /* @__PURE__ */ e({ Section: () => i });
+function i({ options: e }) {
+	let r = typeof e?.label == "string" ? e.label : "";
+	return /* @__PURE__ */ n("div", {
+		className: "h-full flex items-center gap-3 px-1",
+		children: [r && /* @__PURE__ */ t("span", {
+			className: "text-[length:var(--mtc-font-size-xs)] text-zinc-500 shrink-0",
+			children: r
+		}), /* @__PURE__ */ t("div", { className: "flex-1 h-px bg-zinc-800" })]
+	});
+}
+export { r as n, i as t };

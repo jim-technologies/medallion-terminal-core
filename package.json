@@ -4,7 +4,7 @@
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
-  "packageManager": "pnpm@11.27.0",
+  "packageManager": "pnpm@12.9.0",
   "engines": {
     "node": ">=24.18.0"
   },
@@ -95,38 +95,38 @@
     }
   },
   "dependencies": {
-    "dompurify": "^3.4.16",
-    "hyparquet-writer": "^0.16.10",
-    "marked": "^18.0.14"
+    "dompurify": "^3.4.17",
+    "hyparquet-writer": "^0.17.0",
+    "marked": "^18.1.1"
   },
   "devDependencies": {
-    "@axe-core/playwright": "4.13.0",
-    "@bufbuild/protobuf": "^2.15.0",
-    "@bufbuild/protoc-gen-es": "^2.15.0",
+    "@axe-core/playwright": "4.14.0",
+    "@bufbuild/protobuf": "^2.16.0",
+    "@bufbuild/protoc-gen-es": "^2.16.0",
     "@connectrpc/connect": "^2.2.0",
     "@connectrpc/connect-web": "^2.2.0",
     "@playwright/test": "1.64.1",
-    "@storybook/addon-a11y": "10.6.0",
-    "@storybook/addon-vitest": "10.6.0",
-    "@storybook/react": "^10.6.0",
-    "@storybook/react-vite": "^10.6.0",
+    "@storybook/addon-a11y": "10.6.3",
+    "@storybook/addon-vitest": "10.6.3",
+    "@storybook/react": "^10.6.3",
+    "@storybook/react-vite": "^10.6.3",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^24.13.6",
+    "@types/node": "^24",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.1",
-    "@vitest/browser-playwright": "4.1.11",
+    "@vitejs/plugin-react": "^6.1.2",
+    "@vitest/browser-playwright": "5.0.5",
     "esbuild": "^0.28.2",
-    "hyparquet": "^1.31.1",
+    "hyparquet": "^1.31.5",
     "lightweight-charts": "^5.2.1",
-    "maplibre-gl": "^6.11.2",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
+    "maplibre-gl": "^6.15.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "recharts": "^3.10.1",
-    "storybook": "^10.6.0",
+    "storybook": "^10.6.3",
     "tailwindcss": "^4.3.3",
     "typescript": "~7.0.2",
-    "vite": "^8.3.1",
-    "vitest": "^4.1.11"
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   }
 }

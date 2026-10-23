@@ -4,3 +4,7 @@
 # its dist/ bundle.
 allowBuilds:
   esbuild: true
+
+# Preserve the one-day release-age requirement across installs and frozen locks.
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true

@@ -1,14 +1,14 @@
-import { D as e, E as t, S as n, c as r, d as i, f as a, g as o, i as s, m as c, r as l, w as u } from "./States-BUjeBrSp.js";
-import { a as d } from "./utils-8rNbW-NI.js";
-import { r as f } from "./types-C1HPXTFC.js";
-import { _ as p, a as m, c as h, d as g, h as _, i as v, l as y, m as b, n as x, o as S, r as C, s as w, t as T, u as E } from "./sourceError-ivx_3EcC.js";
-import { a as D, i as O, n as k, o as A, t as ee } from "./ScrollRestoration-B0xP6-wB.js";
-import { t as te } from "./NavRail-_P3K7iv_.js";
-import { t as ne } from "./useBreakpoint-CvBnDyn0.js";
+import { D as e, E as t, S as n, c as r, d as i, f as a, g as o, i as s, m as c, r as l, w as u } from "./States-9MUuKqo7.js";
+import { a as d } from "./utils-lOoEiIAx.js";
+import { r as f } from "./types-BsWMEPD5.js";
+import { _ as p, a as m, c as h, d as g, h as _, i as v, l as y, m as b, n as x, o as S, r as C, s as w, t as T, u as E } from "./sourceError-Z6tApgGs.js";
+import { a as D, i as O, n as k, o as A, t as ee } from "./ScrollRestoration-DNZ0AOnD.js";
+import { t as te } from "./NavRail-B0pztnnU.js";
+import { t as ne } from "./useBreakpoint-B-1qHeHo.js";
 import { createContext as j, forwardRef as M, useCallback as N, useContext as P, useEffect as F, useId as I, useMemo as L, useRef as R, useState as z, useSyncExternalStore as B } from "react";
 import { Fragment as V, jsx as H, jsxs as U } from "react/jsx-runtime";
 import { createPortal as re } from "react-dom";
-//#region src/app/productFetch.ts
+// src/app/productFetch.ts
 var W = "x-request-id", G = "traceparent", ie = "connect-timeout-ms";
 function K(e) {
 	let t = new Uint8Array(e);
@@ -89,8 +89,7 @@ async function de(e) {
 	if (e.ok) return e;
 	throw await w(e);
 }
-//#endregion
-//#region src/app/router.ts
+// src/app/router.ts
 function X(e) {
 	let t = new URL(e, "http://app.local");
 	return {
@@ -213,8 +212,7 @@ function ve(e, t) {
 	}
 	return null;
 }
-//#endregion
-//#region src/app/routing.tsx
+// src/app/routing.tsx
 var ye = j(null);
 function be({ router: e, children: t }) {
 	return /* @__PURE__ */ H(ye.Provider, {
@@ -255,8 +253,7 @@ var we = M(function({ to: e, replace: t, onClick: n, ...r }, i) {
 		}
 	});
 });
-//#endregion
-//#region src/app/session.ts
+// src/app/session.ts
 function Te(e) {
 	if (typeof e == "number" && Number.isFinite(e)) return e < 0xe8d4a51000 ? e * 1e3 : e;
 	if (typeof e == "string" && e !== "") {
@@ -321,8 +318,7 @@ function Ae({ url: e, origin: t, timeoutMs: n = 15e3, window: r = globalThis.win
 		r.addEventListener("message", c), o.src = e, r.document.body.appendChild(o);
 	});
 }
-//#endregion
-//#region src/app/useSessionController.ts
+// src/app/useSessionController.ts
 var je = 6e4, Me = 2147483647;
 function Ne(e, t, { now: n = Date.now, document: r, setTimeout: i = (e, t) => globalThis.setTimeout(e, t), clearTimeout: a = (e) => globalThis.clearTimeout(e) }) {
 	let o, s = () => {
@@ -330,11 +326,7 @@ function Ne(e, t, { now: n = Date.now, document: r, setTimeout: i = (e, t) => gl
 	}, c = () => {
 		if (s(), r.hidden) return;
 		let a = e - je - n();
-		if (a <= 0) {
-			t();
-			return;
-		}
-		o = i(() => {
+		a <= 0 ? t() : o = i(() => {
 			o = void 0, a > Me ? c() : t();
 		}, Math.min(a, Me));
 	};
@@ -390,8 +382,7 @@ function Pe(e, t = {}) {
 		}, [p])
 	};
 }
-//#endregion
-//#region src/app/resourceCache.ts
+// src/app/resourceCache.ts
 var Fe = Object.freeze({ validating: !1 });
 function Ie({ maxEntries: e = 100, now: t = Date.now } = {}) {
 	let n = /* @__PURE__ */ new Map(), r = (e) => {
@@ -460,8 +451,7 @@ function Ie({ maxEntries: e = 100, now: t = Date.now } = {}) {
 		}
 	};
 }
-//#endregion
-//#region src/app/useResource.tsx
+// src/app/useResource.tsx
 var Le = j(null), Re;
 function ze({ cache: e, children: t }) {
 	return /* @__PURE__ */ H(Le.Provider, {
@@ -539,8 +529,7 @@ function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		mutate: m
 	};
 }
-//#endregion
-//#region src/app/telemetry.ts
+// src/app/telemetry.ts
 function Ke(e) {
 	try {
 		return new URL(e, "http://app.local").pathname;
@@ -559,8 +548,7 @@ function qe(e) {
 		durationMs: Math.round(t.durationMs)
 	});
 }
-//#endregion
-//#region src/app/embed.ts
+// src/app/embed.ts
 var Je = /* @__PURE__ */ new Set([
 	"dark",
 	"light",
@@ -605,8 +593,7 @@ function Xe({ allowedOrigins: e, window: t = globalThis.window }) {
 		}
 	};
 }
-//#endregion
-//#region src/app/OperationsTray.tsx
+// src/app/OperationsTray.tsx
 var Ze = {
 	queued: "clock",
 	running: "spinner",
@@ -771,8 +758,7 @@ function tt({ operations: n, title: r, onCancel: i, onRetry: s, onDismiss: l, on
 	});
 	return h === "floating" && v ? re(O, v) : O;
 }
-//#endregion
-//#region src/app/ProductShell.tsx
+// src/app/ProductShell.tsx
 var nt = j(null);
 function rt() {
 	let e = P(nt);
@@ -1138,5 +1124,4 @@ function ut(e) {
 		})
 	});
 }
-//#endregion
 export { tt as OperationsTray, at as ProductShell, je as RENEW_LEAD_MS, ze as ResourceCacheProvider, we as RouterLink, be as RouterProvider, Oe as SESSION_RENEWED, ke as SESSION_RENEW_FAILED, ee as ScrollRestorationProvider, T as SourceError, _e as buildPath, Xe as createEmbedChannel, pe as createHistoryRouter, De as createHttpSessionPort, me as createMemoryRouter, le as createProductFetch, Ie as createResourceCache, x as describeSourceError, de as ensureOk, C as isSourceError, ge as matchPath, ve as matchRoutes, ae as newTraceparent, Ye as parseEmbedHostMessage, v as parseRetryAfter, Ee as parseSessionBody, Ae as renewViaFrame, qe as requestTelemetry, Ve as resourceKey, S as responseRequestId, w as sourceErrorFromResponse, h as sourceErrorKindForCode, y as sourceErrorKindForStatus, E as toSourceError, Q as useLocation, rt as useProductShell, Ge as useResource, Be as useResourceCache, Ce as useRoute, xe as useRouter, k as useScrollRestoration, Pe as useSessionController };

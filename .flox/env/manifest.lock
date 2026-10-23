@@ -4,14 +4,16 @@
     "schema-version": "1.12.0",
     "install": {
       "actionlint": {
-        "pkg-path": "actionlint"
+        "pkg-path": "actionlint",
+        "version": "1.7.12"
       },
       "buf": {
         "pkg-path": "buf",
-        "version": "1.72.0"
+        "version": "1.73.0"
       },
       "dejavu_fonts": {
-        "pkg-path": "dejavu_fonts"
+        "pkg-path": "dejavu_fonts",
+        "version": "2.37"
       },
       "gitleaks": {
         "pkg-path": "gitleaks",
@@ -24,22 +26,25 @@
         "version": "50.1"
       },
       "inter": {
-        "pkg-path": "inter"
+        "pkg-path": "inter",
+        "version": "4.1"
       },
       "lato": {
-        "pkg-path": "lato"
+        "pkg-path": "lato",
+        "version": "2.0"
       },
       "nodejs": {
         "pkg-path": "nodejs_24",
         "pkg-group": "node",
-        "version": "24.20.0"
+        "version": "24.21.0"
       },
       "noto-fonts-color-emoji": {
-        "pkg-path": "noto-fonts-color-emoji"
+        "pkg-path": "noto-fonts-color-emoji",
+        "version": "2.051"
       },
       "pnpm": {
         "pkg-path": "pnpm",
-        "version": "11.27.0"
+        "version": "12.9.0"
       }
     },
     "hook": {
@@ -58,17 +63,17 @@
     {
       "attr_path": "gitleaks",
       "broken": false,
-      "derivation": "/nix/store/qbli3j7vzi9l0ryp9gai9y3py903as1g-gitleaks-8.30.1.drv",
+      "derivation": "/nix/store/42dkhy99z4psi0n1fx72g7dcm3i22890-gitleaks-8.30.1.drv",
       "description": "Scan git repos (or files) for secrets",
       "install_id": "gitleaks",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
       "name": "gitleaks-8.30.1",
       "pname": "gitleaks",
-      "rev": "e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
-      "rev_count": 1079315,
-      "rev_date": "2026-09-25T08:03:29Z",
-      "scrape_date": "2026-09-26T04:58:20.927685Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:28.844458Z",
       "stabilities": [
         "unstable"
       ],
@@ -78,7 +83,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/xc2752818mq2g9n4pp8jvjwmknj8izmy-gitleaks-8.30.1"
+        "out": "/nix/store/7zbpn90rg0b4j26zd1bbaab0bvsd0nzd-gitleaks-8.30.1"
       },
       "system": "aarch64-darwin",
       "group": "audit",
@@ -87,17 +92,17 @@
     {
       "attr_path": "gitleaks",
       "broken": false,
-      "derivation": "/nix/store/8b5mddmyvyysc2ign61jm3kgjx3bmfxw-gitleaks-8.30.1.drv",
+      "derivation": "/nix/store/xyv2v6kp360l5v2f9js8v3asivx2gy14-gitleaks-8.30.1.drv",
       "description": "Scan git repos (or files) for secrets",
       "install_id": "gitleaks",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
       "name": "gitleaks-8.30.1",
       "pname": "gitleaks",
-      "rev": "e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
-      "rev_count": 1079315,
-      "rev_date": "2026-09-25T08:03:29Z",
-      "scrape_date": "2026-09-26T05:29:39.937252Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.242306Z",
       "stabilities": [
         "unstable"
       ],
@@ -107,7 +112,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/m9plcdckz6qp0kbx563wlnnpy5zplrya-gitleaks-8.30.1"
+        "out": "/nix/store/4cnpsk0yav46sj005fb2kgygj7pj4bsg-gitleaks-8.30.1"
       },
       "system": "aarch64-linux",
       "group": "audit",
@@ -116,17 +121,17 @@
     {
       "attr_path": "gitleaks",
       "broken": false,
-      "derivation": "/nix/store/j9lkqzrqbfcv90pvnm1apj800vydkavl-gitleaks-8.30.1.drv",
+      "derivation": "/nix/store/cxz95iikw2yi0pk5z60ay7wvzhavdl0v-gitleaks-8.30.1.drv",
       "description": "Scan git repos (or files) for secrets",
       "install_id": "gitleaks",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
       "name": "gitleaks-8.30.1",
       "pname": "gitleaks",
-      "rev": "e94cb152ed51bd6e24eb4a41f1460252beb52cd2",
-      "rev_count": 1079315,
-      "rev_date": "2026-09-25T08:03:29Z",
-      "scrape_date": "2026-09-26T06:05:31.831836Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.640429Z",
       "stabilities": [
         "unstable"
       ],
@@ -136,7 +141,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/sp0zq4si8ax2sllicgv9hnb8xshrqklj-gitleaks-8.30.1"
+        "out": "/nix/store/350dhvpsa71wyv8z0ar701nkz79kj5sx-gitleaks-8.30.1"
       },
       "system": "x86_64-linux",
       "group": "audit",
@@ -145,17 +150,17 @@
     {
       "attr_path": "gsettings-desktop-schemas",
       "broken": false,
-      "derivation": "/nix/store/dpx69sn06m1bfnyliabfga40lly608qk-gsettings-desktop-schemas-50.1.drv",
+      "derivation": "/nix/store/7bvhfd1z982irzmf9ysiz6kv2cq16424-gsettings-desktop-schemas-50.1.drv",
       "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
       "install_id": "gsettings-desktop-schemas",
       "license": "LGPL-2.1-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
       "name": "gsettings-desktop-schemas-50.1",
       "pname": "gsettings-desktop-schemas",
-      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "rev_count": 1090327,
-      "rev_date": "2026-10-11T15:54:36Z",
-      "scrape_date": "2026-10-13T05:00:30.542862Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:28.852218Z",
       "stabilities": [
         "unstable"
       ],
@@ -166,7 +171,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/ba0gnxvncf9xrakxhsjpniswdqmc0nia-gsettings-desktop-schemas-50.1"
+        "out": "/nix/store/9fixjv77cnp5i67z1i3mvvh9pwnih17r-gsettings-desktop-schemas-50.1"
       },
       "system": "aarch64-darwin",
       "group": "browser-runtime",
@@ -175,17 +180,17 @@
     {
       "attr_path": "gsettings-desktop-schemas",
       "broken": false,
-      "derivation": "/nix/store/4ghxsnhm7z4cxa4hkswf1s18kx9pmw0q-gsettings-desktop-schemas-50.1.drv",
+      "derivation": "/nix/store/zw69x5a18vs9a196xyrp9bbwfvv6znn3-gsettings-desktop-schemas-50.1.drv",
       "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
       "install_id": "gsettings-desktop-schemas",
       "license": "LGPL-2.1-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
       "name": "gsettings-desktop-schemas-50.1",
       "pname": "gsettings-desktop-schemas",
-      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "rev_count": 1090327,
-      "rev_date": "2026-10-11T15:54:36Z",
-      "scrape_date": "2026-10-13T05:33:19.913383Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.256520Z",
       "stabilities": [
         "unstable"
       ],
@@ -198,7 +203,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/g3y8lgvx34xaqnjx839bq298nxnk08bz-gsettings-desktop-schemas-50.1"
+        "out": "/nix/store/3g3mklzvdyagapp0nnqnwjd9w1qxys3j-gsettings-desktop-schemas-50.1"
       },
       "system": "aarch64-linux",
       "group": "browser-runtime",
@@ -207,17 +212,17 @@
     {
       "attr_path": "gsettings-desktop-schemas",
       "broken": false,
-      "derivation": "/nix/store/hkici1x7asa6aqgi15y94m7qq874gvsb-gsettings-desktop-schemas-50.1.drv",
+      "derivation": "/nix/store/yji6agxi395nyync1pm5mn0axg4icr0r-gsettings-desktop-schemas-50.1.drv",
       "description": "Collection of GSettings schemas for settings shared by various components of a desktop",
       "install_id": "gsettings-desktop-schemas",
       "license": "LGPL-2.1-or-later",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
       "name": "gsettings-desktop-schemas-50.1",
       "pname": "gsettings-desktop-schemas",
-      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "rev_count": 1090327,
-      "rev_date": "2026-10-11T15:54:36Z",
-      "scrape_date": "2026-10-13T06:09:58.342570Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.650271Z",
       "stabilities": [
         "unstable"
       ],
@@ -230,7 +235,7 @@
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/r0qrx78hday3gr8dznxnniaf98c8lzjl-gsettings-desktop-schemas-50.1"
+        "out": "/nix/store/mq0z878vjvid7xic1v6cchwbb0zqqj0f-gsettings-desktop-schemas-50.1"
       },
       "system": "x86_64-linux",
       "group": "browser-runtime",
@@ -239,28 +244,28 @@
     {
       "attr_path": "nodejs_24",
       "broken": false,
-      "derivation": "/nix/store/j062ph4sqspapzz4bz4knx0icy2kfgjy-nodejs-24.20.0.drv",
+      "derivation": "/nix/store/i2p2vcalxpyikyrihlf83ccvyn73rfg4-nodejs-24.21.0.drv",
       "description": "Event-driven I/O framework for the V8 JavaScript engine",
       "install_id": "nodejs",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=6774f7bc253789b113a4f39285dc0fa100abeacc",
-      "name": "nodejs-24.20.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "nodejs-24.21.0",
       "pname": "nodejs_24",
-      "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
-      "rev_count": 1077996,
-      "rev_date": "2026-09-22T03:11:10Z",
-      "scrape_date": "2026-09-23T04:58:30.111494Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:29.001159Z",
       "stabilities": [
         "unstable"
       ],
       "unfree": false,
-      "version": "24.20.0",
+      "version": "24.21.0",
       "outputs_to_install": [
         "out",
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/7pn7zw2sciv3fih9l4xpyvx0q8hlrr0w-nodejs-24.20.0"
+        "out": "/nix/store/i376rizbw75rswsg2qlk47wj4zz3biqq-nodejs-24.21.0"
       },
       "system": "aarch64-darwin",
       "group": "node",
@@ -269,28 +274,28 @@
     {
       "attr_path": "nodejs_24",
       "broken": false,
-      "derivation": "/nix/store/z4ixg7wqqz4wvlvb3ava11m1khid3a1g-nodejs-24.20.0.drv",
+      "derivation": "/nix/store/pbpcbj48qdzmxzlj4p4mnfy226dq09h7-nodejs-24.21.0.drv",
       "description": "Event-driven I/O framework for the V8 JavaScript engine",
       "install_id": "nodejs",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=6774f7bc253789b113a4f39285dc0fa100abeacc",
-      "name": "nodejs-24.20.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "nodejs-24.21.0",
       "pname": "nodejs_24",
-      "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
-      "rev_count": 1077996,
-      "rev_date": "2026-09-22T03:11:10Z",
-      "scrape_date": "2026-09-23T05:30:18.311666Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.650348Z",
       "stabilities": [
         "unstable"
       ],
       "unfree": false,
-      "version": "24.20.0",
+      "version": "24.21.0",
       "outputs_to_install": [
         "out",
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/hnizp3p9k7gix8iqlip1pai9fy417ygy-nodejs-24.20.0"
+        "out": "/nix/store/6vlx51wp6rjcsb1gcx54hfb7ndf3k2h8-nodejs-24.21.0"
       },
       "system": "aarch64-linux",
       "group": "node",
@@ -299,28 +304,28 @@
     {
       "attr_path": "nodejs_24",
       "broken": false,
-      "derivation": "/nix/store/0z73lh3jfj7hpng8kiinipj94wrwa0j9-nodejs-24.20.0.drv",
+      "derivation": "/nix/store/a7mzwdph5vkavini0lj77xph53qhgjlf-nodejs-24.21.0.drv",
       "description": "Event-driven I/O framework for the V8 JavaScript engine",
       "install_id": "nodejs",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=6774f7bc253789b113a4f39285dc0fa100abeacc",
-      "name": "nodejs-24.20.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "nodejs-24.21.0",
       "pname": "nodejs_24",
-      "rev": "6774f7bc253789b113a4f39285dc0fa100abeacc",
-      "rev_count": 1077996,
-      "rev_date": "2026-09-22T03:11:10Z",
-      "scrape_date": "2026-09-23T06:06:59.669824Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.913927Z",
       "stabilities": [
         "unstable"
       ],
       "unfree": false,
-      "version": "24.20.0",
+      "version": "24.21.0",
       "outputs_to_install": [
         "out",
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/v6wsd9nyglmwh32yn7w8z11dq9cksg4m-nodejs-24.20.0"
+        "out": "/nix/store/j1j9b0w3mhpccdli73ycj5w7nf6fkzqz-nodejs-24.21.0"
       },
       "system": "x86_64-linux",
       "group": "node",
@@ -329,28 +334,28 @@
     {
       "attr_path": "actionlint",
       "broken": false,
-      "derivation": "/nix/store/6gf2fkfinlp1laxa6fwcnabskf3bmppf-actionlint-1.7.12.drv",
+      "derivation": "/nix/store/6m357aickrhr36vhk2pwfr4bd9j2vdnf-actionlint-1.7.12.drv",
       "description": "Static checker for GitHub Actions workflow files",
       "install_id": "actionlint",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
       "name": "actionlint-1.7.12",
       "pname": "actionlint",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:03:18.671817Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:28.697362Z",
       "stabilities": [
-        "staging",
         "unstable"
       ],
       "unfree": false,
       "version": "1.7.12",
       "outputs_to_install": [
+        "out",
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/vzlnbs651kcf8i0jz8j0md4gj0hl12ia-actionlint-1.7.12"
+        "out": "/nix/store/hdfgdp5ib3smcb065wbblw8bdgyxdmdc-actionlint-1.7.12"
       },
       "system": "aarch64-darwin",
       "group": "toplevel",
@@ -359,28 +364,28 @@
     {
       "attr_path": "actionlint",
       "broken": false,
-      "derivation": "/nix/store/nd9vgj4n0583vbba3h25hl61fqsfn4m1-actionlint-1.7.12.drv",
+      "derivation": "/nix/store/fzn0hayy8i4s0wv5mqqbqhcd41j68wfk-actionlint-1.7.12.drv",
       "description": "Static checker for GitHub Actions workflow files",
       "install_id": "actionlint",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
       "name": "actionlint-1.7.12",
       "pname": "actionlint",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:40:22.685942Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.116108Z",
       "stabilities": [
-        "staging",
         "unstable"
       ],
       "unfree": false,
       "version": "1.7.12",
       "outputs_to_install": [
+        "out",
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/8nwbx3mnrmm8j4h8wf7gw0ll05rs19vp-actionlint-1.7.12"
+        "out": "/nix/store/n3z0dj6w8dyv94kzyzx9if5ihkaywbkl-actionlint-1.7.12"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -389,539 +394,521 @@
     {
       "attr_path": "actionlint",
       "broken": false,
-      "derivation": "/nix/store/3vb09dcndsjans9k753q7vvis3q7vxyr-actionlint-1.7.12.drv",
+      "derivation": "/nix/store/q7c6n9q2bhsa5vkdwm3fr9dxqhy8pb0l-actionlint-1.7.12.drv",
       "description": "Static checker for GitHub Actions workflow files",
       "install_id": "actionlint",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
       "name": "actionlint-1.7.12",
       "pname": "actionlint",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T06:22:00.947439Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.595815Z",
       "stabilities": [
-        "staging",
         "unstable"
       ],
       "unfree": false,
       "version": "1.7.12",
       "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/l1mk756h2hqw22g5ba6ppipar40ivij7-actionlint-1.7.12"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "buf",
-      "broken": false,
-      "derivation": "/nix/store/wqd1i949wb88wv9rifz1jfdjvqwgz9b5-buf-1.72.0.drv",
-      "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
-      "install_id": "buf",
-      "license": "Apache-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "buf-1.72.0",
-      "pname": "buf",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:03:18.932112Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "1.72.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/4hb0kxvyaxnz8agf26vv25j7f9kg9wjw-buf-1.72.0"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "buf",
-      "broken": false,
-      "derivation": "/nix/store/cfs0slg3g15f2pq9fkijb6p5m3708y17-buf-1.72.0.drv",
-      "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
-      "install_id": "buf",
-      "license": "Apache-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "buf-1.72.0",
-      "pname": "buf",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:40:22.989213Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "1.72.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/rnj28cal3w4g3w1n05479rqyhdq54p2g-buf-1.72.0"
-      },
-      "system": "aarch64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "buf",
-      "broken": false,
-      "derivation": "/nix/store/prxldl2wq6yg00h2zvn7rw6kklvj8hdw-buf-1.72.0.drv",
-      "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
-      "install_id": "buf",
-      "license": "Apache-2.0",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "buf-1.72.0",
-      "pname": "buf",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T06:22:01.287994Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "1.72.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/0d21d3022nnzpyy58qpdfqdh16f21yz4-buf-1.72.0"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "dejavu_fonts",
-      "broken": false,
-      "derivation": "/nix/store/kli0yd2chfhh9lkznsc3d2inzkl829j2-dejavu-fonts-2.37.drv",
-      "description": "Typeface family based on the Bitstream Vera fonts",
-      "install_id": "dejavu_fonts",
-      "license": "Unspecified free software license",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "dejavu-fonts-2.37",
-      "pname": "dejavu_fonts",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:03:20.062041Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.37",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/yvp1jb81xwrhm4cs1c4flg50m2jv1pl3-dejavu-fonts-2.37"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "dejavu_fonts",
-      "broken": false,
-      "derivation": "/nix/store/d686krg2bf2d2kv3cp4671321q6lawh4-dejavu-fonts-2.37.drv",
-      "description": "Typeface family based on the Bitstream Vera fonts",
-      "install_id": "dejavu_fonts",
-      "license": "Unspecified free software license",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "dejavu-fonts-2.37",
-      "pname": "dejavu_fonts",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:40:23.664524Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.37",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/b888pffg007fsp3aivl4i1acv70v75an-dejavu-fonts-2.37"
-      },
-      "system": "aarch64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "dejavu_fonts",
-      "broken": false,
-      "derivation": "/nix/store/bkzxfgc9xbl1qk3zx7bbq0mwbj9jqmq8-dejavu-fonts-2.37.drv",
-      "description": "Typeface family based on the Bitstream Vera fonts",
-      "install_id": "dejavu_fonts",
-      "license": "Unspecified free software license",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "dejavu-fonts-2.37",
-      "pname": "dejavu_fonts",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T06:22:02.030637Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.37",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/71mxn2pyq807r32qsd2mdszkajhlb39q-dejavu-fonts-2.37"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "inter",
-      "broken": false,
-      "derivation": "/nix/store/s632infkasy1dxsvg2shql1gbavvxyqv-inter-4.1.drv",
-      "description": "Typeface specially designed for user interfaces",
-      "install_id": "inter",
-      "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "inter-4.1",
-      "pname": "inter",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:03:37.140406Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "4.1",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/gscn9lnfhmsid2vxcbkfm8g3bcwp4s39-inter-4.1"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "inter",
-      "broken": false,
-      "derivation": "/nix/store/yy8ss3i0rdi5fyr887y9j2l27wqnbbaa-inter-4.1.drv",
-      "description": "Typeface specially designed for user interfaces",
-      "install_id": "inter",
-      "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "inter-4.1",
-      "pname": "inter",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:40:45.029471Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "4.1",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/9hj8g92p0m46q6px8kidjpw18hhkp1ff-inter-4.1"
-      },
-      "system": "aarch64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "inter",
-      "broken": false,
-      "derivation": "/nix/store/dhj64p3ipyi1419rniqf9dxj29rnjmma-inter-4.1.drv",
-      "description": "Typeface specially designed for user interfaces",
-      "install_id": "inter",
-      "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "inter-4.1",
-      "pname": "inter",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T06:22:24.367672Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "4.1",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/shisxgcl8mqahsi4wxr67s44pdwxkjgp-inter-4.1"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "lato",
-      "broken": false,
-      "derivation": "/nix/store/9mfrf8byfxv48mfw6wlf5449h9dg4cz2-lato-2.0.drv",
-      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
-      "install_id": "lato",
-      "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "lato-2.0",
-      "pname": "lato",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:03:38.652313Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/z7qmjp06jgkc6m7k0yzsgxbz4p67s9if-lato-2.0"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "lato",
-      "broken": false,
-      "derivation": "/nix/store/v8789bi0g8px78y560zcli3jf04dl7dy-lato-2.0.drv",
-      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
-      "install_id": "lato",
-      "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "lato-2.0",
-      "pname": "lato",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:40:47.887873Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/c3wdg3gzdkf0zls7fgg7sad73yxarp0a-lato-2.0"
-      },
-      "system": "aarch64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "lato",
-      "broken": false,
-      "derivation": "/nix/store/nd60axpv7zy3a4qrcl2x1ssaqmj2drpl-lato-2.0.drv",
-      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
-      "install_id": "lato",
-      "license": "OFL-1.1",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "lato-2.0",
-      "pname": "lato",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T06:22:27.343509Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/ypjv8d9r0sndlcsgm0gdq8qrjfjzvcf3-lato-2.0"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "noto-fonts-color-emoji",
-      "broken": false,
-      "derivation": "/nix/store/jjbgglnlwx6r1qh6mnm23bykjdnr5ch1-noto-fonts-color-emoji-2.051.drv",
-      "description": "Color emoji font",
-      "install_id": "noto-fonts-color-emoji",
-      "license": "[ OFL-1.1, Apache-2.0 ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "noto-fonts-color-emoji-2.051",
-      "pname": "noto-fonts-color-emoji",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:03:46.197880Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.051",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/0wf7vmd8zaq8zf8icssgkr22amb40igz-noto-fonts-color-emoji-2.051"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "noto-fonts-color-emoji",
-      "broken": false,
-      "derivation": "/nix/store/xqzp382wb68ggaa7jsrfizfyhimi3661-noto-fonts-color-emoji-2.051.drv",
-      "description": "Color emoji font",
-      "install_id": "noto-fonts-color-emoji",
-      "license": "[ OFL-1.1, Apache-2.0 ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "noto-fonts-color-emoji-2.051",
-      "pname": "noto-fonts-color-emoji",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:41:02.385056Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.051",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/db8y6cqgk11pqlv2gkaf71s3iybqala6-noto-fonts-color-emoji-2.051"
-      },
-      "system": "aarch64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "noto-fonts-color-emoji",
-      "broken": false,
-      "derivation": "/nix/store/b3k663kg4zl50ndinx0ywm2ciqaw69i2-noto-fonts-color-emoji-2.051.drv",
-      "description": "Color emoji font",
-      "install_id": "noto-fonts-color-emoji",
-      "license": "[ OFL-1.1, Apache-2.0 ]",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "noto-fonts-color-emoji-2.051",
-      "pname": "noto-fonts-color-emoji",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T06:22:43.383263Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.051",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/wcd6d7sc56phxg84skxms1lfx63ymzdw-noto-fonts-color-emoji-2.051"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "pnpm",
-      "broken": false,
-      "derivation": "/nix/store/hnj2qqbda4qmzc1hsdn2nq40mwiz83p5-pnpm-11.27.0.drv",
-      "description": "Fast, disk space efficient package manager for JavaScript",
-      "install_id": "pnpm",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "pnpm-11.27.0",
-      "pname": "pnpm",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:04:00.917415Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "11.27.0",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "out": "/nix/store/gjkd8wjh079v7i5j2rb8y0b5r19addpa-pnpm-11.27.0"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "pnpm",
-      "broken": false,
-      "derivation": "/nix/store/ydxv6p16k0909nk1f00blyx5sd59wlv8-pnpm-11.27.0.drv",
-      "description": "Fast, disk space efficient package manager for JavaScript",
-      "install_id": "pnpm",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "pnpm-11.27.0",
-      "pname": "pnpm",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T05:41:21.652185Z",
-      "stabilities": [
-        "staging",
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "11.27.0",
-      "outputs_to_install": [
         "out",
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/1hd83n1x3yh0jvh5p8n8b7x64zsj6pi9-pnpm-11.27.0"
+        "out": "/nix/store/fs69vmim4iirbvm7897w2ah177d7vlxl-actionlint-1.7.12"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "buf",
+      "broken": false,
+      "derivation": "/nix/store/liccdsgzm9vy5s4v3dp0g41vlj4ivzih-buf-1.73.0.drv",
+      "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
+      "install_id": "buf",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "buf-1.73.0",
+      "pname": "buf",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:28.778258Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.73.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/mzk53mxxrv9haz6wv3d3a31r3njapazh-buf-1.73.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "buf",
+      "broken": false,
+      "derivation": "/nix/store/nqmymlncmxwbl383vfvhf8azngprcqqg-buf-1.73.0.drv",
+      "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
+      "install_id": "buf",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "buf-1.73.0",
+      "pname": "buf",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.159989Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.73.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/cp7v21c6wc2l6p236gydm1wy07vf7xx7-buf-1.73.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "buf",
+      "broken": false,
+      "derivation": "/nix/store/5z70abv75bz70m5r5f3arhl0cdh7knfd-buf-1.73.0.drv",
+      "description": "Create consistent Protobuf APIs that preserve compatibility and comply with design best-practices",
+      "install_id": "buf",
+      "license": "Apache-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "buf-1.73.0",
+      "pname": "buf",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.612094Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.73.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/pmr621j6lqlwwnigynjicxn5pkrxsky1-buf-1.73.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "dejavu_fonts",
+      "broken": false,
+      "derivation": "/nix/store/fpk2z102jsggmj6zx519iqrwn19kkilb-dejavu-fonts-2.37.drv",
+      "description": "Typeface family based on the Bitstream Vera fonts",
+      "install_id": "dejavu_fonts",
+      "license": "Unspecified free software license",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "dejavu-fonts-2.37",
+      "pname": "dejavu_fonts",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:28.822Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.37",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/aalx6545bnzykil72zy0257m5cxw8pkq-dejavu-fonts-2.37"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "dejavu_fonts",
+      "broken": false,
+      "derivation": "/nix/store/q47r7wr2wz6avpjx78cislyhkfdlbgz5-dejavu-fonts-2.37.drv",
+      "description": "Typeface family based on the Bitstream Vera fonts",
+      "install_id": "dejavu_fonts",
+      "license": "Unspecified free software license",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "dejavu-fonts-2.37",
+      "pname": "dejavu_fonts",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.224420Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.37",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/d960vw5shaaj5dhfqzw7y25d01cqhk36-dejavu-fonts-2.37"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "dejavu_fonts",
+      "broken": false,
+      "derivation": "/nix/store/n6mvfhcyghv1aa2xd3gjdkcrn2wva2nc-dejavu-fonts-2.37.drv",
+      "description": "Typeface family based on the Bitstream Vera fonts",
+      "install_id": "dejavu_fonts",
+      "license": "Unspecified free software license",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "dejavu-fonts-2.37",
+      "pname": "dejavu_fonts",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.626281Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.37",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/ljhywpw853z08y692xnghv29l5zpk0f3-dejavu-fonts-2.37"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "inter",
+      "broken": false,
+      "derivation": "/nix/store/qayrg5r1nmjq5zj1vsw70a5bc5djmp4c-inter-4.1.drv",
+      "description": "Typeface specially designed for user interfaces",
+      "install_id": "inter",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "inter-4.1",
+      "pname": "inter",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:28.948751Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/l7gziwqcynlaa8bsmn48kly8vjfy977l-inter-4.1"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "inter",
+      "broken": false,
+      "derivation": "/nix/store/mf5smqvhxrwqlx32dkpzf5fzqcbq8pr1-inter-4.1.drv",
+      "description": "Typeface specially designed for user interfaces",
+      "install_id": "inter",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "inter-4.1",
+      "pname": "inter",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.337487Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/p3wn6cfhz4xqjycnwcnm753lvn8lmyrl-inter-4.1"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "inter",
+      "broken": false,
+      "derivation": "/nix/store/06rdxyfp99lql46gjvy3hgv2j4yw7jbx-inter-4.1.drv",
+      "description": "Typeface specially designed for user interfaces",
+      "install_id": "inter",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "inter-4.1",
+      "pname": "inter",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.729832Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/cns6bi11bhj1wmj47q6zgvzfsx71l2yz-inter-4.1"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "lato",
+      "broken": false,
+      "derivation": "/nix/store/agfifiqg4rbn460q4vl247davhrz0vvp-lato-2.0.drv",
+      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
+      "install_id": "lato",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "lato-2.0",
+      "pname": "lato",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:28.957956Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/fm4jwac4qgvjbv31l4lzcjgkgq5xzdzc-lato-2.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "lato",
+      "broken": false,
+      "derivation": "/nix/store/dcks1dwbpar3m5b5gj1bmybsc2l1sb8a-lato-2.0.drv",
+      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
+      "install_id": "lato",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "lato-2.0",
+      "pname": "lato",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.344999Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/7rqnyvnq52wj6xqdiwm2vadkprxrhjm0-lato-2.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "lato",
+      "broken": false,
+      "derivation": "/nix/store/pknxd6wvfmrcwp111lx8bjbw48m43z8b-lato-2.0.drv",
+      "description": "Sans-serif typeface family designed in Summer 2010 by Łukasz Dziedzic",
+      "install_id": "lato",
+      "license": "OFL-1.1",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "lato-2.0",
+      "pname": "lato",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.737852Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/g5q10ybgjwzmvag19rdm3mvw61da568s-lato-2.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "noto-fonts-color-emoji",
+      "broken": false,
+      "derivation": "/nix/store/i4ln4c3hxc77vzgdqlyppzj8sfh6qfc8-noto-fonts-color-emoji-2.051.drv",
+      "description": "Color emoji font",
+      "install_id": "noto-fonts-color-emoji",
+      "license": "[ OFL-1.1, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "noto-fonts-color-emoji-2.051",
+      "pname": "noto-fonts-color-emoji",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:29.001374Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.051",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/fias4a1acbdq94nklica2qlym0lcxs4c-noto-fonts-color-emoji-2.051"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "noto-fonts-color-emoji",
+      "broken": false,
+      "derivation": "/nix/store/ldjw25mgsxa47i6zrc1z0l1cm66yblqb-noto-fonts-color-emoji-2.051.drv",
+      "description": "Color emoji font",
+      "install_id": "noto-fonts-color-emoji",
+      "license": "[ OFL-1.1, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "noto-fonts-color-emoji-2.051",
+      "pname": "noto-fonts-color-emoji",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.650700Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.051",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/aad23rkwhm4v12l4y4n6jz3i72zjdr7d-noto-fonts-color-emoji-2.051"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "noto-fonts-color-emoji",
+      "broken": false,
+      "derivation": "/nix/store/iirahcsj3f6fb8cf9ja01wkx15sc9fra-noto-fonts-color-emoji-2.051.drv",
+      "description": "Color emoji font",
+      "install_id": "noto-fonts-color-emoji",
+      "license": "[ OFL-1.1, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "noto-fonts-color-emoji-2.051",
+      "pname": "noto-fonts-color-emoji",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.914316Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.051",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/xzdkjfrdix43rr4i0aqvp9qx5pqnqjcz-noto-fonts-color-emoji-2.051"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "pnpm",
+      "broken": false,
+      "derivation": "/nix/store/0d7b8w05lwfxscgam4i4yd65wvm22qwc-pnpm-12.9.0.drv",
+      "description": "Fast, disk space efficient package manager for JavaScript",
+      "install_id": "pnpm",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "pnpm-12.9.0",
+      "pname": "pnpm",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T05:50:29.043384Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "12.9.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/fbr90s1ihxvmp05h2yvd3vssr39w02xk-pnpm-12.9.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "pnpm",
+      "broken": false,
+      "derivation": "/nix/store/lc3y700lvaq4zxzvhgikqpzamk96z5by-pnpm-12.9.0.drv",
+      "description": "Fast, disk space efficient package manager for JavaScript",
+      "install_id": "pnpm",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "pnpm-12.9.0",
+      "pname": "pnpm",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T06:26:17.693917Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "12.9.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/0gx73ilr6l2g05abw11fbs0aymxwgp09-pnpm-12.9.0"
       },
       "system": "aarch64-linux",
       "group": "toplevel",
@@ -930,29 +917,27 @@
     {
       "attr_path": "pnpm",
       "broken": false,
-      "derivation": "/nix/store/arlkvr6xrs2k69agbjqainjrq652ljnj-pnpm-11.27.0.drv",
+      "derivation": "/nix/store/6mv7c2k7azn5mrxz4d7al9y9yawhlbx3-pnpm-12.9.0.drv",
       "description": "Fast, disk space efficient package manager for JavaScript",
       "install_id": "pnpm",
       "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "name": "pnpm-11.27.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "name": "pnpm-12.9.0",
       "pname": "pnpm",
-      "rev": "b1b875982b17dabde9b4a37f3e229e74913e6db3",
-      "rev_count": 1074753,
-      "rev_date": "2026-09-16T08:07:56Z",
-      "scrape_date": "2026-09-17T06:23:03.100354Z",
+      "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
+      "rev_count": 1097682,
+      "rev_date": "2026-10-20T13:28:04Z",
+      "scrape_date": "2026-10-21T07:05:52.955436Z",
       "stabilities": [
-        "staging",
         "unstable"
       ],
       "unfree": false,
-      "version": "11.27.0",
+      "version": "12.9.0",
       "outputs_to_install": [
-        "out",
         "out"
       ],
       "outputs": {
-        "out": "/nix/store/f6wrd19wh402lz5dqzg7y1m6kwnz554m-pnpm-11.27.0"
+        "out": "/nix/store/fsf4ff3d6vsnhvhg9n7ai4fvk0c389y7-pnpm-12.9.0"
       },
       "system": "x86_64-linux",
       "group": "toplevel",

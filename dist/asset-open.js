@@ -1,2 +1,1 @@
-import { a as e, i as t, n, o as r, r as i, s as a, t as o } from "./AssetOpen-BBXywwal.js";
-export { o as AssetOpenProvider, n as assetApplicationSupports, i as assetKindMatches, t as assetMimeMatches, e as defaultAssetOpenDecision, r as normalizeAssetOpenResolution, a as useAssetOpen };
+export { t as AssetOpenProvider, n as assetApplicationSupports, r as assetKindMatches, i as assetMimeMatches, a as defaultAssetOpenDecision, o as normalizeAssetOpenResolution, s as useAssetOpen } from "./AssetOpen-CrRbw5Ps.js";
