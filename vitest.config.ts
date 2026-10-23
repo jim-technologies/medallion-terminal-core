@@ -21,6 +21,9 @@ export default mergeConfig(viteConfig, defineConfig({
           name: 'unit',
           environment: 'node',
           include: ['src/**/*.{test,spec}.{ts,tsx}'],
+          benchmark: {
+            include: ['src/**/*.bench.ts'],
+          },
         },
       },
       {
@@ -39,6 +42,9 @@ export default mergeConfig(viteConfig, defineConfig({
         test: {
           name: 'storybook',
           isolate: false,
+          benchmark: {
+            include: [],
+          },
           browser: {
             enabled: true,
             headless: true,

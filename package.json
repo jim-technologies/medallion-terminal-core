@@ -58,7 +58,7 @@
     "test": "vitest run --project=unit",
     "test:storybook": "STORYBOOK_PERFORMANCE_PHASE=0 vitest run --project=storybook",
     "test:browser": "STORYBOOK_PERFORMANCE_PHASE=0 PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/behavior playwright test --grep-invert @performance --output test-results/behavior && STORYBOOK_PERFORMANCE_PHASE=1 PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/performance playwright test --grep @performance --workers 1 --retries 0 --output test-results/performance",
-    "bench": "vitest bench --run",
+    "bench": "vitest bench --run --project='unit (bench)'",
     "build": "tsc -b && vite build",
     "build:lib": "vite build --config vite.config.lib.ts && tsc -p tsconfig.build.json",
     "preview": "vite preview",

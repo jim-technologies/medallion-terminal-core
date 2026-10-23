@@ -10,6 +10,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   Storybook 10.6.3 and the current Vite, React and renderer patches. Keep
   Node 24 and its matching types, and require the one-day package release age
   during ordinary and frozen installs.
+- Migrate all 21 hot-path benchmarks to Vitest 5's awaited benchmark fixture
+  and keep their Node project separate from Storybook and regular unit tests.
 
 ## [0.8.0] — 2026-10-17
 

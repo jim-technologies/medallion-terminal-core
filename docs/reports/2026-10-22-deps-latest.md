@@ -27,6 +27,8 @@ The existing one-day package-age requirement is explicit as1440minutes with stri
 
 ## Qualification
 
-The library build and type declarations pass on the new Flox environment. A pnpm12 source-scan diagnostic parses the same five-package runtime closure and reports0fixedHIGH/0CRITICAL, matching the clean baseline. No candidate image exists: this repository owns a Git-distributed library, with no Dockerfile; image counts are not invented. The full gate, final clean-head scanner result, exact counts and source/cgroup receipts are recorded in the parent delivery report after this source snapshot is frozen. No full-gate success is claimed in advance.
+The library build and type declarations pass on the new Flox environment. The first full gate found Vitest5's removed top-level benchmark export; all21 workloads now use the official awaited test-context fixture, and the dedicated Node benchmark command passes21/21 with ordinary unit/Storybook selections unchanged. The benchmark runner warns about module-export getter overhead; this qualification proves the workloads run and does not claim production timings or a performance improvement. Lint, source-generation freshness and type checks pass after the correction.
+
+A pnpm12 source-scan diagnostic parses the same five-package runtime closure and reports0fixedHIGH/0CRITICAL, matching the clean baseline. No candidate image exists: this repository owns a Git-distributed library, with no Dockerfile; image counts are not invented. The full gate, final clean-head scanner result, exact counts and source/cgroup receipts are recorded in the parent delivery report after this source snapshot is frozen. No full-gate success is claimed in advance.
 
 Only the main session may merge, tag or release the kit and advance consumers to a published tag. No consumer is repinned to this unreleased branch. No apply, cluster write, migration or backfill occurs in this qualification.

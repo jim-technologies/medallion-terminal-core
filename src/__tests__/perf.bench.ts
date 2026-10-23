@@ -1,4 +1,4 @@
-import { bench, describe } from 'vitest'
+import { describe, test } from 'vitest'
 import { applyActions } from '../core/applyActions'
 import { resolveSource, interpolate } from '../core/resolveSource'
 import { readCtxFromUrl, writeCtxToUrl } from '../core/urlState'
@@ -26,12 +26,16 @@ describe('applyActions', () => {
     ...Array.from({ length: 10 }, (_, i) => ({ targetId: `w${90 + i}`, remove: true })),
   ]
 
-  bench('100 widgets + 50 mixed actions', () => {
-    applyActions(widgets, actions)
+  test('100 widgets + 50 mixed actions', async ({ bench }) => {
+    await bench('100 widgets + 50 mixed actions', () => {
+      applyActions(widgets, actions)
+    }).run()
   })
 
-  bench('100 widgets + replaceAll 50 actions', () => {
-    applyActions(widgets, actions, { replaceAll: true })
+  test('100 widgets + replaceAll 50 actions', async ({ bench }) => {
+    await bench('100 widgets + replaceAll 50 actions', () => {
+      applyActions(widgets, actions, { replaceAll: true })
+    }).run()
   })
 })
 
@@ -43,23 +47,29 @@ describe('resolveSource', () => {
     venue: 'deribit', strategy: 'mom', confidence: '0.7', bot: 'alpha-1',
   }
 
-  bench('source_id mode with backendUrl', () => {
-    resolveSource(
-      { source_id: 'ohlcv', params: { symbol: '${ctx.symbol}', range: '${ctx.range}' } },
-      ctx,
-      'https://api.example.com',
-    )
+  test('source_id mode with backendUrl', async ({ bench }) => {
+    await bench('source_id mode with backendUrl', () => {
+      resolveSource(
+        { source_id: 'ohlcv', params: { symbol: '${ctx.symbol}', range: '${ctx.range}' } },
+        ctx,
+        'https://api.example.com',
+      )
+    }).run()
   })
 
-  bench('url mode with substitution + params', () => {
-    resolveSource(
-      { url: '/api/${ctx.symbol}/data', params: { from: '${ctx.from}', to: '${ctx.to}' } },
-      ctx,
-    )
+  test('url mode with substitution + params', async ({ bench }) => {
+    await bench('url mode with substitution + params', () => {
+      resolveSource(
+        { url: '/api/${ctx.symbol}/data', params: { from: '${ctx.from}', to: '${ctx.to}' } },
+        ctx,
+      )
+    }).run()
   })
 
-  bench('interpolate (single token)', () => {
-    interpolate('symbol=${ctx.symbol}&range=${ctx.range}', ctx)
+  test('interpolate (single token)', async ({ bench }) => {
+    await bench('interpolate (single token)', () => {
+      interpolate('symbol=${ctx.symbol}&range=${ctx.range}', ctx)
+    }).run()
   })
 })
 
@@ -72,12 +82,16 @@ describe('urlState', () => {
   }
   const search = '?template=demo.json&ctx.symbol=BTC&ctx.range=1d&ctx.from=2026-04-01&ctx.to=2026-05-01&ctx.venue=deribit&ctx.strategy=mom'
 
-  bench('readCtxFromUrl', () => {
-    readCtxFromUrl(search)
+  test('readCtxFromUrl', async ({ bench }) => {
+    await bench('readCtxFromUrl', () => {
+      readCtxFromUrl(search)
+    }).run()
   })
 
-  bench('writeCtxToUrl', () => {
-    writeCtxToUrl(search, ctx)
+  test('writeCtxToUrl', async ({ bench }) => {
+    await bench('writeCtxToUrl', () => {
+      writeCtxToUrl(search, ctx)
+    }).run()
   })
 })
 
@@ -112,8 +126,10 @@ describe('normalizers', () => {
     })
   }
 
-  bench('timeseries normalize (1k points × 3 series)', () => {
-    normalizeTs(tsPoints)
+  test('timeseries normalize (1k points × 3 series)', async ({ bench }) => {
+    await bench('timeseries normalize (1k points × 3 series)', () => {
+      normalizeTs(tsPoints)
+    }).run()
   })
 
   // Histogram binning: 10k samples → 20 bins.
@@ -131,8 +147,10 @@ describe('normalizers', () => {
     return buckets
   }
 
-  bench('histogram bin (10k values → 20 bins)', () => {
-    binValues(samples, 20)
+  test('histogram bin (10k values → 20 bins)', async ({ bench }) => {
+    await bench('histogram bin (10k values → 20 bins)', () => {
+      binValues(samples, 20)
+    }).run()
   })
 })
 
@@ -175,13 +193,15 @@ describe('parseConnectEnvelopes', () => {
 
   // Whole batch in one read — best case (no buffer growth pain).
   const batchOne = buildBatch(10_000)
-  bench('10k frames in one chunk', async () => {
-    let count = 0
-    await parseConnectEnvelopes(makeReader([batchOne]), {
-      onMessage: () => { count++ },
-      isDisposed: () => false,
-    })
-    if (count !== 10_000) throw new Error(`expected 10k, got ${count}`)
+  test('10k frames in one chunk', async ({ bench }) => {
+    await bench('10k frames in one chunk', async () => {
+      let count = 0
+      await parseConnectEnvelopes(makeReader([batchOne]), {
+        onMessage: () => { count++ },
+        isDisposed: () => false,
+      })
+      if (count !== 10_000) throw new Error(`expected 10k, got ${count}`)
+    }).run()
   })
 
   // Many small chunks — worst case for the buffer-concat strategy.
@@ -192,13 +212,15 @@ describe('parseConnectEnvelopes', () => {
     { length: Math.ceil(batchOne.length / SLICE) },
     (_, i) => batchOne.slice(i * SLICE, (i + 1) * SLICE),
   )
-  bench('10k frames across 256-byte chunks', async () => {
-    let count = 0
-    await parseConnectEnvelopes(makeReader(chunks), {
-      onMessage: () => { count++ },
-      isDisposed: () => false,
-    })
-    if (count !== 10_000) throw new Error(`expected 10k, got ${count}`)
+  test('10k frames across 256-byte chunks', async ({ bench }) => {
+    await bench('10k frames across 256-byte chunks', async () => {
+      let count = 0
+      await parseConnectEnvelopes(makeReader(chunks), {
+        onMessage: () => { count++ },
+        isDisposed: () => false,
+      })
+      if (count !== 10_000) throw new Error(`expected 10k, got ${count}`)
+    }).run()
   })
 })
 
@@ -207,10 +229,14 @@ describe('parseConnectEnvelopes', () => {
 // in real payloads (paired_grid `rows.N.left.values.X`).
 describe('getNested', () => {
   const flat = { value: 67_842, delta: 0.0036, unit: 'USD' }
-  bench('flat 1-level path', () => { getNested(flat, 'value') })
+  test('flat 1-level path', async ({ bench }) => {
+    await bench('flat 1-level path', () => { getNested(flat, 'value') }).run()
+  })
 
   const deep = { metric: { telemetry: { sample: { value: 42 } } } }
-  bench('deep 4-level path', () => { getNested(deep, 'metric.telemetry.sample.value') })
+  test('deep 4-level path', async ({ bench }) => {
+    await bench('deep 4-level path', () => { getNested(deep, 'metric.telemetry.sample.value') }).run()
+  })
 
   const pairedGrid = {
     rows: Array.from({ length: 12 }, (_, i) => ({
@@ -219,8 +245,10 @@ describe('getNested', () => {
       right: { values: { iv: 0.5 + i * 0.02, delta: -0.5 + i * 0.05, bid: i * 90, ask: i * 90 + 50 } },
     })),
   }
-  bench('paired_grid array-indexed path (rows.6.left.values.iv)', () => {
-    getNested(pairedGrid, 'rows.6.left.values.iv')
+  test('paired_grid array-indexed path (rows.6.left.values.iv)', async ({ bench }) => {
+    await bench('paired_grid array-indexed path (rows.6.left.values.iv)', () => {
+      getNested(pairedGrid, 'rows.6.left.values.iv')
+    }).run()
   })
 })
 
@@ -231,13 +259,17 @@ describe('getNested', () => {
 describe('evaluateAlert', () => {
   const metricData = { value: 67_842, delta: 0.0036, unit: 'USD' }
 
-  bench('numeric > on flat path (typical metric alert)', () => {
-    evaluateAlert(metricData, 'value > 67000')
+  test('numeric > on flat path (typical metric alert)', async ({ bench }) => {
+    await bench('numeric > on flat path (typical metric alert)', () => {
+      evaluateAlert(metricData, 'value > 67000')
+    }).run()
   })
 
   const eventData = { events: [{ status: 'EVENT_STATUS_OK' }] }
-  bench('string == on nested path (event status alert)', () => {
-    evaluateAlert(eventData, 'events.0.status == "EVENT_STATUS_ERROR"')
+  test('string == on nested path (event status alert)', async ({ bench }) => {
+    await bench('string == on nested path (event status alert)', () => {
+      evaluateAlert(eventData, 'events.0.status == "EVENT_STATUS_ERROR"')
+    }).run()
   })
 
   const grid = {
@@ -247,8 +279,10 @@ describe('evaluateAlert', () => {
       right: { values: { iv: 0.4 + i * 0.03, delta: -0.5 + i * 0.02 } },
     })),
   }
-  bench('paired_grid alert (rows.10.left.values.iv > 0.7)', () => {
-    evaluateAlert(grid, 'rows.10.left.values.iv > 0.7')
+  test('paired_grid alert (rows.10.left.values.iv > 0.7)', async ({ bench }) => {
+    await bench('paired_grid alert (rows.10.left.values.iv > 0.7)', () => {
+      evaluateAlert(grid, 'rows.10.left.values.iv > 0.7')
+    }).run()
   })
 
   // Worst case: 20 alerts evaluated against the same payload (one
@@ -260,8 +294,10 @@ describe('evaluateAlert', () => {
     'delta > 0.01', 'delta > 0.02', 'unit == "USD"', 'unit != "BTC"',
     'value < 100000', 'value > 0', 'value >= 67842', 'value <= 67842',
   ]
-  bench('20 alerts × 1 metric payload (per-tick fan-out)', () => {
-    for (const a of alerts) evaluateAlert(metricData, a)
+  test('20 alerts × 1 metric payload (per-tick fan-out)', async ({ bench }) => {
+    await bench('20 alerts × 1 metric payload (per-tick fan-out)', () => {
+      for (const a of alerts) evaluateAlert(metricData, a)
+    }).run()
   })
 })
 
@@ -277,15 +313,21 @@ describe('DataGrid model (10,000 rows)', async () => {
     name: `report-${(index * 31) % 10_000}`,
   }))
 
-  bench('rowWindow at an arbitrary scroll offset', () => {
-    rowWindow(rows.length, 123_456, 480, 32, 8, true)
+  test('rowWindow at an arbitrary scroll offset', async ({ bench }) => {
+    await bench('rowWindow at an arbitrary scroll offset', () => {
+      rowWindow(rows.length, 123_456, 480, 32, 8, true)
+    }).run()
   })
 
-  bench('sortRows by a numeric column', () => {
-    sortRows(rows, { id: 'amount' }, 'descending')
+  test('sortRows by a numeric column', async ({ bench }) => {
+    await bench('sortRows by a numeric column', () => {
+      sortRows(rows, { id: 'amount' }, 'descending')
+    }).run()
   })
 
-  bench('sortRows by a text column', () => {
-    sortRows(rows, { id: 'name' }, 'ascending')
+  test('sortRows by a text column', async ({ bench }) => {
+    await bench('sortRows by a text column', () => {
+      sortRows(rows, { id: 'name' }, 'ascending')
+    }).run()
   })
 })
