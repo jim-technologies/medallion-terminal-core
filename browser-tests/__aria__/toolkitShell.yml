@@ -4,8 +4,8 @@
   - link "Storage":
     - /url: /buckets
   - button "Northstar workspace"
-  - button "Search files"
-  - button "Account"
+  - button "Search files Ctrl K": Search files
+  - button "Account JK"
 - navigation "Navigation":
   - list:
     - listitem:

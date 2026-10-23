@@ -183,9 +183,13 @@ export function LinkGraph({
             const text = node.kind === 'more'
               ? t('graph.more', { count: node.moreCount ?? 0 })
               : node.item?.title ?? ''
-            const name = node.kind === 'more'
+            const displayText = truncate(text, labelChars(LABEL_SPACE - 8, scale, LABEL_CHAR))
+            const fullName = node.kind === 'more'
               ? t('graph.moreLabel', { count: node.moreCount ?? 0, relation: group.relation, type: group.targetType.label })
               : `${text}, ${group.relation}`
+            const name = node.kind === 'more'
+              ? `+${node.moreCount ?? 0} ${displayText}, ${fullName}`
+              : displayText === text ? fullName : `${displayText}, ${fullName}`
             const interactive = Boolean(target.href || onNavigate)
             return (
               <a
@@ -209,7 +213,7 @@ export function LinkGraph({
                 {node.kind === 'more' ? (
                   <g className="mtc-graph-more">
                     <rect x={x - NODE / 2} y={y - NODE / 2} width={NODE} height={NODE} rx={NODE / 2} />
-                    <text x={x} y={y} textAnchor="middle" dominantBaseline="central">+{node.moreCount}</text>
+                    <text x={x} y={y} textAnchor="middle" dominantBaseline="central">+{node.moreCount}{' '}</text>
                   </g>
                 ) : (
                   <NodeGlyph
@@ -228,7 +232,7 @@ export function LinkGraph({
                   transform={rotation ? `rotate(${rotation.toFixed(2)} ${labelX.toFixed(2)} ${labelY.toFixed(2)})` : undefined}
                   className="mtc-graph-node-label"
                 >
-                  {truncate(text, labelChars(LABEL_SPACE - 8, scale, LABEL_CHAR))}
+                  {displayText}
                 </text>
               </a>
             )

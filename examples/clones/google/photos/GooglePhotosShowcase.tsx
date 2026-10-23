@@ -801,7 +801,7 @@ function PhotoTile({
         type="button"
         className="gphotos-tile-open"
         onClick={onOpen}
-        aria-label={`Open ${item.kind === 'video' ? 'video' : 'photo'} ${item.title}`}
+        aria-label={item.kind === 'video' ? `Open video ${duration} ${item.title}` : `Open photo ${item.title}`}
       >
         {!failed ? (
           <img
@@ -817,7 +817,7 @@ function PhotoTile({
         <span className="gphotos-tile-overlay" />
         {item.favorite && <span className="gphotos-favorite-badge"><PhotosIcon name="favoriteFilled" /></span>}
         {item.kind === 'video' && (
-          <span className="gphotos-video-badge"><PhotosIcon name="play" /> {duration}</span>
+          <span className="gphotos-video-badge"><PhotosIcon name="play" /> {duration}{' '}</span>
         )}
         <span className="gphotos-tile-title">{item.title}</span>
       </button>

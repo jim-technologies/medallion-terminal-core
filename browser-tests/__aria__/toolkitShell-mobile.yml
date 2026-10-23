@@ -4,8 +4,8 @@
   - button "Open navigation"
   - link "Storage":
     - /url: /buckets
-  - button "Search files"
-  - button "Account"
+  - button "Search files Ctrl K"
+  - button "Account JK"
 - main:
   - navigation "Breadcrumbs":
     - list:

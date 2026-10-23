@@ -782,6 +782,9 @@ function MonthView({
               const day = parseDateKey(dayKey)
               const dayEvents = events.filter(event => eventOverlapsDate(event, day))
               const visibleEvents = dayEvents.slice(0, 4)
+              const dateLabel = day.getDate() === 1
+                ? `${new Intl.DateTimeFormat('en-US', { month: 'short' }).format(day)} ${day.getDate()}`
+                : String(day.getDate())
               return (
                 <div
                   className={[
@@ -794,14 +797,12 @@ function MonthView({
                   role="gridcell"
                 >
                   <button
-                    aria-label={`Create event on ${formatLongDate(day)}`}
+                    aria-label={`Create event on ${dateLabel}, ${formatLongDate(day)}`}
                     className="gcal-month__date"
                     onClick={() => onCreateAt(dayKey)}
                     type="button"
                   >
-                    {day.getDate() === 1
-                      ? `${new Intl.DateTimeFormat('en-US', { month: 'short' }).format(day)} ${day.getDate()}`
-                      : day.getDate()}
+                    {dateLabel}
                   </button>
                   <div className="gcal-month__events">
                     {visibleEvents.map(event => (

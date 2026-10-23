@@ -491,11 +491,11 @@ export function SlackShowcase({
       <div className="slack-clone__workspace">
         <aside className="slack-clone__rail" aria-label="Workspaces">
           <NeutralMark icon="message" size={36} label="Chat" />
-          <button type="button" className="slack-clone__workspace-tile active" aria-label={workspaceName}>
+          <button type="button" className="slack-clone__workspace-tile active" aria-label={`JT ${workspaceName}`}>
             JT
           </button>
-          <button type="button" className="slack-clone__workspace-tile" aria-label="Customer workspace">
-            CX
+          <button type="button" className="slack-clone__workspace-tile" aria-label="CX 2 Customer workspace">
+            CX{' '}
             <em>2</em>
           </button>
           <span className="slack-clone__rail-divider" />
@@ -740,7 +740,7 @@ function ChannelHeader({
           <span>Call</span>
           <OperationalShowcaseIcon name="chevron-down" size={12} />
         </button>
-        <button type="button" className="slack-clone__member-stack" aria-label={`${channel.memberCount ?? members.length} members`}>
+        <button type="button" className="slack-clone__member-stack" aria-label={`${members.slice(0, 3).map(member => initials(member.name)).join(' ')} ${channel.memberCount ?? members.length} members`}>
           <span>
             {members.slice(0, 3).map(member => (
               <SlackAvatar key={member.id} member={member} size="micro" />
@@ -940,7 +940,7 @@ function SlackAvatar({
       title={`${member.name}${member.title ? ` · ${member.title}` : ''}`}
       aria-label={member.name}
     >
-      {initials(member.name)}
+      {initials(member.name)}{' '}
       {member.status && <i className={member.status} />}
     </span>
   )

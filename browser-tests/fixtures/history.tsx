@@ -7,11 +7,24 @@ import '../../src/index.css'
 
 const TIP_ROWS = Array.from({ length: 60 }, (_, id) => ({ id, note: `Entry ${id} — 東京 / café / ${'long-name-'.repeat(8)}`, kind: 'Record' }))
 
+declare global {
+  interface Window {
+    __historyFixtureRows?: { search: string; complete: () => void }
+  }
+}
+
 function Pages() {
   const location = useLocation()
   const [loaded, setLoaded] = useState(false)
   useEffect(() => {
     setLoaded(false)
+    if (new URLSearchParams(location.search).get('load') === 'manual') {
+      const gate = { search: location.search, complete: () => setLoaded(true) }
+      window.__historyFixtureRows = gate
+      return () => {
+        if (window.__historyFixtureRows === gate) delete window.__historyFixtureRows
+      }
+    }
     const timer = setTimeout(() => setLoaded(true), Number(new URLSearchParams(location.search).get('delay') ?? 500))
     return () => clearTimeout(timer)
   }, [location.search])

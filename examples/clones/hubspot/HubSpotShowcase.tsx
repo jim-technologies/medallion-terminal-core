@@ -4,6 +4,7 @@ import {
   ProductShowcaseAvatar,
   ProductShowcaseIcon,
   formatProductCurrency,
+  productShowcaseInitials,
   type ProductShowcaseIconName,
 } from '../shared/ProductShowcasePrimitives'
 import '../shared/ProductShowcases.css'
@@ -477,10 +478,10 @@ function HubSpotContacts({
                     type="button"
                     className="hubspot-contact-name"
                     onClick={() => onSelect(contact)}
-                    aria-label={`Open ${contact.name}`}
+                    aria-label={`Open ${productShowcaseInitials(contact.name)} ${contact.name} ${contact.role}`}
                   >
-                    <ProductShowcaseAvatar name={contact.name} color={contact.ownerColor} size={30} />
-                    <span><strong>{contact.name}</strong><small>{contact.role}</small></span>
+                    <ProductShowcaseAvatar name={contact.name} color={contact.ownerColor} size={30} />{' '}
+                    <span><strong>{contact.name}</strong>{' '}<small>{contact.role}</small></span>
                   </button>
                 </td>
                 <td><a href={`mailto:${contact.email}`}>{contact.email}</a></td>

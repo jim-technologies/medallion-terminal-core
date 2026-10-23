@@ -576,14 +576,14 @@ function BackstageCatalog({
                     <tr key={entity.id}>
                       <td>
                         <button
-                          aria-label={`Open ${entity.title}`}
+                          aria-label={`Open ${entity.name} ${entity.description} (${entity.title})`}
                           className="bks-entity-link"
                           onClick={() => onOpenEntity(entity)}
                           type="button"
                         >
                           <EntityKindMark compact entity={entity} />
                           <span>
-                            <strong>{entity.name}</strong>
+                            <strong>{entity.name}</strong>{' '}
                             <small>{entity.description}</small>
                           </span>
                         </button>

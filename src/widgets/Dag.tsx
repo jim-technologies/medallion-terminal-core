@@ -106,6 +106,10 @@ export function Dag({ data, options }: WidgetProps) {
           const fill = n.status ? STATUS_COLOR[n.status] ?? DEFAULT_NODE : DEFAULT_NODE
           const selectable = !!opts.node_context || Object.keys(n.context).length > 0
           const selected = selectable && ctx[nodeIdKey] === n.id
+          const displayLabel = truncate(n.label, 18)
+          const displaySubtitle = n.subtitle ? truncate(n.subtitle, 22) : ''
+          const visibleLabel = [displayLabel, displaySubtitle].filter(Boolean).join(' ')
+          const fullLabel = [n.label, n.subtitle].filter(Boolean).join(' ')
           return (
             <g
               key={n.id}
@@ -117,7 +121,7 @@ export function Dag({ data, options }: WidgetProps) {
                 }
               } : undefined}
               role={selectable ? 'button' : undefined}
-              aria-label={selectable ? `Select ${n.label}` : undefined}
+              aria-label={selectable ? `Select ${visibleLabel}${visibleLabel === fullLabel ? '' : ` (${fullLabel})`}` : undefined}
               tabIndex={selectable ? 0 : undefined}
               style={{ cursor: selectable ? 'pointer' : 'default' }}
             >
@@ -135,8 +139,8 @@ export function Dag({ data, options }: WidgetProps) {
                 fontSize={11} fill="var(--mtc-fg)"
                 fontFamily="var(--mtc-font-sans)"
               >
-                {truncate(n.label, 18)}
-              </text>
+                {displayLabel}
+              </text>{' '}
               {n.subtitle && (
                 <text
                   x={n.x + NODE_W / 2}
@@ -146,7 +150,7 @@ export function Dag({ data, options }: WidgetProps) {
                   fill="var(--mtc-muted)"
                   fontFamily="var(--mtc-font-sans)"
                 >
-                  {truncate(n.subtitle, 22)}
+                  {displaySubtitle}
                 </text>
               )}
               <circle cx={n.x + 8} cy={n.y + 8} r={3} fill={fill} />

@@ -62,7 +62,7 @@
     - button "Open post by Jim Technologies":
       - img "Abstract studio planning board"
     - text: ● ♥ 1.8K 96 comments · 214 shares
-    - button "Unlike post" [pressed]: Like
+    - button "Like post" [pressed]: Like
     - button "Comment on post": Comment
     - button "Share post": Share
   - article:
@@ -124,7 +124,7 @@
     - button "Open post by Jun":
       - img "Abstract forest path"
     - text: ● ♥ 862 67 comments · 104 shares
-    - button "Unlike post" [pressed]: Like
+    - button "Like post" [pressed]: Like
     - button "Comment on post": Comment
     - button "Share post": Share
 - complementary "Contacts and sponsored content":

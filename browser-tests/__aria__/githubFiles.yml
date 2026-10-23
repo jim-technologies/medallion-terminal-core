@@ -55,9 +55,9 @@
       - strong: Files
       - button "Collapse file tree"
       - strong: medallion-platform
-      - button "Open src/core/providerAdapter.ts": M src/core/providerAdapter.ts
-      - button "Open src/core/providerAdapter.test.ts": A src/core/providerAdapter.test.ts
-      - button "Open docs/integrations.md": M docs/integrations.md
+      - button "Open M src/core/providerAdapter.ts": M src/core/providerAdapter.ts
+      - button "Open A src/core/providerAdapter.test.ts": A src/core/providerAdapter.test.ts
+      - button "Open M docs/integrations.md": M docs/integrations.md
     - strong: 1 of 3 files viewed
     - text: Mark files as viewed as you complete the review.
     - article:

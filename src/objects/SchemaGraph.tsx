@@ -193,9 +193,11 @@ export function SchemaGraph({
             const { icon, color } = typePresentation(type)
             const isSelected = type.id === selectedId
             const interactive = Boolean(type.href || onSelect)
-            const name = type.count === undefined
-              ? type.label
-              : `${type.label}, ${formatNumber(type.count, { locale })}`
+            const displayLabel = truncate(type.label, labelChars(NAME_ROOM, scale, NAME_CHAR))
+            const visibleName = type.count === undefined
+              ? displayLabel
+              : `${displayLabel}, ${formatNumber(type.count, { locale })}`
+            const name = displayLabel === type.label ? visibleName : `${visibleName} (${type.label})`
             return (
               <a
                 key={type.id}
@@ -222,8 +224,8 @@ export function SchemaGraph({
                   <Icon name={icon} x={x + 15} y={y + 15} width={14} height={14} size={14} strokeWidth={2} />
                 </g>
                 <text x={x + 44} y={type.count === undefined ? y + NODE_HEIGHT / 2 : y + 16} dominantBaseline="middle" className="mtc-graph-node-label" data-emphasis="true">
-                  {truncate(type.label, labelChars(NAME_ROOM, scale, NAME_CHAR))}
-                </text>
+                  {displayLabel}
+                </text>{' '}
                 {type.count !== undefined && (
                   <text x={x + 44} y={y + 32} dominantBaseline="middle" className="mtc-graph-node-meta">
                     {formatNumber(type.count, { locale })}

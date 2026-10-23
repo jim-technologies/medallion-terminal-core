@@ -1,5 +1,5 @@
 - navigation "Chat navigation":
-  - button "Chats": "4"
+  - button "Chats 4": "4"
   - button "Updates"
   - button "Communities"
   - button "Calls"

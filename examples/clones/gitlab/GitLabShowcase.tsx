@@ -405,9 +405,9 @@ function GitLabChanges({
         <aside className="gl-change-list" aria-label="Changed files">
           <header><label><OperationalShowcaseIcon name="search" size={14} /><input aria-label="Search changed files" placeholder="Search files" /></label><button type="button" aria-label="Changed file options"><OperationalShowcaseIcon name="more" size={16} /></button></header>
           {data.files.map(file => (
-            <button className={file.id === selectedFile.id ? 'is-active' : ''} type="button" key={file.id} onClick={() => onSelectFile(file)} aria-label={`Open ${file.path}`}>
-              <span className={`gl-file-badge is-${file.status}`}>{file.status === 'added' ? 'A' : file.status === 'deleted' ? 'D' : 'M'}</span>
-              <span><strong>{file.path.slice(file.path.lastIndexOf('/') + 1)}</strong><small>{file.path.split('/').slice(0, -1).join('/')}/</small></span>
+            <button className={file.id === selectedFile.id ? 'is-active' : ''} type="button" key={file.id} onClick={() => onSelectFile(file)} aria-label={`Open ${file.status === 'added' ? 'A' : file.status === 'deleted' ? 'D' : 'M'} ${file.path.slice(file.path.lastIndexOf('/') + 1)} ${file.path.split('/').slice(0, -1).join('/')}/ (${file.path})`}>
+              <span className={`gl-file-badge is-${file.status}`}>{file.status === 'added' ? 'A' : file.status === 'deleted' ? 'D' : 'M'}</span>{' '}
+              <span><strong>{file.path.slice(file.path.lastIndexOf('/') + 1)}</strong>{' '}<small>{file.path.split('/').slice(0, -1).join('/')}/</small></span>
               {viewedFiles.has(file.id) && <OperationalShowcaseIcon name="check" size={14} />}
             </button>
           ))}

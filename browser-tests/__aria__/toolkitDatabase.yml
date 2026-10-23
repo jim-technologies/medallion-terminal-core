@@ -61,41 +61,41 @@
             - columnheader "updated_at":
               - button "updated_at"
         - rowgroup:
-          - row "Inspect row Northwind Health Northwind Health Enterprise Seattle active 2026-07-25 18:42":
-            - cell "Inspect row Northwind Health":
-              - button "Inspect row Northwind Health": cus_1048
+          - 'row "Inspect row Northwind Health: cus_1048 Northwind Health Enterprise Seattle active 2026-07-25 18:42"':
+            - 'cell "Inspect row Northwind Health: cus_1048"':
+              - 'button "Inspect row Northwind Health: cus_1048"': cus_1048
             - cell "Northwind Health"
             - cell "Enterprise"
             - cell "Seattle"
             - cell "active"
             - cell "2026-07-25 18:42"
-          - row "Inspect row Atlas Works Atlas Works Growth Austin active 2026-07-25 17:18":
-            - cell "Inspect row Atlas Works":
-              - button "Inspect row Atlas Works": cus_1047
+          - 'row "Inspect row Atlas Works: cus_1047 Atlas Works Growth Austin active 2026-07-25 17:18"':
+            - 'cell "Inspect row Atlas Works: cus_1047"':
+              - 'button "Inspect row Atlas Works: cus_1047"': cus_1047
             - cell "Atlas Works"
             - cell "Growth"
             - cell "Austin"
             - cell "active"
             - cell "2026-07-25 17:18"
-          - row "Inspect row Cobalt Logistics Cobalt Logistics Enterprise Chicago review 2026-07-25 16:04":
-            - cell "Inspect row Cobalt Logistics":
-              - button "Inspect row Cobalt Logistics": cus_1046
+          - 'row "Inspect row Cobalt Logistics: cus_1046 Cobalt Logistics Enterprise Chicago review 2026-07-25 16:04"':
+            - 'cell "Inspect row Cobalt Logistics: cus_1046"':
+              - 'button "Inspect row Cobalt Logistics: cus_1046"': cus_1046
             - cell "Cobalt Logistics"
             - cell "Enterprise"
             - cell "Chicago"
             - cell "review"
             - cell "2026-07-25 16:04"
-          - row "Inspect row Brightpath Energy Brightpath Energy Growth Denver active 2026-07-25 14:51":
-            - cell "Inspect row Brightpath Energy":
-              - button "Inspect row Brightpath Energy": cus_1045
+          - 'row "Inspect row Brightpath Energy: cus_1045 Brightpath Energy Growth Denver active 2026-07-25 14:51"':
+            - 'cell "Inspect row Brightpath Energy: cus_1045"':
+              - 'button "Inspect row Brightpath Energy: cus_1045"': cus_1045
             - cell "Brightpath Energy"
             - cell "Growth"
             - cell "Denver"
             - cell "active"
             - cell "2026-07-25 14:51"
-          - row "Inspect row Harbor Labs Harbor Labs Startup Boston paused 2026-07-25 13:36":
-            - cell "Inspect row Harbor Labs":
-              - button "Inspect row Harbor Labs": cus_1044
+          - 'row "Inspect row Harbor Labs: cus_1044 Harbor Labs Startup Boston paused 2026-07-25 13:36"':
+            - 'cell "Inspect row Harbor Labs: cus_1044"':
+              - 'button "Inspect row Harbor Labs: cus_1044"': cus_1044
             - cell "Harbor Labs"
             - cell "Startup"
             - cell "Boston"

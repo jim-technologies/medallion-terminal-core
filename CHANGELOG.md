@@ -13,6 +13,13 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 - Migrate all 21 hot-path benchmarks to Vitest 5's awaited benchmark fixture
   and keep their Node project separate from Storybook and regular unit tests.
 
+### Fixed
+
+- Include visible initials, identifiers, counts and shortcuts in accessible
+  action names, as required by the updated accessibility checks.
+- Make browser fixtures wait for explicit data completion, honor bounded
+  worker settings and start fresh catalog servers for each validation run.
+
 ## [0.8.0] — 2026-10-17
 
 A minor release: it adds public API (`ScrollRestorationProvider`,

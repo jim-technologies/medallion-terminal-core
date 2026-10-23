@@ -64,11 +64,11 @@ export const DatabaseLikeDataWorkbench: Story = {
     await userEvent.click(dataTab)
     const filter = canvas.getByRole('searchbox', { name: 'Filter table rows' })
     await userEvent.type(filter, 'atlas')
-    await userEvent.click(canvas.getByRole('button', { name: 'Inspect row Atlas Works' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Inspect row Atlas Works: cus_1047' }))
     await expect(canvas.getByRole('heading', { name: 'Atlas Works' })).toBeVisible()
 
     await userEvent.clear(filter)
-    await userEvent.click(canvas.getByRole('button', { name: 'Inspect row Northwind Health' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Inspect row Northwind Health: cus_1048' }))
   },
 }
 
@@ -77,7 +77,7 @@ export const DatabaseTableViewer: Story = {
   render: () => <DatabaseTableViewerExample />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const columns = canvas.getByRole('button', { name: 'Choose visible columns' })
+    const columns = canvas.getByRole('button', { name: 'Columns 6/6, choose visible columns' })
 
     await userEvent.click(columns)
     const city = canvas.getByRole('checkbox', { name: /city/i })
@@ -89,10 +89,10 @@ export const DatabaseTableViewer: Story = {
 
     const filter = canvas.getByRole('searchbox', { name: 'Filter table rows' })
     await userEvent.type(filter, 'atlas')
-    await userEvent.click(canvas.getByRole('button', { name: 'Inspect row Atlas Works' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Inspect row Atlas Works: cus_1047' }))
     await expect(canvas.getByRole('heading', { name: 'Atlas Works' })).toBeVisible()
     await userEvent.clear(filter)
-    await userEvent.click(canvas.getByRole('button', { name: 'Inspect row Northwind Health' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Inspect row Northwind Health: cus_1048' }))
   },
 }
 
@@ -799,11 +799,11 @@ function DatabaseTableViewerExample() {
               data-size="small"
               data-variant="outline"
             >
-              Columns
+              Columns{' '}
               <Badge>{visibleColumns.length}/{table.columns.length}</Badge>
             </span>
           )}
-          triggerAriaLabel="Choose visible columns"
+          triggerAriaLabel={`Columns ${visibleColumns.length}/${table.columns.length}, choose visible columns`}
           title="Visible columns"
           placement="bottom-start"
         >
@@ -1144,7 +1144,7 @@ function DatabaseRows({
                       {columnIndex === 0 ? (
                         <button
                           type="button"
-                          aria-label={`Inspect row ${rowLabel}`}
+                          aria-label={`Inspect row ${rowLabel}: ${formatDatabaseCell(row[column.key])}`}
                           className="rounded text-[var(--mtc-accent-soft)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--mtc-accent)]"
                           onClick={() => onSelectedRowIdChange(rowId)}
                         >

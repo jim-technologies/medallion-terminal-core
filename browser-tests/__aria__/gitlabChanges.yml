@@ -80,15 +80,15 @@
       - textbox "Search changed files":
         - /placeholder: Search files
       - button "Changed file options"
-      - button "Open src/core/providerAdapter.ts":
+      - button "Open M providerAdapter.ts src/core/ (src/core/providerAdapter.ts)":
         - text: M
         - strong: providerAdapter.ts
         - text: src/core/
-      - button "Open src/core/providerAdapter.test.ts":
+      - button "Open A providerAdapter.test.ts src/core/ (src/core/providerAdapter.test.ts)":
         - text: A
         - strong: providerAdapter.test.ts
         - text: src/core/
-      - button "Open docs/integrations.md":
+      - button "Open M integrations.md docs/ (docs/integrations.md)":
         - text: M
         - strong: integrations.md
         - text: docs/

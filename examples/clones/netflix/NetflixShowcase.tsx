@@ -530,10 +530,10 @@ function NetflixArtwork({ title, hero = false }: { title: NetflixTitle; hero?: b
       <span className="nfx-artwork__wash" />
       {!hero && (
         <span className="nfx-artwork__title">
-          {title.title.split(' ').map((word, index) => <span key={`${word}-${index}`}>{word}</span>)}
+          {title.title.split(' ').map((word, index) => <span key={`${word}-${index}`}>{word}{' '}</span>)}
         </span>
       )}
-      {!hero && title.badge && <small>{title.badge}</small>}
+      {!hero && title.badge && <small>{title.badge}{' '}</small>}
     </div>
   )
 }
@@ -697,9 +697,9 @@ function NetflixCard({
   return (
     <article className={`nfx-card ${isTop10 ? 'is-top10' : ''}`}>
       {isTop10 && <span className="nfx-card__rank">{rank ?? title.top10Rank}</span>}
-      <button aria-label={title.title} onClick={() => onSelect(title)} type="button">
-        <NetflixArtwork title={title} />
-        {title.top10Rank !== undefined && !isTop10 && <span className="nfx-rank-badge">#{title.top10Rank}</span>}
+      <button aria-label={[title.title, title.badge, title.top10Rank !== undefined && !isTop10 ? `#${title.top10Rank}` : undefined, `${title.match}% Match`, title.maturity, title.quality].filter(Boolean).join(' ')} onClick={() => onSelect(title)} type="button">
+        <NetflixArtwork title={title} />{' '}
+        {title.top10Rank !== undefined && !isTop10 && <span className="nfx-rank-badge">#{title.top10Rank}{' '}</span>}
         {presentation === 'continue' && title.progress !== undefined && (
           <span className="nfx-progress">
             <span style={{ width: `${title.progress}%` }} />
@@ -709,8 +709,8 @@ function NetflixCard({
           <span>
             <NetflixIcon name="play" size={15} />
           </span>
-          <b>{title.match}% Match</b>
-          <small>{title.maturity}</small>
+          <b>{title.match}% Match</b>{' '}
+          <small>{title.maturity}</small>{' '}
           <small>{title.quality}</small>
         </span>
       </button>

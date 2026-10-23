@@ -3,11 +3,17 @@ import { expect, test, type Page } from '@playwright/test'
 
 const historyFixture = `http://127.0.0.1:${process.env.HISTORY_FIXTURE_PORT ?? 6216}/browser-tests/fixtures/history.html`
 
+async function completeHistoryRows(page: Page) {
+  await page.waitForFunction(() => window.__historyFixtureRows?.search === window.location.search)
+  await page.evaluate(() => window.__historyFixtureRows!.complete())
+}
+
 test('shell and nested grids restore back, forward and refresh after asynchronous loading', async ({ page }, testInfo) => {
-  await page.goto(`${historyFixture}?pane=list`)
+  await page.goto(`${historyFixture}?pane=list&load=manual`)
   const main = page.getByRole('main')
   const grid = page.getByRole('grid', { name: 'History rows' })
   await expect(grid).toHaveAttribute('aria-busy', 'true')
+  await completeHistoryRows(page)
   await expect(grid).not.toHaveAttribute('aria-busy', 'true')
   await main.evaluate(element => { element.scrollTop = 200 })
   await grid.evaluate(element => { element.scrollTop = 5000; element.scrollLeft = 120 })
@@ -15,16 +21,25 @@ test('shell and nested grids restore back, forward and refresh after asynchronou
   await page.getByRole('button', { name: 'Open detail', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Detail', exact: true })).toBeVisible()
   await page.goBack()
+  await expect(grid).toHaveAttribute('aria-busy', 'true')
+  await completeHistoryRows(page)
+  await expect(grid).not.toHaveAttribute('aria-busy', 'true')
   await expect.poll(() => main.evaluate(element => element.scrollTop)).toBe(200)
   await expect.poll(() => grid.evaluate(element => element.scrollTop)).toBe(5000)
   await expect.poll(() => grid.evaluate(element => element.scrollLeft)).toBe(120)
   await page.goForward()
   await expect(page.getByRole('heading', { name: 'Detail', exact: true })).toBeVisible()
   await page.goBack()
+  await expect(grid).toHaveAttribute('aria-busy', 'true')
+  await completeHistoryRows(page)
+  await expect(grid).not.toHaveAttribute('aria-busy', 'true')
   await expect.poll(() => grid.evaluate(element => element.scrollTop)).toBe(5000)
   const beforeReload = await page.evaluate(() => ({ state:history.state, stored:sessionStorage.getItem('mtc:scroll-restoration:v1'), main:document.querySelector('main')?.scrollTop }))
   await page.reload()
   await writeFile(testInfo.outputPath('reload-state.json'), JSON.stringify({ beforeReload, afterReload:await page.evaluate(() => ({ state:history.state, stored:sessionStorage.getItem('mtc:scroll-restoration:v1'), main:document.querySelector('main')?.scrollTop })) }))
+  await expect(grid).toHaveAttribute('aria-busy', 'true')
+  await completeHistoryRows(page)
+  await expect(grid).not.toHaveAttribute('aria-busy', 'true')
   await expect.poll(() => main.evaluate(element => element.scrollTop)).toBe(200)
   await expect.poll(() => grid.evaluate(element => element.scrollTop)).toBe(5000)
 })

@@ -27,12 +27,12 @@
   - button "100%"
   - button "Normal text"
   - button "Arial"
-  - button "Decrease font size": −
+  - 'button "Decrease font size: −"': −
   - text: "11"
-  - button "Increase font size": +
-  - button "Bold": B
-  - button "Italic": I
-  - button "Underline": U
+  - 'button "Increase font size: +"': +
+  - 'button "Bold: B"': B
+  - 'button "Italic: I"': I
+  - 'button "Underline: U"': U
   - button "Text color"
   - button "Insert link"
   - button "Add comment"

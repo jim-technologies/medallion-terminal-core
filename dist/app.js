@@ -1,20 +1,20 @@
 import { D as e, E as t, S as n, c as r, d as i, f as a, g as o, i as s, m as c, r as l, w as u } from "./States-9MUuKqo7.js";
 import { a as d } from "./utils-lOoEiIAx.js";
 import { r as f } from "./types-BsWMEPD5.js";
-import { _ as p, a as m, c as h, d as g, h as _, i as v, l as y, m as b, n as x, o as S, r as C, s as w, t as T, u as E } from "./sourceError-Z6tApgGs.js";
-import { a as D, i as O, n as k, o as A, t as ee } from "./ScrollRestoration-DNZ0AOnD.js";
+import { _ as p, a as m, c as h, d as g, h as _, i as v, l as y, m as b, n as x, o as S, r as C, s as w, t as T, u as E, w as D } from "./sourceError-Z6tApgGs.js";
+import { a as O, i as k, n as A, o as ee, t as j } from "./ScrollRestoration-DNZ0AOnD.js";
 import { t as te } from "./NavRail-B0pztnnU.js";
 import { t as ne } from "./useBreakpoint-B-1qHeHo.js";
-import { createContext as j, forwardRef as M, useCallback as N, useContext as P, useEffect as F, useId as I, useMemo as L, useRef as R, useState as z, useSyncExternalStore as B } from "react";
-import { Fragment as V, jsx as H, jsxs as U } from "react/jsx-runtime";
-import { createPortal as re } from "react-dom";
+import { createContext as M, forwardRef as N, useCallback as P, useContext as F, useEffect as I, useId as L, useMemo as R, useRef as z, useState as B, useSyncExternalStore as V } from "react";
+import { Fragment as re, jsx as H, jsxs as U } from "react/jsx-runtime";
+import { createPortal as ie } from "react-dom";
 // src/app/productFetch.ts
-var W = "x-request-id", G = "traceparent", ie = "connect-timeout-ms";
+var W = "x-request-id", G = "traceparent", ae = "connect-timeout-ms";
 function K(e) {
 	let t = new Uint8Array(e);
 	return globalThis.crypto.getRandomValues(t), Array.from(t, (e) => e.toString(16).padStart(2, "0")).join("");
 }
-function ae() {
+function oe() {
 	return `00-${K(16)}-${K(8)}-01`;
 }
 function q() {
@@ -26,24 +26,24 @@ function J(e) {
 function Y(e, t) {
 	return (t?.method ?? (e instanceof Request ? e.method : "GET")).toUpperCase();
 }
-function oe(e, t) {
+function se(e, t) {
 	let n = t?.body ?? (e instanceof Request ? e.body : null);
 	return n instanceof Blob || n instanceof FormData || n instanceof ReadableStream;
 }
-function se(e, t, n, r) {
-	let i = r?.timeoutMs === void 0 ? t.has(ie) || oe(n, r) ? void 0 : e : r.timeoutMs;
+function ce(e, t, n, r) {
+	let i = r?.timeoutMs === void 0 ? t.has(ae) || se(n, r) ? void 0 : e : r.timeoutMs;
 	return i && i > 0 ? i : void 0;
 }
-function ce(e) {
+function le(e) {
 	let t = e.filter((e) => !!e);
 	return t.length <= 1 ? t[0] : AbortSignal.any(t);
 }
-function le(e = {}) {
-	let { onUnauthenticated: t, timeoutMs: n, onRequest: r, newRequestId: i = q, newTraceparent: a = ae, now: o = () => performance.now() } = e;
+function ue(e = {}) {
+	let { onUnauthenticated: t, timeoutMs: n, onRequest: r, newRequestId: i = q, newTraceparent: a = oe, now: o = () => performance.now() } = e;
 	return async function(s, c) {
 		let l = e.fetch ?? globalThis.fetch, u = new Headers(c?.headers ?? (s instanceof Request ? s.headers : void 0));
 		u.has(W) || u.set(W, i()), u.has(G) || u.set(G, a());
-		let d = u.get(W), f = u.get(G), p = c?.signal ?? (s instanceof Request ? s.signal : void 0), h = se(n, u, s, c), g = h ? new AbortController() : void 0, _ = g ? setTimeout(() => g.abort(new DOMException(`No response within ${h} ms`, "TimeoutError")), h) : void 0, v = Y(s, c), y = J(s), b = o(), x = (e) => r?.({
+		let d = u.get(W), f = u.get(G), p = c?.signal ?? (s instanceof Request ? s.signal : void 0), h = ce(n, u, s, c), g = h ? new AbortController() : void 0, _ = g ? setTimeout(() => g.abort(new DOMException(`No response within ${h} ms`, "TimeoutError")), h) : void 0, v = Y(s, c), y = J(s), b = o(), x = (e) => r?.({
 			method: v,
 			url: y,
 			requestId: d,
@@ -52,7 +52,7 @@ function le(e = {}) {
 			...e
 		}), { timeoutMs: S, ...C } = c ?? {}, D, O, k = () => {};
 		try {
-			let e = ce([p ?? void 0, g?.signal]);
+			let e = le([p ?? void 0, g?.signal]);
 			O = p && g ? e : void 0, O?.addEventListener("abort", k, { once: !0 }), D = await l(s, {
 				...C,
 				headers: u,
@@ -63,7 +63,7 @@ function le(e = {}) {
 			let t = g?.signal.aborted ? new T(`Request timed out after ${h} ms`, {
 				kind: "unavailable",
 				requestId: d
-			}) : ue(E(e), d);
+			}) : de(E(e), d);
 			throw x({ error: t }), t;
 		} finally {
 			O?.removeEventListener("abort", k), clearTimeout(_);
@@ -76,7 +76,7 @@ function le(e = {}) {
 		}), D.status === 401 && t?.(A), D;
 	};
 }
-function ue(e, t) {
+function de(e, t) {
 	return e.requestId ? e : new T(e.message, {
 		kind: e.kind,
 		status: e.status,
@@ -85,7 +85,7 @@ function ue(e, t) {
 		requestId: t
 	});
 }
-async function de(e) {
+async function fe(e) {
 	if (e.ok) return e;
 	throw await w(e);
 }
@@ -98,15 +98,15 @@ function X(e) {
 		hash: t.hash
 	};
 }
-function fe(e) {
+function pe(e) {
 	let t = e.replace(/\/+$/, "");
 	return t === "" || t.startsWith("/") ? t : `/${t}`;
 }
 function Z() {
 	return Array.from(globalThis.crypto.getRandomValues(/* @__PURE__ */ new Uint32Array(4)), (e) => e.toString(16).padStart(8, "0")).join("");
 }
-function pe({ base: e = "", window: t = globalThis.window } = {}) {
-	let n = fe(e), r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e()), a = (e) => n && (e === n || e.startsWith(`${n}/`)) ? e.slice(n.length) || "/" : e, o = () => {
+function me({ base: e = "", window: t = globalThis.window } = {}) {
+	let n = pe(e), r = /* @__PURE__ */ new Set(), i = () => r.forEach((e) => e()), a = (e) => n && (e === n || e.startsWith(`${n}/`)) ? e.slice(n.length) || "/" : e, o = () => {
 		let e = t.history.state;
 		if (e != null && (typeof e != "object" || Array.isArray(e))) return;
 		let n = e;
@@ -147,7 +147,7 @@ function pe({ base: e = "", window: t = globalThis.window } = {}) {
 		href: l
 	};
 }
-function me(e = "/") {
+function he(e = "/") {
 	let t = [{
 		...X(e),
 		entryKey: Z()
@@ -173,38 +173,38 @@ function me(e = "/") {
 		}
 	};
 }
-function he(e) {
+function ge(e) {
 	try {
 		return decodeURIComponent(e);
 	} catch {
 		return null;
 	}
 }
-function ge(e, t) {
+function _e(e, t) {
 	let n = e.split("/").filter(Boolean), r = t.split("/").filter(Boolean), i = {};
 	for (let e = 0; e < n.length; e++) {
 		let t = n[e];
 		if (t.startsWith("*")) {
-			let n = r.slice(e).map(he);
+			let n = r.slice(e).map(ge);
 			return n.some((e) => e === null) ? null : (i[t.slice(1) || "splat"] = n.join("/"), i);
 		}
 		let a = r[e];
 		if (a === void 0) return null;
 		if (t.startsWith(":")) {
-			let e = he(a);
+			let e = ge(a);
 			if (e === null) return null;
 			i[t.slice(1)] = e;
 		} else if (t !== a) return null;
 	}
 	return r.length === n.length ? i : null;
 }
-function _e(e, t) {
+function ve(e, t) {
 	let n = t;
 	return `/${e.split("/").filter(Boolean).map((e) => e.startsWith("*") ? (n[e.slice(1) || "splat"] ?? "").split("/").filter(Boolean).map(encodeURIComponent).join("/") : e.startsWith(":") ? encodeURIComponent(n[e.slice(1)] ?? "") : e).filter(Boolean).join("/")}`;
 }
-function ve(e, t) {
+function ye(e, t) {
 	for (let [n, r] of Object.entries(e)) {
-		let e = ge(r, t);
+		let e = _e(r, t);
 		if (e) return {
 			id: n,
 			params: e
@@ -213,37 +213,37 @@ function ve(e, t) {
 	return null;
 }
 // src/app/routing.tsx
-var ye = j(null);
-function be({ router: e, children: t }) {
-	return /* @__PURE__ */ H(ye.Provider, {
+var be = M(null);
+function xe({ router: e, children: t }) {
+	return /* @__PURE__ */ H(be.Provider, {
 		value: e,
 		children: t
 	});
 }
-function xe() {
-	let e = P(ye);
+function Se() {
+	let e = F(be);
 	if (!e) throw Error("useRouter must be used inside a RouterProvider or ProductShell");
 	return e;
 }
-function Se(e, t) {
+function Ce(e, t) {
 	return e.pathname === t.pathname && e.search === t.search && e.hash === t.hash && e.entryKey === t.entryKey;
 }
 function Q() {
-	let e = xe(), t = L(() => (t) => e.subscribe(t), [e]), n = L(() => {
+	let e = Se(), t = R(() => (t) => e.subscribe(t), [e]), n = R(() => {
 		let t = e.location();
 		return () => {
 			let n = e.location();
-			return Se(t, n) || (t = n), t;
+			return Ce(t, n) || (t = n), t;
 		};
 	}, [e]);
-	return B(t, n, n);
+	return V(t, n, n);
 }
-function Ce(e) {
+function we(e) {
 	let { pathname: t } = Q();
-	return L(() => ve(e, t), [e, t]);
+	return R(() => ye(e, t), [e, t]);
 }
-var we = M(function({ to: e, replace: t, onClick: n, ...r }, i) {
-	let a = xe();
+var Te = N(function({ to: e, replace: t, onClick: n, ...r }, i) {
+	let a = Se();
 	return /* @__PURE__ */ H("a", {
 		...r,
 		ref: i,
@@ -254,14 +254,14 @@ var we = M(function({ to: e, replace: t, onClick: n, ...r }, i) {
 	});
 });
 // src/app/session.ts
-function Te(e) {
+function Ee(e) {
 	if (typeof e == "number" && Number.isFinite(e)) return e < 0xe8d4a51000 ? e * 1e3 : e;
 	if (typeof e == "string" && e !== "") {
 		let t = Date.parse(e);
 		return Number.isNaN(t) ? void 0 : t;
 	}
 }
-function Ee(e) {
+function De(e) {
 	let t = e && typeof e == "object" ? e : {}, n = (e, n) => {
 		let r = t[e] ?? t[n];
 		return typeof r == "string" && r !== "" ? r : void 0;
@@ -271,11 +271,11 @@ function Ee(e) {
 		subject: n("subject", "sub"),
 		displayName: n("displayName", "display_name"),
 		workspaceId: n("workspaceId", "workspace_id"),
-		expiresAt: Te(t.expiresAt ?? t.expires_at),
+		expiresAt: Ee(t.expiresAt ?? t.expires_at),
 		signInUrl: n("signInUrl", "sign_in_url")
 	};
 }
-function De({ sessionUrl: e = "/auth/session", fetch: t, renew: n, signInHref: r, assign: i = (e) => globalThis.location.assign(e), signOut: a }) {
+function Oe({ sessionUrl: e = "/auth/session", fetch: t, renew: n, signInHref: r, assign: i = (e) => globalThis.location.assign(e), signOut: a }) {
 	let o = async (n) => {
 		let r = await (t ?? globalThis.fetch)(e, {
 			credentials: "same-origin",
@@ -284,7 +284,7 @@ function De({ sessionUrl: e = "/auth/session", fetch: t, renew: n, signInHref: r
 		});
 		if (r.status === 401) return { authenticated: !1 };
 		if (!r.ok) throw Error(`Session check failed: HTTP ${r.status}`);
-		return Ee(await r.json());
+		return De(await r.json());
 	};
 	return {
 		load: o,
@@ -302,8 +302,8 @@ function De({ sessionUrl: e = "/auth/session", fetch: t, renew: n, signInHref: r
 		signOut: a
 	};
 }
-var Oe = "mtc:session-renewed", ke = "mtc:session-renew-failed";
-function Ae({ url: e, origin: t, timeoutMs: n = 15e3, window: r = globalThis.window }) {
+var ke = "mtc:session-renewed", Ae = "mtc:session-renew-failed";
+function je({ url: e, origin: t, timeoutMs: n = 15e3, window: r = globalThis.window }) {
 	let i = t ?? r.location.origin;
 	return new Promise((t, a) => {
 		let o = r.document.createElement("iframe");
@@ -319,23 +319,23 @@ function Ae({ url: e, origin: t, timeoutMs: n = 15e3, window: r = globalThis.win
 	});
 }
 // src/app/useSessionController.ts
-var je = 6e4, Me = 2147483647;
-function Ne(e, t, { now: n = Date.now, document: r, setTimeout: i = (e, t) => globalThis.setTimeout(e, t), clearTimeout: a = (e) => globalThis.clearTimeout(e) }) {
+var Me = 6e4, Ne = 2147483647;
+function Pe(e, t, { now: n = Date.now, document: r, setTimeout: i = (e, t) => globalThis.setTimeout(e, t), clearTimeout: a = (e) => globalThis.clearTimeout(e) }) {
 	let o, s = () => {
 		o !== void 0 && a(o), o = void 0;
 	}, c = () => {
 		if (s(), r.hidden) return;
-		let a = e - je - n();
+		let a = e - Me - n();
 		a <= 0 ? t() : o = i(() => {
-			o = void 0, a > Me ? c() : t();
-		}, Math.min(a, Me));
+			o = void 0, a > Ne ? c() : t();
+		}, Math.min(a, Ne));
 	};
 	return c(), r.addEventListener("visibilitychange", c), () => {
 		s(), r.removeEventListener("visibilitychange", c);
 	};
 }
-function Pe(e, t = {}) {
-	let n = t.now ?? Date.now, r = t.document ?? (typeof document > "u" ? void 0 : document), [i, a] = z(e ? "loading" : "authenticated"), [o, s] = z(null), [c, l] = z(null), [u, d] = z(0), f = R(null), p = N(() => {
+function Fe(e, t = {}) {
+	let n = t.now ?? Date.now, r = t.document ?? (typeof document > "u" ? void 0 : document), [i, a] = B(e ? "loading" : "authenticated"), [o, s] = B(null), [c, l] = B(null), [u, d] = B(0), f = z(null), p = P(() => {
 		if (!e) return Promise.resolve(!0);
 		if (f.current) return f.current;
 		let t = e.renew().then((e) => (s(e), a("authenticated"), !0), () => (a("expired"), !1)).finally(() => {
@@ -343,7 +343,7 @@ function Pe(e, t = {}) {
 		});
 		return f.current = t, t;
 	}, [e]);
-	F(() => {
+	I(() => {
 		if (!e) return;
 		let t = new AbortController();
 		return a((e) => e === "error" ? "loading" : e), e.load(t.signal).then((e) => {
@@ -352,11 +352,11 @@ function Pe(e, t = {}) {
 			t.signal.aborted || (l(E(e)), a("error"));
 		}), () => t.abort();
 	}, [e, u]);
-	let m = N(() => {
+	let m = P(() => {
 		d((e) => e + 1);
 	}, []), { setTimeout: h, clearTimeout: g } = t;
-	return F(() => {
-		if (e && i === "authenticated" && o?.expiresAt && r) return Ne(o.expiresAt, () => void p(), {
+	return I(() => {
+		if (e && i === "authenticated" && o?.expiresAt && r) return Pe(o.expiresAt, () => void p(), {
 			now: n,
 			document: r,
 			setTimeout: h,
@@ -377,18 +377,18 @@ function Pe(e, t = {}) {
 		error: c,
 		renew: p,
 		reload: m,
-		reportUnauthenticated: N(() => {
+		reportUnauthenticated: P(() => {
 			p();
 		}, [p])
 	};
 }
 // src/app/resourceCache.ts
-var Fe = Object.freeze({ validating: !1 });
-function Ie({ maxEntries: e = 100, now: t = Date.now } = {}) {
+var Ie = Object.freeze({ validating: !1 });
+function Le({ maxEntries: e = 100, now: t = Date.now } = {}) {
 	let n = /* @__PURE__ */ new Map(), r = (e) => {
 		let t = n.get(e);
 		return t ? n.delete(e) : t = {
-			snapshot: Fe,
+			snapshot: Ie,
 			listeners: /* @__PURE__ */ new Set(),
 			version: 0
 		}, n.set(e, t), t;
@@ -428,7 +428,7 @@ function Ie({ maxEntries: e = 100, now: t = Date.now } = {}) {
 		}, i(o, { validating: !0 }), l;
 	};
 	return {
-		read: (e) => n.get(e)?.snapshot ?? Fe,
+		read: (e) => n.get(e)?.snapshot ?? Ie,
 		subscribe(e, t) {
 			let n = r(e);
 			return n.listeners.add(t), () => {
@@ -452,20 +452,20 @@ function Ie({ maxEntries: e = 100, now: t = Date.now } = {}) {
 	};
 }
 // src/app/useResource.tsx
-var Le = j(null), Re;
-function ze({ cache: e, children: t }) {
-	return /* @__PURE__ */ H(Le.Provider, {
+var Re = M(null), ze;
+function Be({ cache: e, children: t }) {
+	return /* @__PURE__ */ H(Re.Provider, {
 		value: e,
 		children: t
 	});
 }
-function Be() {
-	return P(Le) ?? (Re ??= Ie());
+function Ve() {
+	return F(Re) ?? (ze ??= Le());
 }
-function Ve(e) {
+function He(e) {
 	return typeof e == "string" ? e : JSON.stringify(e);
 }
-function He({ document: e, intervalMs: t, onVisible: n = !0, isStale: r, revalidate: i, setTimeout: a = (e, t) => globalThis.setTimeout(e, t), clearTimeout: o = (e) => globalThis.clearTimeout(e) }) {
+function Ue({ document: e, intervalMs: t, onVisible: n = !0, isStale: r, revalidate: i, setTimeout: a = (e, t) => globalThis.setTimeout(e, t), clearTimeout: o = (e) => globalThis.clearTimeout(e) }) {
 	let s, c = () => {
 		s !== void 0 && o(s), s = void 0;
 	}, l = () => {
@@ -479,11 +479,11 @@ function He({ document: e, intervalMs: t, onVisible: n = !0, isStale: r, revalid
 		c(), e.removeEventListener("visibilitychange", u);
 	};
 }
-var Ue = { validating: !1 }, We = () => () => {};
-function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisible: i = !0, document: a } = {}) {
-	let o = Be(), s = e === null ? null : Ve(e), c = R(t);
+var We = { validating: !1 }, Ge = () => () => {};
+function Ke(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisible: i = !0, document: a } = {}) {
+	let o = Ve(), s = e === null ? null : He(e), c = z(t);
 	c.current = t;
-	let l = N((e) => s === null ? We() : o.subscribe(s, e), [o, s]), u = B(l, () => s === null ? Ue : o.read(s), () => s === null ? Ue : o.read(s)), d = N(() => s === null ? Promise.resolve() : o.fetch(s, (e) => c.current(e)), [o, s]), f = N(() => {
+	let l = P((e) => s === null ? Ge() : o.subscribe(s, e), [o, s]), u = V(l, () => s === null ? We : o.read(s), () => s === null ? We : o.read(s)), d = P(() => s === null ? Promise.resolve() : o.fetch(s, (e) => c.current(e)), [o, s]), f = P(() => {
 		if (s === null) return !1;
 		let { updatedAt: e } = o.read(s);
 		return e === void 0 || Date.now() - e >= n;
@@ -492,7 +492,7 @@ function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		s,
 		n
 	]);
-	F(() => {
+	I(() => {
 		s !== null && f() && d();
 	}, [
 		s,
@@ -500,8 +500,8 @@ function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		d
 	]);
 	let p = a ?? (typeof document > "u" ? void 0 : document);
-	F(() => {
-		if (s !== null && p) return He({
+	I(() => {
+		if (s !== null && p) return Ue({
 			document: p,
 			intervalMs: r,
 			onVisible: i,
@@ -516,7 +516,7 @@ function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 		f,
 		d
 	]);
-	let m = N((e) => {
+	let m = P((e) => {
 		s !== null && o.set(s, e);
 	}, [o, s]), h = s === null ? "idle" : u.data === void 0 ? u.error ? "error" : "loading" : "success";
 	return {
@@ -530,18 +530,18 @@ function Ge(e, t, { staleTimeMs: n = 0, refreshIntervalMs: r, revalidateOnVisibl
 	};
 }
 // src/app/telemetry.ts
-function Ke(e) {
+function qe(e) {
 	try {
 		return new URL(e, "http://app.local").pathname;
 	} catch {
 		return e.split("?")[0] ?? e;
 	}
 }
-function qe(e) {
+function Je(e) {
 	return (t) => e.record({
 		type: "request",
 		method: t.method,
-		path: Ke(t.url),
+		path: qe(t.url),
 		status: t.status,
 		code: t.error ? t.error.code ?? t.error.kind : void 0,
 		requestId: t.requestId,
@@ -549,13 +549,13 @@ function qe(e) {
 	});
 }
 // src/app/embed.ts
-var Je = /* @__PURE__ */ new Set([
+var Ye = /* @__PURE__ */ new Set([
 	"dark",
 	"light",
 	"operator",
 	"high-contrast"
 ]);
-function Ye(e) {
+function Xe(e) {
 	if (!e || typeof e != "object") return null;
 	let t = e;
 	return t.version === 1 ? t.type === "mtc:navigate" ? typeof t.path == "string" && /^\/(?![/\\])/.test(t.path) ? {
@@ -565,12 +565,12 @@ function Ye(e) {
 	} : null : t.type === "mtc:init" ? {
 		type: "mtc:init",
 		version: 1,
-		theme: typeof t.theme == "string" && Je.has(t.theme) ? t.theme : void 0,
+		theme: typeof t.theme == "string" && Ye.has(t.theme) ? t.theme : void 0,
 		locale: typeof t.locale == "string" ? t.locale : void 0,
 		timeZone: typeof t.timeZone == "string" ? t.timeZone : void 0
 	} : null : null;
 }
-function Xe({ allowedOrigins: e, window: t = globalThis.window }) {
+function Ze({ allowedOrigins: e, window: t = globalThis.window }) {
 	let n = null;
 	try {
 		n = t.document.referrer ? new URL(t.document.referrer).origin : null;
@@ -586,7 +586,7 @@ function Xe({ allowedOrigins: e, window: t = globalThis.window }) {
 		subscribe(e) {
 			let n = (n) => {
 				if (!r || n.origin !== r || n.source !== t.parent) return;
-				let i = Ye(n.data);
+				let i = Xe(n.data);
 				i && e(i);
 			};
 			return t.addEventListener("message", n), () => t.removeEventListener("message", n);
@@ -594,31 +594,31 @@ function Xe({ allowedOrigins: e, window: t = globalThis.window }) {
 	};
 }
 // src/app/OperationsTray.tsx
-var Ze = {
+var Qe = {
 	queued: "clock",
 	running: "spinner",
 	succeeded: "success",
 	failed: "error",
 	cancelled: "close"
-}, Qe = /* @__PURE__ */ new Set([
+}, $e = /* @__PURE__ */ new Set([
 	"succeeded",
 	"failed",
 	"cancelled"
-]), $e = "(max-width: 767px)";
-function et() {
-	return typeof window > "u" || typeof window.matchMedia != "function" || !window.matchMedia($e).matches;
+]), et = "(max-width: 767px)";
+function tt() {
+	return typeof window > "u" || typeof window.matchMedia != "function" || !window.matchMedia(et).matches;
 }
-function tt({ operations: n, title: r, onCancel: i, onRetry: s, onDismiss: l, onClearFinished: u, open: f, defaultOpen: p, onOpenChange: m, placement: h = "floating" }) {
-	let g = t(), _ = I(), v = e(), [y] = z(() => p ?? et()), [b, x] = d({
+function nt({ operations: n, title: r, onCancel: i, onRetry: s, onDismiss: l, onClearFinished: u, open: f, defaultOpen: p, onOpenChange: m, placement: h = "floating" }) {
+	let g = t(), _ = L(), v = e(), [y] = B(() => p ?? tt()), [b, x] = d({
 		value: f,
 		defaultValue: y,
 		onChange: m
-	}), S = R(/* @__PURE__ */ new Map()), [C, w] = z("");
-	F(() => {
-		let e = n.filter((e) => Qe.has(e.status) && S.current.get(e.id) !== e.status);
+	}), S = z(/* @__PURE__ */ new Map()), [C, w] = B("");
+	I(() => {
+		let e = n.filter((e) => $e.has(e.status) && S.current.get(e.id) !== e.status);
 		S.current = new Map(n.map((e) => [e.id, e.status])), e.length > 0 && w(e.map((e) => `${e.label}: ${g(`ops.status.${e.status}`)}`).join(". "));
 	}, [n, g]);
-	let T = L(() => {
+	let T = R(() => {
 		let e = {
 			queued: 0,
 			running: 0,
@@ -635,7 +635,7 @@ function tt({ operations: n, title: r, onCancel: i, onRetry: s, onDismiss: l, on
 		T.queued > 0 && g("ops.queued", { count: T.queued }),
 		T.failed > 0 && g("ops.failed", { count: T.failed }),
 		T.succeeded > 0 && g("ops.done", { count: T.succeeded })
-	].filter(Boolean).join(" · "), D = n.some((e) => Qe.has(e.status)), O = /* @__PURE__ */ U("section", {
+	].filter(Boolean).join(" · "), D = n.some((e) => $e.has(e.status)), O = /* @__PURE__ */ U("section", {
 		className: "mtc-operations-tray",
 		"aria-label": r ?? g("ops.title"),
 		"data-open": b || void 0,
@@ -676,17 +676,17 @@ function tt({ operations: n, title: r, onCancel: i, onRetry: s, onDismiss: l, on
 				className: "mtc-visually-hidden",
 				children: C
 			}),
-			b && /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("ul", {
+			b && /* @__PURE__ */ U(re, { children: [/* @__PURE__ */ H("ul", {
 				id: _,
 				className: "mtc-operations-list",
 				children: n.map((e) => {
-					let t = Qe.has(e.status), n = e.progress === void 0 ? void 0 : Math.round(Math.min(1, Math.max(0, e.progress)) * 100);
+					let t = $e.has(e.status), n = e.progress === void 0 ? void 0 : Math.round(Math.min(1, Math.max(0, e.progress)) * 100);
 					return /* @__PURE__ */ U("li", {
 						className: "mtc-operation",
 						"data-status": e.status,
 						children: [
 							/* @__PURE__ */ H(o, {
-								name: Ze[e.status],
+								name: Qe[e.status],
 								className: "mtc-operation-icon",
 								label: g(`ops.status.${e.status}`)
 							}),
@@ -756,12 +756,12 @@ function tt({ operations: n, title: r, onCancel: i, onRetry: s, onDismiss: l, on
 			})] })
 		]
 	});
-	return h === "floating" && v ? re(O, v) : O;
+	return h === "floating" && v ? ie(O, v) : O;
 }
 // src/app/ProductShell.tsx
-var nt = j(null);
-function rt() {
-	let e = P(nt);
+var rt = M(null);
+function it() {
+	let e = F(rt);
 	if (!e) throw Error("useProductShell must be used inside a ProductShell");
 	return e;
 }
@@ -769,14 +769,14 @@ function $(e) {
 	let { pathname: t, search: n, hash: r } = e.location();
 	return `${t}${n}${r}`;
 }
-function it() {
+function at() {
 	if (typeof navigator > "u") return !1;
 	let e = navigator.userAgentData?.platform ?? navigator.platform;
 	return /Mac|iPhone|iPad|iPod/i.test(e ?? "");
 }
-function at(e) {
-	let { router: t, session: r, telemetry: a, mode: o = "standalone", embedOrigins: s = [], theme: c, density: l, locale: d, timeZone: f, messages: p } = e, m = o === "embed", h = L(() => m && typeof window < "u" ? Xe({ allowedOrigins: s }) : null, [m]), _ = u(), [v, y] = z({}), b = Pe(r);
-	F(() => t.subscribe(() => {
+function ot(e) {
+	let { router: t, session: r, telemetry: a, mode: o = "standalone", embedOrigins: s = [], theme: c, density: l, locale: d, timeZone: f, messages: p } = e, m = o === "embed", h = R(() => m && typeof window < "u" ? Ze({ allowedOrigins: s }) : null, [m]), _ = u(), [v, y] = B({}), b = Fe(r);
+	I(() => t.subscribe(() => {
 		let e = $(t);
 		a?.record({
 			type: "navigation",
@@ -791,7 +791,7 @@ function at(e) {
 		t,
 		a,
 		h
-	]), F(() => {
+	]), I(() => {
 		r && b.status !== "loading" && (a?.record({
 			type: "session",
 			status: b.status,
@@ -807,9 +807,9 @@ function at(e) {
 		h
 	]);
 	let { pageTitle: x, product: { name: S } } = e;
-	F(() => {
+	I(() => {
 		typeof document < "u" && x !== void 0 && (document.title = `${x} · ${S}`);
-	}, [x, S]), F(() => {
+	}, [x, S]), I(() => {
 		if (!h) return;
 		let n = h.subscribe((e) => {
 			e.type === "mtc:navigate" ? t.navigate(e.path) : y({
@@ -829,7 +829,7 @@ function at(e) {
 		t,
 		e.product.name
 	]);
-	let C = L(() => ({
+	let C = R(() => ({
 		router: t,
 		session: b,
 		telemetry: a,
@@ -847,18 +847,18 @@ function at(e) {
 		timeZone: v.timeZone ?? f,
 		messages: p,
 		className: "mtc-product-shell-root",
-		children: /* @__PURE__ */ H(be, {
+		children: /* @__PURE__ */ H(xe, {
 			router: t,
-			children: /* @__PURE__ */ H(nt.Provider, {
+			children: /* @__PURE__ */ H(rt.Provider, {
 				value: C,
 				children: /* @__PURE__ */ H(i.Provider, {
 					value: r !== void 0,
-					children: /* @__PURE__ */ H(g, { children: m ? /* @__PURE__ */ H(ut, {
+					children: /* @__PURE__ */ H(g, { children: m ? /* @__PURE__ */ H(dt, {
 						channel: h,
 						...e,
 						session: r,
 						controller: b
-					}) : /* @__PURE__ */ H(lt, {
+					}) : /* @__PURE__ */ H(ut, {
 						...e,
 						session: r,
 						controller: b
@@ -868,7 +868,7 @@ function at(e) {
 		})
 	});
 }
-function ot({ controller: e, session: t, router: n, children: i }) {
+function st({ controller: e, session: t, router: n, children: i }) {
 	if (e.status === "loading") return /* @__PURE__ */ H(s, {});
 	if (e.status === "error") return /* @__PURE__ */ H(l, {
 		error: e.error ?? void 0,
@@ -878,17 +878,17 @@ function ot({ controller: e, session: t, router: n, children: i }) {
 		let i = e.session ?? void 0, a = t !== void 0 && (t.canSignIn?.(i) ?? !0);
 		return /* @__PURE__ */ H(r, { onSignIn: a ? () => t.signIn($(n), i) : void 0 });
 	}
-	return /* @__PURE__ */ H(V, { children: i });
+	return /* @__PURE__ */ H(re, { children: i });
 }
-function st({ controller: e, session: n, router: r }) {
-	let i = t(), [o, s] = z(!1);
+function ct({ controller: e, session: n, router: r }) {
+	let i = t(), [o, s] = B(!1);
 	if (e.status !== "expired") return null;
 	let c = async () => {
 		s(!0);
 		let t = await e.renew();
 		s(!1), t || n?.signIn($(r), e.session ?? void 0);
 	};
-	return /* @__PURE__ */ H(O, {
+	return /* @__PURE__ */ H(k, {
 		open: !0,
 		onOpenChange: () => {},
 		title: i("state.sessionExpired.title"),
@@ -907,32 +907,32 @@ function st({ controller: e, session: n, router: r }) {
 		})
 	});
 }
-function ct(e) {
-	return /* @__PURE__ */ H(tt, {
+function lt(e) {
+	return /* @__PURE__ */ H(nt, {
 		operations: e.operations ?? [],
 		onCancel: e.onCancelOperation,
 		onRetry: e.onRetryOperation,
 		onDismiss: e.onDismissOperation
 	});
 }
-function lt(e) {
-	let { product: n, nav: r, activeNavId: i, scope: a, search: s, actions: l, accountMenu: u, status: d, inspector: f, router: m, controller: h, session: g } = e, v = t(), y = Q(), { pathname: x } = y, S = m.href(`${x}${y.search}${y.hash}`), C = ne() === "mobile", [w, T] = z(!1), [E, O] = z(!1), [k, j] = z(!1), M = R(null), P = R(null), I = R(!1), B = R(!1), V = N((e) => {
-		e || (I.current = P.current === document.activeElement), P.current = e, e && I.current && (I.current = !1, e.focus());
-	}, []), re = N((e) => {
-		e && (B.current = P.current === document.activeElement), j(e), !e && B.current && P.current?.focus();
+function ut(e) {
+	let { product: n, nav: r, activeNavId: i, scope: a, search: s, actions: l, accountMenu: u, status: d, inspector: f, router: m, controller: h, session: g } = e, v = t(), y = Q(), { pathname: x } = y, S = m.href(`${x}${y.search}${y.hash}`), C = ne() === "mobile", [w, T] = B(!1), [E, k] = B(!1), [A, M] = B(!1), N = z(null), F = z(null), L = z(!1), V = z(!1), re = P((e) => {
+		e || (L.current = F.current === document.activeElement), F.current = e, e && L.current && (L.current = !1, e.focus());
+	}, []), ie = P((e) => {
+		e && (V.current = F.current === document.activeElement), M(e), !e && V.current && F.current?.focus();
 	}, []);
-	F(() => {
-		s || (I.current = !1);
+	I(() => {
+		s || (L.current = !1);
 	}, [s]);
-	let [W] = z(() => it() ? "⌘ K" : "Ctrl K"), G = N((e) => {
-		e.href && (m.navigate(e.href), O(!1));
-	}, [m]), ie = L(() => (r ?? []).map((e) => ({
+	let [W] = B(() => at() ? "⌘ K" : "Ctrl K"), G = P((e) => {
+		e.href && (m.navigate(e.href), k(!1));
+	}, [m]), ae = R(() => (r ?? []).map((e) => ({
 		...e,
 		items: e.items.map((e) => ({
 			...e,
 			href: e.href ? m.href(e.href) : void 0
 		}))
-	})), [r, m]), K = i ?? (r ?? []).flatMap((e) => e.items).filter((e) => e.href && (x === e.href || x.startsWith(e.href === "/" ? "/" : `${e.href}/`))).sort((e, t) => (t.href?.length ?? 0) - (e.href?.length ?? 0))[0]?.id, ae = (e) => {
+	})), [r, m]), K = i ?? (r ?? []).flatMap((e) => e.items).filter((e) => e.href && (x === e.href || x.startsWith(e.href === "/" ? "/" : `${e.href}/`))).sort((e, t) => (t.href?.length ?? 0) - (e.href?.length ?? 0))[0]?.id, oe = (e) => {
 		let t = r?.flatMap((e) => e.items).find((t) => t.id === e.id);
 		t && G(t);
 	}, q = h.session, J = [...u ?? [], ...g?.signOut ? [{
@@ -940,21 +940,21 @@ function lt(e) {
 		label: v("shell.signOut"),
 		icon: /* @__PURE__ */ H(o, { name: "sign-out" }),
 		onSelect: () => void g.signOut?.()
-	}] : []], Y = q?.displayName ?? q?.subject, oe = !!(q?.authenticated && (Y || J.length > 0)), se = (e) => /* @__PURE__ */ H(te, {
+	}] : []], Y = q?.displayName ?? q?.subject, se = !!(q?.authenticated && (Y || J.length > 0)), ce = (e) => /* @__PURE__ */ H(te, {
 		label: v("shell.navigation"),
-		sections: ie,
+		sections: ae,
 		activeId: K,
-		onNavigate: ae,
+		onNavigate: oe,
 		collapsed: !e && w,
 		onCollapsedChange: e ? void 0 : T,
 		className: e ? "mtc-shell-drawer-rail" : "mtc-shell-rail"
-	}), ce = s && /* @__PURE__ */ U("button", {
-		ref: V,
+	}), le = s && /* @__PURE__ */ U("button", {
+		ref: re,
 		type: "button",
 		className: "mtc-shell-search",
-		"aria-label": s.placeholder ?? v("shell.search"),
+		"aria-label": `${s.placeholder ?? v("shell.search")} ${W}`,
 		onClick: (e) => {
-			e.currentTarget.focus(), re(!0);
+			e.currentTarget.focus(), ie(!0);
 		},
 		children: [
 			/* @__PURE__ */ H(o, { name: "search" }),
@@ -962,16 +962,17 @@ function lt(e) {
 				className: "mtc-shell-search-text",
 				children: s.placeholder ?? v("shell.search")
 			}),
+			" ",
 			/* @__PURE__ */ H(p, {
 				"aria-hidden": "true",
 				children: W
 			})
 		]
 	});
-	return /* @__PURE__ */ H(ee, {
+	return /* @__PURE__ */ H(j, {
 		storageKey: y.entryKey ?? S,
 		href: S,
-		mainRef: M,
+		mainRef: N,
 		children: /* @__PURE__ */ U("div", {
 			className: "mtc-shell",
 			"data-operations": e.operations?.length ? "true" : void 0,
@@ -980,7 +981,7 @@ function lt(e) {
 					className: "mtc-shell-skip",
 					href: "#mtc-main",
 					onClick: (e) => {
-						e.preventDefault(), M.current?.focus();
+						e.preventDefault(), N.current?.focus();
 					},
 					children: v("shell.skip")
 				}),
@@ -996,7 +997,7 @@ function lt(e) {
 									"aria-label": v("shell.menu"),
 									variant: "ghost",
 									className: "mtc-shell-menu",
-									onClick: () => O(!0)
+									onClick: () => k(!0)
 								}),
 								/* @__PURE__ */ U("a", {
 									className: "mtc-shell-product",
@@ -1020,7 +1021,7 @@ function lt(e) {
 								})
 							]
 						}),
-						!C && ce,
+						!C && le,
 						/* @__PURE__ */ U("div", {
 							className: "mtc-shell-actions",
 							children: [
@@ -1028,11 +1029,11 @@ function lt(e) {
 									className: "mtc-shell-product-actions",
 									children: l
 								}),
-								C && ce,
-								oe && /* @__PURE__ */ H("div", {
+								C && le,
+								se && /* @__PURE__ */ H("div", {
 									className: "mtc-shell-account",
-									children: J.length > 0 ? /* @__PURE__ */ H(A, {
-										label: v("shell.account"),
+									children: J.length > 0 ? /* @__PURE__ */ H(ee, {
+										label: `${v("shell.account")} ${D(Y ?? v("shell.account"))}`,
 										align: "end",
 										trigger: /* @__PURE__ */ H(_, {
 											name: Y ?? v("shell.account"),
@@ -1047,14 +1048,14 @@ function lt(e) {
 				}),
 				r && /* @__PURE__ */ H("div", {
 					className: "mtc-shell-rail-slot",
-					children: se(!1)
+					children: ce(!1)
 				}),
 				/* @__PURE__ */ H("main", {
 					id: "mtc-main",
-					ref: M,
+					ref: N,
 					tabIndex: -1,
 					className: "mtc-shell-main",
-					children: /* @__PURE__ */ H(ot, { ...e })
+					children: /* @__PURE__ */ H(st, { ...e })
 				}),
 				f && /* @__PURE__ */ H("aside", {
 					className: "mtc-shell-inspector",
@@ -1065,18 +1066,18 @@ function lt(e) {
 					className: "mtc-shell-status",
 					children: d
 				}),
-				r && /* @__PURE__ */ H(D, {
+				r && /* @__PURE__ */ H(O, {
 					open: E,
-					onOpenChange: O,
+					onOpenChange: k,
 					title: n.name,
 					side: "left",
 					width: 288,
 					className: "mtc-shell-drawer",
-					children: se(!0)
+					children: ce(!0)
 				}),
 				s && /* @__PURE__ */ H(b, {
-					open: k,
-					onOpenChange: re,
+					open: A,
+					onOpenChange: ie,
 					query: s.query,
 					onQueryChange: s.onQueryChange,
 					groups: s.groups,
@@ -1084,15 +1085,15 @@ function lt(e) {
 					loading: s.loading,
 					placeholder: s.placeholder
 				}),
-				/* @__PURE__ */ H(ct, { ...e }),
-				/* @__PURE__ */ H(st, { ...e })
+				/* @__PURE__ */ H(lt, { ...e }),
+				/* @__PURE__ */ H(ct, { ...e })
 			]
 		})
 	});
 }
-function ut(e) {
-	let { channel: t } = e, n = Q(), r = e.router.href(`${n.pathname}${n.search}${n.hash}`), i = R(null), a = R(null);
-	return F(() => {
+function dt(e) {
+	let { channel: t } = e, n = Q(), r = e.router.href(`${n.pathname}${n.search}${n.hash}`), i = z(null), a = z(null);
+	return I(() => {
 		let e = a.current;
 		if (!e || !t || typeof ResizeObserver > "u") return;
 		let n = -1, r = new ResizeObserver(() => {
@@ -1104,7 +1105,7 @@ function ut(e) {
 			}));
 		});
 		return r.observe(e), () => r.disconnect();
-	}, [t]), /* @__PURE__ */ H(ee, {
+	}, [t]), /* @__PURE__ */ H(j, {
 		storageKey: n.entryKey ?? r,
 		href: r,
 		mainRef: i,
@@ -1116,12 +1117,12 @@ function ut(e) {
 					id: "mtc-main",
 					ref: i,
 					className: "mtc-shell-main",
-					children: /* @__PURE__ */ H(ot, { ...e })
+					children: /* @__PURE__ */ H(st, { ...e })
 				}),
-				/* @__PURE__ */ H(ct, { ...e }),
-				/* @__PURE__ */ H(st, { ...e })
+				/* @__PURE__ */ H(lt, { ...e }),
+				/* @__PURE__ */ H(ct, { ...e })
 			]
 		})
 	});
 }
-export { tt as OperationsTray, at as ProductShell, je as RENEW_LEAD_MS, ze as ResourceCacheProvider, we as RouterLink, be as RouterProvider, Oe as SESSION_RENEWED, ke as SESSION_RENEW_FAILED, ee as ScrollRestorationProvider, T as SourceError, _e as buildPath, Xe as createEmbedChannel, pe as createHistoryRouter, De as createHttpSessionPort, me as createMemoryRouter, le as createProductFetch, Ie as createResourceCache, x as describeSourceError, de as ensureOk, C as isSourceError, ge as matchPath, ve as matchRoutes, ae as newTraceparent, Ye as parseEmbedHostMessage, v as parseRetryAfter, Ee as parseSessionBody, Ae as renewViaFrame, qe as requestTelemetry, Ve as resourceKey, S as responseRequestId, w as sourceErrorFromResponse, h as sourceErrorKindForCode, y as sourceErrorKindForStatus, E as toSourceError, Q as useLocation, rt as useProductShell, Ge as useResource, Be as useResourceCache, Ce as useRoute, xe as useRouter, k as useScrollRestoration, Pe as useSessionController };
+export { nt as OperationsTray, ot as ProductShell, Me as RENEW_LEAD_MS, Be as ResourceCacheProvider, Te as RouterLink, xe as RouterProvider, ke as SESSION_RENEWED, Ae as SESSION_RENEW_FAILED, j as ScrollRestorationProvider, T as SourceError, ve as buildPath, Ze as createEmbedChannel, me as createHistoryRouter, Oe as createHttpSessionPort, he as createMemoryRouter, ue as createProductFetch, Le as createResourceCache, x as describeSourceError, fe as ensureOk, C as isSourceError, _e as matchPath, ye as matchRoutes, oe as newTraceparent, Xe as parseEmbedHostMessage, v as parseRetryAfter, De as parseSessionBody, je as renewViaFrame, Je as requestTelemetry, He as resourceKey, S as responseRequestId, w as sourceErrorFromResponse, h as sourceErrorKindForCode, y as sourceErrorKindForStatus, E as toSourceError, Q as useLocation, it as useProductShell, Ke as useResource, Ve as useResourceCache, we as useRoute, Se as useRouter, A as useScrollRestoration, Fe as useSessionController };

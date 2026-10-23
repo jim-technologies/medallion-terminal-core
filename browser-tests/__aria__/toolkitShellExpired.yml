@@ -4,7 +4,7 @@
   - link "Storage":
     - /url: /buckets
   - button "Northstar workspace"
-  - button "Search files"
+  - button "Search files Ctrl K": Search files
   - img "Jamie Kim"
 - navigation "Navigation":
   - list:

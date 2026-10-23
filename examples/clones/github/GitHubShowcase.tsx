@@ -422,10 +422,10 @@ function GitHubFilesChanged({
               className={file.id === selectedFile.id ? 'is-active' : ''}
               key={file.id}
               type="button"
-              aria-label={`Open ${file.path}`}
+              aria-label={`Open ${file.status === 'added' ? 'A' : file.status === 'deleted' ? 'D' : 'M'} ${file.path}`}
               onClick={() => onSelectFile(file)}
             >
-              <span className={`gh-file-status is-${file.status}`}>{file.status === 'added' ? 'A' : file.status === 'deleted' ? 'D' : 'M'}</span>
+              <span className={`gh-file-status is-${file.status}`}>{file.status === 'added' ? 'A' : file.status === 'deleted' ? 'D' : 'M'}</span>{' '}
               <span>{file.path}</span>
               {viewedFiles.has(file.id) && <OperationalShowcaseIcon name="check" size={13} />}
             </button>

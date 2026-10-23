@@ -10,6 +10,7 @@ import {
 } from '../../shared/OperationalShowcasePrimitives'
 import './MetaSocialShowcase.css'
 import { NeutralMark } from '../../shared/NeutralMark'
+import { productShowcaseInitials } from '../../shared/ProductShowcasePrimitives'
 
 export type MetaSocialProduct = 'instagram' | 'facebook' | 'threads'
 
@@ -580,7 +581,7 @@ function SocialRail({
           <button
             type="button"
             key={`${item.label}:${index}`}
-            aria-label={item.label}
+            aria-label={item.label === 'Profile' ? `${productShowcaseInitials(AUTHORS.jun.name)} ${item.label}` : item.label}
             className={activeView === item.view && (
               item.label === 'Home'
               || item.label === 'Profile'
@@ -590,7 +591,7 @@ function SocialRail({
           >
             {item.label === 'Profile'
               ? <SocialAvatar author={AUTHORS.jun} size={25} />
-              : <OperationalShowcaseIcon name={item.icon} size={23} />}
+              : <OperationalShowcaseIcon name={item.icon} size={23} />}{' '}
             <span>{item.label}</span>
           </button>
         ))}
@@ -934,7 +935,7 @@ function PostActions({
       <button
         type="button"
         className={liked ? 'is-active' : ''}
-        aria-label={liked ? 'Unlike post' : 'Like post'}
+        aria-label={facebook ? 'Like post' : liked ? 'Unlike post' : 'Like post'}
         aria-pressed={liked}
         onClick={() => toggleLike(post.id)}
       >

@@ -8,8 +8,8 @@
   - text: All systems normal
 - complementary "Workspaces":
   - img "Chat"
-  - button "Jim Technologies": JT
-  - button "Customer workspace":
+  - button "JT Jim Technologies": JT
+  - button "CX 2 Customer workspace":
     - text: CX
     - emphasis: "2"
   - button "Add workspace"
@@ -60,7 +60,7 @@
     - strong: "# launch-room"
     - text: Q3 launch coordination
   - button "Call"
-  - button "8 members":
+  - button "J MC LT 8 members":
     - text: J MC LT
     - strong: "8"
   - button "Channel details"

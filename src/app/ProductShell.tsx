@@ -10,7 +10,7 @@ import {
 } from 'react'
 import { Button, IconButton } from '../components/Button'
 import { CommandPalette, type CommandGroup, type CommandItem } from '../components/CommandPalette'
-import { Avatar, Kbd } from '../components/Display'
+import { Avatar, Kbd, initialsOf } from '../components/Display'
 import { Icon, type IconName } from '../components/Icon'
 import { Dialog, Drawer, Menu, type MenuItem } from '../components/Overlays'
 import { ToastProvider } from '../components/Toast'
@@ -372,12 +372,12 @@ function StandaloneFrame(props: FrameProps) {
     />
   )
   const searchControl = search && (
-    <button ref={attachSearch} type="button" className="mtc-shell-search" aria-label={search.placeholder ?? t('shell.search')} onClick={event => {
+    <button ref={attachSearch} type="button" className="mtc-shell-search" aria-label={`${search.placeholder ?? t('shell.search')} ${shortcut}`} onClick={event => {
       event.currentTarget.focus()
       changePaletteOpen(true)
     }}>
       <Icon name="search" />
-      <span className="mtc-shell-search-text">{search.placeholder ?? t('shell.search')}</span>
+      <span className="mtc-shell-search-text">{search.placeholder ?? t('shell.search')}</span>{' '}
       <Kbd aria-hidden="true">{shortcut}</Kbd>
     </button>
   )
@@ -425,7 +425,7 @@ function StandaloneFrame(props: FrameProps) {
             <div className="mtc-shell-account">
               {menuItems.length > 0 ? (
                 <Menu
-                  label={t('shell.account')}
+                  label={`${t('shell.account')} ${initialsOf(principal ?? t('shell.account'))}`}
                   align="end"
                   trigger={<Avatar name={principal ?? t('shell.account')} decorative />}
                   items={menuItems}

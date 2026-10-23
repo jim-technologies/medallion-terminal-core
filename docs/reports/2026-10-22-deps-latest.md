@@ -32,3 +32,30 @@ The library build and type declarations pass on the new Flox environment. The fi
 A pnpm12 source-scan diagnostic parses the same five-package runtime closure and reports0fixedHIGH/0CRITICAL, matching the clean baseline. No candidate image exists: this repository owns a Git-distributed library, with no Dockerfile; image counts are not invented. The full gate, final clean-head scanner result, exact counts and source/cgroup receipts are recorded in the parent delivery report after this source snapshot is frozen. No full-gate success is claimed in advance.
 
 Only the main session may merge, tag or release the kit and advance consumers to a published tag. No consumer is repinned to this unreleased branch. No apply, cluster write, migration or backfill occurs in this qualification.
+
+## Accessibility and browser qualification
+
+Axe4.14 identified visible text missing from accessible action names. The
+affected names now include displayed initials, identifiers, counts, shortcuts
+and truncated graph text while retaining their full action descriptions.
+Keyboard selectors follow those names. Twenty-eight accessibility-tree
+baselines come from reviewed browser output; existing PNG baselines and pixel
+tolerances remain unchanged.
+
+Browser validation honors its bounded worker setting, builds a fresh phase-0
+catalog and refuses an already-running server. The phase-1 performance build,
+browser projects, assertions, deadlines and retry policy remain unchanged.
+The history fixture exposes an explicit completion signal so tests observe
+the real busy state before rows arrive, including Back, Forward and refresh.
+
+Host runs retained module-fetch failures caused by network-change events.
+An isolated loopback-network smoke passed the same existing keyboard case in
+Chromium, Firefox and WebKit. Full validation still must run every ordinary
+stage and assertion; final counts and the exact network environment belong in
+the delivery report. Public demonstration video URLs returned HTTP403 in a
+separate read-only check; ordinary source tests do not establish their live
+availability.
+
+Release this refreshed library before repinning and publishing consumer
+updates. Dependencies already inlined into a consumer's immutable library
+bundle do not change merely because its application lockfile is refreshed.

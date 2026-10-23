@@ -74,11 +74,11 @@
         - columnheader "Contact owner"
         - columnheader "Last activity"
     - rowgroup:
-      - row "Select Amelia Stone Open Amelia Stone amelia@northwindhealth.com Northwind Health Qualified Maya Chen Maya Chen 12 minutes ago":
+      - row "Select Amelia Stone Open AS Amelia Stone VP, Operations amelia@northwindhealth.com Northwind Health Qualified Maya Chen Maya Chen 12 minutes ago":
         - cell "Select Amelia Stone":
           - checkbox "Select Amelia Stone"
-        - cell "Open Amelia Stone":
-          - button "Open Amelia Stone":
+        - cell "Open AS Amelia Stone VP, Operations":
+          - button "Open AS Amelia Stone VP, Operations":
             - text: AS
             - strong: Amelia Stone
             - text: VP, Operations
@@ -89,11 +89,11 @@
         - cell "Qualified"
         - cell "Maya Chen Maya Chen": MC Maya Chen
         - cell "12 minutes ago"
-      - row "Select Marcus Reed Open Marcus Reed marcus@atlasworks.io Atlas Works Open Noah Williams Noah Williams 38 minutes ago":
+      - row "Select Marcus Reed Open MR Marcus Reed Founder & CEO marcus@atlasworks.io Atlas Works Open Noah Williams Noah Williams 38 minutes ago":
         - cell "Select Marcus Reed":
           - checkbox "Select Marcus Reed"
-        - cell "Open Marcus Reed":
-          - button "Open Marcus Reed":
+        - cell "Open MR Marcus Reed Founder & CEO":
+          - button "Open MR Marcus Reed Founder & CEO":
             - text: MR
             - strong: Marcus Reed
             - text: Founder & CEO
@@ -104,11 +104,11 @@
         - cell "Open"
         - cell "Noah Williams Noah Williams": NW Noah Williams
         - cell "38 minutes ago"
-      - row "Select Nina Patel Open Nina Patel nina@cobaltlogistics.com Cobalt Logistics Customer Priya Shah Priya Shah 2 hours ago":
+      - row "Select Nina Patel Open NP Nina Patel Chief Financial Officer nina@cobaltlogistics.com Cobalt Logistics Customer Priya Shah Priya Shah 2 hours ago":
         - cell "Select Nina Patel":
           - checkbox "Select Nina Patel"
-        - cell "Open Nina Patel":
-          - button "Open Nina Patel":
+        - cell "Open NP Nina Patel Chief Financial Officer":
+          - button "Open NP Nina Patel Chief Financial Officer":
             - text: NP
             - strong: Nina Patel
             - text: Chief Financial Officer
@@ -119,11 +119,11 @@
         - cell "Customer"
         - cell "Priya Shah Priya Shah": PS Priya Shah
         - cell "2 hours ago"
-      - row "Select Theo Martin Open Theo Martin theo@brightpath.energy Brightpath Energy New Lina Ortiz Lina Ortiz Yesterday":
+      - row "Select Theo Martin Open TM Theo Martin Director of Data theo@brightpath.energy Brightpath Energy New Lina Ortiz Lina Ortiz Yesterday":
         - cell "Select Theo Martin":
           - checkbox "Select Theo Martin"
-        - cell "Open Theo Martin":
-          - button "Open Theo Martin":
+        - cell "Open TM Theo Martin Director of Data":
+          - button "Open TM Theo Martin Director of Data":
             - text: TM
             - strong: Theo Martin
             - text: Director of Data
@@ -134,11 +134,11 @@
         - cell "New"
         - cell "Lina Ortiz Lina Ortiz": LO Lina Ortiz
         - cell "Yesterday"
-      - row "Select Sarah Kim Open Sarah Kim sarah@finchretail.com Finch Retail Qualified Eli Turner Eli Turner Yesterday":
+      - row "Select Sarah Kim Open SK Sarah Kim Head of Revenue sarah@finchretail.com Finch Retail Qualified Eli Turner Eli Turner Yesterday":
         - cell "Select Sarah Kim":
           - checkbox "Select Sarah Kim"
-        - cell "Open Sarah Kim":
-          - button "Open Sarah Kim":
+        - cell "Open SK Sarah Kim Head of Revenue":
+          - button "Open SK Sarah Kim Head of Revenue":
             - text: SK
             - strong: Sarah Kim
             - text: Head of Revenue
@@ -149,11 +149,11 @@
         - cell "Qualified"
         - cell "Eli Turner Eli Turner": ET Eli Turner
         - cell "Yesterday"
-      - row "Select Jordan Bell Open Jordan Bell jordan@harborfoods.co Harbor Foods Open Maya Chen Maya Chen 2 days ago":
+      - row "Select Jordan Bell Open JB Jordan Bell COO jordan@harborfoods.co Harbor Foods Open Maya Chen Maya Chen 2 days ago":
         - cell "Select Jordan Bell":
           - checkbox "Select Jordan Bell"
-        - cell "Open Jordan Bell":
-          - button "Open Jordan Bell":
+        - cell "Open JB Jordan Bell COO":
+          - button "Open JB Jordan Bell COO":
             - text: JB
             - strong: Jordan Bell
             - text: COO

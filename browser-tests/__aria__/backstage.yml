@@ -61,9 +61,9 @@
           - columnheader "Lifecycle"
           - columnheader "Health and actions"
       - rowgroup:
-        - row "Open Customer Gateway Component platform-experience customer-platform production Unstar Customer Gateway More actions for Customer Gateway":
-          - cell "Open Customer Gateway":
-            - button "Open Customer Gateway":
+        - row "Open customer-gateway Public edge service for authenticated customer and partner traffic. (Customer Gateway) Component platform-experience customer-platform production Unstar Customer Gateway More actions for Customer Gateway":
+          - cell "Open customer-gateway Public edge service for authenticated customer and partner traffic. (Customer Gateway)":
+            - button "Open customer-gateway Public edge service for authenticated customer and partner traffic. (Customer Gateway)":
               - strong: customer-gateway
               - text: Public edge service for authenticated customer and partner traffic.
           - cell "Component"
@@ -74,9 +74,9 @@
           - cell "Unstar Customer Gateway More actions for Customer Gateway":
             - button "Unstar Customer Gateway": ★
             - button "More actions for Customer Gateway"
-        - row "Open Web Console Component product-engineering customer-platform production Unstar Web Console More actions for Web Console":
-          - cell "Open Web Console":
-            - button "Open Web Console":
+        - row "Open web-console Operator and customer workspace for Jim Technologies products. (Web Console) Component product-engineering customer-platform production Unstar Web Console More actions for Web Console":
+          - cell "Open web-console Operator and customer workspace for Jim Technologies products. (Web Console)":
+            - button "Open web-console Operator and customer workspace for Jim Technologies products. (Web Console)":
               - strong: web-console
               - text: Operator and customer workspace for Jim Technologies products.
           - cell "Component"
@@ -87,9 +87,9 @@
           - cell "Unstar Web Console More actions for Web Console":
             - button "Unstar Web Console": ★
             - button "More actions for Web Console"
-        - row "Open Billing Service Component commerce-platform commerce production Star Billing Service More actions for Billing Service":
-          - cell "Open Billing Service":
-            - button "Open Billing Service":
+        - row "Open billing-service Invoices, subscriptions, usage rating, and ledger posting. (Billing Service) Component commerce-platform commerce production Star Billing Service More actions for Billing Service":
+          - cell "Open billing-service Invoices, subscriptions, usage rating, and ledger posting. (Billing Service)":
+            - button "Open billing-service Invoices, subscriptions, usage rating, and ledger posting. (Billing Service)":
               - strong: billing-service
               - text: Invoices, subscriptions, usage rating, and ledger posting.
           - cell "Component"
@@ -100,9 +100,9 @@
           - cell "Star Billing Service More actions for Billing Service":
             - button "Star Billing Service": ☆
             - button "More actions for Billing Service"
-        - row "Open Identity Service Component security-platform customer-platform production Star Identity Service More actions for Identity Service":
-          - cell "Open Identity Service":
-            - button "Open Identity Service":
+        - row "Open identity-service Workspace identity, sessions, service credentials, and policy claims. (Identity Service) Component security-platform customer-platform production Star Identity Service More actions for Identity Service":
+          - cell "Open identity-service Workspace identity, sessions, service credentials, and policy claims. (Identity Service)":
+            - button "Open identity-service Workspace identity, sessions, service credentials, and policy claims. (Identity Service)":
               - strong: identity-service
               - text: Workspace identity, sessions, service credentials, and policy claims.
           - cell "Component"
@@ -113,9 +113,9 @@
           - cell "Star Identity Service More actions for Identity Service":
             - button "Star Identity Service": ☆
             - button "More actions for Identity Service"
-        - row "Open Notifications Worker Component platform-experience customer-platform production Star Notifications Worker More actions for Notifications Worker":
-          - cell "Open Notifications Worker":
-            - button "Open Notifications Worker":
+        - row "Open notifications-worker Asynchronous email, push, webhook, and in-product delivery worker. (Notifications Worker) Component platform-experience customer-platform production Star Notifications Worker More actions for Notifications Worker":
+          - cell "Open notifications-worker Asynchronous email, push, webhook, and in-product delivery worker. (Notifications Worker)":
+            - button "Open notifications-worker Asynchronous email, push, webhook, and in-product delivery worker. (Notifications Worker)":
               - strong: notifications-worker
               - text: Asynchronous email, push, webhook, and in-product delivery worker.
           - cell "Component"

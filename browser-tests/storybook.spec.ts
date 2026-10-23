@@ -310,7 +310,7 @@ test('Spotify supports search and playback controls', async ({ page }) => {
 
 test('HubSpot opens contact records through the semantic row action', async ({ page }) => {
   const root = await openStory(page, stories.hubspot)
-  const contact = root.getByRole('button', { name: 'Open Amelia Stone' })
+  const contact = root.getByRole('button', { name: /^Open AS Amelia Stone / })
 
   await contact.focus()
   await page.keyboard.press('Enter')
@@ -321,7 +321,7 @@ test('HubSpot opens contact records through the semantic row action', async ({ p
 test('CoinGecko opens ranked assets through the semantic coin action', async ({ page }) => {
   const root = await openStory(page, stories.coingecko)
   const showcase = root.locator('[data-product="coingecko"]')
-  const coin = root.getByRole('button', { name: 'Open Bitcoin' })
+  const coin = root.getByRole('button', { name: 'Open B Bitcoin BTC', exact: true })
 
   await coin.focus()
   await page.keyboard.press('Enter')
@@ -334,10 +334,10 @@ test('Backstage filters the catalog and opens entity topology', async ({ page })
   const showcase = root.locator('[data-product="spotify-backstage"]')
 
   await root.getByRole('searchbox', { name: 'Filter catalog' }).fill('gateway')
-  await expect(root.getByRole('button', { name: 'Open Customer Gateway' })).toBeVisible()
-  await expect(root.getByRole('button', { name: 'Open Web Console' })).toHaveCount(0)
+  await expect(root.getByRole('button', { name: /^Open customer-gateway / })).toBeVisible()
+  await expect(root.getByRole('button', { name: /^Open web-console / })).toHaveCount(0)
 
-  await root.getByRole('button', { name: 'Open Customer Gateway' }).click()
+  await root.getByRole('button', { name: /^Open customer-gateway / }).click()
   await expect(showcase).toHaveAttribute('data-view', 'entity')
   await expect(root.getByRole('heading', { name: 'customer-gateway', level: 1 })).toBeVisible()
 
@@ -359,7 +359,7 @@ test('GitHub supports pull-request review, file selection, and viewed state', as
   await expect(showcase).toHaveAttribute('data-view', 'files-changed')
 
   await root.getByRole('textbox', { name: 'Filter changed files' }).fill('integrations')
-  await root.getByRole('button', { name: 'Open docs/integrations.md' }).click()
+  await root.getByRole('button', { name: 'Open M docs/integrations.md', exact: true }).click()
   const viewed = root.getByRole('checkbox', { name: 'Viewed' })
   await viewed.check()
   await expect(viewed).toBeChecked()
@@ -382,7 +382,7 @@ test('GitLab supports stage-based pipelines and changed-file review', async ({ p
 
   await sections.getByRole('button', { name: /Changes/ }).click()
   await expect(showcase).toHaveAttribute('data-view', 'changes')
-  await root.getByRole('button', { name: 'Open docs/integrations.md' }).click()
+  await root.getByRole('button', { name: 'Open M integrations.md docs/ (docs/integrations.md)', exact: true }).click()
   const viewed = root.getByRole('checkbox', { name: 'Viewed' })
   await viewed.check()
   await expect(viewed).toBeChecked()
@@ -639,9 +639,9 @@ for (const theme of ['dark', 'light'] as const) {
     const root = await openStory(page, 'toolkit-app-productshell--responsive-product-identity', { theme })
     const header = root.getByRole('banner')
     const product = header.getByRole('link', { name: productName, exact: true })
-    const search = header.getByRole('button', { name: 'Search files', exact: true })
+    const search = header.getByRole('button', { name: /^Search files (?:Ctrl K|⌘ K)$/ })
     const appearance = header.getByRole('button', { name: 'Appearance', exact: true })
-    const account = header.getByRole('button', { name: 'Account', exact: true })
+    const account = header.getByRole('button', { name: 'Account JK', exact: true })
     const menu = header.getByRole('button', { name: 'Open navigation', exact: true })
     await expect(account).toBeVisible()
     for (const width of [1440, 768, 767, 390, 320]) {
@@ -714,7 +714,7 @@ for (const theme of ['dark', 'light'] as const) {
     for (const fixture of fixtures) {
       const root = await openStory(page, `toolkit-app-productshell--${fixture.story}`, { theme })
       const header = root.getByRole('banner')
-      const search = header.getByRole('button', { name: 'Search files', exact: true })
+      const search = header.getByRole('button', { name: /^Search files (?:Ctrl K|⌘ K)$/ })
       await expect(root.getByRole('grid', { name: 'Files in finance' })).toBeVisible()
       // Without a session there is no account slot at all, not an empty one.
       if (!fixture.account) {
@@ -1156,7 +1156,7 @@ for (const density of ['standard', 'compact'] as const) {
           await expect(async () => {
             await page.keyboard.press('Tab')
             await expect(root.getByRole('button', { name })).toBeFocused({ timeout: 100 })
-          }).toPass({ timeout: 5_000 })
+          }).toPass({ timeout: 5_000, intervals: [25] })
           const button = await recordEditorFit(page, column)
           expect(button, `${label}, ${name}: ${JSON.stringify(button)}`).toMatchObject({ outline: 'solid', ringInView: true })
         }
@@ -1258,7 +1258,7 @@ test('DataGrid moves one tab stop with the arrow keys and selects with Space', a
 test('Database table viewer controls visible columns, sorting, paging, and row inspection', async ({ page }) => {
   const root = await openStory(page, stories.toolkitTableViewer)
 
-  await root.getByRole('button', { name: 'Choose visible columns' }).click()
+  await root.getByRole('button', { name: 'Columns 6/6, choose visible columns', exact: true }).click()
   const city = root.getByRole('checkbox', { name: /city/i })
   await city.uncheck()
   await expect(root.getByRole('columnheader', { name: 'city' })).toHaveCount(0)

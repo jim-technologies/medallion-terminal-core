@@ -8,7 +8,7 @@
     - button "Messages"
     - button "Notifications"
     - button "Create"
-    - button "Profile":
+    - button "J Profile":
       - img "Jun": J
       - text: Profile
   - button "More"

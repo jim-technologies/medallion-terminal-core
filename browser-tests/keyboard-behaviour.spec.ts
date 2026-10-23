@@ -47,7 +47,7 @@ for (const label of ['Draft name', 'Draft notes', 'Draft choice', 'Draft editor'
 
 test('Ctrl+K inside the shell palette closes it and returns focus to search', async ({ page }) => {
   await page.goto('/iframe.html?id=toolkit-app-productshell--editable-shortcuts&viewMode=story')
-  const search = page.getByRole('button', { name: 'Search files', exact: true })
+  const search = page.getByRole('button', { name: /^Search files (?:Ctrl K|⌘ K)$/ })
   await search.click()
   const palette = page.getByRole('dialog')
   await expect(palette).toBeVisible()

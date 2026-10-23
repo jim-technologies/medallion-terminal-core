@@ -38,10 +38,10 @@
         - columnheader "Market cap"
         - columnheader "Last 7 days"
     - rowgroup:
-      - row "☆ 1 Open Bitcoin $67,842.10 +2.48% $1.34T":
+      - row "☆ 1 Open B Bitcoin BTC $67,842.10 +2.48% $1.34T":
         - cell "☆ 1"
-        - cell "Open Bitcoin":
-          - button "Open Bitcoin":
+        - cell "Open B Bitcoin BTC":
+          - button "Open B Bitcoin BTC":
             - text: B
             - strong: Bitcoin
             - text: BTC
@@ -49,10 +49,10 @@
         - cell "+2.48%"
         - cell "$1.34T"
         - cell
-      - row "☆ 2 Open Ethereum $3,542.18 +1.36% $425.8B":
+      - row "☆ 2 Open E Ethereum ETH $3,542.18 +1.36% $425.8B":
         - cell "☆ 2"
-        - cell "Open Ethereum":
-          - button "Open Ethereum":
+        - cell "Open E Ethereum ETH":
+          - button "Open E Ethereum ETH":
             - text: E
             - strong: Ethereum
             - text: ETH
@@ -60,10 +60,10 @@
         - cell "+1.36%"
         - cell "$425.8B"
         - cell
-      - row "☆ 3 Open Solana $178.42 +4.82% $83.7B":
+      - row "☆ 3 Open S Solana SOL $178.42 +4.82% $83.7B":
         - cell "☆ 3"
-        - cell "Open Solana":
-          - button "Open Solana":
+        - cell "Open S Solana SOL":
+          - button "Open S Solana SOL":
             - text: S
             - strong: Solana
             - text: SOL
@@ -71,10 +71,10 @@
         - cell "+4.82%"
         - cell "$83.7B"
         - cell
-      - row "☆ 4 Open BNB $612.70 -0.34% $91.1B":
+      - row "☆ 4 Open B BNB BNB $612.70 -0.34% $91.1B":
         - cell "☆ 4"
-        - cell "Open BNB":
-          - button "Open BNB":
+        - cell "Open B BNB BNB":
+          - button "Open B BNB BNB":
             - text: B
             - strong: BNB
             - text: BNB
@@ -82,10 +82,10 @@
         - cell "-0.34%"
         - cell "$91.1B"
         - cell
-      - row "☆ 5 Open USDC $1.00 +0.01% $61.4B":
+      - row "☆ 5 Open U USDC USDC $1.00 +0.01% $61.4B":
         - cell "☆ 5"
-        - cell "Open USDC":
-          - button "Open USDC":
+        - cell "Open U USDC USDC":
+          - button "Open U USDC USDC":
             - text: U
             - strong: USDC
             - text: USDC

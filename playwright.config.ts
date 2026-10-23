@@ -8,6 +8,10 @@ if (!Number.isInteger(storybookPort) || storybookPort < 1 || storybookPort > 655
   throw new Error('STORYBOOK_PORT must be a valid port number')
 }
 const storybookUrl = `http://127.0.0.1:${storybookPort}`
+const workers = Number(process.env.PLAYWRIGHT_WORKERS ?? (process.env.CI ? 1 : 8))
+if (!Number.isInteger(workers) || workers < 1 || workers > 32) {
+  throw new Error('PLAYWRIGHT_WORKERS must be an integer from 1 to 32')
+}
 const performancePhase = process.env.STORYBOOK_PERFORMANCE_PHASE === '1'
 const historyFixturePort = Number(process.env.HISTORY_FIXTURE_PORT ?? 6216)
 if (!Number.isInteger(historyFixturePort) || historyFixturePort < 1 || historyFixturePort > 65535 || historyFixturePort === storybookPort) throw new Error('HISTORY_FIXTURE_PORT must be a distinct valid port')
@@ -26,7 +30,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   // Playwright recommends one CI worker for stability; local concurrency stays bounded.
-  workers: process.env.CI ? 1 : 8,
+  workers,
   reporter: process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'line',
   // Text snapshots: the exact accessibility tree of each visual baseline
   // story (see expectBaseline in the spec).
@@ -54,14 +58,14 @@ export default defineConfig({
   webServer: [{
     command: performancePhase
       ? `rm -rf storybook-performance && pnpm exec storybook build --output-dir storybook-performance && pnpm exec vite preview --outDir storybook-performance --host 127.0.0.1 --port ${storybookPort} --strictPort`
-      : `pnpm exec storybook dev -p ${storybookPort} --ci --no-open --exact-port`,
+      : `rm -rf storybook-static && pnpm build:storybook && pnpm exec vite preview --outDir storybook-static --host 127.0.0.1 --port ${storybookPort} --strictPort`,
     url: `${storybookUrl}/index.json`,
-    reuseExistingServer: !performancePhase && !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120_000,
   }, {
     command: `pnpm exec vite --host 127.0.0.1 --port ${historyFixturePort} --strictPort`,
     url: `http://127.0.0.1:${historyFixturePort}/browser-tests/fixtures/history.html`,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120_000,
   }],
   // Keep the device descriptor in the shared `use` block so its default

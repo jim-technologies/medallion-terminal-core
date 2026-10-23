@@ -58,7 +58,7 @@
     - button "Select Golden coast"
     - button "Open photo Harbor walk": Harbor walk
     - button "Select Harbor walk"
-    - button "Open video Coastal approach": 0:24
+    - button "Open video 0:24 Coastal approach": 0:24
     - button "Select Coastal approach"
     - button "Open photo Ridge light": Ridge light
     - button "Select Ridge light"
@@ -72,7 +72,7 @@
     - button "Select Evening in the city"
     - button "Open photo Studio board": Studio board
     - button "Select Studio board"
-    - button "Open video Night drive": 0:48
+    - button "Open video 0:48 Night drive": 0:48
     - button "Select Night drive"
   - region "July 12, 2026":
     - button "Select July 12, 2026"
@@ -92,5 +92,5 @@
     - button "Select Quiet water"
     - button "Open photo Pine study": Pine study
     - button "Select Pine study"
-    - button "Open video Sunset pass": 1:12
+    - button "Open video 1:12 Sunset pass": 1:12
     - button "Select Sunset pass"

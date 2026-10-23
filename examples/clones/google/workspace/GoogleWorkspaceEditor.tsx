@@ -407,7 +407,7 @@ function ToolbarButton({
     <button
       type="button"
       className={`workspace-tool ${strong ? 'is-strong' : ''} ${italic ? 'is-italic' : ''} ${underline ? 'is-underline' : ''}`}
-      aria-label={label}
+      aria-label={text ? `${label}: ${text}` : label}
       title={label}
     >
       {icon ? <WorkspaceIcon name={icon} /> : text}

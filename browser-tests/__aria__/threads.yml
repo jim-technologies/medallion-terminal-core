@@ -5,7 +5,7 @@
     - button "Search"
     - button "Create"
     - button "Activity"
-    - button "Profile"
+    - button "J Profile"
   - button "More"
 - main:
   - img "Posts"
