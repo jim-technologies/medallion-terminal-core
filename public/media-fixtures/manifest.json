@@ -1,0 +1,13 @@
+[
+  { "name": "clip.webm", "type": "video/webm", "codecs": "vp9, opus", "duration": 4 },
+  { "name": "clip-h264.mp4", "type": "video/mp4", "codecs": "avc1.42E01E, mp4a.40.2", "duration": 4 },
+  { "name": "clip-tail.mp4", "type": "video/mp4", "codecs": "avc1.42E01E, mp4a.40.2", "duration": 4 },
+  { "name": "clip-hevc.mp4", "type": "video/mp4", "codecs": "hvc1", "duration": 4 },
+  { "name": "clip.mkv", "type": "video/x-matroska", "codecs": "avc1, mp4a", "duration": 4 },
+  { "name": "tone.opus.ogg", "type": "audio/ogg", "codecs": "opus", "duration": 4 },
+  { "name": "tone.flac", "type": "audio/flac", "codecs": "flac", "duration": 4 },
+  { "name": "tone.wav", "type": "audio/wav", "codecs": "1", "duration": 4 },
+  { "name": "tone.mp3", "type": "audio/mpeg", "codecs": "mp3", "duration": 4 },
+  { "name": "pixel.avif", "type": "image/avif" },
+  { "name": "sample.pdf", "type": "application/pdf" }
+]

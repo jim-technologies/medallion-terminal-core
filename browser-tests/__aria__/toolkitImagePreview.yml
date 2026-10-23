@@ -6,7 +6,7 @@
     - img "chart.png"
     - text: Preview blocked Not a valid PNG.
     - button "Download"
-    - text: Too large to preview 80 MB is over the 50 MB preview limit.
+    - text: Preview blocked Not a valid PDF.
     - button "Download"
     - text: No preview for this file type Download to open.
     - button "Download"

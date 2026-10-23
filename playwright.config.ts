@@ -74,9 +74,9 @@ export default defineConfig({
     { name: 'chromium' },
     {
       name: 'firefox',
-      testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch)\.spec\.ts/,
+      testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch|media-preview)\.spec\.ts/,
       use: { browserName: 'firefox', launchOptions: { env: firefoxEnv } },
     },
-    { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch)\.spec\.ts/, use: { browserName: 'webkit' } },
+    { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch|media-preview)\.spec\.ts/, use: { browserName: 'webkit' } },
   ],
 })

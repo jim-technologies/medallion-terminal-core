@@ -41,7 +41,9 @@ const checks = [
     // add a small static cost; retain a bounded allowance for that API.
     // The value tip following its cell and fragment-aware scroll
     // restoration add about 0.13 KiB more.
-    maxStaticGzipBytes: 47.5 * 1024,
+    // AVIF policy and the localized, lazy file-preview loading shell add
+    // about 0.3 KiB. Fetching and native playback stay behind that boundary.
+    maxStaticGzipBytes: 48 * 1024,
     requireDynamicImport: false,
   },
   {
@@ -112,6 +114,13 @@ for (const check of checks) {
     if (!contents) throw new Error(`${check.label}: missing output bytes for ${outputName}`)
     if (check.label !== 'messages-zh' && decoder.decode(contents).includes(chineseCatalogMarker)) {
       throw new Error(`${check.label}: static bundle reaches the Simplified Chinese catalog (${outputName})`)
+    }
+    if (check.label === 'toolkit') {
+      const inputs = Object.keys(result.metafile.outputs[outputName].inputs)
+      if (inputs.some(input => /(?:^|\/)dist\/(?:FilePreviewContent|MediaPreview|previewProbe)-/.test(input))
+        || /\.canPlayType\(|Preview probe timed out/.test(decoder.decode(contents))) {
+        throw new Error(`toolkit: static bundle reaches file-preview fetching or native playback (${outputName})`)
+      }
     }
     return total + gzipSync(contents).byteLength
   }, 0)

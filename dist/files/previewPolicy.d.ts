@@ -8,16 +8,16 @@
 /** How a file is previewed. */
 export type FilePreviewKind = 'image' | 'pdf' | 'video' | 'audio' | 'csv' | 'tsv' | 'json' | 'markdown' | 'code' | 'text' | 'unsupported';
 /** Raster formats a preview may show, each checked by signature. */
-export type RasterKind = 'png' | 'jpeg' | 'gif' | 'webp';
+export type RasterKind = 'png' | 'jpeg' | 'gif' | 'webp' | 'avif';
 /** Byte and size limits; every read is bounded by them. */
 export interface PreviewLimits {
     /** Text, code, JSON and Markdown: bytes read (a Range request). */
     textBytes: number;
     /** CSV and TSV: bytes read before parsing. */
     delimitedBytes: number;
-    /** Raster images: larger files are not fetched. */
+    /** Raster images: maximum bytes buffered as a Blob before direct preview. */
     imageBytes: number;
-    /** PDFs: larger files are not fetched. */
+    /** PDFs: maximum bytes buffered as a Blob before direct preview. */
     pdfBytes: number;
     /** Delimited rows kept. */
     rows: number;

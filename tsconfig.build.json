@@ -13,6 +13,9 @@
   "exclude": [
     "src/**/*.stories.tsx",
     "src/**/*.fixture.ts",
+    "src/**/*.fixture.tsx",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
     "src/__tests__/**",
     "src/main.tsx",
     "src/embed/main.tsx",

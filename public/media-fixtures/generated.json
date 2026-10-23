@@ -1,0 +1,98 @@
+[
+  {
+    "name": "clip.webm",
+    "bytes": 128041,
+    "sha256": "0d9a379bba1a1b0cebe46d621f233a73d1544577c4865ccc2b95b57f490ccc6f",
+    "duration": 4.008,
+    "codecs": [
+      "vp9",
+      "opus"
+    ]
+  },
+  {
+    "name": "clip-h264.mp4",
+    "bytes": 88480,
+    "sha256": "c0dc3cd6becb0e1a7d70d7624ac3a63a53cfca54dbb73ee1125a116328a9e3c4",
+    "duration": 4.0,
+    "codecs": [
+      "h264",
+      "aac"
+    ]
+  },
+  {
+    "name": "clip-tail.mp4",
+    "bytes": 88480,
+    "sha256": "15cd2aedfb5164597098edc22c58c1dfcb4ca635cd515311cd4b9a94d2cb42b1",
+    "duration": 4.0,
+    "codecs": [
+      "h264",
+      "aac"
+    ]
+  },
+  {
+    "name": "clip-hevc.mp4",
+    "bytes": 81805,
+    "sha256": "9ad29b0d3159f69a8819d7f76070bd14c066ff49f0d51cd9042a6e972a3dd6df",
+    "duration": 4.0,
+    "codecs": [
+      "hevc",
+      "aac"
+    ]
+  },
+  {
+    "name": "clip.mkv",
+    "bytes": 87395,
+    "sha256": "52e433d0b8dca4e6b461f05a96c529e6a838308af31d15e644549b12025f8ab4",
+    "duration": 4.064,
+    "codecs": [
+      "h264",
+      "aac"
+    ]
+  },
+  {
+    "name": "tone.opus.ogg",
+    "bytes": 18311,
+    "sha256": "72d384f549322234c7190da0f7b84f323e4b771879dd108823e49a22c67e459d",
+    "duration": 4.0065,
+    "codecs": [
+      "opus"
+    ]
+  },
+  {
+    "name": "tone.flac",
+    "bytes": 31576,
+    "sha256": "acb669c7824c64b211eaa4b60572fdca81e99c0fe81b6751931813cf6158d92c",
+    "duration": 4.0,
+    "codecs": [
+      "flac"
+    ]
+  },
+  {
+    "name": "tone.wav",
+    "bytes": 128078,
+    "sha256": "25b52eb93e759ca0f70141111b169f30d3e9a556871c6153d6cdb05415d13c06",
+    "duration": 4.0,
+    "codecs": [
+      "pcm_s16le"
+    ]
+  },
+  {
+    "name": "tone.mp3",
+    "bytes": 16641,
+    "sha256": "4a06fa404bedd0861894ae0fff192c07dd6ba3c07f04adc584c7880d228158f0",
+    "duration": 4.0,
+    "codecs": [
+      "mp3"
+    ]
+  },
+  {
+    "name": "pixel.avif",
+    "bytes": 906,
+    "sha256": "07e7cd1237c56c8672438351e9f885c3756016a31815db568e3539505f2477ec"
+  },
+  {
+    "name": "sample.pdf",
+    "bytes": 597,
+    "sha256": "b3fb35adb64c9ba3f766529e00bd70f5292890a9fde5ab1a618b06b4222171bf"
+  }
+]

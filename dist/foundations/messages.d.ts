@@ -104,6 +104,9 @@ export declare const EN_MESSAGES: {
     readonly 'preview.loading': 'Loading preview';
     readonly 'preview.unsupported.title': 'No preview for this file type';
     readonly 'preview.unsupported.description': 'Download to open.';
+    readonly 'preview.cannotPlay.title': "This browser can't play {format}";
+    readonly 'preview.cannotPlay.description': 'Download this file to play it in another app.';
+    readonly 'preview.mediaProbeTimeout': 'The media server did not respond in time.';
     readonly 'preview.tooLarge.title': 'Too large to preview';
     readonly 'preview.tooLarge.description': '{size} is over the {limit} preview limit.';
     readonly 'preview.blocked.title': 'Preview blocked';

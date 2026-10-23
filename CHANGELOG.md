@@ -19,6 +19,12 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   action names, as required by the updated accessibility checks.
 - Make browser fixtures wait for explicit data completion, honor bounded
   worker settings and start fresh catalog servers for each validation run.
+- Native media previews check browser support and distinguish transport errors
+  from unsupported codecs. Hosts can inject silent session renewal; a retry
+  restores playback position and paused or playing state.
+- AVIF images are admitted by signature. Large raster images and PDFs use a
+  bounded signature probe before rendering their original URL, avoiding a
+  whole-file preview buffer. Active document types remain source-only.
 
 ## [0.8.0] — 2026-10-17
 

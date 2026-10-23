@@ -21,7 +21,7 @@ export type FilePreviewKind =
   | 'unsupported'
 
 /** Raster formats a preview may show, each checked by signature. */
-export type RasterKind = 'png' | 'jpeg' | 'gif' | 'webp'
+export type RasterKind = 'png' | 'jpeg' | 'gif' | 'webp' | 'avif'
 
 /** Byte and size limits; every read is bounded by them. */
 export interface PreviewLimits {
@@ -29,9 +29,9 @@ export interface PreviewLimits {
   textBytes: number
   /** CSV and TSV: bytes read before parsing. */
   delimitedBytes: number
-  /** Raster images: larger files are not fetched. */
+  /** Raster images: maximum bytes buffered as a Blob before direct preview. */
   imageBytes: number
-  /** PDFs: larger files are not fetched. */
+  /** PDFs: maximum bytes buffered as a Blob before direct preview. */
   pdfBytes: number
   /** Delimited rows kept. */
   rows: number
@@ -59,6 +59,7 @@ const RASTER: Record<string, RasterKind> = {
   jpeg: 'jpeg',
   gif: 'gif',
   webp: 'webp',
+  avif: 'avif',
 }
 const VIDEO = new Set(['mp4', 'm4v', 'webm', 'mov'])
 const AUDIO = new Set(['mp3', 'm4a', 'aac', 'wav', 'ogg', 'oga', 'opus', 'flac'])
@@ -103,7 +104,7 @@ export interface PreviewPlan {
 export function planPreview(name: string, contentType?: string): PreviewPlan {
   const ext = extensionOf(name)
   const hasExtension = name.split('/').pop()?.includes('.') ?? false
-  if (RASTER[ext]) return { kind: 'image', raster: RASTER[ext] }
+  if (Object.prototype.hasOwnProperty.call(RASTER, ext)) return { kind: 'image', raster: RASTER[ext] }
   if (ext === 'pdf') return { kind: 'pdf' }
   if (VIDEO.has(ext)) return { kind: 'video' }
   if (AUDIO.has(ext)) return { kind: 'audio' }
@@ -111,7 +112,7 @@ export function planPreview(name: string, contentType?: string): PreviewPlan {
   if (ext === 'tsv') return { kind: 'tsv' }
   if (ext === 'json') return { kind: 'json', language: 'JSON' }
   if (MARKDOWN.has(ext)) return { kind: 'markdown' }
-  if (CODE_LANGUAGES[ext]) return { kind: 'code', language: CODE_LANGUAGES[ext] }
+  if (Object.prototype.hasOwnProperty.call(CODE_LANGUAGES, ext)) return { kind: 'code', language: CODE_LANGUAGES[ext] }
   if (TEXT.has(ext)) return { kind: 'text' }
   if (hasExtension || !contentType) return { kind: 'unsupported' }
   const type = contentType.split(';')[0]!.trim().toLowerCase()
@@ -119,6 +120,7 @@ export function planPreview(name: string, contentType?: string): PreviewPlan {
   if (type === 'image/jpeg') return { kind: 'image', raster: 'jpeg' }
   if (type === 'image/gif') return { kind: 'image', raster: 'gif' }
   if (type === 'image/webp') return { kind: 'image', raster: 'webp' }
+  if (type === 'image/avif') return { kind: 'image', raster: 'avif' }
   if (type === 'application/pdf') return { kind: 'pdf' }
   if (type === 'application/json') return { kind: 'json', language: 'JSON' }
   if (type === 'text/csv') return { kind: 'csv' }
@@ -152,6 +154,17 @@ export function hasRasterSignature(kind: RasterKind, bytes: Uint8Array): boolean
       return bytes.length >= 12
         && bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46
         && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50
+    case 'avif': {
+      if (bytes.length < 16 || String.fromCharCode(...bytes.slice(4, 8)) !== 'ftyp') return false
+      const size = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint32(0)
+      if (size < 16) return false
+      const brand = (offset: number) => ['avif', 'avis'].includes(String.fromCharCode(...bytes.slice(offset, offset + 4)))
+      if (brand(8)) return true
+      for (let offset = 16; offset + 4 <= Math.min(size, bytes.length); offset += 4) {
+        if (brand(offset)) return true
+      }
+      return false
+    }
   }
 }
 
