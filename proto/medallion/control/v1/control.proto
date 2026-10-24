@@ -1,0 +1,197 @@
+syntax = "proto3";
+
+package medallion.control.v1;
+
+import "medallion/control/v1/options.proto";
+import "medallion/control/v1/resource.proto";
+
+// One uniform resource API. An aggregator serves it to hosts (identity,
+// authorization, tenancy, discovery merge, audit) and each owner serves the
+// same service as a provider for the groups it owns. Unary only; hosts poll.
+service ControlService {
+  // Kinds, operation types and the form projections needed to render them.
+  rpc Discover(DiscoverRequest) returns (DiscoverResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  // Objects of one kind, filtered by tree prefix, labels or phase.
+  rpc ListResources(ListResourcesRequest) returns (ListResourcesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  // One object.
+  rpc GetResource(GetResourceRequest) returns (GetResourceResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  // Server-side apply of desired state. dry_run plans without persisting;
+  // otherwise the object (an Operation, a Freeze) is created once and its
+  // controller run starts.
+  rpc Apply(ApplyRequest) returns (ApplyResponse);
+  // Deliver an approval or rejection bound to a plan digest.
+  rpc Approve(ApproveRequest) returns (ApproveResponse);
+  // Ask the current generation's run to stop at its next activity boundary.
+  rpc Cancel(CancelRequest) returns (CancelResponse);
+}
+
+// Discover request.
+message DiscoverRequest {
+  // Workspace being browsed.
+  string workspace_id = 1;
+}
+
+// A kind as served.
+message KindInfo {
+  // Message carrying the declaration.
+  string message = 1;
+  // Declaration.
+  KindOptions options = 2;
+  // Operation methods targeting this kind.
+  repeated string operations = 3;
+  // Form projection of the spec, for SPEC_SOURCE_CONTROL_PLANE kinds.
+  repeated FieldSpec spec_fields = 4;
+  // Grid columns in order; each is the label of a Resource property.
+  repeated string columns = 5;
+}
+
+// An operation type as served. RISK_NEVER operations are never served.
+message OperationInfo {
+  // Method, e.g. "example.v1.OpsService.Maintain".
+  string method = 1;
+  // Request message.
+  string request_type = 2;
+  // Response message.
+  string response_type = 3;
+  // Declaration.
+  OperationOptions options = 4;
+  // Form projection of the request, control-managed fields excluded.
+  repeated FieldSpec request_fields = 5;
+}
+
+// Whether a provider is being served.
+enum ProviderState {
+  // Unset.
+  PROVIDER_STATE_UNSPECIFIED = 0;
+  // Served.
+  PROVIDER_STATE_READY = 1;
+  // Not served: unreachable, or its descriptor differs from the frozen one.
+  PROVIDER_STATE_DEGRADED = 2;
+}
+
+// One provider behind the service.
+message ProviderInfo {
+  // Provider name, e.g. "os".
+  string name = 1;
+  // SHA-256 of the provider's declaration descriptor set.
+  string descriptor_digest = 2;
+  // API groups it owns.
+  repeated string groups = 3;
+  // Served or not.
+  ProviderState state = 4;
+  // Why degraded.
+  string message = 5;
+}
+
+// Discover response.
+message DiscoverResponse {
+  // Kinds the caller may read.
+  repeated KindInfo kinds = 1;
+  // Operation types, offered or not, with their reasons.
+  repeated OperationInfo operations = 2;
+  // Providers and their state.
+  repeated ProviderInfo providers = 3;
+}
+
+// List request.
+message ListResourcesRequest {
+  // Workspace.
+  string workspace_id = 1;
+  // Group.
+  string group = 2;
+  // Plural.
+  string plural = 3;
+  // Optional tree prefix, e.g. "Platform/Data/Feeds/markets".
+  string tree_prefix = 4;
+  // Optional equality label selector.
+  map<string, string> labels = 5;
+  // Optional phase filter.
+  repeated string phases = 6;
+  // At most 100; zero means 100.
+  int32 page_size = 7;
+  // Opaque.
+  string page_token = 8;
+}
+
+// List response.
+message ListResourcesResponse {
+  // Objects.
+  repeated Resource resources = 1;
+  // Opaque; empty at the end.
+  string next_page_token = 2;
+}
+
+// Get request.
+message GetResourceRequest {
+  // Object.
+  ResourceRef ref = 1;
+}
+
+// Get response.
+message GetResourceResponse {
+  // Object.
+  Resource resource = 1;
+}
+
+// Apply request.
+message ApplyRequest {
+  // Desired object: metadata.ref names it and spec is the typed message.
+  Resource resource = 1;
+  // Validate and plan only; nothing is persisted.
+  bool dry_run = 2;
+  // Client-generated; a retry with the same key returns the same result.
+  string idempotency_key = 3;
+}
+
+// Apply response.
+message ApplyResponse {
+  // Object after apply, or as it would be for dry_run.
+  Resource resource = 1;
+  // Plan, for operations and plan-then-approve kinds.
+  Plan plan = 2;
+}
+
+// Approve request.
+message ApproveRequest {
+  // Object.
+  ResourceRef ref = 1;
+  // Generation being decided.
+  int64 generation = 2;
+  // Must equal the current plan digest.
+  string plan_digest = 3;
+  // Approve or reject.
+  bool approved = 4;
+  // Required.
+  string reason = 5;
+  // The first six or more hex characters of plan_digest, as typed by the
+  // approver.
+  string confirmation = 6;
+}
+
+// Approve response.
+message ApproveResponse {
+  // Object after the decision.
+  Resource resource = 1;
+}
+
+// Cancel request.
+message CancelRequest {
+  // Object.
+  ResourceRef ref = 1;
+  // Generation being cancelled.
+  int64 generation = 2;
+  // Required.
+  string reason = 3;
+}
+
+// Cancel response.
+message CancelResponse {
+  // Object after the request.
+  Resource resource = 1;
+}

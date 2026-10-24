@@ -6,6 +6,14 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [0.8.1] — 2026-10-24
 
+### Added
+
+- `medallion.control.v1`: control-plane kinds, operation declarations
+  (extensions 52100-52102 on messages, RPCs and fields), resources with
+  server-side display projections, digest-bound plans, human-only approvals,
+  freezes, and a unary `ControlService`. TypeScript JSON types are exported
+  from `medallion-terminal-core/proto`. No UI components.
+
 ### Changed
 
 - Refresh dependency and Flox toolchain pins, including pnpm 12, Vitest 5,

@@ -34,6 +34,7 @@ http://localhost:5173/?template=/examples/platform-foundation.json&backend=http:
 | Files and data repositories | `file_browser`, `table`, charts | `TablePayload` and existing analytical shapes | Object storage, tabular query, previews, signed downloads, HTTP Range |
 | Source catalog / connection inventory | `catalog` | `ListSources` | Source registration, parameter schemas, health, authorization |
 | Object and workflow actions | `object_view`, `trade`, custom forms | `SubmitAction` / `WatchAction` | Policy checks, idempotency, execution, lifecycle, audit |
+| Governed platform operations | host-rendered tree, object page and plan review | `medallion.control.v1` `ControlService` | Declarations on the owner's own RPCs, plan digests, human-only approval, runs, audit |
 | Schema-driven actions | `action_form` | Template field schema + `SubmitAction` / `WatchAction` | Field policy, server validation, authorization, execution, audit |
 | Workspace-scoped “Open with…” | `AssetOpenProvider`, `AssetApplicationFrame` | `AssetReference`, `AssetOpenResolution` | Installed-application catalog, workspace policy, preference persistence, authorization, and short-lived asset grants |
 | AI-assisted views | `prompt` | `Generate` | Model orchestration, retrieval, policy, template validation |

@@ -91,3 +91,64 @@ export type {
   MediaCollectionJson,
   MediaKindJson,
 } from './gen/medallion/terminal/v1/shapes_pb.js'
+
+// Control plane (medallion.control.v1): kinds, resources, plans, approvals.
+// Hosts render these generically from Discover's field specs.
+export type {
+  ActionOfferJson,
+  ApprovalRecordJson,
+  CancelRecordJson,
+  ConditionJson,
+  FieldSpecJson,
+  FreezeScopeJson,
+  FreezeSpecJson,
+  LinkJson,
+  ObjectMetaJson,
+  OperationPhaseJson,
+  OperationSpecJson,
+  OperationStatusJson,
+  PlanJson,
+  PropertyJson,
+  ProvenanceJson,
+  ResourceJson,
+  ResourceRefJson,
+  RunRefJson,
+  StatusJson,
+  ToneJson,
+} from './gen/medallion/control/v1/resource_pb.js'
+
+export type {
+  ApprovalJson,
+  CancelModeJson,
+  DisplayFormatJson,
+  DryRunPolarityJson,
+  FieldOptionsJson,
+  KindOptionsJson,
+  OperationOptionsJson,
+  ReconcilePolicyJson,
+  RiskJson,
+  RunnerJson,
+  ScopeJson,
+  SpecSourceJson,
+  TraitJson,
+  WindowJson,
+} from './gen/medallion/control/v1/options_pb.js'
+
+export type {
+  ApplyRequestJson,
+  ApplyResponseJson,
+  ApproveRequestJson,
+  ApproveResponseJson,
+  CancelRequestJson,
+  CancelResponseJson,
+  DiscoverRequestJson,
+  DiscoverResponseJson,
+  GetResourceRequestJson,
+  GetResourceResponseJson,
+  KindInfoJson,
+  ListResourcesRequestJson,
+  ListResourcesResponseJson,
+  OperationInfoJson,
+  ProviderInfoJson,
+  ProviderStateJson,
+} from './gen/medallion/control/v1/control_pb.js'

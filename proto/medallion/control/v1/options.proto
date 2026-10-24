@@ -1,0 +1,271 @@
+syntax = "proto3";
+
+package medallion.control.v1;
+
+import "google/protobuf/descriptor.proto";
+
+// Declarations that turn ordinary proto messages and RPCs into control-plane
+// kinds and operation types. The descriptor set an owner already builds is
+// the registry: there is no second registration step, and a declaration check
+// in the owner's own gate refuses an RPC that is not declared.
+
+// Who owns a kind's desired state.
+enum SpecSource {
+  // Unset; refused by the declaration check.
+  SPEC_SOURCE_UNSPECIFIED = 0;
+  // Desired state is written through ControlService.Apply.
+  SPEC_SOURCE_CONTROL_PLANE = 1;
+  // Desired state lives in version control (configuration files, chart
+  // values); the panel shows it read-only and links to its source path.
+  SPEC_SOURCE_GIT = 2;
+  // The kind is observation-only (a run, a Job); there is no spec.
+  SPEC_SOURCE_NONE = 3;
+}
+
+// What a controller may do when spec and status disagree.
+enum ReconcilePolicy {
+  // Unset; refused by the declaration check.
+  RECONCILE_POLICY_UNSPECIFIED = 0;
+  // Status is observed; drift is reported as a condition, never acted on.
+  RECONCILE_POLICY_OBSERVE = 1;
+  // The controller converges without approval; fail-safe directions only.
+  RECONCILE_POLICY_AUTO = 2;
+  // The controller plans first, then waits for an approval bound to the plan
+  // digest before it applies.
+  RECONCILE_POLICY_PLAN_THEN_APPROVE = 3;
+}
+
+// Where a kind's objects are visible.
+enum Scope {
+  // Unset; refused by the declaration check.
+  SCOPE_UNSPECIFIED = 0;
+  // Objects belong to one workspace.
+  SCOPE_WORKSPACE = 1;
+  // Platform objects, visible only to platform operators.
+  SCOPE_PLATFORM = 2;
+}
+
+// Behavior shared across kinds, rendered generically by hosts.
+enum Trait {
+  // Unset.
+  TRAIT_UNSPECIFIED = 0;
+  // Offers a run-style operation.
+  TRAIT_RUNNABLE = 1;
+  // Has workflow runs below it (KindOptions.run_workflow_id).
+  TRAIT_HAS_RUNS = 2;
+  // Status carries health conditions.
+  TRAIT_HAS_HEALTH = 3;
+  // Has upstream and downstream lineage links.
+  TRAIT_HAS_LINEAGE = 4;
+  // A deployed workload with a release revision.
+  TRAIT_DEPLOYABLE = 5;
+  // Can be halted by a kill switch.
+  TRAIT_KILLABLE = 6;
+}
+
+// Declares a message as the spec (or view) of a control-plane kind.
+message KindOptions {
+  // API group, e.g. "os.example".
+  string group = 1;
+  // Version segment, e.g. "v1".
+  string version = 2;
+  // Kind name, e.g. "Feed".
+  string kind = 3;
+  // Plural used in references and lists, e.g. "feeds".
+  string plural = 4;
+  // Fully-qualified typed status message carried in Status.detail.
+  string status_type = 5;
+  // Workspace or platform scope.
+  Scope scope = 6;
+  // Who owns desired state.
+  SpecSource spec_source = 7;
+  // What controllers may do on drift.
+  ReconcilePolicy reconcile = 8;
+  // Placement in the panel tree; `{field}` reads a spec field, e.g.
+  // "Platform/Data/Feeds/{domain}/{name}". Paths are placement, never
+  // identity: ResourceRef is identity.
+  string tree_path = 9;
+  // Shared traits the host renders generically.
+  repeated Trait traits = 10;
+  // Host glyph name.
+  string icon = 11;
+  // Workflow id template of the existing workflow runs this kind owns, e.g.
+  // "pull:{name}"; empty when the kind has no runs.
+  string run_workflow_id = 12;
+  // Fully-qualified spec message when it is a shared control message (for
+  // example medallion.control.v1.OperationSpec); empty means the message
+  // carrying this option is the spec.
+  string spec_type = 13;
+}
+
+// How risky an operation is.
+enum Risk {
+  // Unset; refused by the declaration check.
+  RISK_UNSPECIFIED = 0;
+  // No side effects.
+  RISK_READ = 1;
+  // Bounded, idempotent side effects; one confirmation.
+  RISK_SAFE = 2;
+  // Plan first, then an approval bound to the plan digest, then apply.
+  RISK_GATED = 3;
+  // Never offered and never discovered (secret-bearing or host-only).
+  RISK_NEVER = 4;
+}
+
+// How the request field that selects plan-only behavior reads.
+enum DryRunPolarity {
+  // Unset.
+  DRY_RUN_POLARITY_UNSPECIFIED = 0;
+  // `apply` or `execute` style: false, the default, is the read-only plan.
+  DRY_RUN_POLARITY_WRITES_WHEN_TRUE = 1;
+  // `dry_run` style: true is the read-only plan, so the default keeps the
+  // field's existing writing behavior for every caller that never sets it.
+  DRY_RUN_POLARITY_PLANS_WHEN_TRUE = 2;
+}
+
+// Who must confirm before an operation applies.
+enum Approval {
+  // Unset.
+  APPROVAL_UNSPECIFIED = 0;
+  // No confirmation (reads only).
+  APPROVAL_NONE = 1;
+  // The requester confirms once with a reason.
+  APPROVAL_CONFIRM = 2;
+  // A human user, never a service account or an agent, approves the plan
+  // digest.
+  APPROVAL_HUMAN = 3;
+  // A human user other than the requester approves the plan digest.
+  APPROVAL_SECOND_HUMAN = 4;
+}
+
+// Where the apply step executes.
+enum Runner {
+  // Unset.
+  RUNNER_UNSPECIFIED = 0;
+  // Inside the owner's controller process; light, bounded work only.
+  RUNNER_IN_PROCESS = 1;
+  // A Kubernetes Job cloned from an allowlisted CronJob template.
+  RUNNER_KUBERNETES_JOB = 2;
+  // Workstation only; the panel shows state and the exact command.
+  RUNNER_HOST_ONLY = 3;
+}
+
+// How a running operation can be stopped.
+enum CancelMode {
+  // Unset; treated as CANCEL_MODE_COOPERATIVE.
+  CANCEL_MODE_UNSPECIFIED = 0;
+  // Cannot be cancelled once applying.
+  CANCEL_MODE_NONE = 1;
+  // Stops at the next activity boundary.
+  CANCEL_MODE_COOPERATIVE = 2;
+  // The apply Job may be deleted mid-activity.
+  CANCEL_MODE_KILL_JOB = 3;
+}
+
+// A UTC window during which an operation must not apply.
+message Window {
+  // Inclusive start, "HH:MM" UTC.
+  string start_utc = 1;
+  // Exclusive end, "HH:MM" UTC; earlier than start wraps past midnight.
+  string end_utc = 2;
+  // Why, shown in the plan, e.g. "nightly flush".
+  string reason = 3;
+}
+
+// Declares an RPC as a control-plane operation type.
+message OperationOptions {
+  // Target kind as "<group>/<version>/<Kind>", e.g. "os.example/v1/Namespace".
+  string target_kind = 1;
+  // Request field filled from the target object's name; empty for none.
+  string target_field = 2;
+  // Short imperative label, e.g. "Maintain".
+  string label = 3;
+  // Risk class.
+  Risk risk = 4;
+  // Request field that selects plan-only behavior; a control-managed bool.
+  string dry_run_field = 5;
+  // How that field reads.
+  DryRunPolarity dry_run_polarity = 6;
+  // Read-only plan RPC on the same service when the request has no dry-run
+  // field.
+  string plan_method = 7;
+  // Confirmation rule.
+  Approval approval = 8;
+  // Where apply runs.
+  Runner runner = 9;
+  // CronJob whose pod template the apply Job clones.
+  string job_template = 10;
+  // Claim key serializing conflicting writers, e.g. "lake-writer".
+  string concurrency_key = 11;
+  // Fully-qualified operations that must not run at the same time.
+  repeated string excludes = 12;
+  // Windows during which apply is refused.
+  repeated Window deny_windows = 13;
+  // Minutes an unapproved plan stays valid; zero means thirty.
+  uint32 plan_ttl_minutes = 14;
+  // Seconds before the apply step is considered hung.
+  uint32 timeout_seconds = 15;
+  // How a running apply can be stopped.
+  CancelMode cancel = 16;
+  // Whether hosts may request it. A declared operation that is not offered
+  // is still listed with its reason and shown disabled.
+  bool offered = 17;
+  // Why it is not offered, or why it is RISK_NEVER; required for both.
+  string not_offered_reason = 18;
+  // Exact workstation command for RUNNER_HOST_ONLY, shown instead of a
+  // button.
+  string host_command = 19;
+}
+
+// How a host renders a value.
+enum DisplayFormat {
+  // Plain text.
+  DISPLAY_FORMAT_UNSPECIFIED = 0;
+  // A timestamp rendered as its age, e.g. "3 h ago".
+  DISPLAY_FORMAT_AGE = 1;
+  // A duration, e.g. "4 m 12 s".
+  DISPLAY_FORMAT_DURATION = 2;
+  // An integer count with grouping.
+  DISPLAY_FORMAT_COUNT = 3;
+  // A byte size, e.g. "12.4 GiB".
+  DISPLAY_FORMAT_BYTES = 4;
+  // A phase rendered as a status badge.
+  DISPLAY_FORMAT_STATUS = 5;
+  // A UTC timestamp, e.g. "2026-10-16 05:33Z".
+  DISPLAY_FORMAT_TIMESTAMP = 6;
+}
+
+// Per-field presentation and safety rules.
+message FieldOptions {
+  // Never rendered, returned or offered; an operation touching it is refused.
+  bool secret = 1;
+  // Fixed after create.
+  bool immutable = 2;
+  // Set by the control plane and hidden from forms: the dry-run field and
+  // the target field.
+  bool control_managed = 3;
+  // Kind the value names, as "<group>/<version>/<Kind>"; hosts render a link.
+  string ref_kind = 4;
+  // Grid column header; empty keeps the field out of grids.
+  string column = 5;
+  // How the value renders.
+  DisplayFormat format = 6;
+}
+
+// Kind declaration on a spec or view message.
+extend google.protobuf.MessageOptions {
+  // Kind declaration.
+  KindOptions kind = 52100;
+}
+
+// Operation declaration on an RPC.
+extend google.protobuf.MethodOptions {
+  // Operation declaration.
+  OperationOptions operation = 52101;
+}
+
+// Presentation and safety rules on a field.
+extend google.protobuf.FieldOptions {
+  // Field rules.
+  FieldOptions field = 52102;
+}
