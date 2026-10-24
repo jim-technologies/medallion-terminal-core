@@ -215,11 +215,18 @@ async function openPlayback(page: Page, name = 'tone.wav') {
   return page.locator('video, audio').and(page.getByLabel(name, { exact: true }))
 }
 
+// WebKit's GStreamer pipeline reports duration 0 for the Ogg Opus fixture
+// until playback reaches end of stream (about four seconds after Play), then
+// fires durationchange with the real value. The default five-second poll only
+// raced that end, so under load it expired first. Wait for the real duration
+// instead; the assertion itself is unchanged.
+const NATIVE_DURATION_TIMEOUT_MS = 15_000
+
 async function ready(media: Locator) {
   await expect.poll(() => media.evaluate(element => {
     const player = element as HTMLMediaElement
     return player.readyState >= 1 && Number.isFinite(player.duration) && player.duration > 0
-  })).toBe(true)
+  }), { timeout: NATIVE_DURATION_TIMEOUT_MS }).toBe(true)
 }
 
 async function seek(media: Locator, time: number) {
