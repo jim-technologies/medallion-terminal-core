@@ -22,6 +22,9 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   during ordinary and frozen installs.
 - Migrate all 21 hot-path benchmarks to Vitest 5's awaited benchmark fixture
   and keep their Node project separate from Storybook and regular unit tests.
+- Refresh transitive lock entries to their newest in-range releases (immer
+  11.2.9, baseline-browser-mapping 2.11.31, caniuse-lite 1.0.30001819,
+  node-releases 2.0.60). Flox pins were already the newest the catalog offers.
 
 ### Fixed
 
