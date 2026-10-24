@@ -4,6 +4,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.8.1] — 2026-10-24
+
 ### Changed
 
 - Refresh dependency and Flox toolchain pins, including pnpm 12, Vitest 5,
