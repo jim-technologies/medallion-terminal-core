@@ -1,0 +1,33 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -eq 0 ]; then
+  printf '%s\n' 'usage: scripts/browser-phase command [argument ...]' >&2
+  exit 64
+fi
+
+case "${MEDALLION_TEST_BROWSER_NETNS:-auto}" in
+  off)
+    printf '%s\n' '[browser-phase] host network (forced off)' >&2
+    exec "$@"
+    ;;
+  auto) ;;
+  *)
+    printf '%s\n' 'MEDALLION_TEST_BROWSER_NETNS must be auto or off' >&2
+    exit 64
+    ;;
+esac
+
+if [ "$(uname -s)" = Linux ] &&
+  command -v unshare >/dev/null 2>&1 &&
+  command -v ip >/dev/null 2>&1 &&
+  unshare -rn -- sh -ec 'ip link set lo up' >/dev/null 2>&1; then
+  exec unshare -rn -- sh -ec '
+    ip link set lo up
+    printf "%s\n" "[browser-phase] loopback namespace" >&2
+    exec "$@"
+  ' browser-phase "$@"
+fi
+
+printf '%s\n' '[browser-phase] host network (namespace unavailable)' >&2
+exec "$@"

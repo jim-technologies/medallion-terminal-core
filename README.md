@@ -1002,6 +1002,21 @@ following [Playwright’s stability guidance](https://playwright.dev/docs/ci#wor
 This scheduling policy preserves case assertions and concurrency within each case;
 it does not establish the cause or cure of a native browser failure.
 
+On Linux, `scripts/browser-phase` runs Storybook's browser tests and Playwright
+in a private user and network namespace when unprivileged `unshare -rn` and
+`ip` are usable. It brings up only loopback, and fixture servers start inside
+the same namespace as the browsers. Host interface churn cannot reach the
+browser's address tracker. Dependency installation, unit tests and ordinary
+builds remain on the caller's network; no root access, sudo or host network
+capabilities are required.
+
+`MEDALLION_TEST_BROWSER_NETNS=off make validate` runs the original browser
+commands on the host network. Other platforms and hosts without working user
+namespaces also retain that behavior. An isolated browser failure propagates
+unchanged, without a host-network retry. Test selection, workers, deadlines,
+retry policy and assertions are unchanged; the launcher affects only where
+the browser phase runs.
+
 `make validate` is the single gate verb (see
 [`MAKEFILE-CONTRACT.md`](MAKEFILE-CONTRACT.md)) and is exactly what CI runs.
 It gates the public surface — no private hostnames, repository references,
