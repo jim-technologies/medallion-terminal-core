@@ -1040,7 +1040,7 @@ It gates the public surface — no private hostnames, repository references,
 registries, credentials, or internal codenames, checked in tracked content,
 in tracked paths, and in the commit messages a push would publish, with every
 justified exception listed and reasoned in `.public-surface-allow` —
-the version gate (`VERSION` against `package.json` and the changelog's first
+workflow syntax (`actionlint`), the version gate (`VERSION` against `package.json` and the changelog's first
 release heading, `packageManager` against the Flox-locked pnpm, a declared
 `engines.node` floor), TypeScript and proto generation, Buf lint/build and
 compatibility against the newest reachable release tag, the reusable
