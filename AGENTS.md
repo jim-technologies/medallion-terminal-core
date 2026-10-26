@@ -375,7 +375,7 @@ The inner loop and single slices of the gate are `pnpm` scripts:
 - `pnpm backend` — reference TerminalService on :3001
 - `pnpm storybook` — storybook (http://localhost:6006)
 - `pnpm lint` — `tsc --noEmit` + style-token ratchet + buf format/lint/build +
-  regenerated proto types checked against `src/gen`
+  regenerated proto types checked against `src/gen` + workflow syntax (`actionlint`)
 - `pnpm build:lib` — library bundle (JS + CSS + .d.ts), committed under `dist/`
 - `pnpm check:breaking` — `buf breaking` against the newest reachable `v*` tag
   (`scripts/check-breaking.mjs`)
