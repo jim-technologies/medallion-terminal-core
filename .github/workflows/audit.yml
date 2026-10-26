@@ -1,8 +1,8 @@
 # Weekly network-dependent supply-chain audit: advisories against the runtime
 # dependencies this library ships inside its consumers' bundles, and the Git
 # history secret scan. Deliberately outside `make validate` (the gate stays
-# lockfile-driven and offline), and exactly the same secretless Flox skeleton
-# as ci.yml, running one make verb.
+# lockfile-driven and offline). Like ci.yml, this uses a secretless Flox
+# environment and runs one make verb; CI schedules its gate slices in parallel.
 name: audit
 "on":
   schedule:

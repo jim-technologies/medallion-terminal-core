@@ -12,6 +12,17 @@ const workers = Number(process.env.PLAYWRIGHT_WORKERS ?? (process.env.CI ? 1 : 8
 if (!Number.isInteger(workers) || workers < 1 || workers > 32) {
   throw new Error('PLAYWRIGHT_WORKERS must be an integer from 1 to 32')
 }
+const shardInput = process.env.PLAYWRIGHT_SHARD
+let shard: { current: number; total: number } | undefined
+if (shardInput !== undefined) {
+  const match = /^([1-9]\d*)\/([1-9]\d*)$/.exec(shardInput)
+  const current = Number(match?.[1])
+  const total = Number(match?.[2])
+  if (!match || !Number.isSafeInteger(current) || !Number.isSafeInteger(total) || current > total) {
+    throw new Error('PLAYWRIGHT_SHARD must be current/total with integers 1 <= current <= total')
+  }
+  shard = { current, total }
+}
 const performancePhase = process.env.STORYBOOK_PERFORMANCE_PHASE === '1'
 const historyFixturePort = Number(process.env.HISTORY_FIXTURE_PORT ?? 6216)
 if (!Number.isInteger(historyFixturePort) || historyFixturePort < 1 || historyFixturePort > 65535 || historyFixturePort === storybookPort) throw new Error('HISTORY_FIXTURE_PORT must be a distinct valid port')
@@ -31,7 +42,10 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   // Playwright recommends one CI worker for stability; local concurrency stays bounded.
   workers,
-  reporter: process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'line',
+  shard,
+  reporter: process.env.GITHUB_ACTIONS
+    ? [['line'], ['html', { open: 'never' }], ['github']]
+    : process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'line',
   // Text snapshots: the exact accessibility tree of each visual baseline
   // story (see expectBaseline in the spec).
   snapshotPathTemplate: '{testDir}/__aria__/{arg}{ext}',
