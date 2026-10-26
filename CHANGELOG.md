@@ -6,7 +6,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
-- CI now fans the gate out across independent checks, Storybook, eight behavior shards and performance rather than running one command; the unchanged main job canceled at 30.3 minutes, while the measured 4-CPU behavior shard took 6.4 minutes. Each CI job keeps one browser worker and the 30-minute limit, restores pnpm and browser caches, and annotates browser failures.
+- CI now fans the full gate out across checks, Storybook, eight behavior shards and performance instead of one command. The first cold-cache jobs completed in 1.1–10.2 minutes, including failing browser checks, against the previous single-job cancellation at 30.3 minutes; this is not a green browser qualification yet. Each job keeps one browser worker and its 30-minute limit, restores pnpm/browser caches, and annotates failures. The local gate also checks workflow syntax, and keyboard/editor probes await registration and settled layout before measuring.
 
 ## [0.8.1] — 2026-10-24
 
