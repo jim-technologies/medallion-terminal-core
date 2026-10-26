@@ -990,15 +990,31 @@ For wiring this into a real product, in order:
 
 ## Production verification
 
-Run the same gate as CI — it installs dependencies with a frozen lockfile
-and Playwright's pinned Chromium, Firefox and WebKit (a no-op after the first run):
+Run all of CI's checks locally with one gate. It installs dependencies with a
+frozen lockfile and Playwright's pinned Chromium, Firefox and WebKit (a no-op
+after the first run):
 
 ```bash
 make validate
 ```
 
-Browser tooling is pinned to Playwright 1.64.1. CI uses one browser worker,
+CI schedules the same gate across independent checks, Storybook, eight behavior
+shards, and performance jobs. Each job uses the standard Linux runner, keeps the
+30-minute limit, and owns its dependency installation through one make verb.
+`make validate-checks`, `make test-storybook`, `make test-browser`, and
+`make test-performance` are those slices; `make validate` runs their union.
+
+Browser tooling is pinned to Playwright 1.64.1. CI uses one browser worker per job,
 following [Playwright’s stability guidance](https://playwright.dev/docs/ci#workers).
+Set `PLAYWRIGHT_SHARD=current/total` for a focused behavior shard; invalid or
+out-of-range values fail before running tests. Unset means all cases. The full
+`make validate` and `make test` explicitly run all shards, and performance is
+always unsharded. CI saves the complete pnpm store from the checks job and all
+three browsers from behavior shard 1, including after test failures. Exact-key
+cache hits skip saves. Flox activation has its own visible step; its metadata
+cache is not used as a package cache. Playwright adds GitHub annotations on
+Actions; no workflow uploads test reports or artifacts.
+
 This scheduling policy preserves case assertions and concurrency within each case;
 it does not establish the cause or cure of a native browser failure.
 
@@ -1018,7 +1034,8 @@ retry policy and assertions are unchanged; the launcher affects only where
 the browser phase runs.
 
 `make validate` is the single gate verb (see
-[`MAKEFILE-CONTRACT.md`](MAKEFILE-CONTRACT.md)) and is exactly what CI runs.
+[`MAKEFILE-CONTRACT.md`](MAKEFILE-CONTRACT.md)); CI runs exactly its checks
+across the parallel jobs above.
 It gates the public surface — no private hostnames, repository references,
 registries, credentials, or internal codenames, checked in tracked content,
 in tracked paths, and in the commit messages a push would publish, with every

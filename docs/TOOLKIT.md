@@ -769,7 +769,9 @@ Run the repository-defined full gate with:
 flox activate -- make validate
 ```
 
-The browser gate runs ordinary checks against development Storybook, then
+`make test-browser` runs behavior checks against development Storybook;
+`make test-performance` runs the separate, unsharded timing phase. The full
+gate runs both (CI schedules behavior shards and timing independently). It
 builds a fresh, isolated production catalog for the single-worker timing
 phase. Only that phase disables Storybook's development React mode and
 DOM-scanning debug highlighter. Hidden source maps verify the actually

@@ -57,7 +57,7 @@
     "format": "buf format --write",
     "test": "vitest run --project=unit",
     "test:storybook": "STORYBOOK_PERFORMANCE_PHASE=0 scripts/browser-phase vitest run --project=storybook",
-    "test:browser": "scripts/browser-phase sh -c 'STORYBOOK_PERFORMANCE_PHASE=0 PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/behavior playwright test --grep-invert @performance --output test-results/behavior && STORYBOOK_PERFORMANCE_PHASE=1 PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/performance playwright test --grep @performance --workers 1 --retries 0 --output test-results/performance'",
+    "test:browser": "STORYBOOK_PERFORMANCE_PHASE=0 PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/behavior scripts/browser-phase playwright test --grep-invert @performance --output test-results/behavior",
     "bench": "vitest bench --run --project='unit (bench)'",
     "build": "tsc -b && vite build",
     "build:lib": "vite build --config vite.config.lib.ts && tsc -p tsconfig.build.json",
@@ -74,7 +74,10 @@
     "check:storybook": "node scripts/check-storybook.mjs",
     "check:conformance": "node scripts/check-reference-conformance.mjs",
     "build:storybook": "STORYBOOK_PERFORMANCE_PHASE=0 storybook build && pnpm check:storybook",
-    "validate": "pnpm check:surface && pnpm check:version && pnpm lint && pnpm check:breaking && pnpm check:conformance && pnpm test && pnpm test:storybook && pnpm build && pnpm check:dist && pnpm check:package && pnpm check:bundles && pnpm build:storybook && pnpm test:browser"
+    "validate": "pnpm validate:checks && pnpm test:storybook && PLAYWRIGHT_SHARD=1/1 pnpm test:browser && pnpm test:performance",
+    "check:sharding": "node scripts/check-sharding.mjs",
+    "validate:checks": "pnpm check:surface && pnpm check:version && pnpm check:sharding && pnpm lint && pnpm check:breaking && pnpm check:conformance && pnpm test && pnpm build && pnpm check:dist && pnpm check:package && pnpm check:bundles && pnpm build:storybook",
+    "test:performance": "STORYBOOK_PERFORMANCE_PHASE=1 PLAYWRIGHT_SHARD=1/1 PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report/performance scripts/browser-phase playwright test --grep @performance --workers 1 --retries 0 --output test-results/performance"
   },
   "peerDependencies": {
     "lightweight-charts": "^5.0.0",

@@ -9,31 +9,138 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  validate:
+  checks:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # `make validate` runs `buf breaking` against the newest reachable
-          # release tag, which needs real history and tags, not a shallow
-          # single-ref clone.
+          # Compatibility checks and the surface guard need history and tags.
           fetch-depth: 0
       - uses: flox/install-flox-action@1128abd73431089ab9d871c893b4e72a729354e1 # v2.6.0
         with:
           disable-metrics: "true"
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: pnpm-cache
         with:
-          path: ~/.cache/flox
-          key: flox-${{ runner.os }}-${{ hashFiles('.flox/env/manifest.lock') }}
-      # The gate installs Playwright's pinned Chromium, the one tool Flox does
-      # not provide; keyed on the lockfile so a bumped @playwright/test fetches
-      # a fresh browser and everything else reuses the cached one.
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+          path: ${{ runner.temp }}/pnpm-store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Activate toolchain
+        env:
+          FLOX_DISABLE_METRICS: "true"
+        run: flox activate -- true
+      - name: "Run source checks (pnpm cache: ${{ steps.pnpm-cache.outputs.cache-hit || 'false' }})"
+        env:
+          FLOX_DISABLE_METRICS: "true"
+          pnpm_config_store_dir: ${{ runner.temp }}/pnpm-store
+        run: flox activate -- make validate-checks
+      # A failed check must not force every later run to download dependencies.
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: always() && steps.pnpm-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/pnpm-store
+          key: ${{ steps.pnpm-cache.outputs.cache-primary-key }}
+  storybook:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Compatibility checks and the surface guard need history and tags.
+          fetch-depth: 0
+      - uses: flox/install-flox-action@1128abd73431089ab9d871c893b4e72a729354e1 # v2.6.0
+        with:
+          disable-metrics: "true"
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: pnpm-cache
+        with:
+          path: ${{ runner.temp }}/pnpm-store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      # This key holds all three pinned engines; only browser shard 1 saves it.
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: browser-cache
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - name: Run the gate
+      - name: Activate toolchain
         env:
           FLOX_DISABLE_METRICS: "true"
-        run: flox activate -- make validate
+        run: flox activate -- true
+      - name: "Run storybook checks (pnpm cache: ${{ steps.pnpm-cache.outputs.cache-hit || 'false' }}, browser cache: ${{ steps.browser-cache.outputs.cache-hit || 'false' }})"
+        env:
+          FLOX_DISABLE_METRICS: "true"
+          pnpm_config_store_dir: ${{ runner.temp }}/pnpm-store
+        run: flox activate -- make test-storybook
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+    env:
+      PLAYWRIGHT_SHARD: ${{ matrix.shard }}/8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Compatibility checks and the surface guard need history and tags.
+          fetch-depth: 0
+      - uses: flox/install-flox-action@1128abd73431089ab9d871c893b4e72a729354e1 # v2.6.0
+        with:
+          disable-metrics: "true"
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: pnpm-cache
+        with:
+          path: ${{ runner.temp }}/pnpm-store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      # This key holds all three pinned engines; only browser shard 1 saves it.
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: browser-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Activate toolchain
+        env:
+          FLOX_DISABLE_METRICS: "true"
+        run: flox activate -- true
+      - name: "Run browser checks (pnpm cache: ${{ steps.pnpm-cache.outputs.cache-hit || 'false' }}, browser cache: ${{ steps.browser-cache.outputs.cache-hit || 'false' }})"
+        env:
+          FLOX_DISABLE_METRICS: "true"
+          pnpm_config_store_dir: ${{ runner.temp }}/pnpm-store
+        run: flox activate -- make test-browser
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: always() && matrix.shard == 1 && steps.browser-cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ steps.browser-cache.outputs.cache-primary-key }}
+  performance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Compatibility checks and the surface guard need history and tags.
+          fetch-depth: 0
+      - uses: flox/install-flox-action@1128abd73431089ab9d871c893b4e72a729354e1 # v2.6.0
+        with:
+          disable-metrics: "true"
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: pnpm-cache
+        with:
+          path: ${{ runner.temp }}/pnpm-store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      # This key holds all three pinned engines; only browser shard 1 saves it.
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: browser-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Activate toolchain
+        env:
+          FLOX_DISABLE_METRICS: "true"
+        run: flox activate -- true
+      - name: "Run performance checks (pnpm cache: ${{ steps.pnpm-cache.outputs.cache-hit || 'false' }}, browser cache: ${{ steps.browser-cache.outputs.cache-hit || 'false' }})"
+        env:
+          FLOX_DISABLE_METRICS: "true"
+          pnpm_config_store_dir: ${{ runner.temp }}/pnpm-store
+        run: flox activate -- make test-performance
