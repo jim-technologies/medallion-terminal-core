@@ -1029,6 +1029,31 @@ const RECORD_EDITORS = [
 ] as const
 
 async function recordEditorFit(page: Page, column: string) {
+  // Autofocus scroll and ResizeObserver placement can follow the editor's mount.
+  await page.evaluate(column => new Promise<void>(resolve => {
+    let previous: string | undefined
+    const sample = () => {
+      const cell = document.querySelector<HTMLElement>(`#storybook-root [data-row-index="1"] [data-column-id="${column}"]`)
+      const dialog = document.querySelector<HTMLElement>('.mtc-data-grid-overlay-editor')
+      const editor = (dialog ?? cell)?.querySelector<HTMLElement>('.mtc-data-grid-editor')
+      if (!cell || !editor) { requestAnimationFrame(sample); return }
+      const elements: Element[] = [cell, editor, ...editor.children]
+      for (let parent = editor.parentElement; parent; parent = parent.parentElement) elements.push(parent)
+      const active = document.activeElement
+      const style = active ? getComputedStyle(active) : undefined
+      const current = JSON.stringify({
+        focus: active?.getAttribute('aria-label'),
+        outline: [style?.outlineWidth, style?.outlineOffset],
+        boxes: elements.map(element => {
+          const box = element.getBoundingClientRect()
+          return [box.x, box.y, box.width, box.height, element.scrollLeft, element.scrollTop, element.clientWidth, element.clientHeight]
+        }),
+      })
+      if (current === previous) resolve()
+      else { previous = current; requestAnimationFrame(sample) }
+    }
+    requestAnimationFrame(sample)
+  }), column)
   return page.evaluate(column => {
     const cell = document.querySelector<HTMLElement>(`#storybook-root [data-row-index="1"] [data-column-id="${column}"]`)!
     const dialog = document.querySelector<HTMLElement>('.mtc-data-grid-overlay-editor')
@@ -1067,6 +1092,7 @@ async function recordEditorFit(page: Page, column: string) {
       && box.right <= view.right + 0.1 && box.bottom <= view.bottom + 0.1
     let ringInView: boolean | null = null
     let outline: string | null = null
+    let focusGeometry: { box: Box; view: Box; outlineWidth: number; outlineOffset: number } | null = null
     if (focused) {
       // The ring's outer edge: its width plus its offset from the border box
       // (a negative offset draws it inside the control).
@@ -1074,7 +1100,12 @@ async function recordEditorFit(page: Page, column: string) {
       outline = style.outlineStyle
       const reach = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset)
       const box = focused.getBoundingClientRect()
-      ringInView = inside({ left: box.left - reach, top: box.top - reach, right: box.right + reach, bottom: box.bottom + reach }, visibleArea(focused))
+      const view = visibleArea(focused)
+      ringInView = inside({ left: box.left - reach, top: box.top - reach, right: box.right + reach, bottom: box.bottom + reach }, view)
+      focusGeometry = {
+        box: { left: box.left, top: box.top, right: box.right, bottom: box.bottom }, view,
+        outlineWidth: parseFloat(style.outlineWidth), outlineOffset: parseFloat(style.outlineOffset),
+      }
     }
     // The pending value is whole: nothing in it is cut or outside the view.
     const valueWhole = control.tagName === 'DIV'
@@ -1092,6 +1123,7 @@ async function recordEditorFit(page: Page, column: string) {
       controlInView: inside(controlBox, visibleArea(control)),
       ringInView,
       valueWhole,
+      focusGeometry,
     }
     if (dialog) {
       // Anchored over the cell: at its top, covering it (moved left only as
@@ -1102,6 +1134,7 @@ async function recordEditorFit(page: Page, column: string) {
         overCell: Math.abs(box.top - cellRect.top) <= 1 && box.left <= cellRect.left + 1
           && box.right >= Math.min(cellRect.right, windowBox().right - 8) - 1,
         inWindow: inside(box, windowBox()),
+        cellBox: cellRect.toJSON(), overlayBox: box.toJSON(),
       }
     }
     const cellStyle = getComputedStyle(cell)
@@ -1116,6 +1149,7 @@ async function recordEditorFit(page: Page, column: string) {
       editorFillsCell: Math.abs(editorBox.left - content.left) <= 1 && Math.abs(editorBox.right - content.right) <= 1,
       controlTakesTheRest: Math.abs(controlBox.right + parseFloat(getComputedStyle(editor).columnGap) - buttons[0]!.left) <= 1,
       buttonsAtTheEnd: Math.abs(buttons.at(-1)!.right - content.right) <= 1,
+      inlineGeometry: { content, editorBox: editorBox.toJSON(), controlBox: controlBox.toJSON(), buttons: buttons.map(box => box.toJSON()) },
     }
   }, column)
 }
