@@ -239,7 +239,10 @@ async function ready(media: Locator) {
         error: player.error ? { code: player.error.code, message: player.error.message } : null,
       }
     })).catch(() => [])
-    throw new Error(`Native media readiness failed: ${JSON.stringify(native)}`, { cause: error })
+    const timeline = await media.page().evaluate(() =>
+      (window as unknown as { mediaPreviewNativeTimeline?: NativeTimelineEvent[] }).mediaPreviewNativeTimeline ?? [],
+    ).catch(() => [])
+    throw new Error(`Native media readiness failed: ${JSON.stringify({ native, timeline })}`, { cause: error })
   }
 }
 
