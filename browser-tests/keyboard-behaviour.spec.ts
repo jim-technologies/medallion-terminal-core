@@ -52,11 +52,19 @@ test('Ctrl+K inside the shell palette closes it and returns focus to search', as
   const palette = page.getByRole('dialog')
   await expect(palette).toBeVisible()
   await expect(palette.getByRole('combobox')).toBeFocused()
-  const pressed = page.evaluate(() => new Promise<boolean>(resolve => {
-    document.addEventListener('keydown', event => setTimeout(() => resolve(event.defaultPrevented)), { once: true })
+  const pressed = await page.evaluateHandle(() => ({
+    result: new Promise<boolean>(resolve => {
+      const onKeydown = (event: KeyboardEvent) => {
+        if (event.key.toLowerCase() !== 'k' || !event.ctrlKey) return
+        document.removeEventListener('keydown', onKeydown)
+        setTimeout(() => resolve(event.defaultPrevented))
+      }
+      document.addEventListener('keydown', onKeydown)
+    }),
   }))
   await page.keyboard.press('Control+k')
-  expect(await pressed).toBe(true)
+  expect(await pressed.evaluate(({ result }) => result)).toBe(true)
+  await pressed.dispose()
   await expect(palette).toHaveCount(0)
   await expect(search).toBeFocused()
 })
