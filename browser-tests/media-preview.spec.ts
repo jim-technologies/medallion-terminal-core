@@ -223,10 +223,24 @@ async function openPlayback(page: Page, name = 'tone.wav') {
 const NATIVE_DURATION_TIMEOUT_MS = 15_000
 
 async function ready(media: Locator) {
-  await expect.poll(() => media.evaluate(element => {
-    const player = element as HTMLMediaElement
-    return player.readyState >= 1 && Number.isFinite(player.duration) && player.duration > 0
-  }), { timeout: NATIVE_DURATION_TIMEOUT_MS }).toBe(true)
+  try {
+    await expect.poll(() => media.evaluate(element => {
+      const player = element as HTMLMediaElement
+      return player.readyState >= 1 && Number.isFinite(player.duration) && player.duration > 0
+    }), { timeout: NATIVE_DURATION_TIMEOUT_MS }).toBe(true)
+  } catch (error) {
+    const native = await media.evaluateAll(elements => elements.map(element => {
+      const player = element as HTMLMediaElement
+      return {
+        readyState: player.readyState, networkState: player.networkState,
+        duration: Number.isFinite(player.duration) ? player.duration : String(player.duration),
+        currentTime: player.currentTime, paused: player.paused, ended: player.ended,
+        muted: player.muted, volume: player.volume,
+        error: player.error ? { code: player.error.code, message: player.error.message } : null,
+      }
+    })).catch(() => [])
+    throw new Error(`Native media readiness failed: ${JSON.stringify(native)}`, { cause: error })
+  }
 }
 
 async function seek(media: Locator, time: number) {
