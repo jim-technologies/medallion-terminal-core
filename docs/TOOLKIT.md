@@ -627,7 +627,8 @@ const productFetch = createProductFetch({ onRequest: requestTelemetry(telemetry)
   reloads the matching keys on screen, and `null` as the key waits. One
   cache serves the page unless `ResourceCacheProvider` scopes one
   (`createResourceCache({ maxEntries })`; unread entries beyond the bound
-  are dropped oldest first).
+  are dropped oldest first). A loader that throws before returning a promise
+  settles like an asynchronous failure: loading ends and `refresh` can retry.
 
 ## Host integration
 

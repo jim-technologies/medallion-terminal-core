@@ -409,7 +409,7 @@ function Le({ maxEntries: e = 100, now: t = Date.now } = {}) {
 		if (o.load = n, o.inflight && !o.inflight.controller.signal.aborted) return o.inflight.promise;
 		let s = new AbortController(), c = o.version, l = (async () => {
 			try {
-				let e = await n(s.signal);
+				let e = await new Promise((e) => e(n(s.signal)));
 				if (s.signal.aborted || o.version !== c) return;
 				i(o, {
 					data: e,

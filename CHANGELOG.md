@@ -4,6 +4,11 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Fixed
+
+- Resource-cache loaders that throw synchronously finish their loading state
+  and allow a fresh retry, while concurrent readers still share one request.
+
 ## [0.8.1] — 2026-10-24
 
 ### Added

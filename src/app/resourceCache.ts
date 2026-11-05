@@ -89,7 +89,8 @@ export function createResourceCache({ maxEntries = 100, now = Date.now }: Resour
     const version = current.version
     const promise = (async () => {
       try {
-        const data = await load(controller.signal)
+        // Register the in-flight request before even a synchronous failure settles.
+        const data = await new Promise<T>(resolve => resolve(load(controller.signal)))
         if (controller.signal.aborted || current.version !== version) return
         update(current, { data, error: undefined, updatedAt: now() })
       } catch (error) {

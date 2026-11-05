@@ -48,6 +48,24 @@ describe('resource cache', () => {
     expect(cache.read('broken').error).toBeInstanceOf(SourceError)
   })
 
+  it('settles a synchronous loader failure and lets retry recover', async () => {
+    const cache = createResourceCache()
+    const failed = vi.fn(() => { throw new TypeError('invalid request') })
+    await cache.fetch('objects', failed)
+    expect(failed).toHaveBeenCalledTimes(1)
+    expect(cache.read('objects').error).toBeInstanceOf(SourceError)
+    expect(cache.read('objects').validating).toBe(false)
+    const pending = deferred<string[]>()
+    const retry = vi.fn(() => pending.promise)
+    const first = cache.fetch('objects', retry)
+    const second = cache.fetch('objects', retry)
+    expect(retry).toHaveBeenCalledTimes(1)
+    expect(cache.read('objects').validating).toBe(true)
+    pending.resolve(['recovered'])
+    await Promise.all([first, second])
+    expect(cache.read('objects')).toMatchObject({ data: ['recovered'], error: undefined, validating: false })
+  })
+
   it('aborts a load once nobody reads the key, and starts afresh for a new reader', async () => {
     const cache = createResourceCache()
     const signals: AbortSignal[] = []
