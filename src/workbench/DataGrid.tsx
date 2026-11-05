@@ -821,14 +821,14 @@ export function DataGrid<Row>({
   const headerWidth = (columnIndex: number, fallback: number) => viewportRef.current
     ?.querySelector<HTMLElement>(`[data-cell="-1:${columnIndex}"]`)?.getBoundingClientRect().width ?? fallback
 
-  const resizeColumn = (columnIndex: number, delta: number) => {
+  const resizeColumn = (columnIndex: number, delta: number, basis?: number, persist = true) => {
     const entry = renderedColumns[columnIndex]
     if (!entry || entry.kind !== 'data') return
-    const next = Math.max(entry.column.minWidth ?? RESIZE_MIN_WIDTH, headerWidth(columnIndex, entry.width) + delta)
+    const next = Math.max(entry.column.minWidth ?? RESIZE_MIN_WIDTH, (basis ?? headerWidth(columnIndex, entry.width)) + delta)
     const resized = { ...widthsRef.current, [entry.column.id]: next }
     widthsRef.current = resized
     setWidths(resized)
-    saveColumnWidths(stateKey, resized)
+    if (persist) saveColumnWidths(stateKey, resized)
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -928,35 +928,26 @@ export function DataGrid<Row>({
     const pointerId = event.pointerId
     const previousWidths = widthsRef.current
     const startWidth = headerWidth(columnIndex, entry.width)
-    const min = entry.column.minWidth ?? RESIZE_MIN_WIDTH
-    const id = entry.column.id
-    const onMove = (move: globalThis.PointerEvent) => {
-      if (move.pointerId !== pointerId) return
-      const resized = { ...widthsRef.current, [id]: Math.max(min, startWidth + move.clientX - startX) }
-      widthsRef.current = resized
-      setWidths(resized)
+    const events = ['pointermove', 'pointerup', 'pointercancel'] as const
+    const onPointer = (pointer: globalThis.PointerEvent) => {
+      if (pointer.pointerId !== pointerId) return
+      if (pointer.type === 'pointermove') {
+        resizeColumn(columnIndex, pointer.clientX - startX, startWidth, false)
+      } else {
+        resizeCleanup.current?.()
+        if (pointer.type === 'pointerup') {
+          saveColumnWidths(stateKey, widthsRef.current)
+        } else {
+          widthsRef.current = previousWidths
+          setWidths(previousWidths)
+        }
+      }
     }
-    const onUp = (up: globalThis.PointerEvent) => {
-      if (up.pointerId !== pointerId) return
-      detach()
-      saveColumnWidths(stateKey, widthsRef.current)
-    }
-    const onCancel = (cancel: globalThis.PointerEvent) => {
-      if (cancel.pointerId !== pointerId) return
-      detach()
-      widthsRef.current = previousWidths
-      setWidths(previousWidths)
-    }
-    const detach = () => {
-      document.removeEventListener('pointermove', onMove)
-      document.removeEventListener('pointerup', onUp)
-      document.removeEventListener('pointercancel', onCancel)
+    resizeCleanup.current = () => {
+      for (const type of events) document.removeEventListener(type, onPointer)
       resizeCleanup.current = null
     }
-    resizeCleanup.current = detach
-    document.addEventListener('pointermove', onMove)
-    document.addEventListener('pointerup', onUp)
-    document.addEventListener('pointercancel', onCancel)
+    for (const type of events) document.addEventListener(type, onPointer)
   }
 
   // A value cut short stays reachable: a pointer gets it as the cell's

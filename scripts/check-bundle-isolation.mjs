@@ -43,7 +43,8 @@ const checks = [
     // restoration add about 0.13 KiB more.
     // AVIF policy and the localized, lazy file-preview loading shell add
     // about 0.3 KiB. Fetching and native playback stay behind that boundary.
-    maxStaticGzipBytes: 48 * 1024,
+    // Pointer ownership, cancellation and unmount cleanup add about 64 bytes.
+    maxStaticGzipBytes: 48 * 1024 + 64,
     requireDynamicImport: false,
   },
   {

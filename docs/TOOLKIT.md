@@ -413,6 +413,8 @@ items accept `kind` and `format`.
   Pointer resizing belongs to the pointer that started it. A cancelled gesture
   restores its starting width without saving; unmounting or changing `stateKey`
   retires the gesture, so later pointer events cannot save stale widths.
+  Pointer and keyboard resizing share width limits; dragging measures its starting
+  width once and saves only on completion.
   Pass `totalRows` when known.
   `loading` shows skeleton rows or a
   loading-more row; `empty` replaces the default empty state; `rowProps`

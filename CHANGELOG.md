@@ -8,6 +8,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 - Grid resize gestures ignore other pointers, restore widths on cancellation,
   and release document listeners when the grid unmounts or changes its state key.
+  Share width updates with keyboard resizing; the toolkit static bundle grows
+  from 47.97 to 48.03 KiB gzip, with a measured 64-byte budget allowance.
 - Resource-cache loaders that throw synchronously finish their loading state
   and allow a fresh retry, while concurrent readers still share one request.
 
