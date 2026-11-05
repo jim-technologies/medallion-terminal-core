@@ -574,3 +574,15 @@ export const GrowingColumnWidths: Story = {
       rows={[{ id: 'roadmap', name: 'Platform roadmap', kind: 'Document' }]} rowKey={row => row.id} height={160} />
   </div>,
 }
+
+export const ResizeLifecycle: Story = {
+  render: function ResizeLifecycleExample() {
+    const [visible, setVisible] = useState(true)
+    return <div className="grid gap-4" style={{ width: 900 }}>
+      <button type="button" onClick={() => setVisible(value => !value)}>{visible ? 'Hide grid' : 'Show grid'}</button>
+      {visible && <DataGrid label="Resize lifecycle" stateKey="resize-lifecycle"
+        columns={[{ id: 'name', header: 'Name', width: 120, grow: true }, { id: 'kind', header: 'Kind', width: 160 }]}
+        rows={[{ id: 'roadmap', name: 'Platform roadmap', kind: 'Document' }]} rowKey={row => row.id} height={160} />}
+    </div>
+  },
+}

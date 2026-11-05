@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 test('explicitly scoped grid column widths survive refresh', async ({ page }) => {
   await page.goto('/iframe.html?id=toolkit-workbench-datagrid--scroll-ownership&viewMode=story&args=count:50;bounded:true')
@@ -53,4 +53,70 @@ for (const mode of ['keyboard', 'pointer']) test(`growing columns resize from th
   await page.keyboard.press('Alt+ArrowLeft')
   await page.keyboard.press('Alt+ArrowLeft')
   await expect.poll(async () => Math.abs((await header.boundingBox())!.width - initial)).toBeLessThanOrEqual(1)
+})
+
+async function resizePointer(page: Page, type: string, pointerId: number, clientX: number) {
+  await page.evaluate(({ type, pointerId, clientX }) => {
+    document.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId, clientX }))
+  }, { type, pointerId, clientX })
+}
+
+test('column resize cancellation restores the width and retires the gesture', async ({ page }) => {
+  await page.goto('/iframe.html?id=toolkit-workbench-datagrid--growing-column-widths&viewMode=story')
+  const header = page.getByRole('grid', { name: 'Growing columns' }).locator('[data-cell="-1:0"]')
+  await expect(header).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
+  const initial = (await header.boundingBox())!.width
+  await header.locator('.mtc-data-grid-resize').dispatchEvent('pointerdown', { pointerId: 17, clientX: 100 })
+  await resizePointer(page, 'pointermove', 17, 150)
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial + 50)
+  await resizePointer(page, 'pointercancel', 17, 150)
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial)
+  await resizePointer(page, 'pointermove', 17, 200)
+  await resizePointer(page, 'pointerup', 17, 200)
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial)
+  await page.reload()
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial)
+})
+
+test('column resize belongs only to the initiating pointer', async ({ page }) => {
+  await page.goto('/iframe.html?id=toolkit-workbench-datagrid--growing-column-widths&viewMode=story')
+  const header = page.getByRole('grid', { name: 'Growing columns' }).locator('[data-cell="-1:0"]')
+  await expect(header).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
+  const initial = (await header.boundingBox())!.width
+  await header.locator('.mtc-data-grid-resize').dispatchEvent('pointerdown', { pointerId: 17, clientX: 100 })
+  await resizePointer(page, 'pointermove', 17, 132)
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial + 32)
+  await resizePointer(page, 'pointermove', 18, 180)
+  await resizePointer(page, 'pointerup', 18, 180)
+  await resizePointer(page, 'pointercancel', 18, 180)
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial + 32)
+  await resizePointer(page, 'pointermove', 17, 148)
+  await resizePointer(page, 'pointerup', 17, 148)
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial + 48)
+  await page.reload()
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial + 48)
+})
+
+test('column resize unmount never saves a detached gesture', async ({ page }) => {
+  await page.goto('/iframe.html?id=toolkit-workbench-datagrid--resize-lifecycle&viewMode=story')
+  const grid = page.getByRole('grid', { name: 'Resize lifecycle' })
+  const header = grid.locator('[data-cell="-1:0"]')
+  await expect(header).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
+  const initial = (await header.boundingBox())!.width
+  await header.locator('.mtc-data-grid-resize').dispatchEvent('pointerdown', { pointerId: 17, clientX: 100 })
+  await resizePointer(page, 'pointermove', 17, 150)
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial + 50)
+  const hide = page.getByRole('button', { name: 'Hide grid', exact: true })
+  await hide.focus()
+  await hide.press('Enter')
+  await expect(grid).toHaveCount(0)
+  await resizePointer(page, 'pointermove', 17, 200)
+  await resizePointer(page, 'pointerup', 17, 200)
+  await page.getByRole('button', { name: 'Show grid', exact: true }).click()
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial)
+  await page.reload()
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(initial)
 })

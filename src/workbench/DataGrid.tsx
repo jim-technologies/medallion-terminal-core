@@ -385,11 +385,13 @@ export function DataGrid<Row>({
   const selectedSet = useMemo(() => new Set(selectedList), [selectedList])
   const [widths, setWidths] = useState<Record<string, number>>(() => Object.create(null))
   const widthsRef = useRef(widths)
+  const resizeCleanup = useRef<(() => void) | null>(null)
   widthsRef.current = widths
   useLayoutEffect(() => {
     const restored = readColumnWidths(stateKey)
     widthsRef.current = restored
     setWidths(restored)
+    return () => resizeCleanup.current?.()
   }, [stateKey])
   // Content widths of the content-sized columns, measured after render.
   const [measured, setMeasured] = useState<Record<string, number>>({})
@@ -922,22 +924,39 @@ export function DataGrid<Row>({
     event.stopPropagation()
     const startX = event.clientX
     const entry = renderedColumns[columnIndex]
-    if (!entry || entry.kind !== 'data') return
+    if (!entry || entry.kind !== 'data' || resizeCleanup.current) return
+    const pointerId = event.pointerId
+    const previousWidths = widthsRef.current
     const startWidth = headerWidth(columnIndex, entry.width)
     const min = entry.column.minWidth ?? RESIZE_MIN_WIDTH
     const id = entry.column.id
     const onMove = (move: globalThis.PointerEvent) => {
+      if (move.pointerId !== pointerId) return
       const resized = { ...widthsRef.current, [id]: Math.max(min, startWidth + move.clientX - startX) }
       widthsRef.current = resized
       setWidths(resized)
     }
-    const onUp = () => {
+    const onUp = (up: globalThis.PointerEvent) => {
+      if (up.pointerId !== pointerId) return
+      detach()
       saveColumnWidths(stateKey, widthsRef.current)
+    }
+    const onCancel = (cancel: globalThis.PointerEvent) => {
+      if (cancel.pointerId !== pointerId) return
+      detach()
+      widthsRef.current = previousWidths
+      setWidths(previousWidths)
+    }
+    const detach = () => {
       document.removeEventListener('pointermove', onMove)
       document.removeEventListener('pointerup', onUp)
+      document.removeEventListener('pointercancel', onCancel)
+      resizeCleanup.current = null
     }
+    resizeCleanup.current = detach
     document.addEventListener('pointermove', onMove)
     document.addEventListener('pointerup', onUp)
+    document.addEventListener('pointercancel', onCancel)
   }
 
   // A value cut short stays reachable: a pointer gets it as the cell's

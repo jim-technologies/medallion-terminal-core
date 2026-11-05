@@ -6,6 +6,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Fixed
 
+- Grid resize gestures ignore other pointers, restore widths on cancellation,
+  and release document listeners when the grid unmounts or changes its state key.
 - Resource-cache loaders that throw synchronously finish their loading state
   and allow a fresh retry, while concurrent readers still share one request.
 

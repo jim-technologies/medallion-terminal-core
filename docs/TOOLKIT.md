@@ -410,6 +410,9 @@ items accept `kind` and `format`.
   `stateKey` opts a logical grid into remembering resized column widths for
   this browser tab. Give different grids different keys; a grid without one
   keeps its widths only while mounted. Stored widths load after hydration.
+  Pointer resizing belongs to the pointer that started it. A cancelled gesture
+  restores its starting width without saving; unmounting or changing `stateKey`
+  retires the gesture, so later pointer events cannot save stale widths.
   Pass `totalRows` when known.
   `loading` shows skeleton rows or a
   loading-more row; `empty` replaces the default empty state; `rowProps`
