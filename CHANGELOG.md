@@ -8,10 +8,11 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 - CI fans the full gate out across checks, Storybook, eight behavior shards and
   performance instead of one command, which was cancelled at its 30-minute
-  limit (30.3 minutes). Each job keeps one browser worker and the 30-minute
-  limit, restores pnpm and browser caches, and annotates failures. The local
-  gate also checks workflow syntax, and keyboard and editor probes await
-  registration and settled layout before measuring.
+  limit (30.3 minutes). The first green run, on cold pnpm and browser caches,
+  finished every job in 1.9–5.5 minutes. Each job keeps one browser worker and
+  the 30-minute limit, restores pnpm and browser caches, and annotates
+  failures. The local gate also checks workflow syntax, and keyboard and editor
+  probes await registration and settled layout before measuring.
 - Public CI runs the Chromium and Firefox projects; WebKit stays in the local
   gate, because the hosted runner lacks its system libraries and nixpkgs'
   WebKit fails the media checks. `PLAYWRIGHT_PROJECTS` selects the browser
