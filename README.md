@@ -1024,8 +1024,12 @@ revision, in directories only Firefox's launch environment can see. It plays
 into a private PulseAudio null sink that Playwright starts and stops with each
 browser phase (`scripts/browser-audio`). The sink listens on loopback only,
 uses no sound hardware or host audio service, and keeps its state in a private
-temporary directory. No browser inherits Flox's loader audit (`LD_AUDIT`), so
-Chromium and WebKit remain Playwright's stock builds on the host's libraries.
+temporary directory. Firefox's PulseAudio client keeps its cookie in
+`test-results/`, not in the user's home. When the browser phase falls back to
+the host network, other local processes can reach the sink while the phase
+runs, but cannot load modules into it or stop it. No browser inherits Flox's
+loader audit (`LD_AUDIT`), so Chromium and WebKit remain Playwright's stock
+builds on the host's libraries.
 
 Browser tooling is pinned to Playwright 1.64.1. CI uses one browser worker per job,
 following [Playwright’s stability guidance](https://playwright.dev/docs/ci#workers).

@@ -47,6 +47,7 @@ for (const [value, expected] of [
   for (const project of config.projects) {
     assert.equal(project.launch.env.LD_AUDIT, undefined, `${project.name} inherits no loader audit`)
     assert.equal(project.launch.env.PULSE_SERVER !== undefined, project === firefox && nativeFirefox, `${project.name} audio server`)
+    assert.equal(project.launch.env.PULSE_COOKIE?.endsWith('/test-results/browser-audio.cookie') ?? false, project === firefox && nativeFirefox, `${project.name} audio cookie`)
     assert.equal(project.launch.executablePath?.endsWith('/firefox/firefox') ?? false, project === firefox && nativeFirefox, `${project.name} executable`)
   }
   checks++

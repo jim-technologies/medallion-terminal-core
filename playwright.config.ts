@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, realpathSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig, devices } from '@playwright/test'
 
 // Flox's Nix ldd disagrees with the host ELF loader; real browser launches remain the gate.
@@ -81,6 +82,9 @@ if (process.platform === 'linux' && process.arch === 'x64' && selectedProjects.i
       LD_LIBRARY_PATH: libraries.map(library => dirname(realpathSync(library))).join(':'),
       PULSE_SERVER: `tcp:127.0.0.1:${audioFixturePort}`,
       PULSE_CLIENTCONFIG: '/dev/null',
+      // Otherwise libpulse reads, or creates, the user's ~/.config/pulse/cookie.
+      // The sink takes anonymous clients, so any cookie will do.
+      PULSE_COOKIE: fileURLToPath(new URL('test-results/browser-audio.cookie', import.meta.url)),
     },
   }
   audioServers.push({
