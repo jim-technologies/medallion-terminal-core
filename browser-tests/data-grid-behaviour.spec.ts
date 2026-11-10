@@ -265,6 +265,14 @@ test('long values remain available by hover and keyboard at 200 percent reflow',
   await expect(grid.locator(':focus')).toHaveAttribute('data-cell', '0:2')
   const tip = page.locator('.mtc-data-grid-value-tip')
   await expect(tip).toBeVisible()
+  // Reduced motion still gives every style change a 0.01 ms transition
+  // (index.css), so for a frame the tip sits at its cell's left, not at the
+  // window-clamped left it was given. Measure once it has moved there.
+  await tip.evaluate(async element => {
+    for (let running = element.getAnimations(); running.length > 0; running = element.getAnimations()) {
+      await Promise.allSettled(running.map(animation => animation.finished))
+    }
+  })
   const tipBox = (await tip.boundingBox())!
   const geometry = await tip.evaluate(element => ({
     rect: element.getBoundingClientRect().toJSON(), left: (element as HTMLElement).style.left,

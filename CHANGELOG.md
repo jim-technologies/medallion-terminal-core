@@ -11,8 +11,9 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   limit (30.3 minutes). The first green run, on cold pnpm and browser caches,
   finished every job in 1.9–5.5 minutes. Each job keeps one browser worker and
   the 30-minute limit, restores pnpm and browser caches, and annotates
-  failures. The local gate also checks workflow syntax, and keyboard and editor
-  probes await registration and settled layout before measuring.
+  failures. The local gate also checks workflow syntax, and keyboard, editor
+  and value-tip probes await registration, settled layout and finished
+  transitions before measuring.
 - Public CI runs the Chromium and Firefox projects; WebKit stays in the local
   gate, because the hosted runner lacks its system libraries and nixpkgs'
   WebKit fails the media checks. `PLAYWRIGHT_PROJECTS` selects the browser
