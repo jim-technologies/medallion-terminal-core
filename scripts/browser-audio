@@ -1,0 +1,59 @@
+#!/bin/sh
+# A private PulseAudio null sink for one Playwright phase. Firefox plays sound
+# only through PulseAudio, and a host without a sound server (hosted CI runners
+# have none) fails its audio-only media. On Linux x86-64, playwright.config.ts
+# runs this as a web server, waits for its loopback port and stops it with
+# SIGTERM. It touches no sound hardware and no host audio service,
+# configuration or cookie: its state lives in a private directory removed on
+# exit, it listens on loopback only (inside the browser phase's private network
+# namespace when there is one), and clients can neither load modules nor stop
+# it.
+set -eu
+
+if [ "$#" -ne 1 ]; then
+  printf '%s\n' 'usage: scripts/browser-audio port' >&2
+  exit 64
+fi
+case "$1" in
+  '' | *[!0-9]*)
+    printf '%s\n' 'scripts/browser-audio: the port must be a decimal number' >&2
+    exit 64
+    ;;
+esac
+if [ -z "${FLOX_ENV:-}" ] || [ ! -x "$FLOX_ENV/bin/pulseaudio" ]; then
+  printf '%s\n' 'scripts/browser-audio: run inside flox activate on Linux x86-64' >&2
+  exit 69
+fi
+
+state=$(mktemp -d "${TMPDIR:-/tmp}/browser-audio.XXXXXX")
+server=
+stop() {
+  if [ -n "$server" ]; then
+    kill -TERM "$server" 2>/dev/null || :
+    wait "$server" 2>/dev/null || :
+  fi
+  rm -rf "$state"
+}
+trap 'stop; exit 129' HUP
+trap 'stop; exit 130' INT
+trap 'stop; exit 143' TERM
+
+# The server comes from the Flox environment's own nixpkgs closure and needs
+# no loader audit; unreachable D-Bus addresses keep it off the host's buses.
+env -u LD_AUDIT -u LD_LIBRARY_PATH \
+  HOME="$state" XDG_CONFIG_HOME="$state" XDG_RUNTIME_DIR="$state" \
+  PULSE_CONFIG=/dev/null PULSE_RUNTIME_PATH="$state/runtime" PULSE_STATE_PATH="$state/state" \
+  DBUS_SESSION_BUS_ADDRESS="unix:path=$state/no-session-bus" \
+  DBUS_SYSTEM_BUS_ADDRESS="unix:path=$state/no-system-bus" \
+  "$FLOX_ENV/bin/pulseaudio" --daemonize=no --system=no --use-pid-file=no \
+  --exit-idle-time=-1 --high-priority=no --realtime=no --no-cpu-limit \
+  --disable-shm --log-target=stderr --log-level=error -n \
+  --load='module-null-sink sink_name=browser_test' \
+  --load="module-native-protocol-tcp listen=127.0.0.1 port=$1 auth-anonymous=1 auth-cookie-enabled=0" \
+  --disallow-module-loading --disallow-exit &
+server=$!
+status=0
+wait "$server" || status=$?
+server=
+rm -rf "$state"
+exit "$status"

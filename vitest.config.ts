@@ -48,7 +48,9 @@ export default mergeConfig(viteConfig, defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: playwright({}),
+            // Chromium runs without Flox's loader audit, as in the
+            // Playwright projects (see playwright.config.ts).
+            provider: playwright({ launchOptions: { env: { ...process.env, LD_AUDIT: undefined } } }),
             // Story files share one non-isolated Storybook preview. Serial
             // files keep React act boundaries deterministic when lazy widgets
             // resolve under load, while individual play steps remain fast.

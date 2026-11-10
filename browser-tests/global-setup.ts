@@ -15,7 +15,8 @@ export default async function warmStorybook(config: FullConfig) {
   const baseURL = config.projects[0]?.use.baseURL
   if (!baseURL) throw new Error('Storybook warm-up needs the project baseURL')
   const deadline = Date.now() + BUDGET_MS
-  const browser = await chromium.launch()
+  // Like every project's browser, without Flox's loader audit (see playwright.config.ts).
+  const browser = await chromium.launch({ env: { ...process.env, LD_AUDIT: undefined } })
   try {
     const page = await browser.newPage()
     for (;;) {

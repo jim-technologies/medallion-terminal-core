@@ -31,6 +31,24 @@ gitleaks.pkg-group = "audit"
 gsettings-desktop-schemas.pkg-path = "gsettings-desktop-schemas"
 gsettings-desktop-schemas.version = "50.1"
 gsettings-desktop-schemas.pkg-group = "browser-runtime"
+# On Linux x86-64 the Firefox browser checks run nixpkgs' copy of Playwright's
+# own Firefox build for this Playwright release (157.0, revision 1555),
+# patched to load its libraries from nixpkgs rather than the host. Firefox
+# plays sound only through PulseAudio, and hosted CI runners have neither its
+# client library nor a sound server, so audio-only media fails there. The
+# PulseAudio client library and the private null-sink server, and the FFmpeg
+# libraries Firefox decodes H.264 and AAC with (already in this Firefox's
+# closure), come from the same nixpkgs revision: the one the catalog's
+# playwright-driver@1.64.1 is built from. Firefox and these libraries share
+# one loader and glibc, as in nixpkgs' own Firefox package.
+# Flake installs take no package group; the default and font groups stay put.
+playwright-firefox.flake = "github:flox/nixpkgs/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504#playwright-driver.components.firefox"
+playwright-firefox.systems = ["x86_64-linux"]
+pulseaudio.flake = "github:flox/nixpkgs/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504#pulseaudio"
+pulseaudio.systems = ["x86_64-linux"]
+ffmpeg-headless.flake = "github:flox/nixpkgs/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504#ffmpeg-headless"
+ffmpeg-headless.systems = ["x86_64-linux"]
+ffmpeg-headless.outputs = ["lib"]
 lato.pkg-path = "lato"
 lato.version = "2.0"
 dejavu_fonts.pkg-path = "dejavu_fonts"

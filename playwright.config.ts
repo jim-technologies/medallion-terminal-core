@@ -1,3 +1,6 @@
+import { existsSync, readFileSync, realpathSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
 import { defineConfig, devices } from '@playwright/test'
 
 // Flox's Nix ldd disagrees with the host ELF loader; real browser launches remain the gate.
@@ -33,12 +36,61 @@ if (selectedProjects.some(name => !projectNames.includes(name)) || new Set(selec
 const performancePhase = process.env.STORYBOOK_PERFORMANCE_PHASE === '1'
 const historyFixturePort = Number(process.env.HISTORY_FIXTURE_PORT ?? 6216)
 if (!Number.isInteger(historyFixturePort) || historyFixturePort < 1 || historyFixturePort > 65535 || historyFixturePort === storybookPort) throw new Error('HISTORY_FIXTURE_PORT must be a distinct valid port')
+const audioFixturePort = Number(process.env.AUDIO_FIXTURE_PORT ?? 6217)
+if (!Number.isInteger(audioFixturePort) || audioFixturePort < 1 || audioFixturePort > 65535 || audioFixturePort === storybookPort || audioFixturePort === historyFixturePort) throw new Error('AUDIO_FIXTURE_PORT must be a distinct valid port')
 
 // Flox activation sets LD_AUDIT to its loader-audit library, and every browser
-// process inherits it. With it, Firefox content processes intermittently die
-// on SIGSEGV during page creation ("browserContext.newPage: Target crashed").
-// Firefox runs on the host loader and needs no Flox library.
-const firefoxEnv = { ...process.env, LD_AUDIT: undefined }
+// process would inherit it. With it, Firefox content processes intermittently
+// die on SIGSEGV during page creation ("browserContext.newPage: Target
+// crashed"), and a stock browser looking for a library the host lacks would
+// be handed this environment's Nix build, linked against a newer glibc than
+// the host's. No browser needs it; global-setup.ts and the Vitest Storybook
+// project launch Chromium without it too.
+const browserEnv = { ...process.env, LD_AUDIT: undefined }
+
+// On Linux x86-64, Firefox is nixpkgs' copy of Playwright's own build for this
+// release, from the Flox environment (see .flox/env/manifest.toml). Firefox
+// plays sound only through PulseAudio, and hosted CI runners have neither
+// libpulse nor a sound server, so audio-only media failed there with
+// MediaError 3 (OnMediaSinkAudioError). The stock build cannot load nixpkgs'
+// libpulse, which needs a newer glibc than the host's; this build shares
+// nixpkgs' loader with PulseAudio and FFmpeg (its H.264 and AAC decoders) from
+// the same revision. As nixpkgs' own Firefox wrapper does, only Firefox gets
+// their library directories, and it plays into the private null sink that
+// scripts/browser-audio serves.
+let firefoxLaunch: { executablePath?: string, env: NodeJS.ProcessEnv } = { env: browserEnv }
+const audioServers = []
+if (process.platform === 'linux' && process.arch === 'x64' && selectedProjects.includes('firefox')) {
+  const root = process.env.FLOX_ENV ?? ''
+  const executablePath = join(root, 'firefox/firefox')
+  const libraries = ['lib/libpulse.so.0', 'lib/libavcodec.so.63'].map(library => join(root, library))
+  if (!root || ![executablePath, ...libraries].every(path => existsSync(path))) {
+    throw new Error('Linux x86-64 Firefox and its PulseAudio and FFmpeg libraries come from the Flox environment: run inside flox activate')
+  }
+  const requireFrom = createRequire(createRequire(createRequire(import.meta.url).resolve('@playwright/test/package.json')).resolve('playwright/package.json'))
+  const browsers = JSON.parse(readFileSync(join(dirname(requireFrom.resolve('playwright-core/package.json')), 'browsers.json'), 'utf8')) as { browsers: { name: string, browserVersion?: string }[] }
+  const expected = browsers.browsers.find(browser => browser.name === 'firefox')?.browserVersion
+  const actual = /^Version=(.+)$/m.exec(readFileSync(join(root, 'firefox/application.ini'), 'utf8'))?.[1]
+  if (!expected || actual !== expected) {
+    throw new Error(`The Flox environment's Firefox ${actual} does not match Playwright's ${expected}: move its nixpkgs revision with @playwright/test`)
+  }
+  firefoxLaunch = {
+    executablePath,
+    env: {
+      ...browserEnv,
+      LD_LIBRARY_PATH: libraries.map(library => dirname(realpathSync(library))).join(':'),
+      PULSE_SERVER: `tcp:127.0.0.1:${audioFixturePort}`,
+      PULSE_CLIENTCONFIG: '/dev/null',
+    },
+  }
+  audioServers.push({
+    command: `scripts/browser-audio ${audioFixturePort}`,
+    port: audioFixturePort,
+    reuseExistingServer: false,
+    timeout: 30_000,
+    gracefulShutdown: { signal: 'SIGTERM' as const, timeout: 5_000 },
+  })
+}
 
 export default defineConfig({
   testDir: './browser-tests',
@@ -75,6 +127,7 @@ export default defineConfig({
     reducedMotion: 'reduce',
     viewport: { width: 1440, height: 1000 },
     trace: 'retain-on-failure',
+    launchOptions: { env: browserEnv },
   },
   webServer: [{
     command: performancePhase
@@ -88,7 +141,7 @@ export default defineConfig({
     url: `http://127.0.0.1:${historyFixturePort}/browser-tests/fixtures/history.html`,
     reuseExistingServer: false,
     timeout: 120_000,
-  }],
+  }, ...audioServers],
   // Keep the device descriptor in the shared `use` block so its default
   // viewport cannot silently override the explicit regression viewport.
   projects: [
@@ -96,7 +149,7 @@ export default defineConfig({
     {
       name: 'firefox',
       testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch|media-preview)\.spec\.ts/,
-      use: { browserName: 'firefox', launchOptions: { env: firefoxEnv } },
+      use: { browserName: 'firefox', launchOptions: firefoxLaunch },
     },
     { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch|media-preview)\.spec\.ts/, use: { browserName: 'webkit' } },
   ].filter(project => selectedProjects.includes(project.name)),

@@ -353,7 +353,9 @@ lists every target.
   builds + artifact checks; CI schedules these checks across parallel checks,
   Storybook, behavior-shard and performance jobs, one browser worker each, all
   but WebKit's (the hosted runner lacks its libraries; README "Production
-  verification" records the gap)
+  verification" records the gap). On Linux x86-64, Firefox, its PulseAudio
+  and FFmpeg libraries and the null sink it plays into (`scripts/browser-audio`)
+  come from the Flox environment
 - `make test` — the unit, Storybook-in-Chromium and Playwright browser suites
   (`make test-unit`, `make test-storybook`, `make test-browser`,
   `make test-performance`); `pnpm test`

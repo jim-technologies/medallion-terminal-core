@@ -1014,6 +1014,19 @@ media checks instead: the HEVC sample's playback check times out, playback stays
 paused after two independent URL renewals, and Ogg seeks intermittently stay at
 zero. Neither build is used, and no WebKit check is weakened.
 
+On Linux x86-64 the Firefox project runs nixpkgs' copy of Playwright's own
+Firefox build from the Flox environment. Firefox plays sound only through
+PulseAudio, and the hosted runner has neither its client library nor a sound
+server, so audio-only media failed there with `MediaError` 3
+(`OnMediaSinkAudioError`). nixpkgs' Firefox loads PulseAudio's client library,
+and the FFmpeg libraries it decodes H.264 and AAC with, from the same nixpkgs
+revision, in directories only Firefox's launch environment can see. It plays
+into a private PulseAudio null sink that Playwright starts and stops with each
+browser phase (`scripts/browser-audio`). The sink listens on loopback only,
+uses no sound hardware or host audio service, and keeps its state in a private
+temporary directory. No browser inherits Flox's loader audit (`LD_AUDIT`), so
+Chromium and WebKit remain Playwright's stock builds on the host's libraries.
+
 Browser tooling is pinned to Playwright 1.64.1. CI uses one browser worker per job,
 following [Playwright’s stability guidance](https://playwright.dev/docs/ci#workers).
 Set `PLAYWRIGHT_SHARD=current/total` for a focused behavior shard; invalid or

@@ -16,6 +16,11 @@ Notable changes to medallion-terminal-core. Versions follow semver.
   gate, because the hosted runner lacks its system libraries and nixpkgs'
   WebKit fails the media checks. `PLAYWRIGHT_PROJECTS` selects the browser
   projects a run covers.
+- On Linux x86-64, Firefox browser checks run nixpkgs' build of Playwright's
+  Firefox from the Flox environment, with PulseAudio and FFmpeg from the same
+  nixpkgs revision and a private null sink, so audio-only media plays and H.264
+  and AAC decode on hosts without a sound server or FFmpeg, such as hosted CI
+  runners. No browser inherits Flox's loader audit.
 
 ### Fixed
 

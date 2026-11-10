@@ -792,12 +792,20 @@ settings. This qualifies the production-built Storybook harness; it does
 not qualify development Storybook at 50 ms or establish an application
 speedup. No library or application option changes.
 
-Firefox launches with `LD_AUDIT` removed from its environment. `flox
-activate` sets it to Flox's loader-audit library, and Firefox content
-processes that inherit it intermittently die on SIGSEGV during page creation
-("browserContext.newPage: Target crashed"). Firefox uses the host loader and
-no Flox library; Chromium and WebKit keep the inherited environment and every
-project shares the global worker limit.
+Every browser launches with `LD_AUDIT` removed from its environment. `flox
+activate` sets it to Flox's loader-audit library: Firefox content processes
+that inherit it intermittently die on SIGSEGV during page creation
+("browserContext.newPage: Target crashed"), and a stock browser looking for a
+library its host lacks would be handed the environment's Nix build, linked
+against a newer glibc. Chromium and WebKit are Playwright's stock builds on the
+host's libraries. On Linux x86-64, Firefox is nixpkgs' copy of Playwright's
+Firefox build from the Flox environment. It loads PulseAudio's client library
+and FFmpeg's H.264 and AAC decoders from the same nixpkgs revision, in
+directories only Firefox's launch environment sees, and plays into a private
+null sink (`scripts/browser-audio`) that Playwright starts and stops with the
+phase, so audio-only media plays on hosts without a sound server. Every
+project shares the global worker limit, and `PLAYWRIGHT_PROJECTS` selects
+projects (public CI leaves WebKit out).
 
 For a focused timing run, set the same phase flag explicitly:
 

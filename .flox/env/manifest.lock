@@ -15,6 +15,15 @@
         "pkg-path": "dejavu_fonts",
         "version": "2.37"
       },
+      "ffmpeg-headless": {
+        "flake": "github:flox/nixpkgs/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504#ffmpeg-headless",
+        "systems": [
+          "x86_64-linux"
+        ],
+        "outputs": [
+          "lib"
+        ]
+      },
       "gitleaks": {
         "pkg-path": "gitleaks",
         "pkg-group": "audit",
@@ -42,9 +51,21 @@
         "pkg-path": "noto-fonts-color-emoji",
         "version": "2.051"
       },
+      "playwright-firefox": {
+        "flake": "github:flox/nixpkgs/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504#playwright-driver.components.firefox",
+        "systems": [
+          "x86_64-linux"
+        ]
+      },
       "pnpm": {
         "pkg-path": "pnpm",
         "version": "12.9.0"
+      },
+      "pulseaudio": {
+        "flake": "github:flox/nixpkgs/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504#pulseaudio",
+        "systems": [
+          "x86_64-linux"
+        ]
       }
     },
     "hook": {
@@ -941,6 +962,105 @@
       },
       "system": "x86_64-linux",
       "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "install_id": "playwright-firefox",
+      "locked-url": "github:flox/nixpkgs/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504?narHash=sha256-rZLrzrC6i%2BjnTAlvPZHogKDulY7WWDEv9hJeHieO7Zw%3D",
+      "flake-description": "A collection of packages for the Nix package manager",
+      "locked-flake-attr-path": "legacyPackages.x86_64-linux.playwright-driver.components.firefox",
+      "derivation": "/nix/store/05b41hxqyfl973zc7xhgvaanl5hnzc5s-playwright-firefox.drv",
+      "outputs": {
+        "out": "/nix/store/dr9brb05xgnn445w0qaka3w5zfjz59gi-playwright-firefox"
+      },
+      "output-names": [
+        "out"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "x86_64-linux",
+      "system": "x86_64-linux",
+      "name": "playwright-firefox",
+      "broken": false,
+      "unfree": false,
+      "priority": 5
+    },
+    {
+      "install_id": "pulseaudio",
+      "locked-url": "github:flox/nixpkgs/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504?narHash=sha256-rZLrzrC6i%2BjnTAlvPZHogKDulY7WWDEv9hJeHieO7Zw%3D",
+      "flake-description": "A collection of packages for the Nix package manager",
+      "locked-flake-attr-path": "legacyPackages.x86_64-linux.pulseaudio",
+      "derivation": "/nix/store/cxw8w8r04rsnj8gq897gv6xjs3bja1nq-pulseaudio-17.0.drv",
+      "outputs": {
+        "dev": "/nix/store/m2vf7m29gh2dd32fkfbny02px6s95zlq-pulseaudio-17.0-dev",
+        "out": "/nix/store/7r4f7r1xv1ssm3kh3518ldgdnp5w3lkf-pulseaudio-17.0"
+      },
+      "output-names": [
+        "out",
+        "dev"
+      ],
+      "outputs-to-install": [
+        "out"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "x86_64-linux",
+      "system": "x86_64-linux",
+      "name": "pulseaudio-17.0",
+      "pname": "pulseaudio",
+      "version": "17.0",
+      "description": "Sound server for POSIX and Win32 systems",
+      "licenses": [
+        "LGPL-2.0-or-later"
+      ],
+      "broken": false,
+      "unfree": false,
+      "priority": 5
+    },
+    {
+      "install_id": "ffmpeg-headless",
+      "locked-url": "github:flox/nixpkgs/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504?narHash=sha256-rZLrzrC6i%2BjnTAlvPZHogKDulY7WWDEv9hJeHieO7Zw%3D",
+      "flake-description": "A collection of packages for the Nix package manager",
+      "locked-flake-attr-path": "legacyPackages.x86_64-linux.ffmpeg-headless",
+      "derivation": "/nix/store/44ivymv5sm7dd6nczp1145hjgrf1r7ah-ffmpeg-headless-9.0.2.drv",
+      "outputs": {
+        "bin": "/nix/store/fqpym60z9jyv2a7cal8411axw7jbknxh-ffmpeg-headless-9.0.2-bin",
+        "data": "/nix/store/xm2gnhglb8l8rw1ch6dg4mw0sqb1nk7n-ffmpeg-headless-9.0.2-data",
+        "dev": "/nix/store/ihh9hvdxwn8x7dacz5pkk8nqxsrkgy09-ffmpeg-headless-9.0.2-dev",
+        "doc": "/nix/store/27g42qazalnj2224cxcqi6sk3fyzbm9l-ffmpeg-headless-9.0.2-doc",
+        "lib": "/nix/store/hzig36pp5m4sb1lv8fhf2ynhfhv54qg4-ffmpeg-headless-9.0.2-lib",
+        "man": "/nix/store/j752dc97kklzwcsvhh5bdhh5jdxpxycv-ffmpeg-headless-9.0.2-man",
+        "out": "/nix/store/a0k5nv84jnfzljhkgarjdfqr2lasil3d-ffmpeg-headless-9.0.2"
+      },
+      "output-names": [
+        "bin",
+        "lib",
+        "dev",
+        "doc",
+        "man",
+        "data",
+        "out"
+      ],
+      "outputs-to-install": [
+        "bin",
+        "man"
+      ],
+      "requested-outputs-to-install": [],
+      "package-system": "x86_64-linux",
+      "system": "x86_64-linux",
+      "name": "ffmpeg-headless-9.0.2",
+      "pname": "ffmpeg-headless",
+      "version": "9.0.2",
+      "description": "Complete, cross-platform solution to record, convert and stream audio and video",
+      "licenses": [
+        "LGPL-2.1-or-later",
+        "GPL-2.0-or-later",
+        "LGPL-3.0-or-later",
+        "GPL-3.0-or-later"
+      ],
+      "broken": false,
+      "unfree": false,
       "priority": 5
     }
   ]
