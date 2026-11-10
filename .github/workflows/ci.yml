@@ -80,6 +80,11 @@ jobs:
         shard: [1, 2, 3, 4, 5, 6, 7, 8]
     env:
       PLAYWRIGHT_SHARD: ${{ matrix.shard }}/8
+      # WebKit runs in `make validate` only. Playwright's WebKit build needs
+      # Ubuntu libraries this runner image lacks (libevent, GStreamer and
+      # more) that only apt could add, and nixpkgs' build of it fails the
+      # media checks. README "Production verification" records the gap.
+      PLAYWRIGHT_PROJECTS: chromium,firefox
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -116,6 +121,9 @@ jobs:
   performance:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    env:
+      # The same project selection as the behavior shards, for the same reason.
+      PLAYWRIGHT_PROJECTS: chromium,firefox
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

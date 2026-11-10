@@ -990,9 +990,9 @@ For wiring this into a real product, in order:
 
 ## Production verification
 
-Run all of CI's checks locally with one gate. It installs dependencies with a
-frozen lockfile and Playwright's pinned Chromium, Firefox and WebKit (a no-op
-after the first run):
+Run all of CI's checks, and WebKit's, locally with one gate. It installs
+dependencies with a frozen lockfile and Playwright's pinned Chromium, Firefox
+and WebKit (a no-op after the first run):
 
 ```bash
 make validate
@@ -1004,12 +1004,25 @@ shards, and performance jobs. Each job uses the standard Linux runner, keeps the
 `make validate-checks`, `make test-storybook`, `make test-browser`, and
 `make test-performance` are those slices; `make validate` runs their union.
 
+Public CI runs the Chromium and Firefox projects; WebKit runs only in the local
+`make validate`. That is a recorded coverage gap of the hosted runner, not a
+pass. Playwright's WebKit build needs Ubuntu libraries that GitHub's
+ubuntu-24.04 image does not ship (libevent, the GStreamer plugin sets, WOFF2,
+AVIF, Manette, Hyphen and more), which only apt could add, and the gate needs no
+root. nixpkgs' build of the same WebKit release, tried through Flox, fails the
+media checks instead: the HEVC sample's playback check times out, playback stays
+paused after two independent URL renewals, and Ogg seeks intermittently stay at
+zero. Neither build is used, and no WebKit check is weakened.
+
 Browser tooling is pinned to Playwright 1.64.1. CI uses one browser worker per job,
 following [Playwright’s stability guidance](https://playwright.dev/docs/ci#workers).
 Set `PLAYWRIGHT_SHARD=current/total` for a focused behavior shard; invalid or
-out-of-range values fail before running tests. Unset means all cases. The full
-`make validate` and `make test` explicitly run all shards, and performance is
-always unsharded. CI saves the complete pnpm store from the checks job and all
+out-of-range values fail before running tests. Unset means all cases.
+`PLAYWRIGHT_PROJECTS` names the browser projects to run, such as
+`chromium,firefox`; unset or `all` means every project, and an unknown or
+repeated name fails before running tests. The full `make validate` and
+`make test` explicitly run all shards and projects, and performance is always
+unsharded. CI saves the complete pnpm store from the checks job and all
 three browsers from behavior shard 1, including after test failures. Exact-key
 cache hits skip saves. Flox activation has its own visible step; its metadata
 cache is not used as a package cache. Playwright adds GitHub annotations on
@@ -1034,8 +1047,8 @@ retry policy and assertions are unchanged; the launcher affects only where
 the browser phase runs.
 
 `make validate` is the single gate verb (see
-[`MAKEFILE-CONTRACT.md`](MAKEFILE-CONTRACT.md)); CI runs exactly its checks
-across the parallel jobs above.
+[`MAKEFILE-CONTRACT.md`](MAKEFILE-CONTRACT.md)); CI runs its checks across the
+parallel jobs above, all but WebKit's.
 It gates the public surface — no private hostnames, repository references,
 registries, credentials, or internal codenames, checked in tracked content,
 in tracked paths, and in the commit messages a push would publish, with every
@@ -1048,7 +1061,7 @@ TerminalService conformance suite, unit/integration tests, every Storybook
 story in real Chromium, both application and library builds, committed
 package artifacts, the static Storybook catalog, curated accessibility
 checks, interaction flows, and visual snapshots. Grid scroll-ownership and
-keyboard regressions additionally run in Firefox and WebKit. Each visual baseline is a
+keyboard regressions additionally run in Firefox and, in the local gate, WebKit. Each visual baseline is a
 pixel image (`browser-tests/__screenshots__/`, 0.3% anti-aliasing tolerance)
 plus an exact accessibility-tree text snapshot (`browser-tests/__aria__/`, no
 tolerance) rendered at a pinned clock, so a changed label or state fails even

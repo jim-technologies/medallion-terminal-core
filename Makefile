@@ -8,7 +8,7 @@ help: ## One-screen help (make help-all for every target)
 	@echo "Daily:"
 	@echo "  make fmt        rewrite formatting in place"
 	@echo "  make test       full test suite (unit + storybook + browser)"
-	@echo "  make validate   the gate — exactly what CI runs"
+	@echo "  make validate   the gate — what CI runs, plus WebKit"
 	@echo "  make generate   regenerate proto-derived types"
 	@echo ""
 	@echo "Everything else: make help-all; the Vite dev server is pnpm dev."
@@ -20,6 +20,7 @@ fmt: ## Rewrite formatting in place (buf format; TypeScript is gated by tsc, not
 	pnpm format
 
 test: export PLAYWRIGHT_SHARD := 1/1
+test: export PLAYWRIGHT_PROJECTS := all
 test: test-unit test-storybook test-browser test-performance ## Run the full test suite.
 
 test-unit: ## Run the Node unit test project.
@@ -30,17 +31,17 @@ test-storybook: ## Render every Storybook story in headless Chromium.
 	pnpm exec playwright install chromium
 	pnpm test:storybook
 
-test-browser: ## Run Playwright behavior checks (PLAYWRIGHT_SHARD=current/total selects a CI shard).
+test-browser: ## Run Playwright behavior checks (PLAYWRIGHT_SHARD=current/total and PLAYWRIGHT_PROJECTS=chromium,firefox select a CI slice).
 	pnpm install --frozen-lockfile
 	pnpm exec playwright install chromium firefox webkit
 	pnpm test:browser
 
-test-performance: ## Run the unsharded, single-worker browser performance phase.
+test-performance: ## Run the unsharded, single-worker browser performance phase (PLAYWRIGHT_PROJECTS selects browsers).
 	pnpm install --frozen-lockfile
 	pnpm exec playwright install chromium firefox webkit
 	pnpm test:performance
 
-validate: ## The gate — exactly what CI runs: deps, surface guard, version parity, lint, tests, builds, artifact checks.
+validate: ## The gate — what CI runs, plus WebKit: deps, surface guard, version parity, lint, tests, builds, artifact checks.
 	pnpm install --frozen-lockfile
 	pnpm exec playwright install chromium firefox webkit
 	pnpm validate

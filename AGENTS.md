@@ -350,15 +350,19 @@ lists every target.
 - `make validate` — the single gate verb: frozen-lockfile install + pinned
   Chromium, Firefox and WebKit + public-surface guard (`scripts/public-surface-check`, exceptions
   in `.public-surface-allow`) + `VERSION` parity + lint + all test suites +
-  builds + artifact checks; CI schedules exactly these checks across parallel
-  checks, Storybook, behavior-shard and performance jobs, one browser worker each
+  builds + artifact checks; CI schedules these checks across parallel checks,
+  Storybook, behavior-shard and performance jobs, one browser worker each, all
+  but WebKit's (the hosted runner lacks its libraries; README "Production
+  verification" records the gap)
 - `make test` — the unit, Storybook-in-Chromium and Playwright browser suites
   (`make test-unit`, `make test-storybook`, `make test-browser`,
   `make test-performance`); `pnpm test`
   is `make test-unit` alone
 - `make validate-checks` — the guards, unit tests, builds and artifact checks;
-  `make test-browser` accepts `PLAYWRIGHT_SHARD=current/total` for behavior only.
-  The full `make validate` and `make test` remain unsharded
+  `make test-browser` accepts `PLAYWRIGHT_SHARD=current/total` for behavior only,
+  and it and `make test-performance` accept `PLAYWRIGHT_PROJECTS=chromium,firefox`
+  (any of chromium, firefox and webkit; CI leaves WebKit out). The full
+  `make validate` and `make test` remain unsharded and run every project
 - `make fmt` — `buf format --write` (TypeScript is gated by `tsc`, not a
   rewriter)
 - `make build` — standalone app + library bundle (`pnpm build`,

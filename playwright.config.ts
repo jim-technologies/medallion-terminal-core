@@ -23,6 +23,13 @@ if (shardInput !== undefined) {
   }
   shard = { current, total }
 }
+// Unset or `all` runs every project; public CI names the projects it runs.
+const projectNames = ['chromium', 'firefox', 'webkit']
+const projectInput = process.env.PLAYWRIGHT_PROJECTS
+const selectedProjects = projectInput === undefined || projectInput === 'all' ? projectNames : projectInput.split(',')
+if (selectedProjects.some(name => !projectNames.includes(name)) || new Set(selectedProjects).size !== selectedProjects.length) {
+  throw new Error(`PLAYWRIGHT_PROJECTS must be all or distinct comma-separated names from ${projectNames.join(', ')}`)
+}
 const performancePhase = process.env.STORYBOOK_PERFORMANCE_PHASE === '1'
 const historyFixturePort = Number(process.env.HISTORY_FIXTURE_PORT ?? 6216)
 if (!Number.isInteger(historyFixturePort) || historyFixturePort < 1 || historyFixturePort > 65535 || historyFixturePort === storybookPort) throw new Error('HISTORY_FIXTURE_PORT must be a distinct valid port')
@@ -92,5 +99,5 @@ export default defineConfig({
       use: { browserName: 'firefox', launchOptions: { env: firefoxEnv } },
     },
     { name: 'webkit', testMatch: /(?:data-grid-behaviour|data-grid-pagination|keyboard-behaviour|scroll-restoration|grid-preferences|stat-tile-behaviour|product-fetch|media-preview)\.spec\.ts/, use: { browserName: 'webkit' } },
-  ],
+  ].filter(project => selectedProjects.includes(project.name)),
 })
