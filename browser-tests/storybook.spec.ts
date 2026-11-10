@@ -1030,9 +1030,13 @@ const RECORD_EDITORS = [
 
 async function recordEditorFit(page: Page, column: string) {
   // Autofocus scroll and ResizeObserver placement can follow the editor's mount.
+  // At most 120 frames, so a missing or restless editor fails the measurement
+  // below with its own message instead of the case timeout.
   await page.evaluate(column => new Promise<void>(resolve => {
     let previous: string | undefined
+    let frames = 0
     const sample = () => {
+      if (++frames > 120) { resolve(); return }
       const cell = document.querySelector<HTMLElement>(`#storybook-root [data-row-index="1"] [data-column-id="${column}"]`)
       const dialog = document.querySelector<HTMLElement>('.mtc-data-grid-overlay-editor')
       const editor = (dialog ?? cell)?.querySelector<HTMLElement>('.mtc-data-grid-editor')
