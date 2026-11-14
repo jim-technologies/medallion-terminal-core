@@ -4,6 +4,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.8.2] — 2026-11-14
+
 ### Changed
 
 - CI fans the full gate out across checks, Storybook, eight behavior shards and
