@@ -8,6 +8,9 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ### Changed
 
+- Separate the browser checks for grid key isolation and unkeyed refresh.
+  Both retain their assertions and deadlines; the unkeyed case also checks
+  that scoped widths were saved before testing isolation.
 - CI fans the full gate out across checks, Storybook, eight behavior shards and
   performance instead of one command, which was cancelled at its 30-minute
   limit (30.3 minutes). The first green run, on cold pnpm and browser caches,

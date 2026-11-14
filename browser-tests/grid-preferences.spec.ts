@@ -11,7 +11,7 @@ test('explicitly scoped grid column widths survive refresh', async ({ page }) =>
   await expect.poll(async () => (await header.boundingBox())!.width).toBe(original + 16)
 })
 
-test('different grid state keys do not share widths and unkeyed grids do not persist', async ({ page }) => {
+test('different grid state keys do not share widths', async ({ page }) => {
   const open = (key: string) => page.goto(`/iframe.html?id=toolkit-workbench-datagrid--scroll-ownership&viewMode=story&args=count:50;bounded:true;stateKey:${key}`)
   const header = page.getByRole('grid', { name: 'Scroll ownership rows' }).locator('[data-cell="-1:1"]')
   await open('first')
@@ -22,7 +22,22 @@ test('different grid state keys do not share widths and unkeyed grids do not per
   await expect.poll(async () => (await header.boundingBox())!.width).toBe(200)
   await open('first')
   await expect.poll(async () => (await header.boundingBox())!.width).toBe(216)
+})
+
+test('unkeyed grids ignore scoped widths and do not persist', async ({ page }) => {
+  const open = (key: string) => page.goto(`/iframe.html?id=toolkit-workbench-datagrid--scroll-ownership&viewMode=story&args=count:50;bounded:true;stateKey:${key}`)
+  const header = page.getByRole('grid', { name: 'Scroll ownership rows' }).locator('[data-cell="-1:1"]')
+  await open('first')
+  await header.focus()
+  await page.keyboard.press('Alt+ArrowRight')
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(216)
+  const scopedWidth = await page.evaluate(() => {
+    const stored = JSON.parse(sessionStorage.getItem('mtc:grid-widths:v1') ?? '[]') as [string, Record<string, number>][]
+    return stored.find(([key]) => key === 'first')?.[1]['sequence']
+  })
+  expect(scopedWidth).toBe(216)
   await open('')
+  await expect.poll(async () => (await header.boundingBox())!.width).toBe(200)
   await header.focus()
   await page.keyboard.press('Alt+ArrowRight')
   await expect.poll(async () => (await header.boundingBox())!.width).toBe(216)
