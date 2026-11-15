@@ -121,6 +121,7 @@ describe('workspace module manifests', () => {
     'https://user:password@metrics.example.test/',
     'https://@metrics.example.test/',
     'https://:@metrics.example.test/',
+    'https://metrics.example.test/#',
     'https://metrics.example.test:8443/',
     'https://{workspace}.metrics.example.test/',
     'https://metrics.example.test/{unresolved}',
@@ -137,6 +138,8 @@ describe('workspace module manifests', () => {
   it.each([
     'https://metrics.example.test/d/@reader/{workspace}',
     'https://metrics.example.test/d/{workspace}?reader=@viewer',
+    'https://metrics.example.test/d/%23reader/{workspace}',
+    'https://metrics.example.test/d/{workspace}?reader=%23viewer',
   ])('permits @ outside the authority in %s', urlTemplate => {
     const manifest = link()
     manifest.link!.urlTemplate = urlTemplate
