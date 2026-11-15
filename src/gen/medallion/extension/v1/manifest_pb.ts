@@ -37,7 +37,8 @@ export type ExtensionManifest = Message<"medallion.extension.v1.ExtensionManifes
   version: string;
 
   /**
-   * Nonblank display title, at most 128 characters, without surrounding space.
+   * Nonblank display title, at most 128 characters, without surrounding
+   * whitespace, C0 controls or DEL.
    *
    * @generated from field: string title = 3;
    */
@@ -106,7 +107,8 @@ export type ExtensionManifestJson = {
   version?: string;
 
   /**
-   * Nonblank display title, at most 128 characters, without surrounding space.
+   * Nonblank display title, at most 128 characters, without surrounding
+   * whitespace, C0 controls or DEL.
    *
    * @generated from field: string title = 3;
    */
@@ -233,7 +235,8 @@ export const ExtensionContributionsSchema: GenMessage<ExtensionContributions, {j
  */
 export type ExtensionEntry = Message<"medallion.extension.v1.ExtensionEntry"> & {
   /**
-   * Nonblank entry title, at most 128 characters, without surrounding space.
+   * Nonblank entry title, at most 128 characters, without surrounding
+   * whitespace, C0 controls or DEL.
    *
    * @generated from field: string title = 1;
    */
@@ -261,7 +264,8 @@ export type ExtensionEntry = Message<"medallion.extension.v1.ExtensionEntry"> & 
  */
 export type ExtensionEntryJson = {
   /**
-   * Nonblank entry title, at most 128 characters, without surrounding space.
+   * Nonblank entry title, at most 128 characters, without surrounding
+   * whitespace, C0 controls or DEL.
    *
    * @generated from field: string title = 1;
    */

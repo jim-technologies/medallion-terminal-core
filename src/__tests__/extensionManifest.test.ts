@@ -49,6 +49,12 @@ describe('workspace module manifests', () => {
     expect(validateExtensionManifest(manifest)).toEqual([{ path: '', message: 'manifest must be an object' }])
   })
 
+  it.each([null, [], 3, false, {}, { toString: null }, { toString: null, valueOf: null }].map(id => ({ id })))('refuses non-string identity $id without coercion', ({ id }) => {
+    const manifest = { ...native(), id }
+    expect(() => validateExtensionManifest(manifest)).not.toThrow()
+    expect(validateExtensionManifest(manifest)).toContainEqual(expect.objectContaining({ path: 'id' }))
+  })
+
   it.each(['ab', 'Upper', '../records', 'a'.repeat(65), 'records/other'])('refuses invalid identity %s', id => {
     expect(validateExtensionManifest({ ...native(), id })).toContainEqual(expect.objectContaining({ path: 'id' }))
   })

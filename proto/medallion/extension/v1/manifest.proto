@@ -12,7 +12,8 @@ message ExtensionManifest {
   // Exact Semantic Versioning 2.0.0 version, including optional prerelease/build,
   // at most 128 characters.
   string version = 2;
-  // Nonblank display title, at most 128 characters, without surrounding space.
+  // Nonblank display title, at most 128 characters, without surrounding
+  // whitespace, C0 controls or DEL.
   string title = 3;
   // Host icon identifier, at most 128 characters, beginning with an ASCII letter
   // and otherwise containing letters, digits, dots, underscores or hyphens.
@@ -56,7 +57,8 @@ message ExtensionContributions {
 
 // A navigation item or home tile that enters one of the module's declared routes.
 message ExtensionEntry {
-  // Nonblank entry title, at most 128 characters, without surrounding space.
+  // Nonblank entry title, at most 128 characters, without surrounding
+  // whitespace, C0 controls or DEL.
   string title = 1;
   // An exact route template from this manifest's contributes.routes list.
   string path = 2;

@@ -48,7 +48,8 @@ export function validateExtensionManifest(
     return issues
   }
   fields(manifest, ['id', 'version', 'title', 'icon', 'kind', 'entitlementKey', 'contributes', 'link'], '')
-  if (typeof manifest.id !== 'string' || !identifier.test(manifest.id)) {
+  const id = typeof manifest.id === 'string' ? manifest.id : ''
+  if (!identifier.test(id)) {
     issue('id', 'id must match ^[a-z0-9][a-z0-9.-]{2,63}$')
   }
   if (typeof manifest.version !== 'string' || manifest.version.length > 128 || !semver.test(manifest.version)) {
@@ -69,7 +70,7 @@ export function validateExtensionManifest(
     const contributes = manifest.contributes
     fields(contributes, ['nav', 'routes', 'homeTiles'], 'contributes')
     const routes = new Set<string>()
-    const prefix = `/w/{workspace}/m/${manifest.id}`
+    const prefix = `/w/{workspace}/m/${id}`
     if (!Array.isArray(contributes.routes) || contributes.routes.length === 0) {
       issue('contributes.routes', 'at least one route is required')
     } else {

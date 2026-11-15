@@ -17,7 +17,7 @@ function s(t, n = { allowedLinkHosts: [] }) {
 		for (let r of Object.keys(e)) t.includes(r) || c(n ? `${n}.${r}` : r, "field is not supported by manifest v1");
 	};
 	if (!i(t)) return c("", "manifest must be an object"), s;
-	if (l(t, [
+	l(t, [
 		"id",
 		"version",
 		"title",
@@ -26,7 +26,9 @@ function s(t, n = { allowedLinkHosts: [] }) {
 		"entitlementKey",
 		"contributes",
 		"link"
-	], ""), typeof t.id == "string" && e.test(t.id) || c("id", "id must match ^[a-z0-9][a-z0-9.-]{2,63}$"), (typeof t.version != "string" || t.version.length > 128 || !r.test(t.version)) && c("version", "version must be an exact semantic version"), a(t.title) || c("title", "a nonblank title of at most 128 characters is required"), o(t.icon) || c("icon", "a host icon identifier of at most 128 characters is required"), a(t.entitlementKey) && /^[a-zA-Z0-9][a-zA-Z0-9_.:-]*$/.test(t.entitlementKey) || c("entitlementKey", "a stable workspace entitlement key is required"), t.kind !== "EXTENSION_KIND_NATIVE" && t.kind !== "EXTENSION_KIND_LINK" && c("kind", "kind must be EXTENSION_KIND_NATIVE or EXTENSION_KIND_LINK"), !i(t.contributes)) c("contributes", "contributions must declare the module routes");
+	], "");
+	let u = typeof t.id == "string" ? t.id : "";
+	if (e.test(u) || c("id", "id must match ^[a-z0-9][a-z0-9.-]{2,63}$"), (typeof t.version != "string" || t.version.length > 128 || !r.test(t.version)) && c("version", "version must be an exact semantic version"), a(t.title) || c("title", "a nonblank title of at most 128 characters is required"), o(t.icon) || c("icon", "a host icon identifier of at most 128 characters is required"), a(t.entitlementKey) && /^[a-zA-Z0-9][a-zA-Z0-9_.:-]*$/.test(t.entitlementKey) || c("entitlementKey", "a stable workspace entitlement key is required"), t.kind !== "EXTENSION_KIND_NATIVE" && t.kind !== "EXTENSION_KIND_LINK" && c("kind", "kind must be EXTENSION_KIND_NATIVE or EXTENSION_KIND_LINK"), !i(t.contributes)) c("contributes", "contributions must declare the module routes");
 	else {
 		let e = t.contributes;
 		l(e, [
@@ -34,7 +36,7 @@ function s(t, n = { allowedLinkHosts: [] }) {
 			"routes",
 			"homeTiles"
 		], "contributes");
-		let n = /* @__PURE__ */ new Set(), r = `/w/{workspace}/m/${t.id}`;
+		let n = /* @__PURE__ */ new Set(), r = `/w/{workspace}/m/${u}`;
 		!Array.isArray(e.routes) || e.routes.length === 0 ? c("contributes.routes", "at least one route is required") : e.routes.forEach((e, t) => {
 			let i = `contributes.routes[${t}]`;
 			if (typeof e != "string" || e.length > 2048 || e !== r && !e.startsWith(`${r}/`)) {
