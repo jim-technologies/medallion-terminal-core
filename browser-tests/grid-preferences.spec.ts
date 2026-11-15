@@ -1,13 +1,34 @@
 import { expect, test, type Page } from '@playwright/test'
 
 test('explicitly scoped grid column widths survive refresh', async ({ page }) => {
+  const ready = async () => {
+    await page.waitForFunction(() => {
+      const render = (window as unknown as {
+        __STORYBOOK_PREVIEW__?: { currentRender?: {
+          id: string
+          phase?: string
+          store: { args: { get(id: string): Record<string, unknown> } }
+        } }
+      }).__STORYBOOK_PREVIEW__?.currentRender
+      if (render?.id !== 'toolkit-workbench-datagrid--scroll-ownership' || render.phase !== 'finished') return false
+      const args = render.store.args.get(render.id)
+      return args.count === 50 && args.bounded === true && args.stateKey === 'scroll-ownership'
+    })
+    await page.evaluate(() => document.fonts.ready)
+  }
   await page.goto('/iframe.html?id=toolkit-workbench-datagrid--scroll-ownership&viewMode=story&args=count:50;bounded:true')
+  await ready()
   const header = page.getByRole('grid', { name: 'Scroll ownership rows' }).locator('[data-cell="-1:1"]')
   const original = (await header.boundingBox())!.width
   await header.focus()
   await page.keyboard.press('Alt+ArrowRight')
   await expect.poll(async () => (await header.boundingBox())!.width).toBe(original + 16)
+  await expect.poll(() => page.evaluate(() => {
+    const stored = JSON.parse(sessionStorage.getItem('mtc:grid-widths:v1') ?? '[]') as [string, Record<string, number>][]
+    return stored.find(([key]) => key === 'scroll-ownership')?.[1]['sequence']
+  })).toBe(original + 16)
   await page.reload()
+  await ready()
   await expect.poll(async () => (await header.boundingBox())!.width).toBe(original + 16)
 })
 

@@ -431,12 +431,11 @@ for (const initiallyPlaying of [true, false]) {
         const nativeLoad = player.load
         const bookmark = { time: nativeTime.get!.call(player) as number, paused: player.paused }
         let pending = true
-        let observingTimeEvent = false
-        const trackTime = () => {
+        let observingTimeEvent: Event | null = null
+        const trackTime = (event: Event) => {
           if (!pending || player.error) return
           bookmark.time = nativeTime.get!.call(player) as number
-          observingTimeEvent = true
-          queueMicrotask(() => { observingTimeEvent = false })
+          observingTimeEvent = event
         }
         const trackPlay = () => { if (pending) bookmark.paused = false }
         const trackPause = () => { if (pending && !player.error) bookmark.paused = true }
@@ -458,8 +457,8 @@ for (const initiallyPlaying of [true, false]) {
           enumerable: nativeTime.enumerable,
           get() {
             const time = nativeTime.get!.call(player) as number
-            // Observe the exact native value read by a bookmark event handler.
-            if (pending && observingTimeEvent && Number.isFinite(time)) bookmark.time = time
+            // Native dispatch can checkpoint microtasks between listeners.
+            if (pending && observingTimeEvent && observingTimeEvent.eventPhase !== Event.NONE && Number.isFinite(time)) bookmark.time = time
             return time
           },
           set(time: number) {
