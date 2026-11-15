@@ -1543,8 +1543,9 @@ for (const theme of ['dark', 'light'] as const) {
   })
 
   test(`table flashes require unambiguous scalar identity in ${theme}`, async ({ page }) => {
+    await page.clock.install({ time: new Date('2026-01-01T00:00:00Z') })
     await openStory(page, 'widgets-datatable--flash-identity', { theme })
-    await page.clock.install()
+    await page.clock.pauseAt(new Date('2026-01-01T01:00:00Z'))
     const grid = page.getByRole('grid', { name: 'Table data' })
     const dataRows = grid.locator('[data-row-index]')
     await page.getByRole('button', { name: 'Advance values' }).click()

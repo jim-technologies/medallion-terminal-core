@@ -7,6 +7,7 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 ### Fixed
 
 - Reject empty userinfo in link destinations while preserving `@` in paths and query strings.
+- Control flash-check time explicitly and wait for settled grid fixtures before measuring reloads.
 
 ### Added
 

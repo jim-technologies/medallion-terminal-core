@@ -54,7 +54,10 @@ test('different grid state keys do not share widths', async ({ page }) => {
 })
 
 test('unkeyed grids ignore scoped widths and do not persist', async ({ page }) => {
-  const open = (key: string) => page.goto(`/iframe.html?id=toolkit-workbench-datagrid--scroll-ownership&viewMode=story&args=count:50;bounded:true;stateKey:${key}`)
+  const open = async (key: string) => {
+    await page.goto(`/iframe.html?id=toolkit-workbench-datagrid--scroll-ownership&viewMode=story&args=count:50;bounded:true;stateKey:${key}`)
+    await readyScrollOwnership(page, key)
+  }
   const header = page.getByRole('grid', { name: 'Scroll ownership rows' }).locator('[data-cell="-1:1"]')
   await open('first')
   await header.focus()
@@ -71,6 +74,7 @@ test('unkeyed grids ignore scoped widths and do not persist', async ({ page }) =
   await page.keyboard.press('Alt+ArrowRight')
   await expect.poll(async () => (await header.boundingBox())!.width).toBe(216)
   await page.reload()
+  await readyScrollOwnership(page, '')
   await expect.poll(async () => (await header.boundingBox())!.width).toBe(200)
 })
 
