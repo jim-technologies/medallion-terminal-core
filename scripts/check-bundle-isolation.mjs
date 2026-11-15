@@ -26,6 +26,12 @@ const chineseCatalogMarker = '正在加载'
 
 const checks = [
   {
+    label: 'proto',
+    entry: path.join(root, 'dist/proto.js'),
+    maxStaticGzipBytes: 6 * 1024,
+    requireDynamicImport: false,
+  },
+  {
     // 0.6.0 moved product states into the toolkit: typed SourceError, the
     // access/session/freshness states, and the en + zh-CN message catalog
     // with Intl formatters (~4.7 KiB together). 0.7.0 adds the component

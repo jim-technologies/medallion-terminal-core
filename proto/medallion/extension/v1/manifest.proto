@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package medallion.extension.v1;
+
+// A first-party workspace module declaration. Hosts enforce membership and the
+// workspace entitlement before exposing contributions; this is not an install,
+// code-execution or authorization grant. ProtoJSON uses the generated camelCase
+// field names and symbolic enum names. Unknown fields are refused in v1.
+message ExtensionManifest {
+  // Stable identifier matching ^[a-z0-9][a-z0-9.-]{2,63}$.
+  string id = 1;
+  // Exact Semantic Versioning 2.0.0 version, including optional prerelease/build.
+  string version = 2;
+  // Nonblank display title, at most 128 characters, without surrounding space.
+  string title = 3;
+  // Host icon identifier, at most 128 characters, beginning with an ASCII letter
+  // and otherwise containing letters, digits, dots, underscores or hyphens.
+  string icon = 4;
+  // Whether the host renders a native module or checks and resolves a link.
+  ExtensionKind kind = 5;
+  // Workspace entitlement key, at most 128 characters, containing ASCII letters,
+  // digits, dots, underscores, colons or hyphens and beginning with a letter/digit.
+  string entitlement_key = 6;
+  // The module's routes and optional navigation and home entries.
+  ExtensionContributions contributes = 7;
+  // Required for LINK and forbidden for NATIVE; the host supplies deployment URLs.
+  ExtensionLink link = 8;
+
+  reserved 9 to 13;
+  reserved "runtime", "capabilities", "operations", "viewers", "commands";
+}
+
+// The two supported workspace module presentation modes.
+enum ExtensionKind {
+  // No presentation mode; invalid in a published manifest.
+  EXTENSION_KIND_UNSPECIFIED = 0;
+  // A native module compiled into the host application.
+  EXTENSION_KIND_NATIVE = 1;
+  // An external destination resolved by the host after its permission check.
+  EXTENSION_KIND_LINK = 2;
+}
+
+// Declarative host contributions; omitted navigation and home lists are empty.
+message ExtensionContributions {
+  // Optional navigation entries, each pointing at a declared route.
+  repeated ExtensionEntry nav = 1;
+  // Unique route templates beginning /w/{workspace}/m/<manifest-id>. At least one
+  // is required. Optional child segments contain ASCII letters, digits, dots,
+  // underscores, tildes or hyphens; dot segments, encoded delimiters, query strings,
+  // fragments, backslashes, empty segments and trailing slashes are forbidden.
+  repeated string routes = 2;
+  // Optional home tiles, each pointing at a declared route.
+  repeated ExtensionEntry home_tiles = 3;
+}
+
+// A navigation item or home tile that enters one of the module's declared routes.
+message ExtensionEntry {
+  // Nonblank entry title, at most 128 characters, without surrounding space.
+  string title = 1;
+  // An exact route template from this manifest's contributes.routes list.
+  string path = 2;
+  // Optional icon using the manifest icon syntax; inherits it when omitted.
+  string icon = 3;
+}
+
+// A deployment-configured destination; hosts resolve it on their server, not by
+// handing the browser an unchecked destination. Manifest validation does not
+// perform the required permission check or emit the link-opened audit event.
+message ExtensionLink {
+  // Absolute HTTP(S) URL, with no userinfo, fragment or whitespace and an authority exactly
+  // allowed by the host's host[:port] list. The only template token is {workspace},
+  // permitted in path/query, never in the authority; the host percent-encodes its
+  // replacement. Other deployment placeholders must be resolved before validation.
+  string url_template = 1;
+  // Required object relation, matching ^[a-z][a-z0-9_]{0,63}$.
+  string required_relation = 2;
+}

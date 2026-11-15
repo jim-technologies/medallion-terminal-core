@@ -42,7 +42,9 @@
       "default": "./dist/messages-zh.js"
     },
     "./proto": {
-      "types": "./dist/proto.d.ts"
+      "types": "./dist/proto.d.ts",
+      "import": "./dist/proto.js",
+      "default": "./dist/proto.js"
     },
     "./styles": "./dist/styles.css"
   },

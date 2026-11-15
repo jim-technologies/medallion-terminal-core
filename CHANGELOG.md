@@ -4,6 +4,14 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Added
+
+- A workspace-module manifest proto for native and permission-checked link modules,
+  with typed navigation, routes and home tiles. The focused `./proto` entry exports
+  its generated JSON types and a validator that checks route isolation, duplicate
+  contributions and host-supplied link authorities. This contract registers no apps
+  and reserves future runtime and capability fields.
+
 ## [0.8.2] — 2026-11-14
 
 ### Changed

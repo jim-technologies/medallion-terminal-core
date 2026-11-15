@@ -133,6 +133,11 @@ const requiredExports = [
   'exportView',
   'validateTemplateTrust',
 ]
+const proto = await import(pathToFileURL(path.resolve(root, packageJson.exports['./proto'].import)).href)
+if (typeof proto.validateExtensionManifest !== 'function'
+  || proto.validateExtensionManifest(null).length !== 1) {
+  throw new Error('Published ./proto entry must export the manifest validator')
+}
 for (const name of requiredExports) {
   if (!(name in library)) throw new Error(`Published entry is missing export ${JSON.stringify(name)}`)
 }

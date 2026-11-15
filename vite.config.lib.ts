@@ -61,6 +61,7 @@ export default defineConfig({
         'asset-open': resolve(import.meta.dirname, 'src/asset-open.ts'),
         app: resolve(import.meta.dirname, 'src/app.ts'),
         'messages-zh': resolve(import.meta.dirname, 'src/messages-zh.ts'),
+        proto: resolve(import.meta.dirname, 'src/proto.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.js`,
