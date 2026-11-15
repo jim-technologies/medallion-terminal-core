@@ -4,6 +4,10 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+### Fixed
+
+- Reject empty userinfo in link destinations while preserving `@` in paths and query strings.
+
 ### Added
 
 - A workspace-module manifest proto for native and permission-checked link modules,

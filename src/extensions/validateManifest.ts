@@ -132,7 +132,7 @@ export function validateExtensionManifest(
           const authority = template.match(/^https?:\/\/([^/?#]*)/i)?.[1]
           const remainder = template.replace(/\{workspace\}/g, 'workspace')
           const url = new URL(remainder)
-          if (!authority || /[{}]/.test(authority) || /[{}]/.test(remainder)
+          if (!authority || /[{}@]/.test(authority) || /[{}]/.test(remainder)
             || !['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.hash
             || !options.allowedLinkHosts.some(host => host.toLowerCase() === url.host.toLowerCase())) {
             issue('link.urlTemplate', 'link authority must be explicitly allowed; only {workspace} in path/query is supported')

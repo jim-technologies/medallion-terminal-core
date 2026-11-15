@@ -119,6 +119,8 @@ describe('workspace module manifests', () => {
     'https://metrics.example.test.evil.test/',
     'https://metrics.example.test@evil.test/',
     'https://user:password@metrics.example.test/',
+    'https://@metrics.example.test/',
+    'https://:@metrics.example.test/',
     'https://metrics.example.test:8443/',
     'https://{workspace}.metrics.example.test/',
     'https://metrics.example.test/{unresolved}',
@@ -130,6 +132,15 @@ describe('workspace module manifests', () => {
     manifest.link!.urlTemplate = urlTemplate
     expect(validateExtensionManifest(manifest, { allowedLinkHosts: ['metrics.example.test'] }))
       .toContainEqual(expect.objectContaining({ path: 'link.urlTemplate' }))
+  })
+
+  it.each([
+    'https://metrics.example.test/d/@reader/{workspace}',
+    'https://metrics.example.test/d/{workspace}?reader=@viewer',
+  ])('permits @ outside the authority in %s', urlTemplate => {
+    const manifest = link()
+    manifest.link!.urlTemplate = urlTemplate
+    expect(validateExtensionManifest(manifest, { allowedLinkHosts: ['metrics.example.test'] })).toEqual([])
   })
 
   it('requires the relation on links and refuses destinations on native modules', () => {

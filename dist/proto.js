@@ -72,7 +72,7 @@ function s(t, n = { allowedLinkHosts: [] }) {
 			if (typeof e != "string" || e.length > 2048 || /\s|[\u0000-\u001f\u007f\\]/.test(e)) c("link.urlTemplate", "link must be an absolute HTTP(S) template without whitespace or backslashes");
 			else try {
 				let t = e.match(/^https?:\/\/([^/?#]*)/i)?.[1], r = e.replace(/\{workspace\}/g, "workspace"), i = new URL(r);
-				(!t || /[{}]/.test(t) || /[{}]/.test(r) || !["http:", "https:"].includes(i.protocol) || i.username || i.password || i.hash || !n.allowedLinkHosts.some((e) => e.toLowerCase() === i.host.toLowerCase())) && c("link.urlTemplate", "link authority must be explicitly allowed; only {workspace} in path/query is supported");
+				(!t || /[{}@]/.test(t) || /[{}]/.test(r) || !["http:", "https:"].includes(i.protocol) || i.username || i.password || i.hash || !n.allowedLinkHosts.some((e) => e.toLowerCase() === i.host.toLowerCase())) && c("link.urlTemplate", "link authority must be explicitly allowed; only {workspace} in path/query is supported");
 			} catch {
 				c("link.urlTemplate", "link must be an absolute HTTP(S) URL");
 			}
