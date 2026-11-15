@@ -29,7 +29,8 @@ export type ExtensionManifest = Message<"medallion.extension.v1.ExtensionManifes
   id: string;
 
   /**
-   * Exact Semantic Versioning 2.0.0 version, including optional prerelease/build.
+   * Exact Semantic Versioning 2.0.0 version, including optional prerelease/build,
+   * at most 128 characters.
    *
    * @generated from field: string version = 2;
    */
@@ -97,7 +98,8 @@ export type ExtensionManifestJson = {
   id?: string;
 
   /**
-   * Exact Semantic Versioning 2.0.0 version, including optional prerelease/build.
+   * Exact Semantic Versioning 2.0.0 version, including optional prerelease/build,
+   * at most 128 characters.
    *
    * @generated from field: string version = 2;
    */
@@ -162,7 +164,7 @@ export const ExtensionManifestSchema: GenMessage<ExtensionManifest, {jsonType: E
  */
 export type ExtensionContributions = Message<"medallion.extension.v1.ExtensionContributions"> & {
   /**
-   * Optional navigation entries, each pointing at a declared route.
+   * Optional navigation entries with unique paths, each at a declared route.
    *
    * @generated from field: repeated medallion.extension.v1.ExtensionEntry nav = 1;
    */
@@ -170,7 +172,7 @@ export type ExtensionContributions = Message<"medallion.extension.v1.ExtensionCo
 
   /**
    * Unique route templates beginning /w/{workspace}/m/<manifest-id>. At least one
-   * is required. Optional child segments contain ASCII letters, digits, dots,
+   * is required; each is at most 2048 characters. Optional child segments contain ASCII letters, digits, dots,
    * underscores, tildes or hyphens; dot segments, encoded delimiters, query strings,
    * fragments, backslashes, empty segments and trailing slashes are forbidden.
    *
@@ -179,7 +181,7 @@ export type ExtensionContributions = Message<"medallion.extension.v1.ExtensionCo
   routes: string[];
 
   /**
-   * Optional home tiles, each pointing at a declared route.
+   * Optional home tiles with unique paths, each at a declared route.
    *
    * @generated from field: repeated medallion.extension.v1.ExtensionEntry home_tiles = 3;
    */
@@ -193,7 +195,7 @@ export type ExtensionContributions = Message<"medallion.extension.v1.ExtensionCo
  */
 export type ExtensionContributionsJson = {
   /**
-   * Optional navigation entries, each pointing at a declared route.
+   * Optional navigation entries with unique paths, each at a declared route.
    *
    * @generated from field: repeated medallion.extension.v1.ExtensionEntry nav = 1;
    */
@@ -201,7 +203,7 @@ export type ExtensionContributionsJson = {
 
   /**
    * Unique route templates beginning /w/{workspace}/m/<manifest-id>. At least one
-   * is required. Optional child segments contain ASCII letters, digits, dots,
+   * is required; each is at most 2048 characters. Optional child segments contain ASCII letters, digits, dots,
    * underscores, tildes or hyphens; dot segments, encoded delimiters, query strings,
    * fragments, backslashes, empty segments and trailing slashes are forbidden.
    *
@@ -210,7 +212,7 @@ export type ExtensionContributionsJson = {
   routes?: string[];
 
   /**
-   * Optional home tiles, each pointing at a declared route.
+   * Optional home tiles with unique paths, each at a declared route.
    *
    * @generated from field: repeated medallion.extension.v1.ExtensionEntry home_tiles = 3;
    */
@@ -296,7 +298,8 @@ export const ExtensionEntrySchema: GenMessage<ExtensionEntry, {jsonType: Extensi
  */
 export type ExtensionLink = Message<"medallion.extension.v1.ExtensionLink"> & {
   /**
-   * Absolute HTTP(S) URL, with no userinfo, fragment or whitespace and an authority exactly
+   * Absolute HTTP(S) URL, at most 2048 characters, with no userinfo, fragment or
+   * whitespace and an authority exactly
    * allowed by the host's host[:port] list. The only template token is {workspace},
    * permitted in path/query, never in the authority; the host percent-encodes its
    * replacement. Other deployment placeholders must be resolved before validation.
@@ -322,7 +325,8 @@ export type ExtensionLink = Message<"medallion.extension.v1.ExtensionLink"> & {
  */
 export type ExtensionLinkJson = {
   /**
-   * Absolute HTTP(S) URL, with no userinfo, fragment or whitespace and an authority exactly
+   * Absolute HTTP(S) URL, at most 2048 characters, with no userinfo, fragment or
+   * whitespace and an authority exactly
    * allowed by the host's host[:port] list. The only template token is {workspace},
    * permitted in path/query, never in the authority; the host percent-encodes its
    * replacement. Other deployment placeholders must be resolved before validation.
