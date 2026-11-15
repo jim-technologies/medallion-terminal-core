@@ -388,10 +388,15 @@ for (const playing of [false, true]) {
       await expect.poll(() => state.renewals).toBe(cycle)
       await expect(page.locator('.mtc-file-preview [aria-busy="true"]')).toHaveCount(0)
       await ready(media)
-      await expect.poll(() => media.evaluate(element => {
+      await expect.poll(() => media.evaluate(element => !(element as HTMLMediaElement).seeking)).toBe(true)
+      const recoveryStart = await media.evaluate(element => (element as HTMLMediaElement).currentTime)
+      await expect.poll(() => media.evaluate((element, { playing, recoveryStart }) => {
         const player = element as HTMLMediaElement
-        return player.readyState >= 3 && !player.seeking
-      })).toBe(true)
+        // WebKit can advance native playback at HAVE_CURRENT_DATA until EOF.
+        const advancing = playing && player.readyState >= 2 && !player.paused && !player.ended
+          && player.currentTime > recoveryStart + 0.1
+        return !player.seeking && (player.readyState >= 3 || advancing)
+      }, { playing, recoveryStart })).toBe(true)
       await expect.poll(() => media.evaluate(element => (element as HTMLMediaElement).paused)).toBe(!playing)
       const restored = await media.evaluate(element => (element as HTMLMediaElement).currentTime)
       if (playing) {
