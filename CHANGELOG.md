@@ -4,6 +4,8 @@ Notable changes to medallion-terminal-core. Versions follow semver.
 
 ## [Unreleased]
 
+## [0.8.3] — 2026-11-17
+
 ### Fixed
 
 - Reject empty userinfo and fragment delimiters in link destinations while preserving encoded delimiters in paths and query strings.
